@@ -1,0 +1,30 @@
+{
+  "name": "next-app",
+  "dockerComposeFile": [
+    "../docker-compose.dev.yml",
+    "../docker-compose.devcontainer.yml"
+  ],
+  "service": "web",
+  "workspaceFolder": "/app",
+  "forwardPorts": [3000, 3001],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "rvest.vs-code-prettier-eslint",
+        "streetsidesoftware.code-spell-checker",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "explicit",
+          "source.unusedImports": "explicit",
+          "source.fixAll.ts": "always"
+        },
+        "editor.formatOnSave": true
+      }
+    }
+  }
+}
