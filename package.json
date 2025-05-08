@@ -1,0 +1,39 @@
+{
+  "name": "next-app",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo run lint",
+    "lint:package": "npx sort-package-json",
+    "prepare": "husky",
+    "test": "turbo run test",
+    "commit": "./node_modules/cz-customizable/standalone.js"
+  },
+  "lint-staged": {
+    "*.md": "prettier --write"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/prompt-cli": "^19.8.1",
+    "cz-customizable": "^7.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3"
+  },
+  "packageManager": "pnpm@10.10.0",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  },
+  "config": {
+    "cz-customizable": {
+      "config": "cz-config.js"
+    }
+  }
+}

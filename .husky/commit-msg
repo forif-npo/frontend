@@ -1,0 +1,14 @@
+COMMIT_MESSAGE_FILE=$1
+COMMIT_MESSAGE=$(cat "$COMMIT_MESSAGE_FILE")
+
+echo "커밋 메세지: $COMMIT_MESSAGE"
+
+npx commitlint --edit $1
+
+if [ $? -eq 0 ]; then
+  echo "✅ 커밋 컨벤션과 일치합니다"
+  exit 0
+else
+  echo "❌ 커밋 컨벤션과 일치하지 않습니다"
+  exit 1
+fi
