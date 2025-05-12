@@ -1,34 +1,52 @@
 {
   "name": "web",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
-    "dev": "WATCHPACK_POLLING=true next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "test": "jest",
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@formatjs/intl-localematcher": "^0.6.1",
+    "@hookform/error-message": "^2.0.1",
+    "@hookform/resolvers": "^5.0.1",
+    "@repo/core": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@sentry/nextjs": "^9.17.0",
+    "clsx": "^2.1.1",
+    "lodash": "^4.17.21",
+    "next": "15.3.2",
+    "next-intl": "^4.1.0",
+    "next-themes": "^0.4.6",
+    "nuqs": "^2.4.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.3.2"
+    "react-hook-form": "^7.56.3",
+    "zod": "^3.24.4"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
+    "@eslint/eslintrc": "^3",
     "@jest/globals": "^29.7.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/jest-presets": "workspace:*",
+    "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "tailwindcss": "^4",
-    "eslint": "^8",
+    "@tailwindcss/postcss": "^4",
+    "@types/lodash": "^4.17.16",
+    "@types/negotiator": "^0.6.3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
   "packageManager": "pnpm@10.10.0"
 }

@@ -1,34 +1,38 @@
 {
   "name": "admin",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
-    "dev": "WATCHPACK_POLLING=true next dev -p 3001",
+    "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "lint:package": "npx sort-package-json",
     "test": "jest",
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "next": "15.3.2",
+    "nuqs": "^2.4.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.3.2"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
+    "@eslint/eslintrc": "^3",
     "@jest/globals": "^29.7.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/jest-presets": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "tailwindcss": "^4",
-    "eslint": "^8",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
   "packageManager": "pnpm@10.10.0"
 }

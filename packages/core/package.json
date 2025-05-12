@@ -1,0 +1,46 @@
+{
+  "name": "@repo/core",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./*": [
+      "./src/*.ts"
+    ],
+    "./theme-provider": "./src/components/theme-provider.tsx",
+    "./dictionaries/*": "./src/dictionaries/*.json",
+    "./schemas": "./src/schemas/index.ts",
+    "./mock": "./mock.ts",
+    "./components": "./src/components/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "^0.13.4",
+    "ky": "^1.8.1",
+    "lodash": "^4.17.21",
+    "next-themes": "^0.4.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typesafe-i18n": "^5.26.2",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^20.17.43",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "typescript": "^5"
+  },
+  "packageManager": "pnpm@10.10.0",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  }
+}
