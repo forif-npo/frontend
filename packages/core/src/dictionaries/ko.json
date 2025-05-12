@@ -1,0 +1,13 @@
+{
+  "HomePage": {
+    "title": "타이틀",
+    "about": "어바웃 페이지로 이동"
+  },
+  "NotFoundPage": {
+    "title": "찾을 수 없습니다."
+  },
+  "LocaleSwitcher": {
+    "label": "언어 변환",
+    "locale": "{locale, select, ko {한국어} en {English} other {Unknown}}"
+  }
+}

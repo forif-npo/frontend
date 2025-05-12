@@ -1,5 +1,4 @@
 {
-  "*.{ts,tsx}": "eslint --cache --max-warnings=0",
   "*.{ts,tsx,css,md}": "prettier --write",
   "*.md": "prettier --write"
 }

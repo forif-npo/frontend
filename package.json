@@ -11,7 +11,10 @@
     "lint:package": "npx sort-package-json",
     "prepare": "husky",
     "test": "turbo run test",
-    "commit": "./node_modules/cz-customizable/standalone.js"
+    "commit": "./node_modules/cz-customizable/standalone.js",
+    "add:web": "pnpm add -F web",
+    "add:admin": "pnpm add -F admin",
+    "add:client": "pnpm add -F web -F admin"
   },
   "lint-staged": {
     "*.md": "prettier --write"
