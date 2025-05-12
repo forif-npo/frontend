@@ -1,0 +1,3863 @@
+[
+  {
+    "name": "next-app",
+    "version": "0.0.0",
+    "path": "/home2/junseong.pyo/next-app",
+    "private": true,
+    "devDependencies": {
+      "@commitlint/cli": {
+        "from": "@commitlint/cli",
+        "version": "19.8.1",
+        "resolved": "https://registry.npmjs.org/@commitlint/cli/-/cli-19.8.1.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@commitlint+cli@19.8.1_@types+node@20.17.43_typescript@5.8.3/node_modules/@commitlint/cli"
+      },
+      "@commitlint/config-conventional": {
+        "from": "@commitlint/config-conventional",
+        "version": "19.8.1",
+        "resolved": "https://registry.npmjs.org/@commitlint/config-conventional/-/config-conventional-19.8.1.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@commitlint+config-conventional@19.8.1/node_modules/@commitlint/config-conventional"
+      },
+      "@commitlint/prompt-cli": {
+        "from": "@commitlint/prompt-cli",
+        "version": "19.8.1",
+        "resolved": "https://registry.npmjs.org/@commitlint/prompt-cli/-/prompt-cli-19.8.1.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@commitlint+prompt-cli@19.8.1_@types+node@20.17.43_typescript@5.8.3/node_modules/@commitlint/prompt-cli"
+      },
+      "cz-customizable": {
+        "from": "cz-customizable",
+        "version": "7.4.0",
+        "resolved": "https://registry.npmjs.org/cz-customizable/-/cz-customizable-7.4.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/cz-customizable@7.4.0/node_modules/cz-customizable"
+      },
+      "husky": {
+        "from": "husky",
+        "version": "9.1.7",
+        "resolved": "https://registry.npmjs.org/husky/-/husky-9.1.7.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/husky@9.1.7/node_modules/husky"
+      },
+      "lint-staged": {
+        "from": "lint-staged",
+        "version": "15.5.2",
+        "resolved": "https://registry.npmjs.org/lint-staged/-/lint-staged-15.5.2.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/lint-staged@15.5.2/node_modules/lint-staged"
+      },
+      "prettier": {
+        "from": "prettier",
+        "version": "3.5.3",
+        "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.5.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/prettier@3.5.3/node_modules/prettier"
+      },
+      "turbo": {
+        "from": "turbo",
+        "version": "2.5.3",
+        "resolved": "https://registry.npmjs.org/turbo/-/turbo-2.5.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/turbo@2.5.3/node_modules/turbo"
+      }
+    }
+  },
+  {
+    "name": "admin",
+    "version": "0.1.0",
+    "path": "/home2/junseong.pyo/next-app/apps/admin",
+    "private": true,
+    "dependencies": {
+      "next": {
+        "from": "next",
+        "version": "15.3.2",
+        "resolved": "https://registry.npmjs.org/next/-/next-15.3.2.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/next@15.3.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next"
+      },
+      "react": {
+        "from": "react",
+        "version": "19.1.0",
+        "resolved": "https://registry.npmjs.org/react/-/react-19.1.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/react@19.1.0/node_modules/react"
+      },
+      "react-dom": {
+        "from": "react-dom",
+        "version": "19.1.0",
+        "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.1.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/react-dom@19.1.0_react@19.1.0/node_modules/react-dom"
+      }
+    },
+    "devDependencies": {
+      "@eslint/eslintrc": {
+        "from": "@eslint/eslintrc",
+        "version": "3.3.1",
+        "resolved": "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-3.3.1.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@eslint+eslintrc@3.3.1/node_modules/@eslint/eslintrc"
+      },
+      "@jest/globals": {
+        "from": "@jest/globals",
+        "version": "29.7.0",
+        "resolved": "https://registry.npmjs.org/@jest/globals/-/globals-29.7.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@jest+globals@29.7.0/node_modules/@jest/globals"
+      },
+      "@repo/eslint-config": {
+        "from": "@repo/eslint-config",
+        "version": "link:../../packages/eslint-config",
+        "path": "/home2/junseong.pyo/next-app/packages/eslint-config"
+      },
+      "@repo/jest-presets": {
+        "from": "@repo/jest-presets",
+        "version": "link:../../packages/jest-presets",
+        "path": "/home2/junseong.pyo/next-app/packages/jest-presets"
+      },
+      "@repo/typescript-config": {
+        "from": "@repo/typescript-config",
+        "version": "link:../../packages/typescript-config",
+        "path": "/home2/junseong.pyo/next-app/packages/typescript-config"
+      },
+      "@tailwindcss/postcss": {
+        "from": "@tailwindcss/postcss",
+        "version": "4.1.5",
+        "resolved": "https://registry.npmjs.org/@tailwindcss/postcss/-/postcss-4.1.5.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@tailwindcss+postcss@4.1.5/node_modules/@tailwindcss/postcss"
+      },
+      "@types/node": {
+        "from": "@types/node",
+        "version": "20.17.43",
+        "resolved": "https://registry.npmjs.org/@types/node/-/node-20.17.43.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@types+node@20.17.43/node_modules/@types/node"
+      },
+      "@types/react": {
+        "from": "@types/react",
+        "version": "19.1.3",
+        "resolved": "https://registry.npmjs.org/@types/react/-/react-19.1.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@types+react@19.1.3/node_modules/@types/react"
+      },
+      "@types/react-dom": {
+        "from": "@types/react-dom",
+        "version": "19.1.3",
+        "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.1.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@types+react-dom@19.1.3_@types+react@19.1.3/node_modules/@types/react-dom"
+      },
+      "eslint": {
+        "from": "eslint",
+        "version": "8.57.1",
+        "resolved": "https://registry.npmjs.org/eslint/-/eslint-8.57.1.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/eslint@8.57.1/node_modules/eslint"
+      },
+      "eslint-config-next": {
+        "from": "eslint-config-next",
+        "version": "15.3.2",
+        "resolved": "https://registry.npmjs.org/eslint-config-next/-/eslint-config-next-15.3.2.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/eslint-config-next@15.3.2_eslint@8.57.1_typescript@5.8.3/node_modules/eslint-config-next"
+      },
+      "tailwindcss": {
+        "from": "tailwindcss",
+        "version": "4.1.5",
+        "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.1.5.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/tailwindcss@4.1.5/node_modules/tailwindcss"
+      },
+      "typescript": {
+        "from": "typescript",
+        "version": "5.8.3",
+        "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.8.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/typescript@5.8.3/node_modules/typescript"
+      }
+    },
+    "unsavedDependencies": {
+      "accepts": {
+        "from": "accepts",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/accepts"
+      },
+      "ansi-styles": {
+        "from": "ansi-styles",
+        "version": "4.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/ansi-styles"
+      },
+      "acorn": {
+        "from": "acorn",
+        "version": "8.14.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/acorn"
+      },
+      "acorn-jsx": {
+        "from": "acorn-jsx",
+        "version": "5.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/acorn-jsx"
+      },
+      "ajv": {
+        "from": "ajv",
+        "version": "6.12.6",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/ajv"
+      },
+      "array-buffer-byte-length": {
+        "from": "array-buffer-byte-length",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/array-buffer-byte-length"
+      },
+      "aria-query": {
+        "from": "aria-query",
+        "version": "5.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/aria-query"
+      },
+      "argparse": {
+        "from": "argparse",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/argparse"
+      },
+      "array.prototype.findlast": {
+        "from": "array.prototype.findlast",
+        "version": "1.2.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/array.prototype.findlast"
+      },
+      "array-includes": {
+        "from": "array-includes",
+        "version": "3.1.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/array-includes"
+      },
+      "array.prototype.findlastindex": {
+        "from": "array.prototype.findlastindex",
+        "version": "1.2.6",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/array.prototype.findlastindex"
+      },
+      "array.prototype.flat": {
+        "from": "array.prototype.flat",
+        "version": "1.3.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/array.prototype.flat"
+      },
+      "array.prototype.flatmap": {
+        "from": "array.prototype.flatmap",
+        "version": "1.3.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/array.prototype.flatmap"
+      },
+      "arraybuffer.prototype.slice": {
+        "from": "arraybuffer.prototype.slice",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/arraybuffer.prototype.slice"
+      },
+      "array.prototype.tosorted": {
+        "from": "array.prototype.tosorted",
+        "version": "1.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/array.prototype.tosorted"
+      },
+      "async-function": {
+        "from": "async-function",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/async-function"
+      },
+      "ast-types-flow": {
+        "from": "ast-types-flow",
+        "version": "0.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/ast-types-flow"
+      },
+      "axobject-query": {
+        "from": "axobject-query",
+        "version": "4.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/axobject-query"
+      },
+      "axe-core": {
+        "from": "axe-core",
+        "version": "4.10.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/axe-core"
+      },
+      "brace-expansion": {
+        "from": "brace-expansion",
+        "version": "1.1.11",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/brace-expansion"
+      },
+      "available-typed-arrays": {
+        "from": "available-typed-arrays",
+        "version": "1.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/available-typed-arrays"
+      },
+      "balanced-match": {
+        "from": "balanced-match",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/balanced-match"
+      },
+      "braces": {
+        "from": "braces",
+        "version": "3.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/braces"
+      },
+      "body-parser": {
+        "from": "body-parser",
+        "version": "2.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/body-parser"
+      },
+      "call-bind": {
+        "from": "call-bind",
+        "version": "1.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/call-bind"
+      },
+      "bytes": {
+        "from": "bytes",
+        "version": "3.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/bytes"
+      },
+      "call-bound": {
+        "from": "call-bound",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/call-bound"
+      },
+      "call-bind-apply-helpers": {
+        "from": "call-bind-apply-helpers",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/call-bind-apply-helpers"
+      },
+      "callsites": {
+        "from": "callsites",
+        "version": "3.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/callsites"
+      },
+      "client-only": {
+        "from": "client-only",
+        "version": "0.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/client-only"
+      },
+      "chalk": {
+        "from": "chalk",
+        "version": "4.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/chalk"
+      },
+      "caniuse-lite": {
+        "from": "caniuse-lite",
+        "version": "1.0.30001717",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/caniuse-lite"
+      },
+      "busboy": {
+        "from": "busboy",
+        "version": "1.6.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/busboy"
+      },
+      "color": {
+        "from": "color",
+        "version": "4.2.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/color"
+      },
+      "color-convert": {
+        "from": "color-convert",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/color-convert"
+      },
+      "color-name": {
+        "from": "color-name",
+        "version": "1.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/color-name"
+      },
+      "content-disposition": {
+        "from": "content-disposition",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/content-disposition"
+      },
+      "color-string": {
+        "from": "color-string",
+        "version": "1.9.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/color-string"
+      },
+      "concat-map": {
+        "from": "concat-map",
+        "version": "0.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/concat-map"
+      },
+      "content-type": {
+        "from": "content-type",
+        "version": "1.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/content-type"
+      },
+      "cookie": {
+        "from": "cookie",
+        "version": "0.7.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/cookie"
+      },
+      "cross-spawn": {
+        "from": "cross-spawn",
+        "version": "7.0.6",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/cross-spawn"
+      },
+      "cookie-signature": {
+        "from": "cookie-signature",
+        "version": "1.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/cookie-signature"
+      },
+      "cors": {
+        "from": "cors",
+        "version": "2.8.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/cors"
+      },
+      "csstype": {
+        "from": "csstype",
+        "version": "3.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/csstype"
+      },
+      "damerau-levenshtein": {
+        "from": "damerau-levenshtein",
+        "version": "1.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/damerau-levenshtein"
+      },
+      "deep-is": {
+        "from": "deep-is",
+        "version": "0.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/deep-is"
+      },
+      "data-view-buffer": {
+        "from": "data-view-buffer",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/data-view-buffer"
+      },
+      "debug": {
+        "from": "debug",
+        "version": "4.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/debug"
+      },
+      "data-view-byte-offset": {
+        "from": "data-view-byte-offset",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/data-view-byte-offset"
+      },
+      "depd": {
+        "from": "depd",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/depd"
+      },
+      "define-data-property": {
+        "from": "define-data-property",
+        "version": "1.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/define-data-property"
+      },
+      "data-view-byte-length": {
+        "from": "data-view-byte-length",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/data-view-byte-length"
+      },
+      "doctrine": {
+        "from": "doctrine",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/doctrine"
+      },
+      "define-properties": {
+        "from": "define-properties",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/define-properties"
+      },
+      "detect-libc": {
+        "from": "detect-libc",
+        "version": "2.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/detect-libc"
+      },
+      "dunder-proto": {
+        "from": "dunder-proto",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/dunder-proto"
+      },
+      "ee-first": {
+        "from": "ee-first",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/ee-first"
+      },
+      "emoji-regex": {
+        "from": "emoji-regex",
+        "version": "9.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/emoji-regex"
+      },
+      "enhanced-resolve": {
+        "from": "enhanced-resolve",
+        "version": "5.18.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/enhanced-resolve"
+      },
+      "encodeurl": {
+        "from": "encodeurl",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/encodeurl"
+      },
+      "es-define-property": {
+        "from": "es-define-property",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/es-define-property"
+      },
+      "es-errors": {
+        "from": "es-errors",
+        "version": "1.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/es-errors"
+      },
+      "es-abstract": {
+        "from": "es-abstract",
+        "version": "1.23.9",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/es-abstract"
+      },
+      "es-shim-unscopables": {
+        "from": "es-shim-unscopables",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/es-shim-unscopables"
+      },
+      "es-iterator-helpers": {
+        "from": "es-iterator-helpers",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/es-iterator-helpers"
+      },
+      "es-object-atoms": {
+        "from": "es-object-atoms",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/es-object-atoms"
+      },
+      "es-to-primitive": {
+        "from": "es-to-primitive",
+        "version": "1.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/es-to-primitive"
+      },
+      "es-set-tostringtag": {
+        "from": "es-set-tostringtag",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/es-set-tostringtag"
+      },
+      "escape-html": {
+        "from": "escape-html",
+        "version": "1.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/escape-html"
+      },
+      "eslint-import-resolver-node": {
+        "from": "eslint-import-resolver-node",
+        "version": "0.3.9",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eslint-import-resolver-node"
+      },
+      "escape-string-regexp": {
+        "from": "escape-string-regexp",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/escape-string-regexp"
+      },
+      "eslint-import-resolver-typescript": {
+        "from": "eslint-import-resolver-typescript",
+        "version": "3.10.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eslint-import-resolver-typescript"
+      },
+      "eslint-module-utils": {
+        "from": "eslint-module-utils",
+        "version": "2.12.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eslint-module-utils"
+      },
+      "eslint-plugin-import": {
+        "from": "eslint-plugin-import",
+        "version": "2.31.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eslint-plugin-import"
+      },
+      "eslint-plugin-jsx-a11y": {
+        "from": "eslint-plugin-jsx-a11y",
+        "version": "6.10.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eslint-plugin-jsx-a11y"
+      },
+      "eslint-plugin-react-hooks": {
+        "from": "eslint-plugin-react-hooks",
+        "version": "5.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eslint-plugin-react-hooks"
+      },
+      "eslint-scope": {
+        "from": "eslint-scope",
+        "version": "8.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eslint-scope"
+      },
+      "eslint-plugin-react": {
+        "from": "eslint-plugin-react",
+        "version": "7.37.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eslint-plugin-react"
+      },
+      "eslint-visitor-keys": {
+        "from": "eslint-visitor-keys",
+        "version": "4.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eslint-visitor-keys"
+      },
+      "espree": {
+        "from": "espree",
+        "version": "10.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/espree"
+      },
+      "esrecurse": {
+        "from": "esrecurse",
+        "version": "4.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/esrecurse"
+      },
+      "estraverse": {
+        "from": "estraverse",
+        "version": "5.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/estraverse"
+      },
+      "esutils": {
+        "from": "esutils",
+        "version": "2.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/esutils"
+      },
+      "eventsource": {
+        "from": "eventsource",
+        "version": "3.0.6",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eventsource"
+      },
+      "eventsource-parser": {
+        "from": "eventsource-parser",
+        "version": "3.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/eventsource-parser"
+      },
+      "express-rate-limit": {
+        "from": "express-rate-limit",
+        "version": "7.5.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/express-rate-limit"
+      },
+      "esquery": {
+        "from": "esquery",
+        "version": "1.6.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/esquery"
+      },
+      "etag": {
+        "from": "etag",
+        "version": "1.8.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/etag"
+      },
+      "fast-deep-equal": {
+        "from": "fast-deep-equal",
+        "version": "3.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/fast-deep-equal"
+      },
+      "fast-glob": {
+        "from": "fast-glob",
+        "version": "3.3.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/fast-glob"
+      },
+      "fast-json-stable-stringify": {
+        "from": "fast-json-stable-stringify",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/fast-json-stable-stringify"
+      },
+      "express": {
+        "from": "express",
+        "version": "5.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/express"
+      },
+      "fast-levenshtein": {
+        "from": "fast-levenshtein",
+        "version": "2.0.6",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/fast-levenshtein"
+      },
+      "fastq": {
+        "from": "fastq",
+        "version": "1.19.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/fastq"
+      },
+      "fill-range": {
+        "from": "fill-range",
+        "version": "7.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/fill-range"
+      },
+      "file-entry-cache": {
+        "from": "file-entry-cache",
+        "version": "8.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/file-entry-cache"
+      },
+      "find-up": {
+        "from": "find-up",
+        "version": "5.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/find-up"
+      },
+      "finalhandler": {
+        "from": "finalhandler",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/finalhandler"
+      },
+      "flat-cache": {
+        "from": "flat-cache",
+        "version": "4.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/flat-cache"
+      },
+      "forwarded": {
+        "from": "forwarded",
+        "version": "0.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/forwarded"
+      },
+      "fresh": {
+        "from": "fresh",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/fresh"
+      },
+      "for-each": {
+        "from": "for-each",
+        "version": "0.3.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/for-each"
+      },
+      "flatted": {
+        "from": "flatted",
+        "version": "3.3.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/flatted"
+      },
+      "function-bind": {
+        "from": "function-bind",
+        "version": "1.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/function-bind"
+      },
+      "function.prototype.name": {
+        "from": "function.prototype.name",
+        "version": "1.1.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/function.prototype.name"
+      },
+      "functions-have-names": {
+        "from": "functions-have-names",
+        "version": "1.2.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/functions-have-names"
+      },
+      "get-proto": {
+        "from": "get-proto",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/get-proto"
+      },
+      "get-intrinsic": {
+        "from": "get-intrinsic",
+        "version": "1.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/get-intrinsic"
+      },
+      "get-symbol-description": {
+        "from": "get-symbol-description",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/get-symbol-description"
+      },
+      "globals": {
+        "from": "globals",
+        "version": "14.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/globals"
+      },
+      "glob-parent": {
+        "from": "glob-parent",
+        "version": "6.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/glob-parent"
+      },
+      "get-tsconfig": {
+        "from": "get-tsconfig",
+        "version": "4.10.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/get-tsconfig"
+      },
+      "globalthis": {
+        "from": "globalthis",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/globalthis"
+      },
+      "graceful-fs": {
+        "from": "graceful-fs",
+        "version": "4.2.11",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/graceful-fs"
+      },
+      "graphemer": {
+        "from": "graphemer",
+        "version": "1.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/graphemer"
+      },
+      "gopd": {
+        "from": "gopd",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/gopd"
+      },
+      "has-bigints": {
+        "from": "has-bigints",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/has-bigints"
+      },
+      "has-proto": {
+        "from": "has-proto",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/has-proto"
+      },
+      "has-flag": {
+        "from": "has-flag",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/has-flag"
+      },
+      "has-property-descriptors": {
+        "from": "has-property-descriptors",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/has-property-descriptors"
+      },
+      "has-tostringtag": {
+        "from": "has-tostringtag",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/has-tostringtag"
+      },
+      "has-symbols": {
+        "from": "has-symbols",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/has-symbols"
+      },
+      "hasown": {
+        "from": "hasown",
+        "version": "2.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/hasown"
+      },
+      "http-errors": {
+        "from": "http-errors",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/http-errors"
+      },
+      "iconv-lite": {
+        "from": "iconv-lite",
+        "version": "0.6.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/iconv-lite"
+      },
+      "import-fresh": {
+        "from": "import-fresh",
+        "version": "3.3.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/import-fresh"
+      },
+      "inherits": {
+        "from": "inherits",
+        "version": "2.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/inherits"
+      },
+      "ignore": {
+        "from": "ignore",
+        "version": "5.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/ignore"
+      },
+      "internal-slot": {
+        "from": "internal-slot",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/internal-slot"
+      },
+      "ipaddr.js": {
+        "from": "ipaddr.js",
+        "version": "1.9.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/ipaddr.js"
+      },
+      "is-arrayish": {
+        "from": "is-arrayish",
+        "version": "0.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-arrayish"
+      },
+      "imurmurhash": {
+        "from": "imurmurhash",
+        "version": "0.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/imurmurhash"
+      },
+      "is-array-buffer": {
+        "from": "is-array-buffer",
+        "version": "3.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-array-buffer"
+      },
+      "is-bigint": {
+        "from": "is-bigint",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-bigint"
+      },
+      "is-core-module": {
+        "from": "is-core-module",
+        "version": "2.16.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-core-module"
+      },
+      "is-bun-module": {
+        "from": "is-bun-module",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-bun-module"
+      },
+      "is-boolean-object": {
+        "from": "is-boolean-object",
+        "version": "1.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-boolean-object"
+      },
+      "is-callable": {
+        "from": "is-callable",
+        "version": "1.2.7",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-callable"
+      },
+      "is-async-function": {
+        "from": "is-async-function",
+        "version": "2.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-async-function"
+      },
+      "is-data-view": {
+        "from": "is-data-view",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-data-view"
+      },
+      "is-extglob": {
+        "from": "is-extglob",
+        "version": "2.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-extglob"
+      },
+      "is-finalizationregistry": {
+        "from": "is-finalizationregistry",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-finalizationregistry"
+      },
+      "is-generator-function": {
+        "from": "is-generator-function",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-generator-function"
+      },
+      "is-date-object": {
+        "from": "is-date-object",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-date-object"
+      },
+      "is-glob": {
+        "from": "is-glob",
+        "version": "4.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-glob"
+      },
+      "is-map": {
+        "from": "is-map",
+        "version": "2.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-map"
+      },
+      "is-number": {
+        "from": "is-number",
+        "version": "7.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-number"
+      },
+      "is-number-object": {
+        "from": "is-number-object",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-number-object"
+      },
+      "is-set": {
+        "from": "is-set",
+        "version": "2.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-set"
+      },
+      "is-promise": {
+        "from": "is-promise",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-promise"
+      },
+      "is-string": {
+        "from": "is-string",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-string"
+      },
+      "is-regex": {
+        "from": "is-regex",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-regex"
+      },
+      "is-shared-array-buffer": {
+        "from": "is-shared-array-buffer",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-shared-array-buffer"
+      },
+      "is-symbol": {
+        "from": "is-symbol",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-symbol"
+      },
+      "is-typed-array": {
+        "from": "is-typed-array",
+        "version": "1.1.15",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-typed-array"
+      },
+      "is-weakmap": {
+        "from": "is-weakmap",
+        "version": "2.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-weakmap"
+      },
+      "is-weakref": {
+        "from": "is-weakref",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-weakref"
+      },
+      "is-weakset": {
+        "from": "is-weakset",
+        "version": "2.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/is-weakset"
+      },
+      "isarray": {
+        "from": "isarray",
+        "version": "2.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/isarray"
+      },
+      "isexe": {
+        "from": "isexe",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/isexe"
+      },
+      "jiti": {
+        "from": "jiti",
+        "version": "2.4.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/jiti"
+      },
+      "iterator.prototype": {
+        "from": "iterator.prototype",
+        "version": "1.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/iterator.prototype"
+      },
+      "js-tokens": {
+        "from": "js-tokens",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/js-tokens"
+      },
+      "json-schema-traverse": {
+        "from": "json-schema-traverse",
+        "version": "0.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/json-schema-traverse"
+      },
+      "js-yaml": {
+        "from": "js-yaml",
+        "version": "4.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/js-yaml"
+      },
+      "json-buffer": {
+        "from": "json-buffer",
+        "version": "3.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/json-buffer"
+      },
+      "keyv": {
+        "from": "keyv",
+        "version": "4.5.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/keyv"
+      },
+      "json-stable-stringify-without-jsonify": {
+        "from": "json-stable-stringify-without-jsonify",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/json-stable-stringify-without-jsonify"
+      },
+      "json5": {
+        "from": "json5",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/json5"
+      },
+      "jsx-ast-utils": {
+        "from": "jsx-ast-utils",
+        "version": "3.3.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/jsx-ast-utils"
+      },
+      "levn": {
+        "from": "levn",
+        "version": "0.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/levn"
+      },
+      "language-tags": {
+        "from": "language-tags",
+        "version": "1.0.9",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/language-tags"
+      },
+      "language-subtag-registry": {
+        "from": "language-subtag-registry",
+        "version": "0.3.23",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/language-subtag-registry"
+      },
+      "locate-path": {
+        "from": "locate-path",
+        "version": "6.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/locate-path"
+      },
+      "lightningcss": {
+        "from": "lightningcss",
+        "version": "1.29.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/lightningcss"
+      },
+      "lightningcss-linux-x64-gnu": {
+        "from": "lightningcss-linux-x64-gnu",
+        "version": "1.29.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/lightningcss-linux-x64-gnu"
+      },
+      "lodash.merge": {
+        "from": "lodash.merge",
+        "version": "4.6.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/lodash.merge"
+      },
+      "loose-envify": {
+        "from": "loose-envify",
+        "version": "1.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/loose-envify"
+      },
+      "media-typer": {
+        "from": "media-typer",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/media-typer"
+      },
+      "math-intrinsics": {
+        "from": "math-intrinsics",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/math-intrinsics"
+      },
+      "merge2": {
+        "from": "merge2",
+        "version": "1.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/merge2"
+      },
+      "merge-descriptors": {
+        "from": "merge-descriptors",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/merge-descriptors"
+      },
+      "micromatch": {
+        "from": "micromatch",
+        "version": "4.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/micromatch"
+      },
+      "mime-db": {
+        "from": "mime-db",
+        "version": "1.54.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/mime-db"
+      },
+      "mime-types": {
+        "from": "mime-types",
+        "version": "3.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/mime-types"
+      },
+      "minimatch": {
+        "from": "minimatch",
+        "version": "3.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/minimatch"
+      },
+      "minimist": {
+        "from": "minimist",
+        "version": "1.2.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/minimist"
+      },
+      "ms": {
+        "from": "ms",
+        "version": "2.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/ms"
+      },
+      "nanoid": {
+        "from": "nanoid",
+        "version": "3.3.11",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/nanoid"
+      },
+      "napi-postinstall": {
+        "from": "napi-postinstall",
+        "version": "0.2.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/napi-postinstall"
+      },
+      "object-assign": {
+        "from": "object-assign",
+        "version": "4.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/object-assign"
+      },
+      "natural-compare": {
+        "from": "natural-compare",
+        "version": "1.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/natural-compare"
+      },
+      "negotiator": {
+        "from": "negotiator",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/negotiator"
+      },
+      "object.entries": {
+        "from": "object.entries",
+        "version": "1.1.9",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/object.entries"
+      },
+      "object-keys": {
+        "from": "object-keys",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/object-keys"
+      },
+      "object.assign": {
+        "from": "object.assign",
+        "version": "4.1.7",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/object.assign"
+      },
+      "object.groupby": {
+        "from": "object.groupby",
+        "version": "1.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/object.groupby"
+      },
+      "object-inspect": {
+        "from": "object-inspect",
+        "version": "1.13.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/object-inspect"
+      },
+      "object.values": {
+        "from": "object.values",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/object.values"
+      },
+      "object.fromentries": {
+        "from": "object.fromentries",
+        "version": "2.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/object.fromentries"
+      },
+      "once": {
+        "from": "once",
+        "version": "1.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/once"
+      },
+      "optionator": {
+        "from": "optionator",
+        "version": "0.9.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/optionator"
+      },
+      "p-limit": {
+        "from": "p-limit",
+        "version": "3.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/p-limit"
+      },
+      "own-keys": {
+        "from": "own-keys",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/own-keys"
+      },
+      "on-finished": {
+        "from": "on-finished",
+        "version": "2.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/on-finished"
+      },
+      "parent-module": {
+        "from": "parent-module",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/parent-module"
+      },
+      "p-locate": {
+        "from": "p-locate",
+        "version": "5.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/p-locate"
+      },
+      "path-exists": {
+        "from": "path-exists",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/path-exists"
+      },
+      "path-parse": {
+        "from": "path-parse",
+        "version": "1.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/path-parse"
+      },
+      "parseurl": {
+        "from": "parseurl",
+        "version": "1.3.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/parseurl"
+      },
+      "path-key": {
+        "from": "path-key",
+        "version": "3.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/path-key"
+      },
+      "picocolors": {
+        "from": "picocolors",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/picocolors"
+      },
+      "path-to-regexp": {
+        "from": "path-to-regexp",
+        "version": "8.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/path-to-regexp"
+      },
+      "possible-typed-array-names": {
+        "from": "possible-typed-array-names",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/possible-typed-array-names"
+      },
+      "picomatch": {
+        "from": "picomatch",
+        "version": "2.3.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/picomatch"
+      },
+      "pkce-challenge": {
+        "from": "pkce-challenge",
+        "version": "5.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/pkce-challenge"
+      },
+      "prop-types": {
+        "from": "prop-types",
+        "version": "15.8.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/prop-types"
+      },
+      "postcss": {
+        "from": "postcss",
+        "version": "8.5.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/postcss"
+      },
+      "prelude-ls": {
+        "from": "prelude-ls",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/prelude-ls"
+      },
+      "proxy-addr": {
+        "from": "proxy-addr",
+        "version": "2.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/proxy-addr"
+      },
+      "punycode": {
+        "from": "punycode",
+        "version": "2.3.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/punycode"
+      },
+      "queue-microtask": {
+        "from": "queue-microtask",
+        "version": "1.2.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/queue-microtask"
+      },
+      "qs": {
+        "from": "qs",
+        "version": "6.14.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/qs"
+      },
+      "raw-body": {
+        "from": "raw-body",
+        "version": "3.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/raw-body"
+      },
+      "react-is": {
+        "from": "react-is",
+        "version": "16.13.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/react-is"
+      },
+      "range-parser": {
+        "from": "range-parser",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/range-parser"
+      },
+      "regexp.prototype.flags": {
+        "from": "regexp.prototype.flags",
+        "version": "1.5.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/regexp.prototype.flags"
+      },
+      "reflect.getprototypeof": {
+        "from": "reflect.getprototypeof",
+        "version": "1.0.10",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/reflect.getprototypeof"
+      },
+      "resolve": {
+        "from": "resolve",
+        "version": "1.22.10",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/resolve"
+      },
+      "resolve-from": {
+        "from": "resolve-from",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/resolve-from"
+      },
+      "reusify": {
+        "from": "reusify",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/reusify"
+      },
+      "safe-array-concat": {
+        "from": "safe-array-concat",
+        "version": "1.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/safe-array-concat"
+      },
+      "resolve-pkg-maps": {
+        "from": "resolve-pkg-maps",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/resolve-pkg-maps"
+      },
+      "router": {
+        "from": "router",
+        "version": "2.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/router"
+      },
+      "run-parallel": {
+        "from": "run-parallel",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/run-parallel"
+      },
+      "safe-buffer": {
+        "from": "safe-buffer",
+        "version": "5.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/safe-buffer"
+      },
+      "safe-regex-test": {
+        "from": "safe-regex-test",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/safe-regex-test"
+      },
+      "safer-buffer": {
+        "from": "safer-buffer",
+        "version": "2.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/safer-buffer"
+      },
+      "scheduler": {
+        "from": "scheduler",
+        "version": "0.26.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/scheduler"
+      },
+      "semver": {
+        "from": "semver",
+        "version": "7.7.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/semver"
+      },
+      "safe-push-apply": {
+        "from": "safe-push-apply",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/safe-push-apply"
+      },
+      "send": {
+        "from": "send",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/send"
+      },
+      "serve-static": {
+        "from": "serve-static",
+        "version": "2.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/serve-static"
+      },
+      "set-function-name": {
+        "from": "set-function-name",
+        "version": "2.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/set-function-name"
+      },
+      "set-function-length": {
+        "from": "set-function-length",
+        "version": "1.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/set-function-length"
+      },
+      "set-proto": {
+        "from": "set-proto",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/set-proto"
+      },
+      "sharp": {
+        "from": "sharp",
+        "version": "0.34.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/sharp"
+      },
+      "shebang-command": {
+        "from": "shebang-command",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/shebang-command"
+      },
+      "side-channel-list": {
+        "from": "side-channel-list",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/side-channel-list"
+      },
+      "setprototypeof": {
+        "from": "setprototypeof",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/setprototypeof"
+      },
+      "side-channel": {
+        "from": "side-channel",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/side-channel"
+      },
+      "shebang-regex": {
+        "from": "shebang-regex",
+        "version": "3.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/shebang-regex"
+      },
+      "side-channel-map": {
+        "from": "side-channel-map",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/side-channel-map"
+      },
+      "source-map-js": {
+        "from": "source-map-js",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/source-map-js"
+      },
+      "simple-swizzle": {
+        "from": "simple-swizzle",
+        "version": "0.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/simple-swizzle"
+      },
+      "side-channel-weakmap": {
+        "from": "side-channel-weakmap",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/side-channel-weakmap"
+      },
+      "stable-hash": {
+        "from": "stable-hash",
+        "version": "0.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/stable-hash"
+      },
+      "statuses": {
+        "from": "statuses",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/statuses"
+      },
+      "streamsearch": {
+        "from": "streamsearch",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/streamsearch"
+      },
+      "string.prototype.includes": {
+        "from": "string.prototype.includes",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/string.prototype.includes"
+      },
+      "string.prototype.matchall": {
+        "from": "string.prototype.matchall",
+        "version": "4.0.12",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/string.prototype.matchall"
+      },
+      "string.prototype.trim": {
+        "from": "string.prototype.trim",
+        "version": "1.2.10",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/string.prototype.trim"
+      },
+      "string.prototype.repeat": {
+        "from": "string.prototype.repeat",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/string.prototype.repeat"
+      },
+      "string.prototype.trimend": {
+        "from": "string.prototype.trimend",
+        "version": "1.0.9",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/string.prototype.trimend"
+      },
+      "string.prototype.trimstart": {
+        "from": "string.prototype.trimstart",
+        "version": "1.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/string.prototype.trimstart"
+      },
+      "strip-json-comments": {
+        "from": "strip-json-comments",
+        "version": "3.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/strip-json-comments"
+      },
+      "styled-jsx": {
+        "from": "styled-jsx",
+        "version": "5.1.6",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/styled-jsx"
+      },
+      "supports-color": {
+        "from": "supports-color",
+        "version": "7.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/supports-color"
+      },
+      "supports-preserve-symlinks-flag": {
+        "from": "supports-preserve-symlinks-flag",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/supports-preserve-symlinks-flag"
+      },
+      "tinyglobby": {
+        "from": "tinyglobby",
+        "version": "0.2.13",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/tinyglobby"
+      },
+      "tapable": {
+        "from": "tapable",
+        "version": "2.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/tapable"
+      },
+      "strip-bom": {
+        "from": "strip-bom",
+        "version": "3.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/strip-bom"
+      },
+      "ts-api-utils": {
+        "from": "ts-api-utils",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/ts-api-utils"
+      },
+      "to-regex-range": {
+        "from": "to-regex-range",
+        "version": "5.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/to-regex-range"
+      },
+      "toidentifier": {
+        "from": "toidentifier",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/toidentifier"
+      },
+      "type-check": {
+        "from": "type-check",
+        "version": "0.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/type-check"
+      },
+      "tslib": {
+        "from": "tslib",
+        "version": "2.8.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/tslib"
+      },
+      "tsconfig-paths": {
+        "from": "tsconfig-paths",
+        "version": "3.15.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/tsconfig-paths"
+      },
+      "typed-array-buffer": {
+        "from": "typed-array-buffer",
+        "version": "1.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/typed-array-buffer"
+      },
+      "type-is": {
+        "from": "type-is",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/type-is"
+      },
+      "typed-array-byte-length": {
+        "from": "typed-array-byte-length",
+        "version": "1.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/typed-array-byte-length"
+      },
+      "typed-array-byte-offset": {
+        "from": "typed-array-byte-offset",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/typed-array-byte-offset"
+      },
+      "unbox-primitive": {
+        "from": "unbox-primitive",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/unbox-primitive"
+      },
+      "undici-types": {
+        "from": "undici-types",
+        "version": "6.19.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/undici-types"
+      },
+      "unpipe": {
+        "from": "unpipe",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/unpipe"
+      },
+      "uri-js": {
+        "from": "uri-js",
+        "version": "4.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/uri-js"
+      },
+      "typed-array-length": {
+        "from": "typed-array-length",
+        "version": "1.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/typed-array-length"
+      },
+      "vary": {
+        "from": "vary",
+        "version": "1.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/vary"
+      },
+      "which": {
+        "from": "which",
+        "version": "2.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/which"
+      },
+      "unrs-resolver": {
+        "from": "unrs-resolver",
+        "version": "1.7.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/unrs-resolver"
+      },
+      "which-boxed-primitive": {
+        "from": "which-boxed-primitive",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/which-boxed-primitive"
+      },
+      "which-builtin-type": {
+        "from": "which-builtin-type",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/which-builtin-type"
+      },
+      "which-typed-array": {
+        "from": "which-typed-array",
+        "version": "1.1.19",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/which-typed-array"
+      },
+      "which-collection": {
+        "from": "which-collection",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/which-collection"
+      },
+      "word-wrap": {
+        "from": "word-wrap",
+        "version": "1.2.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/word-wrap"
+      },
+      "yocto-queue": {
+        "from": "yocto-queue",
+        "version": "0.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/yocto-queue"
+      },
+      "@alloc/quick-lru": {
+        "from": "@alloc/quick-lru",
+        "version": "5.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@alloc/quick-lru"
+      },
+      "wrappy": {
+        "from": "wrappy",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/wrappy"
+      },
+      "zod-to-json-schema": {
+        "from": "zod-to-json-schema",
+        "version": "3.24.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/zod-to-json-schema"
+      },
+      "@emnapi/core": {
+        "from": "@emnapi/core",
+        "version": "1.4.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@emnapi/core"
+      },
+      "@emnapi/runtime": {
+        "from": "@emnapi/runtime",
+        "version": "1.4.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@emnapi/runtime"
+      },
+      "zod": {
+        "from": "zod",
+        "version": "3.24.4",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/zod"
+      },
+      "@eslint/config-array": {
+        "from": "@eslint/config-array",
+        "version": "0.20.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@eslint/config-array"
+      },
+      "@eslint/config-helpers": {
+        "from": "@eslint/config-helpers",
+        "version": "0.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@eslint/config-helpers"
+      },
+      "@emnapi/wasi-threads": {
+        "from": "@emnapi/wasi-threads",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@emnapi/wasi-threads"
+      },
+      "@eslint/core": {
+        "from": "@eslint/core",
+        "version": "0.13.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@eslint/core"
+      },
+      "@eslint/js": {
+        "from": "@eslint/js",
+        "version": "9.26.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@eslint/js"
+      },
+      "@humanfs/core": {
+        "from": "@humanfs/core",
+        "version": "0.19.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@humanfs/core"
+      },
+      "@eslint-community/eslint-utils": {
+        "from": "@eslint-community/eslint-utils",
+        "version": "4.7.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@eslint-community/eslint-utils"
+      },
+      "@eslint/plugin-kit": {
+        "from": "@eslint/plugin-kit",
+        "version": "0.2.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@eslint/plugin-kit"
+      },
+      "@eslint/object-schema": {
+        "from": "@eslint/object-schema",
+        "version": "2.1.6",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@eslint/object-schema"
+      },
+      "@eslint-community/regexpp": {
+        "from": "@eslint-community/regexpp",
+        "version": "4.12.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@eslint-community/regexpp"
+      },
+      "@humanfs/node": {
+        "from": "@humanfs/node",
+        "version": "0.16.6",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@humanfs/node"
+      },
+      "@humanwhocodes/module-importer": {
+        "from": "@humanwhocodes/module-importer",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@humanwhocodes/module-importer"
+      },
+      "@img/sharp-linux-x64": {
+        "from": "@img/sharp-linux-x64",
+        "version": "0.34.1",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@img/sharp-linux-x64"
+      },
+      "@humanwhocodes/retry": {
+        "from": "@humanwhocodes/retry",
+        "version": "0.4.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@humanwhocodes/retry"
+      },
+      "@img/sharp-libvips-linux-x64": {
+        "from": "@img/sharp-libvips-linux-x64",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@img/sharp-libvips-linux-x64"
+      },
+      "@modelcontextprotocol/sdk": {
+        "from": "@modelcontextprotocol/sdk",
+        "version": "1.11.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@modelcontextprotocol/sdk"
+      },
+      "@napi-rs/wasm-runtime": {
+        "from": "@napi-rs/wasm-runtime",
+        "version": "0.2.9",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@napi-rs/wasm-runtime"
+      },
+      "@next/env": {
+        "from": "@next/env",
+        "version": "15.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@next/env"
+      },
+      "@next/swc-linux-x64-gnu": {
+        "from": "@next/swc-linux-x64-gnu",
+        "version": "15.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@next/swc-linux-x64-gnu"
+      },
+      "@nodelib/fs.scandir": {
+        "from": "@nodelib/fs.scandir",
+        "version": "2.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@nodelib/fs.scandir"
+      },
+      "@nodelib/fs.walk": {
+        "from": "@nodelib/fs.walk",
+        "version": "1.2.8",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@nodelib/fs.walk"
+      },
+      "@nodelib/fs.stat": {
+        "from": "@nodelib/fs.stat",
+        "version": "2.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@nodelib/fs.stat"
+      },
+      "@rtsao/scc": {
+        "from": "@rtsao/scc",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@rtsao/scc"
+      },
+      "@nolyfill/is-core-module": {
+        "from": "@nolyfill/is-core-module",
+        "version": "1.0.39",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@nolyfill/is-core-module"
+      },
+      "@rushstack/eslint-patch": {
+        "from": "@rushstack/eslint-patch",
+        "version": "1.11.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@rushstack/eslint-patch"
+      },
+      "@tailwindcss/node": {
+        "from": "@tailwindcss/node",
+        "version": "4.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@tailwindcss/node"
+      },
+      "@swc/counter": {
+        "from": "@swc/counter",
+        "version": "0.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@swc/counter"
+      },
+      "@tybys/wasm-util": {
+        "from": "@tybys/wasm-util",
+        "version": "0.9.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@tybys/wasm-util"
+      },
+      "@tailwindcss/oxide": {
+        "from": "@tailwindcss/oxide",
+        "version": "4.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@tailwindcss/oxide"
+      },
+      "@swc/helpers": {
+        "from": "@swc/helpers",
+        "version": "0.5.15",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@swc/helpers"
+      },
+      "@types/estree": {
+        "from": "@types/estree",
+        "version": "1.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@types/estree"
+      },
+      "@tailwindcss/oxide-linux-x64-gnu": {
+        "from": "@tailwindcss/oxide-linux-x64-gnu",
+        "version": "4.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@tailwindcss/oxide-linux-x64-gnu"
+      },
+      "@types/json5": {
+        "from": "@types/json5",
+        "version": "0.0.29",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@types/json5"
+      },
+      "@types/json-schema": {
+        "from": "@types/json-schema",
+        "version": "7.0.15",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@types/json-schema"
+      },
+      "@typescript-eslint/eslint-plugin": {
+        "from": "@typescript-eslint/eslint-plugin",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@typescript-eslint/eslint-plugin"
+      },
+      "@typescript-eslint/scope-manager": {
+        "from": "@typescript-eslint/scope-manager",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@typescript-eslint/scope-manager"
+      },
+      "@typescript-eslint/typescript-estree": {
+        "from": "@typescript-eslint/typescript-estree",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@typescript-eslint/typescript-estree"
+      },
+      "@typescript-eslint/parser": {
+        "from": "@typescript-eslint/parser",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@typescript-eslint/parser"
+      },
+      "@typescript-eslint/types": {
+        "from": "@typescript-eslint/types",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@typescript-eslint/types"
+      },
+      "@typescript-eslint/type-utils": {
+        "from": "@typescript-eslint/type-utils",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@typescript-eslint/type-utils"
+      },
+      "@typescript-eslint/visitor-keys": {
+        "from": "@typescript-eslint/visitor-keys",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@typescript-eslint/visitor-keys"
+      },
+      "@unrs/resolver-binding-linux-x64-gnu": {
+        "from": "@unrs/resolver-binding-linux-x64-gnu",
+        "version": "1.7.2",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@unrs/resolver-binding-linux-x64-gnu"
+      },
+      "@typescript-eslint/utils": {
+        "from": "@typescript-eslint/utils",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/@typescript-eslint/utils"
+      }
+    }
+  },
+  {
+    "name": "web",
+    "version": "0.1.0",
+    "path": "/home2/junseong.pyo/next-app/apps/web",
+    "private": true,
+    "dependencies": {
+      "next": {
+        "from": "next",
+        "version": "15.3.2",
+        "resolved": "https://registry.npmjs.org/next/-/next-15.3.2.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/next@15.3.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next"
+      },
+      "react": {
+        "from": "react",
+        "version": "19.1.0",
+        "resolved": "https://registry.npmjs.org/react/-/react-19.1.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/react@19.1.0/node_modules/react"
+      },
+      "react-dom": {
+        "from": "react-dom",
+        "version": "19.1.0",
+        "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.1.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/react-dom@19.1.0_react@19.1.0/node_modules/react-dom"
+      }
+    },
+    "devDependencies": {
+      "@eslint/eslintrc": {
+        "from": "@eslint/eslintrc",
+        "version": "3.3.1",
+        "resolved": "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-3.3.1.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@eslint+eslintrc@3.3.1/node_modules/@eslint/eslintrc"
+      },
+      "@jest/globals": {
+        "from": "@jest/globals",
+        "version": "29.7.0",
+        "resolved": "https://registry.npmjs.org/@jest/globals/-/globals-29.7.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@jest+globals@29.7.0/node_modules/@jest/globals"
+      },
+      "@repo/eslint-config": {
+        "from": "@repo/eslint-config",
+        "version": "link:../../packages/eslint-config",
+        "path": "/home2/junseong.pyo/next-app/packages/eslint-config"
+      },
+      "@repo/jest-presets": {
+        "from": "@repo/jest-presets",
+        "version": "link:../../packages/jest-presets",
+        "path": "/home2/junseong.pyo/next-app/packages/jest-presets"
+      },
+      "@repo/typescript-config": {
+        "from": "@repo/typescript-config",
+        "version": "link:../../packages/typescript-config",
+        "path": "/home2/junseong.pyo/next-app/packages/typescript-config"
+      },
+      "@tailwindcss/postcss": {
+        "from": "@tailwindcss/postcss",
+        "version": "4.1.5",
+        "resolved": "https://registry.npmjs.org/@tailwindcss/postcss/-/postcss-4.1.5.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@tailwindcss+postcss@4.1.5/node_modules/@tailwindcss/postcss"
+      },
+      "@types/node": {
+        "from": "@types/node",
+        "version": "20.17.43",
+        "resolved": "https://registry.npmjs.org/@types/node/-/node-20.17.43.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@types+node@20.17.43/node_modules/@types/node"
+      },
+      "@types/react": {
+        "from": "@types/react",
+        "version": "19.1.3",
+        "resolved": "https://registry.npmjs.org/@types/react/-/react-19.1.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@types+react@19.1.3/node_modules/@types/react"
+      },
+      "@types/react-dom": {
+        "from": "@types/react-dom",
+        "version": "19.1.3",
+        "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.1.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@types+react-dom@19.1.3_@types+react@19.1.3/node_modules/@types/react-dom"
+      },
+      "eslint": {
+        "from": "eslint",
+        "version": "8.57.1",
+        "resolved": "https://registry.npmjs.org/eslint/-/eslint-8.57.1.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/eslint@8.57.1/node_modules/eslint"
+      },
+      "eslint-config-next": {
+        "from": "eslint-config-next",
+        "version": "15.3.2",
+        "resolved": "https://registry.npmjs.org/eslint-config-next/-/eslint-config-next-15.3.2.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/eslint-config-next@15.3.2_eslint@8.57.1_typescript@5.8.3/node_modules/eslint-config-next"
+      },
+      "tailwindcss": {
+        "from": "tailwindcss",
+        "version": "4.1.5",
+        "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.1.5.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/tailwindcss@4.1.5/node_modules/tailwindcss"
+      },
+      "typescript": {
+        "from": "typescript",
+        "version": "5.8.3",
+        "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.8.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/typescript@5.8.3/node_modules/typescript"
+      }
+    },
+    "unsavedDependencies": {
+      "accepts": {
+        "from": "accepts",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/accepts"
+      },
+      "acorn-jsx": {
+        "from": "acorn-jsx",
+        "version": "5.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/acorn-jsx"
+      },
+      "acorn": {
+        "from": "acorn",
+        "version": "8.14.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/acorn"
+      },
+      "ansi-styles": {
+        "from": "ansi-styles",
+        "version": "4.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/ansi-styles"
+      },
+      "ajv": {
+        "from": "ajv",
+        "version": "6.12.6",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/ajv"
+      },
+      "array-includes": {
+        "from": "array-includes",
+        "version": "3.1.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/array-includes"
+      },
+      "aria-query": {
+        "from": "aria-query",
+        "version": "5.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/aria-query"
+      },
+      "argparse": {
+        "from": "argparse",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/argparse"
+      },
+      "array.prototype.findlastindex": {
+        "from": "array.prototype.findlastindex",
+        "version": "1.2.6",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/array.prototype.findlastindex"
+      },
+      "array.prototype.findlast": {
+        "from": "array.prototype.findlast",
+        "version": "1.2.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/array.prototype.findlast"
+      },
+      "array-buffer-byte-length": {
+        "from": "array-buffer-byte-length",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/array-buffer-byte-length"
+      },
+      "array.prototype.flat": {
+        "from": "array.prototype.flat",
+        "version": "1.3.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/array.prototype.flat"
+      },
+      "array.prototype.flatmap": {
+        "from": "array.prototype.flatmap",
+        "version": "1.3.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/array.prototype.flatmap"
+      },
+      "array.prototype.tosorted": {
+        "from": "array.prototype.tosorted",
+        "version": "1.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/array.prototype.tosorted"
+      },
+      "ast-types-flow": {
+        "from": "ast-types-flow",
+        "version": "0.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/ast-types-flow"
+      },
+      "async-function": {
+        "from": "async-function",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/async-function"
+      },
+      "arraybuffer.prototype.slice": {
+        "from": "arraybuffer.prototype.slice",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/arraybuffer.prototype.slice"
+      },
+      "axe-core": {
+        "from": "axe-core",
+        "version": "4.10.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/axe-core"
+      },
+      "balanced-match": {
+        "from": "balanced-match",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/balanced-match"
+      },
+      "available-typed-arrays": {
+        "from": "available-typed-arrays",
+        "version": "1.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/available-typed-arrays"
+      },
+      "body-parser": {
+        "from": "body-parser",
+        "version": "2.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/body-parser"
+      },
+      "axobject-query": {
+        "from": "axobject-query",
+        "version": "4.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/axobject-query"
+      },
+      "call-bind-apply-helpers": {
+        "from": "call-bind-apply-helpers",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/call-bind-apply-helpers"
+      },
+      "brace-expansion": {
+        "from": "brace-expansion",
+        "version": "1.1.11",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/brace-expansion"
+      },
+      "braces": {
+        "from": "braces",
+        "version": "3.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/braces"
+      },
+      "call-bind": {
+        "from": "call-bind",
+        "version": "1.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/call-bind"
+      },
+      "busboy": {
+        "from": "busboy",
+        "version": "1.6.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/busboy"
+      },
+      "callsites": {
+        "from": "callsites",
+        "version": "3.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/callsites"
+      },
+      "caniuse-lite": {
+        "from": "caniuse-lite",
+        "version": "1.0.30001717",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/caniuse-lite"
+      },
+      "call-bound": {
+        "from": "call-bound",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/call-bound"
+      },
+      "chalk": {
+        "from": "chalk",
+        "version": "4.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/chalk"
+      },
+      "bytes": {
+        "from": "bytes",
+        "version": "3.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/bytes"
+      },
+      "client-only": {
+        "from": "client-only",
+        "version": "0.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/client-only"
+      },
+      "color-name": {
+        "from": "color-name",
+        "version": "1.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/color-name"
+      },
+      "color-convert": {
+        "from": "color-convert",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/color-convert"
+      },
+      "concat-map": {
+        "from": "concat-map",
+        "version": "0.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/concat-map"
+      },
+      "color": {
+        "from": "color",
+        "version": "4.2.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/color"
+      },
+      "content-type": {
+        "from": "content-type",
+        "version": "1.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/content-type"
+      },
+      "color-string": {
+        "from": "color-string",
+        "version": "1.9.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/color-string"
+      },
+      "content-disposition": {
+        "from": "content-disposition",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/content-disposition"
+      },
+      "cookie-signature": {
+        "from": "cookie-signature",
+        "version": "1.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/cookie-signature"
+      },
+      "cookie": {
+        "from": "cookie",
+        "version": "0.7.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/cookie"
+      },
+      "cors": {
+        "from": "cors",
+        "version": "2.8.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/cors"
+      },
+      "damerau-levenshtein": {
+        "from": "damerau-levenshtein",
+        "version": "1.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/damerau-levenshtein"
+      },
+      "cross-spawn": {
+        "from": "cross-spawn",
+        "version": "7.0.6",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/cross-spawn"
+      },
+      "data-view-buffer": {
+        "from": "data-view-buffer",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/data-view-buffer"
+      },
+      "csstype": {
+        "from": "csstype",
+        "version": "3.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/csstype"
+      },
+      "debug": {
+        "from": "debug",
+        "version": "4.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/debug"
+      },
+      "data-view-byte-offset": {
+        "from": "data-view-byte-offset",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/data-view-byte-offset"
+      },
+      "deep-is": {
+        "from": "deep-is",
+        "version": "0.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/deep-is"
+      },
+      "define-data-property": {
+        "from": "define-data-property",
+        "version": "1.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/define-data-property"
+      },
+      "define-properties": {
+        "from": "define-properties",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/define-properties"
+      },
+      "data-view-byte-length": {
+        "from": "data-view-byte-length",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/data-view-byte-length"
+      },
+      "depd": {
+        "from": "depd",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/depd"
+      },
+      "detect-libc": {
+        "from": "detect-libc",
+        "version": "2.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/detect-libc"
+      },
+      "dunder-proto": {
+        "from": "dunder-proto",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/dunder-proto"
+      },
+      "doctrine": {
+        "from": "doctrine",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/doctrine"
+      },
+      "emoji-regex": {
+        "from": "emoji-regex",
+        "version": "9.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/emoji-regex"
+      },
+      "encodeurl": {
+        "from": "encodeurl",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/encodeurl"
+      },
+      "enhanced-resolve": {
+        "from": "enhanced-resolve",
+        "version": "5.18.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/enhanced-resolve"
+      },
+      "es-define-property": {
+        "from": "es-define-property",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/es-define-property"
+      },
+      "ee-first": {
+        "from": "ee-first",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/ee-first"
+      },
+      "es-abstract": {
+        "from": "es-abstract",
+        "version": "1.23.9",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/es-abstract"
+      },
+      "es-errors": {
+        "from": "es-errors",
+        "version": "1.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/es-errors"
+      },
+      "es-iterator-helpers": {
+        "from": "es-iterator-helpers",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/es-iterator-helpers"
+      },
+      "es-set-tostringtag": {
+        "from": "es-set-tostringtag",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/es-set-tostringtag"
+      },
+      "es-to-primitive": {
+        "from": "es-to-primitive",
+        "version": "1.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/es-to-primitive"
+      },
+      "es-object-atoms": {
+        "from": "es-object-atoms",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/es-object-atoms"
+      },
+      "es-shim-unscopables": {
+        "from": "es-shim-unscopables",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/es-shim-unscopables"
+      },
+      "escape-string-regexp": {
+        "from": "escape-string-regexp",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/escape-string-regexp"
+      },
+      "eslint-import-resolver-typescript": {
+        "from": "eslint-import-resolver-typescript",
+        "version": "3.10.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eslint-import-resolver-typescript"
+      },
+      "escape-html": {
+        "from": "escape-html",
+        "version": "1.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/escape-html"
+      },
+      "eslint-module-utils": {
+        "from": "eslint-module-utils",
+        "version": "2.12.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eslint-module-utils"
+      },
+      "eslint-plugin-jsx-a11y": {
+        "from": "eslint-plugin-jsx-a11y",
+        "version": "6.10.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eslint-plugin-jsx-a11y"
+      },
+      "eslint-import-resolver-node": {
+        "from": "eslint-import-resolver-node",
+        "version": "0.3.9",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eslint-import-resolver-node"
+      },
+      "eslint-scope": {
+        "from": "eslint-scope",
+        "version": "8.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eslint-scope"
+      },
+      "eslint-plugin-import": {
+        "from": "eslint-plugin-import",
+        "version": "2.31.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eslint-plugin-import"
+      },
+      "eslint-plugin-react": {
+        "from": "eslint-plugin-react",
+        "version": "7.37.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eslint-plugin-react"
+      },
+      "eslint-plugin-react-hooks": {
+        "from": "eslint-plugin-react-hooks",
+        "version": "5.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eslint-plugin-react-hooks"
+      },
+      "espree": {
+        "from": "espree",
+        "version": "10.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/espree"
+      },
+      "eslint-visitor-keys": {
+        "from": "eslint-visitor-keys",
+        "version": "4.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eslint-visitor-keys"
+      },
+      "esutils": {
+        "from": "esutils",
+        "version": "2.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/esutils"
+      },
+      "esrecurse": {
+        "from": "esrecurse",
+        "version": "4.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/esrecurse"
+      },
+      "esquery": {
+        "from": "esquery",
+        "version": "1.6.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/esquery"
+      },
+      "etag": {
+        "from": "etag",
+        "version": "1.8.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/etag"
+      },
+      "estraverse": {
+        "from": "estraverse",
+        "version": "5.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/estraverse"
+      },
+      "eventsource-parser": {
+        "from": "eventsource-parser",
+        "version": "3.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eventsource-parser"
+      },
+      "eventsource": {
+        "from": "eventsource",
+        "version": "3.0.6",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/eventsource"
+      },
+      "fast-deep-equal": {
+        "from": "fast-deep-equal",
+        "version": "3.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/fast-deep-equal"
+      },
+      "fast-glob": {
+        "from": "fast-glob",
+        "version": "3.3.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/fast-glob"
+      },
+      "express-rate-limit": {
+        "from": "express-rate-limit",
+        "version": "7.5.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/express-rate-limit"
+      },
+      "fast-json-stable-stringify": {
+        "from": "fast-json-stable-stringify",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/fast-json-stable-stringify"
+      },
+      "file-entry-cache": {
+        "from": "file-entry-cache",
+        "version": "8.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/file-entry-cache"
+      },
+      "express": {
+        "from": "express",
+        "version": "5.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/express"
+      },
+      "fast-levenshtein": {
+        "from": "fast-levenshtein",
+        "version": "2.0.6",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/fast-levenshtein"
+      },
+      "finalhandler": {
+        "from": "finalhandler",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/finalhandler"
+      },
+      "fill-range": {
+        "from": "fill-range",
+        "version": "7.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/fill-range"
+      },
+      "find-up": {
+        "from": "find-up",
+        "version": "5.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/find-up"
+      },
+      "fastq": {
+        "from": "fastq",
+        "version": "1.19.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/fastq"
+      },
+      "flatted": {
+        "from": "flatted",
+        "version": "3.3.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/flatted"
+      },
+      "flat-cache": {
+        "from": "flat-cache",
+        "version": "4.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/flat-cache"
+      },
+      "forwarded": {
+        "from": "forwarded",
+        "version": "0.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/forwarded"
+      },
+      "for-each": {
+        "from": "for-each",
+        "version": "0.3.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/for-each"
+      },
+      "get-proto": {
+        "from": "get-proto",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/get-proto"
+      },
+      "fresh": {
+        "from": "fresh",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/fresh"
+      },
+      "function-bind": {
+        "from": "function-bind",
+        "version": "1.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/function-bind"
+      },
+      "function.prototype.name": {
+        "from": "function.prototype.name",
+        "version": "1.1.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/function.prototype.name"
+      },
+      "get-symbol-description": {
+        "from": "get-symbol-description",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/get-symbol-description"
+      },
+      "get-intrinsic": {
+        "from": "get-intrinsic",
+        "version": "1.3.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/get-intrinsic"
+      },
+      "functions-have-names": {
+        "from": "functions-have-names",
+        "version": "1.2.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/functions-have-names"
+      },
+      "get-tsconfig": {
+        "from": "get-tsconfig",
+        "version": "4.10.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/get-tsconfig"
+      },
+      "globalthis": {
+        "from": "globalthis",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/globalthis"
+      },
+      "glob-parent": {
+        "from": "glob-parent",
+        "version": "6.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/glob-parent"
+      },
+      "globals": {
+        "from": "globals",
+        "version": "14.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/globals"
+      },
+      "graphemer": {
+        "from": "graphemer",
+        "version": "1.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/graphemer"
+      },
+      "graceful-fs": {
+        "from": "graceful-fs",
+        "version": "4.2.11",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/graceful-fs"
+      },
+      "gopd": {
+        "from": "gopd",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/gopd"
+      },
+      "has-bigints": {
+        "from": "has-bigints",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/has-bigints"
+      },
+      "has-flag": {
+        "from": "has-flag",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/has-flag"
+      },
+      "has-property-descriptors": {
+        "from": "has-property-descriptors",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/has-property-descriptors"
+      },
+      "has-symbols": {
+        "from": "has-symbols",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/has-symbols"
+      },
+      "has-proto": {
+        "from": "has-proto",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/has-proto"
+      },
+      "hasown": {
+        "from": "hasown",
+        "version": "2.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/hasown"
+      },
+      "has-tostringtag": {
+        "from": "has-tostringtag",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/has-tostringtag"
+      },
+      "ignore": {
+        "from": "ignore",
+        "version": "5.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/ignore"
+      },
+      "import-fresh": {
+        "from": "import-fresh",
+        "version": "3.3.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/import-fresh"
+      },
+      "iconv-lite": {
+        "from": "iconv-lite",
+        "version": "0.6.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/iconv-lite"
+      },
+      "http-errors": {
+        "from": "http-errors",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/http-errors"
+      },
+      "ipaddr.js": {
+        "from": "ipaddr.js",
+        "version": "1.9.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/ipaddr.js"
+      },
+      "imurmurhash": {
+        "from": "imurmurhash",
+        "version": "0.1.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/imurmurhash"
+      },
+      "is-array-buffer": {
+        "from": "is-array-buffer",
+        "version": "3.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-array-buffer"
+      },
+      "is-arrayish": {
+        "from": "is-arrayish",
+        "version": "0.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-arrayish"
+      },
+      "internal-slot": {
+        "from": "internal-slot",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/internal-slot"
+      },
+      "is-bigint": {
+        "from": "is-bigint",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-bigint"
+      },
+      "is-async-function": {
+        "from": "is-async-function",
+        "version": "2.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-async-function"
+      },
+      "inherits": {
+        "from": "inherits",
+        "version": "2.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/inherits"
+      },
+      "is-callable": {
+        "from": "is-callable",
+        "version": "1.2.7",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-callable"
+      },
+      "is-boolean-object": {
+        "from": "is-boolean-object",
+        "version": "1.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-boolean-object"
+      },
+      "is-core-module": {
+        "from": "is-core-module",
+        "version": "2.16.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-core-module"
+      },
+      "is-data-view": {
+        "from": "is-data-view",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-data-view"
+      },
+      "is-date-object": {
+        "from": "is-date-object",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-date-object"
+      },
+      "is-bun-module": {
+        "from": "is-bun-module",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-bun-module"
+      },
+      "is-extglob": {
+        "from": "is-extglob",
+        "version": "2.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-extglob"
+      },
+      "is-finalizationregistry": {
+        "from": "is-finalizationregistry",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-finalizationregistry"
+      },
+      "is-generator-function": {
+        "from": "is-generator-function",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-generator-function"
+      },
+      "is-number": {
+        "from": "is-number",
+        "version": "7.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-number"
+      },
+      "is-glob": {
+        "from": "is-glob",
+        "version": "4.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-glob"
+      },
+      "is-promise": {
+        "from": "is-promise",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-promise"
+      },
+      "is-map": {
+        "from": "is-map",
+        "version": "2.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-map"
+      },
+      "is-number-object": {
+        "from": "is-number-object",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-number-object"
+      },
+      "is-symbol": {
+        "from": "is-symbol",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-symbol"
+      },
+      "is-regex": {
+        "from": "is-regex",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-regex"
+      },
+      "is-typed-array": {
+        "from": "is-typed-array",
+        "version": "1.1.15",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-typed-array"
+      },
+      "is-shared-array-buffer": {
+        "from": "is-shared-array-buffer",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-shared-array-buffer"
+      },
+      "isarray": {
+        "from": "isarray",
+        "version": "2.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/isarray"
+      },
+      "is-string": {
+        "from": "is-string",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-string"
+      },
+      "is-weakmap": {
+        "from": "is-weakmap",
+        "version": "2.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-weakmap"
+      },
+      "is-weakref": {
+        "from": "is-weakref",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-weakref"
+      },
+      "is-weakset": {
+        "from": "is-weakset",
+        "version": "2.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-weakset"
+      },
+      "is-set": {
+        "from": "is-set",
+        "version": "2.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/is-set"
+      },
+      "isexe": {
+        "from": "isexe",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/isexe"
+      },
+      "iterator.prototype": {
+        "from": "iterator.prototype",
+        "version": "1.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/iterator.prototype"
+      },
+      "jiti": {
+        "from": "jiti",
+        "version": "2.4.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/jiti"
+      },
+      "json-buffer": {
+        "from": "json-buffer",
+        "version": "3.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/json-buffer"
+      },
+      "js-tokens": {
+        "from": "js-tokens",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/js-tokens"
+      },
+      "json-schema-traverse": {
+        "from": "json-schema-traverse",
+        "version": "0.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/json-schema-traverse"
+      },
+      "json-stable-stringify-without-jsonify": {
+        "from": "json-stable-stringify-without-jsonify",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/json-stable-stringify-without-jsonify"
+      },
+      "js-yaml": {
+        "from": "js-yaml",
+        "version": "4.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/js-yaml"
+      },
+      "jsx-ast-utils": {
+        "from": "jsx-ast-utils",
+        "version": "3.3.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/jsx-ast-utils"
+      },
+      "keyv": {
+        "from": "keyv",
+        "version": "4.5.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/keyv"
+      },
+      "json5": {
+        "from": "json5",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/json5"
+      },
+      "language-subtag-registry": {
+        "from": "language-subtag-registry",
+        "version": "0.3.23",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/language-subtag-registry"
+      },
+      "levn": {
+        "from": "levn",
+        "version": "0.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/levn"
+      },
+      "locate-path": {
+        "from": "locate-path",
+        "version": "6.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/locate-path"
+      },
+      "lightningcss-linux-x64-gnu": {
+        "from": "lightningcss-linux-x64-gnu",
+        "version": "1.29.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/lightningcss-linux-x64-gnu"
+      },
+      "language-tags": {
+        "from": "language-tags",
+        "version": "1.0.9",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/language-tags"
+      },
+      "lightningcss": {
+        "from": "lightningcss",
+        "version": "1.29.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/lightningcss"
+      },
+      "lodash.merge": {
+        "from": "lodash.merge",
+        "version": "4.6.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/lodash.merge"
+      },
+      "loose-envify": {
+        "from": "loose-envify",
+        "version": "1.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/loose-envify"
+      },
+      "micromatch": {
+        "from": "micromatch",
+        "version": "4.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/micromatch"
+      },
+      "merge2": {
+        "from": "merge2",
+        "version": "1.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/merge2"
+      },
+      "media-typer": {
+        "from": "media-typer",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/media-typer"
+      },
+      "merge-descriptors": {
+        "from": "merge-descriptors",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/merge-descriptors"
+      },
+      "mime-db": {
+        "from": "mime-db",
+        "version": "1.54.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/mime-db"
+      },
+      "mime-types": {
+        "from": "mime-types",
+        "version": "3.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/mime-types"
+      },
+      "nanoid": {
+        "from": "nanoid",
+        "version": "3.3.11",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/nanoid"
+      },
+      "minimatch": {
+        "from": "minimatch",
+        "version": "3.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/minimatch"
+      },
+      "ms": {
+        "from": "ms",
+        "version": "2.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/ms"
+      },
+      "minimist": {
+        "from": "minimist",
+        "version": "1.2.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/minimist"
+      },
+      "negotiator": {
+        "from": "negotiator",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/negotiator"
+      },
+      "napi-postinstall": {
+        "from": "napi-postinstall",
+        "version": "0.2.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/napi-postinstall"
+      },
+      "natural-compare": {
+        "from": "natural-compare",
+        "version": "1.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/natural-compare"
+      },
+      "math-intrinsics": {
+        "from": "math-intrinsics",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/math-intrinsics"
+      },
+      "object-assign": {
+        "from": "object-assign",
+        "version": "4.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/object-assign"
+      },
+      "object-keys": {
+        "from": "object-keys",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/object-keys"
+      },
+      "object-inspect": {
+        "from": "object-inspect",
+        "version": "1.13.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/object-inspect"
+      },
+      "object.assign": {
+        "from": "object.assign",
+        "version": "4.1.7",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/object.assign"
+      },
+      "object.fromentries": {
+        "from": "object.fromentries",
+        "version": "2.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/object.fromentries"
+      },
+      "object.groupby": {
+        "from": "object.groupby",
+        "version": "1.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/object.groupby"
+      },
+      "once": {
+        "from": "once",
+        "version": "1.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/once"
+      },
+      "object.entries": {
+        "from": "object.entries",
+        "version": "1.1.9",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/object.entries"
+      },
+      "object.values": {
+        "from": "object.values",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/object.values"
+      },
+      "on-finished": {
+        "from": "on-finished",
+        "version": "2.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/on-finished"
+      },
+      "optionator": {
+        "from": "optionator",
+        "version": "0.9.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/optionator"
+      },
+      "p-locate": {
+        "from": "p-locate",
+        "version": "5.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/p-locate"
+      },
+      "p-limit": {
+        "from": "p-limit",
+        "version": "3.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/p-limit"
+      },
+      "own-keys": {
+        "from": "own-keys",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/own-keys"
+      },
+      "path-exists": {
+        "from": "path-exists",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/path-exists"
+      },
+      "parseurl": {
+        "from": "parseurl",
+        "version": "1.3.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/parseurl"
+      },
+      "parent-module": {
+        "from": "parent-module",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/parent-module"
+      },
+      "path-key": {
+        "from": "path-key",
+        "version": "3.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/path-key"
+      },
+      "path-parse": {
+        "from": "path-parse",
+        "version": "1.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/path-parse"
+      },
+      "path-to-regexp": {
+        "from": "path-to-regexp",
+        "version": "8.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/path-to-regexp"
+      },
+      "pkce-challenge": {
+        "from": "pkce-challenge",
+        "version": "5.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/pkce-challenge"
+      },
+      "picomatch": {
+        "from": "picomatch",
+        "version": "2.3.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/picomatch"
+      },
+      "picocolors": {
+        "from": "picocolors",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/picocolors"
+      },
+      "prelude-ls": {
+        "from": "prelude-ls",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/prelude-ls"
+      },
+      "possible-typed-array-names": {
+        "from": "possible-typed-array-names",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/possible-typed-array-names"
+      },
+      "prop-types": {
+        "from": "prop-types",
+        "version": "15.8.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/prop-types"
+      },
+      "proxy-addr": {
+        "from": "proxy-addr",
+        "version": "2.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/proxy-addr"
+      },
+      "postcss": {
+        "from": "postcss",
+        "version": "8.5.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/postcss"
+      },
+      "range-parser": {
+        "from": "range-parser",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/range-parser"
+      },
+      "punycode": {
+        "from": "punycode",
+        "version": "2.3.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/punycode"
+      },
+      "qs": {
+        "from": "qs",
+        "version": "6.14.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/qs"
+      },
+      "queue-microtask": {
+        "from": "queue-microtask",
+        "version": "1.2.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/queue-microtask"
+      },
+      "react-is": {
+        "from": "react-is",
+        "version": "16.13.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/react-is"
+      },
+      "raw-body": {
+        "from": "raw-body",
+        "version": "3.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/raw-body"
+      },
+      "reflect.getprototypeof": {
+        "from": "reflect.getprototypeof",
+        "version": "1.0.10",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/reflect.getprototypeof"
+      },
+      "resolve": {
+        "from": "resolve",
+        "version": "1.22.10",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/resolve"
+      },
+      "reusify": {
+        "from": "reusify",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/reusify"
+      },
+      "regexp.prototype.flags": {
+        "from": "regexp.prototype.flags",
+        "version": "1.5.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/regexp.prototype.flags"
+      },
+      "resolve-pkg-maps": {
+        "from": "resolve-pkg-maps",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/resolve-pkg-maps"
+      },
+      "resolve-from": {
+        "from": "resolve-from",
+        "version": "4.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/resolve-from"
+      },
+      "run-parallel": {
+        "from": "run-parallel",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/run-parallel"
+      },
+      "safe-array-concat": {
+        "from": "safe-array-concat",
+        "version": "1.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/safe-array-concat"
+      },
+      "router": {
+        "from": "router",
+        "version": "2.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/router"
+      },
+      "safe-push-apply": {
+        "from": "safe-push-apply",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/safe-push-apply"
+      },
+      "safe-regex-test": {
+        "from": "safe-regex-test",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/safe-regex-test"
+      },
+      "safe-buffer": {
+        "from": "safe-buffer",
+        "version": "5.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/safe-buffer"
+      },
+      "safer-buffer": {
+        "from": "safer-buffer",
+        "version": "2.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/safer-buffer"
+      },
+      "semver": {
+        "from": "semver",
+        "version": "7.7.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/semver"
+      },
+      "scheduler": {
+        "from": "scheduler",
+        "version": "0.26.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/scheduler"
+      },
+      "send": {
+        "from": "send",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/send"
+      },
+      "set-function-name": {
+        "from": "set-function-name",
+        "version": "2.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/set-function-name"
+      },
+      "serve-static": {
+        "from": "serve-static",
+        "version": "2.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/serve-static"
+      },
+      "setprototypeof": {
+        "from": "setprototypeof",
+        "version": "1.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/setprototypeof"
+      },
+      "set-function-length": {
+        "from": "set-function-length",
+        "version": "1.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/set-function-length"
+      },
+      "set-proto": {
+        "from": "set-proto",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/set-proto"
+      },
+      "shebang-regex": {
+        "from": "shebang-regex",
+        "version": "3.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/shebang-regex"
+      },
+      "sharp": {
+        "from": "sharp",
+        "version": "0.34.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/sharp"
+      },
+      "side-channel-list": {
+        "from": "side-channel-list",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/side-channel-list"
+      },
+      "shebang-command": {
+        "from": "shebang-command",
+        "version": "2.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/shebang-command"
+      },
+      "side-channel-weakmap": {
+        "from": "side-channel-weakmap",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/side-channel-weakmap"
+      },
+      "side-channel": {
+        "from": "side-channel",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/side-channel"
+      },
+      "side-channel-map": {
+        "from": "side-channel-map",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/side-channel-map"
+      },
+      "simple-swizzle": {
+        "from": "simple-swizzle",
+        "version": "0.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/simple-swizzle"
+      },
+      "stable-hash": {
+        "from": "stable-hash",
+        "version": "0.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/stable-hash"
+      },
+      "source-map-js": {
+        "from": "source-map-js",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/source-map-js"
+      },
+      "statuses": {
+        "from": "statuses",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/statuses"
+      },
+      "streamsearch": {
+        "from": "streamsearch",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/streamsearch"
+      },
+      "string.prototype.includes": {
+        "from": "string.prototype.includes",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/string.prototype.includes"
+      },
+      "string.prototype.trimend": {
+        "from": "string.prototype.trimend",
+        "version": "1.0.9",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/string.prototype.trimend"
+      },
+      "string.prototype.trim": {
+        "from": "string.prototype.trim",
+        "version": "1.2.10",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/string.prototype.trim"
+      },
+      "string.prototype.matchall": {
+        "from": "string.prototype.matchall",
+        "version": "4.0.12",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/string.prototype.matchall"
+      },
+      "string.prototype.trimstart": {
+        "from": "string.prototype.trimstart",
+        "version": "1.0.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/string.prototype.trimstart"
+      },
+      "string.prototype.repeat": {
+        "from": "string.prototype.repeat",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/string.prototype.repeat"
+      },
+      "strip-json-comments": {
+        "from": "strip-json-comments",
+        "version": "3.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/strip-json-comments"
+      },
+      "strip-bom": {
+        "from": "strip-bom",
+        "version": "3.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/strip-bom"
+      },
+      "supports-color": {
+        "from": "supports-color",
+        "version": "7.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/supports-color"
+      },
+      "styled-jsx": {
+        "from": "styled-jsx",
+        "version": "5.1.6",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/styled-jsx"
+      },
+      "tapable": {
+        "from": "tapable",
+        "version": "2.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/tapable"
+      },
+      "supports-preserve-symlinks-flag": {
+        "from": "supports-preserve-symlinks-flag",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/supports-preserve-symlinks-flag"
+      },
+      "to-regex-range": {
+        "from": "to-regex-range",
+        "version": "5.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/to-regex-range"
+      },
+      "tinyglobby": {
+        "from": "tinyglobby",
+        "version": "0.2.13",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/tinyglobby"
+      },
+      "tsconfig-paths": {
+        "from": "tsconfig-paths",
+        "version": "3.15.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/tsconfig-paths"
+      },
+      "toidentifier": {
+        "from": "toidentifier",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/toidentifier"
+      },
+      "type-check": {
+        "from": "type-check",
+        "version": "0.4.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/type-check"
+      },
+      "ts-api-utils": {
+        "from": "ts-api-utils",
+        "version": "2.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/ts-api-utils"
+      },
+      "tslib": {
+        "from": "tslib",
+        "version": "2.8.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/tslib"
+      },
+      "typed-array-buffer": {
+        "from": "typed-array-buffer",
+        "version": "1.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/typed-array-buffer"
+      },
+      "type-is": {
+        "from": "type-is",
+        "version": "2.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/type-is"
+      },
+      "typed-array-byte-offset": {
+        "from": "typed-array-byte-offset",
+        "version": "1.0.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/typed-array-byte-offset"
+      },
+      "typed-array-byte-length": {
+        "from": "typed-array-byte-length",
+        "version": "1.0.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/typed-array-byte-length"
+      },
+      "typed-array-length": {
+        "from": "typed-array-length",
+        "version": "1.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/typed-array-length"
+      },
+      "undici-types": {
+        "from": "undici-types",
+        "version": "6.19.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/undici-types"
+      },
+      "unbox-primitive": {
+        "from": "unbox-primitive",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/unbox-primitive"
+      },
+      "unrs-resolver": {
+        "from": "unrs-resolver",
+        "version": "1.7.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/unrs-resolver"
+      },
+      "unpipe": {
+        "from": "unpipe",
+        "version": "1.0.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/unpipe"
+      },
+      "vary": {
+        "from": "vary",
+        "version": "1.1.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/vary"
+      },
+      "uri-js": {
+        "from": "uri-js",
+        "version": "4.4.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/uri-js"
+      },
+      "which": {
+        "from": "which",
+        "version": "2.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/which"
+      },
+      "which-builtin-type": {
+        "from": "which-builtin-type",
+        "version": "1.2.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/which-builtin-type"
+      },
+      "which-typed-array": {
+        "from": "which-typed-array",
+        "version": "1.1.19",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/which-typed-array"
+      },
+      "which-boxed-primitive": {
+        "from": "which-boxed-primitive",
+        "version": "1.1.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/which-boxed-primitive"
+      },
+      "wrappy": {
+        "from": "wrappy",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/wrappy"
+      },
+      "yocto-queue": {
+        "from": "yocto-queue",
+        "version": "0.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/yocto-queue"
+      },
+      "word-wrap": {
+        "from": "word-wrap",
+        "version": "1.2.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/word-wrap"
+      },
+      "which-collection": {
+        "from": "which-collection",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/which-collection"
+      },
+      "zod": {
+        "from": "zod",
+        "version": "3.24.4",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/zod"
+      },
+      "zod-to-json-schema": {
+        "from": "zod-to-json-schema",
+        "version": "3.24.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/zod-to-json-schema"
+      },
+      "@alloc/quick-lru": {
+        "from": "@alloc/quick-lru",
+        "version": "5.2.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@alloc/quick-lru"
+      },
+      "@eslint/config-array": {
+        "from": "@eslint/config-array",
+        "version": "0.20.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@eslint/config-array"
+      },
+      "@eslint/config-helpers": {
+        "from": "@eslint/config-helpers",
+        "version": "0.2.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@eslint/config-helpers"
+      },
+      "@eslint/object-schema": {
+        "from": "@eslint/object-schema",
+        "version": "2.1.6",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@eslint/object-schema"
+      },
+      "@eslint/core": {
+        "from": "@eslint/core",
+        "version": "0.13.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@eslint/core"
+      },
+      "@emnapi/core": {
+        "from": "@emnapi/core",
+        "version": "1.4.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@emnapi/core"
+      },
+      "@eslint/js": {
+        "from": "@eslint/js",
+        "version": "9.26.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@eslint/js"
+      },
+      "@emnapi/runtime": {
+        "from": "@emnapi/runtime",
+        "version": "1.4.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@emnapi/runtime"
+      },
+      "@eslint-community/regexpp": {
+        "from": "@eslint-community/regexpp",
+        "version": "4.12.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@eslint-community/regexpp"
+      },
+      "@eslint/plugin-kit": {
+        "from": "@eslint/plugin-kit",
+        "version": "0.2.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@eslint/plugin-kit"
+      },
+      "@emnapi/wasi-threads": {
+        "from": "@emnapi/wasi-threads",
+        "version": "1.0.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@emnapi/wasi-threads"
+      },
+      "@humanfs/core": {
+        "from": "@humanfs/core",
+        "version": "0.19.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@humanfs/core"
+      },
+      "@eslint-community/eslint-utils": {
+        "from": "@eslint-community/eslint-utils",
+        "version": "4.7.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@eslint-community/eslint-utils"
+      },
+      "@humanfs/node": {
+        "from": "@humanfs/node",
+        "version": "0.16.6",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@humanfs/node"
+      },
+      "@humanwhocodes/module-importer": {
+        "from": "@humanwhocodes/module-importer",
+        "version": "1.0.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@humanwhocodes/module-importer"
+      },
+      "@humanwhocodes/retry": {
+        "from": "@humanwhocodes/retry",
+        "version": "0.4.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@humanwhocodes/retry"
+      },
+      "@modelcontextprotocol/sdk": {
+        "from": "@modelcontextprotocol/sdk",
+        "version": "1.11.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@modelcontextprotocol/sdk"
+      },
+      "@img/sharp-linux-x64": {
+        "from": "@img/sharp-linux-x64",
+        "version": "0.34.1",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@img/sharp-linux-x64"
+      },
+      "@next/env": {
+        "from": "@next/env",
+        "version": "15.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@next/env"
+      },
+      "@next/swc-linux-x64-gnu": {
+        "from": "@next/swc-linux-x64-gnu",
+        "version": "15.3.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@next/swc-linux-x64-gnu"
+      },
+      "@napi-rs/wasm-runtime": {
+        "from": "@napi-rs/wasm-runtime",
+        "version": "0.2.9",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@napi-rs/wasm-runtime"
+      },
+      "@img/sharp-libvips-linux-x64": {
+        "from": "@img/sharp-libvips-linux-x64",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@img/sharp-libvips-linux-x64"
+      },
+      "@nodelib/fs.scandir": {
+        "from": "@nodelib/fs.scandir",
+        "version": "2.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@nodelib/fs.scandir"
+      },
+      "@nodelib/fs.stat": {
+        "from": "@nodelib/fs.stat",
+        "version": "2.0.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@nodelib/fs.stat"
+      },
+      "@nolyfill/is-core-module": {
+        "from": "@nolyfill/is-core-module",
+        "version": "1.0.39",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@nolyfill/is-core-module"
+      },
+      "@rushstack/eslint-patch": {
+        "from": "@rushstack/eslint-patch",
+        "version": "1.11.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@rushstack/eslint-patch"
+      },
+      "@rtsao/scc": {
+        "from": "@rtsao/scc",
+        "version": "1.1.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@rtsao/scc"
+      },
+      "@swc/counter": {
+        "from": "@swc/counter",
+        "version": "0.1.3",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@swc/counter"
+      },
+      "@nodelib/fs.walk": {
+        "from": "@nodelib/fs.walk",
+        "version": "1.2.8",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@nodelib/fs.walk"
+      },
+      "@swc/helpers": {
+        "from": "@swc/helpers",
+        "version": "0.5.15",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@swc/helpers"
+      },
+      "@tailwindcss/node": {
+        "from": "@tailwindcss/node",
+        "version": "4.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@tailwindcss/node"
+      },
+      "@tailwindcss/oxide": {
+        "from": "@tailwindcss/oxide",
+        "version": "4.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@tailwindcss/oxide"
+      },
+      "@tybys/wasm-util": {
+        "from": "@tybys/wasm-util",
+        "version": "0.9.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@tybys/wasm-util"
+      },
+      "@tailwindcss/oxide-linux-x64-gnu": {
+        "from": "@tailwindcss/oxide-linux-x64-gnu",
+        "version": "4.1.5",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@tailwindcss/oxide-linux-x64-gnu"
+      },
+      "@types/estree": {
+        "from": "@types/estree",
+        "version": "1.0.7",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@types/estree"
+      },
+      "@types/json5": {
+        "from": "@types/json5",
+        "version": "0.0.29",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@types/json5"
+      },
+      "@types/json-schema": {
+        "from": "@types/json-schema",
+        "version": "7.0.15",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@types/json-schema"
+      },
+      "@typescript-eslint/parser": {
+        "from": "@typescript-eslint/parser",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@typescript-eslint/parser"
+      },
+      "@typescript-eslint/typescript-estree": {
+        "from": "@typescript-eslint/typescript-estree",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@typescript-eslint/typescript-estree"
+      },
+      "@typescript-eslint/types": {
+        "from": "@typescript-eslint/types",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@typescript-eslint/types"
+      },
+      "@typescript-eslint/eslint-plugin": {
+        "from": "@typescript-eslint/eslint-plugin",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@typescript-eslint/eslint-plugin"
+      },
+      "@typescript-eslint/scope-manager": {
+        "from": "@typescript-eslint/scope-manager",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@typescript-eslint/scope-manager"
+      },
+      "@typescript-eslint/visitor-keys": {
+        "from": "@typescript-eslint/visitor-keys",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@typescript-eslint/visitor-keys"
+      },
+      "@typescript-eslint/type-utils": {
+        "from": "@typescript-eslint/type-utils",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@typescript-eslint/type-utils"
+      },
+      "@unrs/resolver-binding-linux-x64-gnu": {
+        "from": "@unrs/resolver-binding-linux-x64-gnu",
+        "version": "1.7.2",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@unrs/resolver-binding-linux-x64-gnu"
+      },
+      "@typescript-eslint/utils": {
+        "from": "@typescript-eslint/utils",
+        "version": "8.32.0",
+        "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/@typescript-eslint/utils"
+      }
+    }
+  },
+  {
+    "name": "@repo/eslint-config",
+    "version": "0.0.0",
+    "path": "/home2/junseong.pyo/next-app/packages/eslint-config",
+    "private": true,
+    "devDependencies": {
+      "@typescript-eslint/eslint-plugin": {
+        "from": "@typescript-eslint/eslint-plugin",
+        "version": "8.32.0",
+        "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.32.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@typescript-eslint+eslint-plugin@8.32.0_@typescript-eslint+parser@8.32.0_eslint@9.26.0__e949c46e110888b51ed6bdd24eab2bc9/node_modules/@typescript-eslint/eslint-plugin"
+      },
+      "@typescript-eslint/parser": {
+        "from": "@typescript-eslint/parser",
+        "version": "8.32.0",
+        "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.32.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@typescript-eslint+parser@8.32.0_eslint@9.26.0_jiti@2.4.2__typescript@5.8.3/node_modules/@typescript-eslint/parser"
+      },
+      "@vercel/style-guide": {
+        "from": "@vercel/style-guide",
+        "version": "6.0.0",
+        "resolved": "https://registry.npmjs.org/@vercel/style-guide/-/style-guide-6.0.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@vercel+style-guide@6.0.0_@next+eslint-plugin-next@14.2.28_eslint@9.26.0_jiti@2.4.2__je_2238c7a096ce1f02c53e8511e868b2fe/node_modules/@vercel/style-guide"
+      },
+      "eslint-config-prettier": {
+        "from": "eslint-config-prettier",
+        "version": "10.1.2",
+        "resolved": "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-10.1.2.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/eslint-config-prettier@10.1.2_eslint@9.26.0_jiti@2.4.2_/node_modules/eslint-config-prettier"
+      },
+      "eslint-config-turbo": {
+        "from": "eslint-config-turbo",
+        "version": "2.5.3",
+        "resolved": "https://registry.npmjs.org/eslint-config-turbo/-/eslint-config-turbo-2.5.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/eslint-config-turbo@2.5.3_eslint@9.26.0_jiti@2.4.2__turbo@2.5.3/node_modules/eslint-config-turbo"
+      },
+      "eslint-plugin-only-warn": {
+        "from": "eslint-plugin-only-warn",
+        "version": "1.1.0",
+        "resolved": "https://registry.npmjs.org/eslint-plugin-only-warn/-/eslint-plugin-only-warn-1.1.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/eslint-plugin-only-warn@1.1.0/node_modules/eslint-plugin-only-warn"
+      },
+      "prettier-plugin-tailwindcss": {
+        "from": "prettier-plugin-tailwindcss",
+        "version": "0.6.11",
+        "resolved": "https://registry.npmjs.org/prettier-plugin-tailwindcss/-/prettier-plugin-tailwindcss-0.6.11.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/prettier-plugin-tailwindcss@0.6.11_prettier@3.5.3/node_modules/prettier-plugin-tailwindcss"
+      },
+      "typescript": {
+        "from": "typescript",
+        "version": "5.8.3",
+        "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.8.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/typescript@5.8.3/node_modules/typescript"
+      }
+    }
+  },
+  {
+    "name": "@repo/jest-presets",
+    "version": "0.0.0",
+    "path": "/home2/junseong.pyo/next-app/packages/jest-presets",
+    "private": true,
+    "dependencies": {
+      "jest": {
+        "from": "jest",
+        "version": "29.7.0",
+        "resolved": "https://registry.npmjs.org/jest/-/jest-29.7.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/jest@29.7.0_@types+node@20.17.43/node_modules/jest"
+      },
+      "ts-jest": {
+        "from": "ts-jest",
+        "version": "29.3.2",
+        "resolved": "https://registry.npmjs.org/ts-jest/-/ts-jest-29.3.2.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/ts-jest@29.3.2_@babel+core@7.27.1_@jest+transform@29.7.0_@jest+types@29.6.3_babel-jest@_ae389359dd01c14add33e97bc325b965/node_modules/ts-jest"
+      }
+    }
+  },
+  {
+    "name": "@repo/logger",
+    "version": "0.0.0",
+    "path": "/home2/junseong.pyo/next-app/packages/logger",
+    "private": true,
+    "devDependencies": {
+      "@jest/globals": {
+        "from": "@jest/globals",
+        "version": "29.7.0",
+        "resolved": "https://registry.npmjs.org/@jest/globals/-/globals-29.7.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@jest+globals@29.7.0/node_modules/@jest/globals"
+      },
+      "@repo/eslint-config": {
+        "from": "@repo/eslint-config",
+        "version": "link:../eslint-config",
+        "path": "/home2/junseong.pyo/next-app/packages/eslint-config"
+      },
+      "@repo/jest-presets": {
+        "from": "@repo/jest-presets",
+        "version": "link:../jest-presets",
+        "path": "/home2/junseong.pyo/next-app/packages/jest-presets"
+      },
+      "@repo/typescript-config": {
+        "from": "@repo/typescript-config",
+        "version": "link:../typescript-config",
+        "path": "/home2/junseong.pyo/next-app/packages/typescript-config"
+      },
+      "@types/node": {
+        "from": "@types/node",
+        "version": "20.17.43",
+        "resolved": "https://registry.npmjs.org/@types/node/-/node-20.17.43.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/@types+node@20.17.43/node_modules/@types/node"
+      },
+      "eslint": {
+        "from": "eslint",
+        "version": "8.57.1",
+        "resolved": "https://registry.npmjs.org/eslint/-/eslint-8.57.1.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/eslint@8.57.1/node_modules/eslint"
+      },
+      "jest": {
+        "from": "jest",
+        "version": "29.7.0",
+        "resolved": "https://registry.npmjs.org/jest/-/jest-29.7.0.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/jest@29.7.0_@types+node@20.17.43/node_modules/jest"
+      },
+      "typescript": {
+        "from": "typescript",
+        "version": "5.8.3",
+        "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.8.3.tgz",
+        "path": "/home2/junseong.pyo/next-app/node_modules/.pnpm/typescript@5.8.3/node_modules/typescript"
+      }
+    }
+  },
+  {
+    "name": "@repo/typescript-config",
+    "version": "0.0.0",
+    "path": "/home2/junseong.pyo/next-app/packages/typescript-config",
+    "private": true
+  }
+]
