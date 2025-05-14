@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, "../../"),
-  transpilePackages: ["@t3-oss/env-nextjs", "@t3-oss/env-core"],
+  transpilePackages: ["@t3-oss/env-nextjs", "@t3-oss/env-core", "@repo/ui"],
 };
 
 const withNextIntl = createNextIntlPlugin();

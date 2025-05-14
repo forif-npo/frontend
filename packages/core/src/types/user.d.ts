@@ -1,5 +1,6 @@
 interface User {
-  id: number;
+  email: string;
+  id: string;
   name: string;
   department: string;
 }

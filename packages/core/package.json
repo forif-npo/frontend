@@ -8,6 +8,7 @@
       "./src/*.ts"
     ],
     "./dictionaries/*": "./src/dictionaries/*.json",
+    "./schemas": "./src/schemas/index.ts",
     "./mock": "./mock.ts"
   },
   "scripts": {},
@@ -30,10 +31,5 @@
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
-  },
-  "config": {
-    "cz-customizable": {
-      "config": "cz-config.js"
-    }
   }
 }
