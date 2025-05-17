@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export const FileXdIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const FileXdIcon: React.FC<{
   width = 32,
   height = 32,
   className,
-  color = "white",
-  backgroundColor = "#063A74",
+  color = 'white',
+  backgroundColor = '#063A74',
 }) => {
   return (
     <svg
@@ -23,7 +23,7 @@ export const FileXdIcon: React.FC<{
       className={className}
     >
       <g id="img_file_adobe_xd">
-        <g clip-path="url(#clip0_564_25740)">
+        <g clipPath="url(#clip0_564_25740)">
           <rect
             id="Rectangle 19614"
             width="32"

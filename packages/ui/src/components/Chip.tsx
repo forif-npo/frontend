@@ -19,9 +19,9 @@ export const Chip: React.FC<ChipProps> = ({
   id,
 }) => {
   const sizeClasses = {
-    sm: "px-4 h-8",
-    md: "px-4 h-9",
-    lg: "px-4 h-10",
+    sm: "px-4 h-10",
+    md: "px-4 h-12",
+    lg: "px-4 h-14",
   };
 
   const labelSize = {
@@ -35,12 +35,12 @@ export const Chip: React.FC<ChipProps> = ({
       ? "text-primary"
       : "text-basic";
 
-  const baseClasses = `inline-flex items-center gap-2 rounded-3 border transition-colors duration-200 ${sizeClasses[size]}`;
+  const baseClasses = `inline-flex items-center gap-1 rounded-2 border transition-colors duration-200 ${sizeClasses[size]}`;
 
   const stateClasses = disabled
     ? "bg-surface-gray-subtle text-text-disabled border-border-gray cursor-not-allowed"
     : checked
-      ? "bg-button-primary-fill text-text-primary border-border-primary hover:bg-button-primary-fill-hover cursor-pointer"
+      ? "bg-action-primary-selected text-text-primary border-border-primary hover:bg-action-primary-hover cursor-pointer"
       : "bg-surface-white text-text-subtle border-border-gray hover:bg-surface-gray-subtle cursor-pointer";
 
   const iconClasses = disabled
@@ -50,9 +50,9 @@ export const Chip: React.FC<ChipProps> = ({
       : "text-icon-subtle";
 
   const iconSizes = {
-    sm: "w-5 h-5",
-    md: "w-6 h-6",
-    lg: "w-7 h-7",
+    sm: "w-3 h-3",
+    md: "w-4 h-4",
+    lg: "w-5 h-5",
   };
 
   const handleClick = () => {
@@ -103,8 +103,7 @@ export const Chip: React.FC<ChipProps> = ({
       <Label
         htmlFor={id}
         size={labelSize}
-        className={`${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
-        color={labelColor}
+        className={`text-${labelColor} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
       >
         {label}
       </Label>

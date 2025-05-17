@@ -12,13 +12,13 @@ const meta = {
     variant: {
       control: {
         type: "select",
-        options: ["default", "primary", "success", "warning", "error"],
+        options: ["primary", "success", "warning", "error"],
       },
     },
     size: {
       control: {
         type: "select",
-        options: ["x-small", "small", "medium", "large"],
+        options: ["medium", "large"],
       },
     },
   },
@@ -26,12 +26,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  args: {
-    label: "default",
-  },
-};
 
 export const Primary: Story = {
   args: {
@@ -61,20 +55,6 @@ export const Error: Story = {
   },
 };
 
-export const xSmall: Story = {
-  args: {
-    label: "x-small",
-    size: "x-small",
-  },
-};
-
-export const Small: Story = {
-  args: {
-    label: "small",
-    size: "small",
-  },
-};
-
 export const Medium: Story = {
   args: {
     label: "medium",
@@ -96,9 +76,16 @@ export const Fill: Story = {
   },
 };
 
-export const Stroke: Story = {
+export const Outline: Story = {
   args: {
-    label: "stroke",
-    appearance: "stroke",
+    label: "outline",
+    appearance: "outline",
+  },
+};
+
+export const SolidPastel: Story = {
+  args: {
+    label: "solid-pastel",
+    appearance: "solid-pastel",
   },
 };

@@ -40,8 +40,8 @@ export const WarningFillIcon: React.FC<{
         />
       </g>
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M13 8.5H11V14.5H13V8.5ZM13 16H11V18H13V16Z"
         fill={exclamationColor}
       />

@@ -1,4 +1,5 @@
 import { routing } from "@/i18n/routing";
+import { ThemeProvider } from "@repo/core/theme-provider";
 import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
@@ -23,11 +24,17 @@ export default async function RootLayout({
     notFound();
   }
   return (
-    <html lang={locale}>
-      <body className={`antialiased`}>
-        <NuqsAdapter>
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
-        </NuqsAdapter>
+    <html lang={locale} suppressHydrationWarning>
+      <body className="bg-white">
+        <ThemeProvider
+          defaultTheme="light"
+          enableColorScheme
+          themes={["light", "high-contrast"]}
+        >
+          <NuqsAdapter>
+            <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          </NuqsAdapter>
+        </ThemeProvider>
       </body>
     </html>
   );

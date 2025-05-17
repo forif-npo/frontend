@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Label } from "./Label";
 
 interface FileObject {
@@ -180,7 +180,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
           className="hidden"
         />
         <UploadIcon />
-        <Label size="s" color="gray-60" className="cursor-pointer">
+        <Label size="s" className="text-gray-60 cursor-pointer">
           파일을 여기에 끌어다 놓거나, 클릭하여 파일을 선택하세요
         </Label>
       </div>

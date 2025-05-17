@@ -11,7 +11,6 @@ export { FileUpload } from "./FileUpload";
 export { Heading } from "./Heading";
 export { Label } from "./Label";
 export { Link } from "./Link";
-export { Masthead } from "./Masthead";
 export { Modal } from "./Modal";
 export { Pagination } from "./Pagination";
 export { RadioButtonGroup } from "./RadioButton";

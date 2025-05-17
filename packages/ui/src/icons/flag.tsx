@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export const FlagIcon: React.FC<{
   width?: number;
@@ -14,7 +14,7 @@ export const FlagIcon: React.FC<{
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      <g clip-path="url(#clip0_887_44026)">
+      <g clipPath="url(#clip0_887_44026)">
         <path d="M0 4H24V20H0V4Z" fill="white" />
         <path
           d="M8.67188 9.78125C9.26035 8.89857 10.1754 8.28581 11.2156 8.07777C12.2559 7.86973 13.3362 8.08345 14.2189 8.67192C15.1016 9.26039 15.7144 10.1754 15.9224 11.2157C16.1304 12.2559 15.9167 13.3362 15.3282 14.2189L8.67188 9.78125Z"

@@ -23,8 +23,8 @@ export const HelpIcon: React.FC<{
       className={className}
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M12 2C6.47715 2 2 6.47715 2 12C2 13.5113 2.33527 14.9443 2.93548 16.2287L2.06724 20.3995C1.99384 20.7521 2.30605 21.0643 2.65865 20.9909L6.31701 20.2293C7.93082 21.3459 9.88902 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
         fill={backgroundColor}
       />

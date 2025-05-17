@@ -7,7 +7,6 @@ export { Calendar } from "./components/Calendar";
 export { CriticalAlert } from "./components/CriticalAlert";
 export { Disclosure } from "./components/Disclosure";
 export { FileUpload } from "./components/FileUpload";
-export { Masthead } from "./components/Masthead";
 export { Modal } from "./components/Modal";
 export { Pagination } from "./components/Pagination";
 export { RadioButtonGroup } from "./components/RadioButton";

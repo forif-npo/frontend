@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
 export const LoginCertifyGoIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = "#2D2D2D" }) => {
+}> = ({ width = 24, height = 24, className, color = '#2D2D2D' }) => {
   return (
     <svg
       width={width}
@@ -18,8 +18,8 @@ export const LoginCertifyGoIcon: React.FC<{
       <path
         d="M16.0781 16.5996L20.8781 11.9996L16.0781 7.39961"
         stroke={color}
-        stroke-width="1.6"
-        stroke-linecap="round"
+        strokeWidth="1.6"
+        strokeLinecap="round"
       />
       <line
         x1="20"
@@ -27,7 +27,7 @@ export const LoginCertifyGoIcon: React.FC<{
         x2="2"
         y2="11.9992"
         stroke={color}
-        stroke-width="1.6"
+        strokeWidth="1.6"
       />
     </svg>
   );

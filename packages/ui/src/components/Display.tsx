@@ -17,11 +17,11 @@ export const Display = <E extends React.ElementType = "h1">({
     s: "text-display-s-mobile sm:text-display-s",
   }[size];
   const weightClass = "font-bold";
-  const textColorClass = "";
+  const textColorClass = `text-${color}`;
 
   return (
     <h1
-      className={`${sizeClass} ${weightClass} ${textColorClass} ${className}`}
+      className={clsx(sizeClass, weightClass, textColorClass, className)}
       {...props}
     >
       {children}

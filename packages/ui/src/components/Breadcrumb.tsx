@@ -78,9 +78,8 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
             )}
             <Label
               onClick={item.onClick}
-              color="text-basic"
               size="xs"
-              className="focus:ring-border-primary cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2"
+              className="focus:ring-border-primary text-text-basic cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2"
             >
               {item.label}
             </Label>

@@ -1,3 +1,5 @@
+import clsx from "clsx";
+
 export type TitleProps<E extends React.ElementType> = {
   size?: "xxl" | "xl" | "l" | "m" | "s" | "xs";
   children: React.ReactNode;
@@ -20,11 +22,11 @@ export const Title = <E extends React.ElementType = "h3">({
     xs: "text-title-xs-mobile sm:text-title-xs",
   }[size];
   const weightClass = "font-bold";
-  const textColorClass = "";
+  const textColorClass = `text-${color}`;
 
   return (
     <h3
-      className={`${sizeClass} ${weightClass} ${textColorClass} ${className}`}
+      className={clsx(sizeClass, weightClass, textColorClass, className)}
       {...props}
     >
       {children}

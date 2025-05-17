@@ -1,3 +1,5 @@
+import clsx from "clsx";
+
 export type LabelProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s" | "xs";
   weight?: "regular" | "bold";
@@ -23,13 +25,9 @@ export const Label = <E extends React.ElementType = "label">({
     regular: "font-regular",
     bold: "font-bold",
   }[weight];
-  const textColorClass = "";
 
   return (
-    <label
-      className={`${sizeClass} ${weightClass} ${textColorClass} ${className}`}
-      {...props}
-    >
+    <label className={clsx(sizeClass, weightClass, className)} {...props}>
       {children}
     </label>
   );

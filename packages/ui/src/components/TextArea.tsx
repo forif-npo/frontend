@@ -39,14 +39,14 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     };
 
     return (
-      <div className="flex flex-col justify-center gap-1">
+      <div className="flex flex-col justify-center">
         {title && (
-          <Label htmlFor={id} weight="bold">
+          <Label htmlFor={id} size="s" className="text-gray-70">
             {title}
           </Label>
         )}
         {description && (
-          <Label size={"s"} color={"gray-50"}>
+          <Label size={"s"} className="text-gray-50">
             {description}
           </Label>
         )}
@@ -54,7 +54,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           <textarea
             ref={ref}
             id={id}
-            className={`w-full ${sizeClasses} text-gray-70 rounded-4 focus:border-primary focus:ring-primary mt-3 resize-none border border-gray-50 px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1`}
+            className={`w-full ${sizeClasses} text-gray-70 focus:border-primary-50 focus:ring-primary-50 mt-3 resize-none rounded-[6px] border border-gray-50 px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1`}
             placeholder={placeholder}
             maxLength={maxLength}
             onChange={handleChange}
@@ -62,10 +62,13 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           />
           {maxLength && (
             <div className="flex justify-end gap-1">
-              <Label color={"primary"} size={"xs"}>
+              <Label size={"xs"} className="text-text-primary">
                 {charCount}
               </Label>
-              <Label size={"xs"}>{`/${maxLength}`}</Label>
+              <Label
+                size={"xs"}
+                className="text-gray-70"
+              >{`/${maxLength}`}</Label>
             </div>
           )}
         </div>
@@ -73,3 +76,5 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     );
   },
 );
+
+TextArea.displayName = "TextArea";

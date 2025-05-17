@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export const UrgentBadgeInfoIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const UrgentBadgeInfoIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  backgroundColor = "white",
-  iconColor = "#16408D",
+  backgroundColor = 'white',
+  iconColor = '#16408D',
 }) => {
   return (
     <svg
@@ -31,7 +31,7 @@ export const UrgentBadgeInfoIcon: React.FC<{
         transform="matrix(1 0 0 -1 2 20.4)"
         fill={backgroundColor}
         stroke={backgroundColor}
-        stroke-width="1.6"
+        strokeWidth="1.6"
       />
       <rect x="11.3008" y="10.4297" width="1.8" height="5.6" fill={iconColor} />
       <rect x="10.1992" y="10.4297" width="2" height="1.2" fill={iconColor} />

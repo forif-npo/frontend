@@ -30,8 +30,8 @@ export const InformationFillIcon: React.FC<{
         fill={backgroundColor}
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M11.8992 9.44102C12.562 9.44102 13.0992 8.90376 13.0992 8.24102C13.0992 7.57827 12.562 7.04102 11.8992 7.04102C11.2365 7.04102 10.6992 7.57827 10.6992 8.24102C10.6992 8.90376 11.2365 9.44102 11.8992 9.44102ZM11.3008 10.4312H10.1992V11.6312H11.3008V15.5938H10V16.7937H14V15.5938H13.1008V10.4312H12.1992H11.3008Z"
         fill={color}
       />

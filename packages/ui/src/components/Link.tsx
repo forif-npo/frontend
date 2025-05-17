@@ -1,3 +1,5 @@
+import { cn } from "../utils/cn";
+
 export type LinkProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s";
   weight?: "regular" | "bold";
@@ -15,9 +17,9 @@ export const Link = <E extends React.ElementType = "a">({
   ...props
 }: LinkProps<E>) => {
   const sizeClass = {
-    l: "text-link-l-mobile sm:text-link-l",
-    m: "text-link-m-mobile sm:text-link-m",
-    s: "text-link-s-mobile sm:text-link-s",
+    l: "text-label-l-mobile sm:text-label-l",
+    m: "text-label-m-mobile sm:text-label-m",
+    s: "text-label-s-mobile sm:text-label-s",
   }[size];
 
   const weightClass = {
@@ -28,7 +30,7 @@ export const Link = <E extends React.ElementType = "a">({
 
   return (
     <a
-      className={`${sizeClass} ${weightClass} ${textColorClass} ${className}`}
+      className={cn(sizeClass, weightClass, textColorClass, className)}
       title={title}
       aria-label={title}
       {...props}

@@ -24,7 +24,7 @@ export const Danger: Story = {
 export const Info: Story = {
   args: {
     text: "미세먼지 노출 시 철저한 위생관리로 건강관리에 유의바랍니다.",
-    variant: "info",
+    variant: "information",
     link: "https://github.com/KRDS-community/krds-react",
     title: "krds-react로 이동",
   },
@@ -33,7 +33,7 @@ export const Info: Story = {
 export const Ok: Story = {
   args: {
     text: "미세먼지 노출 시 철저한 위생관리로 건강관리에 유의바랍니다.",
-    variant: "ok",
+    variant: "success",
     link: "https://github.com/KRDS-community/krds-react",
     title: "krds-react로 이동",
   },

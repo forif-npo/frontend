@@ -19,7 +19,7 @@ export const Heading = <E extends React.ElementType = "h2">({
     s: "text-heading-s-mobile sm:text-heading-s",
   }[size];
   const weightClass = "font-bold";
-  const textColorClass = "";
+  const textColorClass = `text-${color}`;
 
   return (
     <h2

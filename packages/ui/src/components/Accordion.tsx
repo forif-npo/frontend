@@ -59,7 +59,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : "0px",
         }}
       >
-        <div className="p-6">{children}</div>
+        <div className="text-label-s-mobile sm:text-label-s p-6">
+          {children}
+        </div>
       </div>
     </div>
   );

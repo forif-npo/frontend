@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Label } from "./Label";
 
 const ChevronIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
@@ -40,7 +40,7 @@ export const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
     <div className="w-full">
       <button
         id={buttonId}
-        className="focus:ring-primary-50 flex items-center py-4 text-left focus:outline-none focus:ring-2"
+        className="focus:ring-primary-50 rounded-1 flex items-center py-4 text-left focus:outline-none"
         onClick={toggleDisclosure}
         aria-expanded={isOpen}
         aria-controls={contentId}

@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
 export const SwitchOffIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = "#6D7882" }) => {
+}> = ({ width = 24, height = 24, className, color = '#6D7882' }) => {
   return (
     <svg
       width={width}
@@ -20,15 +20,15 @@ export const SwitchOffIcon: React.FC<{
           id="Line 156"
           d="M1.5 1.96436L8.57107 9.03542"
           stroke={color}
-          stroke-width="1.6"
-          stroke-linecap="round"
+          strokeWidth="1.6"
+          strokeLinecap="round"
         />
         <path
           id="Line 157"
           d="M8.5 1.96436L1.42893 9.03542"
           stroke={color}
-          stroke-width="1.6"
-          stroke-linecap="round"
+          strokeWidth="1.6"
+          strokeLinecap="round"
         />
       </g>
     </svg>

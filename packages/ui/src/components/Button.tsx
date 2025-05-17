@@ -19,42 +19,50 @@ export const Button = <E extends React.ElementType = "button">({
   ...props
 }: ButtonProps<E>) => {
   const baseStyles =
-    "inline-flex items-center justify-center rounded-4 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200";
+    "inline-flex items-center justify-center rounded-2 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200";
 
   const variantStyles = {
     primary: {
       style:
-        "bg-button-primary-fill hover:bg-button-primary-fill-hover text-text-bolder-inverse",
+        "bg-button-primary-fill hover:bg-button-primary-fill-hover active:bg-button-primary-fill-pressed text-text-bolder-inverse",
       disabledStyle: "bg-button-disabled-fill text-text-disabled",
     },
     secondary: {
       style:
-        "bg-button-secondary-fill hover:bg-button-secondary-fill-hover border border-button-secondary-border text-text-basic",
+        "bg-button-secondary-fill hover:bg-button-secondary-fill-hover active:bg-button-secondary-fill-pressed border border-button-secondary-border text-text-basic",
       disabledStyle:
         "bg-button-disabled-fill border border-button-disabled-border text-text-disabled",
     },
     tertiary: {
       style:
-        "bg-button-tertiary-fill hover:bg-button-tertiary-fill-hover border border-button-tertiary-border text-text-basic",
+        "bg-button-tertiary-fill hover:bg-button-tertiary-fill-hover active:bg-button-tertiary-fill-pressed border border-button-tertiary-border text-text-basic",
       disabledStyle:
         "bg-button-disabled-fill border border-button-disabled-border text-text-disabled",
     },
     text: {
-      style: "bg-transparent text-link-default hover:bg-button-text-fill-hover",
+      style:
+        "bg-transparent text-link-default hover:bg-button-text-fill-hover active:bg-button-text-fill-pressed",
       disabledStyle: "text-link-disabled",
     },
   }[variant];
 
+  const textColors = {
+    primary: "text-text-bolder-inverse",
+    secondary: "text-text-primary",
+    tertiary: "text-text-basic",
+    text: "text-text-basic",
+  };
+
   const sizeStyles: { style: string; fontSize: "l" | "m" | "s" | "xs" } = {
     "x-small": {
-      style: "px-3 min-w-[32px] min-h-[32px]",
+      style: "px-2.5 min-w-[32px] min-h-[32px]",
       fontSize: "s" as const,
     },
-    small: { style: "px-7 min-w-[40px] min-h-[40px]", fontSize: "s" as const },
+    small: { style: "px-3 min-w-[40px] min-h-[40px]", fontSize: "s" as const },
     medium: { style: "px-4 min-w-[48px] min-h-[48px]", fontSize: "m" as const },
-    large: { style: "px-6 min-w-[56px] min-h-[56px]", fontSize: "l" as const },
+    large: { style: "px-5 min-w-[56px] min-h-[56px]", fontSize: "l" as const },
     "x-large": {
-      style: "px-8 min-w-[64px] min-h-[64px]",
+      style: "px-6 min-w-[64px] min-h-[64px]",
       fontSize: "l" as const,
     },
   }[size];
@@ -77,8 +85,8 @@ export const Button = <E extends React.ElementType = "button">({
   };
 
   const labelStyles = clsx(
-    disabled ? "cursor-not-allowed" : "cursor-pointer",
-    variant === "text" && "underline",
+    textColors[variant],
+    disabled ? "cursor-not-allowed text-text-disabled" : "cursor-pointer",
   );
 
   return (

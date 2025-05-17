@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export const FilePdfIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const FilePdfIcon: React.FC<{
   width = 32,
   height = 32,
   className,
-  color = "white",
-  backgroundColor = "#063A74",
+  color = 'white',
+  backgroundColor = '#063A74',
 }) => {
   return (
     <svg
@@ -23,7 +23,7 @@ export const FilePdfIcon: React.FC<{
       className={className}
     >
       <g id="img_file_pdf">
-        <g clip-path="url(#clip0_564_25680)">
+        <g clipPath="url(#clip0_564_25680)">
           <rect
             id="Rectangle 19614"
             width="32"

@@ -3,6 +3,13 @@
   "version": "0.0.0",
   "type": "module",
   "sideEffects": false,
+  "scripts": {
+    "build": "tailwindcss -i ./src/styles.css -o ./dist/styles.css",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "dev": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --watch",
+    "type-check": "tsc --noEmit"
+  },
   "exports": {
     "./styles.css": "./dist/styles.css",
     "./components/server": "./src/index.server.ts",
@@ -11,18 +18,13 @@
     "./theme-provider": "./src/provider.tsx",
     "./colors": "./src/colors/color.ts"
   },
-  "scripts": {
-    "build": "tailwindcss -i ./src/styles.css -o ./dist/styles.css",
-    "lint": "eslint src/",
-    "dev": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --watch",
-    "type-check": "tsc --noEmit"
-  },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.7",
     "clsx": "^2.1.1",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.5"
   },
   "devDependencies": {
@@ -33,7 +35,7 @@
     "@types/node": "^20.17.43",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^8",
+    "eslint": "^9",
     "typescript": "^5"
   },
   "packageManager": "pnpm@10.10.0",

@@ -23,11 +23,11 @@ export const Body = <E extends React.ElementType = "p">({
     regular: "font-regular",
     bold: "font-bold",
   }[weight];
-  const textColorClass = "text-text-basic";
+  const textColorClass = `text-${color}`;
 
   return (
     <p
-      className={`${sizeClass} ${weightClass} ${textColorClass} ${className}`}
+      className={clsx(sizeClass, weightClass, textColorClass, className)}
       {...props}
     >
       {children}

@@ -172,8 +172,8 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   return (
     <div className="bg-surface-secondary-subtler border-border-secondary-light mx-auto w-full rounded-lg border">
-      <div className="p-8">
-        <div className="mb-2 flex items-center justify-between p-4">
+      <div className="p-6">
+        <div className="mb-2 flex items-center justify-between">
           <button
             onClick={() => changeMonth(-1)}
             className="text-icon-subtle hover:text-icon-primary rounded-max border-border-gray-light flex h-[32px] w-[32px] items-center justify-center border focus:outline-none"
@@ -225,7 +225,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         <Button variant="text" size="small">
           오늘
         </Button>
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-2">
           <Button variant="tertiary" size="small">
             취소
           </Button>

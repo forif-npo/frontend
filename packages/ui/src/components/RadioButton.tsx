@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Label } from "./Label";
 
 type RadioButtonProps = {
@@ -98,9 +98,10 @@ const RadioButton: React.FC<RadioButtonProps> = ({
       <Label
         htmlFor={id}
         size={labelSizeClasses[size]}
-        color={disabled ? "gray-40" : "gray-90"}
         className={`${
-          disabled ? "cursor-not-allowed" : "cursor-pointer"
+          disabled
+            ? "text-gray-40 cursor-not-allowed"
+            : "text-gray-90 cursor-pointer"
         } transition-colors duration-300`}
       >
         {label}

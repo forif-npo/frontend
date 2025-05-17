@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
 export const SwitchOnIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = "#256EF4" }) => {
+}> = ({ width = 24, height = 24, className, color = '#256EF4' }) => {
   return (
     <svg
       width={width}
@@ -20,9 +20,9 @@ export const SwitchOnIcon: React.FC<{
           id="Vector 1"
           d="M1 5.5L4.63158 9L9 2"
           stroke={color}
-          stroke-width="1.6"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </g>
     </svg>

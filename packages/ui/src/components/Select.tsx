@@ -1,6 +1,7 @@
-import clsx from "clsx";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowDropdownIcon } from "../icons";
+import { cn } from "../utils/cn";
+import { Label } from "./Label";
 interface Option {
   value: string;
   label: string;
@@ -64,14 +65,16 @@ export const Select = ({
           setIsOpen(false);
           break;
         case "ArrowDown":
-        case "ArrowUp":
+        case "ArrowUp": {
           e.preventDefault();
           const delta = e.key === "ArrowDown" ? 1 : -1;
           setFocusedIndex((prev) => moveFocus(prev, delta, options.length));
           setHoveredIndex(null);
           break;
+        }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isOpen, focusedIndex, options],
   );
 
@@ -94,9 +97,16 @@ export const Select = ({
     return () => document.removeEventListener("mousedown", clickOutside);
   }, []);
 
+  const labelSize = {
+    lg: "l" as const,
+    md: "m" as const,
+    sm: "s" as const,
+  };
+
   const variantClasses = {
-    default: "bg-white border shadow-sm hover:shadow-md",
-    text: "bg-transparent border-none shadow-none underline hover:bg-gray-5",
+    default:
+      "border-gray-30 focus:ring-primary-50 border bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:outline-none",
+    text: "hover:bg-gray-5 border-none bg-transparent",
   };
 
   return (
@@ -107,22 +117,25 @@ export const Select = ({
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         ref={triggerRef}
-        className={clsx(
-          "rounded-4 flex w-full min-w-[240px] items-center justify-between px-5 text-left transition duration-150 ease-in-out",
+        className={cn(
+          "rounded-2 flex w-full min-w-[240px] items-center justify-between px-5 text-left transition duration-150 ease-in-out",
           sizeClasses[size],
-          variant === "default" &&
-            "border-gray-30 focus:ring-primary-50 border bg-white shadow-sm hover:shadow-md focus:outline-none focus:ring-2",
-          variant === "text" &&
-            "hover:bg-gray-5 border-none bg-transparent underline",
+          variantClasses[variant],
         )}
       >
-        <span className={clsx(sizeClasses[size].button, "text-gray-90")}>
+        <Label
+          size={labelSize[size]}
+          className={cn(
+            "text-gray-90 flex items-center",
+            sizeClasses[size].button,
+          )}
+        >
           {selectedValue
             ? options.find((o) => o.value === selectedValue)?.label
             : placeholder}
-        </span>
+        </Label>
         <span
-          className={clsx(
+          className={cn(
             "ml-2 inline-block transform transition-transform",
             isOpen ? "rotate-180" : "rotate-0",
             "text-gray-80",
@@ -135,7 +148,7 @@ export const Select = ({
       {isOpen && (
         <div
           role="listbox"
-          className="absolute z-10 mt-2 max-h-60 w-full min-w-[240px] overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg"
+          className="absolute z-10 mt-2 max-h-60 w-full min-w-[240px] overflow-y-auto rounded-md border border-gray-300 bg-white"
         >
           {options.map((option, index) => (
             <button
@@ -151,7 +164,7 @@ export const Select = ({
                   handleSelect(option.value);
                 }
               }}
-              className={`rounded-4 w-full px-5 text-left outline-none ${sizeClasses[size].button} ${
+              className={`rounded-2 w-full px-5 text-left outline-none ${sizeClasses[size].button} ${
                 selectedValue === option.value
                   ? "text-primary-50 bg-primary-5"
                   : "text-gray-90"

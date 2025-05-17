@@ -23,11 +23,11 @@ export const Detail = <E extends React.ElementType = "span">({
     regular: "font-regular",
     bold: "font-bold",
   }[weight];
-  const textColorClass = "";
+  const textColorClass = `text-${color}`;
 
   return (
     <span
-      className={`${sizeClass} ${weightClass} ${textColorClass} ${className}`}
+      className={clsx(sizeClass, weightClass, textColorClass, className)}
       {...props}
     >
       {children}

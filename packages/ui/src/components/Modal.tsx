@@ -103,7 +103,12 @@ export const Modal: React.FC<ModalProps> = ({
       >
         <div className="flex max-h-[90vh] flex-col">
           <div className="border-gray-10 flex items-start justify-between border-b p-5">
-            <Label id="modal-title" size="l" weight="bold" color="gray-90">
+            <Label
+              id="modal-title"
+              size="l"
+              weight="bold"
+              className="text-gray-90"
+            >
               {title}
             </Label>
           </div>

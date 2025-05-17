@@ -8,7 +8,7 @@ export type CheckboxProps = {
   onChange: (newStatus: CheckboxStatus) => void;
   label?: string;
   disabled?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "md" | "lg";
   id: string;
 };
 
@@ -57,13 +57,11 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   id,
 }) => {
   const sizeClasses = {
-    sm: "w-4 h-4",
     md: "w-5 h-5",
     lg: "w-6 h-6",
   };
 
   const labelSizeClasses = {
-    sm: "s" as const,
     md: "m" as const,
     lg: "l" as const,
   };

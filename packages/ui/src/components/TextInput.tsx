@@ -53,7 +53,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             ref={ref}
             id={inputId}
             type="text"
-            className={` ${lengthClasses} text-gray-70 rounded-2 focus:border-primary focus:ring-primary mt-3 border px-4 py-3 focus:outline-none focus:ring-1 ${error ? "border-danger" : "border-gray-50"} transition duration-150 ease-in-out`}
+            className={` ${lengthClasses} text-gray-70 rounded-2 focus:border-primary-50 focus:ring-primary-50 mt-3 border px-4 py-3 focus:outline-none focus:ring-1 ${error ? "border-border-danger" : "border-gray-50"} transition duration-150 ease-in-out`}
             placeholder={placeholder}
             aria-describedby={error ? errorId : helperTextId}
             aria-invalid={error ? "true" : "false"}
@@ -61,16 +61,11 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           />
         </div>
         {error ? (
-          <Label id={errorId} size={"s"} color={"danger"} className="mt-1">
+          <Label id={errorId} size={"s"} className="text-text-danger mt-1">
             {error}
           </Label>
         ) : helpText ? (
-          <Label
-            id={helperTextId}
-            size={"s"}
-            color={"gray-50"}
-            className="mt-1"
-          >
+          <Label id={helperTextId} size={"s"} className="mt-1 text-gray-50">
             {helpText}
           </Label>
         ) : null}
@@ -78,3 +73,5 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     );
   },
 );
+
+TextInput.displayName = "TextInput";
