@@ -96,7 +96,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
   return (
     <div
-      className="flex items-center gap-3 focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 focus:outline-none"
+      className="focus:ring-primary flex items-center gap-3 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
       tabIndex={disabled ? -1 : 0}
       role="checkbox"
       aria-checked={

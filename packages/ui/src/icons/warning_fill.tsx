@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const WarningFillIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const WarningFillIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  triangleColor = '#FFB724',
-  exclamationColor = 'white',
+  triangleColor = "#FFB724",
+  exclamationColor = "white",
 }) => {
   return (
     <svg
@@ -24,7 +24,7 @@ export const WarningFillIcon: React.FC<{
     >
       <mask
         id="mask0_353_44301"
-        style={{ maskType: 'alpha' }}
+        style={{ maskType: "alpha" }}
         maskUnits="userSpaceOnUse"
         x="0"
         y="0"

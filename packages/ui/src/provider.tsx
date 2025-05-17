@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-export type ThemeMode = 'light' | 'dark' | 'high-contrast' | 'system';
+export type ThemeMode = "light" | "dark" | "high-contrast" | "system";
 
 export type PrimitiveToken = {};
 
@@ -8,9 +8,9 @@ export type SemanticToken = {};
 
 export type ComponentToken = {};
 
-export type Locale = 'ko' | 'en';
+export type Locale = "ko" | "en";
 
-export type TextSize = 'small' | 'medium' | 'large';
+export type TextSize = "small" | "medium" | "large";
 
 export type DesignToken = {
   primitive: PrimitiveToken;
@@ -41,30 +41,30 @@ export const ContextProvider: React.FC<{
   token: DesignTokenProps;
   children: React.ReactNode;
 }> = ({ token, children }) => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('system');
-  const [locale, setLocale] = useState<Locale>('ko');
-  const [textSize, setTextSize] = useState<TextSize>('medium');
+  const [themeMode, setThemeMode] = useState<ThemeMode>("system");
+  const [locale, setLocale] = useState<Locale>("ko");
+  const [textSize, setTextSize] = useState<TextSize>("medium");
 
   const changeTheme = (mode: ThemeMode) => {
     switch (mode) {
-      case 'system': {
+      case "system": {
         // get system theme
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
           .matches
-          ? 'high-contrast'
-          : 'light';
-        document.documentElement.setAttribute('data-theme', systemTheme);
+          ? "high-contrast"
+          : "light";
+        document.documentElement.setAttribute("data-theme", systemTheme);
         break;
       }
 
-      case 'dark':
-      case 'high-contrast': {
-        document.documentElement.setAttribute('data-theme', 'high-contrast');
+      case "dark":
+      case "high-contrast": {
+        document.documentElement.setAttribute("data-theme", "high-contrast");
         break;
       }
 
-      case 'light': {
-        document.documentElement.setAttribute('data-theme', 'light');
+      case "light": {
+        document.documentElement.setAttribute("data-theme", "light");
         break;
       }
     }

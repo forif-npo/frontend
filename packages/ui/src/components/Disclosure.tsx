@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Label } from './Label';
+import React, { useState, useRef } from "react";
+import { Label } from "./Label";
 
 const ChevronIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
   <svg
@@ -7,7 +7,7 @@ const ChevronIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
     viewBox="0 0 24 24"
     width="24"
     height="24"
-    className={`transition-transform duration-300 ${isOpen ? 'rotate-90' : ''}`}
+    className={`transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
     aria-hidden="true"
   >
     <path
@@ -26,10 +26,10 @@ export const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const buttonId = `disclosure-button-${title
-    .replace(/\s+/g, '-')
+    .replace(/\s+/g, "-")
     .toLowerCase()}`;
   const contentId = `disclosure-content-${title
-    .replace(/\s+/g, '-')
+    .replace(/\s+/g, "-")
     .toLowerCase()}`;
 
   const toggleDisclosure = () => {
@@ -40,7 +40,7 @@ export const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
     <div className="w-full">
       <button
         id={buttonId}
-        className="text-left py-4 flex items-center focus:outline-none focus:ring-2 focus:ring-primary-50"
+        className="focus:ring-primary-50 flex items-center py-4 text-left focus:outline-none focus:ring-2"
         onClick={toggleDisclosure}
         aria-expanded={isOpen}
         aria-controls={contentId}
@@ -51,16 +51,16 @@ export const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
         <Label size="m" className="cursor-pointer">
           {title}
         </Label>
-        <span className="sr-only">{isOpen ? '접기' : '펼치기'}</span>
+        <span className="sr-only">{isOpen ? "접기" : "펼치기"}</span>
       </button>
       <div
         id={contentId}
         ref={contentRef}
         role="region"
         aria-labelledby={buttonId}
-        className="overflow-hidden transition-all duration-300 ease-in-out pl-10"
+        className="overflow-hidden pl-10 transition-all duration-300 ease-in-out"
         style={{
-          maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : '0px',
+          maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : "0px",
         }}
       >
         <div className="py-4">{children}</div>

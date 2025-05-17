@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const SuccessFillIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const SuccessFillIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  backgroundColor = '#008A1E',
-  checkColor = 'white',
+  backgroundColor = "#008A1E",
+  checkColor = "white",
 }) => {
   return (
     <svg

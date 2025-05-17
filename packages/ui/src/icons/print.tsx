@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const PrintIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = '#33363D' }) => {
+}> = ({ width = 24, height = 24, className, color = "#33363D" }) => {
   return (
     <svg
       width={width}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const HelpFillIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const HelpFillIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  backgroundColor: primaryColor = '#B1CEFB',
-  color = '#1E2124',
+  backgroundColor: primaryColor = "#B1CEFB",
+  color = "#1E2124",
 }) => {
   return (
     <svg

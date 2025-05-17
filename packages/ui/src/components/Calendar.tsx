@@ -35,7 +35,7 @@ const TriangleIcon: React.FC<{ direction: "left" | "right" }> = ({
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="text-gray-600 hover:text-primary-50 transition-colors"
+    className="hover:text-primary-50 text-gray-600 transition-colors"
   >
     <path
       d={direction === "left" ? "M15 18l-6-6 6-6" : "M9 18l6-6-6-6"}
@@ -141,20 +141,16 @@ export const Calendar: React.FC<CalendarProps> = ({
           <div
             key={date.toISOString()}
             onClick={() => handleDateClick(date)}
-            className={`
-              cursor-pointer text-center w-[44px] h-[44px] flex items-center justify-center rounded-max
-              ${
-                isDateInRange(date) ||
-                selectedDates.some((d) => d.getTime() === date.getTime())
-                  ? "bg-secondary-70 text-text-bolder-inverse"
-                  : ""
-              }
-              ${
-                isToday(date)
-                  ? "border border-border-primary"
-                  : "border border-border-transparency"
-              }
-            `}
+            className={`rounded-max flex h-[44px] w-[44px] cursor-pointer items-center justify-center text-center ${
+              isDateInRange(date) ||
+              selectedDates.some((d) => d.getTime() === date.getTime())
+                ? "bg-secondary-70 text-text-bolder-inverse"
+                : ""
+            } ${
+              isToday(date)
+                ? "border-border-primary border"
+                : "border-border-transparency border"
+            } `}
           >
             <Label
               size="m"
@@ -175,12 +171,12 @@ export const Calendar: React.FC<CalendarProps> = ({
   };
 
   return (
-    <div className="w-full mx-auto bg-surface-secondary-subtler rounded-lg border border-border-secondary-light">
+    <div className="bg-surface-secondary-subtler border-border-secondary-light mx-auto w-full rounded-lg border">
       <div className="p-8">
-        <div className="flex justify-between items-center mb-2 p-4">
+        <div className="mb-2 flex items-center justify-between p-4">
           <button
             onClick={() => changeMonth(-1)}
-            className="focus:outline-none text-icon-subtle hover:text-icon-primary w-[32px] h-[32px] flex items-center justify-center rounded-max border border-border-gray-light"
+            className="text-icon-subtle hover:text-icon-primary rounded-max border-border-gray-light flex h-[32px] w-[32px] items-center justify-center border focus:outline-none"
           >
             <TriangleIcon direction="left" />
           </button>
@@ -192,7 +188,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   new Date(parseInt(e.target.value), currentDate.getMonth(), 1),
                 )
               }
-              className="p-1 text-heading-s-mobile sm:text-heading-s font-bold"
+              className="text-heading-s-mobile sm:text-heading-s p-1 font-bold"
             >
               {YEARS.map((year) => (
                 <option key={year} value={year}>
@@ -207,7 +203,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   new Date(today.getFullYear(), parseInt(e.target.value), 1),
                 )
               }
-              className="p-1 text-heading-s-mobile sm:text-heading-s font-bold"
+              className="text-heading-s-mobile sm:text-heading-s p-1 font-bold"
             >
               {MONTHS.map((month, index) => (
                 <option key={month} value={index}>
@@ -218,14 +214,14 @@ export const Calendar: React.FC<CalendarProps> = ({
           </div>
           <button
             onClick={() => changeMonth(1)}
-            className="focus:outline-none text-icon-subtle hover:text-icon-primary w-[32px] h-[32px] flex items-center justify-center rounded-max border border-border-gray-light"
+            className="text-icon-subtle hover:text-icon-primary rounded-max border-border-gray-light flex h-[32px] w-[32px] items-center justify-center border focus:outline-none"
           >
             <TriangleIcon direction="right" />
           </button>
         </div>
         {renderCalendar()}
       </div>
-      <div className="p-4 flex items-center justify-between border-t border-border-gray-light bg-surface-white p-8">
+      <div className="border-border-gray-light bg-surface-white flex items-center justify-between border-t p-8">
         <Button variant="text" size="small">
           오늘
         </Button>

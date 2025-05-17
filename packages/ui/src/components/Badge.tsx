@@ -51,7 +51,7 @@ export const Badge: React.FC<BadgeProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-2 ${style} ${padding} ${className}`}
+      className={`rounded-2 inline-flex items-center justify-center ${style} ${padding} ${className}`}
       role="status"
       aria-label={label}
     >

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { Button } from './Button';
-import { Label } from './Label';
+import React, { useEffect, useRef } from "react";
+import { Button } from "./Button";
+import { Label } from "./Label";
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,7 +10,7 @@ interface ModalProps {
   children: React.ReactNode;
   showCancelButton?: boolean;
   showCloseIcon?: boolean;
-  width?: 'm' | 'l';
+  width?: "m" | "l";
   closeOnOverlayClick?: boolean;
   cancelLabel?: string;
   confirmLabel?: string;
@@ -41,10 +41,10 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   showCancelButton = true,
   showCloseIcon = true,
-  width = 'm',
+  width = "m",
   closeOnOverlayClick = true,
-  cancelLabel = '취소',
-  confirmLabel = '확인',
+  cancelLabel = "취소",
+  confirmLabel = "확인",
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -53,21 +53,21 @@ export const Modal: React.FC<ModalProps> = ({
     if (isOpen) {
       previousFocusRef.current = document.activeElement as HTMLElement;
       modalRef.current?.focus();
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
       previousFocusRef.current?.focus();
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       onClose();
     }
   };
@@ -78,13 +78,13 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   const modalWidthStyle = {
-    m: 'w-[560px]',
-    l: 'w-[850px]',
+    m: "w-[560px]",
+    l: "w-[850px]",
   }[width];
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none"
       onClick={closeOnOverlayClick ? handleCancel : undefined}
     >
       <div
@@ -93,7 +93,7 @@ export const Modal: React.FC<ModalProps> = ({
       ></div>
       <div
         ref={modalRef}
-        className={`relative mx-auto my-6 bg-white rounded-lg shadow-lg ${modalWidthStyle}`}
+        className={`relative mx-auto my-6 rounded-lg bg-white shadow-lg ${modalWidthStyle}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -101,19 +101,19 @@ export const Modal: React.FC<ModalProps> = ({
         onKeyDown={handleKeyDown}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex flex-col max-h-[90vh]">
-          <div className="flex items-start justify-between p-5 border-b border-gray-10">
+        <div className="flex max-h-[90vh] flex-col">
+          <div className="border-gray-10 flex items-start justify-between border-b p-5">
             <Label id="modal-title" size="l" weight="bold" color="gray-90">
               {title}
             </Label>
           </div>
 
-          <div className="relative flex-auto p-6 overflow-y-auto">
+          <div className="relative flex-auto overflow-y-auto p-6">
             {children}
           </div>
 
           {(onConfirm || showCancelButton) && (
-            <div className="flex items-center justify-end p-6 border-t border-gray-10 gap-4">
+            <div className="border-gray-10 flex items-center justify-end gap-4 border-t p-6">
               {showCancelButton && (
                 <Button
                   variant="tertiary"
@@ -139,7 +139,7 @@ export const Modal: React.FC<ModalProps> = ({
 
           {showCloseIcon && (
             <button
-              className="absolute top-5 right-5 p-1 ml-auto text-gray-50 transition-colors duration-200 hover:text-gray-70 hover:bg-gray-20 rounded-2"
+              className="hover:text-gray-70 hover:bg-gray-20 rounded-2 absolute right-5 top-5 ml-auto p-1 text-gray-50 transition-colors duration-200"
               onClick={handleCancel}
               aria-label="닫기"
             >

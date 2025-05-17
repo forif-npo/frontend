@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const GoIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = '#2D2D2D' }) => {
+}> = ({ width = 24, height = 24, className, color = "#2D2D2D" }) => {
   return (
     <svg
       width={width}

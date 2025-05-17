@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const LoginCertifyType02Icon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = '#303336' }) => {
+}> = ({ width = 24, height = 24, className, color = "#303336" }) => {
   return (
     <svg
       width={width}

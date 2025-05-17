@@ -1,7 +1,7 @@
-import { Label } from './Label';
-import { LinkButton } from './LinkButton';
+import { Label } from "./Label";
+import { LinkButton } from "./LinkButton";
 
-type AlertVariant = 'danger' | 'ok' | 'info';
+type AlertVariant = "danger" | "ok" | "info";
 
 export type CriticalAlertProps = {
   text: string;
@@ -13,9 +13,9 @@ export type CriticalAlertProps = {
 
 //TODO: need i18n
 const ALERT_TAG_MAP: Record<AlertVariant, string> = {
-  danger: '긴급',
-  ok: '안전',
-  info: '안내',
+  danger: "긴급",
+  ok: "안전",
+  info: "안내",
 } as const;
 
 export const CriticalAlert = ({
@@ -27,26 +27,9 @@ export const CriticalAlert = ({
 }: CriticalAlertProps) => {
   return (
     <div
-      className={`
-            container
-            mx-auto
-            border
-            border-gray-0
-            rounded-2
-            bg-gray-0
-            px-5
-            py-3 
-            ${className}
-        `}
+      className={`border-gray-0 rounded-2 bg-gray-0 container mx-auto border px-5 py-3 ${className} `}
     >
-      <div
-        className={`
-            flex
-            justify-between            
-            items-center 
-            gap-3
-        `}
-      >
+      <div className={`flex items-center justify-between gap-3`}>
         <UrgentBadge variant={variant} />
         <Label className="flex-auto" color="gray-100" size="m" weight="bold">
           {text}
@@ -60,7 +43,7 @@ export const CriticalAlert = ({
               title="자세히보기"
               link={link}
               style={{
-                textDecoration: 'none',
+                textDecoration: "none",
               }}
             >
               <ArrowIcon />
@@ -77,22 +60,16 @@ const UrgentBadge = ({ variant }: { variant: AlertVariant }) => {
 
   return (
     <span
-      className={`
-            inline-flex
-            items-center
-            justify-center
-            rounded-full
-            gap-1      
-        `}
+      className={`inline-flex items-center justify-center gap-1 rounded-full`}
       style={{
-        backgroundColor: '', // TODO: fix
-        width: '78px',
-        height: '48px',
+        backgroundColor: "", // TODO: fix
+        width: "78px",
+        height: "48px",
       }}
     >
-      {variant === 'info' && <InfoIcon />}
-      {variant === 'ok' && <OkIcon />}
-      {variant === 'danger' && <DangerIcon />}
+      {variant === "info" && <InfoIcon />}
+      {variant === "ok" && <OkIcon />}
+      {variant === "danger" && <DangerIcon />}
       <Label color="gray-0" size="s" weight="bold">
         {tag}
       </Label>
@@ -106,13 +83,13 @@ const MoreLinkButton = ({ link, title }: { link: string; title?: string }) => {
       link={link}
       title={title}
       style={{
-        textDecoration: 'none',
+        textDecoration: "none",
       }}
     >
       <Label
         color="gray-100"
         size="m"
-        className="hidden md:inline-block cursor-pointer"
+        className="hidden cursor-pointer md:inline-block"
       >
         자세히보기
       </Label>

@@ -68,7 +68,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
     <nav aria-label="브레드크럼" className="py-2">
       <ol className="flex items-center">
         {renderItems().map((item, index) => (
-          <li key={index} className="flex items-center m-0">
+          <li key={index} className="m-0 flex items-center">
             {index > 0 && <ChevronIcon />}
             {index === 1 && items.length > maxItems && (
               <>
@@ -80,7 +80,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
               onClick={item.onClick}
               color="text-basic"
               size="xs"
-              className="hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-border-primary cursor-pointer"
+              className="focus:ring-border-primary cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2"
             >
               {item.label}
             </Label>

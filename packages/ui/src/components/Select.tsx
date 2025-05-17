@@ -108,12 +108,12 @@ export const Select = ({
         aria-haspopup="listbox"
         ref={triggerRef}
         className={clsx(
-          "w-full min-w-[240px] px-5 rounded-4 text-left flex justify-between items-center transition duration-150 ease-in-out",
+          "rounded-4 flex w-full min-w-[240px] items-center justify-between px-5 text-left transition duration-150 ease-in-out",
           sizeClasses[size],
           variant === "default" &&
-            "bg-white border border-gray-30 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-50",
+            "border-gray-30 focus:ring-primary-50 border bg-white shadow-sm hover:shadow-md focus:outline-none focus:ring-2",
           variant === "text" &&
-            "bg-transparent border-none shadow-none underline hover:bg-gray-5",
+            "hover:bg-gray-5 border-none bg-transparent underline",
         )}
       >
         <span className={clsx(sizeClasses[size].button, "text-gray-90")}>
@@ -135,7 +135,7 @@ export const Select = ({
       {isOpen && (
         <div
           role="listbox"
-          className="absolute z-10 mt-2 w-full min-w-[240px] max-h-60 overflow-y-auto border border-gray-300 bg-white rounded-md shadow-lg"
+          className="absolute z-10 mt-2 max-h-60 w-full min-w-[240px] overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg"
         >
           {options.map((option, index) => (
             <button
@@ -151,20 +151,15 @@ export const Select = ({
                   handleSelect(option.value);
                 }
               }}
-              className={`
-                w-full px-5 text-left rounded-4 outline-none
-                ${sizeClasses[size].button}
-                ${
-                  selectedValue === option.value
-                    ? "text-primary-50 bg-primary-5"
-                    : "text-gray-90"
-                }
-                ${
-                  hoveredIndex === index || focusedIndex === index
-                    ? "bg-primary-5"
-                    : ""
-                }
-              `}
+              className={`rounded-4 w-full px-5 text-left outline-none ${sizeClasses[size].button} ${
+                selectedValue === option.value
+                  ? "text-primary-50 bg-primary-5"
+                  : "text-gray-90"
+              } ${
+                hoveredIndex === index || focusedIndex === index
+                  ? "bg-primary-5"
+                  : ""
+              } `}
               role="option"
               aria-selected={selectedValue === option.value}
             >

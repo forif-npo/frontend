@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const FileHwpIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const FileHwpIcon: React.FC<{
   width = 32,
   height = 32,
   className,
-  color = '#33363D',
-  backgroundColor = '#063A74',
+  color = "#33363D",
+  backgroundColor = "#063A74",
 }) => {
   return (
     <svg

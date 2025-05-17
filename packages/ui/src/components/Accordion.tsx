@@ -35,9 +35,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const contentId = `accordion-content-${title.replace(/\s+/g, "-").toLowerCase()}`;
 
   return (
-    <div className="w-full border-b border-divider-gray-light">
+    <div className="border-divider-gray-light w-full border-b">
       <button
-        className="w-full text-left py-6 px-6 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-border-primary"
+        className="focus:ring-border-primary flex w-full items-center justify-between px-6 py-6 text-left focus:outline-none focus:ring-2"
         onClick={onClick}
         aria-expanded={isOpen}
         aria-controls={contentId}
@@ -77,7 +77,7 @@ export const Accordion: React.FC<AccordionProps> = ({ items }) => {
   };
 
   return (
-    <div className="border-t border-divider-gray-light overflow-hidden">
+    <div className="border-divider-gray-light overflow-hidden border-t">
       {items.map((item, index) => (
         <AccordionItem
           key={index}

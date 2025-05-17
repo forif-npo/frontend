@@ -1,33 +1,33 @@
 export type SpinnerProps = {
-  size?: 'x-small' | 'small' | 'medium' | 'large' | 'x-large';
+  size?: "x-small" | "small" | "medium" | "large" | "x-large";
   className?: string;
 };
 
-export const Spinner = ({ size = 'medium', className = '' }: SpinnerProps) => {
-  const sizeStyles: { style: string; fontSize: 'l' | 'm' | 's' | 'xs' } = {
-    'x-small': {
-      style: 'w-4 h-4',
-      fontSize: 's' as const,
+export const Spinner = ({ size = "medium", className = "" }: SpinnerProps) => {
+  const sizeStyles: { style: string; fontSize: "l" | "m" | "s" | "xs" } = {
+    "x-small": {
+      style: "w-4 h-4",
+      fontSize: "s" as const,
     },
     small: {
-      style: 'w-5 h-5',
-      fontSize: 'm' as const,
+      style: "w-5 h-5",
+      fontSize: "m" as const,
     },
     medium: {
-      style: 'w-6 h-6',
-      fontSize: 'm' as const,
+      style: "w-6 h-6",
+      fontSize: "m" as const,
     },
     large: {
-      style: 'w-7 h-7',
-      fontSize: 'l' as const,
+      style: "w-7 h-7",
+      fontSize: "l" as const,
     },
-    'x-large': {
-      style: 'w-8 h-8',
-      fontSize: 'l' as const,
+    "x-large": {
+      style: "w-8 h-8",
+      fontSize: "l" as const,
     },
   }[size];
 
-  const colorStyles = '';
+  const colorStyles = "";
 
   const spinnerStyles = `
     ${sizeStyles.style} 

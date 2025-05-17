@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const AngleInverseIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = '#f9fafa' }) => {
+}> = ({ width = 24, height = 24, className, color = "#f9fafa" }) => {
   return (
     <svg
       width={width}

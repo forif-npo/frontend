@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const DeleteFillIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const DeleteFillIcon: React.FC<{
   width = 20,
   height = 20,
   className,
-  color = '#33363D',
-  backgroundColor = '#CDD1D5',
+  color = "#33363D",
+  backgroundColor = "#CDD1D5",
 }) => {
   return (
     <svg

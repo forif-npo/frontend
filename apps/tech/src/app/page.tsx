@@ -3,7 +3,7 @@ import { Badge } from "@repo/ui/components/server";
 
 export default function Home() {
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
+    <div className="flex h-screen w-screen items-center justify-center">
       <Badge variant="warning" label="하이" />
       <Button variant="primary">하이</Button>
       <Button variant="secondary">하이</Button>

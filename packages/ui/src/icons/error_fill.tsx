@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const ErrorFillIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const ErrorFillIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  color = 'white',
-  backgroundColor = '#EB003B',
+  color = "white",
+  backgroundColor = "#EB003B",
 }) => {
   return (
     <svg

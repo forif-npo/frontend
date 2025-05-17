@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Label } from './Label';
+import React, { useState } from "react";
+import { Label } from "./Label";
 
 interface TabProps {
   label: string;
@@ -27,25 +27,24 @@ const Tab: React.FC<{
       id={id}
       onClick={onClick}
       disabled={disabled}
-      className={`px-6 py-3 focus:outline-none focus:ring-2 focus:ring-primary-50 transition-all duration-400 ease-in-out'
-        ${
-          isSelected
-            ? 'border-b-4 border-primary rounded-t-2'
-            : 'border-b-4 border-transparent rounded-t-2'
-        } ${
+      className={`focus:ring-primary-50 duration-400 ease-in-out' px-6 py-3 transition-all focus:outline-none focus:ring-2 ${
+        isSelected
+          ? "border-primary rounded-t-2 border-b-4"
+          : "rounded-t-2 border-b-4 border-transparent"
+      } ${
         disabled
-          ? 'opacity-50 cursor-not-allowed'
-          : 'cursor-pointer hover:bg-secondary-5'
+          ? "cursor-not-allowed opacity-50"
+          : "hover:bg-secondary-5 cursor-pointer"
       }`}
     >
       <Label
-        color={isSelected ? 'primary' : 'gray-50'}
+        color={isSelected ? "primary" : "gray-50"}
         className={
           disabled
-            ? 'cursor-not-allowed'
+            ? "cursor-not-allowed"
             : isSelected
-            ? 'cursor-pointer'
-            : 'cursor-pointer hover:text-gray-70'
+              ? "cursor-pointer"
+              : "hover:text-gray-70 cursor-pointer"
         }
         size="l"
         weight="bold"
@@ -68,7 +67,7 @@ const TabPanel: React.FC<{
       role="tabpanel"
       id={id}
       aria-labelledby={tabId}
-      className={`${isSelected ? '' : 'hidden'}`}
+      className={`${isSelected ? "" : "hidden"}`}
     >
       {children}
     </div>
@@ -83,7 +82,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       <div
         role="tablist"
         aria-label="Tab Navigation"
-        className="flex border-b border-gray-20"
+        className="border-gray-20 flex border-b"
       >
         {tabs.map((tab, index) => (
           <Tab

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const HelpIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const HelpIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  color = 'white',
-  backgroundColor = '#2768FF',
+  color = "white",
+  backgroundColor = "#2768FF",
 }) => {
   return (
     <svg

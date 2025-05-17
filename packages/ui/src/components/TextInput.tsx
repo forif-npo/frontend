@@ -1,5 +1,5 @@
-import React, { forwardRef } from 'react';
-import { Label } from './Label';
+import React, { forwardRef } from "react";
+import { Label } from "./Label";
 
 type TextInputProps = {
   id: string;
@@ -7,7 +7,7 @@ type TextInputProps = {
   description?: string;
   helpText?: string;
   error?: string;
-  length?: 'x-short' | 'short' | 'middle' | 'long' | 'full';
+  length?: "x-short" | "short" | "middle" | "long" | "full";
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
@@ -19,7 +19,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       error,
       id,
       placeholder,
-      length = 'middle',
+      length = "middle",
       ...props
     },
     ref,
@@ -29,22 +29,22 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     const errorId = `${inputId}-error`;
 
     const lengthClasses = {
-      'x-short': 'w-16',
-      short: 'w-32',
-      middle: 'w-64',
-      long: 'w-128',
-      full: 'w-full',
+      "x-short": "w-16",
+      short: "w-32",
+      middle: "w-64",
+      long: "w-128",
+      full: "w-full",
     }[length];
 
     return (
-      <div className="flex flex-col gap-1 justify-center">
+      <div className="flex flex-col justify-center gap-1">
         {title && (
           <Label htmlFor={inputId} weight="bold">
             {title}
           </Label>
         )}
         {description && (
-          <Label size={'s'} color={'gray-50'}>
+          <Label size={"s"} color={"gray-50"}>
             {description}
           </Label>
         )}
@@ -53,27 +53,22 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             ref={ref}
             id={inputId}
             type="text"
-            className={`
-              ${lengthClasses} px-4 py-3 text-gray-70 border rounded-2 focus:border-primary
-              focus:outline-none focus:ring-1 focus:ring-primary mt-3
-              ${error ? 'border-danger' : 'border-gray-50'}
-              transition duration-150 ease-in-out
-            `}
+            className={` ${lengthClasses} text-gray-70 rounded-2 focus:border-primary focus:ring-primary mt-3 border px-4 py-3 focus:outline-none focus:ring-1 ${error ? "border-danger" : "border-gray-50"} transition duration-150 ease-in-out`}
             placeholder={placeholder}
             aria-describedby={error ? errorId : helperTextId}
-            aria-invalid={error ? 'true' : 'false'}
+            aria-invalid={error ? "true" : "false"}
             {...props}
           />
         </div>
         {error ? (
-          <Label id={errorId} size={'s'} color={'danger'} className="mt-1">
+          <Label id={errorId} size={"s"} color={"danger"} className="mt-1">
             {error}
           </Label>
         ) : helpText ? (
           <Label
             id={helperTextId}
-            size={'s'}
-            color={'gray-50'}
+            size={"s"}
+            color={"gray-50"}
             className="mt-1"
           >
             {helpText}

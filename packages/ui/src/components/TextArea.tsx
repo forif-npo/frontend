@@ -1,11 +1,11 @@
-import React, { forwardRef, useState } from 'react';
-import { Label } from './Label';
+import React, { forwardRef, useState } from "react";
+import { Label } from "./Label";
 
 type TextAreaProps = {
   id: string;
   title?: string;
   description?: string;
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
   maxLength?: number;
 } & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
@@ -16,7 +16,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       description,
       id,
       placeholder,
-      size = 'medium',
+      size = "medium",
       maxLength,
       onChange,
       ...props
@@ -26,9 +26,9 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const [charCount, setCharCount] = useState(0);
 
     const sizeClasses = {
-      small: 'h-24',
-      medium: 'h-32',
-      large: 'h-40',
+      small: "h-24",
+      medium: "h-32",
+      large: "h-40",
     }[size];
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -39,14 +39,14 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     };
 
     return (
-      <div className="flex flex-col gap-1 justify-center">
+      <div className="flex flex-col justify-center gap-1">
         {title && (
           <Label htmlFor={id} weight="bold">
             {title}
           </Label>
         )}
         {description && (
-          <Label size={'s'} color={'gray-50'}>
+          <Label size={"s"} color={"gray-50"}>
             {description}
           </Label>
         )}
@@ -54,11 +54,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           <textarea
             ref={ref}
             id={id}
-            className={`
-              w-full ${sizeClasses} px-4 py-3 text-gray-70 border rounded-4 
-              focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary mt-3
-              border-gray-50 transition duration-150 ease-in-out resize-none
-            `}
+            className={`w-full ${sizeClasses} text-gray-70 rounded-4 focus:border-primary focus:ring-primary mt-3 resize-none border border-gray-50 px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1`}
             placeholder={placeholder}
             maxLength={maxLength}
             onChange={handleChange}
@@ -66,10 +62,10 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           />
           {maxLength && (
             <div className="flex justify-end gap-1">
-              <Label color={'primary'} size={'xs'}>
+              <Label color={"primary"} size={"xs"}>
                 {charCount}
               </Label>
-              <Label size={'xs'}>{`/${maxLength}`}</Label>
+              <Label size={"xs"}>{`/${maxLength}`}</Label>
             </div>
           )}
         </div>

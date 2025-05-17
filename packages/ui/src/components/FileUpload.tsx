@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { Label } from './Label';
+import React, { useState, useRef } from "react";
+import { Label } from "./Label";
 
 interface FileObject {
   file: File;
   name: string;
   size: number;
-  status: 'uploading' | 'success' | 'error';
+  status: "uploading" | "success" | "error";
 }
 
 const XIcon: React.FC = () => (
@@ -57,7 +57,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
       file,
       name: file.name,
       size: file.size,
-      status: 'uploading',
+      status: "uploading",
     }));
 
     setFiles((prevFiles) => [...prevFiles, ...newFileObjects]);
@@ -67,7 +67,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
       setFiles((prevFiles) =>
         prevFiles.map((f) =>
           f.name === fileData.name
-            ? { ...f, status: success ? 'success' : 'error' }
+            ? { ...f, status: success ? "success" : "error" }
             : f,
         ),
       );
@@ -117,7 +117,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
   const UploadIcon: React.FC = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6 mx-auto mb-2"
+      className="mx-auto mb-2 h-6 w-6"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -133,7 +133,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
 
   const LoaderIcon: React.FC = () => (
     <svg
-      className="animate-spin h-4 w-4 mr-2"
+      className="mr-2 h-4 w-4 animate-spin"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -155,9 +155,9 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
   );
 
   return (
-    <div className="w-full mx-auto bg-white rounded-lg p-6">
-      <h2 className="text-xl font-bold mb-2">{title}</h2>
-      {description && <p className="text-gray-600 mb-4">{description}</p>}
+    <div className="mx-auto w-full rounded-lg bg-white p-6">
+      <h2 className="mb-2 text-xl font-bold">{title}</h2>
+      {description && <p className="mb-4 text-gray-600">{description}</p>}
 
       <div
         ref={dropZoneRef}
@@ -166,12 +166,11 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-lg px-10 py-12 text-center cursor-pointer
-          ${
-            isDragActive
-              ? 'border-primary-80'
-              : 'border-gray-30 hover:border-primary'
-          }`}
+        className={`cursor-pointer rounded-lg border-2 border-dashed px-10 py-12 text-center ${
+          isDragActive
+            ? "border-primary-80"
+            : "border-gray-30 hover:border-primary"
+        }`}
       >
         <input
           type="file"
@@ -186,42 +185,42 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
         </Label>
       </div>
 
-      <div className="flex flex-col mt-4 gap-2">
+      <div className="mt-4 flex flex-col gap-2">
         <p>
-          <Label size={'s'} color={'primary'}>
+          <Label size={"s"} color={"primary"}>
             {files.length}개
           </Label>
-          <Label size={'s'} color={'gray-60'}>
-            {' '}
+          <Label size={"s"} color={"gray-60"}>
+            {" "}
             / {maxFiles}개
           </Label>
         </p>
         {files.map((file, index) => (
           <div
             key={index}
-            className="flex items-center justify-between border border-solid border-gray-30 p-4 rounded-4 gap-2"
+            className="border-gray-30 rounded-4 flex items-center justify-between gap-2 border border-solid p-4"
           >
             <div className="flex items-center">
               <Label size="s">
                 {file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)
               </Label>
             </div>
-            {file.status === 'uploading' && <LoaderIcon />}
-            {file.status === 'success' && (
+            {file.status === "uploading" && <LoaderIcon />}
+            {file.status === "success" && (
               <button onClick={() => removeFile(file.name)}>
                 <Label
-                  className="flex items-center text-red-500 hover:text-red-700 cursor-pointer"
-                  size={'s'}
+                  className="flex cursor-pointer items-center text-red-500 hover:text-red-700"
+                  size={"s"}
                 >
                   <XIcon /> 삭제
                 </Label>
               </button>
             )}
-            {file.status === 'error' && (
+            {file.status === "error" && (
               <button onClick={() => removeFile(file.name)}>
                 <Label
-                  className="flex items-center text-red-500 hover:text-red-700 cursor-pointer"
-                  size={'s'}
+                  className="flex cursor-pointer items-center text-red-500 hover:text-red-700"
+                  size={"s"}
                 >
                   <XIcon /> 에러
                 </Label>

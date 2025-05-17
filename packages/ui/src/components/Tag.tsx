@@ -1,9 +1,9 @@
-import React, { KeyboardEvent, MouseEvent } from 'react';
-import { Label } from './Label';
+import React, { KeyboardEvent, MouseEvent } from "react";
+import { Label } from "./Label";
 
 interface TagProps {
   label: string;
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
   disabled?: boolean;
   onDelete?: (label: string) => void;
   onClick?: (label: string) => void;
@@ -12,14 +12,14 @@ interface TagProps {
 
 export const Tag: React.FC<TagProps> = ({
   label,
-  size = 'medium',
+  size = "medium",
   disabled = false,
   onDelete,
   onClick,
-  className = '',
+  className = "",
 }) => {
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       event.stopPropagation();
       if (!disabled && onClick) {
@@ -42,7 +42,7 @@ export const Tag: React.FC<TagProps> = ({
   };
 
   const handleDeleteKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       event.stopPropagation();
       if (!disabled && onDelete) {
@@ -52,17 +52,17 @@ export const Tag: React.FC<TagProps> = ({
   };
 
   const sizeStyle = {
-    small: { size: 's' as const, style: 'px-4 py-1 flex gap-1' },
-    medium: { size: 'm' as const, style: 'px-4 py-1 flex gap-1' },
-    large: { size: 'l' as const, style: 'px-4 py-1 flex gap-2' },
+    small: { size: "s" as const, style: "px-4 py-1 flex gap-1" },
+    medium: { size: "m" as const, style: "px-4 py-1 flex gap-1" },
+    large: { size: "l" as const, style: "px-4 py-1 flex gap-2" },
   }[size];
 
   return (
     <div
       className={`inline-flex items-center ${sizeStyle.style} rounded-full ${
         disabled
-          ? 'border border-gray-40 bg-gray-20 text-gray-50 cursor-not-allowed'
-          : 'border border-gray-40 bg-gray-0 text-gray-90 hover:bg-gray-10 cursor-pointer'
+          ? "border-gray-40 bg-gray-20 cursor-not-allowed border text-gray-50"
+          : "border-gray-40 bg-gray-0 text-gray-90 hover:bg-gray-10 cursor-pointer border"
       } ${className}`}
       role="button"
       tabIndex={disabled ? -1 : 0}
@@ -71,14 +71,14 @@ export const Tag: React.FC<TagProps> = ({
     >
       <Label
         size={sizeStyle.size}
-        color={disabled ? 'gray-50' : 'gray-90'}
-        className={`${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        color={disabled ? "gray-50" : "gray-90"}
+        className={`${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
       >
         {label}
       </Label>
       {onDelete && (
         <button
-          className={`${disabled ? 'cursor-not-allowed' : ''}`}
+          className={`${disabled ? "cursor-not-allowed" : ""}`}
           onClick={handleDelete}
           onKeyDown={handleDeleteKeyDown}
           tabIndex={0}
@@ -86,7 +86,7 @@ export const Tag: React.FC<TagProps> = ({
           aria-label={`Remove ${label} tag`}
         >
           <svg
-            className="w-4 h-4"
+            className="h-4 w-4"
             width="16"
             height="16"
             viewBox="0 0 16 16"

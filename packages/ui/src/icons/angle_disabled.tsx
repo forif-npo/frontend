@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const AngleDisabledIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = '#6F757B' }) => {
+}> = ({ width = 24, height = 24, className, color = "#6F757B" }) => {
   return (
     <svg
       width={width}
