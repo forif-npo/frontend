@@ -452,6 +452,26 @@
     --text-label-xs: 13px;
     --text-label-xs-mobile: 13px;
 
+    --text-detail-l: 17px;
+    --text-detail-l-mobile: 17px;
+    --text-detail-m: 15px;
+    --text-detail-m-mobile: 15px;
+    --text-detail-s: 13px;
+    --text-detail-s-mobile: 13px;
+
+    --text-title-xxl: 32px;
+    --text-title-xxl-mobile: 25px;
+    --text-title-xl: 25px;
+    --text-title-xl-mobile: 25px;
+    --text-title-l: 21px;
+    --text-title-l-mobile: 21px;
+    --text-title-m: 19px;
+    --text-title-m-mobile: 19px;
+    --text-title-s: 17px;
+    --text-title-s-mobile: 17px;
+    --text-title-xs: 15px;
+    --text-title-xs-mobile: 15px;
+
     --color-text-bolder: var(--krds-color-gray-95);
     --color-text-subtle: var(--krds-color-gray-70);
     --color-text-disabled: var(--krds-color-gray-40);

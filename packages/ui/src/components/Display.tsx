@@ -1,3 +1,5 @@
+import { cn } from "../utils/cn";
+
 export type DisplayProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s";
   children: React.ReactNode;
@@ -17,11 +19,10 @@ export const Display = <E extends React.ElementType = "h1">({
     s: "text-display-s-mobile sm:text-display-s",
   }[size];
   const weightClass = "font-bold";
-  const textColorClass = `text-${color}`;
 
   return (
     <h1
-      className={clsx(sizeClass, weightClass, textColorClass, className)}
+      className={cn(sizeClass, weightClass, color, className)}
       {...props}
     >
       {children}

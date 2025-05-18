@@ -1,3 +1,5 @@
+import { cn } from "../utils/cn";
+
 export type DetailProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s";
   weight?: "regular" | "bold";
@@ -8,7 +10,6 @@ export type DetailProps<E extends React.ElementType> = {
 export const Detail = <E extends React.ElementType = "span">({
   size = "m",
   weight = "regular",
-  color = "gray-90",
   children,
   className = "",
   ...props
@@ -23,11 +24,10 @@ export const Detail = <E extends React.ElementType = "span">({
     regular: "font-regular",
     bold: "font-bold",
   }[weight];
-  const textColorClass = `text-${color}`;
 
   return (
     <span
-      className={clsx(sizeClass, weightClass, textColorClass, className)}
+      className={cn(sizeClass, weightClass, className)}
       {...props}
     >
       {children}

@@ -18,6 +18,12 @@ const ALERT_TAG_MAP: Record<AlertVariant, string> = {
   information: "안내",
 } as const;
 
+const variantClaases: Record<AlertVariant, string> = {
+  danger: "bg-danger-50",
+  information: "bg-information-50",
+  success: "bg-success-50"
+}
+
 export const CriticalAlert = ({
   text,
   variant,
@@ -62,7 +68,7 @@ const UrgentBadge = ({ variant }: { variant: AlertVariant }) => {
     <span
       className={cn(
         "rounded-2 inline-flex h-[48px] w-[78px] items-center justify-center gap-1",
-        `bg-${variant}-50`,
+        variantClaases[variant],
       )}
     >
       {variant === "information" && <InfoIcon />}

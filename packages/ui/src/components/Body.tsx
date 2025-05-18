@@ -1,3 +1,5 @@
+import { cn } from "../utils/cn";
+
 export type BodyProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s";
   weight?: "regular" | "bold";
@@ -27,7 +29,7 @@ export const Body = <E extends React.ElementType = "p">({
 
   return (
     <p
-      className={clsx(sizeClass, weightClass, textColorClass, className)}
+      className={cn(sizeClass, weightClass, textColorClass, className)}
       {...props}
     >
       {children}
