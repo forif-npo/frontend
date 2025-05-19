@@ -27,7 +27,10 @@ export const Label = <E extends React.ElementType = "label">({
   }[weight];
 
   return (
-    <label className={clsx(sizeClass, weightClass, className)} {...props}>
+    <label
+      className={clsx("text-text-basic", sizeClass, weightClass, className)}
+      {...props}
+    >
       {children}
     </label>
   );

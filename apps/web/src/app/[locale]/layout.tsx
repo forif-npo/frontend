@@ -25,7 +25,7 @@ export default async function RootLayout({
   }
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className="bg-white">
+      <body style={{ backgroundColor: "var(--background)" }}>
         <ThemeProvider
           defaultTheme="light"
           enableColorScheme

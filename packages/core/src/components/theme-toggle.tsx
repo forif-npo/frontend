@@ -13,6 +13,7 @@ export function ThemeToggles() {
 
   const themeMapping: Record<string, string> = {
     light: "Default",
+    system: "System",
     "high-contrast": "High Contrast",
   };
 
