@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Spinner } from "../../packages/ui/src/components";
+import { Spinner } from "../../packages/ui/src/components/server";
 
 const meta = {
   title: "Components/Spinner",
@@ -28,14 +28,14 @@ export const Default: Story = {
 export const Primary: Story = {
   args: {
     size: "medium",
-    color: "primary",
+    className: "fill-text-primary",
   },
 };
 
 export const SuccessColors: Story = {
   args: {
     size: "medium",
-    color: "success",
+    className: "fill-text-success",
   },
 };
 

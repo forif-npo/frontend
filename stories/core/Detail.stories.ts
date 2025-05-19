@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Detail } from "../../packages/ui/src/components";
+import { Detail } from "../../packages/ui/src/components/server";
 
 const description = `
 Detail은 추가 정보나 작은 정보 텍스트에 사용한다.

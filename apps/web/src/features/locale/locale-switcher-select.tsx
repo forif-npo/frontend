@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { Button } from "@ui/components/client";
 import clsx from "clsx";
 import { Locale } from "next-intl";
 import { useParams } from "next/navigation";
@@ -36,22 +37,23 @@ export default function LocaleSwitcherSelect({
   }
 
   return (
-    <label
-      className={clsx(
-        "relative text-gray-400",
-        isPending && "transition-opacity [&:disabled]:opacity-30",
-      )}
-    >
-      <p className="sr-only">{label}</p>
-      <select
-        className="inline-flex appearance-none bg-transparent py-3 pl-2 pr-6"
-        defaultValue={defaultValue}
-        disabled={isPending}
-        onChange={onSelectChange}
+    <Button variant="text" size="x-small">
+      <label
+        className={clsx(
+          "text-text-basic relative",
+          isPending && "transition-opacity [&:disabled]:opacity-30",
+        )}
       >
-        {children}
-      </select>
-      <span className="pointer-events-none absolute right-2 top-[8px]">⌄</span>
-    </label>
+        <p className="sr-only">{label}</p>
+        <select
+          className="inline-flex cursor-pointer py-2"
+          defaultValue={defaultValue}
+          disabled={isPending}
+          onChange={onSelectChange}
+        >
+          {children}
+        </select>
+      </label>
+    </Button>
   );
 }

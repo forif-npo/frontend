@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import { Body, Disclosure } from "../../packages/ui/src/components";
+import { Disclosure } from "../../packages/ui/src/components/client";
+import { Body } from "../../packages/ui/src/components/server";
 
 const meta = {
   title: "Components/Disclosure",

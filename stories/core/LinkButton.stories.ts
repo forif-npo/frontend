@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { LinkButton } from "../../packages/ui/src/components";
+import { LinkButton } from "../../packages/ui/src/components/server";
 
 const meta = {
   title: "Components/Link",
@@ -31,7 +31,7 @@ export const Accent: Story = {
   args: {
     variant: "accent",
     children: "링크 버튼: Accent",
-    link: "https://uiux.egovframe.go.kr/guide/index.html",
+    href: "https://uiux.egovframe.go.kr/guide/index.html",
     title: "uiux.egovframe.go.kr 이동",
   },
 };
@@ -39,7 +39,7 @@ export const Accent: Story = {
 export const Default: Story = {
   args: {
     children: "링크 버튼: Default",
-    link: "https://uiux.egovframe.go.kr/guide/index.html",
+    href: "https://uiux.egovframe.go.kr/guide/index.html",
     title: "uiux.egovframe.go.kr 이동",
   },
 };
@@ -47,7 +47,7 @@ export const Default: Story = {
 export const Small: Story = {
   args: {
     children: "링크 버튼: Default",
-    link: "https://uiux.egovframe.go.kr/guide/index.html",
+    href: "https://uiux.egovframe.go.kr/guide/index.html",
     title: "uiux.egovframe.go.kr 이동",
     size: "small",
   },
@@ -56,7 +56,7 @@ export const Small: Story = {
 export const Medium: Story = {
   args: {
     children: "링크 버튼: Default",
-    link: "https://uiux.egovframe.go.kr/guide/index.html",
+    href: "https://uiux.egovframe.go.kr/guide/index.html",
     title: "uiux.egovframe.go.kr 이동",
     size: "medium",
   },
@@ -65,7 +65,7 @@ export const Medium: Story = {
 export const Large: Story = {
   args: {
     children: "링크 버튼: Default",
-    link: "https://uiux.egovframe.go.kr/guide/index.html",
+    href: "https://uiux.egovframe.go.kr/guide/index.html",
     title: "uiux.egovframe.go.kr 이동",
     size: "large",
   },
@@ -74,7 +74,7 @@ export const Large: Story = {
 export const popupLink: Story = {
   args: {
     children: "팝업 링크 버튼",
-    link: "https://uiux.egovframe.go.kr/guide/index.html",
+    href: "https://uiux.egovframe.go.kr/guide/index.html",
     title: "uiux.egovframe.go.kr 이동",
     target: "_blank",
     rel: "noopener noreferrer",

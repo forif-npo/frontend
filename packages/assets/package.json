@@ -1,0 +1,32 @@
+{
+  "name": "@repo/assets",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./icons/krds": "./icons/krds/index.ts",
+    "./icons/lucide": "./icons/lucide/index.ts",
+    "./images/*": {
+      "import": "./images/*"
+    },
+    "./fonts/*": {
+      "import": "./fonts/*"
+    }
+  },
+  "dependencies": {
+    "lucide-react": "^0.511.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^20.17.43",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "typescript": "^5"
+  },
+  "packageManager": "pnpm@10.10.0",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  }
+}

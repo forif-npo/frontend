@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Label } from "../../packages/ui/src/components";
+import { Label } from "../../packages/ui/src/components/server";
 
 const description = `
 구성 요소 내부의 텍스트로 사용한다. (예: Button, Label, Chips ...)

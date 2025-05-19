@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
-import { Modal } from "../../packages/ui/src/components";
+import { Modal } from "../../packages/ui/src/components/client";
 
 const meta = {
   title: "Components/Modal",
@@ -17,6 +17,7 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     onClose: { action: "clicked" },
+    onConfirm: { action: "clicked" },
     title: { control: "text" },
     children: { control: "text" },
     isOpen: { control: "boolean" },
@@ -28,6 +29,7 @@ type Story = StoryObj<typeof meta>;
 
 interface ModalWrapperProps {
   title: string;
+  onConfirm?: () => void;
   children: React.ReactNode;
 }
 
@@ -50,11 +52,10 @@ const ModalWrapper: React.FC<ModalWrapperProps> = (args) => {
         {...args}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        onCancel={() => setIsOpen(false)}
         onConfirm={
           args.onConfirm
             ? () => {
-                args.onConfirm();
+                args.onConfirm!();
                 setIsOpen(false);
               }
             : undefined

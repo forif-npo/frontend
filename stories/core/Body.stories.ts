@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Body } from "../../packages/ui/src/components";
+import { Body } from "../../packages/ui/src/components/server";
 
 const description = `
 Body는 본문 텍스트로 사용한다.

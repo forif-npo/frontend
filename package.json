@@ -3,24 +3,33 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "add:admin": "pnpm add -F admin",
+    "add:client": "pnpm add -F web -F admin",
+    "add:web": "pnpm add -F web",
     "build": "turbo run build",
+    "build-storybook": "storybook build",
     "clean": "turbo run clean",
+    "commit": "./node_modules/cz-customizable/standalone.js",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
-    "lint:package": "npx sort-package-json",
+    "lint:package": "npx sort-package-json 'package.json' 'packages/*/package.json' 'apps/*/package.json'",
     "prepare": "husky",
-    "test": "turbo run test",
-    "commit": "./node_modules/cz-customizable/standalone.js",
-    "add:web": "pnpm add -F web",
-    "add:admin": "pnpm add -F admin",
-    "add:client": "pnpm add -F web -F admin",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "test": "turbo run test",
+    "type-check": "turbo run type-check"
   },
   "lint-staged": {
-    "*.md": "prettier --write"
+    "*.md": "prettier --write",
+    "package.json": [
+      "pnpm lint:package"
+    ]
+  },
+  "config": {
+    "cz-customizable": {
+      "config": "cz-config.js"
+    }
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
@@ -29,7 +38,6 @@
     "@storybook/addon-essentials": "^8.6.14",
     "@storybook/addon-interactions": "^8.6.14",
     "@storybook/addon-links": "^8.6.14",
-    "@storybook/addon-onboarding": "^8.6.14",
     "@storybook/addon-styling-webpack": "^1.0.1",
     "@storybook/addon-themes": "^8.6.14",
     "@storybook/blocks": "^8.6.14",
@@ -48,10 +56,5 @@
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
-  },
-  "config": {
-    "cz-customizable": {
-      "config": "cz-config.js"
-    }
   }
 }

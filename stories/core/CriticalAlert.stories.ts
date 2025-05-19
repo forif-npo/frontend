@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { CriticalAlert } from "../../packages/ui/src/components";
+import { CriticalAlert } from "../../packages/ui/src/components/client";
 
 export default {
   title: "Components/CriticalAlert",

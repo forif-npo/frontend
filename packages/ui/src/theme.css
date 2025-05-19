@@ -485,7 +485,7 @@
   }
 
   [data-theme="high-contrast"] {
-    --background: var(--krds-color-gray-100);
+    --background: var(--krds-color-gray-95);
     --foreground: var(--krds-color-gray-0);
 
     --krds-color-primary-5: #ecf2fe;

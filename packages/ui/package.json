@@ -1,27 +1,31 @@
 {
   "name": "@repo/ui",
   "version": "0.0.0",
-  "type": "module",
   "sideEffects": false,
-  "scripts": {
-    "build": "tailwindcss -i ./src/styles.css -o ./dist/styles.css",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "dev": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --watch",
-    "type-check": "tsc --noEmit"
-  },
+  "type": "module",
   "exports": {
     "./styles.css": "./dist/styles.css",
-    "./components/server": "./src/index.server.ts",
-    "./components/client": "./src/index.client.ts",
-    "./components": "./src/index.ts",
+    "./components/server": "./src/components/server/index.ts",
+    "./components/client": "./src/components/client/index.ts",
     "./theme-provider": "./src/provider.tsx",
-    "./colors": "./src/colors/color.ts"
+    "./colors": "./src/colors/color.ts",
+    "./features/*": "./src/features/*.ts"
+  },
+  "scripts": {
+    "build": "tailwindcss -i ./src/styles.css -o ./dist/styles.css",
+    "dev": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@repo/assets": "workspace:*",
+    "@repo/core": "workspace:*",
     "@tailwindcss/cli": "^4.1.7",
     "clsx": "^2.1.1",
+    "next-themes": "^0.4.6",
     "postcss": "^8.5.3",
+    "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.3.0",
@@ -36,6 +40,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
+    "jest": "^29.7.0",
     "typescript": "^5"
   },
   "packageManager": "pnpm@10.10.0",
