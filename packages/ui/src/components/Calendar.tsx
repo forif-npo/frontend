@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { cn } from "../utils/cn";
 import { Button } from "./Button";
 import { Label } from "./Label";
 
@@ -26,16 +27,20 @@ const MONTHS = [
   "12월",
 ];
 
-const TriangleIcon: React.FC<{ direction: "left" | "right" }> = ({
-  direction,
-}) => (
+const TriangleIcon: React.FC<{
+  direction: "left" | "right";
+  className?: string;
+}> = ({ direction, className }) => (
   <svg
     width="24"
     height="24"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="hover:text-primary-50 text-gray-600 transition-colors"
+    className={cn(
+      "hover:text-primary-50 text-gray-600 transition-colors",
+      className,
+    )}
   >
     <path
       d={direction === "left" ? "M15 18l-6-6 6-6" : "M9 18l6-6-6-6"}
@@ -129,7 +134,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       <div className="grid grid-cols-7 gap-1 py-8">
         {DAYS.map((day) => (
           <div key={day} className="text-center">
-            <Label size="s" color="text-basic" weight="bold">
+            <Label size="s" weight="bold">
               {day}
             </Label>
           </div>
@@ -178,7 +183,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             onClick={() => changeMonth(-1)}
             className="text-icon-subtle hover:text-icon-primary rounded-max border-border-gray-light flex h-[32px] w-[32px] items-center justify-center border focus:outline-none"
           >
-            <TriangleIcon direction="left" />
+            <TriangleIcon direction="left" className="text-text-basic" />
           </button>
           <div className="flex gap-2">
             <select
@@ -188,10 +193,10 @@ export const Calendar: React.FC<CalendarProps> = ({
                   new Date(parseInt(e.target.value), currentDate.getMonth(), 1),
                 )
               }
-              className="text-heading-s-mobile sm:text-heading-s p-1 font-bold"
+              className="text-heading-s-mobile sm:text-heading-s text-text-basic p-1 font-bold"
             >
               {YEARS.map((year) => (
-                <option key={year} value={year}>
+                <option key={year} value={year} style={{ color: "initial" }}>
                   {year}년
                 </option>
               ))}
@@ -203,10 +208,10 @@ export const Calendar: React.FC<CalendarProps> = ({
                   new Date(today.getFullYear(), parseInt(e.target.value), 1),
                 )
               }
-              className="text-heading-s-mobile sm:text-heading-s p-1 font-bold"
+              className="text-heading-s-mobile sm:text-heading-s text-text-basic p-1 font-bold"
             >
               {MONTHS.map((month, index) => (
-                <option key={month} value={index}>
+                <option key={month} value={index} style={{ color: "initial" }}>
                   {month}
                 </option>
               ))}
@@ -216,7 +221,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             onClick={() => changeMonth(1)}
             className="text-icon-subtle hover:text-icon-primary rounded-max border-border-gray-light flex h-[32px] w-[32px] items-center justify-center border focus:outline-none"
           >
-            <TriangleIcon direction="right" />
+            <TriangleIcon direction="right" className="text-text-basic" />
           </button>
         </div>
         {renderCalendar()}

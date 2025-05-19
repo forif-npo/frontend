@@ -20,7 +20,10 @@ export const Default: Story = {
       { label: "홈", onClick: () => console.log("홈") },
       { label: "문서", onClick: () => console.log("문서") },
       { label: "서적", onClick: () => console.log("서적") },
-      { label: "서적 서적", onClick: () => console.log("서적 서적") },
+      {
+        label: "Effective Typescript",
+        onClick: () => console.log("Effective Typescript"),
+      },
     ],
   },
 };
@@ -31,7 +34,10 @@ export const MaxItems: Story = {
       { label: "홈", onClick: () => console.log("홈") },
       { label: "문서", onClick: () => console.log("문서") },
       { label: "서적", onClick: () => console.log("서적") },
-      { label: "서적 서적", onClick: () => console.log("서적 서적") },
+      {
+        label: "Effective Typescript",
+        onClick: () => console.log("Effective Typescript"),
+      },
     ],
     maxLength: 2,
   },
@@ -43,7 +49,10 @@ export const WithoutEllipsis: Story = {
       { label: "홈", onClick: () => console.log("홈") },
       { label: "문서", onClick: () => console.log("문서") },
       { label: "서적", onClick: () => console.log("서적") },
-      { label: "서적 서적", onClick: () => console.log("서적 서적") },
+      {
+        label: "Effective Typescript",
+        onClick: () => console.log("Effective Typescript"),
+      },
     ],
     maxLength: 5,
   },
@@ -55,7 +64,10 @@ export const maxLengthIsLessThan2: Story = {
       { label: "홈", onClick: () => console.log("홈") },
       { label: "문서", onClick: () => console.log("문서") },
       { label: "서적", onClick: () => console.log("서적") },
-      { label: "서적 서적", onClick: () => console.log("서적 서적") },
+      {
+        label: "Effective Typescript",
+        onClick: () => console.log("Effective Typescript"),
+      },
     ],
     maxLength: 1,
   },

@@ -11,7 +11,7 @@ interface BreadcrumbProps {
   maxLength?: number;
 }
 
-const ChevronIcon: React.FC = () => (
+const ChevronIcon = ({ className }: { className?: string }) => (
   <svg
     width="16"
     height="16"
@@ -19,6 +19,7 @@ const ChevronIcon: React.FC = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
+    className={className}
   >
     <path
       d="M6 4L10 8L6 12"
@@ -30,7 +31,7 @@ const ChevronIcon: React.FC = () => (
   </svg>
 );
 
-const EllipsisIcon: React.FC = () => (
+const EllipsisIcon = ({ className }: { className?: string }) => (
   <svg
     width="16"
     height="16"
@@ -38,6 +39,7 @@ const EllipsisIcon: React.FC = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
+    className={className}
   >
     <circle cx="3" cy="8" r="1" fill="currentColor" />
     <circle cx="8" cy="8" r="1" fill="currentColor" />
@@ -69,11 +71,11 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
       <ol className="flex items-center">
         {renderItems().map((item, index) => (
           <li key={index} className="m-0 flex items-center">
-            {index > 0 && <ChevronIcon />}
+            {index > 0 && <ChevronIcon className="text-text-basic" />}
             {index === 1 && items.length > maxItems && (
               <>
-                <EllipsisIcon />
-                <ChevronIcon />
+                <EllipsisIcon className="text-text-basic" />
+                <ChevronIcon className="text-text-basic" />
               </>
             )}
             <Label

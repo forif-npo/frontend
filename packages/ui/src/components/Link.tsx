@@ -26,11 +26,10 @@ export const Link = <E extends React.ElementType = "a">({
     regular: "font-regular",
     bold: "font-bold",
   }[weight];
-  const textColorClass = "";
 
   return (
     <a
-      className={cn(sizeClass, weightClass, textColorClass, className)}
+      className={cn(sizeClass, weightClass, className)}
       title={title}
       aria-label={title}
       {...props}

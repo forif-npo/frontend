@@ -1,13 +1,16 @@
 import React, { useRef, useState } from "react";
 import { Label } from "./Label";
 
-const ChevronIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
+const ChevronIcon: React.FC<{ isOpen: boolean; className?: string }> = ({
+  isOpen,
+  className,
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width="24"
     height="24"
-    className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+    className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""} ${className}`}
     aria-hidden="true"
   >
     <path
@@ -46,7 +49,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           {title}
         </Label>
         <span className="ml-6 flex-shrink-0">
-          <ChevronIcon isOpen={isOpen} />
+          <ChevronIcon isOpen={isOpen} className="text-text-basic" />
         </span>
         <span className="sr-only">{isOpen ? "접기" : "펼치기"}</span>
       </button>
@@ -59,9 +62,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : "0px",
         }}
       >
-        <div className="text-label-s-mobile sm:text-label-s p-6">
+        <Label size="s" className="p-6">
           {children}
-        </div>
+        </Label>
       </div>
     </div>
   );

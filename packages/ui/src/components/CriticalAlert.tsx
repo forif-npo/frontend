@@ -21,8 +21,8 @@ const ALERT_TAG_MAP: Record<AlertVariant, string> = {
 const variantClaases: Record<AlertVariant, string> = {
   danger: "bg-danger-50",
   information: "bg-information-50",
-  success: "bg-success-50"
-}
+  success: "bg-success-50",
+};
 
 export const CriticalAlert = ({
   text,
@@ -37,7 +37,11 @@ export const CriticalAlert = ({
     >
       <div className={`flex items-center justify-between gap-3`}>
         <UrgentBadge variant={variant} />
-        <Label className="flex-auto text-gray-100" size="m" weight="bold">
+        <Label
+          className="text-text-basic-inverse flex-auto"
+          size="m"
+          weight="bold"
+        >
           {text}
         </Label>
         <div className="hidden md:block">
@@ -91,9 +95,8 @@ const MoreLinkButton = ({ link, title }: { link: string; title?: string }) => {
       }}
     >
       <Label
-        color="gray-100"
         size="m"
-        className="hidden cursor-pointer md:inline-block"
+        className="text-text-basic-inverse hidden cursor-pointer md:inline-block"
       >
         자세히보기
       </Label>

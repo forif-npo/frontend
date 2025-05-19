@@ -10,7 +10,6 @@ export type BodyProps<E extends React.ElementType> = {
 export const Body = <E extends React.ElementType = "p">({
   size = "m",
   weight = "regular",
-  color = "gray-90",
   children,
   className = "",
   ...props
@@ -25,11 +24,10 @@ export const Body = <E extends React.ElementType = "p">({
     regular: "font-regular",
     bold: "font-bold",
   }[weight];
-  const textColorClass = `text-${color}`;
 
   return (
     <p
-      className={cn(sizeClass, weightClass, textColorClass, className)}
+      className={cn("text-text-basic", sizeClass, weightClass, className)}
       {...props}
     >
       {children}

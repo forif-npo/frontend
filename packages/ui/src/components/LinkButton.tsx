@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "../utils/cn";
 import { Link } from "./Link";
 
 export type LinkButtonProps<E extends React.ElementType> = {
@@ -44,7 +45,7 @@ export const LinkButton = <E extends React.ElementType = "a">({
 
   return (
     <Link
-      className={`${baseStyles} ${variantStyles.style} ${className}`}
+      className={cn(baseStyles, variantStyles.style, className)}
       size={linkSize}
       href={link}
       role="link"

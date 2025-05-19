@@ -1,13 +1,16 @@
 import React, { useRef, useState } from "react";
 import { Label } from "./Label";
 
-const ChevronIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
+const ChevronIcon: React.FC<{ isOpen: boolean; className?: string }> = ({
+  isOpen,
+  className,
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width="24"
     height="24"
-    className={`transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
+    className={`transition-transform duration-300 ${isOpen ? "rotate-90" : ""} ${className}`}
     aria-hidden="true"
   >
     <path
@@ -46,7 +49,7 @@ export const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
         aria-controls={contentId}
       >
         <span className="mr-4 flex-shrink-0">
-          <ChevronIcon isOpen={isOpen} />
+          <ChevronIcon isOpen={isOpen} className="text-text-basic" />
         </span>
         <Label size="m" className="cursor-pointer">
           {title}
