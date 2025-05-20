@@ -18,6 +18,7 @@
     "@hookform/resolvers": "^5.0.1",
     "@repo/core": "workspace:*",
     "@repo/ui": "workspace:*",
+    "@repo/assets": "workspace:*",
     "@sentry/nextjs": "^9.17.0",
     "clsx": "^2.1.1",
     "lodash": "^4.17.21",

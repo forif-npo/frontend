@@ -11,7 +11,8 @@
     "./dictionaries/*": "./src/dictionaries/*.json",
     "./schemas": "./src/schemas/index.ts",
     "./mock": "./mock.ts",
-    "./components": "./src/components/index.ts"
+    "./components": "./src/components/index.ts",
+    "./features/*": "./src/features/*"
   },
   "scripts": {
     "lint": "eslint .",
@@ -26,7 +27,10 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "typesafe-i18n": "^5.26.2",
-    "zod": "^3.24.4"
+    "zod": "^3.24.4",
+    "@repo/assets": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "clsx": "^2.1.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -36,7 +40,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "typescript": "^5"
+    "typescript": "^5",
+    "tailwind-merge": "^3.3.0"
   },
   "packageManager": "pnpm@10.10.0",
   "engines": {
