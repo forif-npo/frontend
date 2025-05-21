@@ -12,7 +12,8 @@
     "typescript": "^5"
   },
   "exports": {
-    "./icons": "./icons/index.ts",
+    "./icons/krds": "./icons/krds/index.ts",
+    "./icons/lucide": "./icons/lucide/index.ts",
     "./images/*": {
       "import": "./images/*"
     },
@@ -24,5 +25,8 @@
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
+  },
+  "dependencies": {
+    "lucide-react": "^0.511.0"
   }
 }

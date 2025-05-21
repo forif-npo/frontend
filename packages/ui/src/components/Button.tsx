@@ -3,7 +3,7 @@ import React from "react";
 import { Label } from "./Label";
 
 export type ButtonProps<E extends React.ElementType> = {
-  variant?: "primary" | "secondary" | "tertiary" | "text";
+  variant?: "primary" | "secondary" | "tertiary" | "text" | "icon";
   size?: "x-small" | "small" | "medium" | "large" | "x-large";
   children: React.ReactNode;
   className?: string;
@@ -19,7 +19,7 @@ export const Button = <E extends React.ElementType = "button">({
   ...props
 }: ButtonProps<E>) => {
   const baseStyles =
-    "inline-flex items-center justify-center rounded-2 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200";
+    "inline-flex items-center justify-center rounded-2 focus:outline-none focus:ring-1 focus:ring-offset-1 transition-colors duration-200 cursor-pointer";
 
   const variantStyles = {
     primary: {
@@ -44,6 +44,11 @@ export const Button = <E extends React.ElementType = "button">({
         "bg-transparent text-link-default hover:bg-button-text-fill-hover active:bg-button-text-fill-pressed",
       disabledStyle: "text-link-disabled",
     },
+    icon: {
+      style:
+        "bg-transparent text-link-default hover:bg-button-text-fill-hover active:bg-button-text-fill-pressed",
+      disabledStyle: "text-link-disabled",
+    },
   }[variant];
 
   const textColors = {
@@ -51,6 +56,7 @@ export const Button = <E extends React.ElementType = "button">({
     secondary: "text-text-primary",
     tertiary: "text-text-basic",
     text: "text-text-basic",
+    icon: "flex items-center justify-center",
   };
 
   const sizeStyles: { style: string; fontSize: "l" | "m" | "s" | "xs" } = {

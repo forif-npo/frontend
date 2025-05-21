@@ -8,6 +8,6 @@
   },
   "LocaleSwitcher": {
     "label": "언어 변환",
-    "locale": "{locale, select, ko {한국어} en {English} other {Unknown}}"
+    "locale": "{locale, select, ko {KO} en {EN} other {Unknown}}"
   }
 }

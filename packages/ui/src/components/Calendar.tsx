@@ -159,13 +159,13 @@ export const Calendar: React.FC<CalendarProps> = ({
           >
             <Label
               size="m"
-              color={
+              className={cn(
+                "cursor-pointer",
                 isDateInRange(date) ||
-                selectedDates.some((d) => d.getTime() === date.getTime())
-                  ? "text-bolder-inverse"
-                  : "text-basic"
-              }
-              className="cursor-pointer"
+                  selectedDates.some((d) => d.getTime() === date.getTime())
+                  ? "text-text-bolder-inverse"
+                  : "text-text-basic",
+              )}
             >
               {date.getDate()}
             </Label>

@@ -4,6 +4,7 @@ import { ThemeProvider } from "@repo/core/theme-provider";
 import { NavBar } from "@repo/ui/features/common/navigation";
 import type { Metadata } from "next";
 
+import LocaleSwitcher from "@/features/locale/locale-switcher";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -38,6 +39,7 @@ export default async function RootLayout({
             <NextIntlClientProvider>
               <NavBar
                 logo={<Image src={NavLogo} alt="Logo" width={87} height={56} />}
+                rightSlot={<LocaleSwitcher />}
                 items={[
                   {
                     label: "Home",
