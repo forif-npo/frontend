@@ -20,7 +20,10 @@
     "test": "turbo run test"
   },
   "lint-staged": {
-    "*.md": "prettier --write"
+    "*.md": "prettier --write",
+    "package.json": [
+      "pnpm lint:package"
+    ]
   },
   "config": {
     "cz-customizable": {
