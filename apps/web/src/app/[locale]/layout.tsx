@@ -1,7 +1,7 @@
 import { routing } from "@/i18n/routing";
 import NavLogo from "@repo/assets/images/nav_logo.png";
 import { ThemeProvider } from "@repo/core/theme-provider";
-import { NavBar } from "@repo/ui/features/common/navigation";
+import { NavBar } from "@repo/ui/features/common/navigation/nav-bar";
 import type { Metadata } from "next";
 
 import LocaleSwitcher from "@/features/locale/locale-switcher";

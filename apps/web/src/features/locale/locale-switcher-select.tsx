@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { Button } from "@ui/index.client";
+import { Button } from "@ui/components/client";
 import clsx from "clsx";
 import { Locale } from "next-intl";
 import { useParams } from "next/navigation";

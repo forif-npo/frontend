@@ -1,7 +1,7 @@
 "use client";
-
 import { LoginIcon, SearchIcon } from "@repo/assets/icons/krds";
-import { Button, Link } from "@ui/components";
+import { Button } from "@ui/components/client";
+import { LinkButton } from "@ui/components/server";
 import { ThemeToggles } from "@ui/features/common/theme";
 import { cn } from "@ui/utils/cn";
 import { NavigationBarProps } from "./types";
@@ -13,8 +13,8 @@ export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
       <ul className="flex flex-grow gap-4">
         {items.map(({ label, href, active }) => (
           <li key={label}>
-            <Link
-              href={href}
+            <LinkButton
+              link={href}
               className={cn(
                 "text-text-subtle hover:text-text-primary",
                 active && "text-text-basic font-semibold",
@@ -22,7 +22,7 @@ export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
               )}
             >
               {label}
-            </Link>
+            </LinkButton>
           </li>
         ))}
       </ul>

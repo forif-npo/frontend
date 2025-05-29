@@ -5,12 +5,11 @@
   "type": "module",
   "exports": {
     "./styles.css": "./dist/styles.css",
-    "./components/server": "./src/index.server.ts",
-    "./components/client": "./src/index.client.ts",
-    "./components": "./src/index.ts",
+    "./components/server": "./src/components/server/index.ts",
+    "./components/client": "./src/components/client/index.ts",
     "./theme-provider": "./src/provider.tsx",
     "./colors": "./src/colors/color.ts",
-    "./features/*": "./src/features/*"
+    "./features/*": "./src/features/*.tsx"
   },
   "scripts": {
     "build": "tailwindcss -i ./src/styles.css -o ./dist/styles.css",
