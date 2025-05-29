@@ -1,7 +1,7 @@
 "use client";
 import { CriticalAlert } from "@repo/ui/components/client";
-import { Button, Carousel } from "@ui/components";
-import { CarouselItem } from "@ui/components/Carousel";
+import { Button, Carousel } from "@ui/components/client";
+import { CarouselItem } from "@ui/components/client/Carousel";
 export default function Page() {
   return (
     <div className="min-h-screen">

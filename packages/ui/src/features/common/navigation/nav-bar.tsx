@@ -1,7 +1,7 @@
 "use client";
 import { LoginIcon, SearchIcon } from "@repo/assets/icons/krds";
 import { Button } from "@ui/components/client";
-import { LinkButton } from "@ui/components/server";
+import { Link, LinkButton, Title } from "@ui/components/server";
 import { ThemeToggles } from "@ui/features/common/theme";
 import { cn } from "@ui/utils/cn";
 import { useEffect, useRef, useState } from "react";

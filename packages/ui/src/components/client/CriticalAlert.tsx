@@ -33,7 +33,7 @@ export const CriticalAlert = ({
 }: CriticalAlertProps) => {
   return (
     <div
-      className={`border-border-gray-light rounded-2 bg-gray-0 container mx-auto border px-5 py-3 ${className} `}
+      className={`border-border-gray-light rounded-2 bg-surface-white container mx-auto border px-5 py-3 ${className} `}
     >
       <div className={`flex items-center justify-between gap-3`}>
         <UrgentBadge variant={variant} />

@@ -12,15 +12,13 @@ export default function LocaleSwitcher() {
     };
   });
 
-  console.log(locale);
-
   return (
     <LocaleSwitcherSelect defaultValue={locale} label={t("label")}>
       {options.map((option) => (
         <option
           key={option.value}
           value={option.value}
-          className={`rounded-2 text-gray-90 w-full px-5 text-left outline-none`}
+          className={`rounded-2 text-text-basic w-full px-5 text-left outline-none`}
           role="option"
         >
           {t("locale", { locale: option.label })}

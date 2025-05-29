@@ -1,8 +1,8 @@
 import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
 import Image from "next/image";
-import { Body } from "./Body";
+import { Body } from "../server/Body";
+import { Display } from "../server/Display";
 import { Button } from "./Button";
-import { Display } from "./Display";
 
 interface CarouselProps {
   carouselItems: CarouselItem[];
@@ -24,10 +24,10 @@ export function Carousel({ carouselItems }: CarouselProps) {
       <CarouselArrow align="left" title="이전" />
       <div className="flex w-full max-w-[1200px] flex-row items-center justify-between">
         <div className="max-w-[600px]">
-          <Display size="s" className="mb-6">
+          <Display size="s" className="text-text-basic mb-6">
             {carouselItems[0].title}
           </Display>
-          <Body size="l" className="mb-6">
+          <Body size="l" className="text-text-basic mb-6">
             {carouselItems[0].description}
           </Body>
           {carouselItems[0].footer ? (
@@ -65,7 +65,11 @@ export function CarouselArrow({
       onClick={onClick}
       className="bg-surface-white hover:bg-surface-white-subtler border-border-gray-light flex cursor-pointer items-center gap-2 rounded-full border p-2"
     >
-      {align === "left" ? <ArrowLeft /> : <ArrowRight />}
+      {align === "left" ? (
+        <ArrowLeft className="text-text-basic" />
+      ) : (
+        <ArrowRight className="text-text-basic" />
+      )}
       <span className="sr-only">{title}</span>
     </button>
   );
