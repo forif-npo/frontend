@@ -9,7 +9,6 @@ export type DisplayProps<E extends React.ElementType> = {
 export const Display = <E extends React.ElementType = "h1">({
   size = "m",
   children,
-  color = "gray-90",
   className = "",
   ...props
 }: DisplayProps<E>) => {
@@ -21,7 +20,10 @@ export const Display = <E extends React.ElementType = "h1">({
   const weightClass = "font-bold";
 
   return (
-    <h1 className={cn(sizeClass, weightClass, color, className)} {...props}>
+    <h1
+      className={cn("text-text-basic", sizeClass, weightClass, className)}
+      {...props}
+    >
       {children}
     </h1>
   );

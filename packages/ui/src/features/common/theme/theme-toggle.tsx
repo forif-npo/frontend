@@ -1,14 +1,8 @@
-"use client";
-
 import { Moon, Sun } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 export function ThemeToggles() {
   const { theme, setTheme } = useTheme();
-  console.log(theme);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
   const toggleTheme = () => {
     if (theme === "high-contrast") setTheme("light");

@@ -8,7 +8,6 @@ export type TitleProps<E extends React.ElementType> = {
 
 export const Title = <E extends React.ElementType = "h3">({
   size = "m",
-  color = "gray-90",
   children,
   className = "",
   ...props
@@ -22,11 +21,10 @@ export const Title = <E extends React.ElementType = "h3">({
     xs: "text-title-xs-mobile sm:text-title-xs",
   }[size];
   const weightClass = "font-bold";
-  const textColorClass = `text-${color}`;
 
   return (
     <h3
-      className={clsx(sizeClass, weightClass, textColorClass, className)}
+      className={clsx("text-text-basic", sizeClass, weightClass, className)}
       {...props}
     >
       {children}

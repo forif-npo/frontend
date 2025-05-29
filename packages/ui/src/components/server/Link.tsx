@@ -1,4 +1,5 @@
-import { cn } from "../../utils/cn";
+import NextLink from "next/link";
+import { cn } from "../utils/cn";
 
 export type LinkProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s";
@@ -14,6 +15,7 @@ export const Link = <E extends React.ElementType = "a">({
   children,
   className = "",
   title,
+  href,
   ...props
 }: LinkProps<E>) => {
   const sizeClass = {
@@ -28,13 +30,19 @@ export const Link = <E extends React.ElementType = "a">({
   }[weight];
 
   return (
-    <a
-      className={cn(sizeClass, weightClass, className)}
+    <NextLink
+      href={href}
+      className={cn(
+        "text-text-basic hover:font-semibold",
+        sizeClass,
+        weightClass,
+        className,
+      )}
       title={title}
       aria-label={title}
       {...props}
     >
       {children}
-    </a>
+    </NextLink>
   );
 };

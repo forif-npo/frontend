@@ -33,15 +33,11 @@ export const CriticalAlert = ({
 }: CriticalAlertProps) => {
   return (
     <div
-      className={`border-gray-0 rounded-2 bg-gray-0 container mx-auto border px-5 py-3 ${className} `}
+      className={`border-border-gray-light rounded-2 bg-gray-0 container mx-auto border px-5 py-3 ${className} `}
     >
       <div className={`flex items-center justify-between gap-3`}>
         <UrgentBadge variant={variant} />
-        <Label
-          className="text-text-basic-inverse flex-auto"
-          size="m"
-          weight="bold"
-        >
+        <Label className="text-text-basic flex-auto" size="m" weight="bold">
           {text}
         </Label>
         <div className="hidden md:block">
@@ -51,7 +47,7 @@ export const CriticalAlert = ({
           {link && (
             <LinkButton
               title="자세히보기"
-              link={link}
+              href={link}
               style={{
                 textDecoration: "none",
               }}
@@ -88,7 +84,7 @@ const UrgentBadge = ({ variant }: { variant: AlertVariant }) => {
 const MoreLinkButton = ({ link, title }: { link: string; title?: string }) => {
   return (
     <LinkButton
-      link={link}
+      href={link}
       title={title}
       style={{
         textDecoration: "none",
@@ -96,7 +92,7 @@ const MoreLinkButton = ({ link, title }: { link: string; title?: string }) => {
     >
       <Label
         size="m"
-        className="text-text-basic-inverse hidden cursor-pointer md:inline-block"
+        className="text-text-basic hidden cursor-pointer md:inline-block"
       >
         자세히보기
       </Label>

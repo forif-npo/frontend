@@ -1,15 +1,14 @@
 import { ReactNode } from "react";
 
-export type NavItem = {
+export type NavMenu = {
   label: string;
+  title?: string;
   href: string;
-  icon?: ReactNode;
-  active?: boolean;
+  subMenus?: NavMenu[];
 };
 
 export interface NavigationBarProps {
   logo?: ReactNode;
-  items: NavItem[];
+  items: NavMenu[];
   rightSlot?: ReactNode;
-  className?: string;
 }
