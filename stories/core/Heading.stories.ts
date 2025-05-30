@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Heading } from "../../packages/ui/src/components";
+import { Heading } from "../../packages/ui/src/components/server";
 
 const description = `
 Heading은 페이지 단위 타이틀에 사용한다.

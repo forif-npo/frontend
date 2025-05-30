@@ -24,35 +24,35 @@ export const Button = <E extends React.ElementType = "button">({
   const variantStyles = {
     primary: {
       style:
-        "bg-button-primary-fill hover:bg-button-primary-fill-hover active:bg-button-primary-fill-pressed text-text-bolder-inverse",
-      disabledStyle: "bg-button-disabled-fill text-text-disabled",
+        "bg-button-primary-fill hover:bg-button-primary-fill-hover active:bg-button-primary-fill-pressed",
+      disabledStyle: "bg-button-disabled-fill",
     },
     secondary: {
       style:
-        "bg-button-secondary-fill hover:bg-button-secondary-fill-hover active:bg-button-secondary-fill-pressed border border-button-secondary-border text-text-basic",
+        "bg-button-secondary-fill hover:bg-button-secondary-fill-hover active:bg-button-secondary-fill-pressed border border-button-secondary-border",
       disabledStyle:
-        "bg-button-disabled-fill border border-button-disabled-border text-text-disabled",
+        "bg-button-disabled-fill border border-button-disabled-border",
     },
     tertiary: {
       style:
-        "bg-button-tertiary-fill hover:bg-button-tertiary-fill-hover active:bg-button-tertiary-fill-pressed border border-button-tertiary-border text-text-basic",
+        "bg-button-tertiary-fill hover:bg-button-tertiary-fill-hover active:bg-button-tertiary-fill-pressed border border-button-tertiary-border",
       disabledStyle:
-        "bg-button-disabled-fill border border-button-disabled-border text-text-disabled",
+        "bg-button-disabled-fill border border-button-disabled-border",
     },
     text: {
       style:
-        "bg-transparent text-link-default hover:bg-button-text-fill-hover active:bg-button-text-fill-pressed",
+        "bg-transparent hover:bg-button-text-fill-hover active:bg-button-text-fill-pressed",
       disabledStyle: "text-link-disabled",
     },
     icon: {
       style:
-        "bg-transparent text-link-default hover:bg-button-text-fill-hover active:bg-button-text-fill-pressed",
+        "bg-transparent hover:bg-button-text-fill-hover active:bg-button-text-fill-pressed",
       disabledStyle: "text-link-disabled",
     },
   }[variant];
 
   const textColors = {
-    primary: "text-text-bolder-inverse",
+    primary: "text-text-inverse-static",
     secondary: "text-text-primary",
     tertiary: "text-text-basic",
     text: "text-text-basic",

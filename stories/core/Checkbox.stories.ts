@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Checkbox } from "../../packages/ui/src/components";
+import { Checkbox } from "../../packages/ui/src/components/server";
 
 const meta = {
   title: "Components/Checkbox",
@@ -28,7 +28,7 @@ const meta = {
     size: {
       control: {
         type: "select",
-        options: ["sm", "md", "lg"],
+        options: ["md", "lg"],
       },
     },
     onChange: { action: "clicked" },
@@ -117,17 +117,6 @@ export const NoLabelDisabled: Story = {
       console.log(`Switched to ${checked}`),
     disabled: true,
     id: "cb-8",
-  },
-};
-
-export const SmallCheckbox: Story = {
-  args: {
-    status: "on",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    label: "CheckBox",
-    size: "sm",
-    id: "cb-9",
   },
 };
 

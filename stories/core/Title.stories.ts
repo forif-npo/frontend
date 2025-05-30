@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Title } from "../../packages/ui/src/components";
+import { Title } from "../../packages/ui/src/components/server";
 
 const description = `
 Title은 텝플릿 단위, 모듈 단위의 작말 및 기능을 강조할 때 사용한다.

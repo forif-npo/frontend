@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Link } from "../../packages/ui/src/components";
+import { Link } from "../../packages/ui/src/components/server";
 
 const description = `
 문장 내의 링크 단어로 이루어진 텍스트 특은 브랜드크럼의 매뉴와 같이 독립적인 링크에 사용한다.

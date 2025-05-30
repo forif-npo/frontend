@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Display } from "../../packages/ui/src/components";
+import { Display } from "../../packages/ui/src/components/server";
 
 const description = `
 Display는 화면에서 가장 큰 텍스트로 주로 마케팅 용도로 사용한다.

@@ -1,0 +1,18 @@
+import { SignInTab } from "@/features/auth/signin/signin-tab";
+import { Heading } from "@ui/components/server";
+
+export default function Page() {
+  return (
+    <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
+      <Heading size="s" className="text-text-basic text-left">
+        포리프 부원 로그인
+      </Heading>
+      <Heading size="l" className="text-text-basic text-left">
+        로그인 방식을 선택해주세요.
+      </Heading>
+      <section className="mt-12 w-full">
+        <SignInTab />
+      </section>
+    </div>
+  );
+}

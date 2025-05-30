@@ -1,5 +1,5 @@
-import { cn } from "@ui/utils/cn";
 import NextLink from "next/link";
+import { cn } from "../../utils/cn";
 
 export type LinkProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s";
@@ -32,6 +32,8 @@ export const Link = <E extends React.ElementType = "a">({
   return (
     <NextLink
       href={href}
+      rel="noopener noreferrer"
+      target="_blank"
       className={cn(
         "text-text-basic hover:font-semibold",
         sizeClass,

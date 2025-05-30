@@ -6,6 +6,7 @@ export * from "./Chip";
 export * from "./Detail";
 export * from "./Display";
 export * from "./Heading";
+export * from "./InfoBox";
 export * from "./Label";
 export * from "./Link";
 export * from "./LinkButton";

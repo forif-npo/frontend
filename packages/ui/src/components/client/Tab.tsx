@@ -1,7 +1,8 @@
+"use client";
 import React, { useState } from "react";
 import { Label } from "../server/Label";
 
-interface TabProps {
+export interface TabProps {
   label: string;
   content: React.ReactNode;
   disabled?: boolean;
