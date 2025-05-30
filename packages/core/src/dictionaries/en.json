@@ -1,13 +1,35 @@
 {
-  "HomePage": {
-    "title": "title",
-    "about": "Go to title"
-  },
   "NotFoundPage": {
-    "title": "Cannot find"
+    "title": "Not Found."
   },
   "LocaleSwitcher": {
-    "label": "translate lang",
+    "label": "translate language",
     "locale": "{locale, select, ko {한국어} en {English} other {Unknown}}"
+  },
+  "SignInPage": {
+    "title": "Forif Member Sign In",
+    "description": "Please select a sign-in method.",
+    "member-signin": {
+      "title": "Member Sign In",
+      "description": "This is an integrated login for members. By signing in, you can access more information and services.",
+      "info_section": {
+        "text_0": "In accordance with Article 4 (Qualifications and Composition) of Chapter 2 of the Bylaws, membership eligibility is limited to current, temporary, and graduated students of Hanyang University. Therefore, we proceed with login/membership registration using Hanyang University email. If you have not created a Hanyang email yet,",
+        "text_1": "follow this link",
+        "text_2": "to create one."
+      },
+      "help_section": {
+        "title": "Having trouble signing in?",
+        "text_0": "Check the login help guide",
+        "text_1": "or see the",
+        "text_2": "frequently asked questions",
+        "text_3": "by other users.",
+        "text_4": "Contact us via the KakaoTalk open channel",
+        "text_5": "and we will assist you with logging into the service."
+      }
+    },
+    "operator-signin": {
+      "title": "Operator Sign In",
+      "description": "This is an integrated login for operators. After signing in, you will be redirected to the operator page."
+    }
   }
 }
