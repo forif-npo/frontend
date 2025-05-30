@@ -2,44 +2,44 @@ import { NavMenu } from "@ui/features/common/navigation";
 
 export const NAV_MENUS: NavMenu[] = [
   {
-    label: "동아리",
-    title: "한양대학교 중앙 프로그래밍 동아리, FORIF를 소개합니다.",
+    label: "club.label",
+    navigate: "club.navigate",
+    title: "club.title",
     href: "/club",
     subMenus: [
       {
-        label: "동아리 소개",
+        label: "club.subMenu.intro",
         href: "/club/about",
       },
       {
-        label: "운영진 소개",
+        label: "club.subMenu.operator_intro",
         href: "/club/members",
       },
       {
-        label: "연혁",
+        label: "club.subMenu.history",
         href: "/club/activities",
       },
       {
-        label: "회칙",
+        label: "club.subMenu.rule",
         href: "/club/activities",
       },
       {
-        label: "회계",
+        label: "club.subMenu.accounting",
         href: "/club/activities",
       },
     ],
   },
   {
-    label: "스터디",
-    title:
-      "매 학기 다양한 주제, 다양한 언어로 진행되는 FORIF의 스터디를 소개합니다.",
+    label: "study.label",
+    title: "study.title",
     href: "/studies",
     subMenus: [
       {
-        label: "스터디 목록",
+        label: "study.subMenu.list",
         href: "/studies/about",
       },
       {
-        label: "스터디 가이드",
+        label: "study.subMenu.guide",
         href: "/studies/members",
       },
     ],

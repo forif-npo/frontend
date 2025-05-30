@@ -1,28 +1,59 @@
 {
-  "HomePage": {
-    "title": "타이틀",
-    "about": "어바웃 페이지로 이동",
-    "alert": {
-      "label": "스터디 신청 절차를 자세히 알고 싶으신가요?",
-      "title": "스터디 신청 절차 안내 페이지로 이동",
-      "detail": "자세히보기"
-    },
-    "carousel": {
-      "item_0": {
-        "title": "한양대학교 중앙 프로그래밍 동아리, 포리프에 대해 알아보세요.",
-        "description": "전공과 무관하게 프로그래밍에 관심 있는 모든 학생을 환영합니다.",
-        "footer": {
-          "detail": "자세히 보러가기",
-          "apply_operator": "운영진 지원하기"
-        }
-      }
-    }
-  },
   "NotFoundPage": {
     "title": "찾을 수 없습니다."
   },
   "LocaleSwitcher": {
     "label": "언어 변환",
     "locale": "{locale, select, ko {한국어} en {English} other {Unknown}}"
+  },
+  "SignInPage": {
+    "title": "포리프 부원 로그인",
+    "description": "로그인 방식을 선택해주세요.",
+    "member-signin": {
+      "title": "부원 로그인",
+      "description": "부원을 위한 통합 로그인입니다. 로그인을 하시면 보다 더 많은 정보와 서비스를 이용하실 수 있습니다.",
+      "sign_in_with_hyu_email": "한양대학교 이메일로 로그인",
+      "sign_up": "회원가입",
+      "info_section": {
+        "text_0": "회칙 2장 제4조(자격과 구성)에 의거하여 부원 가입대상을 한양대학교 재·휴·졸업생으로 한정함에 따라 한양대학교 이메일을 통한 로그인/회원가입을 진행하고 있습니다. 아직 한양메일을 만드시지 않았다면",
+        "text_1": "다음 링크",
+        "text_2": "를 따라 만드실 수 있습니다."
+      },
+      "help_section": {
+        "title": "로그인에 어려움이 있으신가요?",
+        "text_0": "로그인 관련 도움말",
+        "text_1": "이나 다른 사용자가",
+        "text_2": "자주 묻는 질문",
+        "text_3": "을 확인해보세요.",
+        "text_4": "카카오톡 오픈 채널",
+        "text_5": "로 연락주세요. 서비스에 로그인할 수 있도록 도와드리겠습니다."
+      }
+    },
+    "operator-signin": {
+      "title": "운영진 로그인",
+      "description": "운영진을 위한 통합 로그인입니다. 로그인 후 운영진 페이지로 이동합니다."
+    }
+  },
+  "Nav": {
+    "club": {
+      "label": "동아리",
+      "navigate": "바로 가기",
+      "title": "한양대학교 중앙 프로그래밍 동아리, FORIF를 소개합니다.",
+      "subMenu": {
+        "intro": "동아리 소개",
+        "operator_intro": "운영진 소개",
+        "history": "연혁",
+        "rule": "회칙",
+        "accounting": "회계"
+      }
+    },
+    "study": {
+      "label": "스터디",
+      "title": "매 학기 다양한 주제, 다양한 언어로 진행되는 FORIF의 스터디를 소개합니다.",
+      "subMenu": {
+        "list": "스터디 목록",
+        "guide": "스터디 가이드"
+      }
+    }
   }
 }
