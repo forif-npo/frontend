@@ -8,6 +8,7 @@ import ThemedNavLogo from "@/features/theme/themed-nav-logo";
 import { NavBar, NavMenu } from "@ui/features/common/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { SearchParams } from "nuqs/server";
@@ -16,6 +17,12 @@ export const metadata: Metadata = {
   title: "FORIF WEB",
   description: "포리프 웹사이트",
 };
+const pretendard = localFont({
+  src: "../../../../../packages/assets/fonts/PretendardGOVVariable.woff2",
+  display: "swap",
+  weight: "100 900",
+  variable: "--font-pretendard",
+});
 
 export default async function RootLayout({
   children,
@@ -44,7 +51,11 @@ export default async function RootLayout({
     };
   });
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={`${pretendard.variable}`}
+    >
       <body
         style={{ backgroundColor: "var(--background)" }}
         className="scrollbar-hidden"
