@@ -5,8 +5,9 @@ import type { Metadata } from "next";
 import { NAV_MENUS } from "@/constants/nav-menu.constant";
 import LocaleSwitcher from "@/features/locale/locale-switcher";
 import ThemedNavLogo from "@/features/theme/themed-nav-logo";
-import { NavBar } from "@ui/features/common/navigation";
+import { NavBar, NavMenu } from "@ui/features/common/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { SearchParams } from "nuqs/server";
@@ -24,9 +25,24 @@ export default async function RootLayout({
   params: Promise<SearchParams>;
 }>) {
   const { locale } = await params;
+
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+
+  const t = await getTranslations("Nav");
+  const navMenus: NavMenu[] = NAV_MENUS.map((menu) => {
+    return {
+      title: t(menu.title!),
+      label: t(menu.label!),
+      href: menu.href,
+      navigate: t("club.navigate"),
+      subMenus: menu.subMenus?.map((subMenu) => ({
+        ...subMenu,
+        label: t(subMenu.label!), // subMenu의 label만 번역
+      })),
+    };
+  });
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
@@ -43,7 +59,7 @@ export default async function RootLayout({
               <NavBar
                 logo={<ThemedNavLogo />}
                 rightSlot={<LocaleSwitcher />}
-                items={NAV_MENUS}
+                items={navMenus}
               />
               {children}
             </NextIntlClientProvider>

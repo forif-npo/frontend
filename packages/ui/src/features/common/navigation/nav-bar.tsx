@@ -57,7 +57,7 @@ export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
           {logo}
         </Link>
         <ul className="flex flex-grow justify-center gap-4">
-          {items.map(({ label, href, subMenus, title }) => (
+          {items.map(({ label, href, subMenus, title, navigate }) => (
             <li key={label}>
               <Button
                 size="medium"
@@ -80,7 +80,7 @@ export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
                       size="small"
                       className="hidden sm:block"
                     >
-                      바로가기
+                      {navigate}
                     </LinkButton>
                   </div>
                   <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 md:grid-cols-4">

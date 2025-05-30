@@ -9,8 +9,8 @@ export default function MemberLogin() {
     <div className="mt-10 flex flex-col gap-10">
       <Body className="text-text-basic">{t("description")}</Body>
       <div className="border-divider-gray-light rounded-3 flex flex-col gap-6 border px-10 py-8 shadow">
-        <Button>한양대학교 이메일로 로그인</Button>
-        <Button variant="text">회원가입</Button>
+        <Button>{t("sign_in_with_hyu_email")}</Button>
+        <Button variant="text">{t("sign_up")}</Button>
         <div className="flex flex-row items-start gap-1">
           <span className="h-[20px] w-[20px]">
             <InformationIcon
@@ -27,7 +27,7 @@ export default function MemberLogin() {
               className="text-text-primary"
             >
               {t("info_section.text_1")}
-            </Link>{" "}
+            </Link>
             {t("info_section.text_2")}
           </Body>
         </div>

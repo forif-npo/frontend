@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 export type NavMenu = {
   label: string;
   title?: string;
+  navigate?: string;
   href: string;
   subMenus?: NavMenu[];
 };
