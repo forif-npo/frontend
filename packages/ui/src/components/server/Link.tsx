@@ -32,8 +32,6 @@ export const Link = <E extends React.ElementType = "a">({
   return (
     <NextLink
       href={href}
-      rel="noopener noreferrer"
-      target="_blank"
       className={cn(
         "text-text-basic hover:font-semibold",
         sizeClass,

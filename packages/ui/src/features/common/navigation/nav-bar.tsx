@@ -106,9 +106,11 @@ export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
           <Button variant="text" size="small">
             <SearchIcon width={18} height={18} className="fill-text-subtle" />
           </Button>
-          <Button variant="text" size="small">
-            <LoginIcon width={18} height={18} className="fill-text-subtle" />
-          </Button>
+          <Link href="/signin">
+            <Button variant="text" size="small">
+              <LoginIcon width={18} height={18} className="fill-text-subtle" />
+            </Button>
+          </Link>
           <ThemeToggles />
           {rightSlot}
         </div>

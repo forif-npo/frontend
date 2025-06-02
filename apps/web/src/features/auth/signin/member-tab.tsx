@@ -24,6 +24,8 @@ export default function MemberLogin() {
             <Link
               size="s"
               href="https://hanyang.ac.kr"
+              rel="noopener noreferrer"
+              target="_blank"
               className="text-text-primary"
             >
               {t("info_section.text_1")}
@@ -52,7 +54,7 @@ const InfoBoxContent = () => {
         {t("help_section.text_1")}{" "}
         <Link size="m" href="" className="underline underline-offset-2">
           {t("help_section.text_2")}
-        </Link>{" "}
+        </Link>
         {t("help_section.text_3")}
       </li>
       <li className="text-text-subtle">
