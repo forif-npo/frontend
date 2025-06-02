@@ -1,3 +1,4 @@
+import { cn } from "@repo/core/utils/cn";
 import React, { forwardRef } from "react";
 import { Label } from "./Label";
 
@@ -39,12 +40,12 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     return (
       <div className="flex flex-col justify-center gap-1">
         {title && (
-          <Label htmlFor={inputId} weight="bold">
+          <Label htmlFor={inputId} weight="bold" className="text-text-basic">
             {title}
           </Label>
         )}
         {description && (
-          <Label size={"s"} color={"gray-50"}>
+          <Label size={"s"} className="text-text-subtle">
             {description}
           </Label>
         )}
@@ -53,7 +54,14 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             ref={ref}
             id={inputId}
             type="text"
-            className={` ${lengthClasses} text-gray-70 rounded-2 focus:border-primary-50 focus:ring-primary-50 mt-3 border px-4 py-3 focus:outline-none focus:ring-1 ${error ? "border-border-danger" : "border-gray-50"} transition duration-150 ease-in-out`}
+            className={cn(
+              lengthClasses,
+              `text-gray-70 rounded-2 focus:border-input-border-active focus:ring-border-input-border-active mt-1 border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1`,
+              props.disabled || props.readOnly
+                ? "bg-input-surface-disabled border-input-border-disabled"
+                : "bg-input-surface border-input-border",
+              error && "border-input-border-error",
+            )}
             placeholder={placeholder}
             aria-describedby={error ? errorId : helperTextId}
             aria-invalid={error ? "true" : "false"}

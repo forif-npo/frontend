@@ -44,7 +44,7 @@ export function Carousel({ carouselItems }: CarouselProps) {
           alt="Carousel Image"
           width={344}
           height={300}
-          className="rounded-2"
+          className="rounded-2 hidden md:block"
         />
       </div>
       <CarouselArrow align="right" title="다음" />
@@ -64,7 +64,7 @@ export function CarouselArrow({
   return (
     <button
       onClick={onClick}
-      className="bg-surface-white hover:bg-surface-white-subtler border-border-gray-light flex cursor-pointer items-center gap-2 rounded-full border p-2"
+      className="bg-surface-white hover:bg-surface-white-subtler border-border-gray-light hidden cursor-pointer items-center gap-2 rounded-full border p-2 md:flex"
     >
       {align === "left" ? (
         <ArrowLeft className="text-text-basic" />
@@ -73,31 +73,6 @@ export function CarouselArrow({
       )}
       <span className="sr-only">{title}</span>
     </button>
-  );
-}
-
-export function CarouselContent({
-  imageSrc,
-  title,
-  description,
-}: {
-  imageSrc?: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="max-w-[600px]">
-      <Display size="s" className="mb-6">
-        한양대학교 최대 규모의 중앙 프로그래밍 동아리, 포리프에 대해 알아보세요.
-      </Display>
-      <Body size="l" className="mb-6">
-        전공과 무관하게 프로그래밍에 관심 있는 모든 학생을 환영합니다.
-      </Body>
-      <div className="flex flex-row gap-4">
-        <Button>자세히 보러가기</Button>
-        <Button variant="tertiary">운영진 지원하기</Button>
-      </div>
-    </div>
   );
 }
 

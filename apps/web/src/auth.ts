@@ -1,12 +1,16 @@
+import { env } from "@core/env";
+import { Member } from "@core/types/member";
 import NextAuth, { type NextAuthResult } from "next-auth";
-import Google from "next-auth/providers/google";
-
+import GoogleProvider from "next-auth/providers/google";
 const result = NextAuth({
+  secret: env.AUTH_SECRET,
   pages: {
     signIn: "/signin",
   },
   providers: [
-    Google({
+    GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
           prompt: "consent",
@@ -18,41 +22,39 @@ const result = NextAuth({
   ],
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60 * 24, // 1 day
+    maxAge: 60 * 60 * 24 * 30, // 7 days
   },
   callbacks: {
     async signIn({ account, profile }) {
       if (account?.provider === "google") {
-        return (
-          !!profile?.email_verified && profile.email!.endsWith("@hanyang.ac.kr")
-        );
+        if (
+          !!profile?.email_verified &&
+          profile.email!.endsWith("@hanyang.ac.kr")
+        ) {
+          return true;
+        }
+        return false;
       }
       return true;
     },
-
-    jwt: async ({ token, user, trigger, session }) => {
-      if (user?.accessToken) {
-        token.accessToken = user.accessToken;
-      }
-      if (trigger === "update" && session) {
-        token = { ...token, ...session.user };
+    async jwt({ token, account }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
       }
       return token;
     },
+    async session({ session, token }) {
+      session.accessToken = token.accessToken as string;
+      session.refreshToken = token.refreshToken as string;
 
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-
-      const isOnProtected = !nextUrl.pathname.startsWith("/signIn");
-      console.log(isLoggedIn, isOnProtected);
-
-      if (isOnProtected) {
-        if (isLoggedIn) return true;
-        return false;
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL("/", nextUrl));
+      const member: Member | null = null; // await getUser(token.accessToken as string);
+      let isSignUp = false;
+      if (member) {
+        isSignUp = true;
       }
-      return true;
+      session.isSignUp = isSignUp;
+      return session;
     },
   },
 });

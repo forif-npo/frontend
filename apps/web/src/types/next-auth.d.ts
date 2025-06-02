@@ -1,7 +1,9 @@
 import "next-auth";
 
 declare module "next-auth" {
-  interface User {
+  interface Session {
     accessToken: string;
+    refreshToken: string;
+    isSignUp: boolean;
   }
 }

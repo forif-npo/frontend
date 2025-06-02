@@ -34,6 +34,49 @@
       "description": "This is integrated sign-in for operators. After signing in, you will be redirected to the operator page."
     }
   },
+  "SignUpPage": {
+    "title": "Forif Sign Up",
+    "description": "Sign Up",
+    "signup_with_another": "Sign Up With Another Email",
+    "member-signup": {
+      "description": "By signing up, you can access more information and services."
+    },
+    "form": {
+      "email": {
+        "title": "Email",
+        "description": "If you wish to join as a Forif member, please ensure your email address is 'hanyang.ac.kr'.",
+        "error": "Please enter your email."
+      },
+      "id": {
+        "title": "Student ID",
+        "description": "The student ID consists of 10 digits starting with the admission year.",
+        "placeholder": "2023063845",
+        "error": "Please enter your student ID.",
+        "length-error": "The student ID must be 10 digits."
+      },
+      "name": {
+        "title": "Name",
+        "placeholder": "John Doe",
+        "error": "Please enter your name."
+      },
+      "department": {
+        "title": "Department",
+        "placeholder": "Information Systems Department",
+        "error": "Please select a department."
+      },
+      "phoneNumber": {
+        "title": "Phone Number",
+        "placeholder": "010-1234-5678",
+        "error": "Please enter your phone number.",
+        "shape-error": "Please enter your phone number in the format 010-1234-5678."
+      },
+      "referralSource": {
+        "title": "추천 경로",
+        "placeholder": "동아리 박람회",
+        "error": "추천 경로를 선택해주세요."
+      }
+    }
+  },
   "Nav": {
     "club": {
       "label": "Club",

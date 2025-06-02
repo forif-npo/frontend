@@ -1,16 +1,17 @@
-import React from "react";
+import { cn } from "@repo/core/utils/cn";
+import React, { forwardRef } from "react";
 import { Label } from "./Label";
 
 export type CheckboxStatus = "on" | "off" | "intermediate";
 
 export type CheckboxProps = {
   status: CheckboxStatus;
-  onChange: (newStatus: CheckboxStatus) => void;
   label?: string;
   disabled?: boolean;
-  size?: "md" | "lg";
+  size: "md" | "lg";
   id: string;
-};
+  onChange: () => void;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "onChange">;
 
 const CheckIcon = () => (
   <svg
@@ -48,98 +49,101 @@ const IntermediateIcon = () => (
   </svg>
 );
 
-export const Checkbox: React.FC<CheckboxProps> = ({
-  status,
-  onChange,
-  label,
-  disabled = false,
-  size = "md",
-  id,
-}) => {
-  const sizeClasses = {
-    md: "w-5 h-5",
-    lg: "w-6 h-6",
-  };
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
+  ({ id, label, size, disabled, status, onChange, name, ...props }, ref) => {
+    const sizeClasses = {
+      md: "w-5 h-5",
+      lg: "w-6 h-6",
+    };
 
-  const labelSizeClasses = {
-    md: "m" as const,
-    lg: "l" as const,
-  };
+    const labelSizeClasses = {
+      md: "m" as const,
+      lg: "l" as const,
+    };
 
-  const handleChange = () => {
-    if (!disabled) {
-      const newStatus: CheckboxStatus = status === "on" ? "off" : "on";
-      onChange(newStatus);
-    }
-  };
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onChange();
+      }
+    };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleChange();
-    }
-  };
-
-  const baseClasses = `
+    const baseClasses = `
     inline-flex items-center justify-center border rounded cursor-pointer
     ${sizeClasses[size]} transition-all duration-300 ease-in-out`;
 
-  const stateClasses = disabled
-    ? "bg-surface-gray-subtle border-border-gray text-text-disabled cursor-not-allowed"
-    : status === "on"
-      ? "bg-button-primary-fill border-border-primary text-text-bolder-inverse"
-      : status === "intermediate"
+    const stateClasses = disabled
+      ? "bg-surface-gray-subtle border-border-gray text-text-disabled cursor-not-allowed"
+      : status === "on"
         ? "bg-button-primary-fill border-border-primary text-text-bolder-inverse"
-        : "bg-surface-white border-border-gray hover:border-border-primary";
+        : status === "intermediate"
+          ? "bg-button-primary-fill border-border-primary text-text-bolder-inverse"
+          : "bg-surface-white border-border-gray hover:border-border-primary";
 
-  return (
-    <div
-      className="focus:ring-primary flex items-center gap-3 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
-      tabIndex={disabled ? -1 : 0}
-      role="checkbox"
-      aria-checked={
-        status === "on" ? "true" : status === "intermediate" ? "mixed" : "false"
-      }
-      aria-disabled={disabled}
-      onKeyDown={handleKeyDown}
-    >
+    return (
       <div
-        className={`${baseClasses} ${stateClasses} relative`}
-        onClick={handleChange}
+        className="focus:ring-primary flex items-center gap-3 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+        tabIndex={disabled ? -1 : 0}
+        role="checkbox"
+        aria-checked={
+          status === "on"
+            ? "true"
+            : status === "intermediate"
+              ? "mixed"
+              : "false"
+        }
+        aria-disabled={disabled}
+        onKeyDown={handleKeyDown}
       >
-        <div
-          className="absolute inset-0 transition-opacity duration-300 ease-in-out"
-          style={{ opacity: status === "on" ? 1 : 0 }}
-        >
-          <CheckIcon />
+        <div className={`${baseClasses} ${stateClasses} relative`}>
+          <div
+            className="absolute inset-0 transition-opacity duration-300 ease-in-out"
+            style={{ opacity: status === "on" ? 1 : 0 }}
+          >
+            <CheckIcon />
+          </div>
+          <div
+            className="absolute inset-0 transition-opacity duration-300 ease-in-out"
+            style={{ opacity: status === "intermediate" ? 1 : 0 }}
+          >
+            <IntermediateIcon />
+          </div>
+          <input
+            ref={ref}
+            type="checkbox"
+            id={id}
+            checked={status === "on"}
+            disabled={disabled}
+            className="sr-only"
+            onChange={onChange}
+            {...props}
+          />
+
+          {name && (
+            <input
+              type="hidden"
+              name={name}
+              value={status === "on" ? "true" : "false"}
+            />
+          )}
         </div>
-        <div
-          className="absolute inset-0 transition-opacity duration-300 ease-in-out"
-          style={{ opacity: status === "intermediate" ? 1 : 0 }}
-        >
-          <IntermediateIcon />
-        </div>
-        <input
-          type="checkbox"
-          id={id}
-          checked={status === "on"}
-          onChange={handleChange}
-          disabled={disabled}
-          className="sr-only"
-        />
+        {label && (
+          <Label
+            htmlFor={id}
+            size={labelSizeClasses[size]}
+            className={cn(
+              "transition-all duration-300 ease-in-out",
+              disabled
+                ? "text-text-subtle cursor-not-allowed"
+                : "text-text-basic cursor-pointer",
+            )}
+          >
+            {label}
+          </Label>
+        )}
       </div>
-      {label && (
-        <Label
-          htmlFor={id}
-          size={labelSizeClasses[size]}
-          color={disabled ? "gray-40" : "gray-90"}
-          className={`${
-            disabled ? "cursor-not-allowed" : "cursor-pointer"
-          } transition-all duration-300 ease-in-out`}
-        >
-          {label}
-        </Label>
-      )}
-    </div>
-  );
-};
+    );
+  },
+);
+
+Checkbox.displayName = "Checkbox";

@@ -1,10 +1,13 @@
 import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const env = createEnv({
   server: {
-    SERVER_URL: z.string().url(),
+    SERVER_URL: z.url().min(1),
     SENTRY_AUTH_TOKEN: z.string().min(1),
+    GOOGLE_CLIENT_ID: z.string().min(1),
+    GOOGLE_CLIENT_SECRET: z.string().min(1),
+    AUTH_SECRET: z.string().min(1),
   },
 
   /**

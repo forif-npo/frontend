@@ -36,3 +36,8 @@ yarn-error.log*
 .turbo
 
 *storybook.log
+
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store

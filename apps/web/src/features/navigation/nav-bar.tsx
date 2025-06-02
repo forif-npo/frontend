@@ -1,13 +1,47 @@
 "use client";
-import { LoginIcon, SearchIcon } from "@repo/assets/icons/krds";
+import { LoginIcon, MyIcon, SearchIcon } from "@repo/assets/icons/krds";
 import { Button } from "@ui/components/client";
 import { Link, LinkButton, Title } from "@ui/components/server";
 import { ThemeToggles } from "@ui/features/common/theme";
 import { cn } from "@ui/utils/cn";
-import { useEffect, useRef, useState } from "react";
-import { NavigationBarProps } from "./types";
+import { useTranslations } from "next-intl";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
-export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
+export type NavMenu = {
+  label: string;
+  title?: string;
+  navigate?: string;
+  href: string;
+  subMenus?: NavMenu[];
+};
+
+export interface NavigationBarProps {
+  logo?: ReactNode;
+  items: NavMenu[];
+  isLoggedIn: boolean;
+  rightSlot?: ReactNode;
+}
+
+export function NavBar({
+  logo,
+  items,
+  rightSlot,
+  isLoggedIn,
+}: NavigationBarProps) {
+  const t = useTranslations("Nav");
+  const navMenus: NavMenu[] | undefined = items.map((menu) => {
+    return {
+      title: t(menu.title!),
+      label: t(menu.label!),
+      href: menu.href,
+      navigate: t("club.navigate"),
+      subMenus: menu.subMenus?.map((subMenu) => ({
+        ...subMenu,
+        label: t(subMenu.label!),
+      })),
+    };
+  });
+
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -38,6 +72,8 @@ export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
     };
   }, []);
 
+  if (!navMenus) return null;
+
   return (
     <div className="relative z-50">
       {openMenu && (
@@ -46,7 +82,7 @@ export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
       <nav
         ref={navRef}
         className={cn(
-          "bg-surface-white border-b-divider-gray-light relative z-50 flex h-[80px] items-center gap-16 border-b px-16",
+          "bg-surface-white border-divider-gray-light relative z-50 flex h-[80px] items-center gap-16 border-b px-16",
         )}
       >
         <Link
@@ -57,7 +93,7 @@ export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
           {logo}
         </Link>
         <ul className="flex flex-grow justify-center gap-4">
-          {items.map(({ label, href, subMenus, title, navigate }) => (
+          {navMenus.map(({ label, href, subMenus, title, navigate }) => (
             <li key={label}>
               <Button
                 size="medium"
@@ -106,9 +142,24 @@ export function NavBar({ logo, items, rightSlot }: NavigationBarProps) {
           <Button variant="text" size="small">
             <SearchIcon width={18} height={18} className="fill-text-subtle" />
           </Button>
-          <Button variant="text" size="small">
-            <LoginIcon width={18} height={18} className="fill-text-subtle" />
-          </Button>
+          {isLoggedIn ? (
+            <Link href="/my">
+              <Button variant="text" size="small">
+                <MyIcon width={18} height={18} className="fill-text-subtle" />
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/signin">
+              <Button variant="text" size="small">
+                <LoginIcon
+                  width={18}
+                  height={18}
+                  className="fill-text-subtle"
+                />
+              </Button>
+            </Link>
+          )}
+
           <ThemeToggles />
           {rightSlot}
         </div>

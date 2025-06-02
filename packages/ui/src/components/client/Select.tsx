@@ -11,12 +11,15 @@ export interface Option {
 export type SelectSize = "lg" | "md" | "sm";
 
 export interface SelectProps {
+  id: string;
   options: Option[];
   placeholder: string;
   size?: SelectSize;
   value?: string | null;
   onChange?: (value: string) => void;
   variant?: "default" | "text";
+  disabled?: boolean;
+  error?: string;
 }
 
 const sizeClasses = {
@@ -26,12 +29,15 @@ const sizeClasses = {
 };
 
 export const Select = ({
+  id,
   options,
   placeholder,
   size = "md",
   value,
   onChange,
   variant = "default",
+  disabled,
+  error,
 }: SelectProps) => {
   const isControlled = value !== undefined && onChange !== undefined;
   const [internalValue, setInternalValue] = useState<string | null>(null);
@@ -111,9 +117,12 @@ export const Select = ({
   };
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative" id={id} ref={containerRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsOpen(!isOpen);
+        }}
         onKeyDown={handleKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -122,6 +131,10 @@ export const Select = ({
           "rounded-2 flex w-full min-w-[240px] items-center justify-between px-5 text-left transition duration-150 ease-in-out",
           sizeClasses[size],
           variantClasses[variant],
+          disabled
+            ? "bg-input-surface-disabled border-input-border-disabled"
+            : "bg-input-surface border-input-border",
+          error && "border-input-border-error",
         )}
       >
         <Label
@@ -129,6 +142,7 @@ export const Select = ({
           className={cn(
             "text-gray-90 flex items-center",
             sizeClasses[size].button,
+            selectedValue === null && "text-gray-30",
           )}
         >
           {selectedValue
@@ -145,16 +159,20 @@ export const Select = ({
           <ArrowDropdownIcon />
         </span>
       </button>
-
       {isOpen && (
         <div
           role="listbox"
+          aria-activedescendant={
+            focusedIndex !== null ? `option-${focusedIndex}` : undefined
+          }
           className="absolute z-10 mt-2 max-h-60 w-full min-w-[240px] overflow-y-auto rounded-md border border-gray-300 bg-white"
         >
           {options.map((option, index) => (
             <button
               key={option.value}
-              onClick={() => handleSelect(option.value)}
+              onClick={() => {
+                handleSelect(option.value);
+              }}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() =>
                 focusedIndex !== index && setHoveredIndex(null)
@@ -176,6 +194,7 @@ export const Select = ({
               } `}
               role="option"
               aria-selected={selectedValue === option.value}
+              tabIndex={isOpen ? 0 : -1}
             >
               {option.label}
             </button>

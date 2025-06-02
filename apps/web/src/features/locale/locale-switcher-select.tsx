@@ -46,6 +46,7 @@ export default function LocaleSwitcherSelect({
       >
         <p className="sr-only">{label}</p>
         <select
+          id="locale-select"
           className="inline-flex cursor-pointer py-2"
           defaultValue={defaultValue}
           disabled={isPending}

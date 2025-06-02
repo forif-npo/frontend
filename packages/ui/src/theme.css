@@ -429,6 +429,7 @@
     --color-button-disabled-border: var(--krds-color-gray-30);
 
     --color-border-primary: var(--krds-color-primary-50);
+    --color-border-active: var(--krds-color-primary-50);
     --color-border-disabled: var(--krds-color-gray-30);
     --color-border-danger: var(--krds-color-danger-50);
     --color-border-transparency: var(--krds-color-alpha-black0);
@@ -482,6 +483,13 @@
     --color-link-default: var(--krds-color-primary-50);
     --color-link-hover: var(--krds-color-primary-60);
     --color-link-disabled: var(--krds-color-gray-30);
+
+    --color-input-surface: var(--krds-color-gray-0);
+    --color-input-border: var(--krds-color-gray-60);
+    --color-input-border-active: var(--krds-color-primary-50);
+    --color-input-border-error: var(--krds-color-danger-50);
+    --color-input-surface-disabled: var(--krds-color-gray-20);
+    --color-input-border-disabled: var(--krds-color-gray-30);
   }
 
   [data-theme="high-contrast"] {

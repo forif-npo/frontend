@@ -22,6 +22,7 @@
     "@repo/ui": "workspace:*",
     "@sentry/nextjs": "^9.17.0",
     "clsx": "^2.1.1",
+    "ky": "^1.8.1",
     "lodash": "^4.17.21",
     "next": "15.3.2",
     "next-auth": "5.0.0-beta.28",
@@ -31,7 +32,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.3",
-    "zod": "^3.24.4"
+    "zod": "^3.25.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
