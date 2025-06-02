@@ -8,6 +8,7 @@ export type CriticalAlertProps = {
   text: string;
   variant: AlertVariant;
   link?: string;
+  detailText?: string;
   title?: string;
   className?: string;
 };
@@ -29,6 +30,7 @@ export const CriticalAlert = ({
   variant,
   link,
   title,
+  detailText = "자세히보기",
   className,
 }: CriticalAlertProps) => {
   return (
@@ -46,7 +48,7 @@ export const CriticalAlert = ({
         <div className="block md:hidden">
           {link && (
             <LinkButton
-              title="자세히보기"
+              title={detailText}
               href={link}
               style={{
                 textDecoration: "none",

@@ -1,8 +1,24 @@
-"use client";
 import { CriticalAlert } from "@repo/ui/components/client";
 import { Button, Carousel } from "@ui/components/client";
 import { CarouselItem } from "@ui/components/client/Carousel";
-export default function Page() {
+import { getTranslations } from "next-intl/server";
+export default async function Page() {
+  const t = await getTranslations("HomePage");
+  const carouselItems: CarouselItem[] = [
+    {
+      imageSrc: "/images/carousel/carousel-img-1.png",
+      title: t("carousel.item_0.title"),
+      description: t("carousel.item_0.description"),
+      footer: (
+        <div className="flex flex-row gap-4">
+          <Button>{t("carousel.item_0.footer.detail")}</Button>
+          <Button variant="tertiary">
+            {t("carousel.item_0.footer.apply_operator")}
+          </Button>
+        </div>
+      ),
+    },
+  ];
   return (
     <div className="min-h-screen">
       <main className="flex flex-col items-center gap-8 sm:items-start">
@@ -10,8 +26,9 @@ export default function Page() {
           <CriticalAlert
             variant="information"
             link="/studies"
-            text="스터디 신청 절차를 자세히 알고 싶으신가요?"
-            title="스터디 신청 절차 안내 페이지로 이동"
+            text={t("alert.label")}
+            title={t("alert.title")}
+            detailText={t("alert.detail")}
           />
         </section>
         <section className="flex w-full max-w-[1400px] flex-col items-center gap-4">
@@ -21,18 +38,3 @@ export default function Page() {
     </div>
   );
 }
-
-const carouselItems: CarouselItem[] = [
-  {
-    imageSrc: "/images/carousel/carousel-img-1.png",
-    title: "한양대학교 중앙 프로그래밍 동아리, 포리프에 대해 알아보세요.",
-    description:
-      "전공과 무관하게 프로그래밍에 관심 있는 모든 학생을 환영합니다.",
-    footer: (
-      <div className="flex flex-row gap-4">
-        <Button>자세히 보러가기</Button>
-        <Button variant="tertiary">운영진 지원하기</Button>
-      </div>
-    ),
-  },
-];

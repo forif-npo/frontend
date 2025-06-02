@@ -1,3 +1,4 @@
+"use client";
 import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
 import Image from "next/image";
 import { Body } from "../server/Body";

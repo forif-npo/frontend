@@ -1,55 +1,72 @@
 {
+  "HomePage": {
+    "alert": {
+      "label": "Would you like to know more about the study application process?",
+      "title": "Navigate to the study application guide page",
+      "detail": "Learn more"
+    },
+    "carousel": {
+      "item_0": {
+        "title": "Learn about Hanyang University's central programming club, FORIF.",
+        "description": "We welcome all students interested in programming, regardless of their major.",
+        "footer": {
+          "detail": "Learn more",
+          "apply_operator": "Apply for operator"
+        }
+      }
+    }
+  },
   "NotFoundPage": {
-    "title": "Not Found."
+    "title": "Page not found."
   },
   "LocaleSwitcher": {
     "label": "translate language",
     "locale": "{locale, select, ko {한국어} en {English} other {Unknown}}"
   },
   "SignInPage": {
-    "title": "FORIF Member Sign-In",
-    "description": "Please select a sign-in method.",
+    "title": "FORIF Member Login",
+    "description": "Please select a login method.",
     "member-signin": {
-      "title": "Member Sign-In",
-      "description": "This is integrated sign-in for members. After signing in, you can access more information and services.",
-      "sign_in_with_hyu_email": "Sign in with Hanyang University Email",
-      "sign_up": "Sign Up",
+      "title": "Member Login",
+      "description": "This is an integrated login for members. Once logged in, you can access more information and services.",
+      "sign_in_with_hyu_email": "Log in with Hanyang University email",
+      "sign_up": "Sign up",
       "info_section": {
-        "text_0": "In accordance with Article 4 (Eligibility and Composition) of Chapter 2 of the Rules, the membership eligibility is limited to current, leave-of-absence, and alumni of Hanyang University. Therefore, we proceed with sign-in/sign-up through Hanyang University email. If you haven't created a Hanyang email yet,",
-        "text_1": "follow the link",
+        "text_0": "In accordance with Article 4 (Eligibility and Composition) of Chapter 2 of the club regulations, membership eligibility is limited to enrolled, on-leave, or graduated students of Hanyang University. Therefore, login/sign-up is conducted through Hanyang University email. If you haven't created a Hanyang email yet,",
+        "text_1": "follow this link",
         "text_2": "to create one."
       },
       "help_section": {
-        "title": "Having trouble signing in?",
-        "text_0": "Login help",
-        "text_1": "or check the",
-        "text_2": "Frequently Asked Questions",
-        "text_3": "by other users.",
-        "text_4": "Contact us via KakaoTalk Open Channel",
-        "text_5": "and we'll assist you in logging into the service."
+        "title": "Having difficulty logging in?",
+        "text_0": "Login help guide",
+        "text_1": "or check out what other users",
+        "text_2": "frequently asked questions",
+        "text_3": "have encountered.",
+        "text_4": "Contact us via KakaoTalk open channel",
+        "text_5": "to assist you in logging into the service."
       }
     },
     "operator-signin": {
-      "title": "Operator Sign-In",
-      "description": "This is integrated sign-in for operators. After signing in, you will be redirected to the operator page."
+      "title": "Operator Login",
+      "description": "This is an integrated login for operators. After logging in, you will be redirected to the operator page."
     }
   },
   "Nav": {
     "club": {
       "label": "Club",
-      "navigate": "Navigate",
-      "title": "Introducing FORIF, the central programming club at Hanyang University.",
+      "navigate": "Go directly",
+      "title": "Introducing Hanyang University's central programming club, FORIF.",
       "subMenu": {
         "intro": "Club Introduction",
         "operator_intro": "Operator Introduction",
         "history": "History",
-        "rule": "Rules",
+        "rule": "Regulations",
         "accounting": "Accounting"
       }
     },
     "study": {
       "label": "Study",
-      "title": "Introducing FORIF's studies held every semester on various topics and in various languages.",
+      "title": "Introducing FORIF's studies conducted every semester on various topics and languages.",
       "subMenu": {
         "list": "Study List",
         "guide": "Study Guide"

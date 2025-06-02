@@ -1,3 +1,4 @@
+"use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowDropdownIcon } from "../../icons";
 import { cn } from "../../utils/cn";

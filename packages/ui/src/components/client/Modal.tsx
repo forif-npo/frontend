@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useRef } from "react";
 import { Label } from "../server/Label";
 import { Button } from "./Button";
