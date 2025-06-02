@@ -29,7 +29,7 @@ export function NavBar({
   isLoggedIn,
 }: NavigationBarProps) {
   const t = useTranslations("Nav");
-  const navMenus: NavMenu[] = items.map((menu) => {
+  const navMenus: NavMenu[] | undefined = items.map((menu) => {
     return {
       title: t(menu.title!),
       label: t(menu.label!),
@@ -71,6 +71,8 @@ export function NavBar({
       document.removeEventListener("keydown", handleEsc);
     };
   }, []);
+
+  if (!navMenus) return null;
 
   return (
     <div className="relative z-50">

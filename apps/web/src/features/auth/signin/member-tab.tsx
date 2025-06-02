@@ -46,7 +46,7 @@ export default function MemberLogin() {
   );
 }
 
-const InfoBoxContent = () => {
+const InfoBoxContent = ({}: {}) => {
   const t = useTranslations("SignInPage.member-signin");
   return (
     <ul className="list-inside list-disc">

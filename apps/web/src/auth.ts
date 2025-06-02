@@ -44,7 +44,6 @@ const result = NextAuth({
       const isLoggedIn = !!auth?.user;
 
       const isOnProtected = !nextUrl.pathname.startsWith("/signIn");
-      console.log(isLoggedIn, isOnProtected);
 
       if (isOnProtected) {
         if (isLoggedIn) return true;
