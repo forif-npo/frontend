@@ -4,7 +4,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "@repo/core/schemas";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v4";
 export function Input() {
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),

@@ -20,7 +20,6 @@ export default function middleware(req: NextRequest) {
     "i",
   );
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
-  console.log(isPublicPage);
 
   if (isPublicPage) return handleI18nRouting(req);
   else return (authMiddleware as any)(req);

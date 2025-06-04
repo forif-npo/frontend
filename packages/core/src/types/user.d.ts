@@ -3,4 +3,5 @@ interface User {
   id: string;
   name: string;
   department: string;
+  phone_number: string;
 }

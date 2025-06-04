@@ -82,7 +82,7 @@ export function NavBar({
       <nav
         ref={navRef}
         className={cn(
-          "bg-surface-white border-b-divider-gray-light relative z-50 flex h-[80px] items-center gap-16 border-b px-16",
+          "bg-surface-white border-divider-gray-light relative z-50 flex h-[80px] items-center gap-16 border-b px-16",
         )}
       >
         <Link

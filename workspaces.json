@@ -1670,7 +1670,7 @@
       },
       "zod": {
         "from": "zod",
-        "version": "3.24.4",
+        "version": "3.25.0",
         "path": "/home2/junseong.pyo/next-app/apps/admin/node_modules/zod"
       },
       "@eslint/config-array": {
@@ -3485,7 +3485,7 @@
       },
       "zod": {
         "from": "zod",
-        "version": "3.24.4",
+        "version": "3.25.0",
         "path": "/home2/junseong.pyo/next-app/apps/web/node_modules/zod"
       },
       "zod-to-json-schema": {

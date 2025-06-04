@@ -9,5 +9,6 @@ export { Modal } from "./Modal";
 export { Pagination } from "./Pagination";
 export { RadioButtonGroup } from "./RadioButton";
 export { Select } from "./Select";
+export { SelectBox } from "./SelectBox";
 export { Tabs } from "./Tab";
 export { TextArea } from "./TextArea";
