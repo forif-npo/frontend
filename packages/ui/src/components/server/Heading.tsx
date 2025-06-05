@@ -8,7 +8,6 @@ export type HeadingProps<E extends React.ElementType> = {
 
 export const Heading = <E extends React.ElementType = "h2">({
   size = "m",
-  color = "gray-90",
   children,
   className = "",
   ...props
