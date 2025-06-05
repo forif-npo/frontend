@@ -1,5 +1,5 @@
 import { SignUpForm } from "@/features/auth/signup/signup-form";
-import { signUpSchema } from "@core/schemas";
+import { signUpSchema, SignUpValues } from "@core/schemas";
 import { Heading } from "@ui/components/server";
 import { getTranslations } from "next-intl/server";
 import z from "zod/v4";
@@ -9,12 +9,19 @@ type ActionState = {
   values: z.infer<typeof signUpSchema>;
 };
 
+type PageProps = {
+  email: string;
+};
+
 const submitForm = async (initialState: ActionState, formData: FormData) => {
   "use server";
-
-  const values = {
-    firstName: String(formData.get("firstName") || ""),
-    lastName: String(formData.get("lastName") || ""),
+  const values: SignUpValues = {
+    name: String(formData.get("name") || ""),
+    department: String(formData.get("department") || ""),
+    email: String(formData.get("email") || ""),
+    id: String(formData.get("id") || ""),
+    phone_number: String(formData.get("phone_number") || ""),
+    referral_source: String(formData.get("referral_source") || ""),
   };
 
   const { error: parseError } = signUpSchema.safeParse(values);
@@ -22,24 +29,15 @@ const submitForm = async (initialState: ActionState, formData: FormData) => {
   for (const { path, message } of parseError?.issues || []) {
     errors[path.join(".")] = { message };
   }
-  // TODO: server-side validation
-  // Save data in a database or send it to an API.
 
   return {
     values,
-    errors: {},
+    errors,
   };
 };
 
-const getData = async () => {
-  "use server";
-
-  // Fetch data from a database or API.
-  return { firstName: "John", lastName: "Doe" };
-};
-
-export default async function Page() {
-  const data = await getData();
+export default async function Page({}: PageProps) {
+  const email = "standardstar@hanyang.ac.kr";
   const t = await getTranslations("SignUpPage");
   return (
     <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
@@ -50,7 +48,7 @@ export default async function Page() {
         {t("description")}
       </Heading>
       <section className="mt-12 w-full">
-        <SignUpForm action={submitForm} values={data} />
+        <SignUpForm action={submitForm} email={email} />
       </section>
     </div>
   );

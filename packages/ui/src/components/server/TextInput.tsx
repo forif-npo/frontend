@@ -57,7 +57,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             className={cn(
               lengthClasses,
               `text-gray-70 rounded-2 focus:border-input-border-active focus:ring-border-input-border-active mt-1 border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1`,
-              props.disabled
+              props.disabled || props.readOnly
                 ? "bg-input-surface-disabled border-input-border-disabled"
                 : "bg-input-surface border-input-border",
               error && "border-input-border-error",

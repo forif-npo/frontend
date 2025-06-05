@@ -149,6 +149,9 @@ export const Select = ({
       {isOpen && (
         <div
           role="listbox"
+          aria-activedescendant={
+            focusedIndex !== null ? `option-${focusedIndex}` : undefined
+          }
           className="absolute z-10 mt-2 max-h-60 w-full min-w-[240px] overflow-y-auto rounded-md border border-gray-300 bg-white"
         >
           {options.map((option, index) => (
@@ -176,6 +179,7 @@ export const Select = ({
               } `}
               role="option"
               aria-selected={selectedValue === option.value}
+              tabIndex={isOpen ? 0 : -1}
             >
               {option.label}
             </button>

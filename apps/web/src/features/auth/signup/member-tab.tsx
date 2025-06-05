@@ -4,7 +4,7 @@ import { Button } from "@ui/components/client";
 import { Body, InfoBox, Link } from "@ui/components/server";
 import { useTranslations } from "next-intl";
 
-export default function MemberLogin() {
+export default function MemberSignUp() {
   const t = useTranslations("SignInPage.member-signin");
   return (
     <div className="mt-10 flex flex-col gap-10">

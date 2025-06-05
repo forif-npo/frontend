@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, forwardRef } from "react";
+import React, { forwardRef } from "react";
 import { Label } from "../server/Label";
 import { Option, Select } from "./Select";
 
@@ -9,8 +9,9 @@ type SelectBoxProps = {
   helpText?: string;
   error?: string;
   options: Option[];
-  onChange?: ChangeEventHandler<HTMLInputElement>;
-} & React.InputHTMLAttributes<HTMLInputElement>;
+  value?: string;
+  onChange?: (value: string) => void;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">;
 
 export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
   (
@@ -22,6 +23,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
       id,
       placeholder,
       options,
+      value,
       onChange,
       ...props
     },
@@ -46,6 +48,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
         <Select
           placeholder={placeholder ?? ""}
           options={options}
+          value={value}
           onChange={onChange}
         />
         {error ? (
@@ -57,6 +60,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
             {helpText}
           </Label>
         ) : null}
+        <input type="hidden" id={id} ref={ref} value={value} {...props} />
       </div>
     );
   },
