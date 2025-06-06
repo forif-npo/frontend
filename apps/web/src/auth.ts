@@ -1,12 +1,15 @@
+import { env } from "@core/env";
 import NextAuth, { type NextAuthResult } from "next-auth";
-import Google from "next-auth/providers/google";
-
+import GoogleProvider from "next-auth/providers/google";
 const result = NextAuth({
+  secret: env.AUTH_SECRET,
   pages: {
     signIn: "/signin",
   },
   providers: [
-    Google({
+    GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
           prompt: "consent",
@@ -16,10 +19,7 @@ const result = NextAuth({
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-    maxAge: 60 * 60 * 24, // 1 day
-  },
+
   callbacks: {
     async signIn({ account, profile }) {
       if (account?.provider === "google") {
@@ -28,16 +28,6 @@ const result = NextAuth({
         );
       }
       return true;
-    },
-
-    jwt: async ({ token, user, trigger, session }) => {
-      if (user?.accessToken) {
-        token.accessToken = user.accessToken;
-      }
-      if (trigger === "update" && session) {
-        token = { ...token, ...session.user };
-      }
-      return token;
     },
 
     authorized({ auth, request: { nextUrl } }) {

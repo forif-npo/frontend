@@ -4,17 +4,37 @@ import { NextRequest } from "next/server";
 import { auth } from "./auth";
 import { routing } from "./i18n/routing";
 
-const publicPages = ["/", "/signin"];
+const publicRoutes = ["/", "/studies"];
+const authRoutes = ["/signin", "/signup"];
+const apiAuthPrefix = "/api/auth";
 
 const handleI18nRouting = createMiddleware(routing);
 
 const authMiddleware = auth((req) => {
+  const { nextUrl } = req;
+  const pathname = nextUrl.pathname.replace(
+    /^\/[a-z]{2}(?:-[A-Z]{2})?(?=\/|$)/,
+    "",
+  );
+  const isLoggedIn = !!req.auth;
+  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+  const isAuthRoute = authRoutes.includes(pathname);
+
+  if (isApiAuthRoute) return;
+  if (isLoggedIn) return handleI18nRouting(req);
+  if (isLoggedIn && isAuthRoute) {
+    return Response.redirect(new URL(`/`, nextUrl));
+  }
+
+  if (!isLoggedIn && !isAuthRoute) {
+    return Response.redirect(new URL(`/signin`, nextUrl));
+  }
   return handleI18nRouting(req);
 });
 
 export default function middleware(req: NextRequest) {
   const publicPathnameRegex = RegExp(
-    `^(/(${i18n.locales.join("|")}))?(${publicPages
+    `^(/(${i18n.locales.join("|")}))?(${publicRoutes
       .flatMap((p) => (p === "/" ? ["", "/"] : p))
       .join("|")})/?$`,
     "i",
@@ -22,6 +42,7 @@ export default function middleware(req: NextRequest) {
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
 
   if (isPublicPage) return handleI18nRouting(req);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   else return (authMiddleware as any)(req);
 }
 

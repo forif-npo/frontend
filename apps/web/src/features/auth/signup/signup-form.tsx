@@ -64,6 +64,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (
