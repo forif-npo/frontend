@@ -5,6 +5,7 @@ import { signUpSchema, SignUpValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Button } from "@ui/components/client";
 import { TextInput } from "@ui/components/server";
+import { useTranslations } from "next-intl";
 import Form from "next/form";
 import { useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -23,13 +24,14 @@ interface SignUpFormProps {
 }
 
 export function SignUpForm({ action, email }: SignUpFormProps) {
+  const t = useTranslations("SignUpPage.form");
   const initialValues: SignUpValues = {
     id: "",
     department: "",
     email: email,
     name: "",
-    phone_number: "",
-    referral_source: "",
+    phoneNumber: "",
+    referralSource: "",
   };
 
   const [state, formAction, isPending] = useActionState(action, {
@@ -71,51 +73,59 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
     <div className="border-divider-gray-light rounded-3 mb-16 flex flex-col justify-center border p-8">
       <Form action={formAction} className="flex flex-col justify-center gap-10">
         <TextInput
-          length="full"
-          title="이메일"
-          description="포리프 부원으로 가입을 원할 시 이메일 주소가 'hanyang.ac.kr'인지 꼭 확인해주세요"
           id="email"
-          error={errors.email?.message}
+          length="full"
+          title={t("email.title")}
+          description={t("email.description")}
+          error={errors.email?.message ? t(errors.email?.message) : undefined}
           {...register("email")}
           value={email}
           readOnly
         />
         <TextInput
           length="full"
-          title="학번"
-          description="입학년도로 시작하는 10자리로 구성되어 있습니다."
+          title={t("id.title")}
+          description={t("id.description")}
           id="id"
-          placeholder="2023063845"
-          error={errors.id?.message}
+          placeholder={t("id.placeholder")}
+          error={errors.id?.message ? t(errors.id?.message) : undefined}
           disabled={isPending}
           {...register("id")}
         />
         <TextInput
           length="full"
-          title="이름"
+          title={t("name.title")}
           id="name"
-          placeholder="홍길동"
-          error={errors.name?.message}
+          placeholder={t("name.placeholder")}
+          error={errors.name?.message ? t(errors.name?.message) : undefined}
           disabled={isPending}
           {...register("name")}
         />
         <TextInput
           length="full"
-          title="학과"
+          title={t("department.title")}
           id="department"
-          placeholder="정보시스템학과"
-          error={errors.department?.message}
+          placeholder={t("department.placeholder")}
+          error={
+            errors.department?.message
+              ? t(errors.department?.message)
+              : undefined
+          }
           disabled={isPending}
           {...register("department")}
         />
         <TextInput
           length="full"
-          title="전화번호"
-          id="phone_number"
-          placeholder="010-1234-5678"
-          error={errors.phone_number?.message}
+          title={t("phoneNumber.title")}
+          id="phoneNumber"
+          placeholder={t("phoneNumber.placeholder")}
+          error={
+            errors.phoneNumber?.message
+              ? t(errors.phoneNumber?.message)
+              : undefined
+          }
           disabled={isPending}
-          {...register("phone_number", {
+          {...register("phoneNumber", {
             onChange: (e) => {
               autoHyphenPhoneNumber(e, setValue);
             },

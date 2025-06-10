@@ -15,13 +15,14 @@ type PageProps = {
 
 const submitForm = async (initialState: ActionState, formData: FormData) => {
   "use server";
+  const t = await getTranslations("SignUpPage");
   const values: SignUpValues = {
     name: String(formData.get("name") || ""),
     department: String(formData.get("department") || ""),
     email: String(formData.get("email") || ""),
     id: String(formData.get("id") || ""),
-    phone_number: String(formData.get("phone_number") || ""),
-    referral_source: String(formData.get("referral_source") || ""),
+    phoneNumber: String(formData.get("phoneNumber") || ""),
+    referralSource: String(formData.get("referralSource") || ""),
   };
 
   const { error: parseError } = signUpSchema.safeParse(values);
