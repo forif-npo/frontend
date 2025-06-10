@@ -1,7 +1,12 @@
+import { getSession } from "@/app/actions";
+import { signOut } from "@/auth";
 import { SignUpForm } from "@/features/auth/signup/signup-form";
 import { signUpSchema, SignUpValues } from "@core/schemas";
+import { ArrowLeft } from "@repo/assets/icons/lucide";
+import { Button } from "@ui/components/client";
 import { Heading } from "@ui/components/server";
 import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import z from "zod/v4";
 
 type ActionState = {
@@ -9,13 +14,8 @@ type ActionState = {
   values: z.infer<typeof signUpSchema>;
 };
 
-type PageProps = {
-  email: string;
-};
-
 const submitForm = async (initialState: ActionState, formData: FormData) => {
   "use server";
-  const t = await getTranslations("SignUpPage");
   const values: SignUpValues = {
     name: String(formData.get("name") || ""),
     department: String(formData.get("department") || ""),
@@ -36,9 +36,16 @@ const submitForm = async (initialState: ActionState, formData: FormData) => {
     errors,
   };
 };
-
-export default async function Page({}: PageProps) {
-  const email = "standardstar@hanyang.ac.kr";
+export default async function Page() {
+  const session = await getSession();
+  const isMember = false; // await checkMember();
+  if (!session?.user?.email) {
+    await signOut();
+    redirect("/signin");
+  }
+  if (isMember) {
+    redirect("/");
+  }
   const t = await getTranslations("SignUpPage");
   return (
     <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
@@ -49,7 +56,19 @@ export default async function Page({}: PageProps) {
         {t("description")}
       </Heading>
       <section className="mt-12 w-full">
-        <SignUpForm action={submitForm} email={email} />
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/signin" });
+          }}
+          className="mb-2 flex cursor-pointer flex-row items-center"
+        >
+          <ArrowLeft size={20} />
+          <Button variant="text" size="medium">
+            다른 이메일 계정으로 회원가입
+          </Button>
+        </form>
+        <SignUpForm action={submitForm} email={session.user.email} />
       </section>
     </div>
   );

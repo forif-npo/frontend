@@ -25,5 +25,5 @@ export const autoHyphenPhoneNumber = (
   }
 
   const displayPhone = formattedPhone.length > 0 ? formattedPhone : "";
-  setValue("phone_number", displayPhone);
+  setValue("phoneNumber", displayPhone);
 };

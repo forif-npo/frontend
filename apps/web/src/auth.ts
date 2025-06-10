@@ -23,25 +23,27 @@ const result = NextAuth({
   callbacks: {
     async signIn({ account, profile }) {
       if (account?.provider === "google") {
-        return (
-          !!profile?.email_verified && profile.email!.endsWith("@hanyang.ac.kr")
-        );
+        if (
+          !!profile?.email_verified &&
+          profile.email!.endsWith("@hanyang.ac.kr")
+        ) {
+          return true;
+        }
+        return false;
       }
       return true;
     },
-
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-
-      const isOnProtected = !nextUrl.pathname.startsWith("/signIn");
-
-      if (isOnProtected) {
-        if (isLoggedIn) return true;
-        return false;
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL("/", nextUrl));
+    async jwt({ token, account }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
       }
-      return true;
+      return token;
+    },
+    async session({ session, token }) {
+      session.accessToken = token.accessToken as string;
+      session.refreshToken = token.refreshToken as string;
+      return session;
     },
   },
 });

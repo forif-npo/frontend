@@ -1,7 +1,8 @@
+import { Member } from "@core/types/member";
 import { z } from "zod/v4";
 import { createSchema } from "../utils/schema.util";
 
-export const signUpSchema = createSchema<User & { referralSource: string }>()(
+export const signUpSchema = createSchema<Member & { referralSource: string }>()(
   z.object({
     email: z.email().min(1, "email.error"),
     id: z.string().min(1, "id.error").length(10, "id.length-error"),

@@ -5,7 +5,7 @@ import { auth } from "./auth";
 import { routing } from "./i18n/routing";
 
 const publicRoutes = ["/", "/studies"];
-const authRoutes = ["/signin", "/signup"];
+const authRoutes = ["/signin"];
 const apiAuthPrefix = "/api/auth";
 
 const handleI18nRouting = createMiddleware(routing);
@@ -21,8 +21,8 @@ const authMiddleware = auth((req) => {
   const isAuthRoute = authRoutes.includes(pathname);
 
   if (isApiAuthRoute) return;
-  if (isLoggedIn) return handleI18nRouting(req);
   if (isLoggedIn && isAuthRoute) {
+    console.log("already logged in");
     return Response.redirect(new URL(`/`, nextUrl));
   }
 
