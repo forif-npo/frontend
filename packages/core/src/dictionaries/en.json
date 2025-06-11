@@ -54,6 +54,7 @@
   "SignUpPage": {
     "title": "Forif Sign Up",
     "description": "Sign Up",
+    "signup_with_another": "Sign Up With Another Email",
     "member-signup": {
       "description": "By signing up, you can access more information and services."
     },
@@ -85,6 +86,11 @@
         "placeholder": "010-1234-5678",
         "error": "Please enter your phone number.",
         "shape-error": "Please enter your phone number in the format 010-1234-5678."
+      },
+      "referralSource": {
+        "title": "추천 경로",
+        "placeholder": "동아리 박람회",
+        "error": "추천 경로를 선택해주세요."
       }
     }
   },

@@ -1,6 +1,6 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import { Label } from "../server/Label";
-import { Option, Select } from "./Select";
+import { Select, SelectProps } from "./Select";
 
 type SelectBoxProps = {
   id: string;
@@ -8,27 +8,10 @@ type SelectBoxProps = {
   description?: string;
   helpText?: string;
   error?: string;
-  options: Option[];
-  value?: string;
-  onChange?: (value: string) => void;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">;
+} & SelectProps;
 
 export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
-  (
-    {
-      title,
-      description,
-      helpText,
-      error,
-      id,
-      placeholder,
-      options,
-      value,
-      onChange,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ title, description, helpText, error, id, ...props }, ref) => {
     const inputId = id;
     const helperTextId = `${inputId}-help`;
     const errorId = `${inputId}-error`;
@@ -36,7 +19,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
     return (
       <div className="flex flex-col justify-center gap-1">
         {title && (
-          <Label htmlFor={inputId} weight="bold">
+          <Label weight="bold" className="text-text-basic">
             {title}
           </Label>
         )}
@@ -45,12 +28,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
             {description}
           </Label>
         )}
-        <Select
-          placeholder={placeholder ?? ""}
-          options={options}
-          value={value}
-          onChange={onChange}
-        />
+        <Select id={id} {...props} />
         {error ? (
           <Label id={errorId} size={"s"} className="text-text-danger mt-1">
             {error}
@@ -60,7 +38,6 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
             {helpText}
           </Label>
         ) : null}
-        <input type="hidden" id={id} ref={ref} value={value} {...props} />
       </div>
     );
   },

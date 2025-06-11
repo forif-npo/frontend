@@ -40,7 +40,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     return (
       <div className="flex flex-col justify-center gap-1">
         {title && (
-          <Label htmlFor={inputId} weight="bold">
+          <Label htmlFor={inputId} weight="bold" className="text-text-basic">
             {title}
           </Label>
         )}

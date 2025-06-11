@@ -33,7 +33,7 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params;
   const session = await auth();
-  const isLoggedIn = !!session?.user;
+  const isLoggedIn = !!session && session.isSignUp;
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();

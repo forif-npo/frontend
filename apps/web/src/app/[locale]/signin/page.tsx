@@ -1,8 +1,14 @@
+import { auth } from "@/auth";
 import { SignInTab } from "@/features/auth/signin/signin-tab";
 import { Heading } from "@ui/components/server";
 import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
+  const session = await auth();
+  if (session && !session.isSignUp) {
+    redirect("/signup");
+  }
   const t = await getTranslations("SignInPage");
   return (
     <div className="mx-auto mt-8 min-h-screen max-w-[800px]">

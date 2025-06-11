@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@repo/core/utils/cn";
 
 export type LabelProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s" | "xs";
@@ -28,7 +28,7 @@ export const Label = <E extends React.ElementType = "label">({
 
   return (
     <label
-      className={clsx("text-text-basic", sizeClass, weightClass, className)}
+      className={cn("text-text-basic", sizeClass, weightClass, className)}
       {...props}
     >
       {children}

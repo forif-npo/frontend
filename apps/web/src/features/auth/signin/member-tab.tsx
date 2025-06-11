@@ -1,4 +1,5 @@
 import { signInWithGoogle } from "@/app/actions";
+import { HYUButton } from "@/components/HYUButton";
 import { InformationIcon } from "@repo/assets/icons/krds";
 import { Button } from "@ui/components/client";
 import { Body, InfoBox, Link } from "@ui/components/server";
@@ -10,9 +11,9 @@ export default function MemberLogin() {
     <div className="mt-10 flex flex-col gap-10">
       <Body className="text-text-basic">{t("description")}</Body>
       <div className="border-divider-gray-light rounded-3 flex flex-col gap-6 border px-10 py-8 shadow">
-        <Button onClick={signInWithGoogle} className="w-full">
+        <HYUButton onClick={signInWithGoogle} className="w-full">
           {t("sign_in_with_hyu_email")}
-        </Button>
+        </HYUButton>
         <Link href="/signup" className="w-full">
           <Button variant="text" className="w-full">
             {t("sign_up")}
@@ -57,7 +58,7 @@ const InfoBoxContent = () => {
       <li className="text-text-subtle">
         <Link size="m" href="" className="underline underline-offset-2">
           {t("help_section.text_0")}
-        </Link>{" "}
+        </Link>
         {t("help_section.text_1")}{" "}
         <Link size="m" href="" className="underline underline-offset-2">
           {t("help_section.text_2")}
@@ -67,7 +68,7 @@ const InfoBoxContent = () => {
       <li className="text-text-subtle">
         <Link size="m" href="" className="underline underline-offset-2">
           {t("help_section.text_4")}
-        </Link>{" "}
+        </Link>
         {t("help_section.text_5")}
       </li>
     </ul>

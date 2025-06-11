@@ -44,7 +44,7 @@ export function Carousel({ carouselItems }: CarouselProps) {
           alt="Carousel Image"
           width={344}
           height={300}
-          className="rounded-2"
+          className="rounded-2 hidden md:block"
         />
       </div>
       <CarouselArrow align="right" title="다음" />
@@ -64,7 +64,7 @@ export function CarouselArrow({
   return (
     <button
       onClick={onClick}
-      className="bg-surface-white hover:bg-surface-white-subtler border-border-gray-light flex cursor-pointer items-center gap-2 rounded-full border p-2"
+      className="bg-surface-white hover:bg-surface-white-subtler border-border-gray-light hidden cursor-pointer items-center gap-2 rounded-full border p-2 md:flex"
     >
       {align === "left" ? (
         <ArrowLeft className="text-text-basic" />

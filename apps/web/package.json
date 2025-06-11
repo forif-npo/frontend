@@ -22,6 +22,7 @@
     "@repo/ui": "workspace:*",
     "@sentry/nextjs": "^9.17.0",
     "clsx": "^2.1.1",
+    "ky": "^1.8.1",
     "lodash": "^4.17.21",
     "next": "15.3.2",
     "next-auth": "5.0.0-beta.28",

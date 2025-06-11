@@ -4,8 +4,8 @@ import { NextRequest } from "next/server";
 import { auth } from "./auth";
 import { routing } from "./i18n/routing";
 
-const publicRoutes = ["/", "/studies"];
-const authRoutes = ["/signin"];
+const publicRoutes = ["/", "/studies", "/terms"];
+const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
 
 const handleI18nRouting = createMiddleware(routing);
@@ -16,13 +16,12 @@ const authMiddleware = auth((req) => {
     /^\/[a-z]{2}(?:-[A-Z]{2})?(?=\/|$)/,
     "",
   );
-  const isLoggedIn = !!req.auth;
+  const isLoggedIn = !!req.auth && req.auth.isSignUp;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isAuthRoute = authRoutes.includes(pathname);
 
   if (isApiAuthRoute) return;
   if (isLoggedIn && isAuthRoute) {
-    console.log("already logged in");
     return Response.redirect(new URL(`/`, nextUrl));
   }
 

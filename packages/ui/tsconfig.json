@@ -6,6 +6,10 @@
       "@ui/*": ["src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "../../apps/web/src/components/HYUButton.tsx"
+  ],
   "exclude": ["node_modules"]
 }

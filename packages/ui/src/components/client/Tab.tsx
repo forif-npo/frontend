@@ -39,13 +39,13 @@ const Tab: React.FC<{
       }`}
     >
       <Label
-        color={isSelected ? "primary" : "gray-50"}
+        color={isSelected ? "text-text-primary" : "text-disabled-on"}
         className={
           disabled
             ? "cursor-not-allowed"
             : isSelected
               ? "cursor-pointer"
-              : "hover:text-gray-70 cursor-pointer"
+              : "hover:text-text-subtle cursor-pointer"
         }
         size="l"
         weight="bold"

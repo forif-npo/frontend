@@ -1,5 +1,4 @@
 "use client";
-import { usePathname } from "@/i18n/navigation";
 import { LoginIcon, MyIcon, SearchIcon } from "@repo/assets/icons/krds";
 import { Button } from "@ui/components/client";
 import { Link, LinkButton, Title } from "@ui/components/server";
@@ -30,8 +29,6 @@ export function NavBar({
   isLoggedIn,
 }: NavigationBarProps) {
   const t = useTranslations("Nav");
-  const pathname = usePathname();
-  console.log(pathname);
   const navMenus: NavMenu[] | undefined = items.map((menu) => {
     return {
       title: t(menu.title!),
@@ -145,7 +142,7 @@ export function NavBar({
           <Button variant="text" size="small">
             <SearchIcon width={18} height={18} className="fill-text-subtle" />
           </Button>
-          {isLoggedIn && pathname !== "/signup" ? (
+          {isLoggedIn ? (
             <Link href="/my">
               <Button variant="text" size="small">
                 <MyIcon width={18} height={18} className="fill-text-subtle" />

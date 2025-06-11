@@ -1,14 +1,18 @@
 "use client";
 
+import {
+  departmentsOptions,
+  referralSourcesOptions,
+} from "@/constants/options.constant";
 import { autoHyphenPhoneNumber } from "@/utils/form";
 import { signUpSchema, SignUpValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { Button } from "@ui/components/client";
-import { TextInput } from "@ui/components/server";
+import { Button, SelectBox } from "@ui/components/client";
+import { Checkbox, Label, Link, TextInput } from "@ui/components/server";
 import { useTranslations } from "next-intl";
 import Form from "next/form";
 import { useActionState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 type ActionState = {
   errors: Record<string, { message: string }>;
@@ -26,12 +30,14 @@ interface SignUpFormProps {
 export function SignUpForm({ action, email }: SignUpFormProps) {
   const t = useTranslations("SignUpPage.form");
   const initialValues: SignUpValues = {
+    email: email,
     id: "",
     department: "",
-    email: email,
     name: "",
     phoneNumber: "",
     referralSource: "",
+    serviceTermAgree: false,
+    privacyPolicyAgree: false,
   };
 
   const [state, formAction, isPending] = useActionState(action, {
@@ -45,10 +51,15 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
     mode: "onBlur",
   });
   const {
+    control,
     register,
     formState: { errors },
     setValue,
+    watch,
   } = form;
+
+  const serviceTermAgree = watch("serviceTermAgree");
+  const privacyPolicyAgree = watch("privacyPolicyAgree");
 
   useEffect(() => {
     for (const key in state.values) {
@@ -73,6 +84,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
     <div className="border-divider-gray-light rounded-3 mb-16 flex flex-col justify-center border p-8">
       <Form action={formAction} className="flex flex-col justify-center gap-10">
         <TextInput
+          autoComplete="email"
           id="email"
           length="full"
           title={t("email.title")}
@@ -93,6 +105,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
           {...register("id")}
         />
         <TextInput
+          autoComplete="name"
           length="full"
           title={t("name.title")}
           id="name"
@@ -101,23 +114,37 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
           disabled={isPending}
           {...register("name")}
         />
-        <TextInput
-          length="full"
-          title={t("department.title")}
-          id="department"
-          placeholder={t("department.placeholder")}
-          error={
-            errors.department?.message
-              ? t(errors.department?.message)
-              : undefined
-          }
-          disabled={isPending}
-          {...register("department")}
+        <Controller
+          control={control}
+          name="department"
+          rules={{ required: true }}
+          render={({ field: { value, onChange } }) => (
+            <>
+              <SelectBox
+                id="department"
+                value={value || null}
+                options={departmentsOptions}
+                placeholder="정보시스템학과"
+                title="학과"
+                onChange={onChange}
+                error={
+                  errors.department?.message
+                    ? t(errors.department?.message)
+                    : undefined
+                }
+                disabled={isPending}
+              />
+              {/* Hidden input for FormData */}
+              <input type="hidden" name="department" value={value || ""} />
+            </>
+          )}
         />
+
         <TextInput
           length="full"
           title={t("phoneNumber.title")}
           id="phoneNumber"
+          description="카카오톡 메세지로 ... 하기 위해 사용됩니다."
           placeholder={t("phoneNumber.placeholder")}
           error={
             errors.phoneNumber?.message
@@ -131,8 +158,100 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
             },
           })}
         />
+        <Controller
+          control={control}
+          name="referralSource"
+          rules={{ required: true }}
+          render={({ field: { value, onChange } }) => (
+            <>
+              <SelectBox
+                id="referralSource"
+                value={value || null}
+                options={referralSourcesOptions}
+                placeholder="동아리 박람회"
+                title="추천 경로"
+                onChange={onChange}
+                error={
+                  errors.referralSource?.message
+                    ? t(errors.referralSource?.message)
+                    : undefined
+                }
+                disabled={isPending}
+              />
+              {/* Hidden input for FormData */}
+              <input type="hidden" name="referralSource" value={value || ""} />
+            </>
+          )}
+        />
+        <section className="flex flex-col gap-1">
+          <Label weight="bold" className="text-text-basic">
+            {t("terms.title")}
+          </Label>
+          <div className="border-border-gray-light rounded-2 flex flex-col gap-4 border p-8">
+            <Checkbox
+              id="agree-all-checkbox"
+              size="md"
+              label={t("terms.agreeAll")}
+              status={privacyPolicyAgree && serviceTermAgree ? "on" : "off"}
+              onChange={() => {
+                setValue("privacyPolicyAgree", !privacyPolicyAgree);
+                setValue("serviceTermAgree", !serviceTermAgree);
+              }}
+            />
+            <div className="flex flex-row items-center">
+              <div className="flex-1">
+                <Checkbox
+                  id="service-term-checkbox"
+                  name="serviceTermAgree"
+                  size="md"
+                  label={t("terms.serviceLabel")}
+                  status={serviceTermAgree ? "on" : "off"}
+                  onChange={() =>
+                    setValue("serviceTermAgree", !serviceTermAgree)
+                  }
+                />
+              </div>
+              <Link
+                href="/terms#TERMS"
+                target="_blank"
+                className="text-text-basic"
+              >
+                {t("terms.show")}
+              </Link>
+            </div>
+            <div className="flex flex-row items-center">
+              <div className="flex-1">
+                <Checkbox
+                  id="privacy-policy-checkbox"
+                  name="privacyPolicyAgree"
+                  size="md"
+                  label={t("terms.privacyPolicyLabel")}
+                  status={privacyPolicyAgree ? "on" : "off"}
+                  onChange={() =>
+                    setValue("privacyPolicyAgree", !privacyPolicyAgree)
+                  }
+                />
+              </div>
+              <Link
+                href="/terms#PRIVACY_POLICY"
+                target="_blank"
+                className="text-text-basic"
+              >
+                {t("terms.show")}
+              </Link>
+            </div>
+          </div>
+          <Label id="terms" size={"s"} className="text-text-danger">
+            {errors.serviceTermAgree?.message
+              ? t(errors.serviceTermAgree?.message)
+              : null}
+          </Label>
+        </section>
+        <Label id="root" size={"s"} className="text-text-danger">
+          {errors.root?.message ? t(errors.root?.message) : null}
+        </Label>
         <Button type="submit" size="large" disabled={isPending}>
-          회원가입
+          {t("signupButtonText")}
         </Button>
       </Form>
     </div>

@@ -5,6 +5,7 @@ export * from "./Checkbox";
 export * from "./Chip";
 export * from "./Detail";
 export * from "./Display";
+export * from "./Divider";
 export * from "./Heading";
 export * from "./InfoBox";
 export * from "./Label";

@@ -37,7 +37,7 @@ export default async function Page() {
           <Carousel carouselItems={carouselItems} />
         </section>
         <div className="mb-16 h-[240px] w-full bg-gradient-to-r from-[#0b50d0] to-white">
-          <div className="mx-auto flex h-full max-w-[1200px] justify-center sm:flex-col">
+          <div className="mx-auto flex h-full max-w-[1200px] justify-center px-8 sm:flex-col lg:px-0">
             <Heading size="m" className="mb-6 text-left text-white">
               Supported by
             </Heading>

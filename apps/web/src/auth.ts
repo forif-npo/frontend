@@ -1,4 +1,5 @@
 import { env } from "@core/env";
+import { Member } from "@core/types/member";
 import NextAuth, { type NextAuthResult } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 const result = NextAuth({
@@ -19,7 +20,10 @@ const result = NextAuth({
       },
     }),
   ],
-
+  session: {
+    strategy: "jwt",
+    maxAge: 60 * 60 * 24 * 30, // 7 days
+  },
   callbacks: {
     async signIn({ account, profile }) {
       if (account?.provider === "google") {
@@ -43,6 +47,13 @@ const result = NextAuth({
     async session({ session, token }) {
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
+
+      const member: Member | null = null; // await getUser(token.accessToken as string);
+      let isSignUp = false;
+      if (member) {
+        isSignUp = true;
+      }
+      session.isSignUp = isSignUp;
       return session;
     },
   },
