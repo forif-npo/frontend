@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs";
 import React from "react";
 import { Disclosure } from "../../packages/ui/src/components/client";
 import { Body } from "../../packages/ui/src/components/server";

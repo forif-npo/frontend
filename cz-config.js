@@ -10,7 +10,7 @@ module.exports = {
       value: "feat",
       name: "✨ feat:\t새로운 기능 추가",
     },
-    { value: "🐛 fix", name: "🐛 fix:\t버그 수정" },
+    { value: "fix", name: "🐛 fix:\t버그 수정" },
     {
       value: "docs",
       name: "📝 docs:\t문서 추가/수정/삭제",

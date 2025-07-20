@@ -32,19 +32,18 @@
       "config": "cz-config.js"
     }
   },
+  "dependencies": {
+    "@storybook/test": "^8.6.14"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/prompt-cli": "^19.8.1",
-    "@storybook/addon-essentials": "^8.6.14",
-    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/addon-docs": "^9.0.17",
     "@storybook/addon-links": "^9.0.17",
     "@storybook/addon-styling-webpack": "^2.0.0",
     "@storybook/addon-themes": "^9.0.17",
-    "@storybook/blocks": "^8.6.14",
     "@storybook/nextjs": "^9.0.17",
-    "@storybook/react": "^9.0.17",
-    "@storybook/test": "^8.6.14",
     "cz-customizable": "^7.4.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",

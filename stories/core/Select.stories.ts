@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs";
 import { Select } from "../../packages/ui/src/components/client";
 import { SelectProps } from "../../packages/ui/src/components/client/Select";
 

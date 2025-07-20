@@ -1,6 +1,6 @@
 import { withThemeByDataAttribute } from "@storybook/addon-themes";
-import type { Preview } from "@storybook/react";
-import { ReactRenderer } from "@storybook/react";
+import type { Preview } from "@storybook/nextjs";
+import { ReactRenderer } from "@storybook/nextjs";
 import "../apps/web/src/app/globals.css";
 const preview: Preview = {
   decorators: [

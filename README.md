@@ -16,22 +16,27 @@ cd frontend
 
 ```bash
 pnpm install
+```
+
+### 3. 개발 서버 실행
+
+```bash
 pnpm dev
 ```
 
-브라우저에서 http://localhost:3000 을 열어 애플리케이션을 확인하세요.
+Check http://localhost:3000
 
 ## 📦 프로젝트 구조
 
 ### 앱
 
-- `web`: [Next.js](https://nextjs.org/) 기반 부원용 공식 홈페이지
+- `web`: Next.js 기반 부원/멘토용 홈페이지
 - `operator`: 운영진용 관리 시스템
 
 ### 패키지
 
 - `@repo/ui`: 공통 React 컴포넌트 라이브러리
-- `@repo/core`: 핵심 유틸리티 및 설정
+- `@repo/core`: 스키마, 유틸리티, 공통 환경 변수
 - `@repo/assets`: 폰트, 아이콘, 이미지 등 정적 리소스
 - `@repo/eslint-config`: ESLint 설정 프리셋
 - `@repo/typescript-config`: TypeScript 설정
