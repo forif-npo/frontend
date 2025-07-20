@@ -3,11 +3,10 @@ import { z } from "zod/v4";
 
 export const env = createEnv({
   server: {
-    SERVER_URL: z.url().min(1),
-    SENTRY_AUTH_TOKEN: z.string().min(1),
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     AUTH_SECRET: z.string().min(1),
+    SERVER_URL: z.url().min(1),
   },
 
   /**
@@ -17,7 +16,7 @@ export const env = createEnv({
   clientPrefix: "NEXT_PUBLIC_",
 
   client: {
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+    // NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
   },
 
   /**

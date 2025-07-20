@@ -1,14 +1,9 @@
-import { i18n } from "@repo/core/i18n.config";
-import createMiddleware from "next-intl/middleware";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
-import { routing } from "./i18n/routing";
 
-const publicRoutes = ["/", "/studies", "/terms"];
+const publicRoutes = ["/", "/signin", "/signup", "/terms", "/privacy-policy"];
 const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
-
-const handleI18nRouting = createMiddleware(routing);
 
 const authMiddleware = auth((req) => {
   const { nextUrl } = req;
@@ -19,30 +14,22 @@ const authMiddleware = auth((req) => {
   const isLoggedIn = !!req.auth && req.auth.isSignUp;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isAuthRoute = authRoutes.includes(pathname);
+  const isPublicRoute = publicRoutes.includes(pathname);
 
   if (isApiAuthRoute) return;
   if (isLoggedIn && isAuthRoute) {
     return Response.redirect(new URL(`/`, nextUrl));
   }
 
-  if (!isLoggedIn && !isAuthRoute) {
+  if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
     return Response.redirect(new URL(`/signin`, nextUrl));
   }
-  return handleI18nRouting(req);
+  return NextResponse.next();
 });
 
 export default function middleware(req: NextRequest) {
-  const publicPathnameRegex = RegExp(
-    `^(/(${i18n.locales.join("|")}))?(${publicRoutes
-      .flatMap((p) => (p === "/" ? ["", "/"] : p))
-      .join("|")})/?$`,
-    "i",
-  );
-  const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
-
-  if (isPublicPage) return handleI18nRouting(req);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  else return (authMiddleware as any)(req);
+  return (authMiddleware as any)(req);
 }
 
 export const config = {

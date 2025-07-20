@@ -3,32 +3,20 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-# This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
-
-# Make sure you update both files!
-
 FROM base AS builder
-
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 
 RUN apk update
 RUN apk add --no-cache libc6-compat
-
-# Set working directory
 
 WORKDIR /app
 RUN npm install turbo --global
 COPY . .
 RUN turbo prune web --docker
 
-# Add lockfile and package.json's of isolated subworkspace
-
 FROM base AS installer
 RUN apk update
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
-# First install the dependencies (as they change less often)
 
 COPY --from=builder /app/out/json/ .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -66,4 +54,9 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
-CMD ["node","apps/web/server.js"]
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node","--trace-deprecation","apps/web/server.js"]

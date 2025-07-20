@@ -20,6 +20,7 @@ const result = NextAuth({
       },
     }),
   ],
+  trustHost: true, // Trust the host to avoid issues with custom domains
   session: {
     strategy: "jwt",
     maxAge: 60 * 60 * 24 * 30, // 7 days

@@ -17,6 +17,7 @@
     "lint:package": "npx sort-package-json 'package.json' 'packages/*/package.json' 'apps/*/package.json'",
     "prepare": "husky",
     "storybook": "storybook dev -p 6006",
+    "sync-dotenv-slack": "envbot",
     "test": "turbo run test",
     "type-check": "turbo run type-check"
   },
@@ -31,30 +32,37 @@
       "config": "cz-config.js"
     }
   },
+  "dependencies": {
+    "@storybook/test": "^8.6.14"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/prompt-cli": "^19.8.1",
-    "@storybook/addon-essentials": "^8.6.14",
-    "@storybook/addon-interactions": "^8.6.14",
-    "@storybook/addon-links": "^8.6.14",
-    "@storybook/addon-styling-webpack": "^1.0.1",
-    "@storybook/addon-themes": "^8.6.14",
-    "@storybook/blocks": "^8.6.14",
-    "@storybook/nextjs": "^8.6.14",
-    "@storybook/react": "^8.6.14",
-    "@storybook/test": "^8.6.14",
+    "@storybook/addon-docs": "^9.0.17",
+    "@storybook/addon-links": "^9.0.17",
+    "@storybook/addon-styling-webpack": "^2.0.0",
+    "@storybook/addon-themes": "^9.0.17",
+    "@storybook/nextjs": "^9.0.17",
     "cz-customizable": "^7.4.0",
     "husky": "^9.1.7",
-    "lint-staged": "^15.5.2",
-    "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.11",
-    "storybook": "^8.6.14",
-    "turbo": "^2.5.3"
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "storybook": "^9.0.17",
+    "sync-dotenv-slack": "^0.1.0",
+    "turbo": "^2.5.5"
   },
   "packageManager": "pnpm@10.10.0",
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
+  },
+  "envbot": {
+    "channel": "general",
+    "include": [
+      "*",
+      "!SECRET"
+    ]
   }
 }

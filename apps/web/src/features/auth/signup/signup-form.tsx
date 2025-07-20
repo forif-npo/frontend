@@ -9,7 +9,6 @@ import { signUpSchema, SignUpValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Button, SelectBox } from "@ui/components/client";
 import { Checkbox, Label, Link, TextInput } from "@ui/components/server";
-import { useTranslations } from "next-intl";
 import Form from "next/form";
 import { useActionState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -28,7 +27,6 @@ interface SignUpFormProps {
 }
 
 export function SignUpForm({ action, email }: SignUpFormProps) {
-  const t = useTranslations("SignUpPage.form");
   const initialValues: SignUpValues = {
     email: email,
     id: "",
@@ -87,30 +85,30 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
           autoComplete="email"
           id="email"
           length="full"
-          title={t("email.title")}
-          description={t("email.description")}
-          error={errors.email?.message ? t(errors.email?.message) : undefined}
+          title="이메일"
+          description="포리프 부원으로 가입을 원할 시 이메일 주소가 'hanyang.ac.kr'인지 꼭 확인해주세요"
+          error={errors.email?.message ? errors.email?.message : undefined}
           {...register("email")}
           value={email}
           readOnly
         />
         <TextInput
           length="full"
-          title={t("id.title")}
-          description={t("id.description")}
+          title="학번"
+          description="학번은 입학년도로 시작하는 10자리로 구성되어 있습니다."
           id="id"
-          placeholder={t("id.placeholder")}
-          error={errors.id?.message ? t(errors.id?.message) : undefined}
+          placeholder="2023063845"
+          error={errors.id?.message}
           disabled={isPending}
           {...register("id")}
         />
         <TextInput
           autoComplete="name"
           length="full"
-          title={t("name.title")}
+          title="이름"
           id="name"
-          placeholder={t("name.placeholder")}
-          error={errors.name?.message ? t(errors.name?.message) : undefined}
+          placeholder="홍길동"
+          error={errors.name?.message}
           disabled={isPending}
           {...register("name")}
         />
@@ -127,11 +125,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                 placeholder="정보시스템학과"
                 title="학과"
                 onChange={onChange}
-                error={
-                  errors.department?.message
-                    ? t(errors.department?.message)
-                    : undefined
-                }
+                error={errors.department?.message}
                 disabled={isPending}
               />
               {/* Hidden input for FormData */}
@@ -142,15 +136,11 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
 
         <TextInput
           length="full"
-          title={t("phoneNumber.title")}
+          title="전화번호"
           id="phoneNumber"
           description="카카오톡 메세지로 ... 하기 위해 사용됩니다."
-          placeholder={t("phoneNumber.placeholder")}
-          error={
-            errors.phoneNumber?.message
-              ? t(errors.phoneNumber?.message)
-              : undefined
-          }
+          placeholder="010-1234-5678"
+          error={errors.phoneNumber?.message}
           disabled={isPending}
           {...register("phoneNumber", {
             onChange: (e) => {
@@ -171,11 +161,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                 placeholder="동아리 박람회"
                 title="추천 경로"
                 onChange={onChange}
-                error={
-                  errors.referralSource?.message
-                    ? t(errors.referralSource?.message)
-                    : undefined
-                }
+                error={errors.referralSource?.message}
                 disabled={isPending}
               />
               {/* Hidden input for FormData */}
@@ -185,13 +171,13 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
         />
         <section className="flex flex-col gap-1">
           <Label weight="bold" className="text-text-basic">
-            {t("terms.title")}
+            아래 이용약관에 동의해주세요.
           </Label>
           <div className="border-border-gray-light rounded-2 flex flex-col gap-4 border p-8">
             <Checkbox
               id="agree-all-checkbox"
               size="md"
-              label={t("terms.agreeAll")}
+              label="모두 동의합니다."
               status={privacyPolicyAgree && serviceTermAgree ? "on" : "off"}
               onChange={() => {
                 setValue("privacyPolicyAgree", !privacyPolicyAgree);
@@ -204,7 +190,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                   id="service-term-checkbox"
                   name="serviceTermAgree"
                   size="md"
-                  label={t("terms.serviceLabel")}
+                  label="[필수] 서비스 이용약관에 동의합니다."
                   status={serviceTermAgree ? "on" : "off"}
                   onChange={() =>
                     setValue("serviceTermAgree", !serviceTermAgree)
@@ -216,7 +202,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                 target="_blank"
                 className="text-text-basic"
               >
-                {t("terms.show")}
+                보기
               </Link>
             </div>
             <div className="flex flex-row items-center">
@@ -225,7 +211,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                   id="privacy-policy-checkbox"
                   name="privacyPolicyAgree"
                   size="md"
-                  label={t("terms.privacyPolicyLabel")}
+                  label="[필수] 개인정보의 수집에 동의합니다."
                   status={privacyPolicyAgree ? "on" : "off"}
                   onChange={() =>
                     setValue("privacyPolicyAgree", !privacyPolicyAgree)
@@ -237,21 +223,19 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                 target="_blank"
                 className="text-text-basic"
               >
-                {t("terms.show")}
+                보기
               </Link>
             </div>
           </div>
           <Label id="terms" size={"s"} className="text-text-danger">
-            {errors.serviceTermAgree?.message
-              ? t(errors.serviceTermAgree?.message)
-              : null}
+            {errors.serviceTermAgree?.message}
           </Label>
         </section>
         <Label id="root" size={"s"} className="text-text-danger">
-          {errors.root?.message ? t(errors.root?.message) : null}
+          {errors.root?.message}
         </Label>
         <Button type="submit" size="large" disabled={isPending}>
-          {t("signupButtonText")}
+          회원가입
         </Button>
       </Form>
     </div>

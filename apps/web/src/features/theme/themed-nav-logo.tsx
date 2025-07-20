@@ -1,13 +1,12 @@
 "use client";
-import HighContrastNavLogo from "@repo/assets/images/high_contrast_nav_logo.png";
-import NavLogo from "@repo/assets/images/nav_logo.png";
+import { HighContrastNavLogo, NavLogo } from "@repo/assets/images";
 import Image from "next/image";
 
 function ThemedNavLogo() {
   return (
     <>
       <div data-hide-on-theme="high-contrast">
-        <Image src={NavLogo} width={87} height={56} alt="Nav Logo" />
+        <Image src={NavLogo} width={87} height={56} alt="FORIF Logo" />
       </div>
 
       <div data-hide-on-theme="light">
@@ -15,7 +14,7 @@ function ThemedNavLogo() {
           src={HighContrastNavLogo}
           width={87}
           height={56}
-          alt="Nav Logo"
+          alt="FORIF Logo"
         />
       </div>
     </>
