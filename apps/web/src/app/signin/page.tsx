@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import { SignInTab } from "@/features/auth/signin/signin-tab";
 import { Heading } from "@ui/components/server";
-import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
@@ -9,14 +8,14 @@ export default async function Page() {
   if (session && !session.isSignUp) {
     redirect("/signup");
   }
-  const t = await getTranslations("SignInPage");
+
   return (
     <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
       <Heading size="s" className="text-text-basic text-left">
-        {t("title")}
+        포리프 부원 로그인
       </Heading>
       <Heading size="l" className="text-text-basic text-left">
-        {t("description")}
+        로그인 방식을 선택해주세요.
       </Heading>
       <section className="mt-12 w-full">
         <SignInTab />

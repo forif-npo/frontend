@@ -1,20 +1,18 @@
 import { CheckCircle } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
 import { Body, Divider, Heading, LinkButton } from "@ui/components/server";
-import { getTranslations } from "next-intl/server";
 
 export default async function Page() {
-  const t = await getTranslations("SignUpCompletePage");
   return (
     <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
       <div className="flex flex-col items-center gap-6">
         <CheckCircle size={128} className="text-icon-primary" />
         <Heading size="xl" className="text-text-basic text-left">
-          {t("title")}
+          회원가입이 완료되었습니다
         </Heading>
         <section className="rounded-3 bg-surface-secondary-subtler flex w-full flex-row items-center justify-around gap-3 p-10">
           <Body size="l" weight="bold">
-            {t("signup_info")}
+            가입 정보
           </Body>
           <div className="flex flex-col gap-4">
             <Body size="l" className="text-text-basic">

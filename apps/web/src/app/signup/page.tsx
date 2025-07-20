@@ -6,9 +6,8 @@ import { ArrowLeft } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
 import { Heading } from "@ui/components/server";
 import { HTTPError } from "ky";
-import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import z from "zod/v4";
+import { z } from "zod/v4";
 
 type ActionState = {
   errors: Record<string, { message: string }>;
@@ -70,14 +69,14 @@ export default async function Page() {
   if (session.isSignUp) {
     redirect("/");
   }
-  const t = await getTranslations("SignUpPage");
+
   return (
     <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
       <Heading size="s" className="text-text-basic text-left">
-        {t("title")}
+        포리프 회원가입
       </Heading>
       <Heading size="l" className="text-text-basic text-left">
-        {t("description")}
+        회원가입
       </Heading>
       <section className="mt-12 w-full">
         <form
@@ -90,7 +89,7 @@ export default async function Page() {
           <Button variant="text" size="medium">
             <span className="flex flex-row items-center gap-2">
               <ArrowLeft size={20} className="text-text-basic" />
-              {t("signup_with_another")}
+              다른 이메일 계정으로 회원가입
             </span>
           </Button>
         </form>

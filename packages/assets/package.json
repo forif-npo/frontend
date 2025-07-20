@@ -6,6 +6,7 @@
   "exports": {
     "./icons/krds": "./icons/krds/index.ts",
     "./icons/lucide": "./icons/lucide/index.ts",
+    "./images": "./images/index.ts",
     "./images/*": {
       "import": "./images/*"
     },

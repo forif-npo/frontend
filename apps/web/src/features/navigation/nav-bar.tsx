@@ -2,10 +2,9 @@
 import { LoginIcon, MyIcon, SearchIcon } from "@repo/assets/icons/krds";
 import { Button } from "@ui/components/client";
 import { Link, LinkButton, Title } from "@ui/components/server";
-import { ThemeToggles } from "@ui/features/common/theme";
 import { cn } from "@ui/utils/cn";
-import { useTranslations } from "next-intl";
 import { ReactNode, useEffect, useRef, useState } from "react";
+import { ThemeToggles } from "../theme/theme-toggle";
 
 export type NavMenu = {
   label: string;
@@ -28,19 +27,7 @@ export function NavBar({
   rightSlot,
   isLoggedIn,
 }: NavigationBarProps) {
-  const t = useTranslations("Nav");
-  const navMenus: NavMenu[] | undefined = items.map((menu) => {
-    return {
-      title: t(menu.title!),
-      label: t(menu.label!),
-      href: menu.href,
-      navigate: t("club.navigate"),
-      subMenus: menu.subMenus?.map((subMenu) => ({
-        ...subMenu,
-        label: t(subMenu.label!),
-      })),
-    };
-  });
+  const navMenus: NavMenu[] = items;
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);

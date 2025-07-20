@@ -17,9 +17,12 @@
       ],
       "env": [
         "NEXT_PUBLIC_API_HOST",
+        "NEXTAUTH_URL",
         "NEXT_RUNTIME",
         "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET"
+        "GOOGLE_CLIENT_SECRET",
+        "SENTRY_AUTH_TOKEN",
+        "CI"
       ]
     },
     "test": {

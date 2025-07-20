@@ -1,8 +1,6 @@
 packages:
   - apps/*
   - packages/*
-ignoredBuiltDependencies:
-  - '@sentry/cli'
 onlyBuiltDependencies:
   - sharp
   - unrs-resolver
