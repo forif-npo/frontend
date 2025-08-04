@@ -1,11 +1,11 @@
 {
-  "name": "web",
+  "name": "admin",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "next build",
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "start": "next start",

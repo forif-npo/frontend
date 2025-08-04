@@ -1,7 +1,7 @@
-import { env } from "@core/env";
 import { Member } from "@core/types/member";
 import NextAuth, { type NextAuthResult } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { env } from "./env";
 const result = NextAuth({
   secret: env.AUTH_SECRET,
   pages: {

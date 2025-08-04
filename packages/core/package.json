@@ -8,12 +8,10 @@
       "./src/*.ts"
     ],
     "./theme-provider": "./src/components/theme-provider.tsx",
-    "./dictionaries/*": "./src/dictionaries/*.json",
     "./schemas": "./src/schemas/index.ts",
     "./mock": "./mock.ts",
     "./components": "./src/components/index.ts",
-    "./features/*": "./src/features/*",
-    "./env": "./src/env.ts"
+    "./features/*": "./src/features/*"
   },
   "scripts": {
     "lint": "eslint .",
@@ -22,7 +20,6 @@
   },
   "dependencies": {
     "@repo/assets": "workspace:*",
-    "@t3-oss/env-core": "^0.13.4",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.0",
     "ky": "^1.8.1",

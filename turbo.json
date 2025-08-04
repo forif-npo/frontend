@@ -21,7 +21,6 @@
         "NEXT_RUNTIME",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
-        "SENTRY_AUTH_TOKEN",
         "CI"
       ]
     },

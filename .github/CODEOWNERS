@@ -1,0 +1,26 @@
+# CODEOWNERS 파일
+# 이 파일은 코드 변경사항에 대한 자동 리뷰어 할당을 설정합니다.
+
+# 전체 프로젝트에 대한 기본 소유자
+* @zxvm5962 @standardwish @forif-npo/dev-team
+
+# 프론트엔드 관련 파일
+apps/web/** @zxvm5962 @standardwish @forif-npo/dev-team
+apps/admin/** @zxvm5962 @standardwish @forif-npo/dev-team
+packages/ui/** @zxvm5962 @standardwish @forif-npo/dev-team
+
+# 설정 파일
+*.config.* @zxvm5962 @standardwish @forif-npo/dev-team
+package.json @zxvm5962 @standardwish @forif-npo/dev-team
+pnpm-lock.yaml @zxvm5962 @standardwish @forif-npo/dev-team
+
+# GitHub 관련 파일
+.github/** @zxvm5962 @standardwish @forif-npo/dev-team
+
+# 문서 파일
+*.md @zxvm5962 @standardwish @forif-npo/dev-team
+
+# 테스트 파일
+**/__tests__/** @zxvm5962 @standardwish @forif-npo/dev-team
+**/*.test.* @zxvm5962 @standardwish @forif-npo/dev-team
+**/*.spec.* @zxvm5962 @standardwish @forif-npo/dev-team

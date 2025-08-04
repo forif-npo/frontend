@@ -1,0 +1,17 @@
+# 자동 할당 설정 파일
+# PR과 이슈에 자동으로 담당자와 리뷰어를 할당합니다
+
+# PR에 대한 리뷰어 자동 할당
+addReviewers: true
+
+# 할당할 사용자 목록 (프로젝트 권한을 가진 실제 사용자들)
+reviewers:
+  - zxvm5962 # PoQo
+  - standardwish # Jun Seong Pyo
+
+# 리뷰어 수 (최대 몇 명까지 할당할지)
+numberOfReviewers: 2
+# 특정 라벨이 있는 경우에만 할당
+# skipKeywords:
+#   - wip
+#   - draft
