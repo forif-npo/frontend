@@ -2,8 +2,8 @@
 name: 🐛 버그 리포트
 about: 버그를 발견했을 때 사용하는 템플릿입니다
 title: "[BUG] "
-labels: ["bug"]
-assignees: []
+labels: ["버그"]
+assignees: ["h-forif"]
 ---
 
 ## 🐛 버그 설명

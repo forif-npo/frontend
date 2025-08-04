@@ -2,8 +2,8 @@
 name: ❓ 질문/문의
 about: 프로젝트에 대한 질문이나 문의사항이 있을 때 사용합니다
 title: "[QUESTION] "
-labels: ["question"]
-assignees: []
+labels: ["질문"]
+assignees: ["h-forif"]
 ---
 
 ## ❓ 질문 내용
