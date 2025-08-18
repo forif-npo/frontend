@@ -1,9 +1,8 @@
 import React from "react";
-import { Label } from "./Label";
 
 interface BreadcrumbItem {
   label: string;
-  onClick: () => void;
+  href?: string; // optional link; if absent rendered as plain text
 }
 
 interface BreadcrumbProps {
@@ -53,40 +52,52 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
 }) => {
   const maxItems = Math.max(2, maxLength);
 
-  const renderItems = () => {
+  const computeVisible = () => {
     if (items.length <= maxItems) return items;
-
-    const visibleItems = [items[0]];
+    const visible: BreadcrumbItem[] = [items[0]];
     if (maxItems > 2) {
       for (let i = 1; i < maxItems - 1; i++) {
-        visibleItems.push(items[items.length - maxItems + i]);
+        visible.push(items[items.length - maxItems + i]);
       }
     }
-    visibleItems.push(items[items.length - 1]);
-    return visibleItems;
+    visible.push(items[items.length - 1]);
+    return visible;
   };
 
+  const visibleItems = computeVisible();
+
   return (
-    <nav aria-label="브레드크럼" className="py-2">
-      <ol className="flex items-center">
-        {renderItems().map((item, index) => (
-          <li key={index} className="m-0 flex items-center">
-            {index > 0 && <ChevronIcon className="text-text-basic" />}
-            {index === 1 && items.length > maxItems && (
-              <>
-                <EllipsisIcon className="text-text-basic" />
-                <ChevronIcon className="text-text-basic" />
-              </>
-            )}
-            <Label
-              onClick={item.onClick}
-              size="xs"
-              className="focus:ring-border-primary text-text-basic cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2"
-            >
-              {item.label}
-            </Label>
-          </li>
-        ))}
+    <nav aria-label="breadcrumb" className="py-2">
+      <ol className="flex items-center" role="list">
+        {visibleItems.map((item, index) => {
+          const isLast = index === visibleItems.length - 1;
+          return (
+            <li key={index} className="m-0 flex items-center">
+              {index > 0 && <ChevronIcon className="text-text-basic" />}
+              {index === 1 && items.length > maxItems && (
+                <>
+                  <EllipsisIcon className="text-text-basic" />
+                  <ChevronIcon className="text-text-basic" />
+                </>
+              )}
+              {item.href && !isLast ? (
+                <a
+                  href={item.href}
+                  className="text-text-basic focus:ring-border-primary text-xs hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <span
+                  className={`text-text-basic text-xs ${isLast ? "font-semibold" : ""}`}
+                  aria-current={isLast ? "page" : undefined}
+                >
+                  {item.label}
+                </span>
+              )}
+            </li>
+          );
+        })}
       </ol>
     </nav>
   );

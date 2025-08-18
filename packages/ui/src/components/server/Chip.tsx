@@ -1,112 +1,81 @@
 import React from "react";
 import { Label } from "./Label";
 
+// Server-safe Chip: no onClick/onChange handlers. Pure HTML semantics using a native checkbox + CSS peer styling.
+// State is uncontrolled (defaultChecked). Form submission will include the value when checked.
+// If you need controlled / dynamic behavior in React, create a client wrapper that composes this primitive.
 export type ChipProps = {
+  id: string;
   label: string;
-  checked: boolean;
+  name?: string;
+  value?: string;
   disabled?: boolean;
   size?: "sm" | "md" | "lg";
-  onChange: (newCheckedState: boolean) => void;
-  id: string;
+  defaultChecked?: boolean;
+  className?: string;
 };
 
 export const Chip: React.FC<ChipProps> = ({
+  id,
   label,
-  checked,
+  name,
+  value = "on",
   disabled = false,
   size = "md",
-  onChange,
-  id,
+  defaultChecked = false,
+  className = "",
 }) => {
   const sizeClasses = {
-    sm: "px-4 h-10",
-    md: "px-4 h-12",
-    lg: "px-4 h-14",
-  };
-
-  const labelSize = {
-    sm: "s" as const,
-    md: "m" as const,
-    lg: "m" as const,
+    sm: { container: "px-4 h-10", icon: "w-3 h-3", label: "s" as const },
+    md: { container: "px-4 h-12", icon: "w-4 h-4", label: "m" as const },
+    lg: { container: "px-4 h-14", icon: "w-5 h-5", label: "m" as const },
   }[size];
-  const labelColor = disabled
-    ? "text-disabled"
-    : checked
-      ? "text-primary"
-      : "text-basic";
 
-  const baseClasses = `inline-flex items-center gap-1 rounded-2 border transition-colors duration-200 ${sizeClasses[size]}`;
-
+  // Base visual container uses peer-checked classes to reflect state with no JS.
+  const baseClasses = `inline-flex items-center gap-1 rounded-2 border transition-colors duration-200 ${sizeClasses.container}`;
   const stateClasses = disabled
     ? "bg-surface-gray-subtle text-text-disabled border-border-gray cursor-not-allowed"
-    : checked
-      ? "bg-action-primary-selected text-text-primary border-border-primary hover:bg-action-primary-hover cursor-pointer"
-      : "bg-surface-white text-text-subtle border-border-gray hover:bg-surface-gray-subtle cursor-pointer";
-
-  const iconClasses = disabled
+    : `bg-surface-white text-text-subtle border-border-gray hover:bg-surface-gray-subtle cursor-pointer
+       peer-checked:bg-action-primary-selected peer-checked:text-text-primary peer-checked:border-border-primary peer-checked:hover:bg-action-primary-hover`;
+  const iconColorClasses = disabled
     ? "text-icon-disabled"
-    : checked
-      ? "text-icon-primary"
-      : "text-icon-subtle";
-
-  const iconSizes = {
-    sm: "w-3 h-3",
-    md: "w-4 h-4",
-    lg: "w-5 h-5",
-  };
-
-  const handleClick = () => {
-    if (!disabled) {
-      onChange(!checked);
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      if (!disabled) {
-        onChange(!checked);
-      }
-    }
-  };
+    : `text-icon-subtle peer-checked:text-icon-primary`;
 
   return (
-    <div
-      className={`${baseClasses} ${stateClasses}`}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      role="checkbox"
-      aria-checked={checked}
-      aria-disabled={disabled}
-      tabIndex={disabled ? -1 : 0}
-    >
+    <div className="inline-flex">
       <input
-        type="checkbox"
         id={id}
-        className="sr-only"
-        checked={checked}
+        name={name}
+        value={value}
+        type="checkbox"
+        defaultChecked={defaultChecked}
         disabled={disabled}
-        onChange={handleClick}
-        aria-hidden="true"
+        className="peer sr-only"
+        aria-disabled={disabled}
       />
-      <svg
-        className={`${iconSizes[size]} ${iconClasses}`}
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2.5"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path d="M5 13l4 4L19 7"></path>
-      </svg>
-      <Label
+      <label
         htmlFor={id}
-        size={labelSize}
-        className={`text-${labelColor} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+        className={`${baseClasses} ${stateClasses} ${className}`}
       >
-        {label}
-      </Label>
+        <svg
+          className={`${sizeClasses.icon} ${iconColorClasses}`}
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2.5"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M5 13l4 4L19 7" />
+        </svg>
+        <Label
+          size={sizeClasses.label}
+          className={disabled ? "cursor-not-allowed" : "cursor-pointer"}
+        >
+          {label}
+        </Label>
+      </label>
     </div>
   );
 };

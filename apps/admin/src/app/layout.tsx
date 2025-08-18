@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@repo/core/theme-provider";
 import type { Metadata } from "next";
 
 import localFont from "next/font/local";
@@ -30,13 +29,7 @@ export default async function RootLayout({
         style={{ backgroundColor: "var(--background)" }}
         className="scrollbar-hidden"
       >
-        <ThemeProvider
-          defaultTheme="light"
-          enableColorScheme
-          themes={["light", "high-contrast"]}
-        >
-          <NuqsAdapter>{children}</NuqsAdapter>
-        </ThemeProvider>
+        <NuqsAdapter>{children}</NuqsAdapter>
       </body>
     </html>
   );

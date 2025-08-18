@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { Checkbox } from "../../packages/ui/src/components/server";
+import { Checkbox } from "../../packages/ui/src/components/client";
 
 const meta = {
   title: "Components/Checkbox",
@@ -9,29 +9,12 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    status: {
-      control: {
-        type: "select",
-        options: ["on", "off", "intermediate"],
-      },
-    },
-    label: {
-      control: {
-        type: "text",
-      },
-    },
-    disabled: {
-      control: {
-        type: "boolean",
-      },
-    },
-    size: {
-      control: {
-        type: "select",
-        options: ["md", "lg"],
-      },
-    },
-    onChange: { action: "clicked" },
+    defaultChecked: { control: { type: "boolean" } },
+    indeterminate: { control: { type: "boolean" } },
+    label: { control: { type: "text" } },
+    disabled: { control: { type: "boolean" } },
+    size: { control: { type: "select", options: ["md", "lg"] } },
+    onChange: { action: "changed" },
   },
 } satisfies Meta<typeof Checkbox>;
 
@@ -39,105 +22,44 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Checked: Story = {
-  args: {
-    status: "on",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    label: "CheckBox",
-    id: "cb-1",
-  },
+  args: { defaultChecked: true, label: "CheckBox", id: "cb-1" },
 };
 
 export const Unchecked: Story = {
-  args: {
-    status: "off",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    label: "CheckBox",
-    id: "cb-2",
-  },
+  args: { defaultChecked: false, label: "CheckBox", id: "cb-2" },
 };
 
-export const Intermediate: Story = {
-  args: {
-    status: "intermediate",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    label: "CheckBox",
-    id: "cb-3",
-  },
+export const Indeterminate: Story = {
+  args: { indeterminate: true, label: "CheckBox", id: "cb-3" },
 };
 
 export const Disabled: Story = {
-  args: {
-    status: "on",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    label: "CheckBox",
-    disabled: true,
-    id: "cb-4",
-  },
+  args: { defaultChecked: true, label: "CheckBox", disabled: true, id: "cb-4" },
 };
 
 export const DisabledUnchecked: Story = {
   args: {
-    status: "off",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
+    defaultChecked: false,
     label: "CheckBox",
     disabled: true,
     id: "cb-5",
   },
 };
 
-export const DisabledIntermediate: Story = {
-  args: {
-    status: "intermediate",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    label: "CheckBox",
-    disabled: true,
-    id: "cb-6",
-  },
+export const DisabledIndeterminate: Story = {
+  args: { indeterminate: true, label: "CheckBox", disabled: true, id: "cb-6" },
 };
 
-export const NoLabel: Story = {
-  args: {
-    status: "on",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    id: "cb-7",
-  },
-};
+export const NoLabel: Story = { args: { defaultChecked: true, id: "cb-7" } };
 
 export const NoLabelDisabled: Story = {
-  args: {
-    status: "on",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    disabled: true,
-    id: "cb-8",
-  },
+  args: { defaultChecked: true, disabled: true, id: "cb-8" },
 };
 
 export const MediumCheckbox: Story = {
-  args: {
-    status: "on",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    label: "CheckBox",
-    size: "md",
-    id: "cb-10",
-  },
+  args: { defaultChecked: true, label: "CheckBox", size: "md", id: "cb-10" },
 };
 
 export const LargeCheckbox: Story = {
-  args: {
-    status: "on",
-    onChange: (checked: "on" | "off" | "intermediate") =>
-      console.log(`Switched to ${checked}`),
-    label: "CheckBox",
-    size: "lg",
-    id: "cb-11",
-  },
+  args: { defaultChecked: true, label: "CheckBox", size: "lg", id: "cb-11" },
 };

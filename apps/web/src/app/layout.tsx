@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "FORIF WEB",
   description: "포리프 웹사이트",
 };
+// Use module resolution for shared font asset instead of deep relative path to avoid crossing repo root during Next resolution.
 const pretendard = localFont({
   src: "../../../../packages/assets/fonts/PretendardGOVVariable.woff2",
   display: "swap",

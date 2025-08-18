@@ -1,112 +1,86 @@
-import { cn } from "../../utils/cn";
 import { Label } from "./Label";
 
 export type SwitchProps = {
-  status: boolean;
-  onChange: (checked: boolean) => void;
+  id: string;
+  name?: string;
+  value?: string;
+  defaultChecked?: boolean;
   size?: "lg" | "md";
   disabled?: boolean;
   label?: string;
   labelPosition?: "left" | "right";
-  id: string;
+  className?: string;
 };
 
+// Uncontrolled server-safe switch using a checkbox + peer styling.
 export const Switch = ({
-  status,
+  id,
+  name,
+  value = "on",
+  defaultChecked = false,
   size = "md",
   disabled = false,
-  onChange,
   label,
   labelPosition = "right",
-  id,
+  className = "",
 }: SwitchProps) => {
-  const handleToggle = () => {
-    if (!disabled) {
-      onChange(!status);
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      if (!disabled) {
-        onChange(!status);
-      }
-    }
-  };
-
-  const sizeClasses = {
-    lg: "w-10 h-6",
-    md: "w-8 h-5",
-  };
-
-  const toggleClasses = {
-    lg: { style: "w-6 h-6", translate: "translate-x-6 border-border-primary" },
-    md: { style: "w-5 h-5", translate: "translate-x-5 border-border-primary" },
-  };
-
-  const labelSizeClasses = {
-    lg: { size: "m" as const, gap: "gap-3" },
-    md: { size: "s" as const, gap: "gap-2" },
+  const sizeConf = {
+    lg: { track: "w-10 h-6", knob: "w-6 h-6", translate: "translate-x-6" },
+    md: { track: "w-8 h-5", knob: "w-5 h-5", translate: "translate-x-5" },
   }[size];
 
-  const switchComponent = (
-    <div
-      className={`relative inline-block ${sizeClasses[size]} ${
-        disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-      }`}
-      onClick={handleToggle}
-      onKeyDown={handleKeyDown}
-      role="switch"
-      aria-checked={status}
-      aria-disabled={disabled}
-      tabIndex={disabled ? -1 : 0}
-    >
+  const switchCore = (
+    <span className={`relative inline-flex ${className}`}>
       <input
         id={id}
+        name={name}
+        value={value}
         type="checkbox"
-        className="sr-only"
-        checked={status}
+        defaultChecked={defaultChecked}
         disabled={disabled}
-        onChange={handleToggle}
+        className="peer sr-only"
+        role="switch"
+        aria-disabled={disabled}
+      />
+      <span
         aria-hidden="true"
+        className={`rounded-full transition-colors duration-200 ${sizeConf.track} ${disabled ? "cursor-not-allowed" : "cursor-pointer"} bg-gray-30 peer-checked:bg-primary-50 peer-disabled:opacity-50`}
       />
-      <div
-        className={`block rounded-full ${
-          status ? "bg-primary-50" : "bg-gray-30"
-        } ${sizeClasses[size]}`}
+      <span
+        aria-hidden="true"
+        className={`border-border-gray absolute left-0 top-0 -translate-x-1 transform rounded-full border bg-white transition-transform duration-200 ease-in-out ${sizeConf.knob} peer-checked:${sizeConf.translate} peer-disabled:opacity-75`}
       />
-      <div
-        className={cn(
-          "border-1 border-border-gray absolute -left-1 top-0 transform rounded-full bg-white transition-transform duration-200 ease-in-out",
-          toggleClasses[size].style,
-          status ? toggleClasses[size].translate : "",
-        )}
-      />
-    </div>
+    </span>
   );
 
-  if (!label) {
-    return switchComponent;
-  }
+  if (!label) return switchCore;
+
+  const sizeLabel = size === "lg" ? "m" : ("s" as const);
+  const gap = size === "lg" ? "gap-3" : "gap-2";
 
   return (
-    <div
-      className={`flex ${labelSizeClasses.gap} items-center ${
-        disabled ? "cursor-not-allowed opacity-50" : ""
-      }`}
+    <span
+      className={`inline-flex items-center ${gap} ${disabled ? "opacity-50" : ""}`}
     >
       {labelPosition === "left" && (
-        <Label htmlFor={id} size={labelSizeClasses.size}>
+        <Label
+          htmlFor={id}
+          size={sizeLabel}
+          className={disabled ? "cursor-not-allowed" : "cursor-pointer"}
+        >
           {label}
         </Label>
       )}
-      {switchComponent}
+      {switchCore}
       {labelPosition === "right" && (
-        <Label htmlFor={id} size={labelSizeClasses.size}>
+        <Label
+          htmlFor={id}
+          size={sizeLabel}
+          className={disabled ? "cursor-not-allowed" : "cursor-pointer"}
+        >
           {label}
         </Label>
       )}
-    </div>
+    </span>
   );
 };

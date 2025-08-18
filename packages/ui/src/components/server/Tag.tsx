@@ -1,56 +1,22 @@
-import React, { KeyboardEvent, MouseEvent } from "react";
+import React from "react";
 import { Label } from "./Label";
 
 interface TagProps {
   label: string;
   size?: "small" | "medium" | "large";
   disabled?: boolean;
-  onDelete?: (label: string) => void;
-  onClick?: (label: string) => void;
+  removable?: boolean; // if true, render a remove button but still no JS handlers (purely visual)
   className?: string;
 }
 
+// Server-safe Tag: no interactive callbacks. If you need onClick/onDelete, wrap in a client component.
 export const Tag: React.FC<TagProps> = ({
   label,
   size = "medium",
   disabled = false,
-  onDelete,
-  onClick,
+  removable = false,
   className = "",
 }) => {
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      event.stopPropagation();
-      if (!disabled && onClick) {
-        onClick(label);
-      }
-    }
-  };
-
-  const handleClick = () => {
-    if (!disabled && onClick) {
-      onClick(label);
-    }
-  };
-
-  const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
-    if (!disabled && onDelete) {
-      onDelete(label);
-    }
-    event.stopPropagation();
-  };
-
-  const handleDeleteKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      event.stopPropagation();
-      if (!disabled && onDelete) {
-        onDelete(label);
-      }
-    }
-  };
-
   const sizeStyle = {
     small: { size: "s" as const, style: "px-4 py-1 flex gap-1" },
     medium: { size: "m" as const, style: "px-4 py-1 flex gap-1" },
@@ -58,33 +24,23 @@ export const Tag: React.FC<TagProps> = ({
   }[size];
 
   return (
-    <div
+    <span
       className={`inline-flex items-center ${sizeStyle.style} rounded-full ${
         disabled
           ? "border-gray-40 bg-gray-20 cursor-not-allowed border text-gray-50"
-          : "border-gray-40 bg-gray-0 text-gray-90 hover:bg-gray-10 cursor-pointer border"
+          : "border-gray-40 bg-gray-0 text-gray-90 border"
       } ${className}`}
-      role="button"
-      tabIndex={disabled ? -1 : 0}
-      onKeyDown={handleKeyDown}
-      onClick={handleClick}
+      aria-disabled={disabled || undefined}
     >
       <Label
         size={sizeStyle.size}
         color={disabled ? "gray-50" : "gray-90"}
-        className={`${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+        className={disabled ? "cursor-not-allowed" : "cursor-default"}
       >
         {label}
       </Label>
-      {onDelete && (
-        <button
-          className={`${disabled ? "cursor-not-allowed" : ""}`}
-          onClick={handleDelete}
-          onKeyDown={handleDeleteKeyDown}
-          tabIndex={0}
-          role="button"
-          aria-label={`Remove ${label} tag`}
-        >
+      {removable && (
+        <span aria-hidden="true" className="ml-1 inline-flex items-center">
           <svg
             className="h-4 w-4"
             width="16"
@@ -98,8 +54,8 @@ export const Tag: React.FC<TagProps> = ({
               clipRule="evenodd"
             />
           </svg>
-        </button>
+        </span>
       )}
-    </div>
+    </span>
   );
 };

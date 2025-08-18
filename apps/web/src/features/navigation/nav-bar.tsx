@@ -4,7 +4,6 @@ import { Button } from "@ui/components/client";
 import { Link, LinkButton, Title } from "@ui/components/server";
 import { cn } from "@ui/utils/cn";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { ThemeToggles } from "../theme/theme-toggle";
 
 export type NavMenu = {
   label: string;
@@ -146,8 +145,6 @@ export function NavBar({
               </Button>
             </Link>
           )}
-
-          <ThemeToggles />
           {rightSlot}
         </div>
       </nav>

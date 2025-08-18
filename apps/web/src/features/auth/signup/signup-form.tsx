@@ -7,8 +7,8 @@ import {
 import { autoHyphenPhoneNumber } from "@/utils/form";
 import { signUpSchema, SignUpValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { Button, SelectBox } from "@ui/components/client";
-import { Checkbox, Label, Link, TextInput } from "@ui/components/server";
+import { Button, Checkbox, SelectBox } from "@ui/components/client";
+import { Label, Link, TextInput } from "@ui/components/server";
 import Form from "next/form";
 import { useActionState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -178,10 +178,10 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
               id="agree-all-checkbox"
               size="md"
               label="모두 동의합니다."
-              status={privacyPolicyAgree && serviceTermAgree ? "on" : "off"}
-              onChange={() => {
-                setValue("privacyPolicyAgree", !privacyPolicyAgree);
-                setValue("serviceTermAgree", !serviceTermAgree);
+              defaultChecked={privacyPolicyAgree && serviceTermAgree}
+              onChange={(next) => {
+                setValue("privacyPolicyAgree", next);
+                setValue("serviceTermAgree", next);
               }}
             />
             <div className="flex flex-row items-center">
@@ -191,10 +191,8 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                   name="serviceTermAgree"
                   size="md"
                   label="[필수] 서비스 이용약관에 동의합니다."
-                  status={serviceTermAgree ? "on" : "off"}
-                  onChange={() =>
-                    setValue("serviceTermAgree", !serviceTermAgree)
-                  }
+                  defaultChecked={serviceTermAgree}
+                  onChange={(next) => setValue("serviceTermAgree", next)}
                 />
               </div>
               <Link
@@ -212,10 +210,8 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                   name="privacyPolicyAgree"
                   size="md"
                   label="[필수] 개인정보의 수집에 동의합니다."
-                  status={privacyPolicyAgree ? "on" : "off"}
-                  onChange={() =>
-                    setValue("privacyPolicyAgree", !privacyPolicyAgree)
-                  }
+                  defaultChecked={privacyPolicyAgree}
+                  onChange={(next) => setValue("privacyPolicyAgree", next)}
                 />
               </div>
               <Link

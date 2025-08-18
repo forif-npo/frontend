@@ -31,10 +31,10 @@
       "config": "cz-config.js"
     }
   },
-  "dependencies": {},
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/config-pnpm-scopes": "^19.8.1",
     "@commitlint/prompt-cli": "^19.8.1",
     "@storybook/addon-docs": "^9.1.1",
     "@storybook/addon-links": "^9.1.1",
