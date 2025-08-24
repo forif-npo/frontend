@@ -21,7 +21,8 @@
         "NEXT_RUNTIME",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
-        "CI"
+        "CI",
+        "NODE_ENV"
       ]
     },
     "test": {

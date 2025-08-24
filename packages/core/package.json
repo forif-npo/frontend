@@ -7,7 +7,6 @@
     "./*": [
       "./src/*.ts"
     ],
-    "./theme-provider": "./src/components/theme-provider.tsx",
     "./schemas": "./src/schemas/index.ts",
     "./mock": "./mock.ts",
     "./components": "./src/components/index.ts",
@@ -24,7 +23,6 @@
     "dotenv": "^17.2.0",
     "ky": "^1.8.1",
     "lodash": "^4.17.21",
-    "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zod": "^3.25.0"

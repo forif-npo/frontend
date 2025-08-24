@@ -1,10 +1,11 @@
 "use client";
 import { LoginIcon, MyIcon, SearchIcon } from "@repo/assets/icons/krds";
+import NavLogo from "@repo/assets/images/nav_logo.png";
 import { Button } from "@ui/components/client";
 import { Link, LinkButton, Title } from "@ui/components/server";
 import { cn } from "@ui/utils/cn";
+import Image from "next/image";
 import { ReactNode, useEffect, useRef, useState } from "react";
-
 export type NavMenu = {
   label: string;
   title?: string;
@@ -14,18 +15,12 @@ export type NavMenu = {
 };
 
 export interface NavigationBarProps {
-  logo?: ReactNode;
   items: NavMenu[];
   isLoggedIn: boolean;
   rightSlot?: ReactNode;
 }
 
-export function NavBar({
-  logo,
-  items,
-  rightSlot,
-  isLoggedIn,
-}: NavigationBarProps) {
+export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
   const navMenus: NavMenu[] = items;
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
@@ -76,7 +71,7 @@ export function NavBar({
           href="/"
           className="flex items-center gap-8"
         >
-          {logo}
+          <Image src={NavLogo} width={87} height={56} alt="FORIF Logo" />
         </Link>
         <ul className="flex flex-grow justify-center gap-4">
           {navMenus.map(({ label, href, subMenus, title, navigate }) => (

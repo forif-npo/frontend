@@ -6,7 +6,6 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     AUTH_SECRET: z.string().min(1),
-    SERVER_URL: z.url().min(1),
   },
 
   /**
@@ -16,7 +15,7 @@ export const env = createEnv({
   clientPrefix: "NEXT_PUBLIC_",
 
   client: {
-    // NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+    NEXT_PUBLIC_SERVER_URL: z.string().min(1),
   },
 
   /**
