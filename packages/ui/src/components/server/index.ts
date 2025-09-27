@@ -8,6 +8,7 @@ export * from "./Display";
 export * from "./Divider";
 export * from "./Heading";
 export * from "./InfoBox";
+export * from "./InfoText";
 export * from "./Label";
 export * from "./Link";
 export * from "./LinkButton";

@@ -2,9 +2,7 @@ import { signUp } from "@/app/actions";
 import { auth, signOut } from "@/auth";
 import { SignUpForm } from "@/features/auth/signup/signup-form";
 import { signUpSchema, SignUpValues } from "@core/schemas";
-import { ArrowLeft } from "@repo/assets/icons/lucide";
-import { Button } from "@ui/components/client";
-import { Heading } from "@ui/components/server";
+import { Body, Heading, InfoBox, Link } from "@ui/components/server";
 import { HTTPError } from "ky";
 import { redirect } from "next/navigation";
 import { z } from "zod/v4";
@@ -16,16 +14,14 @@ type ActionState = {
 
 const submitForm = async (_: ActionState, formData: FormData) => {
   "use server";
-  let redirectPath: string | null = null;
   const values: SignUpValues = {
     name: String(formData.get("name") || ""),
     department: String(formData.get("department") || ""),
     email: String(formData.get("email") || ""),
     id: String(formData.get("id") || ""),
     phoneNumber: String(formData.get("phoneNumber") || ""),
-    referralSource: String(formData.get("referralSource") || ""),
-    serviceTermAgree: Boolean(formData.get("serviceTermAgree") || false),
-    privacyPolicyAgree: Boolean(formData.get("privacyPolicyAgree") || false),
+    serviceTermAgree: formData.get("serviceTermAgree") === "on",
+    privacyPolicyAgree: formData.get("privacyPolicyAgree") === "on",
   };
 
   const { error: parseError } = signUpSchema.safeParse(values);
@@ -41,7 +37,6 @@ const submitForm = async (_: ActionState, formData: FormData) => {
   }
   try {
     await signUp(values);
-    redirectPath = "/signup/complete";
   } catch (error) {
     if (error instanceof HTTPError) {
       errors["root"] = { message: error.message };
@@ -50,16 +45,15 @@ const submitForm = async (_: ActionState, formData: FormData) => {
         message: `알 수 없는 오류가 발생했습니다: ${(error as Error).message}`,
       };
     }
-  } finally {
-    if (redirectPath) {
-      redirect(redirectPath);
-    }
+    return {
+      values,
+      errors,
+    };
   }
-  return {
-    values,
-    errors,
-  };
+
+  redirect("/signup/complete");
 };
+
 export default async function Page() {
   const session = await auth();
   if (!session?.user?.email) {
@@ -71,30 +65,51 @@ export default async function Page() {
   }
 
   return (
-    <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
-      <Heading size="s" className="text-text-basic text-left">
-        포리프 회원가입
+    <div className="mx-auto mb-16 mt-8 min-h-screen max-w-[800px]">
+      <Heading size="xxs" className="text-text-subtle text-left">
+        포리프 부원 회원가입
       </Heading>
-      <Heading size="l" className="text-text-basic text-left">
+      <Heading size="l" className="text-text-basic mt-4 text-left">
         회원가입
       </Heading>
-      <section className="mt-12 w-full">
-        <form
-          action={async () => {
-            "use server";
-            await signOut({ redirectTo: "/signin" });
-          }}
-          className="mb-2 flex cursor-pointer flex-row items-center"
-        >
-          <Button variant="text" size="medium">
-            <span className="flex flex-row items-center gap-2">
-              <ArrowLeft size={20} className="text-text-basic" />
-              다른 이메일 계정으로 회원가입
-            </span>
-          </Button>
-        </form>
+      <Body size="m" className="text-text-subtle mt-12">
+        포리프 부원을 위한 회원가입입니다.
+        <br />
+        회원가입을 하시면 스터디 신청 / 회계 공시 서비스를 이용하실 수 있습니다.
+      </Body>
+      <section className="my-10 w-full">
         <SignUpForm action={submitForm} email={session.user.email} />
       </section>
+      <InfoBox
+        title="회원가입에 어려움이 있으신가요?"
+        variant="information"
+        content={<InfoBoxContent />}
+      />
     </div>
   );
 }
+const InfoBoxContent = () => {
+  return (
+    <div className="mx-7">
+      <ul className="list-inside list-disc space-y-2">
+        <li className="text-text-subtle">
+          회원가입{" "}
+          <Link size="m" href="" className="underline underline-offset-2">
+            관련 도움말
+          </Link>
+          이나 다른 사용자가{" "}
+          <Link size="m" href="" className="underline underline-offset-2">
+            자주 묻는 질문
+          </Link>
+          을 확인해보세요.
+        </li>
+        <li className="text-text-subtle">
+          <Link size="m" href="" className="underline underline-offset-2">
+            카카오톡 오픈 채널
+          </Link>
+          로 연락주세요. 서비스에 회원가입할 수 있도록 도와드리겠습니다.
+        </li>
+      </ul>
+    </div>
+  );
+};
