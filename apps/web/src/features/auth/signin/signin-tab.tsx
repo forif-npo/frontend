@@ -1,21 +1,20 @@
 "use client";
 
-import { Tabs } from "@ui/components/client";
-import { TabProps } from "@ui/components/client/Tab";
+import { SlideTabProps, SlideTabs } from "@ui/components/client/SlideTab";
 import MemberLogin from "./member-tab";
-import OperatorLogin from "./operator-tab";
+import MentorLogin from "./mentor-tab";
 
 export function SignInTab() {
-  const tabs: TabProps[] = [
+  const tabs: SlideTabProps[] = [
     {
       label: "부원 로그인",
       content: <MemberLogin />,
     },
     {
-      label: "운영진 로그인",
-      content: <OperatorLogin />,
+      label: "멘토 로그인",
+      content: <MentorLogin />,
     },
   ];
 
-  return <Tabs tabs={tabs} />;
+  return <SlideTabs tabs={tabs} />;
 }
