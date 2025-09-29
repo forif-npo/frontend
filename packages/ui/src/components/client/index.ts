@@ -11,6 +11,7 @@ export { Pagination } from "./Pagination";
 export { RadioButtonGroup } from "./RadioButton";
 export { Select } from "./Select";
 export { SelectBox } from "./SelectBox";
+export { SlideTabs } from "./SlideTab";
 export { Tabs } from "./Tab";
 export { TextArea } from "./TextArea";
 export { TextInput } from "./TextInput";

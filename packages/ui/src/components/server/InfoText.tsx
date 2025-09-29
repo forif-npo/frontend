@@ -19,7 +19,7 @@ export function InfoText({
       : "var(--color-icon-secondary)";
 
   return (
-    <div className={`flex flex-row items-start gap-1 ${className}`}>
+    <div className={`mt-6 flex flex-row items-start gap-1 ${className}`}>
       <span className="h-[20px] w-[20px] flex-shrink-0">
         <InformationFillIcon
           width={20}
