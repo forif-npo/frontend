@@ -49,11 +49,15 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         />
         <span
           aria-hidden="true"
-          className={`flex items-center justify-center rounded border transition-colors duration-200 ${sizeClasses.box} ${disabled ? "cursor-not-allowed" : "cursor-pointer"} bg-surface-white border-border-gray peer-hover:border-border-primary peer-checked:bg-button-primary-fill peer-checked:border-border-primary peer-disabled:bg-surface-gray-subtle peer-disabled:border-border-gray peer-disabled:text-text-disabled`}
+          className={`relative flex items-center justify-center rounded border transition-colors duration-200 ${sizeClasses.box} ${disabled ? "cursor-not-allowed" : "cursor-pointer"} ${
+            defaultChecked
+              ? "bg-button-primary-fill border-border-primary"
+              : "bg-surface-white border-border-gray"
+          } ${disabled ? "bg-surface-gray-subtle border-border-gray text-text-disabled" : ""}`}
         >
           {/* Check icon */}
           <svg
-            className={`${sizeClasses.icon} text-text-bolder-inverse opacity-0 transition-opacity duration-150 ease-in-out peer-checked:opacity-100 peer-data-[indeterminate=true]:opacity-0`}
+            className={`absolute ${sizeClasses.icon} text-text-bolder-inverse transition-opacity duration-150 ease-in-out ${defaultChecked && !indeterminate ? "opacity-100" : "opacity-0"}`}
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -65,7 +69,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
           </svg>
           {/* Indeterminate icon */}
           <svg
-            className={`${sizeClasses.icon} text-text-bolder-inverse transition-opacity duration-150 ease-in-out ${indeterminate ? "opacity-100" : "opacity-0"}`}
+            className={`absolute ${sizeClasses.icon} text-text-bolder-inverse transition-opacity duration-150 ease-in-out ${indeterminate ? "opacity-100" : "opacity-0"}`}
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
