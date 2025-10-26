@@ -1,5 +1,3 @@
-"use client";
-
 import { SlideTabProps, SlideTabs } from "@ui/components/client/SlideTab";
 import MemberLogin from "./member-tab";
 import MentorLogin from "./mentor-tab";

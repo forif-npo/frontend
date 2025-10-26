@@ -1,4 +1,4 @@
-import { signUp } from "@/app/actions";
+import { signUp } from "@/features/auth/signin/actions";
 import { auth, signOut } from "@/auth";
 import { SignOutButton } from "@/components/SignOutButton";
 import { SignUpForm } from "@/features/auth/signup/signup-form";

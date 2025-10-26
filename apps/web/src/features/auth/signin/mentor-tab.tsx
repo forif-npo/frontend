@@ -1,5 +1,5 @@
 "use client";
-import { mentorSignIn } from "@/app/actions";
+import { mentorSignIn } from "@/features/auth/signin/actions";
 import { mentorSignInSchema, MentorSignInValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Button, TextInput } from "@ui/components/client";
