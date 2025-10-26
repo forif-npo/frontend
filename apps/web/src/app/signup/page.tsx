@@ -79,9 +79,7 @@ export default async function Page() {
         회원가입을 하시면 스터디 신청 / 회계 공시 서비스를 이용하실 수 있습니다.
       </Body>
       <section className="mt-12 w-full">
-        <div className="mb-2">
-          <SignOutButton />
-        </div>
+        <SignOutButton />
       </section>
       <section className="mb-10 w-full">
         <SignUpForm action={submitForm} email={session.user.email} />
