@@ -11,8 +11,8 @@ export default async function Page() {
 
   return (
     <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
-      <Heading size="s" className="text-text-basic text-left">
-        포리프 부원 로그인
+      <Heading size="xxs" className="text-text-subtle text-left">
+        포리프 부원/멘토 로그인
       </Heading>
       <Heading size="l" className="text-text-basic text-left">
         로그인 방식을 선택해주세요.

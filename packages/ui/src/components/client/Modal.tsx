@@ -15,6 +15,8 @@ interface ModalProps {
   closeOnOverlayClick?: boolean;
   cancelLabel?: string;
   confirmLabel?: string;
+  showHeaderBorder?: boolean;
+  showFooterBorder?: boolean;
 }
 
 const CloseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -46,6 +48,8 @@ export const Modal: React.FC<ModalProps> = ({
   closeOnOverlayClick = true,
   cancelLabel = "취소",
   confirmLabel = "확인",
+  showHeaderBorder = true,
+  showFooterBorder = true,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -103,7 +107,11 @@ export const Modal: React.FC<ModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex max-h-[90vh] flex-col">
-          <div className="border-gray-10 flex items-start justify-between border-b p-5">
+          <div
+            className={`flex items-start justify-between p-5 ${
+              showHeaderBorder ? "border-gray-10 border-b" : ""
+            }`}
+          >
             <Label
               id="modal-title"
               size="l"
@@ -114,12 +122,16 @@ export const Modal: React.FC<ModalProps> = ({
             </Label>
           </div>
 
-          <div className="relative flex-auto overflow-y-auto p-6">
+          <div className="relative flex-auto overflow-y-auto px-6 pt-6">
             {children}
           </div>
 
           {(onConfirm || showCancelButton) && (
-            <div className="border-gray-10 flex items-center justify-end gap-4 border-t p-6">
+            <div
+              className={`flex items-center justify-end gap-4 p-6 ${
+                showFooterBorder ? "border-gray-10 border-t" : ""
+              }`}
+            >
               {showCancelButton && (
                 <Button
                   variant="tertiary"

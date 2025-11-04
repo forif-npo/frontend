@@ -1,5 +1,5 @@
 import {
-  InformationIcon,
+  InformationFillIcon,
   SuccessFillIcon,
   UrgentBadgeDangerIcon,
 } from "@repo/assets/icons/krds";
@@ -14,14 +14,14 @@ export type InfoBoxProps = {
   variant: AlertVariant;
 };
 
-const variantClaases: Record<AlertVariant, string> = {
+const variantClasses: Record<AlertVariant, string> = {
   danger: "text-danger-50",
   information: "text-text-secondary",
   success: "text-success-50",
 };
 
 const AlertBadge = ({ variant }: { variant: AlertVariant }) => {
-  const variantClass = variantClaases[variant];
+  const variantClass = variantClasses[variant];
   return (
     <>
       {variant === "danger" && (
@@ -32,7 +32,7 @@ const AlertBadge = ({ variant }: { variant: AlertVariant }) => {
         />
       )}
       {variant === "information" && (
-        <InformationIcon width={20} height={20} className={variantClass} />
+        <InformationFillIcon width={20} height={20} backgroundColor="#052B57" />
       )}
       {variant === "success" && (
         <SuccessFillIcon width={20} height={20} className={variantClass} />

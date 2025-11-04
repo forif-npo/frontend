@@ -13,3 +13,4 @@ export { Select } from "./Select";
 export { SelectBox } from "./SelectBox";
 export { Tabs } from "./Tab";
 export { TextArea } from "./TextArea";
+export { TextInput } from "./TextInput";
