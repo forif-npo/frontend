@@ -12,10 +12,15 @@ import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
 import { Pagination } from "@ui/components/client";
 import { StudyListSkeleton } from "@/components/study/skeleton/StudyCardSkeleton";
 import { Heading } from "@ui/components/server";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function StudyListPage() {
   const router = useRouter();
   const [sortBy, setSortBy] = useState<"latest" | "popular">("latest");
+  const [searchInput, setSearchInput] = useState<string>("");
+
+  // Debounce search input with 500ms delay
+  const debouncedSearch = useDebounce(searchInput, 500);
 
   // Filters from URL
   const { filters, updateFilter, updateMultipleFilters, clearAllFilters } =
@@ -26,6 +31,11 @@ export default function StudyListPage() {
     data: [],
     initialPageSize: 20,
   });
+
+  // Update filter when debounced search changes
+  useEffect(() => {
+    updateFilter("search", debouncedSearch || undefined);
+  }, [debouncedSearch, updateFilter]);
 
   // Build API params from filters and pagination
   const apiParams: StudyListParams = useMemo(() => {
@@ -94,10 +104,11 @@ export default function StudyListPage() {
         {/* Search + Action Buttons */}
         <div className="mb-6 flex items-center justify-between gap-7">
           <StudySearchBar
-            value={filters.search || ""}
-            onChange={(value) => updateFilter("search", value)}
+            value={searchInput}
+            onChange={(value) => setSearchInput(value)}
             onSubmit={() => {
-              // Search is already applied via onChange
+              // Trigger immediate search on Enter/Submit
+              updateFilter("search", searchInput || undefined);
               setPage(0);
             }}
           />

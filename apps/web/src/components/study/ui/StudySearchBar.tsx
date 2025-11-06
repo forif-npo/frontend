@@ -16,9 +16,20 @@ export const StudySearchBar: React.FC<StudySearchBarProps> = ({
   placeholder = "스터디 제목이나 멘토명을 검색해보세요",
   className = "",
 }) => {
+  const [isComposing, setIsComposing] = React.useState(false);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit();
+    if (!isComposing) {
+      onSubmit();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !isComposing) {
+      e.preventDefault();
+      onSubmit();
+    }
   };
 
   return (
@@ -31,6 +42,9 @@ export const StudySearchBar: React.FC<StudySearchBarProps> = ({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={() => setIsComposing(false)}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className="h-14 w-full rounded-lg border px-4 pr-12 text-[17px] focus:border-blue-500 focus:outline-none"
         />
