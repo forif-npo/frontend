@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
 
-const publicRoutes = ["/", "/signin", "/signup", "/terms", "/privacy-policy"];
+const publicRoutes = [
+  "/",
+  "/signin",
+  "/signup",
+  "/terms",
+  "/privacy-policy",
+  "/apply-card-demo",
+  "/study/list",
+];
+const publicParamsList = "/study/detail";
 const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
 
@@ -15,13 +24,14 @@ const authMiddleware = auth((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isAuthRoute = authRoutes.includes(pathname);
   const isPublicRoute = publicRoutes.includes(pathname);
+  const isPublicParamsRoute = pathname.startsWith(publicParamsList);
 
   if (isApiAuthRoute) return;
   if (isLoggedIn && isAuthRoute) {
     return Response.redirect(new URL(`/`, nextUrl));
   }
 
-  if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
+  if (!isLoggedIn && !isAuthRoute && !isPublicRoute && !isPublicParamsRoute) {
     return Response.redirect(new URL(`/signin`, nextUrl));
   }
   return NextResponse.next();
