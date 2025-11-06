@@ -490,6 +490,7 @@
     --color-input-border-error: var(--krds-color-danger-50);
     --color-input-surface-disabled: var(--krds-color-gray-20);
     --color-input-border-disabled: var(--krds-color-gray-30);
+    --color-element-disabled-light: var(--krds-color-gray-20);
   }
 
   [data-theme="high-contrast"] {
@@ -732,6 +733,8 @@
     --color-link-pressed: var(--krds-color-primary-10);
     --color-link-visited: #c49ff9;
     --color-link-disabled: var(--krds-color-gray-70);
+
+    --color-element-disabled-light: var(--krds-color-gray-20);
   }
 
   html {

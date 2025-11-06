@@ -128,7 +128,7 @@ export const Select = ({
         aria-haspopup="listbox"
         ref={triggerRef}
         className={cn(
-          "rounded-2 flex w-full min-w-[240px] items-center justify-between px-5 text-left transition duration-150 ease-in-out",
+          "rounded-2 flex w-full items-center justify-between px-5 text-left transition duration-150 ease-in-out",
           sizeClasses[size],
           variantClasses[variant],
           disabled
