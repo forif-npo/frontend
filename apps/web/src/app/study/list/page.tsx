@@ -86,7 +86,7 @@ export default function StudyListPage() {
 
   return (
     <div className="bg-bg-base min-h-screen pb-20">
-      <div className="mx-auto max-w-[1200px] pb-8">
+      <div className="w-full pb-8">
         <Heading size="l" className="mb-12">
           스터디 목록
         </Heading>

@@ -25,7 +25,7 @@ export function StudyBreadcrumb() {
   };
 
   return (
-    <div className="mx-auto mb-10 mt-6 flex max-w-[1200px] items-center px-4">
+    <div className="mx-auto mb-10 mt-6 flex max-w-[1200px] items-center">
       <BreadHomeIcon className="h-4 w-4" />
       <Breadcrumb items={getBreadcrumbItems()} />
     </div>
