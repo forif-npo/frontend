@@ -33,37 +33,8 @@ export type SignUpValues = z.infer<typeof signUpSchema>;
 
 // 멘토 로그인 스키마
 export const mentorSignInSchema = z.object({
-  studentId: z
-    .string()
-    .min(1, "학번을 입력해주세요.")
-    .length(10, "학번은 10자리여야 합니다.")
-    .regex(/^\d{10}$/, "학번은 숫자 10자리여야 합니다."),
-  password: z
-    .string()
-    .min(1, "비밀번호를 입력해주세요.")
-    .min(8, "비밀번호는 최소 8자 이상이어야 합니다.")
-    .max(20, "비밀번호는 최대 20자 이하여야 합니다.")
-    .refine(
-      (password) => {
-        const hasUpperCase = /[A-Z]/.test(password);
-        const hasLowerCase = /[a-z]/.test(password);
-        const hasNumbers = /[0-9]/.test(password);
-        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-        // 대문자, 소문자, 숫자, 특수문자 중 2개 이상의 조합 확인
-        const criteriaCount = [
-          hasUpperCase,
-          hasLowerCase,
-          hasNumbers,
-          hasSpecialChar,
-        ].filter(Boolean).length;
-        return criteriaCount >= 2;
-      },
-      {
-        message:
-          "비밀번호는 대문자, 소문자, 숫자, 특수문자 중 2가지 이상을 포함해야 합니다.",
-      },
-    ),
+  studentId: z.string().min(1, "학번을 입력해주세요."),
+  password: z.string().min(1, "비밀번호를 입력해주세요."),
 });
 
 export type MentorSignInValues = z.infer<typeof mentorSignInSchema>;
