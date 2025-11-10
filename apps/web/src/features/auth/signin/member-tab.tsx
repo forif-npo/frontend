@@ -1,9 +1,14 @@
+"use client";
 import { signInWithGoogle } from "@/features/auth/signin/actions";
 import { Button } from "@ui/components/client";
 import { Body, InfoText, Link } from "@ui/components/server";
 import { GoogleButton } from "../../../components/GoogleButton";
 
 export default function MemberLogin() {
+  const handleSignIn = async () => {
+    await signInWithGoogle();
+  };
+
   return (
     <div className="mt-10 flex flex-col gap-6">
       <Body className="text-text-basic">
@@ -12,13 +17,11 @@ export default function MemberLogin() {
         로그인을 하시면 보다 더 많은 정보와 서비스를 이용하실 수 있습니다.
       </Body>
       <div className="border-divider-gray-light rounded-3 flex flex-col gap-6 border px-10 py-8 shadow">
-        <GoogleButton
-          onClick={signInWithGoogle}
-          className="w-full"
-          variant="secondary"
-        >
-          한양대학교 이메일로 로그인
-        </GoogleButton>
+        <form action={handleSignIn} className="w-full">
+          <GoogleButton type="submit" className="w-full" variant="secondary">
+            한양대학교 이메일로 로그인
+          </GoogleButton>
+        </form>
         <Link href="/signup" className="w-full">
           <Button variant="text" className="w-full">
             회원가입
