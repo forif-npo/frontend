@@ -2,5 +2,10 @@ packages:
   - apps/*
   - packages/*
 onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@tailwindcss/oxide'
+  - core-js-pure
+  - esbuild
+  - msw
   - sharp
   - unrs-resolver
