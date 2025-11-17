@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
 
-const publicRoutes = ["/", "/signin", "/signup", "/terms", "/privacy-policy"];
+const publicRoutes = [
+  "/",
+  "/signin",
+  "/signup",
+  "/terms",
+  "/privacy-policy",
+  "/auth-demo",
+];
 const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
 
