@@ -1,11 +1,26 @@
 import { delay, http, HttpResponse } from "msw";
-import { getCurrentSemester, TAG_OPTIONS } from "@/constants/study";
-import type { Study, DifficultyLevel, RecruitStatus } from "@/types/study";
+import { getCurrentSemester } from "@/constants/study";
+import type { Study, RecruitStatus } from "@/types/study";
 
-// Mock data generator for study list
 const generateMockStudies = (count: number): Study[] => {
   const studies: Study[] = [];
-  const difficulties: DifficultyLevel[] = [
+  const TAG_OPTIONS = [
+    "데이터베이스",
+    "프로그래밍 기초",
+    "프론트엔드",
+    "백엔드",
+    "풀스택",
+    "앱",
+    "인공지능",
+    "데이터",
+    "보안",
+    "게임",
+    "디자인",
+    "알고리즘",
+    "블록체인",
+  ];
+
+  const difficulties: string[] = [
     "EASY",
     "SEMI_EASY",
     "NORMAL",
@@ -59,10 +74,10 @@ const generateMockStudies = (count: number): Study[] => {
       study_name: studyNames[i % studyNames.length],
       primary_mentor_name: primaryMentors[i % primaryMentors.length],
       secondary_mentor_name: secondaryMentors[i % secondaryMentors.length],
-      tags: tagIndices.map((idx) => TAG_OPTIONS[idx].value),
+      tags: tagIndices.map((idx) => TAG_OPTIONS[idx]),
       recruit_status: recruitStatuses[i % recruitStatuses.length],
       one_liner: oneLiners[i % oneLiners.length],
-      explanation: `이 스터디는 ${studyNames[i % studyNames.length]}를 다루는 종합 과정입니다. 기초부터 실전 프로젝트까지 체계적으로 학습합니다.`,
+      explanation: `이 스터디는 ${studyNames[i % studyNames.length]}를 다루는 종합 과정입니다. 기초부터 실전 프로젝트까지 체계적으로 학습합니다. 이 스터디는 ${studyNames[i % studyNames.length]}를 다루는 종합 과정입니다. 기초부터 실전 프로젝트까지 체계적으로 학습합니다.이 스터디는 ${studyNames[i % studyNames.length]}를 다루는 종합 과정입니다. 기초부터 실전 프로젝트까지 체계적으로 학습합니다.이 스터디는 ${studyNames[i % studyNames.length]}를 다루는 종합 과정입니다. 기초부터 실전 프로젝트까지 체계적으로 학습합니다.이 스터디는 ${studyNames[i % studyNames.length]}를 다루는 종합 과정입니다. 기초부터 실전 프로젝트까지 체계적으로 학습합니다.이 스터디는 ${studyNames[i % studyNames.length]}를 다루는 종합 과정입니다. 기초부터 실전 프로젝트까지 체계적으로 학습합니다.`,
       start_time: i % 2 === 0 ? "17:00" : "19:00",
       end_time: i % 2 === 0 ? "18:30" : "21:00",
       week_day: weekDays[i % weekDays.length],
@@ -163,6 +178,66 @@ export const getStudyDetail = http.get(
       success: true,
       data: study,
       error: null,
+    });
+  },
+);
+
+// POST /api/v1/study/apply - 스터디 신청
+export const applyStudy = http.post(
+  "https://api.forif.org/api/v1/study/apply",
+  async ({ request }) => {
+    await delay(800);
+
+    const body = (await request.json()) as {
+      primaryStudyId: number;
+      primaryStudyApplyReason: string;
+      secondaryStudyId?: number;
+      secondaryStudyApplyReason?: string;
+    };
+
+    // Validate primary study exists
+    const primaryStudy = mockStudies.find((s) => s.id === body.primaryStudyId);
+    if (!primaryStudy) {
+      return HttpResponse.json(
+        {
+          message: "스터디가 존재하지 않습니다.",
+          errorCode: "FOR018-404",
+        },
+        { status: 404 },
+      );
+    }
+
+    // Validate secondary study if provided
+    if (body.secondaryStudyId) {
+      const secondaryStudy = mockStudies.find(
+        (s) => s.id === body.secondaryStudyId,
+      );
+      if (!secondaryStudy) {
+        return HttpResponse.json(
+          {
+            message: "스터디가 존재하지 않습니다.",
+            errorCode: "FOR018-404",
+          },
+          { status: 404 },
+        );
+      }
+    }
+
+    // Simulate already applied scenario (10% chance)
+    if (Math.random() < 0.1) {
+      return HttpResponse.json(
+        {
+          message: "이번학기 스터디에 이미 지원 했습니다.",
+          errorCode: "FOR032-409",
+        },
+        { status: 409 },
+      );
+    }
+
+    // Success response
+    return HttpResponse.json({
+      message: "Success",
+      data: null,
     });
   },
 );
