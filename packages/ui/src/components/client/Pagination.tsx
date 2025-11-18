@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { Label } from "../server/Label";
 import { Button } from "./Button";
 
 function generateSequence(current: number, count: number): number[] {
@@ -47,16 +46,16 @@ function generateRangeGuaranteedSequence(
 
 export const PrevIcon: React.FC = () => (
   <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M15 18L9 12L15 6"
+      d="M10 13.334L5 8.334L10 3.334"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.333"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
@@ -65,16 +64,16 @@ export const PrevIcon: React.FC = () => (
 
 export const NextIcon: React.FC = () => (
   <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M9 18L15 12L9 6"
+      d="M6.667 13.334L11.667 8.334L6.667 3.334"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.333"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
@@ -135,20 +134,20 @@ export const Pagination: React.FC<PaginationProps> = ({
   };
 
   const renderPageNumbers = () => (
-    <ul className="flex gap-2">
+    <ul className="flex items-center gap-2">
       {pageNumbers.map((page, index) => (
         <li key={index}>
           {page === "ellipsis" ? (
-            <span className="text-gray-70 flex h-8 w-8 items-center justify-center">
+            <span className="text-text-subtle flex h-10 w-10 items-center justify-center">
               <EllipsisIcon />
             </span>
           ) : (
             <button
               onClick={() => onPageChange(page as number)}
-              className={`rounded-2 focus:ring-primary-50 h-8 w-8 focus:outline-none focus:ring-2 ${
+              className={`rounded-2 h-10 w-10 text-[17px] leading-[1.5] transition-colors ${
                 currentPage === page
-                  ? "bg-primary font-bold text-white"
-                  : "text-gray-70 hover:bg-gray-20"
+                  ? "bg-action-secondary-active font-bold text-black"
+                  : "text-text-subtle hover:bg-gray-200"
               }`}
               aria-current={currentPage === page ? "page" : undefined}
               aria-label={`페이지 ${page}`}
@@ -165,7 +164,11 @@ export const Pagination: React.FC<PaginationProps> = ({
     <button
       onClick={() => onPageChange(currentPage - 1)}
       disabled={currentPage === 1}
-      className="text-gray-70 focus:ring-primary-50 hover:bg-gray-20 flex items-center justify-center rounded-full p-2 pr-4 focus:outline-none focus:ring-2 disabled:opacity-50"
+      className={`rounded-2 flex h-10 items-center justify-center gap-1 pl-1 pr-2 text-[17px] leading-[1.5] transition-colors ${
+        currentPage === 1
+          ? "text-text-disabled cursor-not-allowed"
+          : "text-text-subtle hover:bg-gray-200"
+      }`}
       aria-label="이전 페이지"
     >
       <PrevIcon />
@@ -177,7 +180,11 @@ export const Pagination: React.FC<PaginationProps> = ({
     <button
       onClick={() => onPageChange(currentPage + 1)}
       disabled={currentPage === totalPages}
-      className="text-gray-70 focus:ring-primary-50 hover:bg-gray-20 flex items-center justify-center rounded-full p-2 pl-4 focus:outline-none focus:ring-2 disabled:opacity-50"
+      className={`rounded-2 flex h-10 items-center justify-center gap-1 pl-2 pr-1 text-[17px] leading-[1.5] transition-colors ${
+        currentPage === totalPages
+          ? "text-text-disabled cursor-not-allowed"
+          : "text-text-subtle hover:bg-gray-200"
+      }`}
       aria-label="다음 페이지"
     >
       다음
@@ -210,25 +217,27 @@ export const Pagination: React.FC<PaginationProps> = ({
         {!showTwoLines && nextButton}
       </div>
       {allowDirectInput && (
-        <div className="flex items-center gap-2">
-          <input
-            type="number"
-            value={inputPage}
-            onChange={(e) => setInputPage(parseInt(e.target.value, 10))}
-            onKeyDown={inputPageNumber}
-            min={1}
-            max={totalPages}
-            className="rounded-2 focus:ring-primary-50 w-14 border border-gray-50 px-2 py-1 text-right focus:outline-none focus:ring-2"
-            aria-label="페이지 직접 입력"
-          />
-          <Label size="s" color="gray-60">
-            / {totalPages}
-          </Label>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center">
+            <input
+              type="number"
+              value={inputPage}
+              onChange={(e) => setInputPage(parseInt(e.target.value, 10))}
+              onKeyDown={inputPageNumber}
+              min={1}
+              max={totalPages}
+              className="border-input-border bg-input-surface rounded-2 focus:ring-primary-50 h-10 w-14 border px-4 text-center text-[15px] leading-[1.5] focus:outline-none focus:ring-2"
+              aria-label="페이지 직접 입력"
+            />
+            <div className="text-text-subtle flex h-10 items-center justify-center px-2 text-[15px]">
+              /{totalPages}
+            </div>
+          </div>
           <Button
             onClick={handleDirectInput}
-            size="x-small"
+            size="small"
             variant="secondary"
-            className="focus:ring-primary-50 ml-4 focus:outline-none focus:ring-2"
+            className="h-10 min-w-[64px]"
           >
             이동
           </Button>
