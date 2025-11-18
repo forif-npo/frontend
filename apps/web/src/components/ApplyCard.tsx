@@ -63,7 +63,7 @@ export const ApplyCard: React.FC<ApplyCardProps> = ({
       </div>
 
       <div className="flex flex-col gap-4 p-8">
-        <div className="flex gap-1 overflow-x-auto text-nowrap">
+        <div className="flex gap-1 overflow-hidden overflow-x-auto text-nowrap">
           {status && (
             <Badge
               label={status}

@@ -31,8 +31,8 @@ export const StudyCardGrid: React.FC<StudyCardGridProps> = ({
       {studies.map((study) => (
         <ApplyCard
           key={study.id}
-          title={study.study_name}
-          description={study.one_liner}
+          title={study.study_name.slice(0, 60)}
+          description={study.one_liner.slice(0, 200)}
           status={
             study.recruit_status === "APPLICABLE" ? "신청중" : "신청 종료"
           }
