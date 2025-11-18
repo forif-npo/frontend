@@ -4,7 +4,6 @@
  */
 export {
   getDifficultyLabel,
-  getDifficultyColor,
   getDifficultyBadgeVariant,
   getRecruitStatusLabel,
   getRecruitStatusBadgeVariant,

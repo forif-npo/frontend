@@ -1,4 +1,4 @@
-import type { DifficultyLevel, RecruitStatus } from "@/types/study";
+import type { RecruitStatus } from "@/types/study";
 import type { BadgeProps } from "@ui/components/server";
 import { DIFFICULTY_OPTIONS, RECRUIT_STATUS_OPTIONS } from "./options";
 
@@ -13,9 +13,7 @@ export function getWeekDayLabel(weekDay: number): string {
 /**
  * 난이도 라벨 가져오기
  */
-export function getDifficultyLabel(
-  difficulty: DifficultyLevel | string,
-): string {
+export function getDifficultyLabel(difficulty: string): string {
   const option = DIFFICULTY_OPTIONS.find((opt) => opt.value === difficulty);
   return option?.label || difficulty;
 }
@@ -24,19 +22,8 @@ export function getDifficultyLabel(
  * 난이도 Badge variant 가져오기
  */
 export function getDifficultyBadgeVariant(
-  difficulty: DifficultyLevel,
+  difficulty: string,
 ): BadgeProps["variant"] {
-  const option = DIFFICULTY_OPTIONS.find((opt) => opt.value === difficulty);
-  return option?.variant || "primary";
-}
-
-/**
- * 난이도 색상 가져오기 (레거시 호환용)
- * @deprecated getDifficultyBadgeVariant 사용을 권장합니다
- */
-export function getDifficultyColor(
-  difficulty: DifficultyLevel | string,
-): string {
   const option = DIFFICULTY_OPTIONS.find((opt) => opt.value === difficulty);
   return option?.variant || "primary";
 }

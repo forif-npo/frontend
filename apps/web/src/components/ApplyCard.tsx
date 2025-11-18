@@ -4,7 +4,10 @@ import clsx from "clsx";
 import Image from "next/image";
 import { Button } from "@repo/ui/components/client";
 import { Badge, Body, Heading } from "@repo/ui/components/server";
-import { getDifficultyLabel, getDifficultyColor } from "@/constants/study";
+import {
+  getDifficultyLabel,
+  getDifficultyBadgeVariant,
+} from "@/constants/study";
 
 interface ApplyCardProps {
   title: string;
@@ -36,7 +39,7 @@ export const ApplyCard: React.FC<ApplyCardProps> = ({
   difficulty,
   schedule,
   instructors,
-  imageUrl,
+  imageUrl = "/images/temp_python.png",
   disabled,
   onDetailClick,
   onApplyClick,
@@ -45,31 +48,18 @@ export const ApplyCard: React.FC<ApplyCardProps> = ({
   return (
     <div
       className={clsx(
-        "flex w-full flex-col overflow-hidden rounded-b-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md",
-        disabled && "pointer-events-none",
+        "flex w-full flex-col overflow-hidden rounded-b-xl border border-gray-200 bg-white",
         className,
       )}
     >
-      <div className="relative h-[196px] w-full bg-gray-100">
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
-            <Image
-              src="/temp_python.png"
-              alt="Python Logo"
-              width={60}
-              height={60}
-              className="opacity-50"
-            />
-          </div>
-        )}
+      <div className="relative h-[196px] w-full bg-[#DFE8F4]">
+        <Image
+          src={imageUrl}
+          alt={title}
+          fill
+          className="object-contain"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
       </div>
 
       <div className="flex flex-col gap-4 p-8">
@@ -101,7 +91,7 @@ export const ApplyCard: React.FC<ApplyCardProps> = ({
           {difficulty && (
             <Badge
               label={getDifficultyLabel(difficulty)}
-              variant={getDifficultyColor(difficulty) as any}
+              variant={getDifficultyBadgeVariant(difficulty)}
               appearance="solid-pastel"
               size="small"
             />

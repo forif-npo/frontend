@@ -1,12 +1,6 @@
 "use client";
 import React from "react";
-import {
-  TAG_OPTIONS,
-  DIFFICULTY_OPTIONS,
-  getRecentSemesters,
-  getSemesterLabel,
-  getDifficultyLabel,
-} from "@/constants/study";
+import { getRecentSemesters, getSemesterLabel } from "@/constants/study";
 import clsx from "clsx";
 import {
   QuestionBubble,
@@ -14,7 +8,6 @@ import {
   XCircleGrayIcon,
 } from "@repo/assets/icons/krds";
 import { SelectBox } from "@ui/components/client";
-
 interface FilterTag {
   id: string;
   label: string;
@@ -32,6 +25,38 @@ interface StudyFilterSectionProps {
   onClearAll: () => void;
   className?: string;
 }
+
+const DIFFICULTY_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: "EASY", label: "쉬움" },
+  { value: "SEMI_EASY", label: "조금 쉬움" },
+  { value: "NORMAL", label: "보통" },
+  { value: "SEMI_HARD", label: "조금 어려움" },
+  { value: "HARD", label: "어려움" },
+];
+
+const TAG_OPTIONS = [
+  "데이터베이스",
+  "프로그래밍 기초",
+  "프론트엔드",
+  "백엔드",
+  "풀스택",
+  "앱",
+  "인공지능",
+  "데이터",
+  "보안",
+  "게임",
+  "디자인",
+  "알고리즘",
+  "블록체인",
+];
+
+const DIFFICULTY_LABEL_MAP: Record<string, string> = {
+  EASY: "쉬움",
+  SEMI_EASY: "조금 쉬움",
+  NORMAL: "보통",
+  SEMI_HARD: "조금 어려움",
+  HARD: "어려움",
+};
 
 const createFilterTag = (
   type: FilterTag["type"],
@@ -63,20 +88,12 @@ const buildFilterTags = (
   }
 
   if (selectedDifficulty) {
-    tags.push(
-      createFilterTag(
-        "difficulty",
-        selectedDifficulty,
-        getDifficultyLabel(selectedDifficulty),
-      ),
-    );
+    const label = DIFFICULTY_LABEL_MAP[selectedDifficulty];
+    tags.push(createFilterTag("difficulty", selectedDifficulty, label));
   }
 
   if (selectedTag) {
-    const tagOption = TAG_OPTIONS.find((t) => t.value === selectedTag);
-    tags.push(
-      createFilterTag("tag", selectedTag, tagOption?.label || selectedTag),
-    );
+    tags.push(createFilterTag("tag", selectedTag, selectedTag));
   }
 
   return tags;
@@ -101,12 +118,13 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
 
   const removeFilterTag = React.useCallback(
     (tag: FilterTag) => {
-      const handlers = {
-        semester: onSemesterChange,
-        difficulty: onDifficultyChange,
-        tag: onTagChange,
-      };
-      handlers[tag.type]("");
+      if (tag.type === "semester") {
+        onSemesterChange("");
+      } else if (tag.type === "difficulty") {
+        onDifficultyChange("");
+      } else if (tag.type === "tag") {
+        onTagChange("");
+      }
     },
     [onSemesterChange, onDifficultyChange, onTagChange],
   );
@@ -130,8 +148,8 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
   const tagOptions = [
     { value: "", label: "전체" },
     ...TAG_OPTIONS.map((tag) => ({
-      value: tag.value,
-      label: tag.label,
+      value: tag,
+      label: tag,
     })),
   ];
 
@@ -199,7 +217,7 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
         <div className="flex items-center gap-4 border-t border-gray-200 pt-6">
           <span className="whitespace-nowrap text-[17px] font-bold text-gray-900">
             선택된 필터{" "}
-            <span className="text-blue-600">{filterTags.length}</span>
+            <span className="text-text-primary">{filterTags.length}</span>
           </span>
 
           <div className="flex items-center gap-2">

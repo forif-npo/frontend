@@ -1,30 +1,11 @@
-import type { DifficultyLevel, RecruitStatus } from "@/types/study";
+import type { RecruitStatus } from "@/types/study";
 import type { BadgeProps } from "@ui/components/server";
-
-/**
- * 태그 옵션
- */
-export const TAG_OPTIONS = [
-  { value: "database", label: "데이터베이스" },
-  { value: "basic", label: "프로그래밍 기초" },
-  { value: "frontend", label: "프론트엔드" },
-  { value: "backend", label: "백엔드" },
-  { value: "fullstack", label: "풀스택" },
-  { value: "app", label: "앱" },
-  { value: "ai", label: "인공지능" },
-  { value: "data", label: "데이터" },
-  { value: "security", label: "보안" },
-  { value: "game", label: "게임" },
-  { value: "design", label: "디자인" },
-  { value: "algorithm", label: "알고리즘" },
-  { value: "blockchain", label: "블록체인" },
-] as const;
 
 /**
  * 난이도 옵션 (API 스펙 기준)
  */
 export const DIFFICULTY_OPTIONS: Array<{
-  value: DifficultyLevel;
+  value: string;
   label: string;
   variant: BadgeProps["variant"];
 }> = [

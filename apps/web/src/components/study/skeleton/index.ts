@@ -1,1 +1,1 @@
-export { StudyCardSkeleton, StudyListSkeleton } from "./StudyCardSkeleton";
+export { StudyListSkeleton } from "./StudyCardSkeleton";

@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { StudyFilters, DifficultyLevel, RecruitStatus } from "@/types/study";
+import { StudyFilters, RecruitStatus } from "@/types/study";
 
 interface UseStudyFiltersReturn {
   filters: StudyFilters;
@@ -32,7 +32,7 @@ export const useStudyFilters = (): UseStudyFiltersReturn => {
     return {
       year: parseNumberParam("year"),
       semester: parseNumberParam("semester"),
-      difficulty: parseParam("difficulty") as DifficultyLevel | undefined,
+      difficulty: parseParam("difficulty"),
       tag: parseParam("tag"),
       recruitStatus: parseParam("recruitStatus") as RecruitStatus | undefined,
       search: parseParam("search"),

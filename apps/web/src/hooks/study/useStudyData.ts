@@ -11,7 +11,7 @@ interface UseStudyDataReturn {
 
 export const useStudyData = (params?: StudyListParams): UseStudyDataReturn => {
   const [studies, setStudies] = useState<Study[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchStudies = useCallback(async (fetchParams?: StudyListParams) => {

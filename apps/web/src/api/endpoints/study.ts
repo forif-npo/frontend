@@ -1,6 +1,11 @@
 import { kvInstance } from "../client";
 import { API_ENDPOINTS } from "../config";
-import type { Study, StudyListParams, StudyListResponse } from "@/types/study";
+import type {
+  Study,
+  StudyListParams,
+  StudyListResponse,
+  StudyDetailResponse,
+} from "@/types/study";
 
 /**
  * Study API endpoints
@@ -50,7 +55,7 @@ export const studyApi = {
   getStudyDetail: async (id: number): Promise<Study> => {
     const response = await kvInstance
       .get(`${API_ENDPOINTS.studies}/${id}`)
-      .json<{ success: boolean; data: Study; error: null | string }>();
+      .json<StudyDetailResponse>();
     return response.data;
   },
 };

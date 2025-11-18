@@ -19,25 +19,20 @@ export default function StudyListPage() {
   const [sortBy, setSortBy] = useState<"latest" | "popular">("latest");
   const [searchInput, setSearchInput] = useState<string>("");
 
-  // Debounce search input with 500ms delay
   const debouncedSearch = useDebounce(searchInput, 500);
 
-  // Filters from URL
   const { filters, updateFilter, updateMultipleFilters, clearAllFilters } =
     useStudyFilters();
 
-  // Pagination state
   const { currentPage, pageSize, setPage, setPageSize } = usePagination({
     data: [],
     initialPageSize: 20,
   });
 
-  // Update filter when debounced search changes
   useEffect(() => {
     updateFilter("search", debouncedSearch || undefined);
   }, [debouncedSearch, updateFilter]);
 
-  // Build API params from filters and pagination
   const apiParams: StudyListParams = useMemo(() => {
     return {
       page: currentPage,
@@ -60,10 +55,8 @@ export default function StudyListPage() {
     filters.search,
   ]);
 
-  // Fetch studies with current params
   const { studies, loading, error, refetch } = useStudyData(apiParams);
 
-  // Refetch when filters or pagination change
   useEffect(() => {
     refetch(apiParams);
   }, [apiParams, refetch]);
@@ -73,11 +66,9 @@ export default function StudyListPage() {
   };
 
   const handleApplyClick = (study: Study) => {
-    // TODO: 신청 로직 구현
-    console.log("Apply for study:", study.id);
+    router.push(`/study/detail/${study.id}/apply`);
   };
 
-  // Error state
   if (error) {
     return (
       <div className="bg-bg-base flex min-h-screen items-center justify-center">
@@ -88,7 +79,6 @@ export default function StudyListPage() {
     );
   }
 
-  // Build combined semester value for StudyFilterSection
   const selectedSemester =
     filters.year && filters.semester
       ? `${filters.year}-${filters.semester}`
@@ -101,13 +91,11 @@ export default function StudyListPage() {
           스터디 목록
         </Heading>
 
-        {/* Search + Action Buttons */}
         <div className="mb-6 flex items-center justify-between gap-7">
           <StudySearchBar
             value={searchInput}
             onChange={(value) => setSearchInput(value)}
             onSubmit={() => {
-              // Trigger immediate search on Enter/Submit
               updateFilter("search", searchInput || undefined);
               setPage(0);
             }}
@@ -115,7 +103,6 @@ export default function StudyListPage() {
           <StudyActionButtons />
         </div>
 
-        {/* Filters */}
         <div className="mb-7">
           <StudyFilterSection
             selectedSemester={selectedSemester}
@@ -129,9 +116,7 @@ export default function StudyListPage() {
                 updateMultipleFilters({ year: undefined, semester: undefined });
               }
             }}
-            onDifficultyChange={(value) =>
-              updateFilter("difficulty", (value || undefined) as any)
-            }
+            onDifficultyChange={(value) => updateFilter("difficulty", value)}
             onTagChange={(value) => updateFilter("tag", value || undefined)}
             onClearAll={clearAllFilters}
           />
@@ -149,7 +134,6 @@ export default function StudyListPage() {
           <StudyListSkeleton />
         ) : (
           <>
-            {/* Study Cards Grid */}
             <div className="mb-10">
               <StudyCardGrid
                 studies={studies}
@@ -158,7 +142,6 @@ export default function StudyListPage() {
               />
             </div>
 
-            {/* Pagination */}
             {studies.length > 0 && (
               <Pagination
                 currentPage={currentPage + 1}

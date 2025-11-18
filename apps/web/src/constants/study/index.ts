@@ -4,7 +4,6 @@
 
 // Options
 export {
-  TAG_OPTIONS,
   DIFFICULTY_OPTIONS,
   RECRUIT_STATUS_OPTIONS,
   PAGE_SIZE_OPTIONS,
@@ -18,7 +17,6 @@ export {
   getWeekDayLabel,
   getDifficultyLabel,
   getDifficultyBadgeVariant,
-  getDifficultyColor,
   getRecruitStatusLabel,
   getRecruitStatusBadgeVariant,
   getCurrentSemester,

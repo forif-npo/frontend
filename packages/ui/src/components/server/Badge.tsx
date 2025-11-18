@@ -79,10 +79,8 @@ export const Badge: React.FC<BadgeProps> = ({
   appearance = "fill",
   className = "",
 }) => {
-  console.log(variant);
   const style = variantStyles[variant]?.[appearance];
   const { padding, fontSize } = sizeStyles[size];
-  console.log(style);
   return (
     <span
       className={`rounded-1 inline-flex items-center justify-center ${style} ${padding} ${className}`}

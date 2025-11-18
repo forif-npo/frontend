@@ -1,8 +1,6 @@
-"use client";
 import React from "react";
 import { ApplyCard } from "@/components/ApplyCard";
 import { Study } from "@/types/study";
-import { TAG_OPTIONS, getDifficultyLabel } from "@/constants/study";
 
 interface StudyCardGridProps {
   studies: Study[];
@@ -17,11 +15,6 @@ export const StudyCardGrid: React.FC<StudyCardGridProps> = ({
   onApplyClick,
   className = "",
 }) => {
-  const getTagLabel = (tagValue: string) => {
-    const tag = TAG_OPTIONS.find((t) => t.value === tagValue);
-    return tag ? tag.label : tagValue;
-  };
-
   if (studies.length === 0) {
     return (
       <div className="flex h-64 flex-col items-center justify-center text-gray-500">
@@ -38,14 +31,14 @@ export const StudyCardGrid: React.FC<StudyCardGridProps> = ({
       {studies.map((study) => (
         <ApplyCard
           key={study.id}
-          title={study.study_name.slice(0, 60)}
-          description={study.one_liner.slice(0, 200)}
+          title={study.study_name}
+          description={study.one_liner}
           status={
             study.recruit_status === "APPLICABLE" ? "신청중" : "신청 종료"
           }
-          language={getTagLabel(study.tags[0])}
-          level={study.tags[1] ? getTagLabel(study.tags[1]) : undefined}
-          difficulty={getDifficultyLabel(study.difficulty)}
+          language={study.tags[0]}
+          level={study.tags[1]}
+          difficulty={study.difficulty}
           schedule={`${study.start_time}-${study.end_time}`}
           instructors={
             study.secondary_mentor_name
