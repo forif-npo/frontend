@@ -1,8 +1,39 @@
+"use client";
+
 import { CheckCircle } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
 import { Body, Divider, Heading, LinkButton } from "@ui/components/server";
+import { hasAccessToken } from "@core/auth/token";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default async function Page() {
+export default function Page() {
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // localStorage에 토큰이 있는지 확인
+    const hasToken = hasAccessToken();
+    setIsAuthenticated(hasToken);
+
+    if (!hasToken) {
+      // 토큰이 없으면 로그인 페이지로
+      router.push("/signin");
+    }
+  }, [router]);
+
+  const handleGoToMyPage = () => {
+    router.push("/my");
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>로그인 정보를 확인하는 중...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
       <div className="flex flex-col items-center gap-6">
@@ -10,6 +41,9 @@ export default async function Page() {
         <Heading size="xl" className="text-text-basic text-left">
           회원가입이 완료되었습니다
         </Heading>
+        <Button onClick={handleGoToMyPage} size="large">
+          마이페이지로 이동
+        </Button>
         <section className="rounded-3 bg-surface-secondary-subtler flex w-full flex-row items-center justify-around gap-3 p-10">
           <Body size="l" weight="bold">
             가입 정보

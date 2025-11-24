@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { NAV_MENUS } from "@/constants/nav-menu.constant";
 import { NavBar } from "@/features/navigation/nav-bar";
 import { MSWProvider } from "@/mocks/MSWProvider";
+import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
@@ -37,12 +38,14 @@ export default async function RootLayout({
         style={{ backgroundColor: "var(--background)" }}
         className="scrollbar-hidden"
       >
-        <MSWProvider>
-          <NuqsAdapter>
-            <NavBar items={NAV_MENUS} isLoggedIn={isLoggedIn} />
-            {children}
-          </NuqsAdapter>
-        </MSWProvider>
+        <SessionProvider session={session}>
+          <MSWProvider>
+            <NuqsAdapter>
+              <NavBar items={NAV_MENUS} isLoggedIn={isLoggedIn} />
+              {children}
+            </NuqsAdapter>
+          </MSWProvider>
+        </SessionProvider>
       </body>
     </html>
   );

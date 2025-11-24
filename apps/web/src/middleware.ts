@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
 
-const publicRoutes = ["/", "/signin", "/signup", "/terms", "/privacy-policy"];
-const authRoutes = ["/signin", "/signup"];
+const publicRoutes = [
+  "/",
+  "/signin",
+  "/signup",
+  "/terms",
+  "/privacy-policy",
+  "/signup/complete",
+];
+const authRoutes = ["/signin"];
 const apiAuthPrefix = "/api/auth";
 
 const authMiddleware = auth((req) => {
