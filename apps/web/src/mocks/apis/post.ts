@@ -1,7 +1,6 @@
 import { delay, http, HttpResponse } from "msw";
 
 export const getPosts = http.get("https://api.forif.org/posts", async () => {
-  await delay(1000);
   return HttpResponse.json({
     data: {
       posts: [
