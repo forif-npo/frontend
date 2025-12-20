@@ -3,24 +3,27 @@
 import { CheckCircle } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
 import { Body, Divider, Heading, LinkButton } from "@ui/components/server";
-import { hasAccessToken } from "@core/auth/token";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // localStorage에 토큰이 있는지 확인
-    const hasToken = hasAccessToken();
+    if (status === "loading") return;
+
+    // NextAuth 세션에 토큰이 있는지 확인
+    const hasToken = !!session?.accessToken;
     setIsAuthenticated(hasToken);
 
     if (!hasToken) {
       // 토큰이 없으면 로그인 페이지로
       router.push("/signin");
     }
-  }, [router]);
+  }, [session, status, router]);
 
   const handleGoToMyPage = () => {
     router.push("/my");

@@ -7,10 +7,10 @@ import {
   SignUpValues,
 } from "@core/schemas";
 import {
-  memberSignUpApi,
-  userLoginApi,
-  staffLoginApi,
-  logoutApi,
+  memberSignUp,
+  userLogin,
+  staffLogin,
+  logout as logoutApi,
 } from "@core/auth/api";
 import { handleApiError } from "@core/utils/api-client";
 import { cookies } from "next/headers";
@@ -26,7 +26,7 @@ import { cookies } from "next/headers";
  * 5. Refresh Token은 HttpOnly 쿠키로 자동 관리
  */
 export const signInWithGoogle = async () => {
-  await signIn("google", { redirectTo: "/auth/callback" });
+  await signIn("google", { redirectTo: "/" });
 };
 
 /**
@@ -37,7 +37,7 @@ export const signInWithGoogle = async () => {
  */
 export const handleGoogleCallback = async (googleAccessToken: string) => {
   try {
-    const response = await userLoginApi({
+    const response = await userLogin({
       accessToken: googleAccessToken,
     });
 
@@ -60,7 +60,7 @@ export const handleGoogleCallback = async (googleAccessToken: string) => {
 
 export const signUp = async (data: SignUpValues) => {
   try {
-    const response = await memberSignUpApi({
+    const response = await memberSignUp({
       studentId: Number(data.id), // string을 number로 변환
       userName: data.name,
       email: data.email,

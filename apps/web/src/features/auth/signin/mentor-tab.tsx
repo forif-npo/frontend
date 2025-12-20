@@ -5,7 +5,6 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button, TextInput } from "@ui/components/client";
 import { InfoText, Label } from "@ui/components/server";
-import { setAccessToken } from "@core/auth/token";
 
 export default function MentorLogin() {
   const router = useRouter();
@@ -32,14 +31,6 @@ export default function MentorLogin() {
       }
 
       if (result?.ok) {
-        // 세션에서 백엔드 JWT 가져와서 메모리에 저장
-        const response = await fetch("/api/auth/session");
-        const session = await response.json();
-
-        if (session?.accessToken) {
-          setAccessToken(session.accessToken);
-        }
-
         router.push("/my");
         router.refresh();
       }

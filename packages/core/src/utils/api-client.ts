@@ -1,9 +1,4 @@
 import ky, { HTTPError } from "ky";
-import {
-  clearAccessToken,
-  getAccessToken,
-  setAccessToken,
-} from "../auth/token";
 
 const getBaseUrl = (): string => {
   // 서버 사이드에서는 환경 변수 직접 사용
@@ -14,16 +9,99 @@ const getBaseUrl = (): string => {
   return process.env.NEXT_PUBLIC_SERVER_URL || "https://api.forif.org";
 };
 
-// 토큰 갱신 중 플래그 (무한 루프 방지)
+// 외부에서 주입할 토큰 getter/setter 및 콜백
+let tokenGetter: (() => Promise<string | null>) | null = null;
+let onTokenRefreshed: ((newToken: string) => Promise<void>) | null = null;
+let onUnauthorized: (() => void) | null = null;
+
+// 토큰 갱신 중복 방지
 let isRefreshing = false;
+let refreshPromise: Promise<string | null> | null = null;
+
+/**
+ * 토큰 getter 설정 (NextAuth 세션에서 토큰 가져오는 함수 주입)
+ */
+export const setTokenGetter = (getter: () => Promise<string | null>): void => {
+  tokenGetter = getter;
+};
+
+/**
+ * 토큰 갱신 완료 시 호출될 콜백 설정 (NextAuth 세션 업데이트용)
+ */
+export const setOnTokenRefreshed = (
+  callback: (newToken: string) => Promise<void>,
+): void => {
+  onTokenRefreshed = callback;
+};
+
+/**
+ * 401 에러 시 호출될 콜백 설정 (토큰 갱신 실패 시)
+ */
+export const setOnUnauthorized = (callback: () => void): void => {
+  onUnauthorized = callback;
+};
+
+/**
+ * Access Token 갱신
+ * Refresh Token은 HttpOnly 쿠키로 자동 전송됨
+ */
+async function refreshAccessToken(): Promise<string | null> {
+  // 이미 갱신 중이면 기존 Promise 반환 (중복 요청 방지)
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise;
+  }
+
+  isRefreshing = true;
+  refreshPromise = (async () => {
+    try {
+      const response = await fetch(`${getBaseUrl()}/api/v1/users/refresh`, {
+        method: "POST",
+        credentials: "include", // HttpOnly 쿠키 자동 전송
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        console.error("Token refresh failed:", response.status);
+        return null;
+      }
+
+      const data = await response.json();
+      const newToken = data.data?.accessToken;
+
+      if (newToken) {
+        // NextAuth 세션 업데이트 콜백 호출
+        if (onTokenRefreshed) {
+          await onTokenRefreshed(newToken);
+        }
+        return newToken;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Token refresh error:", error);
+      return null;
+    } finally {
+      isRefreshing = false;
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
 
 /**
  * ky 기반 API 클라이언트
  *
  * 특징:
  * - credentials: 'include'로 HttpOnly 쿠키 자동 전송/수신
- * - Authorization 헤더에 Access Token 자동 주입 (메모리/sessionStorage에서 조회)
- * - 401 에러 시 Refresh Token으로 자동 갱신 시도 (무한 루프 방지)
+ * - Authorization 헤더에 Access Token 자동 주입 (외부에서 주입된 getter 사용)
+ * - 401 에러 시 자동으로 토큰 갱신 후 요청 재시도
+ *
+ * 보안:
+ * - Access Token은 NextAuth 세션에서 관리
+ * - Refresh Token은 HttpOnly 쿠키 (JavaScript 접근 불가)
  */
 export const apiClient = ky.create({
   prefixUrl: getBaseUrl(),
@@ -36,71 +114,47 @@ export const apiClient = ky.create({
   },
   hooks: {
     beforeRequest: [
-      (request) => {
+      async (request) => {
         // Content-Type 헤더 설정
         if (!request.headers.has("Content-Type")) {
           request.headers.set("Content-Type", "application/json");
         }
 
-        // Access Token 자동 주입 (메모리/sessionStorage에서 조회)
-        const token = getAccessToken();
-        if (token) {
-          request.headers.set("Authorization", `Bearer ${token}`);
+        // Access Token 자동 주입 (외부에서 주입된 getter 사용)
+        if (tokenGetter) {
+          const token = await tokenGetter();
+          if (token) {
+            request.headers.set("Authorization", `Bearer ${token}`);
+          }
         }
       },
     ],
     afterResponse: [
       async (request, options, response) => {
-        // 401 Unauthorized 에러 시 토큰 갱신 시도
-        if (response.status === 401 && !isRefreshing) {
-          // /refresh 엔드포인트 자체가 401이면 로그아웃 (무한 루프 방지)
-          if (request.url.includes("/refresh")) {
-            clearAccessToken();
-            if (typeof window !== "undefined") {
-              window.location.href = "/signin";
+        // 401 Unauthorized - 토큰 갱신 시도
+        if (response.status === 401) {
+          // refresh 엔드포인트 자체에서 401이면 갱신 불가
+          if (request.url.includes("/api/v1/users/refresh")) {
+            if (onUnauthorized) {
+              onUnauthorized();
             }
             return response;
           }
 
-          isRefreshing = true;
-          try {
-            // Refresh Token으로 새 Access Token 발급
-            // Refresh Token은 HttpOnly 쿠키로 자동 전송됨
-            const refreshResponse = await ky.post("api/v1/users/refresh", {
-              prefixUrl: getBaseUrl(),
-              credentials: "include",
-            });
+          // 토큰 갱신 시도
+          const newToken = await refreshAccessToken();
 
-            const data = await refreshResponse.json<{
-              timestamp: number;
-              data: { accessToken: string } | null;
-              errorCode: string | null;
-              message: string;
-            }>();
+          if (newToken) {
+            // 새 토큰으로 원래 요청 재시도
+            request.headers.set("Authorization", `Bearer ${newToken}`);
+            return ky(request, options);
+          }
 
-            // 응답 데이터 검증
-            if (!data.data?.accessToken) {
-              throw new Error("Access Token을 받지 못했습니다.");
-            }
-
-            // 새 Access Token 저장
-            setAccessToken(data.data.accessToken);
-
-            // 원래 요청 재시도
-            request.headers.set(
-              "Authorization",
-              `Bearer ${data.data.accessToken}`,
-            );
-            return ky(request);
-          } catch (error) {
-            // Refresh 실패 시 로그아웃 처리
-            clearAccessToken();
-            if (typeof window !== "undefined") {
-              window.location.href = "/signin";
-            }
-            throw error;
-          } finally {
-            isRefreshing = false;
+          // 갱신 실패 시 로그아웃 처리
+          if (onUnauthorized) {
+            onUnauthorized();
+          } else if (typeof window !== "undefined") {
+            window.location.href = "/signin";
           }
         }
 
