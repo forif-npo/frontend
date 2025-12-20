@@ -9,10 +9,7 @@ export const signUpSchema = createSchema<Member>()(
     id: z
       .string()
       .min(1, "학번을 입력해주세요.")
-      .length(10, "학번은 10자리여야 합니다.")
-      .refine((val) => !isNaN(Number(val)), {
-        message: "학번은 숫자만 입력 가능합니다.",
-      }),
+      .length(10, "학번은 10자리여야 합니다."),
 
     name: z.string().min(1, "이름을 입력해주세요."),
     department: z.string().min(1, "학과를 선택해주세요."),
@@ -34,26 +31,10 @@ export const signUpSchema = createSchema<Member>()(
 
 export type SignUpValues = z.infer<typeof signUpSchema>;
 
-/**
- * 부원 로그인 스키마 (Google OAuth용)
- */
-export const userLoginSchema = z.object({
-  accessToken: z.string().min(1, "Google Access Token이 필요합니다."),
-});
-
-export type UserLoginValues = z.infer<typeof userLoginSchema>;
-
-/**
- * 스태프(멘토/운영진) 로그인 스키마
- */
-export const staffLoginSchema = z.object({
-  userId: z
-    .string()
-    .min(1, "학번을 입력해주세요.")
-    .refine((val) => !isNaN(Number(val)), {
-      message: "학번은 숫자만 입력 가능합니다.",
-    }),
+// 멘토 로그인 스키마
+export const mentorSignInSchema = z.object({
+  studentId: z.string().min(1, "학번을 입력해주세요."),
   password: z.string().min(1, "비밀번호를 입력해주세요."),
 });
 
-export type StaffLoginValues = z.infer<typeof staffLoginSchema>;
+export type MentorSignInValues = z.infer<typeof mentorSignInSchema>;
