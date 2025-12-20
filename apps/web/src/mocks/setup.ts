@@ -6,9 +6,10 @@ async function initMocks() {
     });
   } else {
     const { worker } = await import("./browser");
-    worker.start({
+    await worker.start({
       onUnhandledRequest: "bypass",
     });
+    console.log("[MSW] Worker started successfully");
   }
 }
 

@@ -16,7 +16,7 @@
         "^build"
       ],
       "env": [
-        "NEXT_PUBLIC_API_HOST",
+        "NEXT_PUBLIC_SERVER_URL",
         "NEXTAUTH_URL",
         "NEXT_RUNTIME",
         "GOOGLE_CLIENT_ID",
