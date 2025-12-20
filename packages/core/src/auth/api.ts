@@ -10,13 +10,13 @@ import type {
 } from "../types/api";
 
 /**
- * 부원 회원가입 API
+ * 부원 회원가입
  *
  * @param data 회원가입 정보
  * @returns 회원가입 응답 (accessToken, role 포함)
  *
  * @example
- * const response = await memberSignUpApi({
+ * const response = await memberSignUp({
  *   studentId: 2021234567,
  *   userName: "홍길동",
  *   email: "hong@hanyang.ac.kr",
@@ -24,7 +24,7 @@ import type {
  *   department: "컴퓨터소프트웨어학부"
  * });
  */
-export const memberSignUpApi = async (
+export const memberSignUp = async (
   data: SignUpRequest,
 ): Promise<SignUpResponse> => {
   return await apiClient
@@ -35,7 +35,7 @@ export const memberSignUpApi = async (
 };
 
 /**
- * 부원 로그인 API
+ * 부원 로그인
  *
  * Google OAuth를 통해 받은 Access Token을 백엔드로 전송하여 로그인합니다.
  * Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.
@@ -44,11 +44,11 @@ export const memberSignUpApi = async (
  * @returns 로그인 응답 (JWT accessToken, role 포함)
  *
  * @example
- * const response = await userLoginApi({
+ * const response = await userLogin({
  *   accessToken: "google-oauth-access-token"
  * });
  */
-export const userLoginApi = async (
+export const userLogin = async (
   data: UserLoginRequest,
 ): Promise<UserLoginResponse> => {
   return await apiClient
@@ -59,7 +59,7 @@ export const userLoginApi = async (
 };
 
 /**
- * 스태프(멘토/운영진) 로그인 API
+ * 스태프(멘토/운영진) 로그인
  *
  * 학번(userId)과 비밀번호로 로그인합니다.
  * Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.
@@ -68,12 +68,12 @@ export const userLoginApi = async (
  * @returns 로그인 응답 (JWT accessToken, role 포함)
  *
  * @example
- * const response = await staffLoginApi({
+ * const response = await staffLogin({
  *   userId: 2021234567,
  *   password: "password123"
  * });
  */
-export const staffLoginApi = async (
+export const staffLogin = async (
   data: StaffLoginRequest,
 ): Promise<StaffLoginResponse> => {
   return await apiClient
@@ -84,29 +84,29 @@ export const staffLoginApi = async (
 };
 
 /**
- * 토큰 갱신 API
+ * 토큰 갱신
  *
  * Refresh Token은 HttpOnly 쿠키로 자동 전송되므로 별도 파라미터 불필요
  *
  * @returns 갱신된 accessToken
  *
  * @example
- * const response = await refreshTokenApi();
+ * const response = await refreshToken();
  */
-export const refreshTokenApi = async (): Promise<RefreshTokenResponse> => {
+export const refreshToken = async (): Promise<RefreshTokenResponse> => {
   return await apiClient
     .post("api/v1/users/refresh")
     .json<RefreshTokenResponse>();
 };
 
 /**
- * 로그아웃 API
+ * 로그아웃
  *
  * 서버의 Refresh Token 쿠키를 삭제합니다.
  *
  * @example
- * await logoutApi();
+ * await logout();
  */
-export const logoutApi = async (): Promise<void> => {
+export const logout = async (): Promise<void> => {
   await apiClient.post("api/v1/users/logout");
 };

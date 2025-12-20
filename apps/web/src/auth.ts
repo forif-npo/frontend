@@ -45,9 +45,9 @@ const result = NextAuth({
           }
 
           // 동적 import로 Edge Runtime 호환성 해결
-          const { staffLoginApi } = await import("@core/auth/api");
+          const { staffLogin } = await import("@core/auth/api");
 
-          const response = await staffLoginApi({
+          const response = await staffLogin({
             userId: Number(credentials.userId),
             password: credentials.password,
           });
@@ -91,10 +91,10 @@ const result = NextAuth({
 
         try {
           // 동적 import로 Edge Runtime 호환성 해결
-          const { userLoginApi } = await import("@core/auth/api");
+          const { userLogin } = await import("@core/auth/api");
 
           // 서버에서 백엔드 API 호출 (Google Access Token → 백엔드 JWT)
-          const response = await userLoginApi({
+          const response = await userLogin({
             accessToken: account.access_token!,
           });
 
