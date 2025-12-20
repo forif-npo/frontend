@@ -1,4 +1,5 @@
 import NextAuth, { type NextAuthResult } from "next-auth";
+import type { StaffUser, ExtendedAccount } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { env } from "./env";
@@ -33,13 +34,22 @@ const result = NextAuth({
             throw new Error("학번과 비밀번호를 입력해주세요.");
           }
 
+          if (
+            typeof credentials.userId !== "string" ||
+            isNaN(Number(credentials.userId))
+          ) {
+            throw new Error("학번은 숫자여야 합니다.");
+          }
+          if (typeof credentials.password !== "string") {
+            throw new Error("비밀번호는 문자열이어야 합니다.");
+          }
+
           // 동적 import로 Edge Runtime 호환성 해결
           const { staffLoginApi } = await import("@core/auth/api");
 
-          // 백엔드 스태프 로그인 API 호출
           const response = await staffLoginApi({
             userId: Number(credentials.userId),
-            password: credentials.password as string,
+            password: credentials.password,
           });
 
           if (!response.data?.accessToken) {
@@ -48,7 +58,7 @@ const result = NextAuth({
 
           // NextAuth에서 사용할 사용자 정보 반환
           return {
-            id: credentials.userId as string,
+            id: credentials.userId,
             email: `${credentials.userId}@staff.forif.org`,
             name: "Staff User",
             accessToken: response.data.accessToken,
@@ -66,7 +76,7 @@ const result = NextAuth({
   trustHost: true, // Trust the host to avoid issues with custom domains
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60 * 24 * 30, // 7 days
+    maxAge: 60 * 60, // 1 hour
   },
   callbacks: {
     async signIn({ account, profile }) {
@@ -116,10 +126,7 @@ const result = NextAuth({
       if (account && user) {
         // Staff Credentials 로그인인 경우
         if (account.provider === "staff-credentials") {
-          const staffUser = user as typeof user & {
-            accessToken: string;
-            role: string;
-          };
+          const staffUser = user as StaffUser;
           return {
             ...token,
             backendJwt: staffUser.accessToken,
@@ -130,15 +137,11 @@ const result = NextAuth({
 
         // Google OAuth 로그인인 경우
         if (account.provider === "google") {
-          const googleAccount = account as typeof account & {
-            backendJwt?: string;
-            role?: string;
-          };
+          const googleAccount = account as typeof account & ExtendedAccount;
           return {
             ...token,
             backendJwt: googleAccount.backendJwt, // 백엔드 JWT
             googleAccessToken: account.access_token, // Google Access Token (참고용)
-            googleRefreshToken: account.refresh_token,
             role: googleAccount.role,
             provider: "google",
           };
@@ -151,7 +154,6 @@ const result = NextAuth({
     async session({ session, token }) {
       // 백엔드 JWT를 accessToken으로 전달
       session.accessToken = (token.backendJwt as string) || "";
-      session.refreshToken = (token.googleRefreshToken as string) || "";
       session.error = token.error as string | undefined;
       session.role = token.role as string | undefined;
       session.provider = token.provider as string | undefined;

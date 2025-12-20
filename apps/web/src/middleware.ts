@@ -24,6 +24,7 @@ const authMiddleware = auth((req) => {
   const isPublicRoute = publicRoutes.includes(pathname);
 
   if (isApiAuthRoute) return;
+
   if (isLoggedIn && isAuthRoute) {
     return Response.redirect(new URL(`/`, nextUrl));
   }
@@ -31,6 +32,7 @@ const authMiddleware = auth((req) => {
   if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
     return Response.redirect(new URL(`/signin`, nextUrl));
   }
+
   return NextResponse.next();
 });
 

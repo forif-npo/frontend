@@ -35,6 +35,7 @@ export default async function RootLayout({
       className={`${pretendard.variable}`}
     >
       <body
+        suppressHydrationWarning
         style={{ backgroundColor: "var(--background)" }}
         className="scrollbar-hidden"
       >

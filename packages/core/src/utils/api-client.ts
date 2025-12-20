@@ -14,16 +14,18 @@ const getBaseUrl = (): string => {
   return process.env.NEXT_PUBLIC_SERVER_URL || "https://api.forif.org";
 };
 
-// 토큰 갱신 중 플래그 (무한 루프 방지)
-let isRefreshing = false;
-
 /**
  * ky 기반 API 클라이언트
  *
  * 특징:
  * - credentials: 'include'로 HttpOnly 쿠키 자동 전송/수신
- * - Authorization 헤더에 Access Token 자동 주입 (메모리/sessionStorage에서 조회)
- * - 401 에러 시 Refresh Token으로 자동 갱신 시도 (무한 루프 방지)
+ * - Authorization 헤더에 Access Token 자동 주입 (메모리에서만 조회)
+ * - 401 에러 시 로그인 페이지로 리디렉션 (토큰 갱신은 서버에서 처리)
+ *
+ * 보안:
+ * - Access Token은 메모리에만 저장 (XSS 공격 범위 최소화)
+ * - Refresh Token은 HttpOnly 쿠키 (JavaScript 접근 불가)
+ * - 토큰 갱신은 서버 미들웨어/API Gateway에서 처리
  */
 export const apiClient = ky.create({
   prefixUrl: getBaseUrl(),
@@ -42,7 +44,7 @@ export const apiClient = ky.create({
           request.headers.set("Content-Type", "application/json");
         }
 
-        // Access Token 자동 주입 (메모리/sessionStorage에서 조회)
+        // Access Token 자동 주입 (메모리에서만 조회)
         const token = getAccessToken();
         if (token) {
           request.headers.set("Authorization", `Bearer ${token}`);
@@ -51,56 +53,12 @@ export const apiClient = ky.create({
     ],
     afterResponse: [
       async (request, options, response) => {
-        // 401 Unauthorized 에러 시 토큰 갱신 시도
-        if (response.status === 401 && !isRefreshing) {
-          // /refresh 엔드포인트 자체가 401이면 로그아웃 (무한 루프 방지)
-          if (request.url.includes("/refresh")) {
-            clearAccessToken();
-            if (typeof window !== "undefined") {
-              window.location.href = "/signin";
-            }
-            return response;
-          }
-
-          isRefreshing = true;
-          try {
-            // Refresh Token으로 새 Access Token 발급
-            // Refresh Token은 HttpOnly 쿠키로 자동 전송됨
-            const refreshResponse = await ky.post("api/v1/users/refresh", {
-              prefixUrl: getBaseUrl(),
-              credentials: "include",
-            });
-
-            const data = await refreshResponse.json<{
-              timestamp: number;
-              data: { accessToken: string } | null;
-              errorCode: string | null;
-              message: string;
-            }>();
-
-            // 응답 데이터 검증
-            if (!data.data?.accessToken) {
-              throw new Error("Access Token을 받지 못했습니다.");
-            }
-
-            // 새 Access Token 저장
-            setAccessToken(data.data.accessToken);
-
-            // 원래 요청 재시도
-            request.headers.set(
-              "Authorization",
-              `Bearer ${data.data.accessToken}`,
-            );
-            return ky(request);
-          } catch (error) {
-            // Refresh 실패 시 로그아웃 처리
-            clearAccessToken();
-            if (typeof window !== "undefined") {
-              window.location.href = "/signin";
-            }
-            throw error;
-          } finally {
-            isRefreshing = false;
+        // 401 Unauthorized 에러 시 로그인 페이지로 리디렉션
+        // 토큰 갱신은 서버(미들웨어/API Gateway)에서 처리
+        if (response.status === 401) {
+          clearAccessToken();
+          if (typeof window !== "undefined") {
+            window.location.href = "/signin";
           }
         }
 
