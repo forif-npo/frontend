@@ -26,7 +26,7 @@ import { cookies } from "next/headers";
  * 5. Refresh Token은 HttpOnly 쿠키로 자동 관리
  */
 export const signInWithGoogle = async () => {
-  await signIn("google", { redirectTo: "/auth/callback" });
+  await signIn("google", { redirectTo: "/" });
 };
 
 /**

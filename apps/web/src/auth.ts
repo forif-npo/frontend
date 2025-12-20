@@ -44,6 +44,8 @@ const result = NextAuth({
             throw new Error("비밀번호는 문자열이어야 합니다.");
           }
 
+
+
           // 동적 import로 Edge Runtime 호환성 해결
           const { staffLogin } = await import("@core/auth/api");
 
@@ -122,7 +124,7 @@ const result = NextAuth({
       return true;
     },
     async jwt({ token, account, user, trigger, session: updateSession }) {
-      // 세션 업데이트 시 (클라이언트에서 update() 호출)
+      // 세션 업데이트 트리거 (토큰 갱신 시)
       if (trigger === "update" && updateSession?.accessToken) {
         return {
           ...token,
@@ -157,7 +159,6 @@ const result = NextAuth({
       }
 
       // 토큰이 이미 있으면 그대로 반환
-      // 토큰 갱신은 클라이언트의 api-client에서 401 에러 시 처리
       return token;
     },
     async session({ session, token }) {

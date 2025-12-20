@@ -31,7 +31,6 @@ export default function MentorLogin() {
       }
 
       if (result?.ok) {
-        // NextAuth 세션이 자동으로 accessToken을 관리
         router.push("/my");
         router.refresh();
       }

@@ -77,13 +77,14 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
 
   useEffect(() => {}, [watchedValues]);
 
-  // 회원가입 성공 시 완료 페이지로 리디렉션
-  // NextAuth 세션이 자동으로 accessToken을 관리함
+  // 회원가입 성공 시 리디렉션
   useEffect(() => {
+    if (state.success) {
     if (state.success) {
       // 완료 페이지로 이동
       router.push("/signup/complete");
     }
+  }, [state.success, router]);
   }, [state.success, router]);
 
   useEffect(() => {
