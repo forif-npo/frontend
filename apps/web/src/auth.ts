@@ -121,7 +121,15 @@ const result = NextAuth({
       }
       return true;
     },
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user, trigger, session: updateSession }) {
+      // 세션 업데이트 시 (클라이언트에서 update() 호출)
+      if (trigger === "update" && updateSession?.accessToken) {
+        return {
+          ...token,
+          backendJwt: updateSession.accessToken,
+        };
+      }
+
       // 초기 로그인 시
       if (account && user) {
         // Staff Credentials 로그인인 경우
@@ -148,7 +156,8 @@ const result = NextAuth({
         }
       }
 
-      // 토큰이 이미 있으면 그대로 반환 (백엔드 JWT는 백엔드에서 만료 관리)
+      // 토큰이 이미 있으면 그대로 반환
+      // 토큰 갱신은 클라이언트의 api-client에서 401 에러 시 처리
       return token;
     },
     async session({ session, token }) {

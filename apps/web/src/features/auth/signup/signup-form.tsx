@@ -3,7 +3,6 @@ import { TermsButton } from "@/components/terms-modal";
 import { departmentsOptions } from "@/constants/options.constant";
 import { autoHyphenPhoneNumber } from "@/utils/form";
 import { signUpSchema, SignUpValues } from "@core/schemas";
-import { setAccessToken } from "@core/auth/token";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Button, Checkbox, SelectBox, TextInput } from "@ui/components/client";
 import { InfoText, Label, Link } from "@ui/components/server";
@@ -78,15 +77,14 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
 
   useEffect(() => {}, [watchedValues]);
 
-  // 회원가입 성공 시 토큰 저장 후 리디렉션
+  // 회원가입 성공 시 완료 페이지로 리디렉션
+  // NextAuth 세션이 자동으로 accessToken을 관리함
   useEffect(() => {
-    if (state.success && state.accessToken) {
-      // JWT Access Token을 localStorage에 저장
-      setAccessToken(state.accessToken);
+    if (state.success) {
       // 완료 페이지로 이동
       router.push("/signup/complete");
     }
-  }, [state.success, state.accessToken, router]);
+  }, [state.success, router]);
 
   useEffect(() => {
     for (const key in state.values) {

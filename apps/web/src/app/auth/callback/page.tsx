@@ -3,13 +3,13 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { setAccessToken } from "@core/auth/token";
 
 /**
  * Google OAuth 콜백 페이지
  *
  * NextAuth의 signIn 콜백에서 이미 백엔드 로그인 처리가 완료되었으므로
- * 세션에서 JWT를 가져와 메모리/sessionStorage에 저장하고 리디렉션합니다.
+ * 세션 상태를 확인하고 리디렉션합니다.
+ * NextAuth 세션이 accessToken을 자동으로 관리합니다.
  */
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -26,8 +26,6 @@ export default function AuthCallbackPage() {
 
     // 백엔드 JWT가 있으면 (로그인 완료)
     if (session.accessToken) {
-      console.log("✅ Session JWT received, saving to storage");
-      setAccessToken(session.accessToken);
       router.push("/");
       return;
     }

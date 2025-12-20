@@ -1,7 +1,6 @@
 "use client";
 
 import { logout } from "@core/auth/api";
-import { clearAccessToken } from "@core/auth/token";
 import { Button } from "@ui/components/client";
 import { signOut } from "next-auth/react";
 import { useTransition } from "react";
@@ -19,10 +18,7 @@ export function LogoutButton() {
         // API 실패해도 계속 진행
       }
 
-      // 2. 메모리의 Access Token 삭제
-      clearAccessToken();
-
-      // 3. NextAuth 세션 종료 및 로그인 페이지로 리디렉션
+      // 2. NextAuth 세션 종료 및 로그인 페이지로 리디렉션
       await signOut({ callbackUrl: "/signin" });
     });
   };

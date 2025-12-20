@@ -3,30 +3,28 @@
 import { CheckCircle } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
 import { Body, Divider, Heading, LinkButton } from "@ui/components/server";
-import { hasAccessToken } from "@core/auth/token";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Page() {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    // localStorage에 토큰이 있는지 확인
-    const hasToken = hasAccessToken();
-    setIsAuthenticated(hasToken);
+    if (status === "loading") return;
 
-    if (!hasToken) {
-      // 토큰이 없으면 로그인 페이지로
+    // 세션이 없거나 accessToken이 없으면 로그인 페이지로
+    if (!session?.accessToken) {
       router.push("/signin");
     }
-  }, [router]);
+  }, [session, status, router]);
 
   const handleGoToMyPage = () => {
     router.push("/my");
   };
 
-  if (!isAuthenticated) {
+  if (status === "loading" || !session?.accessToken) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>로그인 정보를 확인하는 중...</p>
