@@ -1,37 +1,8 @@
-"use client";
-
 import { CheckCircle } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
 import { Body, Divider, Heading, LinkButton } from "@ui/components/server";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
-export default function Page() {
-  const router = useRouter();
-  const { data: session, status } = useSession();
-
-  useEffect(() => {
-    if (status === "loading") return;
-
-    // 세션이 없거나 accessToken이 없으면 로그인 페이지로
-    if (!session?.accessToken) {
-      router.push("/signin");
-    }
-  }, [session, status, router]);
-
-  const handleGoToMyPage = () => {
-    router.push("/my");
-  };
-
-  if (status === "loading" || !session?.accessToken) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p>로그인 정보를 확인하는 중...</p>
-      </div>
-    );
-  }
-
+export default async function Page() {
   return (
     <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
       <div className="flex flex-col items-center gap-6">
@@ -39,9 +10,6 @@ export default function Page() {
         <Heading size="xl" className="text-text-basic text-left">
           회원가입이 완료되었습니다
         </Heading>
-        <Button onClick={handleGoToMyPage} size="large">
-          마이페이지로 이동
-        </Button>
         <section className="rounded-3 bg-surface-secondary-subtler flex w-full flex-row items-center justify-around gap-3 p-10">
           <Body size="l" weight="bold">
             가입 정보

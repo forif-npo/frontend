@@ -1,5 +1,6 @@
 "use client";
 import { signInWithGoogle } from "@/features/auth/signin/actions";
+import { Button } from "@ui/components/client";
 import { Body, InfoText, Link } from "@ui/components/server";
 import { GoogleButton } from "../../../components/GoogleButton";
 
@@ -21,6 +22,11 @@ export default function MemberLogin() {
             한양대학교 이메일로 로그인
           </GoogleButton>
         </form>
+        <Link href="/signup" className="w-full">
+          <Button variant="text" className="w-full">
+            회원가입
+          </Button>
+        </Link>
         <InfoText>
           회칙 2장 제4조(자격과 구성)에 의거하여 부원 가입대상을 한양대학교
           재·휴·졸업생으로 한정함에 따라 한양대학교 이메일을 통한
