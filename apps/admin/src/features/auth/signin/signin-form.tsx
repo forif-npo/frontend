@@ -1,16 +1,21 @@
 "use client";
 import { Button } from "@ui/components/client";
 import { TextInput } from "@ui/components/server";
+import { useRouter } from "next/navigation";
 
 export function SignInForm() {
+  const router = useRouter();
   return (
-    <form className="flex flex-col justify-center gap-6">
+    <form
+      className="flex flex-col justify-center gap-6"
+      onSubmit={() => router.push("/")}
+    >
       <TextInput
-        autoComplete="email"
-        id="email"
+        autoComplete="id"
+        id="id"
         length="full"
-        title="이메일"
-        placeholder="standardstar@hanyang.ac.kr"
+        title="아이디"
+        placeholder=""
         // error={errors.email?.message ? errors.email?.message : undefined}
         // {...register("email")}
         // value={email}
@@ -27,7 +32,7 @@ export function SignInForm() {
         // {...register("name")}
       />
       <Button type="submit" size="large" disabled={false}>
-        회원가입
+        로그인
       </Button>
     </form>
   );

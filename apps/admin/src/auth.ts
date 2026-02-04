@@ -10,16 +10,15 @@ const result = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        email: {},
+        id: {},
         password: {},
       },
       authorize: async (credentials) => {
         let user = null;
         // const pwHash = saltAndHashPassword(credentials.password)
-        // user = await getUserFromDb(credentials.email, pwHash)
+        // user = await getUserFromDb(credentials.id, pwHash)
         user = {
-          email: credentials.email,
-          id: "admin-id",
+          id: credentials.id,
           name: "Admin User",
           department: "Administration",
           phoneNumber: "010-1234-5678",

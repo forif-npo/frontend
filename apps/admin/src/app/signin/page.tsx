@@ -1,5 +1,5 @@
 import { SignInForm } from "@/features/auth/signin/signin-form";
-import { Body, Heading, Label } from "@ui/components/server";
+import { Body, Heading } from "@ui/components/server";
 import Image from "next/image";
 export default async function Page() {
   return (
@@ -16,7 +16,7 @@ export default async function Page() {
           <h1 className="mb-4 text-3xl font-bold leading-snug">
             반가워요
             <br />
-            FORIF 운영진 여러분!👋🏻
+            FORIF 운영진 여러분! 👋🏻
           </h1>
           <p className="mb-auto text-base">
             한양대학교 중앙 프로그래밍 동아리 FORIF의 운영진이 되신 것을
@@ -35,15 +35,6 @@ export default async function Page() {
             해당 학기 회장단/SW팀에게 계정 생성을 문의해주세요.
           </Body>
           <SignInForm />
-          <Label size="xs" className="mt-4 text-xs text-gray-500">
-            🔒 학칙 2장 제4조(가입 구성)의 의거하여 부원 가입대장은 한양대학교
-            재·휴학생임을 확인하기 위해 한양대메일을 통한 로그인/회원가입을
-            진행하고 있습니다. 아직 한양메일을 만들지 않았다면
-            <a href="#" className="text-blue-600 hover:underline">
-              다음 링크
-            </a>
-            를 따라 만들어 주세요.
-          </Label>
         </section>
       </div>
     </main>

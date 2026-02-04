@@ -4,6 +4,9 @@ import { z } from "zod/v4";
 export const env = createEnv({
   server: {
     AUTH_SECRET: z.string().min(1),
+    GOOGLE_SERVICE_ACCOUNT_EMAIL: z.string().min(1),
+    GOOGLE_PRIVATE_KEY: z.string().min(1),
+    GOOGLE_CALENDAR_ID: z.string().min(1),
   },
 
   /**
