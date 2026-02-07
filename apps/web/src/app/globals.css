@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@repo/ui/styles.css";
+@import "@repo/ui/theme.css";
 
 [data-theme="high-contrast"] [data-hide-on-theme="high-contrast"],
 [data-theme="light"] [data-hide-on-theme="light"] {
@@ -9,5 +10,63 @@
 @utility scrollbar-hidden {
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@utility main-gap {
+  gap: var(--spacing-2);
+  @media (min-width: 48rem) {
+    gap: calc(var(--spacing) * 16);
+  }
+}
+
+@utility alert-section {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  padding-inline: 1rem;
+  @media (min-width: 48rem) {
+    margin-top: 5rem;
+    margin-bottom: 2.5rem;
+    padding-inline: 0;
+  }
+}
+
+@utility footer-main {
+  gap: 24px;
+  padding: 32px 16px 24px;
+  @media (min-width: 48rem) {
+    gap: 40px;
+    padding: 40px 24px 24px;
+  }
+}
+
+@utility footer-info-grid {
+  flex-direction: column;
+  gap: 20px;
+  @media (min-width: 48rem) {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+@utility footer-links-col {
+  width: 100%;
+  @media (min-width: 48rem) {
+    width: 282px;
+    flex-shrink: 0;
+  }
+}
+
+@utility footer-copyright {
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  @media (min-width: 48rem) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px 24px;
   }
 }

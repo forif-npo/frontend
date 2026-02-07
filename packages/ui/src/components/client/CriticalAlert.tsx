@@ -35,17 +35,17 @@ export const CriticalAlert = ({
 }: CriticalAlertProps) => {
   return (
     <div
-      className={`border-border-gray-light rounded-2 bg-surface-white container mx-auto border px-5 py-3 ${className} `}
+      className={`border-border-gray-light bg-surface-white w-full rounded-[10px] border p-4 ${className} `}
     >
-      <div className={`flex items-center justify-between gap-3`}>
+      <div className={`flex items-center gap-4`}>
         <UrgentBadge variant={variant} />
-        <Label className="text-text-basic flex-auto" size="m" weight="bold">
+        <Label className="text-text-bolder flex-1" size="m" weight="bold">
           {text}
         </Label>
-        <div className="hidden md:block">
+        <div className="hidden shrink-0 md:block">
           {link && <MoreLinkButton link={link} title={title} />}
         </div>
-        <div className="block md:hidden">
+        <div className="block shrink-0 md:hidden">
           {link && (
             <LinkButton
               title={detailText}
@@ -69,7 +69,7 @@ const UrgentBadge = ({ variant }: { variant: AlertVariant }) => {
   return (
     <span
       className={cn(
-        "rounded-2 inline-flex h-[48px] w-[78px] items-center justify-center gap-1",
+        "inline-flex h-[48px] shrink-0 items-center justify-center gap-1 rounded-[6px] px-[10px] py-2",
         variantClaases[variant],
       )}
     >

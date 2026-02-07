@@ -1,4 +1,4 @@
-import { Study, StudyListParams } from "@/types/study";
+import type { Study, StudiesParams } from "@repo/core/types/study";
 import type { ApiResponse } from "@core/types/api";
 import { apiClient } from "@core/utils/api-client";
 import { useCallback, useState } from "react";
@@ -7,15 +7,15 @@ interface UseStudyDataReturn {
   studies: Study[];
   loading: boolean;
   error: string | null;
-  refetch: (params?: StudyListParams) => Promise<void>;
+  refetch: (params?: StudiesParams) => Promise<void>;
 }
 
-export const useStudyData = (params?: StudyListParams): UseStudyDataReturn => {
+export const useStudyData = (params?: StudiesParams): UseStudyDataReturn => {
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchStudies = useCallback(async (fetchParams?: StudyListParams) => {
+  const fetchStudies = useCallback(async (fetchParams?: StudiesParams) => {
     setError(null);
     setLoading(true);
     try {

@@ -1,16 +1,17 @@
-import { signUp } from "@/app/actions";
+import { signUp } from "@/features/auth/signin/actions";
 import { auth, signOut } from "@/auth";
 import { SignOutButton } from "@/components/SignOutButton";
 import { SignUpForm } from "@/features/auth/signup/signup-form";
 import { signUpSchema, SignUpValues } from "@core/schemas";
 import { Body, Heading, InfoBox, Link } from "@ui/components/server";
-import { HTTPError } from "ky";
 import { redirect } from "next/navigation";
 import { z } from "zod/v4";
 
 type ActionState = {
   errors: Record<string, { message: string }>;
   values: z.infer<typeof signUpSchema>;
+  success?: boolean;
+  accessToken?: string;
 };
 
 const submitForm = async (_: ActionState, formData: FormData) => {
@@ -37,22 +38,42 @@ const submitForm = async (_: ActionState, formData: FormData) => {
     };
   }
   try {
-    await signUp(values);
-  } catch (error) {
-    if (error instanceof HTTPError) {
-      errors["root"] = { message: error.message };
-    } else {
-      errors["root"] = {
-        message: `알 수 없는 오류가 발생했습니다: ${(error as Error).message}`,
+    const result = await signUp(values);
+
+    // 회원가입 성공 시 accessToken을 클라이언트로 반환
+    if (result.success && result.accessToken) {
+      return {
+        values: {
+          name: "",
+          department: "",
+          email: "",
+          id: "",
+          phoneNumber: "",
+          serviceTermAgree: false,
+          privacyPolicyAgree: false,
+        },
+        errors: {},
+        success: true,
+        accessToken: result.accessToken, // 토큰을 클라이언트로 전달
       };
     }
+  } catch (error) {
+    errors["root"] = {
+      message:
+        error instanceof Error
+          ? error.message
+          : "알 수 없는 오류가 발생했습니다.",
+    };
     return {
       values,
       errors,
     };
   }
 
-  redirect("/signup/complete");
+  return {
+    values,
+    errors,
+  };
 };
 
 export default async function Page() {

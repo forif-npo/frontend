@@ -43,6 +43,7 @@ import { InformationIcon } from "./information";
 import { InformationFillIcon } from "./information_fill";
 import { InformationFillHighContrastIcon } from "./information_fill_high_contrast";
 import { InstagramIcon } from "./instagram";
+import { KakaotalkIcon } from "./kakaotalk";
 import { JoinIcon } from "./join";
 import { LikeIcon } from "./like";
 import { LoginIcon } from "./login";
@@ -133,6 +134,7 @@ export {
   InformationFillIcon,
   InformationIcon,
   InstagramIcon,
+  KakaotalkIcon,
   JoinIcon,
   LikeIcon,
   LoginCertifyGoIcon,
