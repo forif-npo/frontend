@@ -54,7 +54,7 @@ const generateMockStudies = (count: number): Study[] => {
     "HTML/CSS 입문",
     "iOS 앱 개발",
     "데이터베이스 설계와 SQL",
-    "풀스택 웹 개발",
+    "창컴, 공창컴.. 너 뭐 돼? 내가 파이썬을 안다고? No. 파이썬이 나를 안다고 해라.",
     "AI/ML 기초부터 실전까지",
   ];
   const oneLiners = [

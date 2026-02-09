@@ -98,11 +98,11 @@ export const ApplyCard: React.FC<ApplyCardProps> = ({
           )}
         </div>
         <div className="flex flex-1 flex-col gap-4">
-          <Heading size="xs" className="text-text-basic line-clamp-2">
+          <Heading size="xs" className="text-text-basic line-clamp-1">
             {title}
           </Heading>
 
-          <Body size="m" className="text-text-subtle line-clamp-3 h-20">
+          <Body size="m" className="text-text-subtle line-clamp-5 h-20">
             {description}
           </Body>
 
