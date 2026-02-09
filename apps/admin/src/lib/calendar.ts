@@ -1,5 +1,11 @@
+import { env } from "@/env";
+
 export async function getCalendarData() {
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
+  const baseUrl =
+    env.NEXT_PUBLIC_APP_URL ||
+    env.NEXTAUTH_URL ||
+    env.NEXT_PUBLIC_SERVER_URL ||
+    "http://localhost:3001";
 
   try {
     const [eventsRes, usersRes] = await Promise.all([

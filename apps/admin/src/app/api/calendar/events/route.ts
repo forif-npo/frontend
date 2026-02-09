@@ -26,7 +26,6 @@ export async function GET() {
       singleEvents: true,
       orderBy: "startTime",
     });
-    console.log("Google Calendar API response:", response.data);
 
     const events = transformGoogleEventsToIEvents(response.data.items);
     return NextResponse.json({ events });

@@ -11,6 +11,8 @@
     "clean": "turbo run clean",
     "commit": "./node_modules/cz-customizable/standalone.js",
     "dev": "turbo run dev",
+    "dev:admin": "pnpm dev -F admin",
+    "dev:web": "pnpm dev -F web",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",

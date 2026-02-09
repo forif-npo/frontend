@@ -50,8 +50,6 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
     );
   });
 
-  console.log("dayEvents", dayEvents);
-
   const groupedEvents = groupEvents(dayEvents);
 
   return (

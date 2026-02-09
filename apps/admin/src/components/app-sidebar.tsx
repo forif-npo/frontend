@@ -1,5 +1,6 @@
 "use client";
 
+import { signOutAction } from "@/app/actions";
 import {
   Sidebar,
   SidebarContent,
@@ -14,12 +15,12 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { LogoutIcon } from "@repo/assets/icons/krds";
 import {
   Award,
   BookOpen,
   Building2,
   CheckCircle,
-  ChevronDown,
   CircleDollarSign,
   Code2,
   FileText,
@@ -31,7 +32,9 @@ import {
   Users,
   Users2,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const menuItems = {
   dashboard: {
@@ -76,6 +79,9 @@ const menuItems = {
 };
 
 export function AppSidebar() {
+  const pathname = usePathname();
+  const { data } = useSession();
+
   return (
     <Sidebar collapsible="icon" className="scrollbar-hidden">
       <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2">
@@ -85,17 +91,16 @@ export function AppSidebar() {
           </div>
           <div className="flex flex-1 flex-col group-data-[collapsible=icon]:hidden">
             <div className="flex items-center gap-1 text-sm font-medium">
-              <span>표준성</span>
+              <span>{data?.user.name}</span>
               <span className="text-muted-foreground">|</span>
-              <span className="text-muted-foreground">SW팀</span>
-              <span className="text-muted-foreground">|</span>
-              <span className="text-muted-foreground">팀장</span>
+              <span className="text-muted-foreground">
+                {data?.user.affiliation}
+              </span>
             </div>
             <span className="text-muted-foreground text-xs">
-              standardstar@hanyang.ac.kr
+              {data?.user.email}
             </span>
           </div>
-          <ChevronDown className="text-muted-foreground h-4 w-4 group-data-[collapsible=icon]:hidden" />
         </div>
       </SidebarHeader>
 
@@ -104,7 +109,10 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === menuItems.dashboard.url}
+              >
                 <Link href={menuItems.dashboard.url}>
                   <menuItems.dashboard.icon />
                   <span>{menuItems.dashboard.title}</span>
@@ -125,7 +133,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.studyManagement.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith(item.url)}
+                  >
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -148,7 +159,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.memberManagement.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith(item.url)}
+                  >
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -171,7 +185,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.postManagement.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith(item.url)}
+                  >
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -192,7 +209,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.others.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith(item.url)}
+                  >
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -205,15 +225,31 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* 설정 푸터 */}
       <SidebarFooter className="p-2">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton
+              asChild
+              isActive={pathname.startsWith("/settings")}
+            >
               <Link href="/settings">
                 <Settings />
                 <span>설정</span>
               </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={false}
+              onClick={() => {
+                signOutAction();
+              }}
+            >
+              <div className="cursor-pointer">
+                <LogoutIcon />
+                <span>로그아웃</span>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

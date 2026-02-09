@@ -1,7 +1,7 @@
-import { Member } from "@core/types/member";
 import NextAuth, { type NextAuthResult } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { env } from "./env";
+
 const result = NextAuth({
   secret: env.AUTH_SECRET,
   pages: {
@@ -10,32 +10,121 @@ const result = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        id: {},
-        password: {},
+        id: { label: "학번", type: "text" },
+        password: { label: "비밀번호", type: "password" },
       },
       authorize: async (credentials) => {
-        let user = null;
-        // const pwHash = saltAndHashPassword(credentials.password)
-        // user = await getUserFromDb(credentials.id, pwHash)
-        user = {
-          id: credentials.id,
-          name: "Admin User",
-          department: "Administration",
-          phoneNumber: "010-1234-5678",
-        } as Member;
-
-        if (!user) {
-          throw new Error("Invalid credentials.");
+        if (!credentials?.id || !credentials?.password) {
+          throw new Error("학번과 비밀번호를 입력해주세요.");
         }
 
-        return user;
+        if (
+          typeof credentials.id !== "string" ||
+          isNaN(Number(credentials.id))
+        ) {
+          throw new Error("학번은 숫자여야 합니다.");
+        }
+
+        if (typeof credentials.password !== "string") {
+          throw new Error("비밀번호는 문자열이어야 합니다.");
+        }
+
+        try {
+          const { staffLogin, getStaff } = await import("@core/auth/api");
+
+          const response = await staffLogin({
+            user_id: Number(credentials.id),
+            password: credentials.password,
+          });
+
+          if (!response.data?.access_token) {
+            throw new Error("로그인에 실패했습니다.");
+          }
+
+          const staffRes = await getStaff(response.data.access_token);
+
+          if (!staffRes.data) {
+            throw new Error("스태프 정보를 가져올 수 없습니다.");
+          }
+
+          const staff = staffRes.data;
+
+          return {
+            id: String(staff.user_id),
+            email: staff.email,
+            name: staff.user_name,
+            phoneNum: staff.phone_num,
+            department: staff.department,
+            imgUrl: staff.img_url,
+            access_token: response.data.access_token,
+            role: response.data.role,
+          };
+        } catch (error) {
+          console.error("Authorize error:", error);
+          throw new Error("로그인에 실패했습니다.");
+        }
       },
     }),
   ],
-  trustHost: true, // Trust the host to avoid issues with custom domains
+  trustHost: true,
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60 * 24 * 30, // 7 days
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+  },
+  callbacks: {
+    async jwt({ token, user, trigger, session: updateSession }) {
+      if (trigger === "update" && updateSession?.access_token) {
+        token.backendJwt = updateSession.access_token;
+      }
+
+      if (user) {
+        token.backendJwt = user.access_token;
+        token.role = user.role;
+        token.staffId = user.id;
+        token.staffName = user.name ?? "";
+        token.staffEmail = user.email ?? "";
+        token.staffPhoneNum = user.phoneNum ?? "";
+        token.staffDepartment = user.department ?? "";
+        token.staffImgUrl = user.imgUrl ?? null;
+      }
+
+      // 토큰은 있지만 staff 정보가 없는 경우 (기존 세션 복원 시) API로 가져옴
+      if (token.backendJwt && !token.staffName) {
+        try {
+          const { getStaff } = await import("@core/auth/api");
+          const staffRes = await getStaff(token.backendJwt as string);
+          if (staffRes.data) {
+            const staff = staffRes.data;
+            token.staffId = String(staff.user_id);
+            token.staffName = staff.user_name;
+            token.staffEmail = staff.email;
+            token.staffPhoneNum = staff.phone_num;
+            token.staffDepartment = staff.department;
+            token.staffImgUrl = staff.img_url;
+            token.role = staff.role;
+          }
+        } catch {
+          // staff 정보를 가져올 수 없으면 토큰이 만료된 것으로 간주
+        }
+      }
+
+      return token;
+    },
+    async session({ session, token }) {
+      session.access_token = (token.backendJwt as string) || "";
+      session.role = token.role as string | undefined;
+      session.user = {
+        ...session.user,
+        id: (token.staffId as string) || "",
+        name: (token.staffName as string) || "",
+        email: (token.staffEmail as string) || "",
+        phoneNum: (token.staffPhoneNum as string) || "",
+        department: (token.staffDepartment as string) || "",
+        imgUrl: (token.staffImgUrl as string | null) ?? null,
+        role: (token.role as "MENTOR" | "ADMIN") || "MENTOR",
+      };
+      return session;
+    },
   },
 });
 

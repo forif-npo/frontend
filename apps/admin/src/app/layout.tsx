@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
-import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { auth } from "@/auth";
+import { ApiClientProvider } from "@/providers/ApiClientProvider";
 import localFont from "next/font/local";
+import { SessionProvider } from "next-auth/react";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
 
@@ -22,6 +23,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html
       lang={"ko"}
@@ -32,12 +35,11 @@ export default async function RootLayout({
         style={{ backgroundColor: "var(--background)" }}
         className="scrollbar-hidden"
       >
-        <NuqsAdapter>
-          <SidebarProvider>
-            <AppSidebar />
-            <main className="w-full">{children}</main>
-          </SidebarProvider>
-        </NuqsAdapter>
+        <SessionProvider session={session}>
+          <ApiClientProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+          </ApiClientProvider>
+        </SessionProvider>
       </body>
     </html>
   );

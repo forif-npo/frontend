@@ -56,8 +56,6 @@ export function CalendarProvider({
   events,
   defaultView = "month",
 }: CalendarProviderProps) {
-  console.log("CalendarProvider rendered");
-  console.log(defaultView);
   const [view, setView] = useState<TCalendarView>(defaultView);
   const [badgeVariant, setBadgeVariant] = useState<TBadgeVariant>("colored");
   const [visibleHours, setVisibleHours] =

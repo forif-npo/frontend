@@ -314,15 +314,6 @@ export function calculateMonthEventPositions(
       }
     }
 
-    console.log(
-      "calculateMonthEventPositions:",
-      event.title,
-      "position:",
-      position,
-      "eventDays:",
-      eventDays.map((d) => d.toISOString()),
-    );
-
     if (position !== -1) {
       eventDays.forEach((day) => {
         const dayKey = startOfDay(day).toISOString();

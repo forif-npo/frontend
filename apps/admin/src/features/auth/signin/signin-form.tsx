@@ -1,24 +1,49 @@
 "use client";
-import { Button } from "@ui/components/client";
-import { TextInput } from "@ui/components/server";
-import { useRouter } from "next/navigation";
+
+import { signInAction } from "@/features/auth/signin/action";
+import { Button, TextInput } from "@ui/components/client";
+import { useState } from "react";
 
 export function SignInForm() {
-  const router = useRouter();
+  const [userId, setUserId] = useState("2024111111");
+  const [password, setPassword] = useState("12345678");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const result = await signInAction(userId, password);
+
+      if (result?.error) {
+        setError(result.error);
+      }
+    } catch {
+      setError("로그인에 실패했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <form
       className="flex flex-col justify-center gap-6"
-      onSubmit={() => router.push("/")}
+      onSubmit={handleSubmit}
     >
       <TextInput
         autoComplete="id"
         id="id"
         length="full"
         title="아이디"
-        placeholder=""
-        // error={errors.email?.message ? errors.email?.message : undefined}
-        // {...register("email")}
-        // value={email}
+        placeholder="2023063845"
+        value={userId}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setUserId(e.target.value)
+        }
+        disabled={isLoading}
       />
       <TextInput
         autoComplete="current-password"
@@ -27,12 +52,15 @@ export function SignInForm() {
         title="비밀번호"
         id="password"
         placeholder="*********"
-        // error={errors.name?.message}
-        // disabled={isPending}
-        // {...register("name")}
+        value={password}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setPassword(e.target.value)
+        }
+        disabled={isLoading}
       />
-      <Button type="submit" size="large" disabled={false}>
-        로그인
+      {error && <p className="text-sm text-red-500">{error}</p>}
+      <Button type="submit" size="large" disabled={isLoading}>
+        {isLoading ? "로그인 중..." : "로그인"}
       </Button>
     </form>
   );

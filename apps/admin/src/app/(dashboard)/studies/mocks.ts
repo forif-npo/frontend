@@ -1,10 +1,15 @@
 import { fakerKO } from "@faker-js/faker";
 import { SemesterInfo, Study } from "./types";
 
-export const MOCK_CURRENT_SEMESTER: SemesterInfo = {
+const MOCK_CURRENT_SEMESTER: SemesterInfo = {
   year: 2025,
   semester: 2,
 };
+
+export async function getCurrentSemester(): Promise<SemesterInfo> {
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  return MOCK_CURRENT_SEMESTER;
+}
 
 const TAGS = [
   "Database",
