@@ -30,7 +30,7 @@ export function StudyApplyInfoStep({
   onCancel,
 }: StudyApplyInfoStepProps) {
   return (
-    <div className="mx-auto mb-16 flex max-w-[1023px] flex-col">
+    <div className="mx-auto mb-16 flex max-w-[792px] flex-col">
       <StudyApplyTitle studyName={studyName} tags={tags} />
 
       <div className="flex flex-col gap-10">

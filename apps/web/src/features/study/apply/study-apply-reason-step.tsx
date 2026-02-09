@@ -61,7 +61,7 @@ export function StudyApplyReasonStep({
   const {
     control,
     register,
-    formState: { errors, isValid },
+    formState: { errors },
   } = form;
 
   const isLoading = isPending || isTransitionPending;
@@ -236,7 +236,7 @@ export function StudyApplyReasonStep({
             <Button
               type="button"
               size="large"
-              disabled={isLoading || !isValid}
+              disabled={isLoading}
               onClick={handleSubmit}
               className="h-14 min-w-[90px]"
             >
