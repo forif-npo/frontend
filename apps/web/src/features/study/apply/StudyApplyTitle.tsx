@@ -12,8 +12,8 @@ interface StudyApplyTitleProps {
 
 export function StudyApplyTitle({ studyName, tags }: StudyApplyTitleProps) {
   return (
-    <div className="mb-12 flex flex-col gap-6">
-      <h1 className="text-[40px] font-bold leading-[1.5] tracking-[1px]">
+    <div className="mb-8 flex flex-col gap-4 sm:mb-12 sm:gap-6">
+      <h1 className="text-[28px] font-bold leading-[1.5] tracking-[1px] sm:text-[40px]">
         <span className="text-secondary line-clamp-2">{studyName}</span>
         <span className="text-text-basic">스터디 신청</span>
       </h1>

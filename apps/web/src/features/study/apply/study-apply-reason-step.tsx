@@ -106,12 +106,12 @@ export function StudyApplyReasonStep({
   };
 
   return (
-    <div className="mx-auto mb-16 flex max-w-[1023px] flex-col">
+    <div className="mx-auto mb-16 flex w-full max-w-[1023px] flex-col">
       <StudyApplyTitle studyName={studyName} tags={tags} />
 
       <Form ref={formRef} action={formAction} className="flex flex-col gap-10">
         {/* 스터디 지원서 카드 */}
-        <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-10">
+        <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
           <h2 className="text-text-bolder text-[24px] font-bold leading-[1.5]">
             스터디 지원서
           </h2>
@@ -211,25 +211,25 @@ export function StudyApplyReasonStep({
         </div>
 
         {/* 버튼 영역 */}
-        <div className="flex items-start gap-4">
-          <div className="flex flex-1 gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+          <div className="flex flex-1 gap-3 sm:gap-4">
             <Button
               type="button"
               variant="tertiary"
               size="large"
               onClick={onPrevious}
-              className="h-14 min-w-[90px]"
+              className="h-14 min-w-0 flex-1 sm:min-w-[90px] sm:flex-none"
             >
               취소하기
             </Button>
           </div>
-          <div className="flex gap-4">
+          <div className="flex w-full gap-3 sm:w-auto sm:gap-4">
             <Button
               type="button"
               variant="secondary"
               size="large"
               onClick={onPrevious}
-              className="h-14 min-w-[90px]"
+              className="h-14 min-w-0 flex-1 sm:min-w-[90px] sm:flex-none"
             >
               이전
             </Button>
@@ -238,7 +238,7 @@ export function StudyApplyReasonStep({
               size="large"
               disabled={isLoading}
               onClick={handleSubmit}
-              className="h-14 min-w-[90px]"
+              className="h-14 min-w-0 flex-1 sm:min-w-[90px] sm:flex-none"
             >
               제출
             </Button>

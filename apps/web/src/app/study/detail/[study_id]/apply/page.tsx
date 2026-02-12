@@ -35,7 +35,7 @@ export default function StudyApplyPage({ params }: Props) {
 
   if (step === 3) {
     return (
-      <div className="mx-auto max-w-[1200px] px-6">
+      <div className="mx-auto min-h-screen max-w-[1200px] px-4 sm:px-6">
         <StudyApplyComplete
           studyName={currentStudy.study_name}
           userInfo={userInfo}
@@ -49,9 +49,9 @@ export default function StudyApplyPage({ params }: Props) {
   }
 
   return (
-    <div className="relative">
-      <StudyApplyHelpPanel defaultOpen />
-      <div className="mr-[390px] flex justify-center px-6">
+    <div className="relative min-h-screen">
+      <StudyApplyHelpPanel />
+      <div className="flex justify-center px-4 sm:px-6">
         {step === 1 ? (
           <StudyApplyInfoStep
             studyName={currentStudy.study_name}

@@ -115,7 +115,7 @@ function QuestionIcon({ className }: { className?: string }) {
 }
 
 export function StudyApplyHelpPanel({
-  defaultOpen = true,
+  defaultOpen = false,
 }: StudyApplyHelpPanelProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -132,9 +132,9 @@ export function StudyApplyHelpPanel({
   }
 
   return (
-    <div className="fixed bottom-48 right-0 top-[200px] z-50 flex w-[390px] flex-col gap-8 border-l border-[#b1b8be] bg-[#f4f5f6] px-10 py-10 shadow-[0px_0px_2px_0px_rgba(0,0,0,0.08),0px_8px_16px_0px_rgba(0,0,0,0.12)]">
+    <div className="fixed inset-0 right-0 top-[64px] z-50 flex w-full flex-col gap-8 border-l border-[#b1b8be] bg-[#f4f5f6] px-6 py-8 shadow-[0px_0px_2px_0px_rgba(0,0,0,0.08),0px_8px_16px_0px_rgba(0,0,0,0.12)] sm:px-10 sm:py-10 lg:bottom-48 lg:left-auto lg:top-[200px] lg:w-[390px]">
       {/* Header */}
-      <div className="flex h-[969px] flex-col">
+      <div className="flex flex-1 flex-col overflow-y-auto">
         <div className="flex w-full flex-col items-end">
           <button
             onClick={() => setIsOpen(false)}

@@ -49,10 +49,10 @@ export function StudyApplyComplete({
   showSecondStudyButton = true,
 }: StudyApplyCompleteProps) {
   return (
-    <div className="mx-auto mb-16 flex max-w-[792px] flex-col items-center gap-12 pt-10">
+    <div className="mx-auto mb-16 flex w-full max-w-[792px] flex-col items-center gap-8 pt-6 sm:gap-12 sm:pt-10">
       {/* Title */}
       <div className="text-center">
-        <h1 className="text-[40px] font-bold leading-[1.5] tracking-[1px]">
+        <h1 className="text-[28px] font-bold leading-[1.5] tracking-[1px] sm:text-[40px]">
           <span className="text-primary">{studyName}</span>
           <br />
           <span className="text-text-basic">스터디 신청이 완료되었습니다.</span>
@@ -64,14 +64,14 @@ export function StudyApplyComplete({
         {/* Application Summary */}
         <div className="flex flex-col items-center gap-10">
           {/* Summary Card */}
-          <div className="w-full rounded-[12px] bg-[#eef2f7] p-10">
+          <div className="w-full rounded-[12px] bg-[#eef2f7] p-5 sm:p-10">
             <div className="flex flex-col gap-6">
               {/* User Info */}
-              <div className="flex gap-3">
-                <p className="text-text-basic w-[191px] text-[19px] font-bold leading-[1.5]">
+              <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                <p className="text-text-basic text-[17px] font-bold leading-[1.5] sm:w-[191px] sm:text-[19px]">
                   신청 부원 정보
                 </p>
-                <div className="text-text-basic flex flex-1 flex-col gap-4 text-[19px] leading-[1.5]">
+                <div className="text-text-basic flex flex-1 flex-col gap-2 text-[17px] leading-[1.5] sm:gap-4 sm:text-[19px]">
                   <p>{userInfo.studentId}</p>
                   <p>{userInfo.department}</p>
                   <p>{userInfo.name}</p>
@@ -80,11 +80,11 @@ export function StudyApplyComplete({
               </div>
 
               {/* Priority */}
-              <div className="flex gap-3">
-                <p className="text-text-basic w-[191px] text-[19px] font-bold leading-[1.5]">
+              <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                <p className="text-text-basic text-[17px] font-bold leading-[1.5] sm:w-[191px] sm:text-[19px]">
                   스터디 우선순위
                 </p>
-                <div className="text-text-basic flex flex-1 flex-col text-[19px] leading-[1.5]">
+                <div className="text-text-basic flex flex-1 flex-col text-[17px] leading-[1.5] sm:text-[19px]">
                   <p>{priority}</p>
                 </div>
               </div>
@@ -115,7 +115,7 @@ export function StudyApplyComplete({
         </div>
 
         {/* Suggested Services */}
-        <div className="w-full rounded-[12px] bg-[#f4f5f6] p-10">
+        <div className="w-full rounded-[12px] bg-[#f4f5f6] p-5 sm:p-10">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-5 border-b border-[#cdd1d5] pb-6">
               <h2 className="text-text-basic text-[19px] font-bold leading-[1.5]">
@@ -128,7 +128,7 @@ export function StudyApplyComplete({
             </div>
 
             {/* Service Links */}
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               <ServiceLink href="/study/list" label="스터디 목록" />
               <ServiceLink href="/club-room" label="동아리방" />
               <ServiceLink href="/about" label="동아리소개" />

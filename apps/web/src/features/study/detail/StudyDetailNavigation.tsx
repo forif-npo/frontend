@@ -83,7 +83,7 @@ export function StudyDetailNavigation({
           <button
             key={item.id}
             onClick={() => scrollToSection(item.id)}
-            className={`rounded-[4px] px-2 py-1 text-left text-[15px] leading-[1.5] transition-colors ${
+            className={`cursor-pointer rounded-[4px] px-2 py-1 text-left text-[15px] leading-[1.5] transition-colors ${
               activeSection === item.id
                 ? "bg-[#eef2f7] font-bold text-[#052b57]"
                 : "text-text-subtle hover:bg-[#f4f5f6]"
@@ -100,7 +100,7 @@ export function StudyDetailNavigation({
           size="medium"
           onClick={onApply}
           disabled={isApplyDisabled}
-          className="h-10 w-full"
+          className="h-10 w-full cursor-pointer"
         >
           신청하기
         </Button>

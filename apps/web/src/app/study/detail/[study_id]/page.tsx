@@ -43,18 +43,18 @@ export default function StudyDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="px-6">
+    <div className="px-4 md:px-6">
       <div className="mb-6 flex flex-col gap-2 md:mb-10 md:gap-4">
-        <h1 className="text-[28px] font-bold leading-[1.3] tracking-[-0.5px] md:text-[40px]">
+        <h1 className="text-[24px] font-bold leading-[1.3] tracking-[-0.5px] md:text-[40px]">
           <span className="text-secondary">{study.study_name}</span>
         </h1>
-        <p className="text-text-subtle text-[15px] leading-[1.6] md:text-[17px]">
+        <p className="text-text-subtle text-[14px] leading-[1.6] md:text-[17px]">
           {study.one_liner}
         </p>
       </div>
 
-      <div className="flex gap-10 pb-28 lg:pb-20">
-        <div className="flex-1">
+      <div className="flex gap-10 pb-28 md:pb-20">
+        <div className="min-w-0 flex-1">
           <StudyDetailContent study={study} />
         </div>
         <StudyDetailNavigation
@@ -64,13 +64,13 @@ export default function StudyDetailPage({ params }: Props) {
         />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-[#e5e8eb] bg-white p-4 lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 border-t border-[#e5e8eb] bg-white p-4 md:hidden">
         <Button
           variant="primary"
           size="large"
           onClick={handleApply}
           disabled={study.recruit_status !== "APPLICABLE"}
-          className="h-14 w-full"
+          className="h-14 w-full cursor-pointer"
         >
           {study.recruit_status === "APPLICABLE"
             ? "스터디 신청하기"

@@ -30,11 +30,11 @@ export function StudyApplyInfoStep({
   onCancel,
 }: StudyApplyInfoStepProps) {
   return (
-    <div className="mx-auto mb-16 flex max-w-[792px] flex-col">
+    <div className="mx-auto mb-16 flex w-full max-w-[792px] flex-col">
       <StudyApplyTitle studyName={studyName} tags={tags} />
 
-      <div className="flex flex-col gap-10">
-        <div className="flex flex-col gap-6 rounded-[12px] border border-[#d6e0eb] bg-[#eef2f7] p-10">
+      <div className="flex flex-col gap-6 sm:gap-10">
+        <div className="flex flex-col gap-4 rounded-[12px] border border-[#d6e0eb] bg-[#eef2f7] p-5 sm:gap-6 sm:p-10">
           <div className="flex flex-col gap-6 border-b border-dashed border-[#b1b8be] pb-6">
             <div className="flex items-center gap-1">
               <div className="p-1">
@@ -75,7 +75,7 @@ export function StudyApplyInfoStep({
           </div>
         </div>
 
-        <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-10">
+        <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
           <h2 className="text-text-bolder text-[24px] font-bold leading-[1.5]">
             기본 신청 정보를 확인해주세요
           </h2>
@@ -155,13 +155,13 @@ export function StudyApplyInfoStep({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-start gap-4">
-          <div className="flex flex-1 gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+          <div className="flex flex-1 gap-3 sm:gap-4">
             <Button
               variant="tertiary"
               size="large"
               onClick={onCancel}
-              className="h-14 min-w-[90px]"
+              className="h-14 min-w-0 flex-1 sm:min-w-[90px] sm:flex-none"
             >
               취소하기
             </Button>
@@ -171,7 +171,7 @@ export function StudyApplyInfoStep({
               onClick={() => {
                 /* TODO: Handle edit */
               }}
-              className="h-14 min-w-[90px]"
+              className="h-14 min-w-0 flex-1 sm:min-w-[90px] sm:flex-none"
             >
               수정하기
             </Button>
@@ -180,7 +180,7 @@ export function StudyApplyInfoStep({
             variant="primary"
             size="large"
             onClick={onNext}
-            className="h-14 min-w-[90px] shrink-0"
+            className="h-14 w-full shrink-0 sm:w-auto sm:min-w-[90px]"
           >
             다음
           </Button>
