@@ -5,6 +5,7 @@ import { StudyListSkeleton } from "@/components/study/skeleton/StudyCardSkeleton
 import { StudyActionButtons } from "@/components/study/ui/StudyActionButtons";
 import { StudyCardGrid } from "@/components/study/ui/StudyCardGrid";
 import { StudyFilterSection } from "@/components/study/ui/StudyFilterSection";
+import { StudyListMobileHeader } from "@/components/study/ui/StudyListMobileHeader";
 import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
 import { usePagination, useStudyData, useStudyFilters } from "@/hooks/study";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -85,52 +86,76 @@ export default function StudyListPage() {
       ? `${filters.year}-${filters.semester}`
       : "";
 
+  const handleSemesterChange = (value: string) => {
+    if (value) {
+      const [year, semester] = value.split("-").map(Number);
+      updateMultipleFilters({ year, semester });
+    } else {
+      updateMultipleFilters({ year: undefined, semester: undefined });
+    }
+  };
+
   return (
     <div className="bg-bg-base min-h-screen pb-20">
       <div className="w-full pb-8">
-        <Heading size="l" className="mb-12">
+        <Heading size="l" className="mb-6 md:mb-12">
           스터디 목록
         </Heading>
 
-        <div className="mb-6 flex w-full flex-col items-center justify-between gap-7 lg:flex-row">
-          <StudySearchBar
-            value={searchInput}
-            onChange={(value) => setSearchInput(value)}
-            onSubmit={() => {
-              updateFilter("search", searchInput || undefined);
-              setPage(0);
-            }}
-          />
-          <StudyActionButtons />
+        <StudyListMobileHeader
+          searchInput={searchInput}
+          onSearchChange={(value) => setSearchInput(value)}
+          onSearchSubmit={() => {
+            updateFilter("search", searchInput || undefined);
+            setPage(0);
+          }}
+          selectedSemester={selectedSemester}
+          selectedDifficulty={filters.difficulty || ""}
+          selectedTag={filters.tag || ""}
+          onSemesterChange={handleSemesterChange}
+          onDifficultyChange={(value) => updateFilter("difficulty", value)}
+          onTagChange={(value) => updateFilter("tag", value || undefined)}
+          onClearAllFilters={clearAllFilters}
+          totalItems={studies.length}
+          loading={loading}
+        />
+
+        <div className="hidden md:block">
+          <div className="mb-6 flex items-center justify-between gap-7">
+            <StudySearchBar
+              value={searchInput}
+              onChange={(value) => setSearchInput(value)}
+              onSubmit={() => {
+                updateFilter("search", searchInput || undefined);
+                setPage(0);
+              }}
+            />
+            <StudyActionButtons />
+          </div>
+
+          <div className="mb-7">
+            <StudyFilterSection
+              selectedSemester={selectedSemester}
+              selectedDifficulty={filters.difficulty || ""}
+              selectedTag={filters.tag || ""}
+              onSemesterChange={handleSemesterChange}
+              onDifficultyChange={(value) => updateFilter("difficulty", value)}
+              onTagChange={(value) => updateFilter("tag", value || undefined)}
+              onClearAll={clearAllFilters}
+            />
+          </div>
+
+          <div className="mb-6">
+            <StudyResultsHeader
+              totalItems={studies.length}
+              pageSize={pageSize}
+              onPageSizeChange={setPageSize}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+            />
+          </div>
         </div>
 
-        <div className="mb-7">
-          <StudyFilterSection
-            selectedSemester={selectedSemester}
-            selectedDifficulty={filters.difficulty || ""}
-            selectedTag={filters.tag || ""}
-            onSemesterChange={(value) => {
-              if (value) {
-                const [year, semester] = value.split("-").map(Number);
-                updateMultipleFilters({ year, semester });
-              } else {
-                updateMultipleFilters({ year: undefined, semester: undefined });
-              }
-            }}
-            onDifficultyChange={(value) => updateFilter("difficulty", value)}
-            onTagChange={(value) => updateFilter("tag", value || undefined)}
-            onClearAll={clearAllFilters}
-          />
-        </div>
-        <div className="mb-6">
-          <StudyResultsHeader
-            totalItems={studies.length}
-            pageSize={pageSize}
-            onPageSizeChange={setPageSize}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-          />
-        </div>
         {loading ? (
           <StudyListSkeleton />
         ) : (
