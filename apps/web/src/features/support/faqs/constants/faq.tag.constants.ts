@@ -8,12 +8,22 @@ export const FAQ_TAGS = [
 
 export type FaqTag = (typeof FAQ_TAGS)[number];
 
-export const FAQ_TAG_STYLE: Record<string, string> = {
-  동아리소개: "border-blue-40 bg-blue-5 text-blue-90",
-  스터디: "border-green-40 bg-green-5 text-green-90",
-  지원: "border-purple-40 bg-purple-5 text-purple-90",
-  회비: "border-red-40 bg-red-5 text-red-90",
-  활동: "border-cyan-40 bg-cyan-5 text-cyan-90",
+export const FAQ_TAG_STYLE: Record<
+  string,
+  { className: string; label?: string }
+> = {
+  지원: {
+    className: "bg-blue-50 border-blue-200 text-blue-700 px-3 py-0.5",
+  },
+  스터디: {
+    className: "bg-green-50 border-green-200 text-green-700 px-3 py-0.5",
+  },
+  행사: {
+    className: "bg-red-50 border-red-200 text-red-700 px-3 py-0.5",
+  },
+  기타: {
+    className: "bg-gray-50 border-gray-200 text-gray-700 px-3 py-0.5",
+  },
 };
 
 export const getFaqTagClassName = (tag: string) => {

@@ -21,20 +21,17 @@ export function SearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="border-divider-gray-light focus:border-divider-gray w-full rounded-lg border px-4 py-3 pr-10 text-sm outline-none"
+        className="border-divider-gray-light focus:border-divider-gray w-full rounded-lg border px-4 py-3 pr-12 text-sm outline-none"
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            onSearch();
-          }
+          if (e.key === "Enter") onSearch();
         }}
       />
 
-      {/* Search Button */}
       <button
         type="button"
         onClick={onSearch}
         aria-label="검색"
-        className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 hover:bg-gray-100"
+        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 hover:bg-gray-100"
       >
         <SearchIcon width={18} height={18} className="fill-text-subtle" />
       </button>

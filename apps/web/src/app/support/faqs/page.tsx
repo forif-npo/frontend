@@ -81,7 +81,7 @@ export default function FaqPage() {
       )}
 
       {!isLoading && !errorMessage && items.length > 0 && (
-        <FaqAccordionList items={items} />
+        <FaqAccordionList key={query} items={items} />
       )}
 
       <div className="mt-8">
