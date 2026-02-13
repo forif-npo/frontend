@@ -85,7 +85,8 @@ import { UrgentBadgeOkIcon } from "./urgent_badge_ok";
 import { ViewModeIcon } from "./view_mode";
 import { WarningFillIcon } from "./warning_fill";
 import { YoutubeIcon } from "./youtube";
-
+import { QuestionBubble } from "./question_bubble";
+import { XCircleGrayIcon } from "./x_circle_gray";
 export {
   AllIcon,
   AngleDisabledIcon,
@@ -152,6 +153,7 @@ export {
   PrintIcon,
   PwVisibleOffIcon,
   PwVisibleOnIcon,
+  QuestionBubble,
   ResetIcon,
   SchIcon,
   SchPlusIcon,
@@ -174,4 +176,5 @@ export {
   ViewModeIcon,
   WarningFillIcon,
   YoutubeIcon,
+  XCircleGrayIcon,
 };

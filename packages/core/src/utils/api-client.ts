@@ -3,10 +3,10 @@ import ky, { HTTPError } from "ky";
 const getBaseUrl = (): string => {
   // 서버 사이드에서는 환경 변수 직접 사용
   if (typeof window === "undefined") {
-    return process.env.NEXT_PUBLIC_SERVER_URL || "https://api.forif.org";
+    return process.env.NEXT_PUBLIC_SERVER_URL || "https://dev.forif.org";
   }
   // 클라이언트에서는 빌드 타임에 주입된 환경 변수 사용
-  return process.env.NEXT_PUBLIC_SERVER_URL || "https://api.forif.org";
+  return process.env.NEXT_PUBLIC_SERVER_URL || "https://dev.forif.org";
 };
 
 // 외부에서 주입할 토큰 getter/setter 및 콜백

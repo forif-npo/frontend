@@ -22,7 +22,7 @@ async function refreshAccessToken(
       })
       .json<RefreshTokenResponse>();
 
-    return response.data?.accessToken ?? null;
+    return response.data?.access_token ?? null;
   } catch {
     return null;
   }

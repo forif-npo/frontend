@@ -4,8 +4,6 @@ import { auth } from "@/auth";
 import { NAV_MENUS } from "@/constants/nav-menu.constant";
 import { NavBar } from "@/features/navigation/nav-bar";
 import { MSWProvider } from "@/mocks/MSWProvider";
-import { ApiClientProvider } from "@/providers/ApiClientProvider";
-import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
@@ -36,20 +34,15 @@ export default async function RootLayout({
       className={`${pretendard.variable}`}
     >
       <body
-        suppressHydrationWarning
         style={{ backgroundColor: "var(--background)" }}
         className="scrollbar-hidden"
       >
-        <SessionProvider session={session}>
-          <ApiClientProvider>
-            <MSWProvider>
-              <NuqsAdapter>
-                <NavBar items={NAV_MENUS} isLoggedIn={isLoggedIn} />
-                {children}
-              </NuqsAdapter>
-            </MSWProvider>
-          </ApiClientProvider>
-        </SessionProvider>
+        <MSWProvider>
+          <NuqsAdapter>
+            <NavBar items={NAV_MENUS} isLoggedIn={isLoggedIn} />
+            {children}
+          </NuqsAdapter>
+        </MSWProvider>
       </body>
     </html>
   );

@@ -4,9 +4,8 @@ import { CheckCircle } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
 import { Body, Divider, Heading, LinkButton } from "@ui/components/server";
 import { useSession } from "next-auth/react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Page() {
   const router = useRouter();
@@ -24,7 +23,6 @@ export default function Page() {
     if (!session?.accessToken) {
       router.push("/signin");
     }
-  }, [session, status, router]);
   }, [session, status, router]);
 
   const handleGoToMyPage = () => {
@@ -46,9 +44,6 @@ export default function Page() {
         <Heading size="xl" className="text-text-basic text-left">
           회원가입이 완료되었습니다
         </Heading>
-        <Button onClick={handleGoToMyPage} size="large">
-          마이페이지로 이동
-        </Button>
         <section className="rounded-3 bg-surface-secondary-subtler flex w-full flex-row items-center justify-around gap-3 p-10">
           <Body size="l" weight="bold">
             가입 정보

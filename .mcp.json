@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "mcp-atlassian": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "mcp-atlassian"
+      ],
+      "env": {
+        "JIRA_URL": "https://forif-web.atlassian.net",
+        "JIRA_USERNAME": "standardstar@hanyang.ac.kr",
+        "JIRA_API_TOKEN": "ATATT3xFfGF0kq4UPt6HYsiCcUA8eOMfpX8ygzF_8L-Pr-9cR2JHJ5LYrp7Rh1pXCA-9vjxPAXY5sSRqyBlH6CcTCwWGYJOMrfVTjvpeDuN8E3hzqsT4JarqJ3Mzmg0HwZZWMH8pw2gSgQMfJUkDKFamrNUMJAey6UL_NZ6FAfs_iZ87CEZe4Ag=64FBA59A",
+        "CONFLUENCE_URL": "https://forif-web.atlassian.net/wiki",
+        "CONFLUENCE_USERNAME": "standardstar@hanyang.ac.kr",
+        "CONFLUENCE_API_TOKEN": "ATATT3xFfGF0kq4UPt6HYsiCcUA8eOMfpX8ygzF_8L-Pr-9cR2JHJ5LYrp7Rh1pXCA-9vjxPAXY5sSRqyBlH6CcTCwWGYJOMrfVTjvpeDuN8E3hzqsT4JarqJ3Mzmg0HwZZWMH8pw2gSgQMfJUkDKFamrNUMJAey6UL_NZ6FAfs_iZ87CEZe4Ag=64FBA59A"
+      }
+    }
+  }
+}

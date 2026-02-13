@@ -7,7 +7,6 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Button, Checkbox, SelectBox, TextInput } from "@ui/components/client";
 import { InfoText, Label, Link } from "@ui/components/server";
 import Form from "next/form";
-import { useRouter } from "next/navigation";
 import {
   useActionState,
   useEffect,
@@ -21,8 +20,6 @@ import { SignUpConfirmationModal } from "./signup-confirmation-modal";
 type ActionState = {
   errors: Record<string, { message: string }>;
   values: SignUpValues;
-  success?: boolean;
-  accessToken?: string;
 };
 
 interface SignUpFormProps {
@@ -34,7 +31,6 @@ interface SignUpFormProps {
 }
 
 export function SignUpForm({ action, email }: SignUpFormProps) {
-  const router = useRouter();
   const initialValues: SignUpValues = {
     email: email,
     id: "",
@@ -76,16 +72,6 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
   const isLoading = isPending || isTransitionPending;
 
   useEffect(() => {}, [watchedValues]);
-
-  // 회원가입 성공 시 리디렉션
-  useEffect(() => {
-    if (state.success) {
-    if (state.success) {
-      // 완료 페이지로 이동
-      router.push("/signup/complete");
-    }
-  }, [state.success, router]);
-  }, [state.success, router]);
 
   useEffect(() => {
     for (const key in state.values) {

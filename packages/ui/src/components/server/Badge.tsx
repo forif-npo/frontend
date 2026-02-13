@@ -4,13 +4,18 @@ import React from "react";
 
 export type BadgeProps = {
   label: string;
-  variant?: "primary" | "success" | "warning" | "danger";
-  size?: "medium" | "large";
+  variant?: "primary" | "success" | "warning" | "danger" | "disabled";
+  size?: "small" | "medium" | "large";
   appearance?: "fill" | "outline" | "solid-pastel";
   className?: string;
 };
 
 const variantStyles = {
+  disabled: {
+    fill: "bg-element-disabled-light",
+    outline: "bg-transparent border border-border-disabled",
+    "solid-pastel": "bg-element-disabled-light",
+  },
   primary: {
     fill: "bg-primary-50",
     outline: "bg-transparent border border-border-primary",
@@ -34,11 +39,17 @@ const variantStyles = {
 };
 
 const sizeStyles = {
+  small: { padding: "px-2 h-6", fontSize: "s" as const },
   medium: { padding: "px-2 h-[24px]", fontSize: "m" as const },
   large: { padding: "px-2 h-[32px]", fontSize: "l" as const },
 };
 
 const textColors = {
+  disabled: {
+    fill: "text-text-disabled-on",
+    outline: "text-text-disabled-on",
+    "solid-pastel": "text-text-disabled-on",
+  },
   primary: {
     fill: "text-text-basic-inverse",
     outline: "text-text-primary",
@@ -68,9 +79,8 @@ export const Badge: React.FC<BadgeProps> = ({
   appearance = "fill",
   className = "",
 }) => {
-  const style = variantStyles[variant][appearance];
+  const style = variantStyles[variant]?.[appearance];
   const { padding, fontSize } = sizeStyles[size];
-
   return (
     <span
       className={`rounded-1 inline-flex items-center justify-center ${style} ${padding} ${className}`}

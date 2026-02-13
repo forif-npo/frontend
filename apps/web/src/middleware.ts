@@ -11,7 +11,12 @@ const publicRoutes = [
   "/support/faqs",
   "/support/announcements",
 ];
-const authRoutes = ["/signin"];
+const publicParamsList = [
+  "/studies/detail",
+  "/studies/apply",
+  "/studies/about",
+];
+const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
 
 const authMiddleware = auth((req) => {
@@ -26,17 +31,18 @@ const authMiddleware = auth((req) => {
   const isPublicRoute =
     publicRoutes.includes(pathname) ||
     pathname.startsWith("/support/announcements/");
+  const isPublicParamsRoute = publicParamsList
+    .map((v) => pathname.startsWith(v))
+    .some(Boolean);
 
   if (isApiAuthRoute) return;
-
   if (isLoggedIn && isAuthRoute) {
     return Response.redirect(new URL(`/`, nextUrl));
   }
 
-  if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
+  if (!isLoggedIn && !isAuthRoute && !isPublicRoute && !isPublicParamsRoute) {
     return Response.redirect(new URL(`/signin`, nextUrl));
   }
-
   return NextResponse.next();
 });
 

@@ -13,6 +13,13 @@
     "./features/*": "./src/features/*",
     "./auth/api": "./src/auth/api.ts",
     "./auth/token": "./src/auth/token.ts",
+    "./admin/api": "./src/admin/api.ts",
+    "./admin/schemas": "./src/admin/schemas.ts",
+    "./studies/api": "./src/studies/api.ts",
+    "./applications/api": "./src/applications/api.ts",
+    "./mentor/api": "./src/mentor/api.ts",
+    "./community/api": "./src/community/api.ts",
+    "./notifications/api": "./src/notifications/api.ts",
     "./utils/api-client": "./src/utils/api-client.ts",
     "./types/api": "./src/types/api.d.ts"
   },
