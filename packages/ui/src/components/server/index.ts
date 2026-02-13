@@ -17,3 +17,4 @@ export * from "./Switch";
 export * from "./Tag";
 export * from "./TextInput";
 export * from "./Title";
+export * from "./icons";

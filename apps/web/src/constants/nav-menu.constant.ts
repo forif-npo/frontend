@@ -37,7 +37,7 @@ export const NAV_MENUS: NavMenu[] = [
     subMenus: [
       {
         label: "스터디 목록",
-        href: "/studies/about",
+        href: "/study/list",
       },
       {
         label: "스터디 가이드",

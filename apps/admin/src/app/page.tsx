@@ -25,7 +25,7 @@ export default async function Page() {
         <section className="mt-20 flex w-full max-w-[1200px] flex-col items-center gap-4">
           <CriticalAlert
             variant="information"
-            link="/studies"
+            link="/study"
             text="스터디 신청 절차를 자세히 알고 싶으신가요?"
             title="스터디 신청 절차 안내 페이지로 이동"
             detailText="자세히보기"
