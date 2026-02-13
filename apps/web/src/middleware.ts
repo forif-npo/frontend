@@ -9,7 +9,12 @@ const publicRoutes = [
   "/privacy-policy",
   "/study/list",
 ];
-const publicParamsList = ["/study/detail", "/study/apply", "/studies/about"];
+const publicParamsList = [
+  "/study/detail",
+  "/study/apply",
+  "/studies/about",
+  "/study/create",
+];
 const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
 

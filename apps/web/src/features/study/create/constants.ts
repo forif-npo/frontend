@@ -1,0 +1,60 @@
+export const TAG_OPTIONS = [
+  "개인개발",
+  "데이터",
+  "데이터베이스",
+  "디자인",
+  "백엔드",
+  "보안",
+  "블록체인",
+  "알고리즘",
+  "인공지능",
+  "모바일",
+  "프로그래밍 언어 기초",
+  "프론트엔드",
+] as const;
+
+export const LOCATION_OPTIONS = [
+  { value: "IT/BT관", label: "IT/BT관" },
+  { value: "신소재공학관", label: "신소재공학관" },
+  { value: "제4공학관", label: "제4공학관" },
+  { value: "온라인", label: "온라인" },
+  { value: "기타", label: "기타" },
+] as const;
+
+export const WEEKDAY_OPTIONS = [
+  { value: "1", label: "월요일" },
+  { value: "2", label: "화요일" },
+  { value: "3", label: "수요일" },
+  { value: "4", label: "목요일" },
+  { value: "5", label: "금요일" },
+  { value: "6", label: "토요일" },
+  { value: "0", label: "일요일" },
+] as const;
+
+export const DIFFICULTY_OPTIONS = [
+  { value: "EASY", label: "초급" },
+  { value: "SEMI_EASY", label: "초중급" },
+  { value: "NORMAL", label: "중급" },
+  { value: "SEMI_HARD", label: "중상급" },
+  { value: "HARD", label: "고급" },
+] as const;
+
+export const REFERENCE_TYPE_OPTIONS = [
+  { value: "URL", label: "URL" },
+  { value: "PDF", label: "PDF" },
+] as const;
+
+export const STEP_LABELS = [
+  "신청 정보 확인",
+  "스터디 개요 및 일정",
+  "주차별 계획",
+  "추천대상 및 운영 방식",
+  "입력 정보 확인",
+] as const;
+
+export const DEFAULT_CURRICULUM = Array.from({ length: 8 }, (_, i) => ({
+  week: i + 1,
+  date: "",
+  topic: "",
+  contents: [""],
+}));

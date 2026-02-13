@@ -514,7 +514,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
           </div>
           <p className="text-text-basic flex items-center gap-1 text-[15px] leading-[1.5] md:text-[17px]">
             <LocationIcon className="h-4 w-4 shrink-0" />
-            한양대학교 서울캠퍼스 학생회관 7층호
+            한양대학교 서울캠퍼스 IT/BT관 708호
           </p>
 
           <div className="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-[8px] bg-[#e5e8eb] md:h-[300px]">
