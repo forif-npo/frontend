@@ -8,6 +8,7 @@ import {
   XCircleGrayIcon,
 } from "@repo/assets/icons/krds";
 import { SelectBox } from "@ui/components/client";
+
 interface FilterTag {
   id: string;
   label: string;
@@ -23,6 +24,7 @@ interface StudyFilterSectionProps {
   onDifficultyChange: (value: string) => void;
   onTagChange: (value: string) => void;
   onClearAll: () => void;
+  variant?: "default" | "compact";
   className?: string;
 }
 
@@ -99,6 +101,14 @@ const buildFilterTags = (
   return tags;
 };
 
+export const getActiveFilterCount = (
+  semester: string,
+  difficulty: string,
+  tag: string,
+) => {
+  return [semester, difficulty, tag].filter(Boolean).length;
+};
+
 export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
   selectedSemester,
   selectedDifficulty,
@@ -107,9 +117,11 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
   onDifficultyChange,
   onTagChange,
   onClearAll,
+  variant = "default",
   className,
 }) => {
   const semesters = getRecentSemesters(5);
+  const isCompact = variant === "compact";
 
   const filterTags = React.useMemo(
     () => buildFilterTags(selectedSemester, selectedDifficulty, selectedTag),
@@ -153,21 +165,30 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
     })),
   ];
 
+  const labelClass = isCompact
+    ? "text-[14px] font-bold text-gray-900"
+    : "whitespace-nowrap text-[17px] font-bold text-gray-900";
+
   return (
     <div
       className={clsx(
-        "bg-surface-secondary-subtler rounded-xl p-10",
+        "bg-surface-secondary-subtler rounded-xl",
+        isCompact ? "px-4 py-4" : "p-10",
         className,
       )}
     >
-      <div className="flex items-center gap-6 pb-6">
+      <div
+        className={clsx(
+          isCompact ? "flex flex-col gap-3" : "flex items-center gap-6 pb-6",
+        )}
+      >
         <div className="flex items-center gap-3">
-          <span className="whitespace-nowrap text-[17px] font-bold text-gray-900">
+          <span className={clsx(isCompact && "w-14 shrink-0", labelClass)}>
             진행 학기
           </span>
-          <div className="w-[208px]">
+          <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
             <SelectBox
-              id="semester-filter"
+              id={isCompact ? "mobile-semester-filter" : "semester-filter"}
               value={selectedSemester || null}
               onChange={(value) => onSemesterChange(value || "")}
               placeholder="전체"
@@ -178,15 +199,18 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            <span className="whitespace-nowrap text-[17px] font-bold text-gray-900">
-              난이도
-            </span>
+          <div
+            className={clsx(
+              "flex items-center gap-1",
+              isCompact && "w-14 shrink-0",
+            )}
+          >
+            <span className={labelClass}>난이도</span>
             <QuestionBubble />
           </div>
-          <div className="w-[208px]">
+          <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
             <SelectBox
-              id="difficulty-filter"
+              id={isCompact ? "mobile-difficulty-filter" : "difficulty-filter"}
               value={selectedDifficulty || null}
               onChange={(value) => onDifficultyChange(value || "")}
               placeholder="전체"
@@ -197,12 +221,12 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="whitespace-nowrap text-[17px] font-bold text-gray-900">
+          <span className={clsx(isCompact && "w-14 shrink-0", labelClass)}>
             주제
           </span>
-          <div className="w-[208px]">
+          <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
             <SelectBox
-              id="tag-filter"
+              id={isCompact ? "mobile-tag-filter" : "tag-filter"}
               value={selectedTag || null}
               onChange={(value) => onTagChange(value || "")}
               placeholder="전체"
@@ -214,36 +238,49 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
       </div>
 
       {filterTags.length > 0 && (
-        <div className="flex items-center gap-4 border-t border-gray-200 pt-6">
-          <span className="whitespace-nowrap text-[17px] font-bold text-gray-900">
-            선택된 필터{" "}
-            <span className="text-text-primary">{filterTags.length}</span>
-          </span>
+        <div
+          className={clsx(
+            "flex flex-wrap items-center gap-2 border-t border-gray-200",
+            isCompact ? "mt-3 pt-3" : "mt-0 gap-4 pt-6",
+          )}
+        >
+          {!isCompact && (
+            <span className="whitespace-nowrap text-[17px] font-bold text-gray-900">
+              선택된 필터{" "}
+              <span className="text-text-primary">{filterTags.length}</span>
+            </span>
+          )}
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClearAll}
-              className="border-border-gray-light rounded-full border bg-white p-3 transition-colors hover:bg-gray-50"
-              aria-label="필터 초기화"
+          <button
+            onClick={onClearAll}
+            className={clsx(
+              "border-border-gray-light rounded-full border bg-white transition-colors hover:bg-gray-50",
+              isCompact ? "p-2" : "p-3",
+            )}
+            aria-label="필터 초기화"
+          >
+            <ResetIcon className={isCompact ? "h-3.5 w-3.5" : "h-4 w-4"} />
+          </button>
+          {filterTags.map((tag) => (
+            <span
+              key={tag.id}
+              className={clsx(
+                "inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white text-gray-900",
+                isCompact ? "px-2.5 py-1 text-[13px]" : "px-3 py-2 text-[17px]",
+              )}
             >
-              <ResetIcon className="h-4 w-4" />
-            </button>
-            {filterTags.map((tag) => (
-              <span
-                key={tag.id}
-                className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-2 text-[17px] text-gray-900"
+              {tag.label}
+              <button
+                onClick={() => removeFilterTag(tag)}
+                className="ml-0.5 rounded-full p-0.5 transition-colors hover:bg-gray-100"
+                aria-label={`${tag.label} 필터 제거`}
               >
-                {tag.label}
-                <button
-                  onClick={() => removeFilterTag(tag)}
-                  className="ml-1 rounded-full p-0.5 transition-colors hover:bg-gray-100"
-                  aria-label={`${tag.label} 필터 제거`}
-                >
-                  <XCircleGrayIcon className="h-4 w-4" />
-                </button>
-              </span>
-            ))}
-          </div>
+                <XCircleGrayIcon
+                  className={isCompact ? "h-3.5 w-3.5" : "h-4 w-4"}
+                />
+              </button>
+            </span>
+          ))}
         </div>
       )}
     </div>
