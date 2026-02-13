@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { kvInstance } from "@/api/client";
+// import { apiClient } from "@core/utils/api-client";
 import type { UserInfo } from "./types";
 
 type UseStudyCreateDataReturn = {
@@ -9,40 +8,46 @@ type UseStudyCreateDataReturn = {
   error: Error | null;
 };
 
+const MOCK_USER_INFO: UserInfo = {
+  studentId: "2024001285",
+  name: "신윤수",
+  department: "컴퓨터소프트웨어학부",
+  phone: "010-1234-5678",
+};
+
 export function useStudyCreateData(): UseStudyCreateDataReturn {
-  const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+    // TODO: API 연동 시 주석 해제
+    // const fetchData = async () => {
+    //   try {
+    //     setIsLoading(true);
+    //     setError(null);
+    //     const userResponse = await apiClient.get("api/v1/user/me").json<{
+    //       success: boolean;
+    //       data: UserInfo;
+    //       error: string | null;
+    //     }>();
+    //     if (userResponse.success && userResponse.data) {
+    //       setUserInfo(userResponse.data);
+    //     }
+    //   } catch (err) {
+    //     const error = err instanceof Error ? err : new Error("Failed to fetch data");
+    //     setError(error);
+    //     console.error("Failed to fetch user data:", error);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
+    // fetchData();
 
-        const userResponse = await kvInstance.get("api/v1/user/me").json<{
-          success: boolean;
-          data: UserInfo;
-          error: string | null;
-        }>();
-
-        if (userResponse.success && userResponse.data) {
-          setUserInfo(userResponse.data);
-        }
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error("Failed to fetch data");
-        setError(error);
-        console.error("Failed to fetch user data:", error);
-        router.push("/study/list");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [router]);
+    // Mock data
+    setUserInfo(MOCK_USER_INFO);
+    setIsLoading(false);
+  }, []);
 
   return {
     userInfo,
