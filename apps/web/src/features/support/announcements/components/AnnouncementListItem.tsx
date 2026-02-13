@@ -14,13 +14,22 @@ export function AnnouncementListItem({ item }: AnnouncementListItemProps) {
     <button
       type="button"
       onClick={() => router.push(`/support/announcements/${item.post_id}`)}
-      className="flex w-full flex-col gap-2 rounded-lg border border-gray-200 bg-white px-6 py-5 text-left hover:bg-gray-50"
+      className="border-divider-gray-light hover:bg-gray-20 flex w-full items-center justify-between gap-6 border-t bg-white px-0 py-6 text-left"
     >
-      <div className="text-sm text-gray-500">
-        {new Date(item.created_at).toLocaleDateString("ko-KR")}
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="truncate text-base font-bold text-gray-900">
+          {item.title}
+        </div>
+        <div className="text-sm text-gray-500">
+          {new Date(item.created_at).toLocaleDateString("ko-KR")}
+        </div>
       </div>
-
-      <div className="text-base font-medium text-gray-900">{item.title}</div>
+      <img
+        src="/icons/chevron-right.svg"
+        alt=""
+        aria-hidden
+        className="h-5 w-5 shrink-0"
+      />
     </button>
   );
 }

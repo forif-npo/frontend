@@ -9,27 +9,6 @@ type FaqAccordionItemProps = {
   item: FaqPost;
 };
 
-function ChevronIcon({ open }: { open: boolean }) {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 20 20"
-      aria-hidden="true"
-      className={`fill-none stroke-gray-500 transition-transform ${
-        open ? "rotate-180" : "rotate-0"
-      }`}
-    >
-      <path
-        d="M5 7.5L10 12.5L15 7.5"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 export function FaqAccordionItem({ item }: FaqAccordionItemProps) {
   const [open, setOpen] = useState(false);
   const contentId = useId();
@@ -56,7 +35,13 @@ export function FaqAccordionItem({ item }: FaqAccordionItemProps) {
 
         <div className="flex items-center gap-3">
           <Tag label={tagLabel} size="small" className={tagStyle} />
-          <ChevronIcon open={open} />
+
+          <img
+            src={open ? "/icons/chevron-up.svg" : "/icons/chevron-down.svg"}
+            alt=""
+            aria-hidden
+            className="h-5 w-5 shrink-0"
+          />
         </div>
       </button>
 

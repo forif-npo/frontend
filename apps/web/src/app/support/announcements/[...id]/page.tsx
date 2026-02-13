@@ -1,15 +1,34 @@
 "use client";
 
 import { Breadcrumb } from "../../../../../../../packages/ui/src/components/server/Breadcrumb";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 import Image from "next/image";
+import { useMemo, useState } from "react";
 
 export default function AnnouncementDetailPage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const id = Number(params.id);
 
   const { item, isLoading, errorMessage } = useAnnouncementDetail(id);
+  const [copied, setCopied] = useState(false);
+
+  const dateOnly = useMemo(() => {
+    if (!item?.created_at) return "";
+    const d = new Date(item.created_at);
+    return `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}.`;
+  }, [item?.created_at]);
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // clipboard 실패해도 조용히 무시
+    }
+  };
 
   return (
     <main className="mx-auto w-full max-w-[1100px] px-6 py-10">
@@ -18,7 +37,7 @@ export default function AnnouncementDetailPage() {
           items={[
             { label: "홈", href: "/" },
             { label: "지원", href: "/support" },
-            { label: "공지사항", href: "/support/announcement" },
+            { label: "공지사항", href: "/support/announcements" },
             { label: item?.title ?? "상세" },
           ]}
         />
@@ -29,13 +48,11 @@ export default function AnnouncementDetailPage() {
           불러오는 중...
         </div>
       )}
-
       {errorMessage && !isLoading && (
         <div className="py-12 text-center text-sm text-red-600">
           {errorMessage}
         </div>
       )}
-
       {!isLoading && !errorMessage && !item && (
         <div className="py-12 text-center text-sm text-gray-500">
           공지사항을 찾을 수 없습니다.
@@ -43,27 +60,40 @@ export default function AnnouncementDetailPage() {
       )}
 
       {item && (
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <div className="mb-3 flex items-center gap-2">
-            <span className="text-xs text-gray-500">
-              {new Date(item.created_at).toLocaleString()}
-            </span>
+        <div>
+          {/* Title */}
+          <h1 className="text-[34px] font-semibold leading-tight text-gray-900">
+            {item.title}
+          </h1>
+
+          {/* Meta row + link icon */}
+          <div className="border-divider-gray-light mt-4 flex items-center justify-between border-b pb-4">
+            <div className="text-[16px] text-gray-600">
+              {dateOnly} {item.author_name}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="inline-flex items-center rounded-md p-1 hover:bg-gray-50"
+              aria-label="링크 복사"
+            >
+              <img src="/icons/link.svg" alt="" className="h-5 w-5" />
+            </button>
           </div>
 
-          <h1 className="text-xl font-semibold text-gray-900">{item.title}</h1>
-
-          <div className="mt-6">
-            <pre className="whitespace-pre-wrap font-sans text-sm leading-7 text-gray-800">
-              {item.content}
-            </pre>
+          {/* Content */}
+          <div className="mt-10 space-y-6 text-[18px] leading-8 text-gray-900">
+            <div className="whitespace-pre-wrap">{item.content}</div>
           </div>
 
+          {/* Images */}
           {item.image_urls?.length > 0 && (
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {item.image_urls.map((url, idx) => (
                 <div
                   key={`${url}-${idx}`}
-                  className="overflow-hidden rounded-lg border border-gray-200"
+                  className="border-divider-gray-light overflow-hidden rounded-lg border"
                 >
                   <Image
                     src={url}
@@ -76,6 +106,17 @@ export default function AnnouncementDetailPage() {
               ))}
             </div>
           )}
+
+          {/* Back button */}
+          <div className="mt-14">
+            <button
+              type="button"
+              onClick={() => router.push("/support/announcements")}
+              className="border-divider-gray-light w-full rounded-lg border bg-white py-4 text-[16px] font-medium hover:bg-gray-50"
+            >
+              목록으로 돌아가기
+            </button>
+          </div>
         </div>
       )}
     </main>
