@@ -80,7 +80,8 @@ const menuItems = {
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { data } = useSession();
+  const { data, status } = useSession();
+  console.log("session data in sidebar:", data);
 
   return (
     <Sidebar collapsible="icon" className="scrollbar-hidden">
@@ -90,16 +91,22 @@ export function AppSidebar() {
             <Users className="h-5 w-5 text-gray-600 group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4" />
           </div>
           <div className="flex flex-1 flex-col group-data-[collapsible=icon]:hidden">
-            <div className="flex items-center gap-1 text-sm font-medium">
-              <span>{data?.user.name}</span>
-              <span className="text-muted-foreground">|</span>
-              <span className="text-muted-foreground">
-                {data?.user.affiliation}
-              </span>
-            </div>
-            <span className="text-muted-foreground text-xs">
-              {data?.user.email}
-            </span>
+            {status === "loading" ? (
+              <div className="text-muted-foreground text-sm">로딩 중...</div>
+            ) : (
+              <>
+                <div className="flex items-center gap-1 text-sm font-medium">
+                  <span>{data?.user.name}</span>
+                  <span className="text-muted-foreground">|</span>
+                  <span className="text-muted-foreground">
+                    {data?.user.department}
+                  </span>
+                </div>
+                <span className="text-muted-foreground text-xs">
+                  {data?.user.email}
+                </span>
+              </>
+            )}
           </div>
         </div>
       </SidebarHeader>

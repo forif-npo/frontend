@@ -73,6 +73,14 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
 
   useEffect(() => {}, [watchedValues]);
 
+  // 회원가입 성공 시 리디렉션
+  useEffect(() => {
+    if (state.success) {
+      // 완료 페이지로 이동
+      router.push("/signup/complete");
+    }
+  }, [state.success, router]);
+
   useEffect(() => {
     for (const key in state.values) {
       form.setValue(

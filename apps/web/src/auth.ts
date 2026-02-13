@@ -19,6 +19,57 @@ const result = NextAuth({
         },
       },
     }),
+    Credentials({
+      id: "staff-credentials",
+      name: "Staff Credentials",
+      credentials: {
+        userId: { label: "학번", type: "text" },
+        password: { label: "비밀번호", type: "password" },
+      },
+      authorize: async (credentials) => {
+        try {
+          if (!credentials?.userId || !credentials?.password) {
+            throw new Error("학번과 비밀번호를 입력해주세요.");
+          }
+
+          if (
+            typeof credentials.userId !== "string" ||
+            isNaN(Number(credentials.userId))
+          ) {
+            throw new Error("학번은 숫자여야 합니다.");
+          }
+          if (typeof credentials.password !== "string") {
+            throw new Error("비밀번호는 문자열이어야 합니다.");
+          }
+
+          // 동적 import로 Edge Runtime 호환성 해결
+          const { staffLogin } = await import("@core/auth/api");
+
+          const response = await staffLogin({
+            user_id: Number(credentials.userId),
+            password: credentials.password,
+          });
+
+          if (!response.data?.access_token) {
+            throw new Error("로그인에 실패했습니다.");
+          }
+
+          // NextAuth에서 사용할 사용자 정보 반환
+          return {
+            id: credentials.userId,
+            email: `${credentials.userId}@staff.forif.org`,
+            name: "Staff User",
+            accessToken: response.data.access_token,
+            role: response.data.role,
+          };
+        } catch (error) {
+          console.error("Staff login error:", error);
+          throw new Error(
+            error instanceof Error ? error.message : "로그인에 실패했습니다.",
+          );
+        }
+      },
+    }),
   ],
   trustHost: true, // Trust the host to avoid issues with custom domains
   session: {

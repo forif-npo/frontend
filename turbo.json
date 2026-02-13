@@ -22,7 +22,8 @@
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
         "CI",
-        "NODE_ENV"
+        "NODE_ENV",
+        "USE_MOCK_DATA"
       ]
     },
     "test": {

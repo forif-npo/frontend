@@ -21,40 +21,36 @@ const TAGS = [
   "DevOps",
   "Algorithm",
 ];
-const LOCATIONS = [
-  "IT관 504호",
-  "제2공학관 302호",
-  "온라인 (Zoom)",
-  "IT관 506호",
-  "도서관 그룹스터디룸",
-];
-const TIMES = [
-  { start: "18:00", end: "20:00" },
-  { start: "19:00", end: "21:00" },
-  { start: "20:00", end: "22:00" },
-  { start: "10:00", end: "12:00" },
-];
 
+/**
+ * Generate mock studies with API-compatible structure
+ */
 function generateMockStudies(count: number, startId: number): Study[] {
   return Array.from({ length: count }).map((_, i) => {
-    const time = fakerKO.helpers.arrayElement(TIMES);
     const tag = fakerKO.helpers.arrayElement(TAGS);
+    const tags = [tag];
+
+    // Randomly add more tags
+    if (fakerKO.datatype.boolean()) {
+      const secondTag = fakerKO.helpers.arrayElement(
+        TAGS.filter((t) => t !== tag),
+      );
+      tags.push(secondTag);
+    }
 
     return {
-      studyId: startId + i,
-      studyName: `FORIF ${tag} 스터디 ${fakerKO.number.int({ min: 1, max: 5 })}`,
-      primaryMentorName: fakerKO.person.fullName(),
-      secondaryMentorName: fakerKO.datatype.boolean()
+      id: startId + i,
+      study_name: `FORIF ${tag} 스터디 ${fakerKO.number.int({ min: 1, max: 5 })}`,
+      primary_mentor_name: fakerKO.person.fullName(),
+      secondary_mentor_name: fakerKO.datatype.boolean()
         ? fakerKO.person.fullName()
         : null,
-      tag: tag,
-      oneLiner: fakerKO.lorem.sentence(50),
-      startTime: time.start,
-      endTime: time.end,
-      weekDay: fakerKO.number.int({ min: 1, max: 7 }), // 1=Mon, 7=Sun
-      location: fakerKO.helpers.arrayElement(LOCATIONS),
-      difficulty: fakerKO.number.int({ min: 1, max: 5 }),
-      imgUrl: `https://dummyimage.com/600x400/000/fff&text=${tag}`,
+      tags: tags,
+      one_liner: fakerKO.lorem.sentence(50),
+      mentee_count: fakerKO.number.int({ min: 0, max: 30 }),
+      recruit_status: fakerKO.helpers.arrayElement(["APPLICABLE", "CLOSED"]) as
+        | "APPLICABLE"
+        | "CLOSED",
     };
   });
 }
@@ -71,7 +67,11 @@ export const MOCK_STUDIES_BY_SEMESTER: Record<string, Study[]> = {
   "그 외": generateMockStudies(3, 900),
 };
 
-export async function getStudiesBySemester(
+/**
+ * Get mock studies by semester label
+ * Used when USE_MOCK_DATA=true
+ */
+export async function getMockStudiesBySemester(
   semesterLabel: string,
 ): Promise<Study[]> {
   // Simulate network delay

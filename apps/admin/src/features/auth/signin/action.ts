@@ -8,10 +8,10 @@ export async function signInAction(userId: string, password: string) {
     await signIn("credentials", {
       id: userId,
       password,
-      redirectTo: "/",
+      redirect: false, // 클라이언트에서 리다이렉트 처리
     });
+    return { ok: true };
   } catch (error) {
-    // signIn throws a NEXT_REDIRECT on success — re-throw it so Next.js handles the redirect
     if (error instanceof AuthError) {
       return { ok: false, error: "학번 또는 비밀번호가 올바르지 않습니다." };
     }

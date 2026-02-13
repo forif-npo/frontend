@@ -2,6 +2,8 @@
 
 import { signInAction } from "@/features/auth/signin/action";
 import { Button, TextInput } from "@ui/components/client";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function SignInForm() {
@@ -9,6 +11,8 @@ export function SignInForm() {
   const [password, setPassword] = useState("12345678");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { update } = useSession();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,12 +22,16 @@ export function SignInForm() {
     try {
       const result = await signInAction(userId, password);
 
-      if (result?.error) {
+      if (result?.ok) {
+        // 세션을 즉시 갱신
+        await update();
+        router.push("/");
+      } else if (result?.error) {
         setError(result.error);
+        setIsLoading(false);
       }
     } catch {
       setError("로그인에 실패했습니다.");
-    } finally {
       setIsLoading(false);
     }
   };

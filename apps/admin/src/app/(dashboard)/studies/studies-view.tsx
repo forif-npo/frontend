@@ -14,11 +14,21 @@ import { SemesterLabel, Study } from "./types";
 interface StudiesViewProps {
   initialData: Study[];
   currentSemester: SemesterLabel;
+  hasNext?: boolean;
+  nextCursor?: number | null;
+  totalElements?: number;
 }
 
 export function StudiesView({
   initialData,
   currentSemester,
+  // TODO: Implement pagination UI
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  hasNext = false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  nextCursor = null,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  totalElements = 0,
 }: StudiesViewProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,10 +46,11 @@ export function StudiesView({
   const filteredData = initialData.filter((study) => {
     const query = searchQuery.toLowerCase();
     return (
-      study.studyName.toLowerCase().includes(query) ||
-      study.primaryMentorName.toLowerCase().includes(query) ||
-      (study.secondaryMentorName &&
-        study.secondaryMentorName.toLowerCase().includes(query))
+      study.study_name.toLowerCase().includes(query) ||
+      study.primary_mentor_name.toLowerCase().includes(query) ||
+      (study.secondary_mentor_name &&
+        study.secondary_mentor_name.toLowerCase().includes(query)) ||
+      study.tags.some((tag) => tag.toLowerCase().includes(query))
     );
   });
 
@@ -51,18 +62,17 @@ export function StudiesView({
 
     const ws = XLSX.utils.json_to_sheet(
       filteredData.map((study) => ({
-        스터디명: study.studyName,
+        ID: study.id,
+        스터디명: study.study_name,
         멘토:
-          study.primaryMentorName +
-          (study.secondaryMentorName ? ` (${study.secondaryMentorName})` : ""),
-        태그: study.tag,
-        난이도: study.difficulty,
-        요일:
-          ["", "월", "화", "수", "목", "금", "토", "일"][study.weekDay] ||
-          study.weekDay,
-        시간: `${study.startTime} ~ ${study.endTime}`,
-        장소: study.location,
-        "한 줄 소개": study.oneLiner,
+          study.primary_mentor_name +
+          (study.secondary_mentor_name
+            ? ` (${study.secondary_mentor_name})`
+            : ""),
+        태그: study.tags.join(", "),
+        "한 줄 소개": study.one_liner,
+        멘티수: study.mentee_count,
+        모집상태: study.recruit_status === "APPLICABLE" ? "모집중" : "마감",
       })),
     );
 
