@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { apiClient } from "@core/utils/api-client";
+import type { ApiResponse } from "@core/types/api";
 import { Study } from "@/types/study";
-import { kvInstance } from "@/api/client";
 
 type UseStudyDetailReturn = {
   study: Study | null;
@@ -19,16 +20,14 @@ export function useStudyDetail(studyId: string): UseStudyDetailReturn {
         setIsLoading(true);
         setError(null);
 
-        const response = await kvInstance
-          .get(`api/v2/studies/${studyId}`)
-          .json<{ success: boolean; data: Study; error: string | null }>();
+        const response = await apiClient
+          .get(`api/v1/studies/${studyId}`)
+          .json<ApiResponse<Study>>();
 
-        if (response.success && response.data) {
+        if (response.data) {
           setStudy(response.data);
         } else {
-          throw new Error(
-            response.error || "스터디 정보를 불러올 수 없습니다.",
-          );
+          throw new Error("스터디 정보를 불러올 수 없습니다.");
         }
       } catch (err) {
         const error =

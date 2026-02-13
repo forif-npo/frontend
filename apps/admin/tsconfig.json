@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@ui/*": ["../../packages/ui/src/*"],
-      "@core/*": ["../../packages/core/src/*"]
+      "@core/*": ["../../packages/core/src/*"],
+      "@big-calendar/*": ["../../packages/big-calendar/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -1,7 +1,7 @@
 "use server";
 import { auth, signIn } from "@/auth";
 import { SignUpValues, StudyApplyValues } from "@core/schemas";
-import { kvInstance } from "@/api/client";
+import { apiClient } from "@core/utils/api-client";
 
 export const signInWithGoogle = async () => {
   await signIn("google", { redirectTo: "/signup" });
@@ -37,7 +37,7 @@ export const applyStudy = async (data: StudyApplyValues) => {
   }
 
   // Make API request
-  const response = await kvInstance
+  const response = await apiClient
     .post("api/v1/study/apply", {
       json: requestBody,
     })

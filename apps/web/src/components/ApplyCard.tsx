@@ -1,13 +1,13 @@
 "use client";
-import React from "react";
-import clsx from "clsx";
-import Image from "next/image";
+import {
+  getDifficultyBadgeVariant,
+  getDifficultyLabel,
+} from "@/constants/study";
 import { Button } from "@repo/ui/components/client";
 import { Badge, Body, Heading } from "@repo/ui/components/server";
-import {
-  getDifficultyLabel,
-  getDifficultyBadgeVariant,
-} from "@/constants/study";
+import clsx from "clsx";
+import Image from "next/image";
+import React from "react";
 
 interface ApplyCardProps {
   title: string;
@@ -39,7 +39,7 @@ export const ApplyCard: React.FC<ApplyCardProps> = ({
   difficulty,
   schedule,
   instructors,
-  imageUrl = "/images/temp_python.png",
+  imageUrl,
   disabled,
   onDetailClick,
   onApplyClick,
@@ -54,7 +54,7 @@ export const ApplyCard: React.FC<ApplyCardProps> = ({
     >
       <div className="relative h-[196px] w-full bg-[#DFE8F4]">
         <Image
-          src={imageUrl}
+          src={imageUrl || "/images/temp_python.png"}
           alt={title}
           fill
           className="object-contain"

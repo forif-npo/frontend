@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { apiClient } from "@core/utils/api-client";
+import type { ApiResponse } from "@core/types/api";
 import { Study } from "@/types/study";
-import { kvInstance } from "@/api/client";
 
 type UserInfo = {
   studentId: string;
@@ -40,42 +41,34 @@ export function useStudyApplyData(studyId: string): UseStudyApplyDataReturn {
         const [userResponse, studyResponse, studiesResponse] =
           await Promise.all([
             // Fetch user info
-            kvInstance.get("api/v1/user/me").json<{
-              success: boolean;
-              data: UserInfo;
-              error: string | null;
-            }>(),
+            apiClient.get("api/v1/user/me").json<ApiResponse<UserInfo>>(),
 
             // Fetch current study
-            kvInstance
-              .get(`api/v2/studies/${studyId}`)
-              .json<{ success: boolean; data: Study; error: string | null }>(),
+            apiClient
+              .get(`api/v1/studies/${studyId}`)
+              .json<ApiResponse<Study>>(),
 
             // Fetch all available studies
-            kvInstance
-              .get("api/v2/studies", {
+            apiClient
+              .get("api/v1/studies", {
                 searchParams: {
-                  page: 0,
-                  page_size: 100,
+                  page: "0",
+                  page_size: "100",
                   recruit_status: "APPLICABLE",
                 },
               })
-              .json<{
-                success: boolean;
-                data: { studies: Study[] };
-                error: string | null;
-              }>(),
+              .json<ApiResponse<{ studies: Study[] }>>(),
           ]);
 
-        if (userResponse.success && userResponse.data) {
+        if (userResponse.data) {
           setUserInfo(userResponse.data);
         }
 
-        if (studyResponse.success && studyResponse.data) {
+        if (studyResponse.data) {
           setCurrentStudy(studyResponse.data);
         }
 
-        if (studiesResponse.success && studiesResponse.data?.studies) {
+        if (studiesResponse.data?.studies) {
           const options = studiesResponse.data.studies
             .filter((study) => study.id !== parseInt(studyId))
             .map((study) => ({
