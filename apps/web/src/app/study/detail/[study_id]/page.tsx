@@ -6,6 +6,7 @@ import { Button } from "@ui/components/client";
 import { StudyDetailContent } from "@/features/study/detail/StudyDetailContent";
 import { StudyDetailNavigation } from "@/features/study/detail/StudyDetailNavigation";
 import { useStudyDetail } from "@/hooks/useStudyDetail";
+import { StudyDetailSkeleton } from "@/features/study/detail/StudyDetailSkeleton";
 
 type Props = {
   params: Promise<{ study_id: string }>;
@@ -21,13 +22,7 @@ export default function StudyDetailPage({ params }: Props) {
   };
 
   if (isLoading) {
-    return (
-      <div className="px-6 py-8">
-        <div className="flex h-[400px] items-center justify-center">
-          <div className="text-text-subtle text-lg">로딩 중...</div>
-        </div>
-      </div>
-    );
+    return <StudyDetailSkeleton />;
   }
 
   if (error || !study) {

@@ -7,7 +7,7 @@ interface StudyLayoutProps {
 
 export default function StudyLayout({ children, params }: StudyLayoutProps) {
   return (
-    <div className="mx-auto max-w-[1200px]">
+    <div className="mx-auto max-w-[1200px] max-md:px-4">
       <StudyBreadcrumb />
       {children}
     </div>

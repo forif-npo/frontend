@@ -1,51 +1,58 @@
+function Bone({ className }: { className?: string }) {
+  return <div className={`animate-pulse rounded bg-gray-200 ${className}`} />;
+}
+
 export function StudyApplySkeleton() {
   return (
-    <div className="mx-auto mb-16 flex max-w-[1200px] flex-col">
-      {/* Title Section Skeleton */}
-      <div className="mb-12 flex flex-col gap-6">
-        <div className="h-[120px] w-full animate-pulse rounded-lg bg-gray-200" />
-        <div className="flex gap-1">
-          <div className="h-8 w-16 animate-pulse rounded bg-gray-200" />
-          <div className="h-8 w-20 animate-pulse rounded bg-gray-200" />
-          <div className="h-8 w-24 animate-pulse rounded bg-gray-200" />
-        </div>
-      </div>
-
-      {/* Getting Started Guide Skeleton */}
-      <div className="mb-10 flex flex-col gap-6 rounded-[12px] border border-gray-200 bg-gray-200 p-10">
-        <div className="flex flex-col gap-6 border-b border-dashed border-gray-300 pb-6">
-          <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
-          <div className="space-y-2">
-            <div className="h-4 w-full animate-pulse rounded bg-gray-200" />
-            <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
+    <div className="flex justify-center px-4 sm:px-6">
+      <div className="mb-16 flex w-full max-w-[792px] flex-col">
+        <div className="mb-8 flex flex-col gap-4 sm:mb-12 sm:gap-6">
+          <div className="flex flex-col gap-2">
+            <Bone className="h-9 w-3/4 sm:h-12" />
+            <Bone className="h-9 w-40 sm:h-12" />
+          </div>
+          <div className="flex gap-1">
+            <Bone className="h-7 w-16 rounded-full" />
+            <Bone className="h-7 w-20 rounded-full" />
+            <Bone className="h-7 w-24 rounded-full" />
           </div>
         </div>
-        <div className="flex flex-col gap-4">
-          <div className="h-6 w-32 animate-pulse rounded bg-gray-200" />
-          <div className="h-6 w-32 animate-pulse rounded bg-gray-200" />
-        </div>
-      </div>
 
-      {/* Basic Info Form Skeleton */}
-      <div className="mb-10 flex flex-col gap-6 rounded-[12px] border border-gray-200 bg-white p-10">
-        <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
-        <div className="flex flex-col gap-10">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="flex flex-col gap-6">
-              <div className="h-6 w-20 animate-pulse rounded bg-gray-200" />
-              <div className="h-14 w-full animate-pulse rounded-lg bg-gray-200" />
+        <div className="flex flex-col gap-6 sm:gap-10">
+          <div className="flex flex-col gap-6 rounded-[12px] border border-[#d6e0eb] bg-[#eef2f7] p-5 sm:p-10">
+            <div className="flex flex-col gap-6 border-b border-dashed border-[#b1b8be] pb-6">
+              <Bone className="h-8 w-40" />
+              <div className="space-y-2">
+                <Bone className="h-5 w-full" />
+                <Bone className="h-5 w-3/4" />
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+            <div className="flex flex-col gap-4">
+              <Bone className="h-6 w-28" />
+              <Bone className="h-6 w-24" />
+            </div>
+          </div>
 
-      {/* Buttons Skeleton */}
-      <div className="flex gap-4">
-        <div className="flex flex-1 gap-4">
-          <div className="h-14 w-[90px] animate-pulse rounded-lg bg-gray-200" />
-          <div className="h-14 w-[90px] animate-pulse rounded-lg bg-gray-200" />
+          <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
+            <Bone className="h-8 w-72" />
+            <div className="flex flex-col gap-10">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex flex-col gap-6">
+                  <Bone className="h-6 w-20" />
+                  <Bone className="h-14 w-full rounded-lg" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+            <div className="flex flex-1 gap-3 sm:gap-4">
+              <Bone className="h-14 min-w-0 flex-1 rounded-lg sm:min-w-[90px] sm:flex-none" />
+              <Bone className="h-14 min-w-0 flex-1 rounded-lg sm:min-w-[90px] sm:flex-none" />
+            </div>
+            <Bone className="h-14 w-full rounded-lg sm:w-auto sm:min-w-[90px]" />
+          </div>
         </div>
-        <div className="h-14 w-[90px] animate-pulse rounded-lg bg-gray-200" />
       </div>
     </div>
   );

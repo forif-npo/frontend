@@ -14,7 +14,7 @@ export const StudyActionButtons: React.FC<StudyActionButtonsProps> = ({
   className = "",
 }) => {
   return (
-    <div className={`flex gap-4 ${className}`}>
+    <div className={`flex gap-2 sm:gap-4 ${className}`}>
       <Button
         variant="primary"
         size="large"
