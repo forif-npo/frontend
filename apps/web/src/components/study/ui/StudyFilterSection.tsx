@@ -1,6 +1,10 @@
 "use client";
 import { getRecentSemesters, getSemesterLabel } from "@/constants/study";
-import { ResetIcon, XCircleGrayIcon } from "@repo/assets/icons/krds";
+import {
+  QuestionBubble,
+  ResetIcon,
+  XCircleGrayIcon,
+} from "@repo/assets/icons/krds";
 import { SelectBox } from "@ui/components/client";
 import clsx from "clsx";
 import React from "react";
@@ -172,9 +176,9 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
         className,
       )}
     >
-      <div className="flex flex-col items-start gap-6 pb-6 lg:flex-row lg:items-center">
-        <div className="flex items-center gap-3">
-          <span className="w-20 whitespace-nowrap text-[17px] font-bold text-gray-900">
+      <div className="flex items-start gap-6 pb-6 max-md:flex-col">
+        <div className="flex items-center gap-3 max-md:w-full">
+          <span className="whitespace-nowrap text-[17px] font-bold text-gray-900 max-md:w-20">
             진행 학기
           </span>
           <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
@@ -189,10 +193,11 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-md:w-full">
           <div className="flex items-center gap-1">
-            <span className="w-20 whitespace-nowrap text-[17px] font-bold text-gray-900">
+            <span className="flex gap-4 whitespace-nowrap text-[17px] font-bold text-gray-900 max-md:w-20">
               난이도
+              <QuestionBubble />
             </span>
           </div>
           <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
@@ -207,8 +212,8 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="w-20 whitespace-nowrap text-[17px] font-bold text-gray-900">
+        <div className="flex items-center gap-3 max-md:w-full">
+          <span className="whitespace-nowrap text-[17px] font-bold text-gray-900 max-md:w-20">
             주제
           </span>
           <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>

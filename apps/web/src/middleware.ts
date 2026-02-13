@@ -7,6 +7,7 @@ const publicRoutes = [
   "/signup",
   "/terms",
   "/privacy-policy",
+  "/studies/create",
   "/studies/list",
 ];
 const publicParamsList = [

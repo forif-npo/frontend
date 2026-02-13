@@ -56,7 +56,7 @@ export const StudyListMobileHeader: React.FC<StudyListMobileHeaderProps> = ({
   );
 
   return (
-    <div className="md:hidden">
+    <div className="z-[9999] md:hidden">
       <div className="mb-4">
         <StudySearchBar
           value={searchInput}
@@ -128,8 +128,10 @@ export const StudyListMobileHeader: React.FC<StudyListMobileHeaderProps> = ({
 
       <div
         className={clsx(
-          "overflow-hidden transition-all duration-200",
-          isFilterOpen ? "mb-4 max-h-[600px] opacity-100" : "max-h-0 opacity-0",
+          "transition-all duration-200",
+          isFilterOpen
+            ? "mb-4 max-h-[600px] overflow-visible opacity-100"
+            : "max-h-0 overflow-hidden opacity-0",
         )}
       >
         {loading ? (
