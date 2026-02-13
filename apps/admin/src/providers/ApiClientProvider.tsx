@@ -13,11 +13,11 @@ export function ApiClientProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setTokenGetter(async () => {
-      return session?.accessToken || null;
+      return session?.access_token || null;
     });
 
     setOnTokenRefreshed(async (newToken: string) => {
-      await update({ accessToken: newToken });
+      await update({ access_token: newToken });
     });
 
     setOnUnauthorized(() => {

@@ -5,10 +5,6 @@ import { Heading } from "@ui/components/server";
 import Image from "next/image";
 
 export default async function Page() {
-  const todos = await fetch("https://api.forif.org/posts")
-    .then((res) => res.json())
-    .catch((reason) => console.error("Failed to fetch posts:", reason));
-  console.log(todos);
   const carouselItems: CarouselItem[] = [
     {
       imageSrc: "/images/carousel/carousel-img-1.png",

@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import { useStudyData, useStudyFilters, usePagination } from "@/hooks/study";
-import { useRouter } from "next/navigation";
-import { StudyListParams, Study } from "@/types/study";
-import { StudyCardGrid } from "@/components/study/ui/StudyCardGrid";
-import { StudySearchBar } from "@/components/study/ui/StudySearchBar";
-import { StudyFilterSection } from "@/components/study/ui/StudyFilterSection";
-import { StudyActionButtons } from "@/components/study/ui/StudyActionButtons";
-import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
-import { Pagination } from "@ui/components/client";
+import { StudySearchBar } from "@/components/study";
 import { StudyListSkeleton } from "@/components/study/skeleton/StudyCardSkeleton";
-import { Heading } from "@ui/components/server";
+import { StudyActionButtons } from "@/components/study/ui/StudyActionButtons";
+import { StudyCardGrid } from "@/components/study/ui/StudyCardGrid";
+import { StudyFilterSection } from "@/components/study/ui/StudyFilterSection";
+import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
+import { usePagination, useStudyData, useStudyFilters } from "@/hooks/study";
 import { useDebounce } from "@/hooks/useDebounce";
+import { Study, StudyListParams } from "@/types/study";
+import { Pagination } from "@ui/components/client";
+import { Heading } from "@ui/components/server";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 export default function StudyListPage() {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function StudyListPage() {
 
   const apiParams: StudyListParams = useMemo(() => {
     return {
-      page: currentPage,
+      page: currentPage - 1,
       page_size: pageSize,
       year: filters.year,
       semester: filters.semester,
@@ -56,6 +56,7 @@ export default function StudyListPage() {
   ]);
 
   const { studies, loading, error, refetch } = useStudyData(apiParams);
+  console.log("studies:", studies);
 
   useEffect(() => {
     refetch(apiParams);
@@ -91,7 +92,7 @@ export default function StudyListPage() {
           스터디 목록
         </Heading>
 
-        <div className="mb-6 flex items-center justify-between gap-7">
+        <div className="mb-6 flex w-full flex-col items-center justify-between gap-7 lg:flex-row">
           <StudySearchBar
             value={searchInput}
             onChange={(value) => setSearchInput(value)}

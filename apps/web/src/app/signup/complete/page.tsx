@@ -1,3 +1,5 @@
+"use client";
+
 import { CheckCircle } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
 import { Body, Divider, Heading, LinkButton } from "@ui/components/server";

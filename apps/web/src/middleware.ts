@@ -7,9 +7,13 @@ const publicRoutes = [
   "/signup",
   "/terms",
   "/privacy-policy",
-  "/study/list",
+  "/studies/list",
 ];
-const publicParamsList = ["/study/detail", "/study/apply", "/studies/about"];
+const publicParamsList = [
+  "/studies/detail",
+  "/studies/apply",
+  "/studies/about",
+];
 const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
 

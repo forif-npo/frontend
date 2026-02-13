@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { apiClient } from "@core/utils/api-client";
+import type { ApiResponse } from "@core/types/api";
 import { Study } from "@/types/study";
-import { studyApi } from "@/api";
 
 interface UseStudyDetailReturn {
   study: Study | null;
@@ -18,8 +19,13 @@ export const useStudyDetail = (studyId: number): UseStudyDetailReturn => {
     setLoading(true);
     setError(null);
     try {
-      const data = await studyApi.getStudyDetail(studyId);
-      setStudy(data);
+      const response = await apiClient
+        .get(`api/v1/studies/${studyId}`)
+        .json<ApiResponse<Study>>();
+
+      if (response.data) {
+        setStudy(response.data);
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to fetch study detail",

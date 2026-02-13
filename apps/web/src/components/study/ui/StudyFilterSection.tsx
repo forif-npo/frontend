@@ -1,13 +1,9 @@
 "use client";
-import React from "react";
 import { getRecentSemesters, getSemesterLabel } from "@/constants/study";
-import clsx from "clsx";
-import {
-  QuestionBubble,
-  ResetIcon,
-  XCircleGrayIcon,
-} from "@repo/assets/icons/krds";
+import { ResetIcon, XCircleGrayIcon } from "@repo/assets/icons/krds";
 import { SelectBox } from "@ui/components/client";
+import clsx from "clsx";
+import React from "react";
 interface FilterTag {
   id: string;
   label: string;
@@ -160,9 +156,9 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
         className,
       )}
     >
-      <div className="flex items-center gap-6 pb-6">
+      <div className="flex flex-col items-start gap-6 pb-6 lg:flex-row lg:items-center">
         <div className="flex items-center gap-3">
-          <span className="whitespace-nowrap text-[17px] font-bold text-gray-900">
+          <span className="w-20 whitespace-nowrap text-[17px] font-bold text-gray-900">
             진행 학기
           </span>
           <div className="w-[208px]">
@@ -179,10 +175,9 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
-            <span className="whitespace-nowrap text-[17px] font-bold text-gray-900">
+            <span className="w-20 whitespace-nowrap text-[17px] font-bold text-gray-900">
               난이도
             </span>
-            <QuestionBubble />
           </div>
           <div className="w-[208px]">
             <SelectBox
@@ -197,7 +192,7 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="whitespace-nowrap text-[17px] font-bold text-gray-900">
+          <span className="w-20 whitespace-nowrap text-[17px] font-bold text-gray-900">
             주제
           </span>
           <div className="w-[208px]">

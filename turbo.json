@@ -2,21 +2,12 @@
   "$schema": "https://v2-8-3.turborepo.dev/schema.json",
   "tasks": {
     "build": {
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env*"
-      ],
-      "outputs": [
-        "dist/**",
-        ".next/**",
-        "!.next/cache/**",
-        "public/dist/**"
-      ],
-      "dependsOn": [
-        "^build"
-      ],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "public/dist/**"],
+      "dependsOn": ["^build"],
       "env": [
         "NEXT_PUBLIC_API_HOST",
+        "NEXT_PUBLIC_SERVER_URL",
         "NEXTAUTH_URL",
         "NEXT_RUNTIME",
         "GOOGLE_CLIENT_ID",
@@ -27,9 +18,7 @@
       ]
     },
     "test": {
-      "outputs": [
-        "coverage/**"
-      ],
+      "outputs": ["coverage/**"],
       "dependsOn": []
     },
     "test:watch": {
@@ -41,14 +30,10 @@
       "dependsOn": []
     },
     "lint": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "lint:fix": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "dev": {
       "cache": false,
