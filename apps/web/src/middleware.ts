@@ -8,6 +8,8 @@ const publicRoutes = [
   "/terms",
   "/privacy-policy",
   "/signup/complete",
+  "/support/faqs",
+  "/support/announcements",
 ];
 const authRoutes = ["/signin"];
 const apiAuthPrefix = "/api/auth";

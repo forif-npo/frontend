@@ -28,6 +28,17 @@ async function refreshAccessToken(
   }
 }
 
+function sanitizeResponseHeaders(original: Headers) {
+  const headers = new Headers(original);
+
+  // 스트리밍 프록시에서 브라우저 디코딩 오류 방지
+  headers.delete("content-encoding");
+  headers.delete("content-length");
+  headers.delete("transfer-encoding");
+
+  return headers;
+}
+
 /**
  * API 프록시 핸들러
  *
@@ -88,7 +99,7 @@ async function handler(
       const proxyResponse = new NextResponse(response.body, {
         status: response.status,
         statusText: response.statusText,
-        headers: response.headers,
+        headers: sanitizeResponseHeaders(response.headers),
       });
       proxyResponse.headers.set("X-New-Access-Token", newAccessToken);
 
@@ -100,7 +111,7 @@ async function handler(
   return new NextResponse(response.body, {
     status: response.status,
     statusText: response.statusText,
-    headers: response.headers,
+    headers: sanitizeResponseHeaders(response.headers),
   });
 }
 
