@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./styles.css": "./dist/styles.css",
+    "./theme.css": "./src/theme.css",
     "./components/server": "./src/components/server/index.ts",
     "./components/client": "./src/components/client/index.ts",
     "./theme-provider": "./src/provider.tsx",

@@ -93,9 +93,9 @@ const generateMockStudies = (count: number): Study[] => {
 
 const mockStudies = generateMockStudies(50);
 
-// GET /api/v2/studies - 스터디 목록 조회
+// GET /api/v1/studies - 스터디 목록 조회
 export const getStudies = http.get(
-  "https://api.forif.org/api/v2/studies",
+  "https://api.forif.org/api/v1/studies",
   async ({ request }) => {
     await delay(500);
 
@@ -146,18 +146,17 @@ export const getStudies = http.get(
     const paginatedStudies = filtered.slice(start, end);
 
     return HttpResponse.json({
-      success: true,
-      data: {
-        studies: paginatedStudies,
-      },
-      error: null,
+      timestamp: Date.now(),
+      data: paginatedStudies,
+      errorCode: null,
+      message: "Success",
     });
   },
 );
 
-// GET /api/v2/studies/:id - 스터디 상세 조회
+// GET /api/v1/studies/:id - 스터디 상세 조회
 export const getStudyDetail = http.get(
-  "https://api.forif.org/api/v2/studies/:id",
+  "https://api.forif.org/api/v1/studies/:id",
   async ({ params }) => {
     await delay(500);
     const { id } = params;
@@ -166,18 +165,20 @@ export const getStudyDetail = http.get(
     if (!study) {
       return HttpResponse.json(
         {
-          success: false,
+          timestamp: Date.now(),
           data: null,
-          error: "Study not found",
+          errorCode: "FOR018-404",
+          message: "스터디를 찾을 수 없습니다.",
         },
         { status: 404 },
       );
     }
 
     return HttpResponse.json({
-      success: true,
+      timestamp: Date.now(),
       data: study,
-      error: null,
+      errorCode: null,
+      message: "Success",
     });
   },
 );
