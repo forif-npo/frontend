@@ -1,6 +1,6 @@
-import type { Study, StudiesParams } from "@repo/core/types/study";
 import type { ApiResponse } from "@core/types/api";
 import { apiClient } from "@core/utils/api-client";
+import type { StudiesParams, Study } from "@repo/core/types/study";
 import { useCallback, useState } from "react";
 
 interface UseStudyDataReturn {
@@ -10,7 +10,7 @@ interface UseStudyDataReturn {
   refetch: (params?: StudiesParams) => Promise<void>;
 }
 
-export const useStudyData = (params?: StudiesParams): UseStudyDataReturn => {
+export const useStudyData = (): UseStudyDataReturn => {
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

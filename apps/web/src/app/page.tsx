@@ -1,8 +1,3 @@
-import { CriticalAlert } from "@repo/ui/components/client";
-import { Button, Carousel } from "@ui/components/client";
-import { CarouselItem } from "@ui/components/client/Carousel";
-import { Heading } from "@ui/components/server";
-import Image from "next/image";
 import { CTASection } from "@/features/home/CTASection";
 import { HackathonSection } from "@/features/home/HackathonSection";
 import { NewsSection } from "@/features/home/NewsSection";
@@ -10,12 +5,17 @@ import { QuickMenu } from "@/features/home/QuickMenu";
 import { ServiceSection } from "@/features/home/ServiceSection";
 import { StudySection } from "@/features/home/StudySection";
 import {
-  MobileLoginSection,
-  MobileStudySection,
-  MobileNoticeSection,
-  MobileFAQSection,
   MobileBlogSection,
+  MobileFAQSection,
+  MobileLoginSection,
+  MobileNoticeSection,
+  MobileStudySection,
 } from "@/features/home/mobile";
+import { CriticalAlert } from "@repo/ui/components/client";
+import { Button, Carousel } from "@ui/components/client";
+import { CarouselItem } from "@ui/components/client/Carousel";
+import { Heading } from "@ui/components/server";
+import Image from "next/image";
 
 export default async function Page() {
   const carouselItems: CarouselItem[] = [
@@ -59,9 +59,9 @@ export default async function Page() {
         </section>
 
         {/* Hero Placeholder - 모바일만 */}
-        <section className="w-full px-4 md:hidden">
+        {/* <section className="w-full px-4 md:hidden">
           <div className="h-[200px] w-full rounded-xl bg-[#d6e0eb]" />
-        </section>
+        </section> */}
 
         {/* Mobile Sections - 모바일만 */}
         <section className="flex w-full flex-col gap-2.5 px-4 md:hidden">

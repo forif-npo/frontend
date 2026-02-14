@@ -1,12 +1,11 @@
-import { Badge } from "@ui/components/server";
-import { Body, Label } from "@ui/components/server";
-import Image from "next/image";
-import Link from "next/link";
 import type {
+  RecruitStatus,
   Study,
   StudyDifficulty,
-  RecruitStatus,
 } from "@repo/core/types/study";
+import { Badge, Body, Label } from "@ui/components/server";
+import Image from "next/image";
+import Link from "next/link";
 
 const DIFFICULTY_LABEL: Record<StudyDifficulty, string> = {
   EASY: "쉬움",
@@ -49,7 +48,7 @@ export function StudyCard({ study }: StudyCardProps) {
     >
       <div className="relative h-[196px] w-full overflow-hidden">
         <Image
-          src={study.img_url}
+          src={study.img_url || "/images/default-study-img.png"}
           alt={study.study_name}
           fill
           className="object-cover"
