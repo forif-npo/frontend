@@ -48,7 +48,7 @@ export const useFaqList = ({ query, page, pageSize }: UseFaqListOptions) => {
     return () => {
       mounted = false;
     };
-  }, [pageSize]);
+  }, []);
 
   const filtered = useMemo(() => {
     const q = normalize(query);

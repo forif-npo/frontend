@@ -1,6 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+
+import { AngleIcon } from "@repo/assets/icons/krds";
+
 import type { AnnouncementPost } from "../types/announcement.type";
 
 type AnnouncementListItemProps = {
@@ -24,12 +27,8 @@ export function AnnouncementListItem({ item }: AnnouncementListItemProps) {
           {new Date(item.created_at).toLocaleDateString("ko-KR")}
         </div>
       </div>
-      <img
-        src="/icons/chevron-right.svg"
-        alt=""
-        aria-hidden
-        className="h-5 w-5 shrink-0"
-      />
+
+      <AngleIcon className="h-5 w-5 shrink-0 -rotate-90 text-gray-500" />
     </button>
   );
 }

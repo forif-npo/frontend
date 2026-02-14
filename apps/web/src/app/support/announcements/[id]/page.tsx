@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { Breadcrumb } from "@ui/components/server";
+import { ShareIcon } from "@repo/assets/icons/krds";
 
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 
@@ -77,7 +78,7 @@ export default function AnnouncementDetailPage() {
               className="inline-flex items-center rounded-md p-1 hover:bg-gray-50"
               aria-label="링크 복사"
             >
-              <img src="/icons/link.svg" alt="" className="h-5 w-5" />
+              <ShareIcon className="h-5 w-5 text-gray-600" aria-hidden />
             </button>
           </div>
 
@@ -92,15 +93,17 @@ export default function AnnouncementDetailPage() {
               {item.image_urls.map((url, idx) => (
                 <div
                   key={`${url}-${idx}`}
-                  className="border-divider-gray-light overflow-hidden rounded-lg border"
+                  className="overflow-hidden rounded-sm"
                 >
-                  <Image
-                    src={url}
-                    alt={`announcement-image-${idx + 1}`}
-                    width={1200}
-                    height={800}
-                    className="h-auto w-full"
-                  />
+                  <div className="flex justify-center">
+                    <Image
+                      src={url}
+                      alt={`announcement-image-${idx + 1}`}
+                      width={1200}
+                      height={800}
+                      className="h-auto w-full"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -111,7 +114,7 @@ export default function AnnouncementDetailPage() {
             <button
               type="button"
               onClick={() => router.push("/support/announcements")}
-              className="border-divider-gray-light w-full rounded-lg border bg-white py-4 text-[16px] font-medium hover:bg-gray-50"
+              className="border-divider-gray-light hover:bg-gray-20 w-full rounded-lg border bg-white py-4 text-[16px] font-medium"
             >
               목록으로 돌아가기
             </button>

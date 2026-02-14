@@ -10,6 +10,7 @@ const publicRoutes = [
   "/signup/complete",
   "/support/faqs",
   "/support/announcements",
+  "/studies/list",
 ];
 const publicParamsList = [
   "/studies/detail",

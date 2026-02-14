@@ -4,7 +4,6 @@ import { Accordion } from "@ui/components/client";
 import { Tag } from "@ui/components/server";
 
 import type { FaqPost } from "../types/faq.type";
-import { FAQ_TAG_STYLE } from "../constants/faq.tag.constants";
 
 type FaqAccordionListProps = {
   items: FaqPost[];
@@ -20,18 +19,12 @@ export function FaqAccordionList({ items }: FaqAccordionListProps) {
   }
 
   const accordionItems = items.map((item) => {
-    const tagStyle = FAQ_TAG_STYLE[item.tag]?.className ?? "px-2 py-0.5";
-
     return {
       title: item.title,
+      tagSlot: <Tag label={item.tag} size="small" />,
       children: (
-        <div className="space-y-3">
-          <div>
-            <Tag label={item.tag} size="small" className={tagStyle} />
-          </div>
-          <div className="whitespace-pre-wrap text-sm leading-7 text-gray-800">
-            {item.content}
-          </div>
+        <div className="space-y-3 px-5">
+          <div className="text-sm leading-7 text-gray-800">{item.content}</div>
         </div>
       ),
     };
