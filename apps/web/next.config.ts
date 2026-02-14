@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
     "@repo/ui",
     "msw",
   ],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "forif-backend-dev.s3.ap-northeast-2.amazonaws.com",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
