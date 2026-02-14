@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 
+import { Pagination } from "@ui/components/client";
+import { Breadcrumb } from "@ui/components/server";
+
 import { SearchBar } from "@/features/support/components/SearchBar";
 import { SearchResultCount } from "@/features/support/components/SearchResultCount";
-import { Pagination } from "@/features/support/components/Pagination";
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
 
 import { useFaqList } from "@/features/support/faqs/hooks/useFaqList";
 import { FaqAccordionList } from "@/features/support/faqs/components/FaqAccordionList";
-
-import { Breadcrumb } from "../../../../../../packages/ui/src/components/server/Breadcrumb";
 
 const PAGE_SIZE = 10;
 
@@ -85,7 +85,11 @@ export default function FaqPage() {
       )}
 
       <div className="mt-8">
-        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </div>
     </main>
   );

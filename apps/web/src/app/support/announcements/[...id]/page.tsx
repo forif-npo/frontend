@@ -1,10 +1,12 @@
 "use client";
 
-import { Breadcrumb } from "../../../../../../../packages/ui/src/components/server/Breadcrumb";
-import { useParams, useRouter } from "next/navigation";
-import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+
+import { Breadcrumb } from "@ui/components/server";
+
+import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 
 export default function AnnouncementDetailPage() {
   const params = useParams<{ id: string }>();
@@ -12,7 +14,6 @@ export default function AnnouncementDetailPage() {
   const id = Number(params.id);
 
   const { item, isLoading, errorMessage } = useAnnouncementDetail(id);
-  const [copied, setCopied] = useState(false);
 
   const dateOnly = useMemo(() => {
     if (!item?.created_at) return "";
@@ -23,8 +24,6 @@ export default function AnnouncementDetailPage() {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1200);
     } catch {
       // clipboard 실패해도 조용히 무시
     }

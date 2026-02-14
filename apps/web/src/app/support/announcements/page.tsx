@@ -1,14 +1,15 @@
 "use client";
 
-import { Breadcrumb } from "../../../../../../packages/ui/src/components/server/Breadcrumb";
+import { useState } from "react";
+
+import { Pagination } from "@ui/components/client";
+import { Breadcrumb } from "@ui/components/server";
+
 import { SearchBar } from "@/features/support/components/SearchBar";
 import { SearchResultCount } from "@/features/support/components/SearchResultCount";
-import { Pagination } from "@/features/support/components/Pagination";
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
-
 import { useAnnouncementList } from "@/features/support/announcements/hooks/useAnnouncementList";
 import { AnnouncementList } from "@/features/support/announcements/components/AnnouncementList";
-import { useState } from "react";
 
 const PAGE_SIZE = 10;
 
@@ -72,7 +73,11 @@ export default function AnnouncementPage() {
       {!isLoading && !errorMessage && <AnnouncementList items={items} />}
 
       <div className="mt-8">
-        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </div>
     </main>
   );
