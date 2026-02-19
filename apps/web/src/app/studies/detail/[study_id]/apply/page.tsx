@@ -5,7 +5,7 @@ import { StudyApplyInfoStep } from "@/features/study/apply/study-apply-info-step
 import { StudyApplyReasonStep } from "@/features/study/apply/study-apply-reason-step";
 import { StudyApplyComplete } from "@/features/study/apply/StudyApplyComplete";
 import { StudyApplySkeleton } from "@/features/study/apply/StudyApplySkeleton";
-import { StudyApplyHelpPanel } from "@/features/study/apply/StudyApplyHelpPanel";
+import { StudyHelpPanel } from "@/features/study/components/StudyHelpPanel";
 import { useStudyApplyPage } from "@/features/study/apply/useStudyApplyPage";
 
 type Props = {
@@ -50,7 +50,7 @@ export default function StudyApplyPage({ params }: Props) {
 
   return (
     <div className="relative min-h-screen">
-      <StudyApplyHelpPanel />
+      <StudyHelpPanel title="스터디 신청 중 어려움이 있으신가요?" />
       <div className="flex justify-center px-4 sm:px-6">
         {step === 1 ? (
           <StudyApplyInfoStep

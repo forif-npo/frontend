@@ -1,34 +1,14 @@
 "use client";
 
+import { Button } from "@ui/components/client";
 import { UseFormReturn } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
-import { StepNavigation } from "../components/StepNavigation";
 
 interface Step3WeeklyPlanProps {
   form: UseFormReturn<StudyOpenValues>;
   onPrevious: () => void;
   onNext: () => void;
   onSaveDraft: () => void;
-}
-
-function MinusIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M3 8H13"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
 }
 
 export function Step3WeeklyPlan({
@@ -47,142 +27,172 @@ export function Step3WeeklyPlan({
   const curriculum = watch("curriculum");
 
   const addContent = (weekIndex: number) => {
-    const current = curriculum[weekIndex].contents;
     const updated = [...curriculum];
     updated[weekIndex] = {
       ...updated[weekIndex],
-      contents: [...current, ""],
-    };
-    setValue("curriculum", updated);
-  };
-
-  const removeContent = (weekIndex: number, contentIndex: number) => {
-    const current = curriculum[weekIndex].contents;
-    if (current.length <= 1) return;
-    const updated = [...curriculum];
-    updated[weekIndex] = {
-      ...updated[weekIndex],
-      contents: current.filter((_, i) => i !== contentIndex),
+      contents: [...updated[weekIndex].contents, ""],
     };
     setValue("curriculum", updated);
   };
 
   return (
-    <div className="mx-auto mb-16 flex w-full max-w-[792px] flex-col gap-6 sm:gap-10">
-      <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
-        <h2 className="text-text-bolder text-[24px] font-bold leading-[1.5]">
-          주차별 계획
-        </h2>
+    <div className="flex w-full flex-col gap-12">
+      {/* 제목 */}
+      <p className="text-text-basic text-[24px] font-bold leading-[1.5]">
+        주차별 계획
+      </p>
 
-        <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
-          <div className="min-w-[600px]">
-            {/* Table Header */}
-            <div className="flex">
-              <div className="text-text-bolder w-[60px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-3 py-2 text-[14px] font-bold leading-[1.5] md:w-[80px] md:text-[15px]">
-                주차
-              </div>
-              <div className="text-text-bolder w-[100px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-3 py-2 text-[14px] font-bold leading-[1.5] md:w-[120px] md:text-[15px]">
-                진행 날짜
-              </div>
-              <div className="text-text-bolder w-[160px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-3 py-2 text-[14px] font-bold leading-[1.5] md:w-[200px] md:text-[15px]">
-                주제
-              </div>
-              <div className="text-text-bolder flex-1 border-b border-[#d6e0eb] bg-[#eef2f7] px-3 py-2 text-[14px] font-bold leading-[1.5] md:text-[15px]">
-                내용
-              </div>
-              <div className="w-[40px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7]" />
-            </div>
+      {/* 본문 */}
+      <div className="flex flex-col gap-10">
+        {/* 커리큘럼 라벨 */}
+        <div className="flex flex-col gap-6">
+          <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
+            커리큘럼
+          </h3>
 
-            {/* Table Body */}
-            {curriculum.map((week, weekIndex) => (
-              <div key={weekIndex}>
-                {week.contents.map((_, contentIndex) => (
-                  <div
-                    key={`${weekIndex}-${contentIndex}`}
-                    className="flex items-center"
-                  >
-                    {/* Week number */}
-                    <div className="text-text-subtle w-[60px] shrink-0 border-b border-[#cdd1d5] px-3 py-2 text-[15px] leading-[1.5] md:w-[80px]">
-                      {contentIndex === 0 ? week.week : ""}
-                    </div>
-
-                    {/* Date */}
-                    <div className="w-[100px] shrink-0 border-b border-[#cdd1d5] px-1 py-1 md:w-[120px]">
-                      {contentIndex === 0 && (
-                        <input
-                          className="text-text-basic w-full rounded border border-transparent px-2 py-1 text-[14px] leading-[1.5] focus:border-[#063a74] focus:outline-none"
-                          placeholder="MM/DD"
-                          {...register(`curriculum.${weekIndex}.date`)}
-                        />
-                      )}
-                    </div>
-
-                    {/* Topic */}
-                    <div className="w-[160px] shrink-0 border-b border-[#cdd1d5] px-1 py-1 md:w-[200px]">
-                      {contentIndex === 0 && (
-                        <input
-                          className="text-text-basic w-full rounded border border-transparent px-2 py-1 text-[14px] leading-[1.5] focus:border-[#063a74] focus:outline-none"
-                          placeholder="주제를 입력하세요"
-                          {...register(`curriculum.${weekIndex}.topic`)}
-                        />
-                      )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 border-b border-[#cdd1d5] px-1 py-1">
-                      <input
-                        className="text-text-basic w-full rounded border border-transparent px-2 py-1 text-[14px] leading-[1.5] focus:border-[#063a74] focus:outline-none"
-                        placeholder="내용을 입력하세요"
-                        {...register(
-                          `curriculum.${weekIndex}.contents.${contentIndex}`,
-                        )}
-                      />
-                    </div>
-
-                    {/* Delete button */}
-                    <div className="flex w-[40px] shrink-0 items-center justify-center border-b border-[#cdd1d5]">
-                      {week.contents.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeContent(weekIndex, contentIndex)}
-                          className="rounded p-1 text-red-500 hover:bg-red-50"
-                        >
-                          <MinusIcon className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-
-                {/* Add content row */}
-                <div className="flex justify-end border-b border-[#e5e8eb] px-3 py-1">
-                  <button
-                    type="button"
-                    onClick={() => addContent(weekIndex)}
-                    className="text-text-primary text-[13px] leading-[1.5] hover:underline"
-                  >
-                    + 내용 추가
-                  </button>
+          {/* 테이블 */}
+          <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+            <div className="min-w-[640px]">
+              {/* 테이블 헤더 */}
+              <div className="flex">
+                <div className="text-text-bolder w-[120px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-4 py-2 text-[15px] font-bold leading-[1.5]">
+                  주차
+                </div>
+                <div className="text-text-bolder w-[120px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-4 py-2 text-[15px] font-bold leading-[1.5]">
+                  진행 날짜
+                </div>
+                <div className="text-text-bolder w-[320px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-4 py-2 text-[15px] font-bold leading-[1.5]">
+                  주제
+                </div>
+                <div className="text-text-bolder flex-1 border-b border-[#d6e0eb] bg-[#eef2f7] px-4 py-2 text-[15px] font-bold leading-[1.5]">
+                  내용
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {errors.curriculum && (
-          <p className="text-text-danger text-[14px]">
-            {typeof errors.curriculum.message === "string"
-              ? errors.curriculum.message
-              : "커리큘럼을 모두 작성해주세요."}
-          </p>
-        )}
+              {/* 테이블 바디 */}
+              {curriculum.map((week, weekIndex) => (
+                <div key={weekIndex}>
+                  {week.contents.map((_, contentIndex) => (
+                    <div
+                      key={`${weekIndex}-${contentIndex}`}
+                      className="flex items-center"
+                    >
+                      {/* 주차 */}
+                      <div className="text-text-disabled w-[120px] shrink-0 border-b border-[#cdd1d5] bg-white px-4 py-3 text-[17px] leading-[1.5]">
+                        {contentIndex === 0 ? week.week : ""}
+                      </div>
+
+                      {/* 진행 날짜 */}
+                      <div className="w-[120px] shrink-0 border-b border-[#cdd1d5] bg-white px-2 py-1">
+                        {contentIndex === 0 ? (
+                          <input
+                            className="text-text-basic w-full rounded border border-transparent px-2 py-2 text-[17px] leading-[1.5] outline-none focus:border-blue-500"
+                            placeholder="25.09.07"
+                            {...register(`curriculum.${weekIndex}.date`)}
+                          />
+                        ) : (
+                          <div className="px-2 py-2 text-[17px] leading-[1.5]">
+                            &nbsp;
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 주제 */}
+                      <div className="w-[320px] shrink-0 border-b border-[#cdd1d5] bg-white px-2 py-1">
+                        {contentIndex === 0 ? (
+                          <input
+                            className="text-text-basic placeholder:text-text-disabled w-full rounded border border-transparent px-2 py-2 text-[17px] leading-[1.5] outline-none focus:border-blue-500"
+                            placeholder={`${week.week}주차 주제를 입력해주세요.`}
+                            {...register(`curriculum.${weekIndex}.topic`)}
+                          />
+                        ) : (
+                          <div className="px-2 py-2 text-[17px] leading-[1.5]">
+                            &nbsp;
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 내용 */}
+                      <div className="flex-1 border-b border-[#cdd1d5] bg-white px-2 py-1">
+                        <input
+                          className="text-text-basic placeholder:text-text-disabled w-full rounded border border-transparent px-2 py-2 text-[17px] leading-[1.5] outline-none focus:border-blue-500"
+                          placeholder={`${week.week}주차 내용을 입력해주세요.`}
+                          {...register(
+                            `curriculum.${weekIndex}.contents.${contentIndex}`,
+                          )}
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* + 내용 추가 */}
+                  <div className="flex justify-end border-b border-[#e5e8eb] bg-white px-4 py-2">
+                    <button
+                      type="button"
+                      onClick={() => addContent(weekIndex)}
+                      className="text-text-primary text-[15px] leading-[1.5] hover:underline"
+                    >
+                      + 내용 추가
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {errors.curriculum && (
+            <p className="text-text-danger text-[14px]">
+              {typeof errors.curriculum.message === "string"
+                ? errors.curriculum.message
+                : "커리큘럼을 모두 작성해주세요."}
+            </p>
+          )}
+        </div>
       </div>
 
-      <StepNavigation
-        onSaveDraft={onSaveDraft}
-        onPrevious={onPrevious}
-        onNext={onNext}
-      />
+      {/* 하단 버튼 */}
+      <div className="flex items-start gap-4">
+        <div className="flex flex-1 gap-4">
+          <Button
+            variant="secondary"
+            size="large"
+            onClick={onSaveDraft}
+            className="h-14 min-w-[90px]"
+            type="button"
+          >
+            임시저장
+          </Button>
+          <Button
+            variant="secondary"
+            size="large"
+            onClick={() => {}}
+            className="h-14 min-w-[90px]"
+            type="button"
+          >
+            미리보기
+          </Button>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="tertiary"
+            size="large"
+            onClick={onPrevious}
+            className="h-14 min-w-[90px]"
+            type="button"
+          >
+            이전
+          </Button>
+          <Button
+            variant="primary"
+            size="large"
+            onClick={onNext}
+            className="h-14 min-w-[90px]"
+            type="button"
+          >
+            다음
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

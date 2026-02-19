@@ -2,7 +2,7 @@
 
 import {
   useStudyCreatePage,
-  StudyCreateHelpPanel,
+  StudyHelpPanel,
   Step1InfoVerification,
   Step2StudyOverview,
   Step3WeeklyPlan,
@@ -42,8 +42,8 @@ export default function StudyCreatePage() {
 
   return (
     <div className="relative min-h-screen">
-      <StudyCreateHelpPanel />
-      <div className="flex justify-center px-4 sm:px-6">
+      <StudyHelpPanel title="스터디 개설 중 어려움이 있으신가요?" />
+      <div className="mx-auto flex max-w-[792px] justify-center px-4 sm:px-6">
         {step === 1 && (
           <Step1InfoVerification
             userInfo={userInfo}

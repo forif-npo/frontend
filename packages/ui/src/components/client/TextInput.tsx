@@ -62,7 +62,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
               error ? errorId : helpText ? helperTextId : undefined
             }
             aria-invalid={error ? "true" : undefined}
-            className={`rounded-2 text-gray-70 focus:border-input-border-active focus:ring-border-input-border-active mt-1 border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1 ${
+            className={`rounded-2 text-gray-70 focus:border-input-border-active focus:ring-border-input-border-active border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1 ${
               inputProps.disabled || inputProps.readOnly
                 ? "bg-input-surface-disabled border-input-border-disabled"
                 : "bg-input-surface border-input-border"

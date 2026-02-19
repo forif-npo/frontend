@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 
-interface StudyApplyHelpPanelProps {
+interface StudyHelpPanelProps {
+  title: string;
   defaultOpen?: boolean;
 }
 
@@ -114,9 +115,10 @@ function QuestionIcon({ className }: { className?: string }) {
   );
 }
 
-export function StudyApplyHelpPanel({
+export function StudyHelpPanel({
+  title,
   defaultOpen = false,
-}: StudyApplyHelpPanelProps) {
+}: StudyHelpPanelProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   if (!isOpen) {
@@ -132,8 +134,7 @@ export function StudyApplyHelpPanel({
   }
 
   return (
-    <div className="fixed inset-0 right-0 top-[64px] z-50 flex w-full flex-col gap-8 border-l border-[#b1b8be] bg-[#f4f5f6] px-6 py-8 shadow-[0px_0px_2px_0px_rgba(0,0,0,0.08),0px_8px_16px_0px_rgba(0,0,0,0.12)] sm:px-10 sm:py-10 lg:bottom-48 lg:left-auto lg:top-[200px] lg:w-[390px]">
-      {/* Header */}
+    <div className="fixed right-0 top-[200px] z-50 flex w-[390px] max-w-[calc(100vw-16px)] flex-col gap-8 border-l border-[#b1b8be] bg-[#f4f5f6] px-10 py-10 shadow-[0px_0px_2px_0px_rgba(0,0,0,0.08),0px_8px_16px_0px_rgba(0,0,0,0.12)]">
       <div className="flex flex-1 flex-col overflow-y-auto">
         <div className="flex w-full flex-col items-end">
           <button
@@ -146,7 +147,6 @@ export function StudyApplyHelpPanel({
             <CloseIcon className="text-text-basic h-[11px] w-[11px]" />
           </button>
 
-          {/* Single Tab */}
           <div className="flex w-full items-center">
             <div className="flex items-start gap-2">
               <div className="border-secondary flex h-10 min-w-14 items-center justify-center border-b-[3px] px-1">
@@ -160,7 +160,7 @@ export function StudyApplyHelpPanel({
 
         <div className="flex flex-1 flex-col gap-4">
           <h3 className="text-text-bolder text-[19px] font-bold leading-[1.5]">
-            스터디 신청 중 어려움이 있으신가요?
+            {title}
           </h3>
 
           <div className="flex flex-wrap items-start gap-2">
@@ -174,10 +174,8 @@ export function StudyApplyHelpPanel({
         </div>
 
         <div className="flex flex-col gap-8">
-          {/* Divider */}
           <div className="h-px w-full bg-[#cdd1d5]" />
 
-          {/* 기타 문의/도움말 */}
           <div className="flex flex-col gap-4">
             <h4 className="text-text-bolder text-[17px] font-bold leading-[1.5]">
               기타 문의/도움말

@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Button, SelectBox } from "@ui/components/client";
+import {
+  Button,
+  TextInput,
+  TextArea,
+  Checkbox,
+  SelectBox,
+} from "@ui/components/client";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
 import { TagSelectModal } from "../components/TagSelectModal";
@@ -134,8 +140,6 @@ export function Step2StudyOverview({
   } = form;
 
   const selectedTags = watch("tags") || [];
-  const goal = watch("goal") || "";
-  const introduction = watch("introduction") || "";
 
   const handleTagsConfirm = (tags: string[]) => {
     setValue("tags", tags, { shouldValidate: true });
@@ -250,17 +254,13 @@ export function Step2StudyOverview({
               해당 스터디를 수강하고 싶은 사유를 작성해주세요. 최소 50자 이상,
               최대 500자 이내로 작성해주세요.
             </HintText>
-            <textarea
+            <TextArea
               id="goal"
               placeholder="내용을 입력하세요"
-              className="text-text-bolder placeholder:text-text-disabled h-36 w-full resize-none rounded-[6px] border border-[#58616a] bg-white px-4 py-2 text-[17px] leading-[1.5] outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              size="large"
               maxLength={500}
               {...register("goal")}
             />
-            <div className="flex justify-end gap-[2px] text-[15px] leading-[1.5]">
-              <span className="text-text-primary">{goal.length}</span>
-              <span className="text-text-subtle">/100</span>
-            </div>
             {errors.goal && (
               <p className="text-text-danger text-[14px]">
                 {errors.goal.message}
@@ -277,17 +277,13 @@ export function Step2StudyOverview({
               해당 스터디를 수강하고 싶은 사유를 작성해주세요. 최소 50자 이상,
               최대 500자 이내로 작성해주세요.
             </HintText>
-            <textarea
+            <TextArea
               id="introduction"
               placeholder="내용을 입력하세요"
-              className="text-text-bolder placeholder:text-text-disabled h-36 w-full resize-none rounded-[6px] border border-[#58616a] bg-white px-4 py-2 text-[17px] leading-[1.5] outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              size="large"
               maxLength={500}
               {...register("introduction")}
             />
-            <div className="flex justify-end gap-[2px] text-[15px] leading-[1.5]">
-              <span className="text-text-primary">{introduction.length}</span>
-              <span className="text-text-subtle">/100</span>
-            </div>
             {errors.introduction && (
               <p className="text-text-danger text-[14px]">
                 {errors.introduction.message}
@@ -296,48 +292,29 @@ export function Step2StudyOverview({
           </div>
 
           {/* 온라인 체크박스 */}
-          <div className="flex items-start gap-2">
-            <Controller
-              control={control}
-              name="isOnline"
-              render={({ field: { value, onChange } }) => (
-                <div className="flex items-start gap-2">
-                  <button
-                    type="button"
-                    onClick={() => onChange(!value)}
-                    className="mt-[3px] flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] border border-[#58616a] bg-white p-[2px]"
-                    aria-pressed={value}
-                  >
-                    {value && (
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                      >
-                        <path
-                          d="M3 8L7 12L13 4"
-                          stroke="#256ef4"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-text-bolder text-[19px] leading-[1.5]">
-                      온라인으로 진행합니다.
-                    </span>
-                    <span className="text-text-subtle text-[17px] leading-[1.5]">
-                      스터디를 온라인으로 진행할 시 스터디 지원금이 나오지
-                      않습니다.
-                    </span>
-                  </div>
+          <Controller
+            control={control}
+            name="isOnline"
+            render={({ field: { value, onChange } }) => (
+              <div className="flex items-start gap-2">
+                <Checkbox
+                  id="isOnline"
+                  defaultChecked={value}
+                  onChange={onChange}
+                  size="lg"
+                />
+                <div className="flex flex-col gap-1">
+                  <span className="text-text-bolder text-[19px] leading-[1.5]">
+                    온라인으로 진행합니다.
+                  </span>
+                  <span className="text-text-subtle text-[17px] leading-[1.5]">
+                    스터디를 온라인으로 진행할 시 스터디 지원금이 나오지
+                    않습니다.
+                  </span>
                 </div>
-              )}
-            />
-          </div>
+              </div>
+            )}
+          />
         </div>
 
         {/* 진행 장소 / 요일 */}
@@ -347,9 +324,9 @@ export function Step2StudyOverview({
             <HintText>
               장소가 확정되지 않았다면 &apos;장소 미정&apos;을 선택해주세요.
             </HintText>
-            <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="flex flex-row gap-2 max-md:flex-col">
               {/* 장소 선택 */}
-              <div className="w-full sm:w-[320px]">
+              <div className="w-[320px] max-md:w-full">
                 <Controller
                   control={control}
                   name="location"
@@ -366,17 +343,16 @@ export function Step2StudyOverview({
                 />
               </div>
               {/* 강의실 */}
-              <div className="flex-1">
-                <input
+              <div className="flex flex-1 items-center max-md:w-full">
+                <TextInput
                   id="room"
-                  type="text"
+                  length="full"
                   placeholder="강의실(호)"
-                  className="rounded-2 border-input-border bg-input-surface text-text-bolder placeholder:text-text-disabled h-14 w-full border px-4 text-[19px] leading-[1.5] outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   {...register("room")}
                 />
               </div>
               {/* 요일 */}
-              <div className="flex-1">
+              <div className="flex-1 max-md:w-full">
                 <Controller
                   control={control}
                   name="weekDay"
@@ -403,30 +379,25 @@ export function Step2StudyOverview({
             <HintText>HH:MM ~ HH:MM</HintText>
             <div className="flex items-center gap-2">
               <div className="flex-1">
-                <input
+                <TextInput
                   id="startTime"
-                  type="text"
+                  length="full"
                   placeholder="HH:MM"
-                  className="rounded-2 border-input-border bg-input-surface text-text-bolder placeholder:text-text-disabled h-14 w-full border px-4 text-[19px] leading-[1.5] outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  error={errors.startTime?.message}
                   {...register("startTime")}
                 />
               </div>
               <MinusIcon className="h-6 w-6 shrink-0 text-[#58616a]" />
               <div className="flex-1">
-                <input
+                <TextInput
                   id="endTime"
-                  type="text"
+                  length="full"
                   placeholder="HH:MM"
-                  className="rounded-2 border-input-border bg-input-surface text-text-bolder placeholder:text-text-disabled h-14 w-full border px-4 text-[19px] leading-[1.5] outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  error={errors.endTime?.message}
                   {...register("endTime")}
                 />
               </div>
             </div>
-            {(errors.startTime || errors.endTime) && (
-              <p className="text-text-danger text-[14px]">
-                {errors.startTime?.message || errors.endTime?.message}
-              </p>
-            )}
           </div>
         </div>
       </div>
