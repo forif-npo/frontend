@@ -10,6 +10,7 @@ import type {
   StaffLoginRequest,
   StaffLoginResponse,
   User,
+  UserLoginData,
   UserLoginRequest,
   UserLoginResponse,
 } from "../types/api";
@@ -57,11 +58,13 @@ export const memberSignUp = async (
 export const userLogin = async (
   data: UserLoginRequest,
 ): Promise<UserLoginResponse> => {
-  return await apiClient
+  const response = await apiClient
     .post("api/v1/users/signin", {
       json: data,
     })
-    .json<UserLoginResponse>();
+    .json<ApiResponse<UserLoginData>>();
+  console.log(response.data);
+  return response;
 };
 
 /**

@@ -77,7 +77,7 @@ export default function Page() {
           </Body>
           <Divider full />
           <div className="flex flex-row gap-4">
-            <LinkButton href="/studies">스터디 목록</LinkButton>
+            <LinkButton href="/studies/list">스터디 목록</LinkButton>
             <LinkButton href="/studies/new">스터디 신청</LinkButton>
             <LinkButton href="/studies/new">동아리 소개</LinkButton>
             <LinkButton href="/studies/new">기술 블로그 </LinkButton>

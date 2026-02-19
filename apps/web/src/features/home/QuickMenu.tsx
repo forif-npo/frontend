@@ -1,5 +1,6 @@
 "use client";
 
+import { FaqIcon } from "@repo/assets/icons/krds";
 import {
   ArrowLeft,
   ArrowRight,
@@ -11,11 +12,10 @@ import {
   HeartPulse,
   MapPin,
 } from "@repo/assets/icons/lucide";
-import { FaqIcon } from "@repo/assets/icons/krds";
-import { Label } from "@ui/components/server";
 import { CarouselIndicators } from "@ui/components/client/Carousel";
-import type { ComponentType, SVGProps } from "react";
+import { Label } from "@ui/components/server";
 import Link from "next/link";
+import type { ComponentType, SVGProps } from "react";
 import { useState } from "react";
 
 const FaqIconAdapter = ({
@@ -43,7 +43,7 @@ interface QuickMenuItem {
 }
 
 const QUICK_MENU_ITEMS: QuickMenuItem[] = [
-  { icon: CalendarDays, label: "스터디 신청", href: "/studies" },
+  { icon: CalendarDays, label: "스터디 신청", href: "/studies/list" },
   { icon: FaqIconAdapter, label: "자주 묻는 질문", href: "/faq" },
   { icon: FileCheck, label: "증명서 발급", href: "/certificate" },
   { icon: FolderPlus, label: "운영진 지원", href: "/apply" },

@@ -47,14 +47,14 @@ export type SignUpResponse = ApiResponse<SignUpData>;
  * Google OAuth Access Token을 백엔드로 전송
  */
 export interface UserLoginRequest {
-  accessToken: string;
+  access_token: string;
 }
 
 /**
  * 부원 로그인 응답 데이터 타입
  */
 export interface UserLoginData {
-  accessToken: string;
+  access_token: string;
   role: "USER";
 }
 

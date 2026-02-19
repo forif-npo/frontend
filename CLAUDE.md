@@ -299,6 +299,56 @@ docker compose -f docker-compose.yml down
 8. **Conventional Commits**: Required by commitlint - use `pnpm commit`
 9. **TypeScript strict mode**: Type checking is enforced across the monorepo
 
+## Backend API Documentation
+
+**IMPORTANT**: All backend API schemas, endpoints, request/response types are documented in the OpenAPI specification:
+
+- **API Spec**: [`docs/api-docs.json`](docs/api-docs.json)
+- **Swagger UI**: https://dev.forif.org/swagger-ui/index.html
+- **Base URL**: `http://dev.forif.org`
+
+### **CRITICAL: Field Naming Convention**
+
+⚠️ **All API field names use snake_case, NOT camelCase**
+
+The OpenAPI spec (`docs/api-docs.json`) documents fields in camelCase, but **the actual backend API uses snake_case for ALL fields**:
+
+```typescript
+// ❌ WRONG - Will cause 401/400 errors
+{
+  accessToken: "...";
+}
+
+// ✅ CORRECT - Backend expects snake_case
+{
+  access_token: "...";
+}
+```
+
+**Always use snake_case** for:
+
+- Request body fields
+- Query parameters
+- Response data fields
+- All TypeScript type definitions in `packages/core/src/types/api.d.ts`
+
+When implementing API integrations:
+
+1. **Always refer to `docs/api-docs.json`** for accurate endpoint paths, request/response schemas, and data types
+2. **Convert camelCase to snake_case** - the spec shows camelCase but backend requires snake_case
+3. **Do not guess API contracts** - read the spec file to understand request bodies, query parameters, and response formats
+4. **Use TypeScript types** from `packages/core/src/types/api.d.ts` (already defined with snake_case)
+5. **Check authentication requirements** - some endpoints require cookies or access tokens
+
+Key API modules:
+
+- **User Auth**: `/api/v1/users/*` (signup, signin, refresh, logout)
+- **Staff Auth**: `/api/v1/staff/*` (staff signup/signin)
+- **Studies**: `/api/v1/studies/*` (list, detail, apply)
+- **Admin Studies**: `/api/v1/admin/studies/*` (manage, approve, reject)
+- **Posts**: `/api/v1/posts/*` (FAQs, announcements)
+- **Notifications**: `/api/v1/notifications/*` (AlimTalk)
+
 ## App-Specific Documentation
 
 For detailed information about each app:

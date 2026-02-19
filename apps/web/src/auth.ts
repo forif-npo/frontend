@@ -1,7 +1,7 @@
+import type { ExtendedAccount, StaffUser } from "next-auth";
 import NextAuth, { type NextAuthResult } from "next-auth";
-import type { StaffUser, ExtendedAccount } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { env } from "./env";
 
 const result = NextAuth({
@@ -95,13 +95,15 @@ const result = NextAuth({
 
           // 서버에서 백엔드 API 호출 (Google Access Token → 백엔드 JWT)
           const response = await userLogin({
-            accessToken: account.access_token!,
+            access_token: account.access_token!,
           });
 
-          if (response.data?.accessToken) {
+          console.log(response.data);
+
+          if (response.data?.access_token) {
             // 백엔드 JWT를 account에 저장 (jwt 콜백에서 사용)
             Object.assign(account, {
-              backendJwt: response.data.accessToken,
+              backendJwt: response.data.access_token,
               role: response.data.role,
             });
             return true;

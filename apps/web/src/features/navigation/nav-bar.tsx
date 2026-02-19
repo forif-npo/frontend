@@ -1,10 +1,5 @@
 "use client";
-import {
-  CloseIcon,
-  LoginIcon,
-  MyIcon,
-  SearchIcon,
-} from "@repo/assets/icons/krds";
+import { CloseIcon, LoginIcon } from "@repo/assets/icons/krds";
 import { Home, Menu } from "@repo/assets/icons/lucide";
 import NavLogo from "@repo/assets/images/nav_logo.png";
 import { Button } from "@ui/components/client";
@@ -235,13 +230,10 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
           ))}
         </ul>
         <div className="flex items-center gap-1">
-          <Button variant="text" size="small">
-            <SearchIcon width={18} height={18} className="fill-text-subtle" />
-          </Button>
           {isLoggedIn ? (
             <Link href="/my">
-              <Button variant="text" size="small">
-                <MyIcon width={18} height={18} className="fill-text-subtle" />
+              <Button variant="text" size="medium">
+                마이 페이지
               </Button>
             </Link>
           ) : (

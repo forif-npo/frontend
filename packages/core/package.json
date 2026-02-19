@@ -20,6 +20,7 @@
     "./mentor/api": "./src/mentor/api.ts",
     "./community/api": "./src/community/api.ts",
     "./notifications/api": "./src/notifications/api.ts",
+    "./my-page/api": "./src/my-page/api.ts",
     "./utils/api-client": "./src/utils/api-client.ts",
     "./types/api": "./src/types/api.d.ts",
     "./types/study": "./src/types/study.d.ts"

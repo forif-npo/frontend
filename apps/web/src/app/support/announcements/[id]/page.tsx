@@ -4,10 +4,11 @@ import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo } from "react";
 
-import { Breadcrumb } from "@ui/components/server";
 import { ShareIcon } from "@repo/assets/icons/krds";
+import { Breadcrumb } from "@ui/components/server";
 
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
+import { Button } from "@ui/components/client";
 
 export default function AnnouncementDetailPage() {
   const params = useParams<{ id: string }>();
@@ -111,13 +112,13 @@ export default function AnnouncementDetailPage() {
 
           {/* Back button */}
           <div className="mt-14">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              className="w-full"
               onClick={() => router.push("/support/announcements")}
-              className="border-divider-gray-light hover:bg-gray-20 w-full rounded-lg border bg-white py-4 text-[16px] font-medium"
             >
               목록으로 돌아가기
-            </button>
+            </Button>
           </div>
         </div>
       )}

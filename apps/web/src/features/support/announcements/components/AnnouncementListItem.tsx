@@ -17,7 +17,7 @@ export function AnnouncementListItem({ item }: AnnouncementListItemProps) {
     <button
       type="button"
       onClick={() => router.push(`/support/announcements/${item.post_id}`)}
-      className="border-divider-gray-light hover:bg-gray-20 flex w-full items-center justify-between gap-6 border-t bg-white px-0 py-6 text-left"
+      className="border-divider-gray-light flex w-full cursor-pointer items-center justify-between gap-6 border-t bg-white px-0 py-6 text-left"
     >
       <div className="flex min-w-0 flex-col gap-2">
         <div className="truncate text-base font-bold text-gray-900">
