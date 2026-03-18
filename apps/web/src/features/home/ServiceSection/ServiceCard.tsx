@@ -1,7 +1,7 @@
 import { ArrowRight } from "@repo/assets/icons/lucide";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
 import Link from "next/link";
-import type { ServiceData } from "@/mocks/data/home";
+import type { ServiceData } from "@/constants/home";
 
 interface ServiceCardProps {
   service: ServiceData;

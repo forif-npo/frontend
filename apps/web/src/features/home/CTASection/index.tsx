@@ -1,7 +1,7 @@
 import { Heading } from "@ui/components/server";
 import { ArrowRight } from "@repo/assets/icons/lucide";
 import Link from "next/link";
-import { ctaData } from "@/mocks/data/home";
+import { ctaData } from "@/constants/home";
 
 export function CTASection() {
   return (

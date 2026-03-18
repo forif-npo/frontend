@@ -2,7 +2,7 @@ import { ArrowRight } from "@repo/assets/icons/lucide";
 import { Body, Label } from "@ui/components/server";
 import Image from "next/image";
 import Link from "next/link";
-import type { HackathonData } from "@/mocks/data/home";
+import type { HackathonData } from "@/constants/home";
 
 interface HackathonCardProps {
   hackathon: HackathonData;

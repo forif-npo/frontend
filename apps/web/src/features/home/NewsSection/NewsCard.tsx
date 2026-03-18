@@ -1,7 +1,7 @@
 import { Body, Label } from "@ui/components/server";
 import Image from "next/image";
 import Link from "next/link";
-import type { NewsData } from "@/mocks/data/home";
+import type { NewsData } from "@core/types/api";
 
 interface NewsCardProps {
   news: NewsData;

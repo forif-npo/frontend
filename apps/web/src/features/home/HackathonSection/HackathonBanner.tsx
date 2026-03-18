@@ -2,7 +2,7 @@ import { ArrowRight } from "@repo/assets/icons/lucide";
 import { Body, Heading, Label } from "@ui/components/server";
 import Image from "next/image";
 import Link from "next/link";
-import { hackathonBanner } from "@/mocks/data/home";
+import { hackathonBanner } from "@/constants/home";
 
 export function HackathonBanner() {
   return (

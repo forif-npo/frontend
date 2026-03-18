@@ -1,4 +1,4 @@
-// Mock data for home page sections
+// Static data for home page sections
 
 export interface HackathonData {
   id: string;
@@ -6,16 +6,6 @@ export interface HackathonData {
   description: string;
   date: string;
   thumbnail: string;
-  link: string;
-}
-
-export interface NewsData {
-  id: string;
-  title: string;
-  summary: string;
-  date: string;
-  category: "notice" | "blog" | "faq";
-  thumbnail?: string;
   link: string;
 }
 
@@ -94,48 +84,6 @@ export const hackathonCards: HackathonData[] = [
     date: "자세히 보기",
     thumbnail: "/images/hackathon/study-img.png",
     link: "/hackathon/3",
-  },
-];
-
-// News Data
-export const newsData: NewsData[] = [
-  {
-    id: "1",
-    title: "Refresh Token Rotation - 토큰 탈취 시나리오",
-    summary:
-      "프런트엔드 개발자, 나아가 인증 관련 로직을 구현해본 개발자라면 토큰 인증 방식에 대해 알고 있을 것입니다.",
-    date: "2025.01.15",
-    category: "blog",
-    thumbnail: "/images/study/sample1.png",
-    link: "/news/1",
-  },
-  {
-    id: "2",
-    title: "제 2회 HSPC를 개최합니다!",
-    summary:
-      "HSPC(Hanyang-Sejong Programming Contest, 가칭)는 한양대학교의 FORIF X 세종대학교의 인터페이스 X 세종대학교의 SAI 동아리가 연합하여 진행할 예정인 교내 비전공자 및 새싹 개발자를 위한 프로그래밍 평가 대회입니다.",
-    date: "2025.01.10",
-    category: "notice",
-    link: "/news/2",
-  },
-  {
-    id: "3",
-    title: "스터디 신청 후 합격 여부는 어디서 알 수 있나요?",
-    summary:
-      "스터디 신청이 완료되면, 각 스터디 별로 정해진 일정에 따라 합격 여부를 알림톡으로 알려드립니다. 홈페이지에서도 합격 여부를 확인할 수 있습니다.",
-    date: "2025.01.08",
-    category: "faq",
-    link: "/news/3",
-  },
-  {
-    id: "4",
-    title: "LLM은 가치관을 가질 수 있는가?",
-    summary:
-      "'진료지원 플랫폼'은 진료기록을 타 병원 방문 진료 시에도 확인할 수 있도록 플랫폼을 구축하는 것으로, 시가 강원특별자치도, 국민건강보험공단, 원주연세의료원, 도 경제진흥원, 한국스마트헬스케어협회와 공동 추진 중이다.",
-    date: "2025.01.05",
-    category: "blog",
-    thumbnail: "/images/study/sample2.png",
-    link: "/news/4",
   },
 ];
 

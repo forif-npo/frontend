@@ -2,7 +2,7 @@
 
 import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
 import { useState } from "react";
-import { hackathonCards } from "@/mocks/data/home";
+import { hackathonCards } from "@/constants/home";
 import { HackathonBanner } from "./HackathonBanner";
 import { HackathonCard } from "./HackathonCard";
 

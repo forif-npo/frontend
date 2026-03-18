@@ -2,7 +2,7 @@
 
 import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
 import { useState } from "react";
-import { serviceData } from "@/mocks/data/home";
+import { serviceData } from "@/constants/home";
 import { ServiceCard } from "./ServiceCard";
 
 const ITEMS_PER_PAGE = 3;

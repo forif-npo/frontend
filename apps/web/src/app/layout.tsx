@@ -4,7 +4,6 @@ import { auth } from "@/auth";
 import { NAV_MENUS } from "@/constants/nav-menu.constant";
 import { Footer } from "@/features/navigation/footer";
 import { NavBar } from "@/features/navigation/nav-bar";
-import { MSWProvider } from "@/mocks/MSWProvider";
 import { ApiClientProvider } from "@/providers/ApiClientProvider";
 import localFont from "next/font/local";
 import { SessionProvider } from "next-auth/react";
@@ -42,13 +41,11 @@ export default async function RootLayout({
       >
         <SessionProvider session={session}>
           <ApiClientProvider>
-            <MSWProvider>
-              <NuqsAdapter>
-                <NavBar items={NAV_MENUS} isLoggedIn={isLoggedIn} />
-                {children}
-                <Footer />
-              </NuqsAdapter>
-            </MSWProvider>
+            <NuqsAdapter>
+              <NavBar items={NAV_MENUS} isLoggedIn={isLoggedIn} />
+              {children}
+              <Footer />
+            </NuqsAdapter>
           </ApiClientProvider>
         </SessionProvider>
       </body>

@@ -497,6 +497,19 @@ export interface MyCreatedStudyResponse {
 }
 
 /**
+ * 뉴스/소식 데이터 타입 (홈페이지 표시용)
+ */
+export interface NewsData {
+  id: string;
+  title: string;
+  summary: string;
+  date: string;
+  category: "notice" | "blog" | "faq";
+  thumbnail?: string;
+  link: string;
+}
+
+/**
  * ============================================
  * Community & Information Types
  * ============================================
