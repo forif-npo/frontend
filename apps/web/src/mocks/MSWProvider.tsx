@@ -1,11 +1,11 @@
-"use client";
+// "use client";
 
-import { useEffect } from "react";
-import { initMocks } from "./setup";
+// import { useEffect } from "react";
+// import { initMocks } from "./setup";
 
-export function MSWProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    initMocks();
-  }, []);
-  return <>{children}</>;
-}
+// export function MSWProvider({ children }: { children: React.ReactNode }) {
+//   useEffect(() => {
+//     initMocks();
+//   }, []);
+//   return <>{children}</>;
+// }
