@@ -1,0 +1,19 @@
+[    2248ms] [WARNING] Statsig is not ready to log exposures, will retry in 1 seconds @ https://www.figma.com/webpack-artifacts/assets/vendor-core-f234877ad2dd8132.min.js.br:53
+[    2810ms] [ERROR] Error fetching plan user: [Object] @ https://www.figma.com/webpack-artifacts/assets/vendor-core-f234877ad2dd8132.min.js.br:53
+[    5040ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://www.figma.com/api/folders/208066517:0
+[    5066ms] E: XHR for "/api/folders/208066517" failed with status 401
+    at C (https://www.figma.com/webpack-artifacts/assets/5608-f69620f55df5f4ae.min.js.br:1609:13698)
+    at async Object.P [as get] (https://www.figma.com/webpack-artifacts/assets/5608-f69620f55df5f4ae.min.js.br:1609:14081)
+    at async https://www.figma.com/webpack-artifacts/assets/5608-f69620f55df5f4ae.min.js.br:1404:139161
+    at async _.validate (https://www.figma.com/webpack-artifacts/assets/figma_app_beta-499bb5a90c02022c.min.js.br:422:1522800)
+    at async h.fetchObject (https://www.figma.com/webpack-artifacts/assets/5608-f69620f55df5f4ae.min.js.br:878:213870)
+    at async g (https://www.figma.com/webpack-artifacts/assets/5608-f69620f55df5f4ae.min.js.br:878:194252)
+[    6203ms] [WARNING] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently @ https://static.figma.com/fullscreen/389fff3c03d950d1297ba9a6e2b20dc44706922e/fullscreen-wasm/compiled_wasm.js.br:1
+[    6249ms] [WARNING] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently @ https://static.figma.com/fullscreen/389fff3c03d950d1297ba9a6e2b20dc44706922e/fullscreen-wasm/compiled_wasm.js.br:1
+[    6543ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://www.figma.com/api/mobile_app_push/OFs4c1sdsCyoHlReCTE59u:0
+[    6566ms] E: XHR for "/api/mobile_app_push/OFs4c1sdsCyoHlReCTE59u" failed with status 401
+    at C (https://www.figma.com/webpack-artifacts/assets/5608-f69620f55df5f4ae.min.js.br:1609:13698)
+    at async C.r [as post] (https://www.figma.com/webpack-artifacts/assets/5608-f69620f55df5f4ae.min.js.br:1609:14328)
+[   10611ms] [WARNING] Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <input.focus-target>
+Ancestor with aria-hidden: <input.focus-target> @ https://www.figma.com/design/OFs4c1sdsCyoHlReCTE59u/FORIF_WEB_v2.0.0?node-id=9392-116967:0

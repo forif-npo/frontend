@@ -23,6 +23,7 @@ const ChevronIcon: React.FC<{ isOpen: boolean; className?: string }> = ({
 
 interface AccordionItemProps {
   title: string;
+  tagSlot?: React.ReactNode;
   children: React.ReactNode;
   isOpen: boolean;
   onClick: () => void;
@@ -30,6 +31,7 @@ interface AccordionItemProps {
 
 const AccordionItem: React.FC<AccordionItemProps> = ({
   title,
+  tagSlot,
   children,
   isOpen,
   onClick,
@@ -49,8 +51,11 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         <Label size="l" weight="bold" className="cursor-pointer">
           {title}
         </Label>
-        <span className="ml-6 flex-shrink-0">
-          <ChevronIcon isOpen={isOpen} className="text-text-basic" />
+        <span className="ml-6 flex items-center gap-2">
+          {tagSlot}
+          <span className="flex-shrink-0">
+            <ChevronIcon isOpen={isOpen} className="text-text-basic" />
+          </span>
         </span>
         <span className="sr-only">{isOpen ? "접기" : "펼치기"}</span>
       </button>

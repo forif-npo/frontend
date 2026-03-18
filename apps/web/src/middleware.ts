@@ -8,6 +8,9 @@ const publicRoutes = [
   "/terms",
   "/privacy-policy",
   "/studies/create",
+  "/signup/complete",
+  "/support/faqs",
+  "/support/announcements",
   "/studies/list",
 ];
 const publicParamsList = [
@@ -27,7 +30,9 @@ const authMiddleware = auth((req) => {
   const isLoggedIn = !!req.auth && req.auth.isSignUp;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isAuthRoute = authRoutes.includes(pathname);
-  const isPublicRoute = publicRoutes.includes(pathname);
+  const isPublicRoute =
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith("/support/announcements/");
   const isPublicParamsRoute = publicParamsList
     .map((v) => pathname.startsWith(v))
     .some(Boolean);

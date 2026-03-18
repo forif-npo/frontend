@@ -47,14 +47,14 @@ export type SignUpResponse = ApiResponse<SignUpData>;
  * Google OAuth Access Token을 백엔드로 전송
  */
 export interface UserLoginRequest {
-  accessToken: string;
+  access_token: string;
 }
 
 /**
  * 부원 로그인 응답 데이터 타입
  */
 export interface UserLoginData {
-  accessToken: string;
+  access_token: string;
   role: "USER";
 }
 
@@ -494,6 +494,19 @@ export interface MyCreatedStudyResponse {
   recruit_status: "APPLICABLE" | "CLOSED";
   year: number;
   semester: number;
+}
+
+/**
+ * 뉴스/소식 데이터 타입 (홈페이지 표시용)
+ */
+export interface NewsData {
+  id: string;
+  title: string;
+  summary: string;
+  date: string;
+  category: "notice" | "blog" | "faq";
+  thumbnail?: string;
+  link: string;
 }
 
 /**

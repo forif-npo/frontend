@@ -4,7 +4,7 @@ import React from "react";
 
 export type BadgeProps = {
   label: string;
-  variant?: "primary" | "success" | "warning" | "danger" | "disabled";
+  variant?: "primary" | "success" | "warning" | "danger" | "disabled" | "info";
   size?: "small" | "medium" | "large";
   appearance?: "fill" | "outline" | "solid-pastel";
   className?: string;
@@ -35,6 +35,11 @@ const variantStyles = {
     fill: "bg-danger-50",
     outline: "bg-transparent border border-border-danger",
     "solid-pastel": "bg-danger-5",
+  },
+  info: {
+    fill: "bg-information-50",
+    outline: "bg-transparent border border-border-information",
+    "solid-pastel": "bg-information-5",
   },
 };
 
@@ -69,6 +74,11 @@ const textColors = {
     fill: "text-text-basic-inverse",
     outline: "text-text-danger",
     "solid-pastel": "text-text-danger",
+  },
+  info: {
+    fill: "text-text-basic-inverse",
+    outline: "text-text-information",
+    "solid-pastel": "text-text-information",
   },
 };
 
