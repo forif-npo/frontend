@@ -68,7 +68,7 @@ async function refreshAccessToken(): Promise<string | null> {
       }
 
       const data = await response.json();
-      const newToken = data.data?.accessToken;
+      const newToken = data.data?.access_token;
 
       if (newToken) {
         // NextAuth 세션 업데이트 콜백 호출
@@ -173,7 +173,7 @@ export const handleApiError = async (error: unknown): Promise<string> => {
     try {
       const errorData = await error.response.json<{
         message?: string;
-        errorCode?: string;
+        error_code?: string;
       }>();
       return errorData.message || "요청에 실패했습니다.";
     } catch {

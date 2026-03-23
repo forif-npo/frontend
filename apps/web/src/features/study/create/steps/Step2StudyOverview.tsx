@@ -246,42 +246,19 @@ export function Step2StudyOverview({
           </div>
         </div>
 
-        {/* 목표 */}
-        <div className="flex flex-col gap-6">
-          <SectionTitle>목표</SectionTitle>
-          <div className="flex flex-col gap-2">
-            <HintText>
-              해당 스터디를 수강하고 싶은 사유를 작성해주세요. 최소 50자 이상,
-              최대 500자 이내로 작성해주세요.
-            </HintText>
-            <TextArea
-              id="goal"
-              placeholder="내용을 입력하세요"
-              size="large"
-              maxLength={500}
-              {...register("goal")}
-            />
-            {errors.goal && (
-              <p className="text-text-danger text-[14px]">
-                {errors.goal.message}
-              </p>
-            )}
-          </div>
-        </div>
-
         {/* 스터디 소개 */}
         <div className="flex flex-col gap-6">
           <SectionTitle>스터디 소개</SectionTitle>
           <div className="flex flex-col gap-2">
             <HintText>
-              해당 스터디를 수강하고 싶은 사유를 작성해주세요. 최소 50자 이상,
-              최대 500자 이내로 작성해주세요.
+              스터디에 대해 소개해주세요. 최소 50자 이상, 최대 5,000자 이내로
+              작성해주세요.
             </HintText>
             <TextArea
               id="introduction"
               placeholder="내용을 입력하세요"
               size="large"
-              maxLength={500}
+              maxLength={5000}
               {...register("introduction")}
             />
             {errors.introduction && (

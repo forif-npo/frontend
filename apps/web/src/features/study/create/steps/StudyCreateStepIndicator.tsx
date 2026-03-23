@@ -10,7 +10,7 @@ const STEPS = [
     number: 2,
     title: "스터디 개요 및 일정",
     description:
-      "이름, 한 줄 설명, 태그, 썸네일, 목표, 스터디소개, 진행 요일/시간/장소",
+      "이름, 한 줄 설명, 태그, 썸네일, 스터디소개, 진행 요일/시간/장소",
   },
   {
     number: 3,
@@ -20,7 +20,7 @@ const STEPS = [
   {
     number: 4,
     title: "추천대상 및 운영 방식",
-    description: "난이도, 선정기준, 모집인원, 참고자료, 면접여부",
+    description: "난이도, 참고자료, 면접여부",
   },
   {
     number: 5,
