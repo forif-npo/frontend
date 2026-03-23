@@ -64,11 +64,11 @@ export default function StudyListPage() {
   }, [apiParams, refetch]);
 
   const handleCardClick = (study: Study) => {
-    router.push(`/study/detail/${study.id}`);
+    router.push(`/studies/detail/${study.id}`);
   };
 
   const handleApplyClick = (study: Study) => {
-    router.push(`/study/detail/${study.id}/apply`);
+    router.push(`/studies/detail/${study.id}/apply`);
   };
 
   if (error) {

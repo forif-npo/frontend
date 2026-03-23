@@ -129,7 +129,7 @@ export function StudyApplyComplete({
 
             {/* Service Links */}
             <div className="flex flex-wrap gap-3 sm:gap-4">
-              <ServiceLink href="/study/list" label="스터디 목록" />
+              <ServiceLink href="/studies/list" label="스터디 목록" />
               <ServiceLink href="/club-room" label="동아리방" />
               <ServiceLink href="/about" label="동아리소개" />
               <ServiceLink href="/blog" label="기술 블로그" />

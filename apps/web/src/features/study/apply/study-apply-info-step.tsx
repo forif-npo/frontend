@@ -3,6 +3,7 @@
 import { Button, TextInput } from "@ui/components/client";
 import { GuideCheckIcon, RoundCheckIcon } from "@ui/components/server";
 import { StudyApplyTitle } from "./StudyApplyTitle";
+import { BadgeTag } from "./utils";
 
 type UserInfo = {
   studentId: string;
@@ -13,10 +14,7 @@ type UserInfo = {
 
 interface StudyApplyInfoStepProps {
   studyName: string;
-  tags: Array<{
-    label: string;
-    variant: "primary" | "success" | "warning" | "danger" | "disabled";
-  }>;
+  tags: BadgeTag[];
   userInfo: UserInfo;
   onNext: () => void;
   onCancel: () => void;
@@ -80,7 +78,7 @@ export function StudyApplyInfoStep({
             기본 신청 정보를 확인해주세요
           </h2>
 
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-6">
               <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
                 학번
@@ -155,15 +153,15 @@ export function StudyApplyInfoStep({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-          <div className="flex flex-1 gap-3 sm:gap-4">
+        <div className="flex items-start justify-between">
+          <div className="flex gap-4">
             <Button
               variant="tertiary"
               size="large"
               onClick={onCancel}
-              className="h-14 min-w-0 flex-1 sm:min-w-[90px] sm:flex-none"
+              className="h-14 w-[90px]"
             >
-              취소하기
+              취소
             </Button>
             <Button
               variant="secondary"
@@ -171,7 +169,7 @@ export function StudyApplyInfoStep({
               onClick={() => {
                 /* TODO: Handle edit */
               }}
-              className="h-14 min-w-0 flex-1 sm:min-w-[90px] sm:flex-none"
+              className="h-14 w-auto min-w-[90px] whitespace-nowrap"
             >
               수정하기
             </Button>
@@ -180,7 +178,7 @@ export function StudyApplyInfoStep({
             variant="primary"
             size="large"
             onClick={onNext}
-            className="h-14 w-full shrink-0 sm:w-auto sm:min-w-[90px]"
+            className="h-14 w-[90px]"
           >
             다음
           </Button>

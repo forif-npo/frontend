@@ -63,11 +63,11 @@ export default function StudyApplyPage({ params }: Props) {
         ) : (
           <StudyApplyReasonStep
             action={handleSubmit}
-            studyOptions={studyOptions}
             currentStudy={currentStudy}
             studyName={currentStudy.study_name}
             tags={badgeTags}
             onPrevious={goToPrevious}
+            onCancel={goToStudyList}
           />
         )}
       </div>

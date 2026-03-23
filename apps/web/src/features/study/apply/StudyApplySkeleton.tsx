@@ -35,7 +35,7 @@ export function StudyApplySkeleton() {
 
           <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
             <Bone className="h-8 w-72" />
-            <div className="flex flex-col gap-10">
+            <div className="flex flex-col gap-6">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="flex flex-col gap-6">
                   <Bone className="h-6 w-20" />
