@@ -134,7 +134,7 @@ export function StudyHelpPanel({
   }
 
   return (
-    <div className="fixed right-0 top-[200px] z-50 flex w-[390px] max-w-[calc(100vw-16px)] flex-col gap-8 border-l border-[#b1b8be] bg-[#f4f5f6] px-10 py-10 shadow-[0px_0px_2px_0px_rgba(0,0,0,0.08),0px_8px_16px_0px_rgba(0,0,0,0.12)]">
+    <div className="fixed right-0 top-[200px] z-50 flex max-h-[calc(100vh-200px-40px)] w-[390px] max-w-[calc(100vw-16px)] flex-col gap-8 border-l border-[#b1b8be] bg-[#f4f5f6] px-10 py-10 shadow-[0px_0px_2px_0px_rgba(0,0,0,0.08),0px_8px_16px_0px_rgba(0,0,0,0.12)]">
       <div className="flex flex-1 flex-col overflow-y-auto">
         <div className="flex w-full flex-col items-end">
           <button
