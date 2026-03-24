@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Heading, Label } from "@ui/components/server";
 import { MyPageStudyCard } from "./MyPageStudyCard";
 import type { StudyBySemester } from "@core/my-page/api";
 
@@ -10,33 +9,22 @@ interface StudySectionProps {
 }
 
 export function StudySection({ studiesData }: StudySectionProps) {
-  const [selectedSemester, setSelectedSemester] = useState<string>("all");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [isPending, startTransition] = useTransition();
 
-  // Generate semester tabs
-  const semesterTabs = [
-    { id: "all", label: "전체 학기" },
-    ...studiesData.semesters.map((sem) => ({
-      id: `${sem.year}-${sem.semester}`,
-      label: sem.semester_label,
-    })),
-  ];
+  const sortedSemesters = [...studiesData.semesters].sort((a, b) => {
+    const aKey = a.year * 10 + a.semester;
+    const bKey = b.year * 10 + b.semester;
+    return sortOrder === "newest" ? bKey - aKey : aKey - bKey;
+  });
 
-  // Filter studies by selected semester
-  const filteredStudies =
-    selectedSemester === "all"
-      ? studiesData.semesters
-      : studiesData.semesters.filter(
-          (sem) => `${sem.year}-${sem.semester}` === selectedSemester,
-        );
+  const totalCount = sortedSemesters.length;
 
   const handleDownloadCertificate = async (studyId: number) => {
     startTransition(async () => {
       try {
         const { getCertificate } = await import("@core/my-page/api");
         const certificateUrl = await getCertificate(studyId);
-
-        // Open certificate in new tab
         window.open(certificateUrl, "_blank");
       } catch (error) {
         console.error("Failed to download certificate:", error);
@@ -46,44 +34,53 @@ export function StudySection({ studiesData }: StudySectionProps) {
   };
 
   return (
-    <div className="flex-1 px-16 py-8">
-      {/* Page Header */}
-      <Heading size="l" className="mb-8">
-        내 스터디
-      </Heading>
+    <div>
+      {/* Sort and Count */}
+      <div className="mb-6 flex items-center justify-between">
+        <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
+          스터디 <span className="text-[#0b50d0]">{totalCount}</span>개
+        </p>
 
-      {/* Semester Tabs */}
-      <div className="mb-8 flex flex-wrap gap-2">
-        {semesterTabs.map((tab) => {
-          const isSelected = selectedSemester === tab.id;
-          return (
+        <div className="flex items-center gap-3">
+          <p className="text-[17px] font-bold leading-[1.5]">정렬기준</p>
+          <div className="flex gap-2">
             <button
-              key={tab.id}
-              onClick={() => setSelectedSemester(tab.id)}
-              className={`rounded-t-lg border-b-4 px-6 py-3 transition-all ${
-                isSelected
-                  ? "border-blue-600 font-semibold text-blue-600"
-                  : "border-transparent text-gray-600 hover:bg-gray-50"
+              onClick={() => setSortOrder("newest")}
+              className={`rounded-[4px] px-1 text-[17px] leading-[1.5] transition-colors ${
+                sortOrder === "newest"
+                  ? "text-text-basic bg-[#d6e0eb]"
+                  : "text-text-basic hover:bg-[#d6e0eb]/50"
               }`}
             >
-              <Label size="l">{tab.label}</Label>
+              최신순
             </button>
-          );
-        })}
+            <button
+              onClick={() => setSortOrder("oldest")}
+              className={`rounded-[4px] px-1 text-[17px] leading-[1.5] transition-colors ${
+                sortOrder === "oldest"
+                  ? "text-text-basic bg-[#d6e0eb]"
+                  : "text-text-basic hover:bg-[#d6e0eb]/50"
+              }`}
+            >
+              오래된 순
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Study Grid */}
-      {filteredStudies.length === 0 ? (
+      {/* Study List */}
+      {sortedSemesters.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-500">
           <p className="text-lg">등록된 스터디가 없습니다</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredStudies.map((semesterData) => (
+        <div className="grid grid-cols-3 gap-[24px]">
+          {sortedSemesters.map((semesterData) => (
             <MyPageStudyCard
               key={`${semesterData.year}-${semesterData.semester}-${semesterData.study.study_id}`}
               study={semesterData.study}
               semesterLabel={semesterData.semester_label}
+              isCurrent={semesterData.is_current}
               onDownloadCertificate={() =>
                 handleDownloadCertificate(semesterData.study.study_id)
               }

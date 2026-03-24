@@ -43,7 +43,7 @@ export function ApplicationCard({
         <div className="flex flex-wrap gap-1">
           <Badge
             label={semesterLabel}
-            variant="point"
+            variant="primary"
             appearance="solid-pastel"
             size="medium"
           />
@@ -55,7 +55,7 @@ export function ApplicationCard({
           />
           <Badge
             label={difficultyLabel}
-            variant="point"
+            variant="primary"
             appearance="solid-pastel"
             size="medium"
           />
@@ -77,7 +77,10 @@ export function ApplicationCard({
         {/* Action Button */}
         <div className="mt-2 flex w-full justify-end">
           <Link href={`/studies/${study.study_id}`}>
-            <Button variant="secondary" className="min-w-[100px]">
+            <Button
+              variant="secondary"
+              className="min-w-[100px] whitespace-nowrap"
+            >
               자세히 보기
             </Button>
           </Link>

@@ -34,15 +34,15 @@ export const signInWithGoogle = async () => {
 export const handleGoogleCallback = async (googleAccessToken: string) => {
   try {
     const response = await userLogin({
-      accessToken: googleAccessToken,
+      access_token: googleAccessToken,
     });
 
-    if (response.data?.accessToken) {
+    if (response.data?.access_token) {
       // JWT Access Token을 메모리(전역)에 저장 (클라이언트에서 실행됨)
       // Refresh Token은 HttpOnly 쿠키로 자동 저장됨
       return {
         success: true,
-        accessToken: response.data.accessToken,
+        accessToken: response.data.access_token,
         role: response.data.role,
       };
     }
@@ -57,10 +57,10 @@ export const handleGoogleCallback = async (googleAccessToken: string) => {
 export const signUp = async (data: SignUpValues) => {
   try {
     const response = await memberSignUp({
-      studentId: Number(data.id), // string을 number로 변환
-      userName: data.name,
+      student_id: Number(data.id), // string을 number로 변환
+      user_name: data.name,
       email: data.email,
-      phoneNum: data.phoneNumber,
+      phone_num: data.phoneNumber,
       department: data.department,
     });
 
@@ -68,7 +68,7 @@ export const signUp = async (data: SignUpValues) => {
     // accessToken은 응답으로 반환하여 클라이언트에서 저장
     return {
       success: true,
-      accessToken: response.data?.accessToken,
+      accessToken: response.data?.access_token,
       role: response.data?.role,
     };
   } catch (error) {
