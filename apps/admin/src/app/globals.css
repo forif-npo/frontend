@@ -3,6 +3,7 @@
 @import "tw-animate-css";
 @import "@repo/ui/theme.css";
 
+@source "../**/*.{ts,tsx}";
 @source "../../../../packages/big-calendar/src/**/*.{ts,tsx}";
 
 @custom-variant dark (&:is(.dark *));

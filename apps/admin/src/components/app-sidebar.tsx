@@ -29,6 +29,8 @@ import {
   LayoutGrid,
   MessageSquare,
   Settings,
+  UserCog,
+  BookUser,
   Users,
   Users2,
 } from "lucide-react";
@@ -53,9 +55,10 @@ const menuItems = {
   memberManagement: {
     label: "부원 관리",
     items: [
+      { title: "운영진", url: "/operators", icon: UserCog },
+      { title: "멘토", url: "/mentors", icon: BookUser },
       { title: "부원", url: "/members", icon: Users },
       { title: "웹사이트 회원", url: "/users", icon: Users2 },
-      { title: "운영진", url: "/operators", icon: Settings },
     ],
   },
   postManagement: {
