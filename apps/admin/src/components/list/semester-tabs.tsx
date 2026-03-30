@@ -1,14 +1,14 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SemesterLabel } from "./types";
 
 interface SemesterTabsProps {
-  currentSemester: SemesterLabel;
-  onSemesterChange: (semester: SemesterLabel) => void;
+  currentSemester: string;
+  onSemesterChange: (semester: string) => void;
+  options?: string[];
 }
 
-export const SEMESTER_OPTIONS: SemesterLabel[] = [
+export const DEFAULT_SEMESTER_OPTIONS = [
   "전체",
   "25-2",
   "25-1",
@@ -22,15 +22,16 @@ export const SEMESTER_OPTIONS: SemesterLabel[] = [
 export function SemesterTabs({
   currentSemester,
   onSemesterChange,
+  options = DEFAULT_SEMESTER_OPTIONS,
 }: SemesterTabsProps) {
   return (
     <Tabs
       value={currentSemester}
-      onValueChange={(val) => onSemesterChange(val as SemesterLabel)}
+      onValueChange={onSemesterChange}
       className="w-full"
     >
       <TabsList className="h-auto w-full flex-wrap justify-start gap-1 bg-transparent p-0">
-        {SEMESTER_OPTIONS.map((semester) => (
+        {options.map((semester) => (
           <TabsTrigger
             key={semester}
             value={semester}

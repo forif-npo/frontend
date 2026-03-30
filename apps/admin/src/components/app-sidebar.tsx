@@ -53,7 +53,7 @@ const menuItems = {
     ],
   },
   memberManagement: {
-    label: "부원 관리",
+    label: "회원 관리",
     items: [
       { title: "운영진", url: "/operators", icon: UserCog },
       { title: "멘토", url: "/mentors", icon: BookUser },

@@ -1,14 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/list/data-table";
+import { SearchBar } from "@/components/list/search-bar";
+import { SemesterTabs } from "@/components/list/semester-tabs";
 import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { columns } from "./columns";
-import { DataTable } from "./data-table";
-import { SearchBar } from "./search-bar";
-import { SemesterTabs } from "./semester-tabs";
 import { SemesterLabel, Study } from "./types";
 
 interface StudiesViewProps {
@@ -22,27 +22,17 @@ interface StudiesViewProps {
 export function StudiesView({
   initialData,
   currentSemester,
-  // TODO: Implement pagination UI
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   hasNext = false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   nextCursor = null,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   totalElements = 0,
 }: StudiesViewProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Handle semester change by updating URL
-  const handleSemesterChange = (semester: SemesterLabel) => {
-    // Determine the query parameter value
-    // If it's the default current semester (e.g. 25-2), we could clear the param,
-    // but explicit is better for now given the requirements.
-    // Wait, 25-2 is the calculated "current", so let's just push whatever is selected.
+  const handleSemesterChange = (semester: string) => {
     router.push(`/studies?semester=${semester}`);
   };
 
-  // Filter data based on search query (Client-side filtering of the server-fetched list)
   const filteredData = initialData.filter((study) => {
     const query = searchQuery.toLowerCase();
     return (
@@ -107,13 +97,11 @@ export function StudiesView({
       </div>
 
       <div className="space-y-4">
-        <SearchBar value={searchQuery} onChange={setSearchQuery} />
-
-        {/* We don't need isLoading state here because the page transition handles it (Server Component) 
-            or we could wrap in Suspense boundary in parent. 
-            For client navigation, Next.js handles the loading state (or we can use useTransition).
-            For now, instant transition or Next.js built-in loading is fine.
-        */}
+        <SearchBar
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="스터디 목록 검색"
+        />
         <DataTable columns={columns} data={filteredData} />
       </div>
     </div>
