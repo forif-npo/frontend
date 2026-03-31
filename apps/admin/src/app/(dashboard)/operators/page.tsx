@@ -16,8 +16,6 @@ export default async function Page({ searchParams }: PageProps) {
 
   const activeSemester = (params.semester as OperatorSemesterLabel) || "전체";
 
-  const search = params.search?.trim().toLowerCase() ?? "";
-
   const session = await auth();
   const accessToken = session?.access_token;
 
@@ -36,20 +34,14 @@ export default async function Page({ searchParams }: PageProps) {
       accessToken,
     });
 
-    const filteredData = search
-      ? operatorsData.content.filter((operator) =>
-          operator.name.toLowerCase().includes(search),
-        )
-      : operatorsData.content;
-
     return (
       <OperatorsView
-        initialData={filteredData}
+        initialData={operatorsData.content}
         currentSemester={activeSemester}
         hasNext={false}
         nextCursor={null}
-        totalElements={filteredData.length}
-        initialSearch={search}
+        totalElements={operatorsData.content.length}
+        initialSearch={params.search ?? ""}
       />
     );
   } catch (error) {

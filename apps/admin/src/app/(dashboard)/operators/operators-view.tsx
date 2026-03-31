@@ -72,9 +72,11 @@ export function OperatorsView({
 
     const ws = XLSX.utils.json_to_sheet(
       initialData.map((operator) => ({
-        "회원 ID": operator.user_id,
+        학번: operator.userId,
+        학과: operator.department,
         이름: operator.name,
-        소속: operator.affiliation,
+        전화번호: operator.phoneNum,
+        직급: operator.title,
       })),
     );
 

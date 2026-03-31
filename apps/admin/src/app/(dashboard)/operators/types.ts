@@ -1,7 +1,11 @@
 export type Operator = {
-  user_id: number;
+  userId: number;
+  department: string;
   name: string;
-  affiliation: string;
+  phoneNum: string;
+  title: string;
+  actYear: number;
+  actSemester: number;
 };
 
 export type OperatorListResult = {

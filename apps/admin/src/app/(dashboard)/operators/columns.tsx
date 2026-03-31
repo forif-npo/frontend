@@ -8,7 +8,7 @@ import { Operator } from "./types";
 
 export const columns: ColumnDef<Operator>[] = [
   {
-    accessorKey: "user_id",
+    accessorKey: "userId",
     header: ({ column }) => {
       return (
         <Button
@@ -16,13 +16,31 @@ export const columns: ColumnDef<Operator>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="p-0 hover:bg-transparent"
         >
-          회원 ID
+          학번
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("user_id")}</div>
+      <div className="font-medium">{row.getValue("userId")}</div>
+    ),
+  },
+  {
+    accessorKey: "department",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0 hover:bg-transparent"
+        >
+          학과
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="text-muted-foreground">{row.getValue("department")}</div>
     ),
   },
   {
@@ -44,7 +62,7 @@ export const columns: ColumnDef<Operator>[] = [
     ),
   },
   {
-    accessorKey: "affiliation",
+    accessorKey: "phoneNum",
     header: ({ column }) => {
       return (
         <Button
@@ -52,13 +70,31 @@ export const columns: ColumnDef<Operator>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="p-0 hover:bg-transparent"
         >
-          소속
+          전화번호
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("affiliation")}</div>
+      <div className="text-muted-foreground">{row.getValue("phoneNum")}</div>
+    ),
+  },
+  {
+    accessorKey: "title",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0 hover:bg-transparent"
+        >
+          직급
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="text-muted-foreground">{row.getValue("title")}</div>
     ),
   },
 ];

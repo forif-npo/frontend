@@ -1,17 +1,9 @@
+import { apiClient } from "@core/utils/api-client";
+import type { ApiResponse } from "@core/types/api";
 import { Operator, OperatorListResult, OperatorSemesterLabel } from "./types";
 
 interface ForifTeamItem {
-  id: number;
-  userId: number;
-  userName: string;
-  actYear: number;
-  actSemester: number;
-  userTitle: string;
-  clubDepartment: string;
-  introTag: string;
-  selfIntro: string;
-  profImgUrl: string;
-  graduateYear: number;
+  [key: string]: unknown;
 }
 
 interface FetchOperatorsParams {
@@ -19,37 +11,87 @@ interface FetchOperatorsParams {
   accessToken: string;
 }
 
-interface ForifTeamResponse {
-  timestamp: number;
-  data: ForifTeamItem[];
-  errorCode: string | null;
-  message: string;
-}
+type ForifTeamListResponse = ForifTeamItem[];
 
-const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://dev.forif.org";
+const MAIN_SEMESTERS = new Set([
+  "25-2",
+  "25-1",
+  "24-2",
+  "24-1",
+  "23-2",
+  "23-1",
+]);
 
-function getOperatorsUrl(semester: OperatorSemesterLabel): string {
+function getOperatorsEndpoint(semester: OperatorSemesterLabel): string {
   if (semester === "전체" || semester === "그 외") {
-    return `${BASE_URL}/api/v1/forif-team`;
+    return "api/v1/forif-team";
   }
 
   const match = semester.match(/^(\d+)-(\d+)$/);
 
   if (!match) {
-    return `${BASE_URL}/api/v1/forif-team`;
+    return "api/v1/forif-team";
   }
 
   const year = Number(`20${match[1]}`);
   const sem = Number(match[2]);
 
-  return `${BASE_URL}/api/v1/forif-team/${year}/${sem}`;
+  return `api/v1/forif-team/${year}/${sem}`;
+}
+
+function pickString(...values: unknown[]): string {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim() !== "") {
+      return value;
+    }
+    if (typeof value === "number") {
+      return String(value);
+    }
+  }
+  return "";
+}
+
+function pickNumber(...values: unknown[]): number {
+  for (const value of values) {
+    if (typeof value === "number") {
+      return value;
+    }
+    if (
+      typeof value === "string" &&
+      value.trim() !== "" &&
+      !Number.isNaN(Number(value))
+    ) {
+      return Number(value);
+    }
+  }
+  return 0;
 }
 
 function mapToOperator(item: ForifTeamItem): Operator {
   return {
-    user_id: item.userId,
-    name: item.userName,
-    affiliation: item.clubDepartment,
+    userId: pickNumber(
+      item.userId,
+      item.user_id,
+      item.studentId,
+      item.student_id,
+    ),
+    department: pickString(
+      item.clubDepartment,
+      item.club_department,
+      item.department,
+      item.major,
+    ),
+    name: pickString(item.userName, item.user_name, item.name),
+    phoneNum: pickString(item.phoneNum, item.phone_num, item.tel, item.phone),
+    title: pickString(
+      item.userTitle,
+      item.user_title,
+      item.title,
+      item.role,
+      item.position,
+    ),
+    actYear: pickNumber(item.actYear, item.act_year, item.year),
+    actSemester: pickNumber(item.actSemester, item.act_semester, item.semester),
   };
 }
 
@@ -57,31 +99,37 @@ export async function fetchOperators({
   semester,
   accessToken,
 }: FetchOperatorsParams): Promise<OperatorListResult> {
-  const url = getOperatorsUrl(semester);
+  const endpoint = getOperatorsEndpoint(semester);
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: "application/json",
-    },
-    cache: "no-store",
+  console.log("[Operators API] Fetching from API:", {
+    endpoint,
+    semester,
   });
 
-  if (!response.ok) {
-    const text = await response.text();
-    console.error("[Operators API] status:", response.status);
-    console.error("[Operators API] body:", text);
-    throw new Error(`운영진 목록 조회 실패 (${response.status})`);
-  }
+  const response = await apiClient
+    .get(endpoint, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .json<ApiResponse<ForifTeamListResponse>>();
 
-  const result = (await response.json()) as ForifTeamResponse;
-
-  if (!Array.isArray(result.data)) {
+  if (!response.data || !Array.isArray(response.data)) {
     throw new Error("Invalid API response structure");
   }
 
-  const content = result.data.map(mapToOperator);
+  console.log("[Operators API] first raw item:", response.data[0]);
+
+  let content = response.data.map(mapToOperator);
+
+  if (semester === "그 외") {
+    content = content.filter((item) => {
+      const label = `${String(item.actYear).slice(2)}-${item.actSemester}`;
+      return !MAIN_SEMESTERS.has(label);
+    });
+  }
+
+  console.log("[Operators API] first mapped item:", content[0]);
 
   return {
     content,
