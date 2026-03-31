@@ -43,10 +43,6 @@ export function MembersView({
       params.set("semester", semester);
     }
 
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
     router.push(`/members?${params.toString()}`);
   };
 
@@ -109,6 +105,9 @@ export function MembersView({
     console.log("운영진 관리", member);
   };
 
+  const displayTotalCount =
+    totalElements && totalElements > 0 ? totalElements : initialData.length;
+
   return (
     <div className="space-y-6 p-8">
       <div className="space-y-2">
@@ -170,7 +169,7 @@ export function MembersView({
         />
 
         <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {totalElements}명</span>
+          <span>총 {displayTotalCount}명</span>
           {hasNext && nextCursor !== null && (
             <span>다음 커서: {nextCursor}</span>
           )}
