@@ -1,9 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
+import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -81,6 +82,10 @@ export function MentorsView({
     XLSX.writeFile(wb, `mentors_${currentSemester}_${date}.xlsx`);
   };
 
+  const handleDeleteMentor = (mentor: Mentor) => {
+    console.log("멘토 삭제", mentor);
+  };
+
   return (
     <div className="space-y-6 p-8">
       <div className="space-y-2">
@@ -113,7 +118,18 @@ export function MentorsView({
           placeholder="멘토 이름을 검색해보세요"
         />
 
-        <DataTable columns={columns} data={initialData} />
+        <DataTable
+          columns={columns}
+          data={initialData}
+          renderRowActions={(mentor) => (
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => handleDeleteMentor(mentor)}
+            >
+              멘토 삭제
+            </DropdownMenuItem>
+          )}
+        />
 
         <div className="text-muted-foreground flex items-center justify-between text-sm">
           <span>총 {totalElements}명</span>

@@ -4,7 +4,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { MentorsActions } from "./mentors-actions";
 import { Mentor } from "./types";
 
 export const columns: ColumnDef<Mentor>[] = [
@@ -61,18 +60,5 @@ export const columns: ColumnDef<Mentor>[] = [
     cell: ({ row }) => (
       <div className="text-muted-foreground">{row.getValue("mentorNum")}</div>
     ),
-  },
-  {
-    id: "actions",
-    header: "직업",
-    cell: ({ row }) => {
-      const mentor = row.original;
-      return (
-        <MentorsActions
-          mentorId={mentor.mentorId}
-          mentorName={mentor.mentorName}
-        />
-      );
-    },
   },
 ];

@@ -4,7 +4,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { OperatorsActions } from "./operators-actions";
 import { Operator } from "./types";
 
 export const columns: ColumnDef<Operator>[] = [
@@ -61,18 +60,5 @@ export const columns: ColumnDef<Operator>[] = [
     cell: ({ row }) => (
       <div className="text-muted-foreground">{row.getValue("affiliation")}</div>
     ),
-  },
-  {
-    id: "actions",
-    header: "직업",
-    cell: ({ row }) => {
-      const operator = row.original;
-      return (
-        <OperatorsActions
-          operatorId={operator.user_id}
-          operatorName={operator.name}
-        />
-      );
-    },
   },
 ];

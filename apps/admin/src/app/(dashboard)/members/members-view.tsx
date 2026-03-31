@@ -1,9 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
+import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -85,6 +89,26 @@ export function MembersView({
     XLSX.writeFile(wb, `members_${currentSemester}_${date}.xlsx`);
   };
 
+  const handleEditMember = (member: Member) => {
+    console.log("부원 정보 수정", member);
+  };
+
+  const handleDeleteMember = (member: Member) => {
+    console.log("부원 삭제", member);
+  };
+
+  const handleGrantMentorRole = (member: Member) => {
+    console.log("멘토 권한 부여", member);
+  };
+
+  const handleGrantAdminRole = (member: Member) => {
+    console.log("운영진 권한 부여", member);
+  };
+
+  const handleManageAdmin = (member: Member) => {
+    console.log("운영진 관리", member);
+  };
+
   return (
     <div className="space-y-6 p-8">
       <div className="space-y-2">
@@ -117,7 +141,33 @@ export function MembersView({
           placeholder="이름 또는 학과를 검색해보세요"
         />
 
-        <DataTable columns={columns} data={initialData} />
+        <DataTable
+          columns={columns}
+          data={initialData}
+          renderRowActions={(member) => (
+            <>
+              <DropdownMenuItem onClick={() => handleEditMember(member)}>
+                부원 정보 수정
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onClick={() => handleDeleteMember(member)}
+              >
+                부원 삭제
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleGrantMentorRole(member)}>
+                멘토 권한 부여
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleGrantAdminRole(member)}>
+                운영진 권한 부여
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleManageAdmin(member)}>
+                운영진 관리
+              </DropdownMenuItem>
+            </>
+          )}
+        />
 
         <div className="text-muted-foreground flex items-center justify-between text-sm">
           <span>총 {totalElements}명</span>

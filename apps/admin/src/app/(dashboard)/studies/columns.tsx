@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { StudyActions } from "./study-actions";
 import { Study } from "./types";
 
 export const columns: ColumnDef<Study>[] = [
@@ -146,13 +145,5 @@ export const columns: ColumnDef<Study>[] = [
         {row.getValue("one_liner")}
       </div>
     ),
-  },
-  {
-    id: "actions",
-    header: "작업",
-    cell: ({ row }) => {
-      const study = row.original;
-      return <StudyActions studyId={study.id} studyName={study.study_name} />;
-    },
   },
 ];

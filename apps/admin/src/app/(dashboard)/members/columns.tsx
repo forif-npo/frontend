@@ -4,7 +4,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { MembersActions } from "./members-actions";
 import { Member } from "./types";
 
 export const columns: ColumnDef<Member>[] = [

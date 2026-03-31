@@ -1,9 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
+import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -72,6 +76,22 @@ export function StudiesView({
     XLSX.writeFile(wb, `studies_${currentSemester}_${date}.xlsx`);
   };
 
+  const handleEditStudy = (study: Study) => {
+    console.log("스터디 정보 수정", study);
+  };
+
+  const handleDeleteStudy = (study: Study) => {
+    console.log("스터디 정보 삭제", study);
+  };
+
+  const handleAddMentee = (study: Study) => {
+    console.log("멘티 추가", study);
+  };
+
+  const handleRemoveMentee = (study: Study) => {
+    console.log("멘티 삭제", study);
+  };
+
   return (
     <div className="space-y-6 p-8">
       <div className="space-y-2">
@@ -102,7 +122,30 @@ export function StudiesView({
           onChange={setSearchQuery}
           placeholder="스터디 목록 검색"
         />
-        <DataTable columns={columns} data={filteredData} />
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          renderRowActions={(study) => (
+            <>
+              <DropdownMenuItem onClick={() => handleEditStudy(study)}>
+                스터디 정보 수정
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onClick={() => handleDeleteStudy(study)}
+              >
+                스터디 정보 삭제
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleAddMentee(study)}>
+                멘티 추가
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleRemoveMentee(study)}>
+                멘티 삭제
+              </DropdownMenuItem>
+            </>
+          )}
+        />
       </div>
     </div>
   );
