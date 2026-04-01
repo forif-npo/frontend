@@ -103,6 +103,9 @@ export function OperatorsView({
     console.log("부회장 임명", operator);
   };
 
+  const displayTotalCount =
+    totalElements && totalElements > 0 ? totalElements : initialData.length;
+
   return (
     <div className="space-y-6 p-8">
       <div className="space-y-2">
@@ -165,7 +168,7 @@ export function OperatorsView({
         />
 
         <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {totalElements}명</span>
+          <span>총 {totalElements}건</span>
           {hasNext && nextCursor !== null && (
             <span>다음 커서: {nextCursor}</span>
           )}

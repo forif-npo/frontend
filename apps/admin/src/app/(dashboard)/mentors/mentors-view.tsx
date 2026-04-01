@@ -69,9 +69,11 @@ export function MentorsView({
 
     const ws = XLSX.utils.json_to_sheet(
       initialData.map((mentor) => ({
-        "멘토 ID": mentor.mentorId,
-        이름: mentor.mentorName,
-        "멘토 번호": mentor.mentorNum,
+        학번: mentor.userId,
+        학과: mentor.department,
+        이름: mentor.name,
+        전화번호: mentor.phoneNum,
+        스터디명: mentor.studyName,
       })),
     );
 
@@ -85,6 +87,9 @@ export function MentorsView({
   const handleDeleteMentor = (mentor: Mentor) => {
     console.log("멘토 삭제", mentor);
   };
+
+  const displayTotalCount =
+    totalElements && totalElements > 0 ? totalElements : initialData.length;
 
   return (
     <div className="space-y-6 p-8">
@@ -132,7 +137,7 @@ export function MentorsView({
         />
 
         <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {totalElements}명</span>
+          <span>총 {displayTotalCount}건</span>
           {hasNext && nextCursor !== null && (
             <span>다음 커서: {nextCursor}</span>
           )}

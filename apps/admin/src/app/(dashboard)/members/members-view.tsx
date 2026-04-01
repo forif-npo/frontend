@@ -72,7 +72,6 @@ export function MembersView({
         학과: member.department,
         이름: member.userName,
         전화번호: member.phoneNum,
-        스터디명: member.currentStudyName,
         "멘토 여부": member.isMentor ? "Y" : "N",
         "운영진 여부": member.isAdmin ? "Y" : "N",
       })),
@@ -169,7 +168,7 @@ export function MembersView({
         />
 
         <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {displayTotalCount}명</span>
+          <span>총 {displayTotalCount}건</span>
           {hasNext && nextCursor !== null && (
             <span>다음 커서: {nextCursor}</span>
           )}

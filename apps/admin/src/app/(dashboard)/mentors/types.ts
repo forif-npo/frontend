@@ -1,7 +1,9 @@
 export type Mentor = {
-  mentorId: number;
-  mentorName: string;
-  mentorNum: number;
+  userId: number;
+  name: string;
+  department: string;
+  phoneNum: string;
+  studyName: string;
 };
 
 export type MentorListApiResponse = {

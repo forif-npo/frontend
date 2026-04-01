@@ -48,6 +48,9 @@ export function StudiesView({
     );
   });
 
+  const displayTotalCount =
+    totalElements && totalElements > 0 ? totalElements : filteredData.length;
+
   const handleDownloadExcel = () => {
     if (filteredData.length === 0) {
       alert("다운로드할 데이터가 없습니다.");
@@ -122,6 +125,7 @@ export function StudiesView({
           onChange={setSearchQuery}
           placeholder="스터디 목록 검색"
         />
+
         <DataTable
           columns={columns}
           data={filteredData}
@@ -146,6 +150,13 @@ export function StudiesView({
             </>
           )}
         />
+
+        <div className="text-muted-foreground flex items-center justify-between text-sm">
+          <span>총 {displayTotalCount}건</span>
+          {hasNext && nextCursor !== null && (
+            <span>다음 커서: {nextCursor}</span>
+          )}
+        </div>
       </div>
     </div>
   );

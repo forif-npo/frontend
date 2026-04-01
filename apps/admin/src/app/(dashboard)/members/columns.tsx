@@ -14,7 +14,7 @@ export const columns: ColumnDef<Member>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
+          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
         >
           학번
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -22,7 +22,7 @@ export const columns: ColumnDef<Member>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("userId")}</div>
+      <div className="text-center">{row.getValue("userId")}</div>
     ),
   },
   {
@@ -32,7 +32,7 @@ export const columns: ColumnDef<Member>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
+          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
         >
           학과
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -40,7 +40,7 @@ export const columns: ColumnDef<Member>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("department")}</div>
+      <div className="text-center">{row.getValue("department")}</div>
     ),
   },
   {
@@ -50,7 +50,7 @@ export const columns: ColumnDef<Member>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
+          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
         >
           이름
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -58,28 +58,19 @@ export const columns: ColumnDef<Member>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("userName")}</div>
+      <div className="text-center">{row.getValue("userName")}</div>
     ),
   },
   {
     accessorKey: "phoneNum",
-    header: "전화번호",
+    header: () => <div className="w-full text-center text-sm">전화번호</div>,
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("phoneNum")}</div>
-    ),
-  },
-  {
-    accessorKey: "currentStudyName",
-    header: "스터디명",
-    cell: ({ row }) => (
-      <div className="text-muted-foreground">
-        {row.getValue("currentStudyName")}
-      </div>
+      <div className="text-center">{row.getValue("phoneNum")}</div>
     ),
   },
   {
     accessorKey: "isMentor",
-    header: "멘토 여부",
+    header: () => <div className="w-full text-center text-sm">멘토 여부</div>,
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <input
@@ -94,7 +85,7 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "isAdmin",
-    header: "운영진 여부",
+    header: () => <div className="w-full text-center text-sm">운영진 여부</div>,
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <input

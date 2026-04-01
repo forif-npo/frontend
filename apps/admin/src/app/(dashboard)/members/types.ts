@@ -3,7 +3,6 @@ export type Member = {
   department: string;
   userName: string;
   phoneNum: string;
-  currentStudyName: string;
   isMentor: boolean;
   isAdmin: boolean;
 };

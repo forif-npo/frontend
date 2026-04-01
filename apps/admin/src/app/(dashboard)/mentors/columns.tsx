@@ -8,31 +8,49 @@ import { Mentor } from "./types";
 
 export const columns: ColumnDef<Mentor>[] = [
   {
-    accessorKey: "mentorId",
+    accessorKey: "userId",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
+          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
         >
-          멘토 ID
+          학번
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("mentorId")}</div>
+      <div className="text-center">{row.getValue("userId")}</div>
     ),
   },
   {
-    accessorKey: "mentorName",
+    accessorKey: "department",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
+          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
+        >
+          학과
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("department")}</div>
+    ),
+  },
+  {
+    accessorKey: "name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
         >
           이름
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -40,25 +58,21 @@ export const columns: ColumnDef<Mentor>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("mentorName")}</div>
+      <div className="text-center">{row.getValue("name")}</div>
     ),
   },
   {
-    accessorKey: "mentorNum",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
-        >
-          멘토 번호
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    accessorKey: "phoneNum",
+    header: () => <div className="w-full text-center text-sm">전화번호</div>,
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("mentorNum")}</div>
+      <div className="text-center">{row.getValue("phoneNum")}</div>
+    ),
+  },
+  {
+    accessorKey: "studyName",
+    header: () => <div className="w-full text-center text-sm">스터디명</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("studyName")}</div>
     ),
   },
 ];

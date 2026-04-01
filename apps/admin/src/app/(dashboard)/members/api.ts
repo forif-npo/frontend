@@ -100,12 +100,6 @@ function mapToMember(
     department: pickString(item.department),
     userName: pickString(item.userName, item.user_name, item.name),
     phoneNum: pickString(item.phoneNum, item.phone_num, item.phone),
-    currentStudyName: pickString(
-      item.currentStudyName,
-      item.current_study_name,
-      item.studyName,
-      item.study_name,
-    ),
     isMentor: pickBoolean(item.isMentor, item.is_mentor),
     isAdmin: pickBoolean(item.isAdmin, item.is_admin),
     actYear: pickNumber(item.actYear, item.act_year, item.year),
@@ -167,20 +161,11 @@ export async function fetchMembers({
 
   return {
     content: content.map(
-      ({
+      ({ userId, department, userName, phoneNum, isMentor, isAdmin }) => ({
         userId,
         department,
         userName,
         phoneNum,
-        currentStudyName,
-        isMentor,
-        isAdmin,
-      }) => ({
-        userId,
-        department,
-        userName,
-        phoneNum,
-        currentStudyName,
         isMentor,
         isAdmin,
       }),

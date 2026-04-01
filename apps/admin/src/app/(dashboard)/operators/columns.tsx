@@ -14,7 +14,7 @@ export const columns: ColumnDef<Operator>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
+          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
         >
           학번
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -22,7 +22,7 @@ export const columns: ColumnDef<Operator>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("userId")}</div>
+      <div className="text-center">{row.getValue("userId")}</div>
     ),
   },
   {
@@ -32,7 +32,7 @@ export const columns: ColumnDef<Operator>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
+          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
         >
           학과
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -40,7 +40,7 @@ export const columns: ColumnDef<Operator>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("department")}</div>
+      <div className="text-center">{row.getValue("department")}</div>
     ),
   },
   {
@@ -50,7 +50,7 @@ export const columns: ColumnDef<Operator>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
+          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
         >
           이름
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -58,43 +58,25 @@ export const columns: ColumnDef<Operator>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("name")}</div>
+      <div className="text-center">{row.getValue("name")}</div>
     ),
   },
   {
     accessorKey: "phoneNum",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
-        >
-          전화번호
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: () => (
+      <div className="text-center text-sm hover:bg-transparent">전화번호</div>
+    ),
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("phoneNum")}</div>
+      <div className="text-center">{row.getValue("phoneNum")}</div>
     ),
   },
   {
     accessorKey: "title",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0 hover:bg-transparent"
-        >
-          직급
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: () => (
+      <div className="text-center text-sm hover:bg-transparent">직급</div>
+    ),
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("title")}</div>
+      <div className="text-center">{row.getValue("title")}</div>
     ),
   },
 ];
