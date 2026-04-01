@@ -1,14 +1,18 @@
 "use client";
 
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/list/dropdown-menu";
+import { DataTable } from "@/components/list/data-table";
+import { SearchBar } from "@/components/list/search-bar";
+import { SemesterTabs } from "@/components/list/semester-tabs";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { columns } from "./columns";
-import { DataTable } from "./data-table";
-import { SearchBar } from "./search-bar";
-import { SemesterTabs } from "./semester-tabs";
 import { SemesterLabel, Study } from "./types";
 
 interface StudiesViewProps {
@@ -22,27 +26,17 @@ interface StudiesViewProps {
 export function StudiesView({
   initialData,
   currentSemester,
-  // TODO: Implement pagination UI
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   hasNext = false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   nextCursor = null,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   totalElements = 0,
 }: StudiesViewProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Handle semester change by updating URL
-  const handleSemesterChange = (semester: SemesterLabel) => {
-    // Determine the query parameter value
-    // If it's the default current semester (e.g. 25-2), we could clear the param,
-    // but explicit is better for now given the requirements.
-    // Wait, 25-2 is the calculated "current", so let's just push whatever is selected.
+  const handleSemesterChange = (semester: string) => {
     router.push(`/studies?semester=${semester}`);
   };
 
-  // Filter data based on search query (Client-side filtering of the server-fetched list)
   const filteredData = initialData.filter((study) => {
     const query = searchQuery.toLowerCase();
     return (
@@ -53,6 +47,9 @@ export function StudiesView({
       study.tags.some((tag) => tag.toLowerCase().includes(query))
     );
   });
+
+  const displayTotalCount =
+    totalElements && totalElements > 0 ? totalElements : filteredData.length;
 
   const handleDownloadExcel = () => {
     if (filteredData.length === 0) {
@@ -82,6 +79,22 @@ export function StudiesView({
     XLSX.writeFile(wb, `studies_${currentSemester}_${date}.xlsx`);
   };
 
+  const handleEditStudy = (study: Study) => {
+    console.log("스터디 정보 수정", study);
+  };
+
+  const handleDeleteStudy = (study: Study) => {
+    console.log("스터디 정보 삭제", study);
+  };
+
+  const handleAddMentee = (study: Study) => {
+    console.log("멘티 추가", study);
+  };
+
+  const handleRemoveMentee = (study: Study) => {
+    console.log("멘티 삭제", study);
+  };
+
   return (
     <div className="space-y-6 p-8">
       <div className="space-y-2">
@@ -107,14 +120,43 @@ export function StudiesView({
       </div>
 
       <div className="space-y-4">
-        <SearchBar value={searchQuery} onChange={setSearchQuery} />
+        <SearchBar
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="스터디 목록 검색"
+        />
 
-        {/* We don't need isLoading state here because the page transition handles it (Server Component) 
-            or we could wrap in Suspense boundary in parent. 
-            For client navigation, Next.js handles the loading state (or we can use useTransition).
-            For now, instant transition or Next.js built-in loading is fine.
-        */}
-        <DataTable columns={columns} data={filteredData} />
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          renderRowActions={(study) => (
+            <>
+              <DropdownMenuItem onClick={() => handleEditStudy(study)}>
+                스터디 정보 수정
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onClick={() => handleDeleteStudy(study)}
+              >
+                스터디 정보 삭제
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleAddMentee(study)}>
+                멘티 추가
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleRemoveMentee(study)}>
+                멘티 삭제
+              </DropdownMenuItem>
+            </>
+          )}
+        />
+
+        <div className="text-muted-foreground flex items-center justify-between text-sm">
+          <span>총 {displayTotalCount}건</span>
+          {hasNext && nextCursor !== null && (
+            <span>다음 커서: {nextCursor}</span>
+          )}
+        </div>
       </div>
     </div>
   );
