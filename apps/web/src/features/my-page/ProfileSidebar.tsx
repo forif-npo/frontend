@@ -2,7 +2,7 @@
 
 import { Body, Label } from "@ui/components/server";
 import Image from "next/image";
-import { CircleUser } from "lucide-react";
+import { CircleUser, Pencil } from "lucide-react";
 
 interface ProfileSidebarProps {
   profile: {
@@ -137,44 +137,6 @@ function SettingIcon({ className }: { className?: string }) {
   );
 }
 
-function PencilIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M13.26 3.6L5.05 12.29C4.74 12.62 4.44 13.27 4.38 13.72L4.01 16.96C3.88 18.13 4.72 18.93 5.88 18.73L9.1 18.18C9.55 18.1 10.18 17.77 10.49 17.43L18.7 8.74C20.12 7.24 20.76 5.53 18.55 3.44C16.35 1.37 14.68 2.1 13.26 3.6Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M11.89 5.05C12.32 7.81 14.56 9.92 17.34 10.2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M3 22H21"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 const navItems = [
   {
     id: "my-studies",
@@ -210,27 +172,29 @@ export function ProfileSidebar({
           />
         ) : (
           <CircleUser
-            className="h-[120px] w-[120px] text-[#b1b8be]"
+            className="h-[120px] w-[120px] text-[#E6E8EA]"
             strokeWidth={0.8}
           />
         )}
-        <button className="absolute bottom-1 right-1 flex h-7 w-7 items-center justify-center rounded-full bg-[#256ef4] shadow-sm">
-          <PencilIcon className="h-3.5 w-3.5 text-white" />
+        <button className="absolute bottom-1 right-1 flex h-7 w-7 items-center justify-center rounded-full bg-black p-2 shadow-sm">
+          <Pencil className="h-full w-full text-white" />
         </button>
       </div>
 
       {/* User Info */}
-      <div className="mb-8 flex flex-col items-center gap-0.5">
-        <Label size="l" className="font-bold">
+      <div className="mb-4 flex flex-col items-center gap-0.5">
+        <Label size="l" weight="bold" className="text-black">
           {profile.user_name}
         </Label>
-        <Body size="s" className="text-text-subtle">
+        <Label size="xs" className="text-black">
           {profile.department}
-        </Body>
-        <Body size="s" className="text-text-subtle">
+        </Label>
+        <Label size="xs" className="text-black">
           {profile.user_id}
-        </Body>
+        </Label>
       </div>
+
+      <hr className="mb-4 w-full border-[#cdd1d5]" />
 
       {/* Navigation */}
       <nav className="flex w-full flex-col gap-2">
@@ -243,7 +207,7 @@ export function ProfileSidebar({
               disabled={item.disabled}
               className={`flex items-center gap-3 rounded-md px-3 py-2 text-left transition-colors ${
                 isActive
-                  ? "text-primary font-semibold"
+                  ? "text-text-primary"
                   : item.disabled
                     ? "text-text-disabled cursor-not-allowed"
                     : "text-text-subtle hover:text-text-basic"
