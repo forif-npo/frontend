@@ -14,7 +14,7 @@ export interface StudyDetail {
   study_name: string;
   primary_mentor_name: string;
   secondary_mentor_name: string | null;
-  tags: string[];
+  tag: string;
   one_liner: string;
   start_time: string;
   end_time: string;
@@ -25,22 +25,20 @@ export interface StudyDetail {
 }
 
 /**
- * Semester with a single study
+ * Semester with studies
  */
 export interface StudyBySemester {
   year: number;
   semester: number;
   semester_label: string;
   is_current: boolean;
-  study: StudyDetail;
+  studies: StudyDetail[];
 }
 
 /**
- * User studies response (list of semesters)
+ * User studies response (array of semesters)
  */
-export interface UserStudiesResponse {
-  semesters: StudyBySemester[];
-}
+export type UserStudiesResponse = StudyBySemester[];
 
 /**
  * Get user profile
@@ -68,7 +66,8 @@ export async function getUserStudies(
   const response = await apiClient
     .get("api/v1/users/me/studies", options)
     .json<ApiResponse<UserStudiesResponse>>();
-  return response.data!;
+  const data = response.data;
+  return Array.isArray(data) ? data : [];
 }
 
 /**
@@ -115,8 +114,8 @@ export interface StudyInfo {
 export interface ApplicationDetail {
   priority: string; // "PRIMARY" or "SECONDARY"
   study: StudyInfo;
-  status: number; // Application status code
-  intro: string; // User's application intro
+  status: number;
+  intro: string;
 }
 
 /**
@@ -126,7 +125,7 @@ export interface StudyApplication {
   user_apply_id: number;
   apply_year: number;
   apply_semester: number;
-  apply_date: string; // ISO date string
+  apply_date: string;
   apply_path: string;
   pay_status: number;
   primary_application: ApplicationDetail;
@@ -146,11 +145,21 @@ export interface StudyApplicationsResponse {
 export async function getStudyApplications(
   token?: string,
 ): Promise<StudyApplicationsResponse> {
+  console.log(
+    "[getStudyApplications] called, token:",
+    token ? "exists" : "missing",
+  );
   const options = token
     ? { headers: { Authorization: `Bearer ${token}` } }
     : {};
-  const response = await apiClient
-    .get("api/v1/users/me/study-applications", options)
-    .json<ApiResponse<StudyApplicationsResponse>>();
-  return response.data!;
+  try {
+    const response = await apiClient
+      .get("api/v1/users/me/study-applications", options)
+      .json<ApiResponse<StudyApplicationsResponse>>();
+    console.log("[getStudyApplications] status:", response);
+    return response.data ?? { applications: [] };
+  } catch (err) {
+    console.error("[getStudyApplications] error:", err);
+    throw err;
+  }
 }
