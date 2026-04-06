@@ -2,6 +2,13 @@
 @import "@repo/ui/styles.css";
 @import "@repo/ui/theme.css";
 
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
+@source "../../../../packages/core/src/**/*.{ts,tsx}";
+
+html {
+  zoom: 80%;
+}
+
 [data-theme="high-contrast"] [data-hide-on-theme="high-contrast"],
 [data-theme="light"] [data-hide-on-theme="light"] {
   display: none;

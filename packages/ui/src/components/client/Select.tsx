@@ -20,6 +20,8 @@ export interface SelectProps {
   variant?: "default" | "text";
   disabled?: boolean;
   error?: string;
+  dropdownAlign?: "left" | "right";
+  noPadding?: boolean;
 }
 
 const sizeClasses = {
@@ -38,6 +40,8 @@ export const Select = ({
   variant = "default",
   disabled,
   error,
+  dropdownAlign = "left",
+  noPadding = false,
 }: SelectProps) => {
   const isControlled = value !== undefined && onChange !== undefined;
   const [internalValue, setInternalValue] = useState<string | null>(null);
@@ -113,7 +117,7 @@ export const Select = ({
   const variantClasses = {
     default:
       "border-gray-30 focus:ring-primary-50 border bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:outline-none",
-    text: "hover:bg-gray-5 border-none bg-transparent",
+    text: "border-none bg-transparent",
   };
 
   return (
@@ -128,7 +132,8 @@ export const Select = ({
         aria-haspopup="listbox"
         ref={triggerRef}
         className={cn(
-          "rounded-2 flex w-full items-center justify-between px-5 text-left transition duration-150 ease-in-out",
+          "rounded-2 flex w-full items-center justify-between text-left transition duration-150 ease-in-out",
+          noPadding ? "border-none! px-0" : "px-5",
           sizeClasses[size],
           variantClasses[variant],
           disabled
@@ -156,7 +161,10 @@ export const Select = ({
             "text-gray-80",
           )}
         >
-          <ArrowDropdownIcon />
+          <ArrowDropdownIcon
+            width={noPadding ? 14 : 24}
+            height={noPadding ? 14 : 24}
+          />
         </span>
       </button>
       {isOpen && (
@@ -165,7 +173,7 @@ export const Select = ({
           aria-activedescendant={
             focusedIndex !== null ? `option-${focusedIndex}` : undefined
           }
-          className="absolute z-10 mt-2 max-h-60 w-full min-w-[240px] overflow-y-auto rounded-md border border-gray-300 bg-white"
+          className={`absolute z-10 mt-2 max-h-60 w-full min-w-[100px] overflow-y-auto rounded-md border border-gray-300 bg-white ${dropdownAlign === "right" ? "right-0" : "left-0"}`}
         >
           {options.map((option, index) => (
             <button
@@ -183,7 +191,7 @@ export const Select = ({
                   handleSelect(option.value);
                 }
               }}
-              className={`rounded-2 w-full px-5 text-left outline-none ${sizeClasses[size].button} ${
+              className={`w-full px-5 text-left outline-none ${sizeClasses[size].button} ${
                 selectedValue === option.value
                   ? "text-primary-50 bg-primary-5"
                   : "text-gray-90"
