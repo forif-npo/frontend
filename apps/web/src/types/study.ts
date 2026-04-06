@@ -1,5 +1,12 @@
 export type RecruitStatus = "APPLICABLE" | "CLOSED";
 
+export type StudyDifficulty =
+  | "EASY"
+  | "SEMI_EASY"
+  | "NORMAL"
+  | "SEMI_HARD"
+  | "HARD";
+
 export type WeekDay = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0: 일요일, 6: 토요일
 
 export interface Study {
@@ -15,7 +22,7 @@ export interface Study {
   end_time: string; // HH:mm 형식
   week_day: WeekDay;
   location: string;
-  difficulty: string;
+  difficulty: StudyDifficulty;
   img_url: string;
   act_year: number;
   act_semester: number;
@@ -31,6 +38,7 @@ export interface StudyListParams {
   tags?: string[];
   recruit_status?: RecruitStatus;
   search?: string;
+  sort_order?: "ASC" | "DESC";
 }
 
 export interface StudyListResponse {

@@ -1,21 +1,34 @@
 import type { ApiResponse } from "@core/types/api";
 import { apiClient } from "@core/utils/api-client";
-import type { StudiesParams, Study } from "@repo/core/types/study";
+import { Study, StudyListParams } from "@/types/study";
 import { useCallback, useState } from "react";
+
+interface PaginatedData<T> {
+  content: T[];
+  next_cursor: string | null;
+  has_next: boolean;
+  total_elements: number;
+}
 
 interface UseStudyDataReturn {
   studies: Study[];
   loading: boolean;
   error: string | null;
-  refetch: (params?: StudiesParams) => Promise<void>;
+  hasNext: boolean;
+  totalElements: number;
+  refetch: (params?: StudyListParams) => Promise<void>;
 }
 
-export const useStudyData = (): UseStudyDataReturn => {
+export const useStudyData = (
+  initialParams?: StudyListParams,
+): UseStudyDataReturn => {
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasNext, setHasNext] = useState(false);
+  const [totalElements, setTotalElements] = useState(0);
 
-  const fetchStudies = useCallback(async (fetchParams?: StudiesParams) => {
+  const fetchStudies = useCallback(async (fetchParams?: StudyListParams) => {
     setError(null);
     setLoading(true);
     try {
@@ -42,15 +55,18 @@ export const useStudyData = (): UseStudyDataReturn => {
           searchParams.append("recruit_status", fetchParams.recruit_status);
         if (fetchParams.search)
           searchParams.append("search", fetchParams.search);
+        if (fetchParams.sort_order)
+          searchParams.append("sort_order", fetchParams.sort_order);
       }
 
-      const studies = await apiClient
+      const response = await apiClient
         .get("api/v1/studies", { searchParams })
-        .json<ApiResponse<Study[]>>();
+        .json<ApiResponse<PaginatedData<Study>>>();
 
-      console.log("API Response:", studies);
-
-      setStudies(studies.data || []);
+      const paginated = response.data;
+      setStudies(paginated?.content ?? []);
+      setHasNext(paginated?.has_next ?? false);
+      setTotalElements(paginated?.total_elements ?? 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch studies");
     } finally {
@@ -62,6 +78,8 @@ export const useStudyData = (): UseStudyDataReturn => {
     studies,
     loading,
     error,
+    hasNext,
+    totalElements,
     refetch: fetchStudies,
   };
 };

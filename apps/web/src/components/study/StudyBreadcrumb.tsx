@@ -17,10 +17,10 @@ export function StudyBreadcrumb() {
         const detailPath = pathname.split("/apply")[0]; // Get path before /apply
 
         if (pathname.includes("/apply")) {
-          items.push({ label: "스터디 정보 확인", href: detailPath });
-          items.push({ label: "스터디 신청", href: pathname });
+          items.push({ label: "스터디 자세히 보기", href: detailPath });
+          items.push({ label: "스터디 지원", href: pathname });
         } else {
-          items.push({ label: "스터디 정보 확인", href: pathname });
+          items.push({ label: "스터디 자세히 보기", href: pathname });
         }
       }
     }

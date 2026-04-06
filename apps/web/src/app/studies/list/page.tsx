@@ -27,7 +27,7 @@ export default function StudyListPage() {
 
   const { currentPage, pageSize, setPage, setPageSize } = usePagination({
     data: [],
-    initialPageSize: 20,
+    initialPageSize: 12,
   });
 
   useEffect(() => {
@@ -44,6 +44,7 @@ export default function StudyListPage() {
       tags: filters.tag ? [filters.tag] : undefined,
       recruit_status: filters.recruitStatus,
       search: filters.search,
+      sort_order: sortBy === "latest" ? "DESC" : "ASC",
     };
   }, [
     currentPage,
@@ -54,6 +55,7 @@ export default function StudyListPage() {
     filters.tag,
     filters.recruitStatus,
     filters.search,
+    sortBy,
   ]);
 
   const { studies, loading, error, refetch } = useStudyData(apiParams);
@@ -64,11 +66,11 @@ export default function StudyListPage() {
   }, [apiParams, refetch]);
 
   const handleCardClick = (study: Study) => {
-    router.push(`/study/detail/${study.id}`);
+    router.push(`/studies/detail/${study.id}`);
   };
 
   const handleApplyClick = (study: Study) => {
-    router.push(`/study/detail/${study.id}/apply`);
+    router.push(`/studies/detail/${study.id}/apply`);
   };
 
   if (error) {

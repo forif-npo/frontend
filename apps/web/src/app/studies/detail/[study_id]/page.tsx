@@ -2,6 +2,7 @@
 
 import { use } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Button } from "@ui/components/client";
 import { StudyDetailContent } from "@/features/study/detail/StudyDetailContent";
 import { StudyDetailNavigation } from "@/features/study/detail/StudyDetailNavigation";
@@ -14,11 +15,16 @@ type Props = {
 
 export default function StudyDetailPage({ params }: Props) {
   const router = useRouter();
+  const { data: session } = useSession();
   const { study_id } = use(params);
   const { study, isLoading, error } = useStudyDetail(study_id);
 
   const handleApply = () => {
-    router.push(`/study/detail/${study_id}/apply`);
+    if (!session?.accessToken) {
+      router.push(`/signin?callbackUrl=/studies/detail/${study_id}/apply`);
+      return;
+    }
+    router.push(`/studies/detail/${study_id}/apply`);
   };
 
   if (isLoading) {
