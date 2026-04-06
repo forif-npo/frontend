@@ -43,7 +43,7 @@ export function Step3WeeklyPlan({
       </p>
 
       {/* 본문 */}
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-6">
         {/* 커리큘럼 라벨 */}
         <div className="flex flex-col gap-6">
           <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">

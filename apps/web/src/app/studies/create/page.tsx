@@ -22,6 +22,7 @@ export default function StudyCreatePage() {
     handleSubmit,
     handleSaveDraft,
     goToStudyList,
+    goToApplication,
   } = useStudyCreatePage();
 
   if (isLoading || !userInfo) {
@@ -35,7 +36,10 @@ export default function StudyCreatePage() {
   if (step === 6) {
     return (
       <div className="mx-auto min-h-screen max-w-[1200px] px-4 sm:px-6">
-        <StudyCreateComplete onGoToStudyList={goToStudyList} />
+        <StudyCreateComplete
+          onGoToStudyList={goToStudyList}
+          onGoToApplication={goToApplication}
+        />
       </div>
     );
   }

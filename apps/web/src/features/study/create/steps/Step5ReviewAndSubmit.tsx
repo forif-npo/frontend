@@ -93,7 +93,6 @@ export function Step5ReviewAndSubmit({
                     : `${locationLabel} ${values.room || ""}`
                 }
               />
-              <InfoRow label="모집 인원" value={`${values.maxMembers}명`} />
               <InfoRow
                 label="면접 여부"
                 value={
@@ -104,18 +103,6 @@ export function Step5ReviewAndSubmit({
               />
             </tbody>
           </table>
-        </section>
-
-        {/* 목표 */}
-        <section className="flex flex-col gap-4">
-          <h3 className="text-text-bolder text-[20px] font-bold leading-[1.5]">
-            목표
-          </h3>
-          <div className="rounded-[12px] bg-[#f4f5f6] p-4 md:p-6">
-            <p className="text-text-basic whitespace-pre-wrap text-[15px] leading-[1.5] md:text-[17px]">
-              {values.goal}
-            </p>
-          </div>
         </section>
 
         {/* 스터디 소개 */}
@@ -164,18 +151,6 @@ export function Step5ReviewAndSubmit({
                 )),
               )}
             </div>
-          </div>
-        </section>
-
-        {/* 선정 기준 */}
-        <section className="flex flex-col gap-4">
-          <h3 className="text-text-bolder text-[20px] font-bold leading-[1.5]">
-            선정 기준
-          </h3>
-          <div className="rounded-[12px] bg-[#f4f5f6] p-4 md:p-6">
-            <p className="text-text-basic text-[15px] leading-[1.5] md:text-[17px]">
-              {values.selectionCriteria}
-            </p>
           </div>
         </section>
 

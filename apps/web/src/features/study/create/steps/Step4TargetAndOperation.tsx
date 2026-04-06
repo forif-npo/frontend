@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Button,
-  TextInput,
-  TextArea,
-  Checkbox,
-  SelectBox,
-} from "@ui/components/client";
+import { Button, TextInput, Checkbox, SelectBox } from "@ui/components/client";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
 import { DIFFICULTY_OPTIONS, REFERENCE_TYPE_OPTIONS } from "../constants";
@@ -57,7 +51,7 @@ export function Step4TargetAndOperation({
   const references = watch("references") || [];
 
   const addReference = () => {
-    setValue("references", [...references, { type: "URL", value: "" }]);
+    setValue("references", [...references, { type: "LINK", value: "" }]);
   };
 
   const removeReference = (index: number) => {
@@ -71,7 +65,7 @@ export function Step4TargetAndOperation({
     <div className="mx-auto mb-16 flex w-full max-w-[792px] flex-col gap-6 sm:gap-10">
       <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
         <h2 className="text-text-bolder text-[24px] font-bold leading-[1.5]">
-          추천대상 및 운영 방식
+          난이도 및 운영 방식
         </h2>
 
         <div className="flex flex-col gap-10">
@@ -94,44 +88,6 @@ export function Step4TargetAndOperation({
                 />
               )}
             />
-          </div>
-
-          {/* 선정 기준 */}
-          <div className="flex flex-col gap-3">
-            <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-              선정 기준
-            </h3>
-            <TextArea
-              id="selectionCriteria"
-              placeholder="멘티 선정 기준을 작성해주세요 (최대 100자)"
-              size="small"
-              maxLength={100}
-              {...register("selectionCriteria")}
-            />
-            {errors.selectionCriteria && (
-              <p className="text-text-danger text-[14px]">
-                {errors.selectionCriteria.message}
-              </p>
-            )}
-          </div>
-
-          {/* 모집 인원 */}
-          <div className="flex flex-col gap-3">
-            <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-              모집 인원
-            </h3>
-            <TextInput
-              id="maxMembers"
-              length="short"
-              placeholder="인원 수"
-              type="number"
-              {...register("maxMembers", { valueAsNumber: true })}
-            />
-            {errors.maxMembers && (
-              <p className="text-text-danger text-[14px]">
-                {errors.maxMembers.message}
-              </p>
-            )}
           </div>
 
           {/* 면접 여부 */}
@@ -208,9 +164,9 @@ export function Step4TargetAndOperation({
                     id={`references.${index}.value`}
                     length="full"
                     placeholder={
-                      ref.type === "URL"
-                        ? "URL을 입력해주세요"
-                        : "PDF 파일명을 입력해주세요"
+                      ref.type === "LINK"
+                        ? "웹사이트 링크를 입력해주세요"
+                        : "자료 다운로드 링크를 입력해주세요"
                     }
                     {...register(`references.${index}.value`)}
                   />

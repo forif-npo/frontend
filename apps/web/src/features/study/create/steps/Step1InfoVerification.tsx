@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Button, TextInput } from "@ui/components/client";
 import { GuideCheckIcon } from "@ui/components/server";
+import { apiClient } from "@core/utils/api-client";
+import type { ApiResponse } from "@core/types/api";
 import { StudyCreateStepIndicator } from "./StudyCreateStepIndicator";
 import type { UserInfo } from "../types";
 
@@ -165,22 +167,6 @@ interface Step1InfoVerificationProps {
   onCancel: () => void;
 }
 
-// 멘토 검색 mock
-const MOCK_MENTORS: Record<string, UserInfo> = {
-  "2024001285": {
-    studentId: "2024001285",
-    name: "신윤수",
-    department: "컴퓨터소프트웨어학부",
-    phone: "010-1234-5678",
-  },
-  "2023063845": {
-    studentId: "2023063845",
-    name: "표준성",
-    department: "정보시스템학과",
-    phone: "010-2078-9868",
-  },
-};
-
 export function Step1InfoVerification({
   userInfo,
   onNext,
@@ -190,11 +176,28 @@ export function Step1InfoVerification({
   const [mentorSearchValue, setMentorSearchValue] = useState("");
   const [mentorInfo, setMentorInfo] = useState<UserInfo | null>(null);
 
-  const handleMentorSearch = () => {
-    const found = MOCK_MENTORS[mentorSearchValue];
-    if (found) {
-      setMentorInfo(found);
-    } else {
+  const handleMentorSearch = async () => {
+    if (!mentorSearchValue.trim()) return;
+    try {
+      const response = await apiClient
+        .get(`api/v1/users/${mentorSearchValue}`)
+        .json<
+          ApiResponse<{
+            user_id: number;
+            user_name: string;
+            department: string;
+            phone_num: string;
+          }>
+        >();
+      if (response.data) {
+        setMentorInfo({
+          studentId: String(response.data.user_id),
+          name: response.data.user_name,
+          department: response.data.department,
+          phone: response.data.phone_num,
+        });
+      }
+    } catch {
       alert("해당 학번의 사용자를 찾을 수 없습니다.");
       setMentorInfo(null);
     }

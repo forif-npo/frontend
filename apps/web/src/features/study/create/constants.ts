@@ -40,8 +40,8 @@ export const DIFFICULTY_OPTIONS = [
 ] as const;
 
 export const REFERENCE_TYPE_OPTIONS = [
-  { value: "URL", label: "URL" },
-  { value: "PDF", label: "PDF" },
+  { value: "DOWNLOAD", label: "자료 다운로드" },
+  { value: "LINK", label: "웹사이트 링크" },
 ] as const;
 
 export const STEP_LABELS = [

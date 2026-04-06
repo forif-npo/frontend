@@ -6,6 +6,7 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { studyOpenSchema, StudyOpenValues } from "@core/schemas";
 import { useStudyCreateData } from "./useStudyCreateData";
+import { submitStudyCreate, saveDraft } from "./actions";
 import { DEFAULT_CURRICULUM } from "./constants";
 import type { StudyCreateStep } from "./types";
 
@@ -14,7 +15,6 @@ const DEFAULT_VALUES: StudyOpenValues = {
   studyName: "",
   oneLiner: "",
   tags: [],
-  goal: "",
   introduction: "",
   isOnline: false,
   location: "",
@@ -24,8 +24,6 @@ const DEFAULT_VALUES: StudyOpenValues = {
   endTime: "",
   curriculum: DEFAULT_CURRICULUM,
   difficulty: "",
-  selectionCriteria: "",
-  maxMembers: 0,
   hasInterview: false,
   interviewDate: null,
   references: [],
@@ -38,7 +36,6 @@ const STEP_FIELDS: Record<number, (keyof StudyOpenValues)[]> = {
     "studyName",
     "oneLiner",
     "tags",
-    "goal",
     "introduction",
     "location",
     "weekDay",
@@ -46,7 +43,7 @@ const STEP_FIELDS: Record<number, (keyof StudyOpenValues)[]> = {
     "endTime",
   ],
   3: ["curriculum"],
-  4: ["difficulty", "selectionCriteria", "maxMembers"],
+  4: ["difficulty"],
   5: [],
 };
 
@@ -89,19 +86,28 @@ export function useStudyCreatePage() {
     const isValid = await form.trigger();
     if (!isValid) return;
 
-    const values = form.getValues();
-    console.log("Study create submitted:", values);
-    setStep(6);
+    try {
+      const values = form.getValues();
+      await submitStudyCreate(values);
+      setStep(6);
+    } catch (err) {
+      console.error("Failed to submit study:", err);
+      alert("제출에 실패했습니다. 다시 시도해주세요.");
+    }
   }, [form]);
 
   const handleSaveDraft = useCallback(() => {
     const values = form.getValues();
-    console.log("Draft saved:", values);
+    saveDraft(values);
     alert("임시저장되었습니다.");
   }, [form]);
 
   const goToStudyList = useCallback(() => {
-    router.push("/study/list");
+    router.push("/studies/list");
+  }, [router]);
+
+  const goToApplication = useCallback(() => {
+    router.push("/my-page");
   }, [router]);
 
   return {
@@ -115,5 +121,6 @@ export function useStudyCreatePage() {
     handleSubmit,
     handleSaveDraft,
     goToStudyList,
+    goToApplication,
   };
 }
