@@ -31,8 +31,8 @@ export const useAnnouncementList = ({
         if (!mounted) return;
 
         const sorted = [...items].sort((a, b) => {
-          const at = new Date(a.created_at).getTime();
-          const bt = new Date(b.created_at).getTime();
+          const at = new Date(a.createdAt).getTime();
+          const bt = new Date(b.createdAt).getTime();
           return bt - at;
         });
 

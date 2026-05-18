@@ -18,10 +18,10 @@ export default function AnnouncementDetailPage() {
   const { item, isLoading, errorMessage } = useAnnouncementDetail(id);
 
   const dateOnly = useMemo(() => {
-    if (!item?.created_at) return "";
-    const d = new Date(item.created_at);
+    if (!item?.createdAt) return "";
+    const d = new Date(item.createdAt);
     return `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}.`;
-  }, [item?.created_at]);
+  }, [item?.createdAt]);
 
   const handleCopyLink = async () => {
     try {
@@ -70,7 +70,7 @@ export default function AnnouncementDetailPage() {
           {/* Meta row + link icon */}
           <div className="border-divider-gray-light mt-4 flex items-center justify-between border-b pb-4">
             <div className="text-[16px] text-gray-600">
-              {dateOnly} {item.author_name}
+              {dateOnly} {item.authorName}
             </div>
 
             <button
@@ -89,9 +89,9 @@ export default function AnnouncementDetailPage() {
           </div>
 
           {/* Images */}
-          {item.image_urls?.length > 0 && (
+          {item.imageUrls?.length > 0 && (
             <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {item.image_urls.map((url, idx) => (
+              {item.imageUrls.map((url, idx) => (
                 <div
                   key={`${url}-${idx}`}
                   className="overflow-hidden rounded-sm"

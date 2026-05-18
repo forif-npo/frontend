@@ -16,7 +16,7 @@ export function AnnouncementListItem({ item }: AnnouncementListItemProps) {
   return (
     <button
       type="button"
-      onClick={() => router.push(`/support/announcements/${item.post_id}`)}
+      onClick={() => router.push(`/support/announcements/${item.postId}`)}
       className="border-divider-gray-light flex w-full cursor-pointer items-center justify-between gap-6 border-t bg-white px-0 py-6 text-left"
     >
       <div className="flex min-w-0 flex-col gap-2">
@@ -24,7 +24,7 @@ export function AnnouncementListItem({ item }: AnnouncementListItemProps) {
           {item.title}
         </div>
         <div className="text-sm text-gray-500">
-          {new Date(item.created_at).toLocaleDateString("ko-KR")}
+          {new Date(item.createdAt).toLocaleDateString("ko-KR")}
         </div>
       </div>
 

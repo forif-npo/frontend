@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
         hostname: "forif-backend-dev.s3.ap-northeast-2.amazonaws.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "study-cardnews.s3.ap-northeast-2.amazonaws.com",
+        pathname: "/**",
+      },
     ],
   },
 };

@@ -17,7 +17,7 @@ export function AnnouncementList({ items }: Props) {
   return (
     <div className="mt-4 space-y-3">
       {items.map((it) => (
-        <AnnouncementListItem key={it.post_id} item={it} />
+        <AnnouncementListItem key={it.postId} item={it} />
       ))}
     </div>
   );
