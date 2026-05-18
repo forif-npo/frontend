@@ -29,8 +29,8 @@ export interface Study {
 }
 
 export interface StudyListParams {
-  page?: number;
-  page_size?: number;
+  cursor?: number;
+  size?: number;
 
   year?: number;
   semester?: number;

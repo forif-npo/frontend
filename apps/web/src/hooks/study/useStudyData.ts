@@ -35,10 +35,10 @@ export const useStudyData = (
       const searchParams = new URLSearchParams();
 
       if (fetchParams) {
-        if (fetchParams.page !== undefined)
-          searchParams.append("page", fetchParams.page.toString());
-        if (fetchParams.page_size !== undefined)
-          searchParams.append("page_size", fetchParams.page_size.toString());
+        if (fetchParams.cursor !== undefined)
+          searchParams.append("cursor", fetchParams.cursor.toString());
+        if (fetchParams.size !== undefined)
+          searchParams.append("size", fetchParams.size.toString());
         if (fetchParams.year !== undefined)
           searchParams.append("year", fetchParams.year.toString());
         if (fetchParams.semester !== undefined)
