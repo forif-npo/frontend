@@ -16,6 +16,7 @@ import { Button, Carousel } from "@ui/components/client";
 import { CarouselItem } from "@ui/components/client/Carousel";
 import { Heading } from "@ui/components/server";
 import Image from "next/image";
+import Link from "next/link";
 
 export default async function Page() {
   const carouselItems: CarouselItem[] = [
@@ -32,8 +33,12 @@ export default async function Page() {
         "전공과 관계없이 프로그래밍을 배우고 경험을 쌓으며 함께 성장해요.",
       footer: (
         <div className="flex flex-row gap-4">
-          <Button>자세히 보러가기</Button>
-          <Button variant="tertiary">운영진 지원하기</Button>
+          <Link href="/club/about">
+            <Button>자세히 보러가기</Button>
+          </Link>
+          <Link href="/club/members">
+            <Button variant="tertiary">운영진 지원하기</Button>
+          </Link>
         </div>
       ),
     },

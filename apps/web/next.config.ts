@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
         hostname: "study-cardnews.s3.ap-northeast-2.amazonaws.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
     ],
   },
 };

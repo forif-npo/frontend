@@ -8,7 +8,6 @@ export const getFaqs = async (): Promise<FaqPost[]> => {
         cache: "no-store",
         headers: { "Content-Type": "application/json" },
         searchParams: {
-          cursor: 1,
           size: 100,
           search: "",
         },
