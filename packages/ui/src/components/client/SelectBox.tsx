@@ -17,7 +17,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
     const errorId = `${inputId}-error`;
 
     return (
-      <div className="flex flex-col justify-center gap-1">
+      <div className="flex h-16 flex-col justify-center gap-1">
         {title && (
           <Label weight="bold" className="text-text-basic">
             {title}

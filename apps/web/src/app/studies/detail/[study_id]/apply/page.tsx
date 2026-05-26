@@ -5,7 +5,6 @@ import { StudyApplyInfoStep } from "@/features/study/apply/study-apply-info-step
 import { StudyApplyReasonStep } from "@/features/study/apply/study-apply-reason-step";
 import { StudyApplyComplete } from "@/features/study/apply/StudyApplyComplete";
 import { StudyApplySkeleton } from "@/features/study/apply/StudyApplySkeleton";
-import { StudyApplyHelpPanel } from "@/features/study/apply/StudyApplyHelpPanel";
 import { useStudyApplyPage } from "@/features/study/apply/useStudyApplyPage";
 
 type Props = {
@@ -16,7 +15,7 @@ export default function StudyApplyPage({ params }: Props) {
   const { study_id } = use(params);
   const {
     step,
-    submittedPriority,
+    submittedIntro,
     currentStudy,
     userInfo,
     studyOptions,
@@ -39,10 +38,10 @@ export default function StudyApplyPage({ params }: Props) {
         <StudyApplyComplete
           studyName={currentStudy.study_name}
           userInfo={userInfo}
-          priority={submittedPriority}
+          priority="1순위"
+          intro={submittedIntro}
           onGoToApplicationList={goToApplications}
-          onApplySecondStudy={goToStudyList}
-          showSecondStudyButton={submittedPriority === "1순위"}
+          showSecondStudyButton={false}
         />
       </div>
     );
@@ -50,7 +49,6 @@ export default function StudyApplyPage({ params }: Props) {
 
   return (
     <div className="relative min-h-screen">
-      <StudyApplyHelpPanel />
       <div className="flex justify-center px-4 sm:px-6">
         {step === 1 ? (
           <StudyApplyInfoStep
@@ -63,11 +61,11 @@ export default function StudyApplyPage({ params }: Props) {
         ) : (
           <StudyApplyReasonStep
             action={handleSubmit}
-            studyOptions={studyOptions}
             currentStudy={currentStudy}
             studyName={currentStudy.study_name}
             tags={badgeTags}
             onPrevious={goToPrevious}
+            onCancel={goToStudyList}
           />
         )}
       </div>

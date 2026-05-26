@@ -1,12 +1,11 @@
-import { Badge, Body, Label } from "@ui/components/server";
 import { Button } from "@ui/components/client";
 import Image from "next/image";
-import Link from "next/link";
 import type { ApplicationDetail } from "@core/my-page/api";
 
 interface ApplicationCardProps {
   application: ApplicationDetail;
   semesterLabel: string;
+  onViewDetail: () => void;
 }
 
 const DIFFICULTY_LABELS: Record<number, string> = {
@@ -20,15 +19,16 @@ const DIFFICULTY_LABELS: Record<number, string> = {
 export function ApplicationCard({
   application,
   semesterLabel,
+  onViewDetail,
 }: ApplicationCardProps) {
   const { study, priority, intro } = application;
   const priorityLabel = priority === "PRIMARY" ? "1순위" : "2순위";
-  const difficultyLabel = DIFFICULTY_LABELS[study.difficulty] || "보통";
+  const difficultyLabel = DIFFICULTY_LABELS[study.difficulty] ?? "보통";
 
   return (
-    <div className="flex w-full max-w-[384px] flex-col overflow-hidden rounded-xl border border-gray-300">
+    <div className="flex h-full min-w-[240px] flex-col overflow-clip">
       {/* Study Image */}
-      <div className="relative h-[196px] w-full bg-blue-50">
+      <div className="relative h-[196px] w-full rounded-t-[12px] border border-[#c6c6c6] bg-[#dfe8f4]">
         <Image
           src={study.img_url || "/images/default-study-img.png"}
           alt={study.study_name}
@@ -38,49 +38,40 @@ export function ApplicationCard({
       </div>
 
       {/* Card Content */}
-      <div className="flex flex-col gap-4 bg-white p-8">
+      <div className="flex flex-1 flex-col gap-4 rounded-b-[12px] border-b border-l border-r border-[#b1b8be] bg-white px-8 py-8">
         {/* Badges */}
         <div className="flex flex-wrap gap-1">
-          <Badge
-            label={semesterLabel}
-            variant="point"
-            appearance="solid-pastel"
-            size="medium"
-          />
-          <Badge
-            label={priorityLabel}
-            variant="info"
-            appearance="solid-pastel"
-            size="medium"
-          />
-          <Badge
-            label={difficultyLabel}
-            variant="point"
-            appearance="solid-pastel"
-            size="medium"
-          />
+          <span className="inline-flex h-[24px] items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2 text-[15px] leading-[1.5] text-[#0b50d0]">
+            {semesterLabel}
+          </span>
+          <span className="inline-flex h-[24px] items-center justify-center rounded-[4px] bg-[#e7f4fe] px-2 text-[15px] leading-[1.5] text-[#096ab3]">
+            {priorityLabel}
+          </span>
+          <span className="inline-flex h-[24px] items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2 text-[15px] leading-[1.5] text-[#0b50d0]">
+            {difficultyLabel}
+          </span>
         </div>
 
         {/* Study Title */}
-        <Label size="l" className="font-bold text-gray-900">
+        <p className="text-text-basic text-[17px] font-bold leading-[1.5]">
           {study.study_name}
-        </Label>
+        </p>
 
-        {/* Application Intro */}
-        <Body
-          size="m"
-          className="line-clamp-3 h-20 overflow-hidden text-gray-600"
-        >
+        {/* Intro */}
+        <p className="text-text-subtle h-[80px] overflow-hidden text-[17px] leading-[1.5]">
           {intro}
-        </Body>
+        </p>
 
         {/* Action Button */}
-        <div className="mt-2 flex w-full justify-end">
-          <Link href={`/studies/${study.study_id}`}>
-            <Button variant="secondary" className="min-w-[100px]">
-              자세히 보기
-            </Button>
-          </Link>
+        <div className="mt-auto flex items-center justify-end">
+          <Button
+            variant="tertiary"
+            size="medium"
+            className="min-w-[78px] whitespace-nowrap"
+            onClick={onViewDetail}
+          >
+            자세히 보기
+          </Button>
         </div>
       </div>
     </div>

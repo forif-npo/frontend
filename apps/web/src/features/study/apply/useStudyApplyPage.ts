@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { StudyApplyValues } from "@core/schemas";
+import { apiClient } from "@core/utils/api-client";
 import { useStudyApplyData } from "./useStudyApplyData";
 import { getStudyBadgeTags } from "./utils";
 
@@ -12,19 +13,16 @@ type ActionState = {
 };
 
 type Step = 1 | 2 | 3;
-type Priority = "1순위" | "2순위";
 
 const EMPTY_VALUES: StudyApplyValues = {
   primaryStudyId: 0,
   primaryStudyApplyReason: "",
-  secondaryStudyId: null,
-  secondaryStudyApplyReason: null,
 };
 
 export function useStudyApplyPage(studyId: string) {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
-  const [submittedPriority, setSubmittedPriority] = useState<Priority>("1순위");
+  const [submittedIntro, setSubmittedIntro] = useState<string>("");
 
   const { currentStudy, userInfo, studyOptions, isLoading } =
     useStudyApplyData(studyId);
@@ -33,7 +31,7 @@ export function useStudyApplyPage(studyId: string) {
 
   const goToNext = () => setStep(2);
   const goToPrevious = () => setStep(1);
-  const goToStudyList = () => router.push("/study/list");
+  const goToStudyList = () => router.push("/studies/list");
   const goToApplications = () => router.push("/my/applications");
 
   const handleSubmit = async (
@@ -50,15 +48,12 @@ export function useStudyApplyPage(studyId: string) {
     const primaryStudyApplyReason = formData.get(
       "primaryStudyApplyReason",
     ) as string;
-    const secondaryStudyId = formData.get("secondaryStudyId") as string;
 
     if (!primaryStudyApplyReason || primaryStudyApplyReason.length < 50) {
       return {
         values: {
           primaryStudyId: currentStudy.id,
           primaryStudyApplyReason: primaryStudyApplyReason || "",
-          secondaryStudyId: secondaryStudyId ? Number(secondaryStudyId) : null,
-          secondaryStudyApplyReason: null,
         },
         errors: {
           primaryStudyApplyReason: {
@@ -68,21 +63,35 @@ export function useStudyApplyPage(studyId: string) {
       };
     }
 
-    console.log("Form submitted", {
-      primaryStudyId: currentStudy.id,
-      primaryStudyApplyReason,
-      secondaryStudyId,
-    });
+    try {
+      await apiClient
+        .post("api/v1/users/apply", {
+          json: {
+            study_id: currentStudy.id,
+            apply_reason: primaryStudyApplyReason,
+            priority: 1,
+          },
+        })
+        .json();
+    } catch {
+      return {
+        values: {
+          primaryStudyId: currentStudy.id,
+          primaryStudyApplyReason,
+        },
+        errors: {
+          root: { message: "지원 중 오류가 발생했습니다. 다시 시도해주세요." },
+        },
+      };
+    }
 
-    setSubmittedPriority(secondaryStudyId ? "2순위" : "1순위");
+    setSubmittedIntro(primaryStudyApplyReason);
     setStep(3);
 
     return {
       values: {
         primaryStudyId: currentStudy.id,
         primaryStudyApplyReason,
-        secondaryStudyId: secondaryStudyId ? Number(secondaryStudyId) : null,
-        secondaryStudyApplyReason: null,
       },
       errors: {},
     };
@@ -90,7 +99,7 @@ export function useStudyApplyPage(studyId: string) {
 
   return {
     step,
-    submittedPriority,
+    submittedIntro,
     currentStudy,
     userInfo,
     studyOptions,

@@ -1,42 +1,44 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Heading, Label } from "@ui/components/server";
+import { Select } from "@ui/components/client";
 import { MyPageStudyCard } from "./MyPageStudyCard";
-import type { StudyBySemester } from "@core/my-page/api";
+import type { UserStudiesResponse, StudyDetail } from "@core/my-page/api";
 
 interface StudySectionProps {
-  studiesData: { semesters: StudyBySemester[] };
+  studiesData: UserStudiesResponse;
 }
 
 export function StudySection({ studiesData }: StudySectionProps) {
-  const [selectedSemester, setSelectedSemester] = useState<string>("all");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [isPending, startTransition] = useTransition();
 
-  // Generate semester tabs
-  const semesterTabs = [
-    { id: "all", label: "전체 학기" },
-    ...studiesData.semesters.map((sem) => ({
-      id: `${sem.year}-${sem.semester}`,
-      label: sem.semester_label,
-    })),
-  ];
+  type FlatStudy = StudyDetail & {
+    semester_label: string;
+    is_current: boolean;
+  };
 
-  // Filter studies by selected semester
-  const filteredStudies =
-    selectedSemester === "all"
-      ? studiesData.semesters
-      : studiesData.semesters.filter(
-          (sem) => `${sem.year}-${sem.semester}` === selectedSemester,
-        );
+  const sortedSemesters = [...studiesData].sort((a, b) => {
+    const aKey = a.year * 10 + a.semester;
+    const bKey = b.year * 10 + b.semester;
+    return sortOrder === "newest" ? bKey - aKey : aKey - bKey;
+  });
+
+  const sortedStudies: FlatStudy[] = sortedSemesters.flatMap((sem) =>
+    sem.studies.map((s) => ({
+      ...s,
+      semester_label: sem.semester_label,
+      is_current: sem.is_current,
+    })),
+  );
+
+  const totalCount = sortedStudies.length;
 
   const handleDownloadCertificate = async (studyId: number) => {
     startTransition(async () => {
       try {
         const { getCertificate } = await import("@core/my-page/api");
         const certificateUrl = await getCertificate(studyId);
-
-        // Open certificate in new tab
         window.open(certificateUrl, "_blank");
       } catch (error) {
         console.error("Failed to download certificate:", error);
@@ -46,46 +48,43 @@ export function StudySection({ studiesData }: StudySectionProps) {
   };
 
   return (
-    <div className="flex-1 px-16 py-8">
-      {/* Page Header */}
-      <Heading size="l" className="mb-8">
-        내 스터디
-      </Heading>
+    <div>
+      {/* Sort and Count */}
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
+          스터디 <span className="text-[#0b50d0]">{totalCount}</span>개
+        </p>
 
-      {/* Semester Tabs */}
-      <div className="mb-8 flex flex-wrap gap-2">
-        {semesterTabs.map((tab) => {
-          const isSelected = selectedSemester === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setSelectedSemester(tab.id)}
-              className={`rounded-t-lg border-b-4 px-6 py-3 transition-all ${
-                isSelected
-                  ? "border-blue-600 font-semibold text-blue-600"
-                  : "border-transparent text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <Label size="l">{tab.label}</Label>
-            </button>
-          );
-        })}
+        <Select
+          id="study-sort"
+          variant="text"
+          size="sm"
+          value={sortOrder}
+          onChange={(v) => setSortOrder(v as "newest" | "oldest")}
+          placeholder="정렬기준"
+          dropdownAlign="right"
+          options={[
+            { value: "newest", label: "최신순" },
+            { value: "oldest", label: "오래된 순" },
+          ]}
+        />
       </div>
 
-      {/* Study Grid */}
-      {filteredStudies.length === 0 ? (
+      {/* Study List */}
+      {sortedStudies.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-500">
           <p className="text-lg">등록된 스터디가 없습니다</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredStudies.map((semesterData) => (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {sortedStudies.map((study) => (
             <MyPageStudyCard
-              key={`${semesterData.year}-${semesterData.semester}-${semesterData.study.study_id}`}
-              study={semesterData.study}
-              semesterLabel={semesterData.semester_label}
+              key={`${study.semester_label}-${study.study_id}`}
+              study={study}
+              semesterLabel={study.semester_label}
+              isCurrent={study.is_current}
               onDownloadCertificate={() =>
-                handleDownloadCertificate(semesterData.study.study_id)
+                handleDownloadCertificate(study.study_id)
               }
             />
           ))}

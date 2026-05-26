@@ -9,14 +9,20 @@ import { apiClient } from "@core/utils/api-client";
 export const getAnnouncements = async (): Promise<AnnouncementPost[]> => {
   try {
     const response = await apiClient
-      .get("api/v1/posts/announcements")
+      .get("api/v1/posts/announcements", {
+        searchParams: {
+          page: 0,
+          size: 100,
+          search: "",
+        },
+      })
       .json<AnnouncementListResponse>();
 
-    if (response.error_code) {
+    if (response.errorCode) {
       throw new Error(response.message || "공지사항 조회에 실패했습니다.");
     }
 
-    return response.data ?? [];
+    return response.data?.content ?? [];
   } catch (err) {
     throw new Error(
       err instanceof Error
@@ -34,7 +40,7 @@ export const getAnnouncementById = async (
       .get(`api/v1/posts/announcements/${id}`)
       .json<AnnouncementDetailResponse>();
 
-    if (response.error_code) {
+    if (response.errorCode) {
       throw new Error(response.message || "공지사항 조회에 실패했습니다.");
     }
 

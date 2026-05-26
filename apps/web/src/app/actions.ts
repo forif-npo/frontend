@@ -19,26 +19,25 @@ export const applyStudy = async (data: StudyApplyValues) => {
     throw new Error("로그인이 필요합니다.");
   }
 
-  // Prepare request body
+  // Prepare request body (backend expects snake_case)
   const requestBody: {
-    primaryStudyId: number;
-    primaryStudyApplyReason: string;
-    secondaryStudyId?: number;
-    secondaryStudyApplyReason?: string;
+    primary_study_id: number;
+    primary_study_apply_reason: string;
+    secondary_study_id?: number;
+    secondary_study_apply_reason?: string;
   } = {
-    primaryStudyId: data.primaryStudyId,
-    primaryStudyApplyReason: data.primaryStudyApplyReason,
+    primary_study_id: data.primaryStudyId,
+    primary_study_apply_reason: data.primaryStudyApplyReason,
   };
 
   // Only include secondary fields if they exist
   if (data.secondaryStudyId && data.secondaryStudyApplyReason) {
-    requestBody.secondaryStudyId = data.secondaryStudyId;
-    requestBody.secondaryStudyApplyReason = data.secondaryStudyApplyReason;
+    requestBody.secondary_study_id = data.secondaryStudyId;
+    requestBody.secondary_study_apply_reason = data.secondaryStudyApplyReason;
   }
 
-  // Make API request
   const response = await apiClient
-    .post("api/v1/study/apply", {
+    .post("api/v1/studies/apply", {
       json: requestBody,
     })
     .json<{ message: string; data: null }>();

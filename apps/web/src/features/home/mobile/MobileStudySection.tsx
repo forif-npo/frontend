@@ -9,7 +9,7 @@ export function MobileStudySection() {
   const { studies, loading, refetch } = useStudyData();
 
   useEffect(() => {
-    refetch({ page: 0, page_size: 3 });
+    refetch({ size: 3 });
   }, [refetch]);
 
   const items = studies.slice(0, 3).map((study) => ({

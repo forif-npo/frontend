@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Badge } from "@ui/components/server";
 import { Study } from "@/types/study";
 import Link from "next/link";
@@ -101,6 +101,16 @@ function LocationIcon({ className }: { className?: string }) {
 
 export function StudyDetailContent({ study }: StudyDetailContentProps) {
   const [isIntroExpanded, setIsIntroExpanded] = useState(false);
+  const [isClamped, setIsClamped] = useState(false);
+  const introRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = introRef.current;
+    if (el) {
+      setIsClamped(el.scrollHeight > el.clientHeight);
+    }
+  }, [study.explanation]);
+
   const recruitBadge = getRecruitStatusBadge(study.recruit_status);
   const difficultyBadge = getDifficultyBadge(study.difficulty);
   const weekDayName = WEEK_DAY_NAMES[study.week_day];
@@ -267,28 +277,33 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
         <div className="flex flex-col items-center gap-4 rounded-[12px] bg-[#f4f5f6] p-4 md:gap-6 md:p-8">
           <div className="relative w-full overflow-hidden">
             <p
+              ref={introRef}
               className={`text-text-basic whitespace-pre-wrap text-[15px] leading-[1.5] md:text-[17px] ${
-                !isIntroExpanded ? "line-clamp-6" : ""
+                !isIntroExpanded && isClamped ? "line-clamp-6" : ""
               }`}
             >
               {study.explanation}
             </p>
-            {!isIntroExpanded && (
+            {!isIntroExpanded && isClamped && (
               <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[72px] bg-gradient-to-t from-[#f4f5f6] to-transparent" />
             )}
           </div>
 
-          <div className="h-px w-full bg-[#cdd1d5]" />
+          {isClamped && (
+            <>
+              <div className="h-px w-full bg-[#cdd1d5]" />
 
-          <button
-            onClick={() => setIsIntroExpanded(!isIntroExpanded)}
-            className="text-text-basic flex cursor-pointer items-center gap-1 text-[15px] leading-[1.5] md:text-[17px]"
-          >
-            {isIntroExpanded ? "접기" : "스터디 소개 자세히 보기"}
-            <ChevronDownIcon
-              className={`h-4 w-4 transition-transform ${isIntroExpanded ? "rotate-180" : ""}`}
-            />
-          </button>
+              <button
+                onClick={() => setIsIntroExpanded(!isIntroExpanded)}
+                className="text-text-basic flex cursor-pointer items-center gap-1 text-[15px] leading-[1.5] md:text-[17px]"
+              >
+                {isIntroExpanded ? "접기" : "스터디 소개 자세히 보기"}
+                <ChevronDownIcon
+                  className={`h-4 w-4 transition-transform ${isIntroExpanded ? "rotate-180" : ""}`}
+                />
+              </button>
+            </>
+          )}
         </div>
       </section>
 
@@ -514,7 +529,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
           </div>
           <p className="text-text-basic flex items-center gap-1 text-[15px] leading-[1.5] md:text-[17px]">
             <LocationIcon className="h-4 w-4 shrink-0" />
-            한양대학교 서울캠퍼스 학생회관 7층호
+            한양대학교 서울캠퍼스 IT/BT관 708호
           </p>
 
           <div className="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-[8px] bg-[#e5e8eb] md:h-[300px]">

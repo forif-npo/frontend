@@ -1,9 +1,6 @@
 import { Badge } from "@ui/components/server";
-
-type BadgeTag = {
-  label: string;
-  variant: "primary" | "success" | "warning" | "danger" | "disabled";
-};
+import { QuestionBubble } from "@repo/assets/icons/krds";
+import { BadgeTag } from "./utils";
 
 interface StudyApplyTitleProps {
   studyName: string;
@@ -15,7 +12,7 @@ export function StudyApplyTitle({ studyName, tags }: StudyApplyTitleProps) {
     <div className="mb-8 flex flex-col gap-4 sm:mb-12 sm:gap-6">
       <h1 className="text-[28px] font-bold leading-[1.5] tracking-[1px] sm:text-[40px]">
         <span className="text-secondary line-clamp-2">{studyName}</span>
-        <span className="text-text-basic">스터디 신청</span>
+        <span className="text-text-basic">스터디 지원</span>
       </h1>
 
       <div className="flex items-center gap-1">
@@ -28,6 +25,11 @@ export function StudyApplyTitle({ studyName, tags }: StudyApplyTitleProps) {
             size="large"
           />
         ))}
+        <QuestionBubble
+          width={24}
+          height={24}
+          className="text-text-subtle ml-1 shrink-0"
+        />
       </div>
     </div>
   );

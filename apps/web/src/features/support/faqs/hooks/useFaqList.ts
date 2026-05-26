@@ -28,8 +28,8 @@ export const useFaqList = ({ query, page, pageSize }: UseFaqListOptions) => {
 
         // 최신순 느낌으로 정렬(원하면 제거 가능)
         const sorted = [...items].sort((a, b) => {
-          const at = new Date(a.created_at).getTime();
-          const bt = new Date(b.created_at).getTime();
+          const at = new Date(a.createdAt).getTime();
+          const bt = new Date(b.createdAt).getTime();
           return bt - at;
         });
 

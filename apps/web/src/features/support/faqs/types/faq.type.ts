@@ -1,17 +1,24 @@
 export type FaqPost = {
-  post_id: number;
-  author_id: number;
-  author_name: string;
+  postId: number;
+  authorId: number;
+  authorName: string;
   type: "FAQ";
   title: string;
   content: string;
   tag: string;
-  created_at: string; // ISO string
+  createdAt: string;
+};
+
+export type CursorPage<T> = {
+  content: T[];
+  nextCursor: number | null;
+  hasNext: boolean;
+  totalElements: number;
 };
 
 export type FaqListResponse = {
   timestamp: number;
-  data: FaqPost[];
-  error_code: string | null;
+  data: CursorPage<FaqPost>;
+  errorCode: string | null;
   message: string;
 };

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { ArrowDropdownIcon } from "@repo/assets/icons/krds";
+import { Select } from "@ui/components/client/Select";
 
 interface StudyResultsHeaderProps {
   totalItems: number;
@@ -11,7 +11,7 @@ interface StudyResultsHeaderProps {
   className?: string;
 }
 
-const PAGE_SIZE_OPTIONS = [10, 20, 30, 50];
+const PAGE_SIZE_OPTIONS = [12, 24, 36, 48];
 
 export const StudyResultsHeader: React.FC<StudyResultsHeaderProps> = ({
   totalItems,
@@ -29,40 +29,40 @@ export const StudyResultsHeader: React.FC<StudyResultsHeaderProps> = ({
       </p>
 
       <div className="flex shrink-0 items-center gap-3">
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-3">
           <p className="text-body-medium whitespace-nowrap font-bold">
             목록 표시 개수
           </p>
-          <div className="relative font-normal">
-            <select
-              value={pageSize}
-              onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="bg-action-secondary border-border-transparency text-label-medium cursor-pointer appearance-none rounded-sm border px-2 py-0 focus:outline-none"
-            >
-              {PAGE_SIZE_OPTIONS.map((size) => (
-                <option key={size} value={size}>
-                  {size}개
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2">
-              <ArrowDropdownIcon width={16} height={16} />
-            </div>
-          </div>
+          <Select
+            id="page-size-select"
+            variant="text"
+            size="sm"
+            noPadding
+            placeholder={`${pageSize}개`}
+            value={String(pageSize)}
+            onChange={(val) => onPageSizeChange(Number(val))}
+            options={PAGE_SIZE_OPTIONS.map((size) => ({
+              value: String(size),
+              label: `${size}개`,
+            }))}
+            dropdownAlign="right"
+          />
         </div>
 
-        <div className="bg-text-divider-gray h-4 w-[1px]" />
+        <div className="bg-divider-gray h-4 w-[1px]" />
 
         <div className="flex items-center gap-3">
           <p className="text-body-medium whitespace-nowrap font-bold">
             정렬기준
           </p>
-          <div className="rounded-xlarge2 flex items-center gap-2 font-normal">
+          <div className="flex items-center font-normal">
             <button
-              onClick={() => onSortChange("latest")}
+              onClick={() =>
+                onSortChange(sortBy === "latest" ? "popular" : "latest")
+              }
               className="bg-action-secondary border-border-transparency rounded-small2 text-label-medium text-text-basic border px-2 py-0"
             >
-              최신순
+              {sortBy === "latest" ? "최신순" : "오래된 순"}
             </button>
           </div>
         </div>

@@ -1,56 +1,66 @@
 import type { ApiResponse } from "@core/types/api";
 import { apiClient } from "@core/utils/api-client";
-import type { StudiesParams, Study } from "@repo/core/types/study";
+import { Study, StudyListParams } from "@/types/study";
 import { useCallback, useState } from "react";
+
+interface PaginatedData<T> {
+  content: T[];
+  next_cursor: number | null;
+  has_next: boolean;
+  total_elements: number;
+}
 
 interface UseStudyDataReturn {
   studies: Study[];
   loading: boolean;
   error: string | null;
-  refetch: (params?: StudiesParams) => Promise<void>;
+  totalElements: number;
+  refetch: (params?: StudyListParams) => Promise<void>;
 }
 
-export const useStudyData = (): UseStudyDataReturn => {
+export const useStudyData = (
+  initialParams?: StudyListParams,
+): UseStudyDataReturn => {
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [totalElements, setTotalElements] = useState(0);
 
-  const fetchStudies = useCallback(async (fetchParams?: StudiesParams) => {
+  const fetchStudies = useCallback(async (fetchParams?: StudyListParams) => {
     setError(null);
     setLoading(true);
     try {
       const searchParams = new URLSearchParams();
 
-      if (fetchParams) {
-        if (fetchParams.page !== undefined)
-          searchParams.append("page", fetchParams.page.toString());
-        if (fetchParams.page_size !== undefined)
-          searchParams.append("page_size", fetchParams.page_size.toString());
-        if (fetchParams.year !== undefined)
-          searchParams.append("year", fetchParams.year.toString());
-        if (fetchParams.semester !== undefined)
-          searchParams.append("semester", fetchParams.semester.toString());
-        if (fetchParams.difficulties) {
-          fetchParams.difficulties.forEach((d) =>
-            searchParams.append("difficulties", d),
-          );
-        }
-        if (fetchParams.tags) {
-          fetchParams.tags.forEach((t) => searchParams.append("tags", t));
-        }
-        if (fetchParams.recruit_status)
-          searchParams.append("recruit_status", fetchParams.recruit_status);
-        if (fetchParams.search)
-          searchParams.append("search", fetchParams.search);
+      const params = { page: 0, size: 12, ...fetchParams };
+
+      searchParams.append("page", params.page.toString());
+      searchParams.append("size", params.size.toString());
+      if (params.year !== undefined)
+        searchParams.append("year", params.year.toString());
+      if (params.semester !== undefined)
+        searchParams.append("semester", params.semester.toString());
+      if (params.difficulties) {
+        params.difficulties.forEach((d) =>
+          searchParams.append("difficulties", d),
+        );
       }
+      if (params.tags) {
+        params.tags.forEach((t) => searchParams.append("tags", t));
+      }
+      if (params.recruit_status)
+        searchParams.append("recruit_status", params.recruit_status);
+      if (params.search) searchParams.append("search", params.search);
+      if (params.sort_order)
+        searchParams.append("sort_order", params.sort_order);
 
-      const studies = await apiClient
+      const response = await apiClient
         .get("api/v1/studies", { searchParams })
-        .json<ApiResponse<Study[]>>();
+        .json<ApiResponse<PaginatedData<Study>>>();
 
-      console.log("API Response:", studies);
-
-      setStudies(studies.data || []);
+      const paginated = response.data;
+      setStudies(paginated?.content ?? []);
+      setTotalElements(paginated?.total_elements ?? 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch studies");
     } finally {
@@ -62,6 +72,7 @@ export const useStudyData = (): UseStudyDataReturn => {
     studies,
     loading,
     error,
+    totalElements,
     refetch: fetchStudies,
   };
 };

@@ -4,7 +4,7 @@
 export interface ApiResponse<T> {
   timestamp: number;
   data: T | null;
-  errorCode: string | null;
+  error_code: string | null;
   message: string;
 }
 
@@ -14,7 +14,7 @@ export interface ApiResponse<T> {
 export interface ApiErrorResponse {
   timestamp: number;
   data: null;
-  errorCode: string;
+  error_code: string;
   message: string;
 }
 
@@ -22,10 +22,10 @@ export interface ApiErrorResponse {
  * 회원가입 요청 타입
  */
 export interface SignUpRequest {
-  studentId: number;
-  userName: string;
+  student_id: number;
+  user_name: string;
   email: string;
-  phoneNum: string;
+  phone_num: string;
   department: string;
 }
 
@@ -33,7 +33,7 @@ export interface SignUpRequest {
  * 회원가입 응답 데이터 타입
  */
 export interface SignUpData {
-  accessToken: string;
+  access_token: string;
   role: "USER" | "MENTOR";
 }
 

@@ -1,24 +1,32 @@
 export type AnnouncementPost = {
-  post_id: number;
-  author_id: number;
-  author_name: string;
-  type: "ANNOUNCEMENT" | "공지사항" | string; // 백엔드 값 확정되면 "ANNOUNCEMENT"로 고정 추천
+  postId: number;
+  authorId: number;
+  authorName: string;
+  type: "ANNOUNCEMENT" | string;
   title: string;
   content: string;
-  created_at: string; // ISO string
-  image_urls: string[];
+  tag: string;
+  createdAt: string;
+  imageUrls: string[];
+};
+
+export type CursorPage<T> = {
+  content: T[];
+  nextCursor: number | null;
+  hasNext: boolean;
+  totalElements: number;
 };
 
 export type AnnouncementListResponse = {
   timestamp: number;
-  data: AnnouncementPost[];
-  error_code: string | null;
+  data: CursorPage<AnnouncementPost>;
+  errorCode: string | null;
   message: string;
 };
 
 export type AnnouncementDetailResponse = {
   timestamp: number;
   data: AnnouncementPost | null;
-  error_code: string | null;
+  errorCode: string | null;
   message: string;
 };

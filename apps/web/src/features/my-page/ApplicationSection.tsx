@@ -1,23 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { Heading, Body, Label } from "@ui/components/server";
+import { Select } from "@ui/components/client";
 import { ApplicationCard } from "./ApplicationCard";
-import type { StudyApplicationsResponse } from "@core/my-page/api";
+import { ApplicationDetailView } from "./ApplicationDetailView";
+import type {
+  StudyApplicationsResponse,
+  ApplicationDetail,
+} from "@core/my-page/api";
 
 interface ApplicationSectionProps {
   applicationsData: StudyApplicationsResponse;
 }
 
+type FlatApplication = ApplicationDetail & {
+  apply_date: string;
+  apply_year: number;
+  apply_semester: number;
+  user_apply_id: number;
+};
+
 export function ApplicationSection({
   applicationsData,
 }: ApplicationSectionProps) {
-  const [activeTab, setActiveTab] = useState<"study" | "creation">("study");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [selectedApplication, setSelectedApplication] =
+    useState<FlatApplication | null>(null);
 
-  // Extract all applications (primary and secondary)
   const allApplications = applicationsData.applications.flatMap((app) => {
-    const items = [
+    const items: FlatApplication[] = [
       {
         ...app.primary_application,
         apply_date: app.apply_date,
@@ -38,104 +49,57 @@ export function ApplicationSection({
     return items;
   });
 
-  // Sort applications
   const sortedApplications = [...allApplications].sort((a, b) => {
     const dateA = new Date(a.apply_date).getTime();
     const dateB = new Date(b.apply_date).getTime();
     return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
   });
 
-  const totalCount = sortedApplications.length;
+  if (selectedApplication) {
+    return (
+      <ApplicationDetailView
+        application={selectedApplication}
+        onBack={() => setSelectedApplication(null)}
+      />
+    );
+  }
 
   return (
-    <div className="flex-1 px-16 py-8">
-      {/* Page Header */}
-      <Heading size="l" className="mb-6">
-        신청서 목록
-      </Heading>
-
-      {/* Tabs */}
-      <div className="mb-6 flex gap-4 border-b border-gray-200">
-        <button
-          onClick={() => setActiveTab("study")}
-          className={`border-b-3 px-2 pb-3 transition-colors ${
-            activeTab === "study"
-              ? "border-blue-700 font-bold text-blue-900"
-              : "border-transparent text-gray-600 hover:text-gray-900"
-          }`}
-        >
-          <Label size="l">스터디 신청서</Label>
-        </button>
-        <button
-          onClick={() => setActiveTab("creation")}
-          className={`border-b-3 px-2 pb-3 transition-colors ${
-            activeTab === "creation"
-              ? "border-blue-700 font-bold text-blue-900"
-              : "border-transparent text-gray-600 hover:text-gray-900"
-          }`}
-        >
-          <Label size="l">스터디 개설 신청서</Label>
-        </button>
+    <div>
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
+          지원서{" "}
+          <span className="text-[#0b50d0]">{sortedApplications.length}</span>개
+        </p>
+        <Select
+          id="application-sort"
+          variant="text"
+          size="sm"
+          value={sortOrder}
+          onChange={(v) => setSortOrder(v as "newest" | "oldest")}
+          placeholder="정렬기준"
+          dropdownAlign="right"
+          options={[
+            { value: "newest", label: "최신순" },
+            { value: "oldest", label: "오래된 순" },
+          ]}
+        />
       </div>
 
-      {/* Filter and Sort */}
-      <div className="mb-6 flex items-center justify-between">
-        <Body size="l" className="font-bold">
-          신청서 <span className="text-blue-600">{totalCount}</span>개
-        </Body>
-
-        <div className="flex items-center gap-3">
-          <Label size="m" className="font-bold">
-            정렬기준
-          </Label>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setSortOrder("newest")}
-              className={`rounded px-2 py-1 transition-colors ${
-                sortOrder === "newest"
-                  ? "bg-blue-100 text-gray-900"
-                  : "bg-transparent text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              <Body size="m">최신순</Body>
-            </button>
-            <button
-              onClick={() => setSortOrder("oldest")}
-              className={`rounded px-2 py-1 transition-colors ${
-                sortOrder === "oldest"
-                  ? "bg-blue-100 text-gray-900"
-                  : "bg-transparent text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              <Body size="m">오래된 순</Body>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Applications Grid */}
-      {activeTab === "study" ? (
-        sortedApplications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-            <p className="text-lg">신청한 스터디가 없습니다</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {sortedApplications.map((app, index) => {
-              const semesterLabel = `${app.apply_year}-${app.apply_semester}`;
-              return (
-                <ApplicationCard
-                  key={`${app.user_apply_id}-${app.priority}-${index}`}
-                  application={app}
-                  semesterLabel={semesterLabel}
-                />
-              );
-            })}
-          </div>
-        )
-      ) : (
+      {sortedApplications.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-          <p className="text-lg">스터디 개설 신청서 (Coming soon)</p>
+          <p className="text-lg">신청한 스터디가 없습니다</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {sortedApplications.map((app, index) => (
+            <ApplicationCard
+              key={`${app.user_apply_id}-${app.priority}-${index}`}
+              application={app}
+              semesterLabel={`${app.apply_year}-${app.apply_semester}`}
+              onViewDetail={() => setSelectedApplication(app)}
+            />
+          ))}
         </div>
       )}
     </div>
