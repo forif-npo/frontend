@@ -11,7 +11,7 @@ export const getAnnouncements = async (): Promise<AnnouncementPost[]> => {
     const response = await apiClient
       .get("api/v1/posts/announcements", {
         searchParams: {
-          cursor: 1,
+          page: 0,
           size: 100,
           search: "",
         },

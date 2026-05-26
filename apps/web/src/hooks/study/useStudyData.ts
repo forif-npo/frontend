@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 
 interface PaginatedData<T> {
   content: T[];
-  next_cursor: string | null;
+  next_cursor: number | null;
   has_next: boolean;
   total_elements: number;
 }
@@ -14,7 +14,6 @@ interface UseStudyDataReturn {
   studies: Study[];
   loading: boolean;
   error: string | null;
-  hasNext: boolean;
   totalElements: number;
   refetch: (params?: StudyListParams) => Promise<void>;
 }
@@ -25,7 +24,6 @@ export const useStudyData = (
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hasNext, setHasNext] = useState(false);
   const [totalElements, setTotalElements] = useState(0);
 
   const fetchStudies = useCallback(async (fetchParams?: StudyListParams) => {
@@ -34,30 +32,27 @@ export const useStudyData = (
     try {
       const searchParams = new URLSearchParams();
 
-      if (fetchParams) {
-        if (fetchParams.cursor !== undefined)
-          searchParams.append("cursor", fetchParams.cursor.toString());
-        if (fetchParams.size !== undefined)
-          searchParams.append("size", fetchParams.size.toString());
-        if (fetchParams.year !== undefined)
-          searchParams.append("year", fetchParams.year.toString());
-        if (fetchParams.semester !== undefined)
-          searchParams.append("semester", fetchParams.semester.toString());
-        if (fetchParams.difficulties) {
-          fetchParams.difficulties.forEach((d) =>
-            searchParams.append("difficulties", d),
-          );
-        }
-        if (fetchParams.tags) {
-          fetchParams.tags.forEach((t) => searchParams.append("tags", t));
-        }
-        if (fetchParams.recruit_status)
-          searchParams.append("recruit_status", fetchParams.recruit_status);
-        if (fetchParams.search)
-          searchParams.append("search", fetchParams.search);
-        if (fetchParams.sort_order)
-          searchParams.append("sort_order", fetchParams.sort_order);
+      const params = { page: 0, size: 12, ...fetchParams };
+
+      searchParams.append("page", params.page.toString());
+      searchParams.append("size", params.size.toString());
+      if (params.year !== undefined)
+        searchParams.append("year", params.year.toString());
+      if (params.semester !== undefined)
+        searchParams.append("semester", params.semester.toString());
+      if (params.difficulties) {
+        params.difficulties.forEach((d) =>
+          searchParams.append("difficulties", d),
+        );
       }
+      if (params.tags) {
+        params.tags.forEach((t) => searchParams.append("tags", t));
+      }
+      if (params.recruit_status)
+        searchParams.append("recruit_status", params.recruit_status);
+      if (params.search) searchParams.append("search", params.search);
+      if (params.sort_order)
+        searchParams.append("sort_order", params.sort_order);
 
       const response = await apiClient
         .get("api/v1/studies", { searchParams })
@@ -65,7 +60,6 @@ export const useStudyData = (
 
       const paginated = response.data;
       setStudies(paginated?.content ?? []);
-      setHasNext(paginated?.has_next ?? false);
       setTotalElements(paginated?.total_elements ?? 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch studies");
@@ -78,7 +72,6 @@ export const useStudyData = (
     studies,
     loading,
     error,
-    hasNext,
     totalElements,
     refetch: fetchStudies,
   };

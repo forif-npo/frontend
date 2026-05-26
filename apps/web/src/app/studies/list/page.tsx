@@ -7,7 +7,7 @@ import { StudyCardGrid } from "@/components/study/ui/StudyCardGrid";
 import { StudyFilterSection } from "@/components/study/ui/StudyFilterSection";
 import { StudyListMobileHeader } from "@/components/study/ui/StudyListMobileHeader";
 import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
-import { usePagination, useStudyData, useStudyFilters } from "@/hooks/study";
+import { useStudyData, useStudyFilters } from "@/hooks/study";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Study, StudyListParams } from "@/types/study";
 import { Pagination } from "@ui/components/client";
@@ -25,10 +25,8 @@ export default function StudyListPage() {
   const { filters, updateFilter, updateMultipleFilters, clearAllFilters } =
     useStudyFilters();
 
-  const { currentPage, pageSize, setPage, setPageSize } = usePagination({
-    data: [],
-    initialPageSize: 12,
-  });
+  const [pageSize, setPageSize] = useState(12);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     updateFilter("search", debouncedSearch || undefined);
@@ -36,8 +34,8 @@ export default function StudyListPage() {
 
   const apiParams: StudyListParams = useMemo(() => {
     return {
-      page: currentPage - 1,
-      page_size: pageSize,
+      page: currentPage,
+      size: pageSize,
       year: filters.year,
       semester: filters.semester,
       difficulties: filters.difficulty ? [filters.difficulty] : undefined,
@@ -58,8 +56,8 @@ export default function StudyListPage() {
     sortBy,
   ]);
 
-  const { studies, loading, error, refetch } = useStudyData(apiParams);
-  console.log("studies:", studies);
+  const { studies, loading, error, totalElements, refetch } =
+    useStudyData(apiParams);
 
   useEffect(() => {
     refetch(apiParams);
@@ -97,6 +95,8 @@ export default function StudyListPage() {
     }
   };
 
+  const resetPage = () => setCurrentPage(0);
+
   return (
     <div className="bg-bg-base min-h-screen pb-20">
       <div className="w-full pb-8">
@@ -109,7 +109,7 @@ export default function StudyListPage() {
           onSearchChange={(value) => setSearchInput(value)}
           onSearchSubmit={() => {
             updateFilter("search", searchInput || undefined);
-            setPage(0);
+            resetPage();
           }}
           selectedSemester={selectedSemester}
           selectedDifficulty={filters.difficulty || ""}
@@ -129,7 +129,7 @@ export default function StudyListPage() {
               onChange={(value) => setSearchInput(value)}
               onSubmit={() => {
                 updateFilter("search", searchInput || undefined);
-                setPage(0);
+                resetPage();
               }}
             />
             <StudyActionButtons />
@@ -173,8 +173,8 @@ export default function StudyListPage() {
             {studies.length > 0 && (
               <Pagination
                 currentPage={currentPage + 1}
-                totalPages={Math.ceil(studies.length / pageSize) || 1}
-                onPageChange={(page) => setPage(page - 1)}
+                totalPages={Math.ceil(totalElements / pageSize) || 1}
+                onPageChange={(page) => setCurrentPage(page - 1)}
               />
             )}
           </>

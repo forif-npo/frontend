@@ -80,14 +80,14 @@ export async function getCertificate(
   const options = token
     ? { headers: { Authorization: `Bearer ${token}` } }
     : {};
-  const searchParams = new URLSearchParams();
-  searchParams.append("study_id", studyId.toString());
-
   const response = await apiClient
-    .get(`api/v1/users/me/certificates?${searchParams.toString()}`, options)
-    .json<ApiResponse<{ certificate_url: string }>>();
+    .get("api/v1/users/me/certificates", {
+      ...options,
+      searchParams: { studyId },
+    })
+    .json<ApiResponse<{ certificateUrl: string }>>();
 
-  return response.data!.certificate_url;
+  return response.data!.certificateUrl;
 }
 
 /**

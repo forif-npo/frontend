@@ -29,7 +29,7 @@ export interface Study {
 }
 
 export interface StudyListParams {
-  cursor?: number;
+  page?: number;
   size?: number;
 
   year?: number;

@@ -12,7 +12,7 @@ export function StudySection() {
   const { studies, loading, refetch } = useStudyData();
 
   useEffect(() => {
-    refetch({ page: 0, page_size: 3 });
+    refetch({ size: 3 });
   }, [refetch]);
 
   return (
