@@ -159,7 +159,7 @@ export default function ClubAboutPage() {
       </section>
 
       {/* History Section */}
-      <section className="mx-auto max-w-[1100px] px-6 py-20">
+      <section id="history" className="mx-auto max-w-[1100px] px-6 py-20">
         <div className="mb-6">
           <Breadcrumb
             items={[

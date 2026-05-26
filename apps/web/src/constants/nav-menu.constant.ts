@@ -13,19 +13,19 @@ export const NAV_MENUS: NavMenu[] = [
       },
       {
         label: "운영진 소개",
-        href: "/club/members",
+        href: "/club/team",
       },
       {
         label: "연혁",
-        href: "/club/activities",
+        href: "/club/about#history",
       },
       {
         label: "회칙",
-        href: "/club/activities",
+        href: "/club/rule",
       },
       {
         label: "회계",
-        href: "/club/activities",
+        href: "/club/accounting",
       },
     ],
   },
