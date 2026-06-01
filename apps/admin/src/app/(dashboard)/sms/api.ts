@@ -5,7 +5,7 @@ import type { SendAlimTalkRequest, SendAlimTalkResult } from "./types";
 export async function sendAlimTalk(
   data: SendAlimTalkRequest,
 ): Promise<ApiResponse<SendAlimTalkResult>> {
-  const response = await apiClient
+  return apiClient
     .post("api/v1/notifications", {
       json: data,
     })
@@ -16,17 +16,16 @@ export async function sendAlimTalk(
         failure_count: number;
         results: string[];
       }>
-    >();
-
-  return {
-    ...response,
-    data: response.data
-      ? {
-          totalCount: response.data.total_count,
-          successCount: response.data.success_count,
-          failureCount: response.data.failure_count,
-          results: response.data.results,
-        }
-      : null,
-  };
+    >()
+    .then(({ data: raw, ...rest }) => ({
+      ...rest,
+      data: raw
+        ? {
+            totalCount: raw.total_count,
+            successCount: raw.success_count,
+            failureCount: raw.failure_count,
+            results: raw.results,
+          }
+        : null,
+    }));
 }

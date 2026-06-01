@@ -1,56 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Button, TextInput } from "@ui/components/client";
-import { GuideCheckIcon } from "@ui/components/server";
+import { Button, CriticalAlert, TextInput } from "@ui/components/client";
+import {
+  AnnotationIcon,
+  GuideCheckIcon,
+  SearchIcon,
+} from "@ui/components/server";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { StudyOpenValues } from "@core/schemas";
 import type { UseFormReturn } from "react-hook-form";
 import { StudyCreateStepIndicator } from "./StudyCreateStepIndicator";
 import type { UserInfo } from "../types";
-
-function AnnotationIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M12 8V13M12 16H12.01"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function SearchIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-        stroke="#58616a"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 /** 읽기 전용 정보 필드 */
 function InfoField({
@@ -179,6 +141,7 @@ export function Step1InfoVerification({
   const [showMentorCard, setShowMentorCard] = useState(false);
   const [mentorSearchValue, setMentorSearchValue] = useState("");
   const [mentorInfo, setMentorInfo] = useState<UserInfo | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   const handleMentorSearch = async () => {
     if (!mentorSearchValue.trim()) return;
@@ -195,7 +158,7 @@ export function Step1InfoVerification({
         >();
       if (response.data) {
         if (String(response.data.user_id) === userInfo.studentId) {
-          alert("본인은 추가 멘토로 등록할 수 없습니다.");
+          setAlertMessage("본인은 추가 멘토로 등록할 수 없습니다.");
           setMentorInfo(null);
           form.setValue("mentorIds", [], { shouldDirty: true });
           return;
@@ -212,7 +175,7 @@ export function Step1InfoVerification({
         });
       }
     } catch {
-      alert("해당 학번의 사용자를 찾을 수 없습니다.");
+      setAlertMessage("해당 학번의 사용자를 찾을 수 없습니다.");
       setMentorInfo(null);
       form.setValue("mentorIds", [], { shouldDirty: true });
     }
@@ -270,6 +233,9 @@ export function Step1InfoVerification({
             icon={<AnnotationIcon className="text-text-subtle h-6 w-6" />}
           />
         </div>
+
+        {/* 알림 메시지 */}
+        {alertMessage && <CriticalAlert text={alertMessage} variant="danger" />}
 
         {/* 멘토 추가 카드 */}
         {showMentorCard && (

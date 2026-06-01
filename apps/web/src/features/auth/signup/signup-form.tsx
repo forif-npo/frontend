@@ -77,8 +77,6 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
 
   const isLoading = isPending || isTransitionPending;
 
-  useEffect(() => {}, [watchedValues]);
-
   useEffect(() => {
     if (!state.success) return;
 
