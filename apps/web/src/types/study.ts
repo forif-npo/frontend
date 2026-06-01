@@ -29,6 +29,7 @@ export interface Study {
 }
 
 export interface StudyListParams {
+  cursor?: number;
   page?: number;
   size?: number;
 
@@ -38,7 +39,6 @@ export interface StudyListParams {
   tags?: string[];
   recruit_status?: RecruitStatus;
   search?: string;
-  sort_order?: "ASC" | "DESC";
 }
 
 export interface StudyListResponse {

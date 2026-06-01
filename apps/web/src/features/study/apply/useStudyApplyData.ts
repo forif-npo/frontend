@@ -26,6 +26,10 @@ type StudyOption = {
   label: string;
 };
 
+type PaginatedStudies = {
+  content: Study[];
+};
+
 type UseStudyApplyDataReturn = {
   currentStudy: Study | null;
   userInfo: UserInfo | null;
@@ -60,11 +64,11 @@ export function useStudyApplyData(studyId: string): UseStudyApplyDataReturn {
               .get("api/v1/studies", {
                 searchParams: {
                   page: "0",
-                  page_size: "100",
+                  size: "100",
                   recruit_status: "APPLICABLE",
                 },
               })
-              .json<ApiResponse<Study[]>>(),
+              .json<ApiResponse<PaginatedStudies>>(),
           ]);
 
         if (userResponse.data) {
@@ -81,9 +85,7 @@ export function useStudyApplyData(studyId: string): UseStudyApplyDataReturn {
         }
 
         if (studiesResponse.data) {
-          const studies = Array.isArray(studiesResponse.data)
-            ? studiesResponse.data
-            : [];
+          const studies = studiesResponse.data.content ?? [];
           const options = studies
             .filter((study) => study.id !== parseInt(studyId))
             .map((study) => ({

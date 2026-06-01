@@ -16,9 +16,9 @@ export type CursorPage<T> = {
   totalElements: number;
 };
 
-export type FaqListResponse = {
+export type FaqListResponse<T = FaqPost> = {
   timestamp: number;
-  data: CursorPage<FaqPost>;
-  errorCode: string | null;
+  data: CursorPage<T>;
+  error_code: string | null;
   message: string;
 };

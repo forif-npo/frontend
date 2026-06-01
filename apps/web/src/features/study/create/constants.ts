@@ -1,17 +1,4 @@
-export const TAG_OPTIONS = [
-  "개인개발",
-  "데이터",
-  "데이터베이스",
-  "디자인",
-  "백엔드",
-  "보안",
-  "블록체인",
-  "알고리즘",
-  "인공지능",
-  "모바일",
-  "프로그래밍 언어 기초",
-  "프론트엔드",
-] as const;
+export { TAG_OPTIONS, getStudyTagId } from "@/constants/study-tags";
 
 export const LOCATION_OPTIONS = [
   { value: "IT/BT관", label: "IT/BT관" },

@@ -2,6 +2,7 @@
 
 import {
   setTokenGetter,
+  setTokenRefresher,
   setOnTokenRefreshed,
   setOnUnauthorized,
 } from "@core/utils/api-client";
@@ -14,6 +15,11 @@ export function ApiClientProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setTokenGetter(async () => {
       return session?.access_token || null;
+    });
+
+    setTokenRefresher(async () => {
+      const refreshedSession = await update({ forceRefresh: true });
+      return refreshedSession?.access_token || null;
     });
 
     setOnTokenRefreshed(async (newToken: string) => {

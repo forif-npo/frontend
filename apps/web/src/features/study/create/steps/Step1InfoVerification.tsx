@@ -5,6 +5,8 @@ import { Button, TextInput } from "@ui/components/client";
 import { GuideCheckIcon } from "@ui/components/server";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
+import type { StudyOpenValues } from "@core/schemas";
+import type { UseFormReturn } from "react-hook-form";
 import { StudyCreateStepIndicator } from "./StudyCreateStepIndicator";
 import type { UserInfo } from "../types";
 
@@ -162,12 +164,14 @@ function MentorAddCard({
 }
 
 interface Step1InfoVerificationProps {
+  form: UseFormReturn<StudyOpenValues>;
   userInfo: UserInfo;
   onNext: () => void;
   onCancel: () => void;
 }
 
 export function Step1InfoVerification({
+  form,
   userInfo,
   onNext,
   onCancel,
@@ -190,16 +194,27 @@ export function Step1InfoVerification({
           }>
         >();
       if (response.data) {
+        if (String(response.data.user_id) === userInfo.studentId) {
+          alert("본인은 추가 멘토로 등록할 수 없습니다.");
+          setMentorInfo(null);
+          form.setValue("mentorIds", [], { shouldDirty: true });
+          return;
+        }
+
         setMentorInfo({
           studentId: String(response.data.user_id),
           name: response.data.user_name,
           department: response.data.department,
           phone: response.data.phone_num,
         });
+        form.setValue("mentorIds", [response.data.user_id], {
+          shouldDirty: true,
+        });
       }
     } catch {
       alert("해당 학번의 사용자를 찾을 수 없습니다.");
       setMentorInfo(null);
+      form.setValue("mentorIds", [], { shouldDirty: true });
     }
   };
 
@@ -207,6 +222,13 @@ export function Step1InfoVerification({
     setShowMentorCard(false);
     setMentorSearchValue("");
     setMentorInfo(null);
+    form.setValue("mentorIds", [], { shouldDirty: true });
+  };
+
+  const handleMentorSearchChange = (value: string) => {
+    setMentorSearchValue(value);
+    setMentorInfo(null);
+    form.setValue("mentorIds", [], { shouldDirty: true });
   };
 
   return (
@@ -256,7 +278,7 @@ export function Step1InfoVerification({
             mentorInfo={mentorInfo}
             onSearch={handleMentorSearch}
             searchValue={mentorSearchValue}
-            onSearchChange={setMentorSearchValue}
+            onSearchChange={handleMentorSearchChange}
           />
         )}
       </div>

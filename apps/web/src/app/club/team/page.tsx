@@ -8,26 +8,36 @@ import { Breadcrumb } from "@ui/components/server";
 import Image from "next/image";
 
 interface TeamMember {
+  id: number;
+  user_id: number;
+  user_name: string;
+  phone_num: string;
   act_year: number;
   act_semester: number;
-  user_title: string;
-  club_department: string;
+  user_title: string | null;
+  club_department: string | null;
   intro_tag: string | null;
   self_intro: string | null;
   prof_img_url: string | null;
-  user: {
-    id: number;
-    name: string;
-  };
+  graduate_year: number | null;
 }
 
-const CURRENT_YEAR = 2025;
-const CURRENT_SEMESTER = 2;
+const DEFAULT_YEAR = 2026;
+const DEFAULT_SEMESTER = 1;
+const LATEST_YEAR = 2026;
+const EARLIEST_YEAR = 2018;
 
-const YEAR_OPTIONS = Array.from({ length: 8 }, (_, i) => ({
-  value: String(CURRENT_YEAR - i),
-  label: `${CURRENT_YEAR - i}년`,
-}));
+const YEAR_OPTIONS = Array.from(
+  { length: LATEST_YEAR - EARLIEST_YEAR + 1 },
+  (_, i) => {
+    const year = LATEST_YEAR - i;
+
+    return {
+      value: String(year),
+      label: `${year}년`,
+    };
+  },
+);
 
 const SEMESTER_OPTIONS = [
   { value: "1", label: "1학기" },
@@ -40,9 +50,12 @@ const TITLE_PRIORITY: Record<string, number> = {
   팀장: 3,
 };
 
+const getTitlePriority = (title: string | null) =>
+  title ? (TITLE_PRIORITY[title] ?? 4) : 4;
+
 export default function TeamPage() {
-  const [year, setYear] = useState(CURRENT_YEAR);
-  const [semester, setSemester] = useState(CURRENT_SEMESTER);
+  const [year, setYear] = useState(DEFAULT_YEAR);
+  const [semester, setSemester] = useState(DEFAULT_SEMESTER);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,15 +63,12 @@ export default function TeamPage() {
     setLoading(true);
     try {
       const res = await apiClient
-        .get("api/v1/forif-team", {
-          searchParams: { year, semester },
-        })
+        .get(`api/v1/forif-team/${year}/${semester}`)
         .json<ApiResponse<TeamMember[]>>();
       const data = res.data ?? [];
       const sorted = [...data].sort(
         (a, b) =>
-          (TITLE_PRIORITY[a.user_title] ?? 4) -
-          (TITLE_PRIORITY[b.user_title] ?? 4),
+          getTitlePriority(a.user_title) - getTitlePriority(b.user_title),
       );
       setTeam(sorted);
     } catch {
@@ -135,7 +145,7 @@ export default function TeamPage() {
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {team.map((member) => (
-            <TeamCard key={member.user.id} member={member} />
+            <TeamCard key={member.id} member={member} />
           ))}
         </div>
       )}
@@ -157,7 +167,7 @@ function TeamCard({ member }: { member: TeamMember }) {
       <div className="mx-auto mb-4 flex justify-center">
         <Image
           src={member.prof_img_url || "/forif-circle.png"}
-          alt={member.user.name}
+          alt={member.user_name || "FORIF 운영진"}
           width={120}
           height={120}
           className="h-[120px] w-[120px] rounded-full object-cover"
@@ -166,7 +176,7 @@ function TeamCard({ member }: { member: TeamMember }) {
 
       {/* Info */}
       <div className="flex min-h-[140px] flex-col items-center justify-center">
-        <p className="text-xl font-bold">{member.user.name}</p>
+        <p className="text-xl font-bold">{member.user_name}</p>
         <p className="mb-2 text-sm text-gray-500">{member.club_department}</p>
         <div className="mb-2 flex flex-wrap justify-center gap-1.5">
           {member.user_title && (

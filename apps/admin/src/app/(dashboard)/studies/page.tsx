@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { fetchStudiesWithFallback, getCurrentSemester } from "./api";
 import { StudiesView } from "./studies-view";
 import { SemesterLabel } from "./types";
@@ -12,9 +13,10 @@ interface PageProps {
 }
 
 export default async function Page({ searchParams }: PageProps) {
-  const [params, currentSemester] = await Promise.all([
+  const [params, currentSemester, session] = await Promise.all([
     searchParams,
     getCurrentSemester(),
+    auth(),
   ]);
 
   // Determine default semester label (e.g., "25-2")
@@ -34,13 +36,16 @@ export default async function Page({ searchParams }: PageProps) {
 
   // Fetch studies from real API (with mock fallback)
   try {
-    const studiesData = await fetchStudiesWithFallback({
-      size: 20,
-      cursor,
-      year,
-      semester,
-      search,
-    });
+    const studiesData = await fetchStudiesWithFallback(
+      {
+        size: 20,
+        cursor,
+        year,
+        semester,
+        search,
+      },
+      session?.access_token,
+    );
 
     return (
       <StudiesView

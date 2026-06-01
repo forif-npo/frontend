@@ -251,14 +251,14 @@ export function Step2StudyOverview({
           <SectionTitle>스터디 소개</SectionTitle>
           <div className="flex flex-col gap-2">
             <HintText>
-              스터디에 대해 소개해주세요. 최소 50자 이상, 최대 5,000자 이내로
+              스터디에 대해 소개해주세요. 최소 50자 이상, 최대 500자 이내로
               작성해주세요.
             </HintText>
             <TextArea
               id="introduction"
               placeholder="내용을 입력하세요"
               size="large"
-              maxLength={5000}
+              maxLength={500}
               {...register("introduction")}
             />
             {errors.introduction && (
@@ -325,6 +325,7 @@ export function Step2StudyOverview({
                   id="room"
                   length="full"
                   placeholder="강의실(호)"
+                  error={errors.room?.message}
                   {...register("room")}
                 />
               </div>

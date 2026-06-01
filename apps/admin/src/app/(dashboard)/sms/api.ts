@@ -5,9 +5,28 @@ import type { SendAlimTalkRequest, SendAlimTalkResult } from "./types";
 export async function sendAlimTalk(
   data: SendAlimTalkRequest,
 ): Promise<ApiResponse<SendAlimTalkResult>> {
-  return await apiClient
+  const response = await apiClient
     .post("api/v1/notifications", {
       json: data,
     })
-    .json<ApiResponse<SendAlimTalkResult>>();
+    .json<
+      ApiResponse<{
+        total_count: number;
+        success_count: number;
+        failure_count: number;
+        results: string[];
+      }>
+    >();
+
+  return {
+    ...response,
+    data: response.data
+      ? {
+          totalCount: response.data.total_count,
+          successCount: response.data.success_count,
+          failureCount: response.data.failure_count,
+          results: response.data.results,
+        }
+      : null,
+  };
 }

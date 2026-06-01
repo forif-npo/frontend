@@ -1,6 +1,7 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { StudyOpenValues } from "@core/schemas";
+import { getStudyTagId } from "./constants";
 
 const DIFFICULTY_MAP: Record<string, number> = {
   EASY: 1,
@@ -10,37 +11,60 @@ const DIFFICULTY_MAP: Record<string, number> = {
   HARD: 5,
 };
 
+function toLocalDateTime(value: string | null | undefined) {
+  if (!value) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return `${value}T00:00:00`;
+
+  const shortDate = value.match(/^(\d{2})\.(\d{2})\.(\d{2})$/);
+  if (shortDate) {
+    const [, year, month, day] = shortDate;
+    return `20${year}-${month}-${day}T00:00:00`;
+  }
+
+  return value;
+}
+
 function buildStudyRequest(values: StudyOpenValues) {
+  const secondaryMentorId = values.mentorIds[0] ?? null;
+  const studyTagIds = values.tags.map((tag) => {
+    const id = getStudyTagId(tag);
+    if (id === null) {
+      throw new Error("선택한 태그 정보를 확인해주세요.");
+    }
+    return id;
+  });
+
   return {
     title: values.studyName,
     sub_title: values.oneLiner,
-    study_tag_id: values.tags.map((_, i) => i + 1), // TODO: map tag names to actual IDs
+    study_tag_id: studyTagIds,
     goal: values.introduction, // Figma removed goal; reuse introduction
     explanation: values.introduction,
     is_online: values.isOnline,
     study_location: values.location,
-    study_location_detail: values.room || "",
+    study_location_detail: values.room,
     week_day: Number(values.weekDay),
     start_time: values.startTime,
     end_time: values.endTime,
     study_plan_list: values.curriculum.flatMap((week) =>
       week.contents.map((content) => ({
         week_num: week.week,
-        date: week.date || null,
+        date: toLocalDateTime(week.date),
         topic: week.topic,
         content,
       })),
     ),
     difficulty: DIFFICULTY_MAP[values.difficulty] ?? 3,
-    selection_criteria: "",
+    selection_criteria: "참여 의지와 스터디 목표 적합도를 기준으로 선정합니다.",
     capacity: 30,
     requires_interview: values.hasInterview,
-    interview_date: values.interviewDate || null,
+    interview_date: toLocalDateTime(values.interviewDate),
     references: values.references.map((ref) => ({
-      type: ref.type === "LINK" ? "URL" : "FILE",
-      url: ref.type === "LINK" ? ref.value : null,
-      file_name: ref.type === "DOWNLOAD" ? ref.value : null,
+      type: "URL",
+      url: ref.value,
+      file_name: null,
     })),
+    secondary_mentor_id: secondaryMentorId,
   };
 }
 

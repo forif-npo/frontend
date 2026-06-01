@@ -16,6 +16,25 @@ import type {
 } from "../types/api";
 import { apiClient } from "../utils/api-client";
 
+const extractRefreshToken = (setCookie: string | null): string | undefined => {
+  if (!setCookie) return undefined;
+  const match = setCookie.match(/(?:^|,\s*)refreshToken=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : undefined;
+};
+
+const withRefreshToken = async <T extends ApiResponse<unknown>>(
+  response: Response,
+): Promise<T> => {
+  const json = (await response.json()) as T;
+  const refreshToken = extractRefreshToken(response.headers.get("set-cookie"));
+
+  if (refreshToken && json.data && typeof json.data === "object") {
+    Object.assign(json.data, { refresh_token: refreshToken });
+  }
+
+  return json;
+};
+
 /**
  * 부원 회원가입
  *
@@ -34,11 +53,11 @@ import { apiClient } from "../utils/api-client";
 export const memberSignUp = async (
   data: SignUpRequest,
 ): Promise<SignUpResponse> => {
-  return await apiClient
-    .post("api/v1/users/signup", {
-      json: data,
-    })
-    .json<SignUpResponse>();
+  const response = await apiClient.post("api/v1/users/signup", {
+    json: data,
+  });
+
+  return await withRefreshToken<SignUpResponse>(response);
 };
 
 /**
@@ -58,13 +77,11 @@ export const memberSignUp = async (
 export const userLogin = async (
   data: UserLoginRequest,
 ): Promise<UserLoginResponse> => {
-  const response = await apiClient
-    .post("api/v1/users/signin", {
-      json: data,
-    })
-    .json<ApiResponse<UserLoginData>>();
-  console.log(response.data);
-  return response;
+  const response = await apiClient.post("api/v1/users/signin", {
+    json: data,
+  });
+
+  return await withRefreshToken<ApiResponse<UserLoginData>>(response);
 };
 
 /**
@@ -85,11 +102,11 @@ export const userLogin = async (
 export const staffLogin = async (
   data: StaffLoginRequest,
 ): Promise<StaffLoginResponse> => {
-  return await apiClient
-    .post("api/v1/staff/signin", {
-      json: data,
-    })
-    .json<StaffLoginResponse>();
+  const response = await apiClient.post("api/v1/staff/signin", {
+    json: data,
+  });
+
+  return await withRefreshToken<StaffLoginResponse>(response);
 };
 
 /**
@@ -138,9 +155,24 @@ export const getUser = async (token?: string): Promise<ApiResponse<User>> => {
  * const response = await refreshToken();
  */
 export const refreshToken = async (): Promise<RefreshTokenResponse> => {
-  return await apiClient
-    .post("api/v1/users/refresh")
-    .json<RefreshTokenResponse>();
+  const response = await apiClient.post("api/v1/users/refresh");
+
+  return await withRefreshToken<RefreshTokenResponse>(response);
+};
+
+/**
+ * 서버에서 보관 중인 refresh token으로 백엔드 access token을 갱신합니다.
+ */
+export const refreshTokenWithCookie = async (
+  refreshToken: string,
+): Promise<RefreshTokenResponse> => {
+  const response = await apiClient.post("api/v1/users/refresh", {
+    headers: {
+      Cookie: `refreshToken=${refreshToken}`,
+    },
+  });
+
+  return await withRefreshToken<RefreshTokenResponse>(response);
 };
 
 /**
@@ -206,7 +238,7 @@ export const getCertificate = async (
   params: CertificateParams,
 ): Promise<ApiResponse<CertificateResponse>> => {
   const searchParams = new URLSearchParams();
-  searchParams.append("study_id", params.study_id.toString());
+  searchParams.append("studyId", params.study_id.toString());
 
   return await apiClient
     .get(`api/v1/users/me/certificates?${searchParams.toString()}`)

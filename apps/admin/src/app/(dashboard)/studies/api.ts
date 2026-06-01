@@ -35,9 +35,10 @@ interface FetchStudiesParams {
  */
 export async function fetchStudiesWithFallback(
   params: FetchStudiesParams,
+  token?: string,
 ): Promise<AdminStudyListResponse> {
   console.log("[Studies API] Fetching from API:", {
-    endpoint: "/api/v1/studies",
+    endpoint: "/api/v1/admin/studies",
     params,
   });
 
@@ -59,7 +60,10 @@ export async function fetchStudiesWithFallback(
   }
 
   const response = await apiClient
-    .get("api/v1/studies", { searchParams })
+    .get("api/v1/admin/studies", {
+      searchParams,
+      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+    })
     .json<ApiResponse<AdminStudyListResponse>>();
 
   // Validate response structure

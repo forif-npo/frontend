@@ -13,8 +13,14 @@ export const getStudies = async (
   if (params?.page !== undefined) {
     searchParams.set("page", String(params.page));
   }
+  if (params?.cursor !== undefined) {
+    searchParams.set("cursor", String(params.cursor));
+  }
+  if (params?.size !== undefined) {
+    searchParams.set("size", String(params.size));
+  }
   if (params?.page_size !== undefined) {
-    searchParams.set("page_size", String(params.page_size));
+    searchParams.set("size", String(params.page_size));
   }
   if (params?.year !== undefined) {
     searchParams.set("year", String(params.year));

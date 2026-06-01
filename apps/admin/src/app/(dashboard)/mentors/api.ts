@@ -16,9 +16,12 @@ interface MentorItem {
 
 interface MentorPageData {
   content: MentorItem[];
-  nextCursor: number | null;
-  hasNext: boolean;
-  totalElements: number;
+  nextCursor?: number | null;
+  next_cursor?: number | null;
+  hasNext?: boolean;
+  has_next?: boolean;
+  totalElements?: number;
+  total_elements?: number;
 }
 
 const MAIN_SEMESTERS = new Set([
@@ -155,8 +158,9 @@ export async function fetchMentors({
         studyName,
       }),
     ),
-    nextCursor: response.data.nextCursor,
-    hasNext: response.data.hasNext,
-    totalElements: response.data.totalElements,
+    nextCursor: response.data.next_cursor ?? response.data.nextCursor ?? null,
+    hasNext: response.data.has_next ?? response.data.hasNext ?? false,
+    totalElements:
+      response.data.total_elements ?? response.data.totalElements ?? 0,
   };
 }

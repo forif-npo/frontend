@@ -17,16 +17,16 @@ export type CursorPage<T> = {
   totalElements: number;
 };
 
-export type AnnouncementListResponse = {
+export type AnnouncementListResponse<T = AnnouncementPost> = {
   timestamp: number;
-  data: CursorPage<AnnouncementPost>;
-  errorCode: string | null;
+  data: CursorPage<T>;
+  error_code: string | null;
   message: string;
 };
 
-export type AnnouncementDetailResponse = {
+export type AnnouncementDetailResponse<T = AnnouncementPost> = {
   timestamp: number;
-  data: AnnouncementPost | null;
-  errorCode: string | null;
+  data: T | null;
+  error_code: string | null;
   message: string;
 };

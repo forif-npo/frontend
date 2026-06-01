@@ -2,6 +2,7 @@
 
 import {
   setTokenGetter,
+  setTokenRefresher,
   setOnTokenRefreshed,
   setOnUnauthorized,
 } from "@core/utils/api-client";
@@ -22,6 +23,12 @@ export function ApiClientProvider({ children }: { children: React.ReactNode }) {
     // NextAuth 세션에서 토큰 가져오는 getter 설정
     setTokenGetter(async () => {
       return session?.accessToken || null;
+    });
+
+    // 백엔드 refresh token은 NextAuth JWT 안에 보관하고, 서버 콜백에서 회전시킴
+    setTokenRefresher(async () => {
+      const refreshedSession = await update({ forceRefresh: true });
+      return refreshedSession?.accessToken || null;
     });
 
     // 토큰 갱신 완료 시 NextAuth 세션 업데이트

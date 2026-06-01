@@ -85,9 +85,9 @@ export async function getCertificate(
       ...options,
       searchParams: { studyId },
     })
-    .json<ApiResponse<{ certificateUrl: string }>>();
+    .json<ApiResponse<{ certificate_url: string }>>();
 
-  return response.data!.certificateUrl;
+  return response.data!.certificate_url;
 }
 
 /**
