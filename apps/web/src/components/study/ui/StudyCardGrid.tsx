@@ -1,5 +1,5 @@
 import React from "react";
-import { ApplyCard } from "@/components/ApplyCard";
+import { StudyCard } from "./StudyCard";
 import { Study } from "@/types/study";
 
 interface StudyCardGridProps {
@@ -29,24 +29,10 @@ export const StudyCardGrid: React.FC<StudyCardGridProps> = ({
       className={`grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ${className}`}
     >
       {studies.map((study) => (
-        <ApplyCard
+        <StudyCard
           key={study.id}
-          title={study.study_name}
-          description={study.one_liner}
-          status={
-            study.recruit_status === "APPLICABLE" ? "신청중" : "신청 종료"
-          }
-          language={study.tags[0]}
-          level={study.tags[1]}
-          difficulty={study.difficulty}
-          schedule={`${study.start_time}-${study.end_time}`}
-          instructors={
-            study.secondary_mentor_name
-              ? `${study.primary_mentor_name}·${study.secondary_mentor_name}`
-              : study.primary_mentor_name
-          }
-          imageUrl={study.img_url}
-          disabled={study.recruit_status === "CLOSED"}
+          variant="list"
+          study={study}
           onDetailClick={() => onCardClick?.(study)}
           onApplyClick={() => onApplyClick?.(study)}
         />

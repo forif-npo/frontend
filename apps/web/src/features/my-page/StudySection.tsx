@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Select } from "@ui/components/client";
-import { MyPageStudyCard } from "./MyPageStudyCard";
+import { StudyCard } from "@/components/study/ui/StudyCard";
 import type { UserStudiesResponse, StudyDetail } from "@core/my-page/api";
 
 interface StudySectionProps {
@@ -78,8 +78,9 @@ export function StudySection({ studiesData }: StudySectionProps) {
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {sortedStudies.map((study) => (
-            <MyPageStudyCard
+            <StudyCard
               key={`${study.semester_label}-${study.study_id}`}
+              variant="mypage"
               study={study}
               semesterLabel={study.semester_label}
               isCurrent={study.is_current}

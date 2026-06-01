@@ -5,7 +5,7 @@ import { Label } from "@ui/components/server";
 import Link from "next/link";
 import { useStudyData } from "@/hooks/study/useStudyData";
 import { getCurrentSemester } from "@/constants/study";
-import { StudyCard } from "./StudyCard";
+import { StudyCard } from "@/components/study/ui/StudyCard";
 
 export function StudySection() {
   const { year, semester } = getCurrentSemester();
@@ -40,7 +40,7 @@ export function StudySection() {
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {studies.slice(0, 3).map((study) => (
-            <StudyCard key={study.id} study={study} />
+            <StudyCard key={study.id} variant="home" study={study} />
           ))}
         </div>
       )}
