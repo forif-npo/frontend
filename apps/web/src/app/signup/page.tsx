@@ -22,8 +22,12 @@ const submitForm = async (_: ActionState, formData: FormData) => {
     email: String(formData.get("email") || ""),
     id: String(formData.get("id") || ""),
     phoneNumber: String(formData.get("phoneNumber") || ""),
-    serviceTermAgree: formData.get("serviceTermAgree") === "on",
-    privacyPolicyAgree: formData.get("privacyPolicyAgree") === "on",
+    serviceTermAgree:
+      formData.get("serviceTermAgree") === "on" ||
+      formData.get("serviceTermAgree") === "true",
+    privacyPolicyAgree:
+      formData.get("privacyPolicyAgree") === "on" ||
+      formData.get("privacyPolicyAgree") === "true",
   };
 
   const { error: parseError } = signUpSchema.safeParse(values);

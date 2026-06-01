@@ -8,6 +8,7 @@ import {
 import { SelectBox } from "@ui/components/client";
 import clsx from "clsx";
 import React from "react";
+import { TAG_OPTIONS } from "@/constants/study-tags";
 interface FilterTag {
   id: string;
   label: string;
@@ -33,22 +34,6 @@ const DIFFICULTY_OPTIONS: Array<{ value: string; label: string }> = [
   { value: "NORMAL", label: "보통" },
   { value: "SEMI_HARD", label: "조금 어려움" },
   { value: "HARD", label: "어려움" },
-];
-
-const TAG_OPTIONS = [
-  "데이터베이스",
-  "프로그래밍 기초",
-  "프론트엔드",
-  "백엔드",
-  "풀스택",
-  "앱",
-  "인공지능",
-  "데이터",
-  "보안",
-  "게임",
-  "디자인",
-  "알고리즘",
-  "블록체인",
 ];
 
 const DIFFICULTY_LABEL_MAP: Record<string, string> = {

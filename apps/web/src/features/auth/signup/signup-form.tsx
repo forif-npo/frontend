@@ -7,6 +7,8 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Button, Checkbox, SelectBox, TextInput } from "@ui/components/client";
 import { InfoText, Label, Link } from "@ui/components/server";
 import Form from "next/form";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   useActionState,
   useEffect,
@@ -20,6 +22,8 @@ import { SignUpConfirmationModal } from "./signup-confirmation-modal";
 type ActionState = {
   errors: Record<string, { message: string }>;
   values: SignUpValues;
+  success?: boolean;
+  accessToken?: string;
 };
 
 interface SignUpFormProps {
@@ -31,6 +35,8 @@ interface SignUpFormProps {
 }
 
 export function SignUpForm({ action, email }: SignUpFormProps) {
+  const router = useRouter();
+  const { update } = useSession();
   const initialValues: SignUpValues = {
     email: email,
     id: "",
@@ -71,7 +77,14 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
 
   const isLoading = isPending || isTransitionPending;
 
-  useEffect(() => {}, [watchedValues]);
+  useEffect(() => {
+    if (!state.success) return;
+
+    void update().then(() => {
+      router.push("/signup/complete");
+      router.refresh();
+    });
+  }, [router, state.success, update]);
 
   useEffect(() => {
     for (const key in state.values) {

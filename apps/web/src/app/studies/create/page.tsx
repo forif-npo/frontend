@@ -50,6 +50,7 @@ export default function StudyCreatePage() {
       <div className="mx-auto flex max-w-[792px] justify-center px-4 sm:px-6">
         {step === 1 && (
           <Step1InfoVerification
+            form={form}
             userInfo={userInfo}
             onNext={goToNext}
             onCancel={goToStudyList}

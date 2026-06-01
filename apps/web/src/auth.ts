@@ -1,8 +1,66 @@
 import type { ExtendedAccount, StaffUser } from "next-auth";
 import NextAuth, { type NextAuthResult } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { env } from "./env";
+
+const BACKEND_TOKEN_REFRESH_BUFFER_MS = 60_000;
+
+function getJwtExpiresAt(token?: string): number | null {
+  if (!token) return null;
+
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) return null;
+
+    const decoded = JSON.parse(
+      Buffer.from(
+        payload.replace(/-/g, "+").replace(/_/g, "/"),
+        "base64",
+      ).toString("utf8"),
+    ) as { exp?: number };
+
+    return typeof decoded.exp === "number" ? decoded.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
+function shouldRefreshBackendJwt(token: JWT): boolean {
+  const expiresAt = getJwtExpiresAt(token.backendJwt);
+  return (
+    expiresAt !== null &&
+    Date.now() >= expiresAt - BACKEND_TOKEN_REFRESH_BUFFER_MS
+  );
+}
+
+async function refreshBackendJwt(token: JWT): Promise<JWT> {
+  if (!token.backendRefreshToken) {
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+
+  try {
+    const { refreshTokenWithCookie } = await import("@core/auth/api");
+    const response = await refreshTokenWithCookie(token.backendRefreshToken);
+    const accessToken = response.data?.access_token;
+
+    if (!accessToken) {
+      throw new Error("Access token refresh failed");
+    }
+
+    return {
+      ...token,
+      backendJwt: accessToken,
+      backendRefreshToken:
+        response.data?.refresh_token ?? token.backendRefreshToken,
+      error: undefined,
+    };
+  } catch (error) {
+    console.error("Backend token refresh failed:", error);
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+}
 
 const result = NextAuth({
   secret: env.AUTH_SECRET,
@@ -62,6 +120,7 @@ const result = NextAuth({
             email: `${credentials.userId}@staff.forif.org`,
             name: "Staff User",
             accessToken: response.data.access_token,
+            backendRefreshToken: response.data.refresh_token,
             role: response.data.role,
           };
         } catch (error) {
@@ -104,6 +163,7 @@ const result = NextAuth({
             // 백엔드 JWT를 account에 저장 (jwt 콜백에서 사용)
             Object.assign(account, {
               backendJwt: response.data.access_token,
+              backendRefreshToken: response.data.refresh_token,
               role: response.data.role,
             });
             return true;
@@ -124,11 +184,32 @@ const result = NextAuth({
       return true;
     },
     async jwt({ token, account, user, trigger, session: updateSession }) {
+      const sessionUpdate = updateSession as
+        | {
+            accessToken?: string;
+            refreshToken?: string;
+            forceRefresh?: boolean;
+            role?: string;
+            provider?: string;
+          }
+        | undefined;
+
       // 세션 업데이트 트리거 (토큰 갱신 시)
-      if (trigger === "update" && updateSession?.accessToken) {
+      if (trigger === "update" && sessionUpdate?.forceRefresh) {
+        return await refreshBackendJwt(token);
+      }
+
+      if (
+        trigger === "update" &&
+        (sessionUpdate?.accessToken || sessionUpdate?.refreshToken)
+      ) {
         return {
           ...token,
-          backendJwt: updateSession.accessToken,
+          backendJwt: sessionUpdate.accessToken ?? token.backendJwt,
+          backendRefreshToken:
+            sessionUpdate.refreshToken ?? token.backendRefreshToken,
+          role: sessionUpdate.role ?? token.role,
+          provider: sessionUpdate.provider ?? token.provider,
         };
       }
 
@@ -140,6 +221,7 @@ const result = NextAuth({
           return {
             ...token,
             backendJwt: staffUser.accessToken,
+            backendRefreshToken: staffUser.backendRefreshToken,
             role: staffUser.role,
             provider: "staff-credentials",
           };
@@ -151,6 +233,7 @@ const result = NextAuth({
           return {
             ...token,
             backendJwt: googleAccount.backendJwt, // 백엔드 JWT
+            backendRefreshToken: googleAccount.backendRefreshToken,
             googleAccessToken: account.access_token, // Google Access Token (참고용)
             role: googleAccount.role,
             provider: "google",
@@ -158,7 +241,10 @@ const result = NextAuth({
         }
       }
 
-      // 토큰이 이미 있으면 그대로 반환
+      if (shouldRefreshBackendJwt(token)) {
+        return await refreshBackendJwt(token);
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -180,3 +266,5 @@ export const handlers: NextAuthResult["handlers"] = result.handlers;
 export const auth: NextAuthResult["auth"] = result.auth;
 export const signIn: NextAuthResult["signIn"] = result.signIn;
 export const signOut: NextAuthResult["signOut"] = result.signOut;
+export const unstable_update: NextAuthResult["unstable_update"] =
+  result.unstable_update;

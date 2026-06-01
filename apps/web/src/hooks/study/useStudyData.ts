@@ -51,8 +51,6 @@ export const useStudyData = (
       if (params.recruit_status)
         searchParams.append("recruit_status", params.recruit_status);
       if (params.search) searchParams.append("search", params.search);
-      if (params.sort_order)
-        searchParams.append("sort_order", params.sort_order);
 
       const response = await apiClient
         .get("api/v1/studies", { searchParams })

@@ -22,10 +22,14 @@ export const studyOpenSchema = createSchema()(
     introduction: z
       .string()
       .min(50, "스터디 소개는 최소 50자 이상 작성해주세요.")
-      .max(5000, "스터디 소개는 최대 5,000자까지 입력 가능합니다."),
+      .max(500, "스터디 소개는 최대 500자까지 입력 가능합니다."),
     isOnline: z.boolean().default(false),
     location: z.string().min(1, "진행 장소를 선택해주세요."),
-    room: z.string().optional().default(""),
+    room: z
+      .string()
+      .min(1, "강의실(호)을 입력해주세요.")
+      .max(50, "강의실(호)은 최대 50자까지 입력 가능합니다.")
+      .default(""),
     weekDay: z.string().min(1, "요일을 선택해주세요."),
     startTime: z
       .string()

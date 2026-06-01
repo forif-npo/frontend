@@ -1,5 +1,6 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
+import type { PaginationInterface } from "@/types/pagination";
 import { Member, MemberListResult, MemberSemesterLabel } from "./types";
 
 interface FetchMembersParams {
@@ -14,11 +15,8 @@ interface MemberItem {
   [key: string]: unknown;
 }
 
-interface MemberPageData {
+interface MemberPageData extends PaginationInterface {
   content: MemberItem[];
-  nextCursor: number | null;
-  hasNext: boolean;
-  totalElements: number;
 }
 
 const MAIN_SEMESTERS = new Set([
@@ -170,8 +168,8 @@ export async function fetchMembers({
         isAdmin,
       }),
     ),
-    nextCursor: response.data.nextCursor,
-    hasNext: response.data.hasNext,
-    totalElements: response.data.totalElements,
+    nextCursor: response.data.next_cursor ?? null,
+    hasNext: response.data.has_next ?? false,
+    totalElements: response.data.total_elements ?? 0,
   };
 }

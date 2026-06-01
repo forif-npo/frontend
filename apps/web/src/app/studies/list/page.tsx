@@ -10,6 +10,7 @@ import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
 import { useStudyData, useStudyFilters } from "@/hooks/study";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Study, StudyListParams } from "@/types/study";
+import { getStudyTagName } from "@/constants/study-tags";
 import { Pagination } from "@ui/components/client";
 import { Heading } from "@ui/components/server";
 import { useRouter } from "next/navigation";
@@ -33,16 +34,17 @@ export default function StudyListPage() {
   }, [debouncedSearch, updateFilter]);
 
   const apiParams: StudyListParams = useMemo(() => {
+    const studyTagName = filters.tag ? getStudyTagName(filters.tag) : null;
+
     return {
       page: currentPage,
       size: pageSize,
       year: filters.year,
       semester: filters.semester,
       difficulties: filters.difficulty ? [filters.difficulty] : undefined,
-      tags: filters.tag ? [filters.tag] : undefined,
+      tags: studyTagName ? [studyTagName] : undefined,
       recruit_status: filters.recruitStatus,
       search: filters.search,
-      sort_order: sortBy === "latest" ? "DESC" : "ASC",
     };
   }, [
     currentPage,
@@ -53,7 +55,6 @@ export default function StudyListPage() {
     filters.tag,
     filters.recruitStatus,
     filters.search,
-    sortBy,
   ]);
 
   const { studies, loading, error, totalElements, refetch } =

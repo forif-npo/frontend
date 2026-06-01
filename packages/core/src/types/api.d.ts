@@ -34,6 +34,7 @@ export interface SignUpRequest {
  */
 export interface SignUpData {
   access_token: string;
+  refresh_token?: string;
   role: "USER" | "MENTOR";
 }
 
@@ -55,6 +56,7 @@ export interface UserLoginRequest {
  */
 export interface UserLoginData {
   access_token: string;
+  refresh_token?: string;
   role: "USER";
 }
 
@@ -102,6 +104,7 @@ export interface User {
  */
 export interface StaffLoginData {
   access_token: string;
+  refresh_token?: string;
   role: "MENTOR" | "ADMIN";
 }
 
@@ -115,6 +118,7 @@ export type StaffLoginResponse = ApiResponse<StaffLoginData>;
  */
 export interface RefreshTokenData {
   access_token: string;
+  refresh_token?: string;
 }
 
 /**
@@ -262,7 +266,9 @@ export interface StudyRejectRequest {
  * 스터디 목록 조회 파라미터
  */
 export interface StudyListParams {
+  cursor?: number;
   page?: number;
+  size?: number;
   page_size?: number;
   year?: number;
   semester?: number;

@@ -11,6 +11,7 @@ const getBaseUrl = (): string => {
 
 // 외부에서 주입할 토큰 getter/setter 및 콜백
 let tokenGetter: (() => Promise<string | null>) | null = null;
+let tokenRefresher: (() => Promise<string | null>) | null = null;
 let onTokenRefreshed: ((newToken: string) => Promise<void>) | null = null;
 let onUnauthorized: (() => void) | null = null;
 
@@ -23,6 +24,15 @@ let refreshPromise: Promise<string | null> | null = null;
  */
 export const setTokenGetter = (getter: () => Promise<string | null>): void => {
   tokenGetter = getter;
+};
+
+/**
+ * 토큰 갱신 함수 설정 (NextAuth 세션 업데이트 등 외부 인증 저장소와 연동)
+ */
+export const setTokenRefresher = (
+  refresher: () => Promise<string | null>,
+): void => {
+  tokenRefresher = refresher;
 };
 
 /**
@@ -54,6 +64,10 @@ async function refreshAccessToken(): Promise<string | null> {
   isRefreshing = true;
   refreshPromise = (async () => {
     try {
+      if (tokenRefresher) {
+        return await tokenRefresher();
+      }
+
       const response = await fetch(`${getBaseUrl()}/api/v1/users/refresh`, {
         method: "POST",
         credentials: "include", // HttpOnly 쿠키 자동 전송
@@ -115,11 +129,6 @@ export const apiClient = ky.create({
   hooks: {
     beforeRequest: [
       async (request) => {
-        // Content-Type 헤더 설정
-        if (!request.headers.has("Content-Type")) {
-          request.headers.set("Content-Type", "application/json");
-        }
-
         // Access Token 자동 주입 (외부에서 주입된 getter 사용)
         if (tokenGetter) {
           const token = await tokenGetter();

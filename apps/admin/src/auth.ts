@@ -1,6 +1,64 @@
 import NextAuth, { type NextAuthResult } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import { env } from "./env";
+
+const BACKEND_TOKEN_REFRESH_BUFFER_MS = 60_000;
+
+function getJwtExpiresAt(token?: string): number | null {
+  if (!token) return null;
+
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) return null;
+
+    const decoded = JSON.parse(
+      Buffer.from(
+        payload.replace(/-/g, "+").replace(/_/g, "/"),
+        "base64",
+      ).toString("utf8"),
+    ) as { exp?: number };
+
+    return typeof decoded.exp === "number" ? decoded.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
+function shouldRefreshBackendJwt(token: JWT): boolean {
+  const expiresAt = getJwtExpiresAt(token.backendJwt);
+  return (
+    expiresAt !== null &&
+    Date.now() >= expiresAt - BACKEND_TOKEN_REFRESH_BUFFER_MS
+  );
+}
+
+async function refreshBackendJwt(token: JWT): Promise<JWT> {
+  if (!token.backendRefreshToken) {
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+
+  try {
+    const { refreshTokenWithCookie } = await import("@core/auth/api");
+    const response = await refreshTokenWithCookie(token.backendRefreshToken);
+    const accessToken = response.data?.access_token;
+
+    if (!accessToken) {
+      throw new Error("Access token refresh failed");
+    }
+
+    return {
+      ...token,
+      backendJwt: accessToken,
+      backendRefreshToken:
+        response.data?.refresh_token ?? token.backendRefreshToken,
+      error: undefined,
+    };
+  } catch (error) {
+    console.error("Backend token refresh failed:", error);
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+}
 
 const result = NextAuth({
   secret: env.AUTH_SECRET,
@@ -57,6 +115,7 @@ const result = NextAuth({
             department: staff.department,
             imgUrl: staff.img_url,
             access_token: response.data.access_token,
+            backendRefreshToken: response.data.refresh_token,
             role: response.data.role,
           };
         } catch (error) {
@@ -73,12 +132,28 @@ const result = NextAuth({
   },
   callbacks: {
     async jwt({ token, user, trigger, session: updateSession }) {
-      if (trigger === "update" && updateSession?.access_token) {
-        token.backendJwt = updateSession.access_token;
+      const sessionUpdate = updateSession as
+        | {
+            access_token?: string;
+            refreshToken?: string;
+            forceRefresh?: boolean;
+          }
+        | undefined;
+
+      if (trigger === "update" && sessionUpdate?.forceRefresh) {
+        token = await refreshBackendJwt(token);
+      } else if (
+        trigger === "update" &&
+        (sessionUpdate?.access_token || sessionUpdate?.refreshToken)
+      ) {
+        token.backendJwt = sessionUpdate.access_token ?? token.backendJwt;
+        token.backendRefreshToken =
+          sessionUpdate.refreshToken ?? token.backendRefreshToken;
       }
 
       if (user) {
         token.backendJwt = user.access_token;
+        token.backendRefreshToken = user.backendRefreshToken;
         token.role = user.role;
         token.staffId = user.id;
         token.staffName = user.name ?? "";
@@ -86,6 +161,10 @@ const result = NextAuth({
         token.staffPhoneNum = user.phoneNum ?? "";
         token.staffDepartment = user.department ?? "";
         token.staffImgUrl = user.imgUrl ?? null;
+      }
+
+      if (shouldRefreshBackendJwt(token)) {
+        token = await refreshBackendJwt(token);
       }
 
       // 토큰은 있지만 staff 정보가 없는 경우 (기존 세션 복원 시) API로 가져옴
@@ -113,6 +192,7 @@ const result = NextAuth({
     async session({ session, token }) {
       session.access_token = (token.backendJwt as string) || "";
       session.role = token.role as string | undefined;
+      session.error = token.error as string | undefined;
       session.user = {
         ...session.user,
         id: (token.staffId as string) || "",
@@ -132,3 +212,5 @@ export const handlers: NextAuthResult["handlers"] = result.handlers;
 export const auth: NextAuthResult["auth"] = result.auth;
 export const signIn: NextAuthResult["signIn"] = result.signIn;
 export const signOut: NextAuthResult["signOut"] = result.signOut;
+export const unstable_update: NextAuthResult["unstable_update"] =
+  result.unstable_update;

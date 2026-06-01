@@ -1,6 +1,6 @@
 "use server";
 
-import { auth, signIn, signOut } from "@/auth";
+import { auth, signIn, signOut, unstable_update } from "@/auth";
 import { SignUpValues } from "@core/schemas";
 import {
   memberSignUp,
@@ -66,6 +66,15 @@ export const signUp = async (data: SignUpValues) => {
 
     // refreshToken은 HttpOnly 쿠키로 자동 저장됨
     // accessToken은 응답으로 반환하여 클라이언트에서 저장
+    if (response.data?.access_token) {
+      await unstable_update({
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+        role: response.data.role,
+        provider: "google",
+      });
+    }
+
     return {
       success: true,
       accessToken: response.data?.access_token,
