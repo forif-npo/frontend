@@ -27,12 +27,12 @@ export function YearViewDayCell({ day, date, events }: IProps) {
     <button
       onClick={handleClick}
       type="button"
-      className="flex h-11 flex-1 flex-col items-center justify-start gap-0.5 rounded-md pt-1 hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      className="hover:bg-accent focus-visible:ring-ring flex h-11 flex-1 flex-col items-center justify-start gap-0.5 rounded-md pt-1 focus-visible:outline-none focus-visible:ring-1"
     >
       <div
         className={cn(
           "flex size-6 items-center justify-center rounded-full text-xs font-medium",
-          isToday(date) && "bg-primary font-semibold text-primary-foreground"
+          isToday(date) && "bg-primary text-primary-foreground font-semibold",
         )}
       >
         {day}
@@ -41,7 +41,7 @@ export function YearViewDayCell({ day, date, events }: IProps) {
       {eventCount > 0 && (
         <div className="mt-0.5 flex gap-0.5">
           {eventCount <= maxIndicators ? (
-            events.map(event => (
+            events.map((event) => (
               <div
                 key={event.id}
                 className={cn(
@@ -52,7 +52,7 @@ export function YearViewDayCell({ day, date, events }: IProps) {
                   event.color === "yellow" && "bg-yellow-600",
                   event.color === "purple" && "bg-purple-600",
                   event.color === "orange" && "bg-orange-600",
-                  event.color === "gray" && "bg-neutral-600"
+                  event.color === "gray" && "bg-neutral-600",
                 )}
               />
             ))
@@ -66,10 +66,12 @@ export function YearViewDayCell({ day, date, events }: IProps) {
                   events[0].color === "red" && "bg-red-600",
                   events[0].color === "yellow" && "bg-yellow-600",
                   events[0].color === "purple" && "bg-purple-600",
-                  events[0].color === "orange" && "bg-orange-600"
+                  events[0].color === "orange" && "bg-orange-600",
                 )}
               />
-              <span className="text-[7px] text-muted-foreground">+{eventCount - 1}</span>
+              <span className="text-muted-foreground text-[7px]">
+                +{eventCount - 1}
+              </span>
             </>
           )}
         </div>

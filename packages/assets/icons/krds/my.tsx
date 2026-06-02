@@ -4,7 +4,7 @@ export const MyIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
-}> = ({ width = 24, height = 24, className}) => {
+}> = ({ width = 24, height = 24, className }) => {
   return (
     <svg
       width={width}

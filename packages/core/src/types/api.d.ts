@@ -175,6 +175,9 @@ export interface AdminStudyResponse {
   one_liner: string;
   mentee_count: number;
   recruit_status: "APPLICABLE" | "CLOSED";
+  study_status: "PENDING" | "APPROVED" | "REJECTED" | "RE_APPLIED";
+  reject_reason: string | null;
+  created_at: string;
 }
 
 /**

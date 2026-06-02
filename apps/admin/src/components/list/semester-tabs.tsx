@@ -10,6 +10,7 @@ interface SemesterTabsProps {
 
 export const DEFAULT_SEMESTER_OPTIONS = [
   "전체",
+  "26-1",
   "25-2",
   "25-1",
   "24-2",
@@ -18,6 +19,8 @@ export const DEFAULT_SEMESTER_OPTIONS = [
   "23-1",
   "그 외",
 ];
+
+const CURRENT_SEMESTER_LABEL = "26-1";
 
 export function SemesterTabs({
   currentSemester,
@@ -37,7 +40,9 @@ export function SemesterTabs({
             value={semester}
             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-muted text-muted-foreground rounded-full px-4"
           >
-            {semester === "25-2" ? `현재학기 (${semester})` : semester}
+            {semester === CURRENT_SEMESTER_LABEL
+              ? `현재학기 (${semester})`
+              : semester}
           </TabsTrigger>
         ))}
       </TabsList>

@@ -35,6 +35,23 @@ export function OperatorsView({
 }: OperatorsViewProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+  const filteredData =
+    normalizedSearchQuery.length > 0
+      ? initialData.filter((operator) =>
+          [
+            operator.userId,
+            operator.department,
+            operator.name,
+            operator.phoneNum,
+            operator.title,
+          ]
+            .map(String)
+            .some((value) =>
+              value.toLowerCase().includes(normalizedSearchQuery),
+            ),
+        )
+      : initialData;
 
   const handleSemesterChange = (semester: string) => {
     const params = new URLSearchParams();
@@ -65,13 +82,13 @@ export function OperatorsView({
   };
 
   const handleDownloadExcel = () => {
-    if (initialData.length === 0) {
+    if (filteredData.length === 0) {
       alert("다운로드할 데이터가 없습니다.");
       return;
     }
 
     const ws = XLSX.utils.json_to_sheet(
-      initialData.map((operator) => ({
+      filteredData.map((operator) => ({
         학번: operator.userId,
         학과: operator.department,
         이름: operator.name,
@@ -104,7 +121,11 @@ export function OperatorsView({
   };
 
   const displayTotalCount =
-    totalElements && totalElements > 0 ? totalElements : initialData.length;
+    normalizedSearchQuery.length > 0
+      ? filteredData.length
+      : totalElements && totalElements > 0
+        ? totalElements
+        : initialData.length;
 
   return (
     <div className="space-y-6 p-8">
@@ -140,7 +161,7 @@ export function OperatorsView({
 
         <DataTable
           columns={columns}
-          data={initialData}
+          data={filteredData}
           renderRowActions={(operator) => (
             <>
               <DropdownMenuItem onClick={() => handleEditOperator(operator)}>
@@ -168,7 +189,7 @@ export function OperatorsView({
         />
 
         <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {totalElements}건</span>
+          <span>총 {displayTotalCount}건</span>
           {hasNext && nextCursor !== null && (
             <span>다음 커서: {nextCursor}</span>
           )}

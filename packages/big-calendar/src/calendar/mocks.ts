@@ -26,7 +26,15 @@ export const USERS_MOCK: IAttendee[] = [
   },
 ];
 
-const COLORS: TEventColor[] = ["blue", "green", "red", "yellow", "purple", "orange", "gray"];
+const COLORS: TEventColor[] = [
+  "blue",
+  "green",
+  "red",
+  "yellow",
+  "purple",
+  "orange",
+  "gray",
+];
 
 const EVENTS = [
   "Doctor's appointment",
@@ -149,7 +157,8 @@ const mockGenerator = (numberOfEvents: number): IEvent[] => {
     endDate: new Date(now.getTime() + 30 * 60000).toISOString(),
     title: EVENTS[Math.floor(Math.random() * EVENTS.length)],
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     attendees: [randomUser],
   };
 
@@ -170,7 +179,10 @@ const mockGenerator = (numberOfEvents: number): IEvent[] => {
     // Determine if this is a multi-day event (10% chance)
     const isMultiDay = Math.random() < 0.1;
 
-    const startDate = new Date(startRange.getTime() + Math.random() * (endRange.getTime() - startRange.getTime()));
+    const startDate = new Date(
+      startRange.getTime() +
+        Math.random() * (endRange.getTime() - startRange.getTime()),
+    );
 
     // Skip if the date is September 20th
     if (startDate.getMonth() === 8 && startDate.getDate() === 20) {
@@ -178,7 +190,12 @@ const mockGenerator = (numberOfEvents: number): IEvent[] => {
     }
 
     // Set time between 8 AM and 8 PM
-    startDate.setHours(8 + Math.floor(Math.random() * 8), Math.floor(Math.random() * 4) * 15, 0, 0);
+    startDate.setHours(
+      8 + Math.floor(Math.random() * 8),
+      Math.floor(Math.random() * 4) * 15,
+      0,
+      0,
+    );
 
     const endDate = new Date(startDate);
 
@@ -195,13 +212,22 @@ const mockGenerator = (numberOfEvents: number): IEvent[] => {
 
       // Check if event spans across September 20th
       if (
-        (startMonth === 8 && startDay < 20 && (endMonth > 8 || (endMonth === 8 && endDay >= 20))) ||
-        (endMonth === 8 && endDay >= 20 && (startMonth < 8 || (startMonth === 8 && startDay < 20)))
+        (startMonth === 8 &&
+          startDay < 20 &&
+          (endMonth > 8 || (endMonth === 8 && endDay >= 20))) ||
+        (endMonth === 8 &&
+          endDay >= 20 &&
+          (startMonth < 8 || (startMonth === 8 && startDay < 20)))
       ) {
         continue;
       }
 
-      endDate.setHours(8 + Math.floor(Math.random() * 12), Math.floor(Math.random() * 4) * 15, 0, 0);
+      endDate.setHours(
+        8 + Math.floor(Math.random() * 12),
+        Math.floor(Math.random() * 4) * 15,
+        0,
+        0,
+      );
     } else {
       const durationMinutes = (Math.floor(Math.random() * 11) + 2) * 15; // 30 to 180 minutes, multiple of 15
       endDate.setTime(endDate.getTime() + durationMinutes * 60 * 1000);
@@ -213,7 +239,8 @@ const mockGenerator = (numberOfEvents: number): IEvent[] => {
       endDate: endDate.toISOString(),
       title: EVENTS[Math.floor(Math.random() * EVENTS.length)],
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       attendees: [USERS_MOCK[Math.floor(Math.random() * USERS_MOCK.length)]],
     });
 

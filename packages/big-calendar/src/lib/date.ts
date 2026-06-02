@@ -6,7 +6,7 @@ const KST = "Asia/Seoul";
 
 export function formatDate(
   date: Date | number | string,
-  formatStr: string
+  formatStr: string,
 ): string {
   const dateObj = typeof date === "string" ? new Date(date) : date;
   const kstDate = toZonedTime(dateObj, KST);

@@ -28,12 +28,20 @@ interface IProps {
 export function CalendarHeader({ events }: IProps) {
   const { view, setView } = useCalendar();
 
-  const viewButtons: { view: TCalendarView; icon: React.ReactNode; label: string }[] = [
+  const viewButtons: {
+    view: TCalendarView;
+    icon: React.ReactNode;
+    label: string;
+  }[] = [
     { view: "day", icon: <List strokeWidth={1.8} />, label: "일별 보기" },
     { view: "week", icon: <Columns strokeWidth={1.8} />, label: "주별 보기" },
     { view: "month", icon: <Grid2x2 strokeWidth={1.8} />, label: "월별 보기" },
     { view: "year", icon: <Grid3x3 strokeWidth={1.8} />, label: "연별 보기" },
-    { view: "agenda", icon: <CalendarRange strokeWidth={1.8} />, label: "일정 목록" },
+    {
+      view: "agenda",
+      icon: <CalendarRange strokeWidth={1.8} />,
+      label: "일정 목록",
+    },
   ];
 
   return (

@@ -21,26 +21,30 @@ export function useUpdateEvent() {
     // If we have a Google event ID, update via API
     if (event.googleEventId) {
       try {
-        const response = await fetch(`/api/calendar/events/${event.googleEventId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `/api/calendar/events/${event.googleEventId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              summary: event.title,
+              description: event.description,
+              start: newEvent.startDate,
+              end: newEvent.endDate,
+              color: event.color,
+            }),
           },
-          body: JSON.stringify({
-            summary: event.title,
-            description: event.description,
-            start: newEvent.startDate,
-            end: newEvent.endDate,
-            color: event.color,
-          }),
-        });
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || "Failed to update event");
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Failed to update event";
+        const message =
+          err instanceof Error ? err.message : "Failed to update event";
         setError(message);
         console.error("Failed to update event:", err);
         setIsLoading(false);

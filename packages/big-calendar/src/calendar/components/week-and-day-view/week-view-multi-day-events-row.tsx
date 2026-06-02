@@ -1,4 +1,12 @@
-import { addDays, differenceInDays, endOfWeek, isAfter, isBefore, startOfDay, startOfWeek } from "date-fns";
+import {
+  addDays,
+  differenceInDays,
+  endOfWeek,
+  isAfter,
+  isBefore,
+  startOfDay,
+  startOfWeek,
+} from "date-fns";
 import { useMemo } from "react";
 
 import { MonthEventBadge } from "@big-calendar/calendar/components/month-view/month-event-badge";
@@ -11,14 +19,17 @@ interface IProps {
   multiDayEvents: IEvent[];
 }
 
-export function WeekViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IProps) {
+export function WeekViewMultiDayEventsRow({
+  selectedDate,
+  multiDayEvents,
+}: IProps) {
   const weekStart = startOfWeek(selectedDate);
   const weekEnd = endOfWeek(selectedDate);
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   const processedEvents = useMemo(() => {
     return multiDayEvents
-      .map(event => {
+      .map((event) => {
         const start = parseToKST(event.startDate);
         const end = parseToKST(event.endDate);
         const adjustedStart = isBefore(start, weekStart) ? weekStart : start;
@@ -44,8 +55,12 @@ export function WeekViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IPro
   const eventRows = useMemo(() => {
     const rows: (typeof processedEvents)[] = [];
 
-    processedEvents.forEach(event => {
-      let rowIndex = rows.findIndex(row => row.every(e => e.endIndex < event.startIndex || e.startIndex > event.endIndex));
+    processedEvents.forEach((event) => {
+      let rowIndex = rows.findIndex((row) =>
+        row.every(
+          (e) => e.endIndex < event.startIndex || e.startIndex > event.endIndex,
+        ),
+      );
 
       if (rowIndex === -1) {
         rowIndex = rows.length;
@@ -59,7 +74,7 @@ export function WeekViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IPro
   }, [processedEvents]);
 
   const hasEventsInWeek = useMemo(() => {
-    return multiDayEvents.some(event => {
+    return multiDayEvents.some((event) => {
       const start = parseToKST(event.startDate);
       const end = parseToKST(event.endDate);
 
@@ -83,17 +98,27 @@ export function WeekViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IPro
       <div className="w-18 border-b"></div>
       <div className="grid flex-1 grid-cols-7 divide-x border-b border-l">
         {weekDays.map((day, dayIndex) => (
-          <div key={day.toISOString()} className="flex h-full flex-col gap-1 py-1">
+          <div
+            key={day.toISOString()}
+            className="flex h-full flex-col gap-1 py-1"
+          >
             {eventRows.map((row, rowIndex) => {
-              const event = row.find(e => e.startIndex <= dayIndex && e.endIndex >= dayIndex);
+              const event = row.find(
+                (e) => e.startIndex <= dayIndex && e.endIndex >= dayIndex,
+              );
 
               if (!event) {
-                return <div key={`${rowIndex}-${dayIndex}`} className="h-6.5" />;
+                return (
+                  <div key={`${rowIndex}-${dayIndex}`} className="h-6.5" />
+                );
               }
 
               let position: "first" | "middle" | "last" | "none" = "none";
 
-              if (dayIndex === event.startIndex && dayIndex === event.endIndex) {
+              if (
+                dayIndex === event.startIndex &&
+                dayIndex === event.endIndex
+              ) {
                 position = "none";
               } else if (dayIndex === event.startIndex) {
                 position = "first";
@@ -103,7 +128,15 @@ export function WeekViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IPro
                 position = "middle";
               }
 
-              return <MonthEventBadge key={`${event.id}-${dayIndex}`} event={event} cellDate={startOfDay(day)} position={position} className="flex" />;
+              return (
+                <MonthEventBadge
+                  key={`${event.id}-${dayIndex}`}
+                  event={event}
+                  cellDate={startOfDay(day)}
+                  position={position}
+                  className="flex"
+                />
+              );
             })}
           </div>
         ))}

@@ -20,6 +20,7 @@ interface MentorPageData extends PaginationInterface {
 }
 
 const MAIN_SEMESTERS = new Set([
+  "26-1",
   "25-2",
   "25-1",
   "24-2",

@@ -61,7 +61,8 @@ export function useAddEvent() {
 
       return newEvent;
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to create event";
+      const message =
+        err instanceof Error ? err.message : "Failed to create event";
       setError(message);
       console.error("Failed to add event:", err);
       return null;

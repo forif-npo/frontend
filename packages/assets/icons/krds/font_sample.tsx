@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const FontSampleIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 30, height = 30, className, color = '#202427' }) => {
+}> = ({ width = 30, height = 30, className, color = "#202427" }) => {
   return (
     <svg
       width={width}

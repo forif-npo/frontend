@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const FlowArrowIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 26, height = 7, className, color = '#D6E0EB' }) => {
+}> = ({ width = 26, height = 7, className, color = "#D6E0EB" }) => {
   return (
     <svg
       width={width}
