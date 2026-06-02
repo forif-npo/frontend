@@ -40,7 +40,7 @@ export function TimerHero({ hackathon, stage }: TimerHeroProps) {
       <div className="bg-primary-20 absolute -left-32 top-1/4 h-96 w-96 rounded-full opacity-20 blur-3xl" />
       <div className="bg-primary-30 absolute -right-32 bottom-1/4 h-96 w-96 rounded-full opacity-10 blur-3xl" />
 
-      <div className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-6 text-center">
+      <div className="relative z-10 flex w-full max-w-5xl flex-col items-center gap-8 text-center">
         <Badge
           label={statusLabel[hackathon.status]}
           variant={statusVariant(stage)}

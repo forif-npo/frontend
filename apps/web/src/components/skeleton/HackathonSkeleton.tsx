@@ -8,15 +8,15 @@ export function HackathonPageSkeleton() {
     <div>
       {/* Timer hero skeleton */}
       <div className="bg-surface-gray-subtler flex min-h-[calc(var(--vh)-80px)] items-center justify-center px-6 py-20">
-        <div className="flex w-full max-w-3xl flex-col items-center gap-6">
+        <div className="flex w-full max-w-5xl flex-col items-center gap-8">
           <Bone className="h-7 w-20 rounded-full" />
-          <Bone className="h-8 w-64" />
+          <Bone className="h-9 w-72" />
           <Bone className="h-4 w-32" />
-          <div className="my-4 flex gap-4">
-            <Bone className="rounded-3 h-[148px] w-[124px] sm:h-[172px] sm:w-[144px]" />
-            <Bone className="rounded-3 h-[148px] w-[124px] sm:h-[172px] sm:w-[144px]" />
-            <Bone className="rounded-3 h-[148px] w-[124px] sm:h-[172px] sm:w-[144px]" />
-            <Bone className="rounded-3 h-[148px] w-[124px] sm:h-[172px] sm:w-[144px]" />
+          <div className="my-4 flex items-center gap-4 sm:gap-8">
+            <Bone className="h-24 w-20 sm:h-40 sm:w-32 lg:h-52 lg:w-44" />
+            <Bone className="h-24 w-20 sm:h-40 sm:w-32 lg:h-52 lg:w-44" />
+            <Bone className="h-24 w-20 sm:h-40 sm:w-32 lg:h-52 lg:w-44" />
+            <Bone className="h-24 w-20 sm:h-40 sm:w-32 lg:h-52 lg:w-44" />
           </div>
           <Bone className="h-4 w-40" />
         </div>
