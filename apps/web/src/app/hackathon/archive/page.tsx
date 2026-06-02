@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
-import type { ApiResponse } from "@core/types/api";
+import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import type { Hackathon } from "@core/types/hackathon";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { ArchiveMain } from "@/features/hackathon";
@@ -16,12 +16,8 @@ export default function HackathonArchivePage() {
     try {
       const res = await apiClient
         .get("api/v1/archive/hackathons")
-        .json<ApiResponse<Hackathon[] | { content: Hackathon[] }>>();
-      const raw = res.data;
-      const list = Array.isArray(raw)
-        ? raw
-        : ((raw as { content?: Hackathon[] })?.content ?? []);
-      setHackathons(list);
+        .json<ApiResponse<CursorPageResponse<Hackathon>>>();
+      setHackathons(res.data?.content ?? []);
     } catch {
       // silent
     } finally {

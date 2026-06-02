@@ -13,10 +13,10 @@ export function HackathonPageSkeleton() {
           <Bone className="h-8 w-64" />
           <Bone className="h-4 w-32" />
           <div className="my-4 flex gap-4">
-            <Bone className="rounded-3 h-[104px] w-[88px]" />
-            <Bone className="rounded-3 h-[104px] w-[88px]" />
-            <Bone className="rounded-3 h-[104px] w-[88px]" />
-            <Bone className="rounded-3 h-[104px] w-[88px]" />
+            <Bone className="rounded-3 h-[148px] w-[124px] sm:h-[172px] sm:w-[144px]" />
+            <Bone className="rounded-3 h-[148px] w-[124px] sm:h-[172px] sm:w-[144px]" />
+            <Bone className="rounded-3 h-[148px] w-[124px] sm:h-[172px] sm:w-[144px]" />
+            <Bone className="rounded-3 h-[148px] w-[124px] sm:h-[172px] sm:w-[144px]" />
           </div>
           <Bone className="h-4 w-40" />
         </div>
@@ -68,6 +68,50 @@ export function HackathonArchiveSkeleton() {
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 해커톤 제출물 상세 스켈레톤
+ */
+export function HackathonSubmissionDetailSkeleton() {
+  return (
+    <div className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
+      <Bone className="mb-6 h-4 w-72" />
+
+      {/* Hero */}
+      <div className="rounded-3 border-border-gray-light bg-surface-white mb-8 border p-8">
+        <div className="mb-4 flex items-center gap-2">
+          <Bone className="h-5 w-20 rounded-full" />
+          <Bone className="h-5 w-16 rounded-full" />
+        </div>
+        <Bone className="mb-3 h-9 w-2/3" />
+        <Bone className="mb-2 h-4 w-full" />
+        <Bone className="h-4 w-1/2" />
+        <div className="mt-6 flex gap-2">
+          <Bone className="rounded-2 h-10 w-28" />
+          <Bone className="rounded-2 h-10 w-24" />
+        </div>
+      </div>
+
+      {/* Image */}
+      <Bone className="rounded-3 mb-8 h-[360px] w-full" />
+
+      {/* Body */}
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_300px]">
+        <div className="space-y-3">
+          <Bone className="h-6 w-32" />
+          <Bone className="h-4 w-full" />
+          <Bone className="h-4 w-full" />
+          <Bone className="h-4 w-3/4" />
+        </div>
+        <div className="space-y-3">
+          <Bone className="h-6 w-24" />
+          <Bone className="h-4 w-full" />
+          <Bone className="h-4 w-2/3" />
+        </div>
       </div>
     </div>
   );

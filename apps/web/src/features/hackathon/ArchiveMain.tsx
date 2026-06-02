@@ -3,9 +3,10 @@
 import type { Hackathon, Submission, Award } from "@core/types/hackathon";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
 import { Pagination, TextInput } from "@ui/components/client";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
-import type { ApiResponse } from "@core/types/api";
+import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import type { ArchiveHackathonDetail } from "@core/types/hackathon";
@@ -15,6 +16,7 @@ interface ArchiveMainProps {
 }
 
 export function ArchiveMain({ hackathons }: ArchiveMainProps) {
+  const router = useRouter();
   const [selectedId, setSelectedId] = useState<number>(
     hackathons[0]?.hackathon_id ?? 0,
   );
@@ -37,15 +39,10 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
           .json<ApiResponse<ArchiveHackathonDetail>>(),
         apiClient
           .get(`api/v1/archive/hackathons/${id}/submissions`)
-          .json<ApiResponse<Submission[] | { content: Submission[] }>>(),
+          .json<ApiResponse<CursorPageResponse<Submission>>>(),
       ]);
       setDetail(detailRes.data);
-      const rawSubs = submissionsRes.data;
-      setSubmissions(
-        Array.isArray(rawSubs)
-          ? rawSubs
-          : ((rawSubs as { content?: Submission[] })?.content ?? []),
-      );
+      setSubmissions(submissionsRes.data?.content ?? []);
       setAwards(detailRes.data?.awards ?? []);
     } catch {
       // silent
@@ -180,7 +177,22 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
           return (
             <article
               key={submission.submission_id}
-              className="rounded-3 border-border-gray-light bg-surface-white group flex flex-col border p-6 shadow-sm transition-shadow hover:shadow-md"
+              role="link"
+              tabIndex={0}
+              onClick={() =>
+                router.push(
+                  `/hackathon/archive/submissions/${submission.submission_id}`,
+                )
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  router.push(
+                    `/hackathon/archive/submissions/${submission.submission_id}`,
+                  );
+                }
+              }}
+              className="rounded-3 border-border-gray-light bg-surface-white focus-visible:ring-primary-20 group flex cursor-pointer flex-col border p-6 shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2"
             >
               {/* Meta */}
               <div className="mb-3 flex items-center justify-between gap-3">
@@ -226,6 +238,7 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
                   href={submission.github_url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
                   className="rounded-2 border-border-gray-light text-label-xs text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-8 items-center border px-3 font-semibold transition-colors"
                 >
                   GitHub
@@ -235,6 +248,7 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
                     href={submission.deploy_url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="rounded-2 border-border-gray-light text-label-xs text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-8 items-center border px-3 font-semibold transition-colors"
                   >
                     배포

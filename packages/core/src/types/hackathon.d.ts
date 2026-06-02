@@ -80,12 +80,13 @@ export interface Team {
 
 /**
  * 팀 가입 신청
+ *
+ * NOTE: 백엔드 응답에는 team_name이 없다. 팀명이 필요하면 team_id로 별도 매칭.
  */
 export interface JoinRequest {
   join_request_id: number;
   hackathon_id: number;
-  hackathon_team_id: number;
-  team_name: string;
+  team_id: number;
   user_id: number;
   user_name: string;
   status: JoinRequestStatus;
@@ -108,6 +109,7 @@ export interface Submission {
   github_url: string;
   deploy_url?: string;
   presentation_file?: string;
+  image_url?: string;
   tech_stacks: string[];
   created_at: string;
   updated_at: string;
@@ -143,14 +145,14 @@ export interface Criterion {
  * 평가 집계
  */
 export interface EvaluationSummary {
-  hackathon_team_id: number;
+  team_id: number;
   team_name: string;
   average_total_score: number;
-  total_score: number;
-  evaluation_count: number;
+  sum_total_score: number;
+  evaluator_count: number;
   criterion_averages: Array<{
     criterion_id: number;
-    criterion_name: string;
+    name: string;
     average_score: number;
   }>;
 }
@@ -204,6 +206,81 @@ export interface ArchiveSubmissionsParams {
 }
 
 /**
+ * 해커톤 생성 요청 (운영진)
+ * POST /api/v1/admin/hackathons
+ */
+export interface CreateHackathonRequest {
+  held_year: number;
+  held_semester: number;
+  event_round: number;
+  title?: string;
+  description?: string;
+  location?: string;
+  recruit_starts_at?: string;
+  recruit_ends_at?: string;
+  team_building_starts_at?: string;
+  team_building_ends_at?: string;
+  starts_at: string;
+  ends_at: string;
+}
+
+/**
+ * 해커톤 수정 요청 (운영진, 모든 필드 선택적)
+ * PATCH /api/v1/admin/hackathons/{hackathonId}
+ */
+export interface UpdateHackathonRequest {
+  title?: string;
+  description?: string;
+  location?: string;
+  recruit_starts_at?: string;
+  recruit_ends_at?: string;
+  team_building_starts_at?: string;
+  team_building_ends_at?: string;
+  starts_at?: string;
+  ends_at?: string;
+}
+
+/**
+ * 해커톤 상태 변경 요청 (운영진)
+ * PATCH /api/v1/admin/hackathons/{hackathonId}/status
+ */
+export interface UpdateHackathonStatusRequest {
+  status: HackathonStatus;
+}
+
+/**
+ * 평가 기준 생성/수정 요청 (운영진)
+ * POST /api/v1/admin/hackathons/{hackathonId}/criteria
+ * PUT  /api/v1/admin/hackathons/{hackathonId}/criteria/{criterionId}
+ */
+export interface CriterionRequest {
+  name?: string;
+  description?: string;
+  max_score?: number;
+  weight?: number;
+  display_order: number;
+}
+
+/**
+ * 수상 등록/수정 요청 (운영진)
+ * POST /api/v1/admin/hackathons/{hackathonId}/awards
+ * PUT  /api/v1/admin/hackathons/{hackathonId}/awards/{awardId}
+ */
+export interface AwardRequest {
+  hackathon_team_id: number;
+  award_name?: string;
+  award_rank?: number;
+}
+
+/**
+ * 심사 점수 (평가 제출 항목)
+ */
+export interface EvaluationScore {
+  criterion_id: number;
+  score: number;
+}
+
+/**
  * 팀 생성 요청
  */
 export interface CreateTeamRequest {
@@ -222,5 +299,6 @@ export interface SubmissionRequest {
   description?: string;
   github_url: string;
   deploy_url?: string;
+  image_url?: string;
   tech_stacks: string[];
 }

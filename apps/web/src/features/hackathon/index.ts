@@ -6,5 +6,6 @@ export { WaitingStartMain } from "./WaitingStartMain";
 export { ActiveHackathonMain } from "./ActiveHackathonMain";
 export { EndedMain } from "./EndedMain";
 export { ArchiveMain } from "./ArchiveMain";
+export { SubmissionDetailMain } from "./SubmissionDetailMain";
 export { getMainStage } from "./utils";
 export type { MainStage } from "./utils";

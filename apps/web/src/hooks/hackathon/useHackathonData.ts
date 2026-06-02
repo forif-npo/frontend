@@ -1,5 +1,5 @@
 import { apiClient } from "@core/utils/api-client";
-import type { ApiResponse } from "@core/types/api";
+import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import type {
   Hackathon,
   Participant,
@@ -27,7 +27,7 @@ export const useHackathonData = (
   const [participant, setParticipant] = useState<Participant | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
-  const [submissions] = useState<Submission[]>([]);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,8 +65,8 @@ export const useHackathonData = (
       try {
         const teamsRes = await apiClient
           .get(`api/v1/hackathons/${hackathonId}/teams`)
-          .json<ApiResponse<Team[]>>();
-        const teamList = teamsRes.data ?? [];
+          .json<ApiResponse<CursorPageResponse<Team>>>();
+        const teamList = teamsRes.data?.content ?? [];
         setTeams(teamList);
 
         // 내 팀 찾기
@@ -78,6 +78,16 @@ export const useHackathonData = (
         }
       } catch {
         setTeams([]);
+      }
+
+      // 제출물 목록 조회
+      try {
+        const submissionsRes = await apiClient
+          .get(`api/v1/hackathons/${hackathonId}/submissions`)
+          .json<ApiResponse<CursorPageResponse<Submission>>>();
+        setSubmissions(submissionsRes.data?.content ?? []);
+      } catch {
+        setSubmissions([]);
       }
     } catch (err) {
       setError(

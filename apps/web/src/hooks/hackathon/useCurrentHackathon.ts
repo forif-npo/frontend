@@ -1,5 +1,5 @@
 import { apiClient } from "@core/utils/api-client";
-import type { ApiResponse } from "@core/types/api";
+import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import type { Hackathon } from "@core/types/hackathon";
 import { useCallback, useEffect, useState } from "react";
 
@@ -18,8 +18,8 @@ export const useCurrentHackathon = () => {
     try {
       const res = await apiClient
         .get("api/v1/hackathons")
-        .json<ApiResponse<Hackathon[]>>();
-      const list = res.data ?? [];
+        .json<ApiResponse<CursorPageResponse<Hackathon>>>();
+      const list = res.data?.content ?? [];
       const active = list.find((h) => h.status !== "ENDED") ?? list[0] ?? null;
       setHackathon(active);
     } catch (err) {

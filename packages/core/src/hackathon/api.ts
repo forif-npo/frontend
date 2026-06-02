@@ -1,4 +1,5 @@
 import { apiClient } from "../utils/api-client";
+import type { CursorPageResponse } from "../types/api";
 import type {
   ArchiveHackathonDetail,
   ArchiveSubmissionDetail,
@@ -31,8 +32,8 @@ export const getHackathons = async (
 
   const res = await apiClient
     .get("api/v1/hackathons", { searchParams })
-    .json<{ data: Hackathon[] }>();
-  return res.data;
+    .json<{ data: CursorPageResponse<Hackathon> }>();
+  return res.data.content;
 };
 
 /**
@@ -79,8 +80,8 @@ export const getMyParticipant = async (
 export const getTeams = async (hackathonId: number): Promise<Team[]> => {
   const res = await apiClient
     .get(`api/v1/hackathons/${hackathonId}/teams`)
-    .json<{ data: Team[] }>();
-  return res.data;
+    .json<{ data: CursorPageResponse<Team> }>();
+  return res.data.content;
 };
 
 /**
@@ -130,8 +131,8 @@ export const getJoinRequests = async (
     .get(`api/v1/hackathons/${hackathonId}/teams/${teamId}/join-requests`, {
       searchParams,
     })
-    .json<{ data: JoinRequest[] }>();
-  return res.data;
+    .json<{ data: CursorPageResponse<JoinRequest> }>();
+  return res.data.content;
 };
 
 /**
@@ -188,8 +189,8 @@ export const getSubmissionStatuses = async (
 ): Promise<SubmissionStatus[]> => {
   const res = await apiClient
     .get(`api/v1/admin/hackathons/${hackathonId}/submissions`)
-    .json<{ data: SubmissionStatus[] }>();
-  return res.data;
+    .json<{ data: CursorPageResponse<SubmissionStatus> }>();
+  return res.data.content;
 };
 
 /**
@@ -201,8 +202,8 @@ export const getCriteria = async (
 ): Promise<Criterion[]> => {
   const res = await apiClient
     .get(`api/v1/hackathons/${hackathonId}/criteria`)
-    .json<{ data: Criterion[] }>();
-  return res.data;
+    .json<{ data: CursorPageResponse<Criterion> }>();
+  return res.data.content;
 };
 
 /**
@@ -229,8 +230,8 @@ export const getEvaluationSummary = async (
 ): Promise<EvaluationSummary[]> => {
   const res = await apiClient
     .get(`api/v1/admin/hackathons/${hackathonId}/evaluations/summary`)
-    .json<{ data: EvaluationSummary[] }>();
-  return res.data;
+    .json<{ data: CursorPageResponse<EvaluationSummary> }>();
+  return res.data.content;
 };
 
 /**
@@ -254,8 +255,8 @@ export const createAward = async (
 export const getArchiveHackathons = async (): Promise<Hackathon[]> => {
   const res = await apiClient
     .get("api/v1/archive/hackathons")
-    .json<{ data: Hackathon[] }>();
-  return res.data;
+    .json<{ data: CursorPageResponse<Hackathon> }>();
+  return res.data.content;
 };
 
 /**
@@ -287,8 +288,8 @@ export const getArchiveSubmissions = async (
     .get(`api/v1/archive/hackathons/${hackathonId}/submissions`, {
       searchParams,
     })
-    .json<{ data: Submission[] }>();
-  return res.data;
+    .json<{ data: CursorPageResponse<Submission> }>();
+  return res.data.content;
 };
 
 /**

@@ -53,11 +53,11 @@ export function CountdownBlocks({
         ];
 
   return (
-    <div className="flex items-center gap-3 sm:gap-4">
+    <div className="flex items-center gap-3 sm:gap-5">
       {units.map((unit, idx) => (
-        <div key={unit.label} className="flex items-center gap-3 sm:gap-4">
+        <div key={unit.label} className="flex items-center gap-3 sm:gap-5">
           {idx > 0 && (
-            <span className="text-text-disabled mb-5 select-none text-2xl font-light sm:text-4xl">
+            <span className="text-text-disabled mb-7 select-none text-4xl font-light sm:text-6xl">
               :
             </span>
           )}
@@ -72,8 +72,8 @@ function FlipUnit({ value, label }: { value: number; label: string }) {
   const display = String(value).padStart(2, "0");
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="rounded-2 sm:rounded-3 bg-surface-white border-border-gray-light relative h-[72px] w-[60px] overflow-hidden border shadow-sm sm:h-[104px] sm:w-[88px]">
+    <div className="flex flex-col items-center gap-2.5">
+      <div className="rounded-2 sm:rounded-3 bg-surface-white border-border-gray-light relative h-[96px] w-[78px] overflow-hidden border shadow-sm sm:h-[148px] sm:w-[124px] lg:h-[172px] lg:w-[144px]">
         {/* Top half darker line */}
         <div className="bg-border-gray-light absolute inset-x-0 top-1/2 z-10 h-px" />
         {/* Subtle inner shadow for depth */}
@@ -88,13 +88,13 @@ function FlipUnit({ value, label }: { value: number; label: string }) {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <span className="text-text-primary text-3xl font-extrabold tabular-nums tracking-tight sm:text-5xl">
+            <span className="text-text-primary text-5xl font-extrabold tabular-nums tracking-tight sm:text-7xl lg:text-8xl">
               {display}
             </span>
           </motion.div>
         </AnimatePresence>
       </div>
-      <span className="text-text-subtle text-[10px] font-bold tracking-widest sm:text-xs">
+      <span className="text-text-subtle text-xs font-bold tracking-widest sm:text-sm">
         {label}
       </span>
     </div>
