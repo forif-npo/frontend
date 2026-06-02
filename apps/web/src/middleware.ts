@@ -12,11 +12,18 @@ const publicRoutes = [
   "/support/faqs",
   "/support/announcements",
   "/studies/list",
+  "/club/",
+  "/club/team",
+  "/club/rule",
+  "/club/accounting",
+  "/hackathon",
+  "/hackathon/archive",
 ];
 const publicParamsList = [
   "/studies/detail",
   "/studies/apply",
   "/studies/about",
+  "/club",
 ];
 const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";

@@ -11,7 +11,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
   return (
     <Link
       href={service.link}
-      className="rounded-3 border-border-gray bg-surface-white group flex min-w-[240px] flex-1 flex-col gap-4 border p-8 transition-shadow hover:shadow-md"
+      className="rounded-3 border-border-gray bg-surface-white group flex min-w-[240px] flex-1 flex-col gap-4 border p-5 transition-shadow hover:shadow-md md:p-8"
     >
       <div>
         <Badge

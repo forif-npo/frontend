@@ -74,7 +74,7 @@ export default function StudyListPage() {
 
   if (error) {
     return (
-      <div className="bg-bg-base flex min-h-screen items-center justify-center">
+      <div className="bg-bg-base min-h-viewport flex items-center justify-center">
         <div className="text-status-error text-lg">
           오류가 발생했습니다: {error}
         </div>
@@ -99,7 +99,7 @@ export default function StudyListPage() {
   const resetPage = () => setCurrentPage(0);
 
   return (
-    <div className="bg-bg-base min-h-screen pb-20">
+    <div className="bg-bg-base min-h-viewport pb-20">
       <div className="w-full pb-8">
         <Heading size="l" className="mb-6 md:mb-12">
           스터디 목록

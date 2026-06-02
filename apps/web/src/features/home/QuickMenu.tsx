@@ -73,7 +73,7 @@ export function QuickMenu() {
   );
 
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div className="flex w-full flex-col gap-4 md:gap-6">
       <div className="flex items-center gap-4">
         <h2 className="text-heading-l-mobile tracking-1 text-text-basic sm:text-heading-l font-bold">
           자주찾는 메뉴
@@ -90,12 +90,12 @@ export function QuickMenu() {
             <ArrowLeft className="text-text-basic" size={24} />
           </button>
 
-          <div className="grid min-w-0 flex-1 grid-cols-4 gap-3 sm:grid-cols-8">
+          <div className="grid min-w-0 flex-1 grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-8">
             {visibleItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className="rounded-3 border-border-gray bg-surface-white-subtle hover:bg-surface-gray-subtler flex flex-col items-center justify-center gap-3 border px-3 py-6 transition-colors"
+                className="rounded-3 border-border-gray bg-surface-white-subtle hover:bg-surface-gray-subtler flex min-h-[108px] flex-col items-center justify-center gap-3 border px-3 py-5 text-center shadow-[0_8px_24px_rgba(30,33,36,0.04)] transition-colors sm:min-h-[120px] md:min-h-0 md:py-6 md:shadow-none"
               >
                 <item.icon
                   className="text-text-basic"

@@ -9,7 +9,7 @@ export const NAV_MENUS: NavMenu[] = [
     subMenus: [
       {
         label: "동아리 소개",
-        href: "/club/about",
+        href: "/club",
       },
       {
         label: "운영진 소개",
@@ -17,7 +17,7 @@ export const NAV_MENUS: NavMenu[] = [
       },
       {
         label: "연혁",
-        href: "/club/about#history",
+        href: "/club#history",
       },
       {
         label: "회칙",
@@ -41,7 +41,22 @@ export const NAV_MENUS: NavMenu[] = [
       },
       {
         label: "스터디 가이드",
-        href: "/studies/members",
+        href: "/studies/guide",
+      },
+    ],
+  },
+  {
+    label: "해커톤",
+    title: "FORIF 해커톤에 참가하고, 역대 결과물을 확인하세요.",
+    href: "/hackathon",
+    subMenus: [
+      {
+        label: "해커톤",
+        href: "/hackathon",
+      },
+      {
+        label: "아카이브",
+        href: "/hackathon/archive",
       },
     ],
   },

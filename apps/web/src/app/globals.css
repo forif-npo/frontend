@@ -1,12 +1,37 @@
 @import "tailwindcss";
-@import "@repo/ui/styles.css";
 @import "@repo/ui/theme.css";
 
+@source "./*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
 @source "../../../../packages/ui/src/**/*.{ts,tsx}";
 @source "../../../../packages/core/src/**/*.{ts,tsx}";
 
+@custom-variant high-contrast (&:where([data-theme=high-contrast], [data-theme=high-contrast] *));
+
+@theme inline {
+  --font-pretendard: var(--font-pretendard);
+}
+
 html {
-  zoom: 80%;
+  zoom: 90%;
+  --zoom: 0.9;
+  --vh: calc(100vh / var(--zoom));
+  --vw: calc(100vw / var(--zoom));
+  font-family:
+    var(--font-pretendard), "Pretendard GOV Variable", "Pretendard GOV",
+    ui-sans-serif, system-ui, sans-serif;
+}
+
+@utility h-viewport {
+  height: var(--vh);
+}
+
+@utility min-h-viewport {
+  min-height: var(--vh);
+}
+
+@utility max-w-main {
+  max-width: 1200px;
 }
 
 [data-theme="high-contrast"] [data-hide-on-theme="high-contrast"],
@@ -47,9 +72,9 @@ html {
 }
 
 @utility main-gap {
-  gap: var(--spacing-2);
+  gap: calc(var(--spacing) * 5);
   @media (min-width: 48rem) {
-    gap: calc(var(--spacing) * 16);
+    gap: calc(var(--spacing) * 8);
   }
 }
 
@@ -58,8 +83,8 @@ html {
   margin-bottom: 0.5rem;
   padding-inline: 1rem;
   @media (min-width: 48rem) {
-    margin-top: 5rem;
-    margin-bottom: 2.5rem;
+    margin-top: 3rem;
+    margin-bottom: 0rem;
     padding-inline: 0;
   }
 }

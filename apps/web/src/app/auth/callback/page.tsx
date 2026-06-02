@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { AuthSkeleton } from "@/components/skeleton/AuthSkeleton";
 
 /**
  * Google OAuth 콜백 페이지
@@ -35,9 +36,5 @@ export default function AuthCallbackPage() {
     router.push("/signin?error=authentication_failed");
   }, [session, status, router]);
 
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <p>로그인 처리 중...</p>
-    </div>
-  );
+  return <AuthSkeleton />;
 }

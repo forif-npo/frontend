@@ -32,7 +32,7 @@ export function MyPageClient({
   ];
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-[1440px]">
+    <div className="min-h-viewport mx-auto flex max-w-[1440px]">
       <ProfileSidebar
         profile={{
           user_name: profile.user_name,
@@ -48,7 +48,7 @@ export function MyPageClient({
       {/* Main Content */}
       <div className="w-[1216px] flex-1 py-8 pl-8">
         {/* Title */}
-        <p className="mb-4 text-[44px] font-bold leading-[1.5] tracking-[1px] text-black">
+        <p className="mb-4 text-[40px] font-bold leading-[1.5] tracking-[1px] text-black">
           내 스터디
         </p>
 

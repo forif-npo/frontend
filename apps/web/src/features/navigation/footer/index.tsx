@@ -24,7 +24,7 @@ export function Footer() {
   return (
     <footer className="bg-surface-white border-border-gray-light border-t">
       {/* Main Content */}
-      <div className="footer-main mx-auto flex max-w-[1200px] flex-col">
+      <div className="footer-main max-w-main mx-auto flex flex-col">
         {/* Brand + Social Links */}
         <div className="flex items-center gap-[10px]">
           {/* TODO: footer 전용 black_title 로고로 교체 필요 */}
@@ -105,7 +105,7 @@ export function Footer() {
 
       {/* Copyright Bar */}
       <div className="border-divider-gray-light border-t">
-        <div className="footer-copyright mx-auto flex max-w-[1200px]">
+        <div className="footer-copyright max-w-main mx-auto flex">
           <div className="mb-4 flex items-center gap-2">
             {POLICY_LINKS.map((link) => (
               <Link

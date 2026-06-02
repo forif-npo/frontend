@@ -9,7 +9,7 @@ interface NewsCardProps {
 
 function getCtaLabel(category: NewsData["category"]): string {
   if (category === "faq") return "자주 묻는 질문 더 보기";
-  return "자세히보기";
+  return "자세히 보기";
 }
 
 export function NewsCard({ news }: NewsCardProps) {

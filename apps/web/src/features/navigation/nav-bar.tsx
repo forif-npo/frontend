@@ -82,89 +82,113 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       )}
 
       {/* Mobile NavBar */}
-      <nav className="bg-surface-white border-divider-gray-light flex h-[72px] items-center justify-between gap-4 border-b p-4 md:hidden">
+      <nav className="bg-surface-white/95 border-divider-gray-light sticky top-0 z-50 flex h-[64px] items-center justify-between gap-4 border-b px-4 backdrop-blur md:hidden">
         <Link href="/" className="flex items-center">
-          <Image src={NavLogo} width={68} height={44} alt="FORIF Logo" />
+          <Image src={NavLogo} width={62} height={40} alt="FORIF Logo" />
         </Link>
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="flex flex-col items-center gap-1 rounded-lg px-3 py-1"
+          className="border-border-gray-light bg-surface-white flex h-10 w-10 items-center justify-center rounded-full border shadow-sm"
+          aria-label="전체 메뉴 열기"
+          aria-expanded={mobileMenuOpen}
         >
           <Menu size={20} className="text-text-basic" />
-          <span className="text-text-basic text-[17px] font-bold leading-[1.5]">
-            전체메뉴
-          </span>
         </button>
       </nav>
 
       {/* Mobile Full Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="bg-surface-white fixed inset-0 z-[100] flex flex-col overflow-y-auto md:hidden">
+        <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-[#f6f8fb] md:hidden">
           {/* Mobile Menu Header */}
-          <div className="border-divider-gray-light flex h-[72px] items-center justify-between border-b p-4">
+          <div className="bg-surface-white/95 border-divider-gray-light sticky top-0 z-10 flex h-[64px] items-center justify-between border-b px-4 backdrop-blur">
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-2"
             >
-              <Home size={20} className="text-text-basic" />
-              <span className="text-[17px] font-bold leading-[1.5] text-black">
-                FORIF 홈
-              </span>
+              <Image src={NavLogo} width={62} height={40} alt="FORIF Logo" />
             </Link>
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="flex flex-col items-center gap-1 rounded-lg px-3 py-1"
+              className="border-border-gray-light bg-surface-white flex h-10 w-10 items-center justify-center rounded-full border"
+              aria-label="전체 메뉴 닫기"
             >
               <CloseIcon width={20} height={20} className="fill-text-basic" />
-              <span className="text-text-basic text-[17px] font-bold leading-[1.5]">
-                닫기
-              </span>
             </button>
           </div>
 
           {/* Mobile Menu Content */}
-          <div className="flex-1">
-            {navMenus.map((menu, index) => (
-              <div key={menu.label}>
-                <div className="flex flex-col gap-4 p-4">
-                  {/* Menu Category Header */}
+          <div className="flex flex-1 flex-col gap-4 px-4 py-5">
+            <div className="rounded-3 bg-surface-white border-border-gray-light flex flex-col gap-4 border p-5 shadow-[0_12px_32px_rgba(30,33,36,0.08)]">
+              <div>
+                <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
+                  FORIF에서 함께 성장해요
+                </p>
+                <p className="text-text-subtle mt-1 text-[15px] leading-[1.5]">
+                  스터디, 해커톤, 공지사항을 빠르게 확인할 수 있어요.
+                </p>
+              </div>
+              <Link
+                href={isLoggedIn ? "/my" : "/signin"}
+                onClick={() => setMobileMenuOpen(false)}
+                className="bg-primary-50 rounded-2 flex h-12 items-center justify-center gap-2 text-[17px] font-bold leading-[1.5] text-white hover:font-bold"
+              >
+                {!isLoggedIn && (
+                  <LoginIcon width={18} height={18} className="fill-white" />
+                )}
+                {isLoggedIn ? "마이 페이지" : "로그인하기"}
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3">
+              {navMenus.map((menu) => (
+                <section
+                  key={menu.label}
+                  className="rounded-3 bg-surface-white border-border-gray-light overflow-hidden border"
+                >
                   <Link
                     href={menu.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2"
+                    className="border-divider-gray-light flex items-center justify-between border-b px-5 py-4"
                   >
-                    <span className="text-[17px] font-bold leading-[1.5] text-black">
+                    <span className="text-text-basic text-[17px] font-bold leading-[1.5]">
                       {menu.label}
+                    </span>
+                    <span
+                      className="text-text-subtle text-[15px] leading-[1.5]"
+                      aria-hidden="true"
+                    >
+                      바로가기
                     </span>
                   </Link>
 
-                  {/* Divider line */}
-                  <div className="border-divider-gray-light h-0 w-full border-t" />
-
                   {/* Sub Menu Grid */}
                   {menu.subMenus && (
-                    <div className="grid grid-cols-2 gap-x-12 gap-y-6">
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1 p-3">
                       {menu.subMenus.map((subMenu) => (
                         <Link
                           key={subMenu.label}
                           href={subMenu.href}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="text-[17px] leading-[1.5] text-black"
+                          className="text-text-basic rounded-2 px-3 py-3 text-[16px] leading-[1.5] hover:bg-[#eef4ff] hover:font-semibold"
                         >
                           {subMenu.label}
                         </Link>
                       ))}
                     </div>
                   )}
-                </div>
+                </section>
+              ))}
+            </div>
 
-                {/* Section Divider */}
-                {index < navMenus.length - 1 && (
-                  <div className="bg-divider-gray-light h-6 w-full" />
-                )}
-              </div>
-            ))}
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-text-subtle rounded-2 mb-2 flex items-center justify-center gap-2 py-3 text-[15px] leading-[1.5]"
+            >
+              <Home size={18} />
+              FORIF 홈으로
+            </Link>
           </div>
         </div>
       )}

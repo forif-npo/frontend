@@ -27,7 +27,7 @@
 //   const filteredNews = filterNews(activeCategory);
 //
 //   return (
-//     <section className="mx-auto w-full max-w-[1200px] px-4 lg:px-0">
+//     <section className="mx-auto w-full max-w-main px-4 lg:px-0">
 //       <h2 className="text-heading-l-mobile tracking-1 text-text-basic sm:text-heading-l mb-6 font-bold">
 //         뉴스
 //       </h2>
@@ -81,7 +81,7 @@
 
 export function NewsSection() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-4 lg:px-0">
+    <section className="max-w-main mx-auto w-full px-4 lg:px-0">
       <h2 className="text-heading-l-mobile tracking-1 text-text-basic sm:text-heading-l mb-6 font-bold">
         뉴스
       </h2>

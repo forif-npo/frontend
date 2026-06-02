@@ -5,8 +5,8 @@ import { ctaData } from "@/constants/home";
 
 export function CTASection() {
   return (
-    <section className="w-full bg-gradient-to-r from-[#052561] to-[#86aff9] py-20">
-      <div className="mx-auto flex max-w-[1200px] flex-col items-center px-6 py-6 text-center lg:px-0">
+    <section className="w-full bg-gradient-to-r from-[#052561] to-[#86aff9] py-12 md:py-20">
+      <div className="max-w-main mx-auto flex flex-col items-center px-6 py-6 text-center lg:px-0">
         <Heading size="l" className="mb-4 text-white">
           {ctaData.title}
         </Heading>

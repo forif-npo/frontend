@@ -30,7 +30,7 @@ export const CriticalAlert = ({
   variant,
   link,
   title,
-  detailText = "자세히보기",
+  detailText = "자세히 보기",
   className,
 }: CriticalAlertProps) => {
   return (
@@ -96,7 +96,7 @@ const MoreLinkButton = ({ link, title }: { link: string; title?: string }) => {
         size="m"
         className="text-text-basic hidden cursor-pointer md:inline-block"
       >
-        자세히보기
+        자세히 보기
       </Label>
       <ArrowIcon />
     </LinkButton>
