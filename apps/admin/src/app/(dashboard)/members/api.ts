@@ -1,6 +1,13 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { PaginationInterface } from "@/types/pagination";
+import {
+  buildSemesterEndpoint,
+  isMainSemester,
+  pickBoolean,
+  pickNumber,
+  pickString,
+} from "@/utils/roster";
 import { Member, MemberListResult, MemberSemesterLabel } from "./types";
 
 interface FetchMembersParams {
@@ -17,78 +24,6 @@ interface MemberItem {
 
 interface MemberPageData extends PaginationInterface {
   content: MemberItem[];
-}
-
-const MAIN_SEMESTERS = new Set([
-  "26-1",
-  "25-2",
-  "25-1",
-  "24-2",
-  "24-1",
-  "23-2",
-  "23-1",
-]);
-
-function getMembersEndpoint(semester?: MemberSemesterLabel): string {
-  if (!semester || semester === "전체" || semester === "그 외") {
-    return "api/v1/admin/users";
-  }
-
-  const match = semester.match(/^(\d+)-(\d+)$/);
-
-  if (!match) {
-    return "api/v1/admin/users";
-  }
-
-  const year = Number(`20${match[1]}`);
-  const sem = Number(match[2]);
-
-  return `api/v1/admin/users/${year}/${sem}`;
-}
-
-function pickString(...values: unknown[]): string {
-  for (const value of values) {
-    if (typeof value === "string" && value.trim() !== "") {
-      return value;
-    }
-    if (typeof value === "number") {
-      return String(value);
-    }
-  }
-  return "";
-}
-
-function pickNumber(...values: unknown[]): number {
-  for (const value of values) {
-    if (typeof value === "number") {
-      return value;
-    }
-    if (
-      typeof value === "string" &&
-      value.trim() !== "" &&
-      !Number.isNaN(Number(value))
-    ) {
-      return Number(value);
-    }
-  }
-  return 0;
-}
-
-function pickBoolean(...values: unknown[]): boolean {
-  for (const value of values) {
-    if (typeof value === "boolean") {
-      return value;
-    }
-    if (typeof value === "string") {
-      if (value.toLowerCase() === "true") return true;
-      if (value.toLowerCase() === "false") return false;
-    }
-    if (typeof value === "number") {
-      if (value === 1) return true;
-      if (value === 0) return false;
-    }
-  }
-  return false;
 }
 
 function mapToMember(
@@ -113,7 +48,7 @@ export async function fetchMembers({
   semester,
   accessToken,
 }: FetchMembersParams): Promise<MemberListResult> {
-  const endpoint = getMembersEndpoint(semester);
+  const endpoint = buildSemesterEndpoint("api/v1/admin/users", semester);
 
   const searchParams: Record<string, string> = {
     size: size.toString(),
@@ -126,12 +61,6 @@ export async function fetchMembers({
   if (search) {
     searchParams.search = search;
   }
-
-  console.log("[Members API] Fetching from API:", {
-    endpoint,
-    semester,
-    searchParams,
-  });
 
   const response = await apiClient
     .get(endpoint, {
@@ -149,14 +78,10 @@ export async function fetchMembers({
   let content = response.data.content.map(mapToMember);
 
   if (semester === "그 외") {
-    content = content.filter((item) => {
-      const label = `${String(item.actYear ?? 0).slice(2)}-${item.actSemester ?? 0}`;
-      return !MAIN_SEMESTERS.has(label);
-    });
+    content = content.filter(
+      (item) => !isMainSemester(item.actYear, item.actSemester),
+    );
   }
-
-  console.log("[Members API] first raw item:", response.data.content[0]);
-  console.log("[Members API] first mapped item:", content[0]);
 
   return {
     content: content.map(

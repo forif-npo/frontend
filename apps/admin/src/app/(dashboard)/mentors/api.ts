@@ -1,6 +1,12 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { PaginationInterface } from "@/types/pagination";
+import {
+  buildSemesterEndpoint,
+  isMainSemester,
+  pickNumber,
+  pickString,
+} from "@/utils/roster";
 import { Mentor, MentorListResult, MentorSemesterLabel } from "./types";
 
 interface FetchMentorsParams {
@@ -17,61 +23,6 @@ interface MentorItem {
 
 interface MentorPageData extends PaginationInterface {
   content: MentorItem[];
-}
-
-const MAIN_SEMESTERS = new Set([
-  "26-1",
-  "25-2",
-  "25-1",
-  "24-2",
-  "24-1",
-  "23-2",
-  "23-1",
-]);
-
-function getMentorsEndpoint(semester?: MentorSemesterLabel): string {
-  if (!semester || semester === "전체" || semester === "그 외") {
-    return "api/v1/admin/mentors";
-  }
-
-  const match = semester.match(/^(\d+)-(\d+)$/);
-
-  if (!match) {
-    return "api/v1/admin/mentors";
-  }
-
-  const year = Number(`20${match[1]}`);
-  const sem = Number(match[2]);
-
-  return `api/v1/admin/mentors/${year}/${sem}`;
-}
-
-function pickString(...values: unknown[]): string {
-  for (const value of values) {
-    if (typeof value === "string" && value.trim() !== "") {
-      return value;
-    }
-    if (typeof value === "number") {
-      return String(value);
-    }
-  }
-  return "";
-}
-
-function pickNumber(...values: unknown[]): number {
-  for (const value of values) {
-    if (typeof value === "number") {
-      return value;
-    }
-    if (
-      typeof value === "string" &&
-      value.trim() !== "" &&
-      !Number.isNaN(Number(value))
-    ) {
-      return Number(value);
-    }
-  }
-  return 0;
 }
 
 function mapToMentor(
@@ -99,7 +50,7 @@ export async function fetchMentors({
   semester,
   accessToken,
 }: FetchMentorsParams): Promise<MentorListResult> {
-  const endpoint = getMentorsEndpoint(semester);
+  const endpoint = buildSemesterEndpoint("api/v1/admin/mentors", semester);
 
   const searchParams: Record<string, string> = {
     size: size.toString(),
@@ -112,12 +63,6 @@ export async function fetchMentors({
   if (search) {
     searchParams.search = search;
   }
-
-  console.log("[Mentors API] Fetching from API:", {
-    endpoint,
-    semester,
-    searchParams,
-  });
 
   const response = await apiClient
     .get(endpoint, {
@@ -135,14 +80,10 @@ export async function fetchMentors({
   let content = response.data.content.map(mapToMentor);
 
   if (semester === "그 외") {
-    content = content.filter((item) => {
-      const label = `${String(item.actYear ?? 0).slice(2)}-${item.actSemester ?? 0}`;
-      return !MAIN_SEMESTERS.has(label);
-    });
+    content = content.filter(
+      (item) => !isMainSemester(item.actYear, item.actSemester),
+    );
   }
-
-  console.log("[Mentors API] first raw item:", response.data.content[0]);
-  console.log("[Mentors API] first mapped item:", content[0]);
 
   return {
     content: content.map(
