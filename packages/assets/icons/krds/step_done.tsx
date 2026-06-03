@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const StepDoneIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = 'white' }) => {
+}> = ({ width = 24, height = 24, className, color = "white" }) => {
   return (
     <svg
       width={width}

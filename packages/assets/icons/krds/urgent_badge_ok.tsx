@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const UrgentBadgeOkIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const UrgentBadgeOkIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  triangleColor = 'white',
-  markColor = '#005713',
+  triangleColor = "white",
+  markColor = "#005713",
 }) => {
   return (
     <svg

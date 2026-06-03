@@ -41,7 +41,7 @@ export function YearViewMonth({ month, events }: IProps) {
       <button
         type="button"
         onClick={handleClick}
-        className="w-full rounded-t-lg border px-3 py-2 text-sm font-semibold hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        className="hover:bg-accent focus-visible:ring-ring w-full rounded-t-lg border px-3 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-1"
       >
         {monthName}
       </button>
@@ -49,7 +49,10 @@ export function YearViewMonth({ month, events }: IProps) {
       <div className="flex-1 space-y-2 rounded-b-lg border border-t-0 p-3">
         <div className="grid grid-cols-7 gap-x-0.5 text-center">
           {weekDays.map((day, index) => (
-            <div key={index} className="text-xs font-medium text-muted-foreground">
+            <div
+              key={index}
+              className="text-muted-foreground text-xs font-medium"
+            >
               {day}
             </div>
           ))}
@@ -57,12 +60,24 @@ export function YearViewMonth({ month, events }: IProps) {
 
         <div className="grid grid-cols-7 gap-x-0.5 gap-y-2">
           {daysInMonth.map((day, index) => {
-            if (day === null) return <div key={`blank-${index}`} className="h-10" />;
+            if (day === null)
+              return <div key={`blank-${index}`} className="h-10" />;
 
             const date = new Date(month.getFullYear(), month.getMonth(), day);
-            const dayEvents = events.filter(event => isSameDay(parseToKST(event.startDate), date) || isSameDay(parseToKST(event.endDate), date));
+            const dayEvents = events.filter(
+              (event) =>
+                isSameDay(parseToKST(event.startDate), date) ||
+                isSameDay(parseToKST(event.endDate), date),
+            );
 
-            return <YearViewDayCell key={`day-${day}`} day={day} date={date} events={dayEvents} />;
+            return (
+              <YearViewDayCell
+                key={`day-${day}`}
+                day={day}
+                date={date}
+                events={dayEvents}
+              />
+            );
           })}
         </div>
       </div>

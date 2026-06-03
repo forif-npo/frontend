@@ -2,7 +2,13 @@
 
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@big-calendar/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@big-calendar/components/ui/select";
 
 export function ChangeBadgeVariantInput() {
   const { badgeVariant, setBadgeVariant } = useCalendar();

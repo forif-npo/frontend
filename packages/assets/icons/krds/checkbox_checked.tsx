@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const CheckboxCheckedIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 16, height = 16, className, color = '#256EF4' }) => {
+}> = ({ width = 16, height = 16, className, color = "#256EF4" }) => {
   return (
     <svg
       width={width}

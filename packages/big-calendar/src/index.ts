@@ -11,7 +11,10 @@ export type {
 export type { IAttendee, IEvent, ICalendarCell } from "./calendar/interfaces";
 
 // Context
-export { CalendarProvider, useCalendar } from "./calendar/contexts/calendar-context";
+export {
+  CalendarProvider,
+  useCalendar,
+} from "./calendar/contexts/calendar-context";
 
 // Main Components
 export { ClientContainer as Calendar } from "./calendar/components/client-container";

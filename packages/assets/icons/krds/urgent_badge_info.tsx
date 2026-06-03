@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const UrgentBadgeInfoIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const UrgentBadgeInfoIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  backgroundColor = 'white',
-  iconColor = '#16408D',
+  backgroundColor = "white",
+  iconColor = "#16408D",
 }) => {
   return (
     <svg

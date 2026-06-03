@@ -1,8 +1,18 @@
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
 
 import { AvatarGroup } from "@big-calendar/components/ui/avatar-group";
-import { Avatar, AvatarFallback, AvatarImage } from "@big-calendar/components/ui/avatar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@big-calendar/components/ui/select";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@big-calendar/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@big-calendar/components/ui/select";
 
 export function UserSelect() {
   const { users, selectedUserId, setSelectedUserId } = useCalendar();
@@ -17,10 +27,15 @@ export function UserSelect() {
         <SelectItem value="all">
           <div className="flex items-center gap-1">
             <AvatarGroup max={2}>
-              {users.map(user => (
-                <Avatar key={user.id} className="size-6 text-xxs">
-                  <AvatarImage src={user.picturePath ?? undefined} alt={user.name} />
-                  <AvatarFallback className="text-xxs">{user.name[0]}</AvatarFallback>
+              {users.map((user) => (
+                <Avatar key={user.id} className="text-xxs size-6">
+                  <AvatarImage
+                    src={user.picturePath ?? undefined}
+                    alt={user.name}
+                  />
+                  <AvatarFallback className="text-xxs">
+                    {user.name[0]}
+                  </AvatarFallback>
                 </Avatar>
               ))}
             </AvatarGroup>
@@ -28,12 +43,17 @@ export function UserSelect() {
           </div>
         </SelectItem>
 
-        {users.map(user => (
+        {users.map((user) => (
           <SelectItem key={user.id} value={user.id} className="flex-1">
             <div className="flex items-center gap-2">
               <Avatar key={user.id} className="size-6">
-                <AvatarImage src={user.picturePath ?? undefined} alt={user.name} />
-                <AvatarFallback className="text-xxs">{user.name[0]}</AvatarFallback>
+                <AvatarImage
+                  src={user.picturePath ?? undefined}
+                  alt={user.name}
+                />
+                <AvatarFallback className="text-xxs">
+                  {user.name[0]}
+                </AvatarFallback>
               </Avatar>
 
               <p className="truncate">{user.name}</p>

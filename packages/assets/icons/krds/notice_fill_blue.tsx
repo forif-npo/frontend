@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const NoticeFillBlueIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const NoticeFillBlueIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  color = 'white',
-  backgroundColor = '#0B78CB',
+  color = "white",
+  backgroundColor = "#0B78CB",
 }) => {
   return (
     <svg

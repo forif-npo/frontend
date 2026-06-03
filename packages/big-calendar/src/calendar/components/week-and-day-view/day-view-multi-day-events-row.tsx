@@ -1,4 +1,9 @@
-import { differenceInDays, endOfDay, isWithinInterval, startOfDay } from "date-fns";
+import {
+  differenceInDays,
+  endOfDay,
+  isWithinInterval,
+  startOfDay,
+} from "date-fns";
 
 import { MonthEventBadge } from "@big-calendar/calendar/components/month-view/month-event-badge";
 
@@ -10,12 +15,15 @@ interface IProps {
   multiDayEvents: IEvent[];
 }
 
-export function DayViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IProps) {
+export function DayViewMultiDayEventsRow({
+  selectedDate,
+  multiDayEvents,
+}: IProps) {
   const dayStart = startOfDay(selectedDate);
   const dayEnd = endOfDay(selectedDate);
 
   const multiDayEventsInDay = multiDayEvents
-    .filter(event => {
+    .filter((event) => {
       const eventStart = parseToKST(event.startDate);
       const eventEnd = parseToKST(event.endDate);
 
@@ -27,8 +35,14 @@ export function DayViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IProp
       return isOverlapping;
     })
     .sort((a, b) => {
-      const durationA = differenceInDays(parseToKST(a.endDate), parseToKST(a.startDate));
-      const durationB = differenceInDays(parseToKST(b.endDate), parseToKST(b.startDate));
+      const durationA = differenceInDays(
+        parseToKST(a.endDate),
+        parseToKST(a.startDate),
+      );
+      const durationB = differenceInDays(
+        parseToKST(b.endDate),
+        parseToKST(b.startDate),
+      );
       return durationB - durationA;
     });
 
@@ -38,7 +52,7 @@ export function DayViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IProp
     <div className="flex border-b">
       <div className="w-18"></div>
       <div className="flex flex-1 flex-col gap-1 border-l py-1">
-        {multiDayEventsInDay.map(event => {
+        {multiDayEventsInDay.map((event) => {
           const eventStart = startOfDay(parseToKST(event.startDate));
           const eventEnd = startOfDay(parseToKST(event.endDate));
           const currentDate = startOfDay(selectedDate);
@@ -46,7 +60,16 @@ export function DayViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IProp
           const eventTotalDays = differenceInDays(eventEnd, eventStart) + 1;
           const eventCurrentDay = differenceInDays(currentDate, eventStart) + 1;
 
-          return <MonthEventBadge key={event.id} event={event} cellDate={selectedDate} eventCurrentDay={eventCurrentDay} eventTotalDays={eventTotalDays} className="flex" />;
+          return (
+            <MonthEventBadge
+              key={event.id}
+              event={event}
+              cellDate={selectedDate}
+              eventCurrentDay={eventCurrentDay}
+              eventTotalDays={eventTotalDays}
+              className="flex"
+            />
+          );
         })}
       </div>
     </div>

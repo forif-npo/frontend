@@ -15,16 +15,20 @@ export function useDeleteEvent() {
     // If we have a Google event ID, delete via API
     if (event.googleEventId) {
       try {
-        const response = await fetch(`/api/calendar/events/${event.googleEventId}`, {
-          method: "DELETE",
-        });
+        const response = await fetch(
+          `/api/calendar/events/${event.googleEventId}`,
+          {
+            method: "DELETE",
+          },
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || "Failed to delete event");
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Failed to delete event";
+        const message =
+          err instanceof Error ? err.message : "Failed to delete event";
         setError(message);
         console.error("Failed to delete event:", err);
         setIsLoading(false);

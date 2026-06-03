@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const SwitchOnIcon: React.FC<{
   width?: number;
   height?: number;
   className?: string;
   color?: string;
-}> = ({ width = 24, height = 24, className, color = '#256EF4' }) => {
+}> = ({ width = 24, height = 24, className, color = "#256EF4" }) => {
   return (
     <svg
       width={width}

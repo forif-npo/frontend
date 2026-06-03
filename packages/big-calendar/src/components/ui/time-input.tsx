@@ -8,7 +8,10 @@ import type { TimeFieldProps, TimeValue } from "react-aria-components";
 // ================================== //
 
 type TTimeInputRef = HTMLDivElement;
-type TTimeInputProps = Omit<TimeFieldProps<TimeValue>, "isDisabled" | "isInvalid"> & {
+type TTimeInputProps = Omit<
+  TimeFieldProps<TimeValue>,
+  "isDisabled" | "isInvalid"
+> & {
   readonly dateInputClassName?: string;
   readonly segmentClassName?: string;
   readonly disabled?: boolean;
@@ -16,7 +19,17 @@ type TTimeInputProps = Omit<TimeFieldProps<TimeValue>, "isDisabled" | "isInvalid
 };
 
 const TimeInput = forwardRef<TTimeInputRef, TTimeInputProps>(
-  ({ className, dateInputClassName, segmentClassName, disabled, "data-invalid": dataInvalid, ...props }, ref) => {
+  (
+    {
+      className,
+      dateInputClassName,
+      segmentClassName,
+      disabled,
+      "data-invalid": dataInvalid,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <TimeField
         ref={ref}
@@ -29,13 +42,13 @@ const TimeInput = forwardRef<TTimeInputRef, TTimeInputProps>(
       >
         <DateInput
           className={cn(
-            "peer inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap rounded-md border bg-background px-3 py-2 text-sm shadow-black",
-            "data-[focus-within]:outline-none data-[focus-within]:ring-1 data-[focus-within]:ring-ring",
+            "bg-background peer inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap rounded-md border px-3 py-2 text-sm shadow-black",
+            "data-[focus-within]:ring-ring data-[focus-within]:outline-none data-[focus-within]:ring-1",
             "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
-            dateInputClassName
+            dateInputClassName,
           )}
         >
-          {segment => (
+          {(segment) => (
             <DateSegment
               segment={segment}
               className={cn(
@@ -43,14 +56,14 @@ const TimeInput = forwardRef<TTimeInputRef, TTimeInputProps>(
                 "data-[focused]:bg-foreground/10 data-[focused]:text-foreground",
                 "data-[placeholder]:text-muted-foreground",
                 "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
-                segmentClassName
+                segmentClassName,
               )}
             />
           )}
         </DateInput>
       </TimeField>
     );
-  }
+  },
 );
 
 TimeInput.displayName = "TimeInput";

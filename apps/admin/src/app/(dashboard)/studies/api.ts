@@ -1,6 +1,29 @@
 import { apiClient } from "@core/utils/api-client";
-import type { AdminStudyListResponse, ApiResponse } from "@core/types/api";
+import type {
+  AdminStudyListResponse,
+  ApiResponse,
+  StudyRejectRequest,
+  StudyUpdateRequest,
+} from "@core/types/api";
 import type { SemesterInfo } from "./types";
+
+export interface AdminStudyDetail {
+  id: number;
+  study_name: string;
+  sub_title?: string | null;
+  one_liner: string;
+  tags?: string[] | null;
+  explanation?: string | null;
+  goal?: string | null;
+  start_time?: string | null;
+  end_time?: string | null;
+  week_day?: number | null;
+  location?: string | null;
+  location_detail?: string | null;
+  recruit_status?: "APPLICABLE" | "CLOSED" | null;
+  difficulty?: string | null;
+  capacity?: number | null;
+}
 
 /**
  * Calculate current academic semester based on date
@@ -21,12 +44,19 @@ export async function getCurrentSemester(): Promise<SemesterInfo> {
 /**
  * Parameters for fetching studies
  */
+export type StudyApprovalStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "RE_APPLIED";
+
 interface FetchStudiesParams {
   size: number;
   cursor?: number;
   year?: number;
   semester?: number;
   search?: string;
+  studyStatuses?: StudyApprovalStatus[];
 }
 
 /**
@@ -35,34 +65,38 @@ interface FetchStudiesParams {
  */
 export async function fetchStudiesWithFallback(
   params: FetchStudiesParams,
-  token?: string,
+  token: string,
 ): Promise<AdminStudyListResponse> {
   console.log("[Studies API] Fetching from API:", {
     endpoint: "/api/v1/admin/studies",
     params,
   });
 
-  const searchParams: Record<string, string> = {
-    size: params.size.toString(),
-  };
+  const searchParams = new URLSearchParams();
+  searchParams.set("size", params.size.toString());
 
   if (params.cursor !== undefined) {
-    searchParams.cursor = params.cursor.toString();
+    searchParams.set("cursor", params.cursor.toString());
   }
   if (params.year !== undefined) {
-    searchParams.year = params.year.toString();
+    searchParams.set("year", params.year.toString());
   }
   if (params.semester !== undefined) {
-    searchParams.semester = params.semester.toString();
+    searchParams.set("semester", params.semester.toString());
   }
   if (params.search) {
-    searchParams.search = params.search;
+    searchParams.set("search", params.search);
   }
+  params.studyStatuses?.forEach((status) => {
+    searchParams.append("study_status", status);
+  });
 
   const response = await apiClient
     .get("api/v1/admin/studies", {
       searchParams,
-      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
     .json<ApiResponse<AdminStudyListResponse>>();
 
@@ -78,4 +112,54 @@ export async function fetchStudiesWithFallback(
   });
 
   return response.data;
+}
+
+export async function approveStudy(studyId: number): Promise<void> {
+  await apiClient
+    .patch(`api/v1/admin/studies/${studyId}/approve`)
+    .json<ApiResponse<null>>();
+}
+
+export async function fetchStudyDetail(
+  studyId: number,
+): Promise<AdminStudyDetail> {
+  const response = await apiClient
+    .get(`api/v1/studies/${studyId}`)
+    .json<ApiResponse<AdminStudyDetail>>();
+
+  if (!response.data) {
+    throw new Error("스터디 상세 정보를 불러올 수 없습니다.");
+  }
+
+  return response.data;
+}
+
+export async function updateStudy(
+  studyId: number,
+  body: StudyUpdateRequest,
+): Promise<void> {
+  await apiClient
+    .patch(`api/v1/admin/studies/${studyId}`, {
+      json: body,
+    })
+    .json<ApiResponse<null>>();
+}
+
+export async function deleteStudy(studyId: number): Promise<void> {
+  await apiClient
+    .delete(`api/v1/admin/studies/${studyId}`)
+    .json<ApiResponse<null>>();
+}
+
+export async function rejectStudy(
+  studyId: number,
+  reason: string,
+): Promise<void> {
+  const body: StudyRejectRequest = { reason };
+
+  await apiClient
+    .patch(`api/v1/admin/studies/${studyId}/reject`, {
+      json: body,
+    })
+    .json<ApiResponse<null>>();
 }

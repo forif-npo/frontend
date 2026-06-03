@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const NoticeFillHighContrastIcon: React.FC<{
   width?: number;
@@ -10,8 +10,8 @@ export const NoticeFillHighContrastIcon: React.FC<{
   width = 24,
   height = 24,
   className,
-  color = '#1E2124',
-  backgroundColor = '#F4F5F6',
+  color = "#1E2124",
+  backgroundColor = "#F4F5F6",
 }) => {
   return (
     <svg

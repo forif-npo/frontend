@@ -8,12 +8,20 @@ import { DataTable } from "@/components/list/data-table";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { Button } from "@/components/ui/button";
+import type { StudyUpdateRequest } from "@core/types/api";
+import { handleApiError } from "@core/utils/api-client";
 import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import * as XLSX from "xlsx";
+import { deleteStudy, fetchStudyDetail, updateStudy } from "./api";
 import { columns } from "./columns";
-import { SemesterLabel, Study } from "./types";
+import { StudyDeleteDialog } from "./components/StudyDeleteDialog";
+import { StudyEditDialog } from "./components/StudyEditDialog";
+import { EMPTY_STUDY_EDIT_FORM, STUDY_SEMESTER_OPTIONS } from "./constants";
+import { parseOptionalNumber, toStudyEditForm } from "./form-utils";
+import { SemesterLabel, Study, StudyEditForm } from "./types";
 
 interface StudiesViewProps {
   initialData: Study[];
@@ -31,7 +39,19 @@ export function StudiesView({
   totalElements = 0,
 }: StudiesViewProps) {
   const router = useRouter();
+  const editRequestSeq = useRef(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [editingStudy, setEditingStudy] = useState<Study | null>(null);
+  const [editForm, setEditForm] = useState<StudyEditForm>({
+    ...EMPTY_STUDY_EDIT_FORM,
+  });
+  const [deleteTarget, setDeleteTarget] = useState<Study | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isEditDetailLoaded, setIsEditDetailLoaded] = useState(false);
+  const [loadingStudyId, setLoadingStudyId] = useState<number | null>(null);
+  const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
+    null,
+  );
 
   const handleSemesterChange = (semester: string) => {
     router.push(`/studies?semester=${semester}`);
@@ -79,12 +99,157 @@ export function StudiesView({
     XLSX.writeFile(wb, `studies_${currentSemester}_${date}.xlsx`);
   };
 
-  const handleEditStudy = (study: Study) => {
-    console.log("스터디 정보 수정", study);
+  const handleEditDialogOpenChange = (open: boolean) => {
+    setIsEditDialogOpen(open);
+
+    if (!open) {
+      editRequestSeq.current += 1;
+      setEditingStudy(null);
+      setEditForm({ ...EMPTY_STUDY_EDIT_FORM });
+      setIsEditDetailLoaded(false);
+      setLoadingStudyId(null);
+    }
+  };
+
+  const handleEditFormChange = <K extends keyof StudyEditForm>(
+    field: K,
+    value: StudyEditForm[K],
+  ) => {
+    setEditForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleEditTagChange = (tagId: number, checked: boolean) => {
+    setEditForm((prev) => {
+      const tags = checked
+        ? Array.from(new Set([...prev.tags, tagId]))
+        : prev.tags.filter((id) => id !== tagId);
+
+      return {
+        ...prev,
+        tags,
+      };
+    });
+  };
+
+  const handleEditStudy = async (study: Study) => {
+    const requestSeq = editRequestSeq.current + 1;
+    editRequestSeq.current = requestSeq;
+
+    setEditingStudy(study);
+    setEditForm(toStudyEditForm(study));
+    setIsEditDetailLoaded(false);
+    setIsEditDialogOpen(true);
+    setLoadingStudyId(study.id);
+
+    try {
+      const detail = await fetchStudyDetail(study.id);
+
+      if (editRequestSeq.current !== requestSeq) {
+        return;
+      }
+
+      setEditForm(toStudyEditForm(study, detail));
+      setIsEditDetailLoaded(true);
+    } catch (error) {
+      if (editRequestSeq.current === requestSeq) {
+        toast.error(await handleApiError(error));
+      }
+    } finally {
+      if (editRequestSeq.current === requestSeq) {
+        setLoadingStudyId(null);
+      }
+    }
   };
 
   const handleDeleteStudy = (study: Study) => {
-    console.log("스터디 정보 삭제", study);
+    setDeleteTarget(study);
+  };
+
+  const handleSubmitEditStudy = async () => {
+    if (!editingStudy || !isEditDetailLoaded) {
+      return;
+    }
+
+    const studyName = editForm.study_name.trim();
+    const oneLiner = editForm.one_liner.trim();
+    const weekDay = parseOptionalNumber(editForm.week_day);
+    const difficulty = parseOptionalNumber(editForm.difficulty);
+    const capacity = parseOptionalNumber(editForm.capacity);
+
+    if (!studyName || !oneLiner) {
+      toast.error("스터디명과 한 줄 소개를 입력해주세요.");
+      return;
+    }
+
+    if (editForm.tags.length === 0) {
+      toast.error("태그를 최소 1개 이상 선택해주세요.");
+      return;
+    }
+
+    if (editForm.tags.length > 4) {
+      toast.error("태그는 최대 4개까지 선택할 수 있습니다.");
+      return;
+    }
+
+    if (editForm.capacity.trim() && capacity === undefined) {
+      toast.error("정원은 숫자로 입력해주세요.");
+      return;
+    }
+
+    if (capacity !== undefined && capacity < 0) {
+      toast.error("정원은 0 이상으로 입력해주세요.");
+      return;
+    }
+
+    const body: StudyUpdateRequest = {
+      study_name: studyName,
+      sub_title: editForm.sub_title.trim(),
+      one_liner: oneLiner,
+      explanation: editForm.explanation.trim(),
+      goal: editForm.goal.trim(),
+      start_time: editForm.start_time,
+      end_time: editForm.end_time,
+      week_day: weekDay,
+      location: editForm.location.trim(),
+      location_detail: editForm.location_detail.trim(),
+      recruit_status: editForm.recruit_status,
+      difficulty: difficulty as StudyUpdateRequest["difficulty"],
+      capacity,
+      study_tag_ids: editForm.tags,
+    };
+
+    try {
+      setSubmittingStudyId(editingStudy.id);
+      await updateStudy(editingStudy.id, body);
+      toast.success("스터디 정보가 수정되었습니다.");
+      handleEditDialogOpenChange(false);
+      router.refresh();
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setSubmittingStudyId(null);
+    }
+  };
+
+  const handleConfirmDeleteStudy = async () => {
+    if (!deleteTarget) {
+      return;
+    }
+
+    try {
+      setSubmittingStudyId(deleteTarget.id);
+      await deleteStudy(deleteTarget.id);
+      toast.success("스터디가 삭제되었습니다.");
+      setDeleteTarget(null);
+      router.refresh();
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setSubmittingStudyId(null);
+    }
   };
 
   const handleAddMentee = (study: Study) => {
@@ -94,6 +259,15 @@ export function StudiesView({
   const handleRemoveMentee = (study: Study) => {
     console.log("멘티 삭제", study);
   };
+
+  const isEditingStudy =
+    editingStudy !== null && submittingStudyId === editingStudy.id;
+  const isLoadingEditDetail =
+    editingStudy !== null && loadingStudyId === editingStudy.id;
+  const isEditFormDisabled =
+    isEditingStudy || isLoadingEditDetail || !isEditDetailLoaded;
+  const isDeletingStudy =
+    deleteTarget !== null && submittingStudyId === deleteTarget.id;
 
   return (
     <div className="space-y-6 p-8">
@@ -108,6 +282,7 @@ export function StudiesView({
         <SemesterTabs
           currentSemester={currentSemester}
           onSemesterChange={handleSemesterChange}
+          options={STUDY_SEMESTER_OPTIONS}
         />
         <Button
           variant="outline"
@@ -131,11 +306,17 @@ export function StudiesView({
           data={filteredData}
           renderRowActions={(study) => (
             <>
-              <DropdownMenuItem onClick={() => handleEditStudy(study)}>
+              <DropdownMenuItem
+                disabled={
+                  loadingStudyId === study.id || submittingStudyId === study.id
+                }
+                onClick={() => void handleEditStudy(study)}
+              >
                 스터디 정보 수정
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
+                disabled={submittingStudyId === study.id}
                 onClick={() => handleDeleteStudy(study)}
               >
                 스터디 정보 삭제
@@ -158,6 +339,28 @@ export function StudiesView({
           )}
         </div>
       </div>
+
+      <StudyEditDialog
+        open={isEditDialogOpen}
+        onOpenChange={handleEditDialogOpenChange}
+        editingStudy={editingStudy}
+        form={editForm}
+        onFieldChange={handleEditFormChange}
+        onTagChange={handleEditTagChange}
+        onSubmit={() => void handleSubmitEditStudy()}
+        isLoadingDetail={isLoadingEditDetail}
+        isFormDisabled={isEditFormDisabled}
+        isSubmitting={isEditingStudy}
+      />
+
+      <StudyDeleteDialog
+        target={deleteTarget}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        onConfirm={() => void handleConfirmDeleteStudy()}
+        isDeleting={isDeletingStudy}
+      />
     </div>
   );
 }

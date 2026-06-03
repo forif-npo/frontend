@@ -13,10 +13,35 @@ import { Button } from "@big-calendar/components/ui/button";
 import { Textarea } from "@big-calendar/components/ui/textarea";
 import { TimeInput } from "@big-calendar/components/ui/time-input";
 import { SingleDayPicker } from "@big-calendar/components/ui/single-day-picker";
-import { Avatar, AvatarFallback, AvatarImage } from "@big-calendar/components/ui/avatar";
-import { Form, FormField, FormLabel, FormItem, FormControl, FormMessage } from "@big-calendar/components/ui/form";
-import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@big-calendar/components/ui/select";
-import { Dialog, DialogHeader, DialogClose, DialogContent, DialogTrigger, DialogTitle, DialogFooter } from "@big-calendar/components/ui/dialog";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@big-calendar/components/ui/avatar";
+import {
+  Form,
+  FormField,
+  FormLabel,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@big-calendar/components/ui/form";
+import {
+  Select,
+  SelectItem,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+} from "@big-calendar/components/ui/select";
+import {
+  Dialog,
+  DialogHeader,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+  DialogFooter,
+} from "@big-calendar/components/ui/dialog";
 
 import { eventSchema } from "@big-calendar/calendar/schemas";
 
@@ -88,7 +113,11 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
         </DialogHeader>
 
         <Form {...form}>
-          <form id="event-form" onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+          <form
+            id="event-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid gap-4 py-4"
+          >
             <FormField
               control={form.control}
               name="user"
@@ -102,12 +131,21 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                       </SelectTrigger>
 
                       <SelectContent>
-                        {users.map(user => (
-                          <SelectItem key={user.id} value={user.id} className="flex-1">
+                        {users.map((user) => (
+                          <SelectItem
+                            key={user.id}
+                            value={user.id}
+                            className="flex-1"
+                          >
                             <div className="flex items-center gap-2">
                               <Avatar key={user.id} className="size-6">
-                                <AvatarImage src={user.picturePath ?? undefined} alt={user.name} />
-                                <AvatarFallback className="text-xxs">{user.name[0]}</AvatarFallback>
+                                <AvatarImage
+                                  src={user.picturePath ?? undefined}
+                                  alt={user.name}
+                                />
+                                <AvatarFallback className="text-xxs">
+                                  {user.name[0]}
+                                </AvatarFallback>
                               </Avatar>
 
                               <p className="truncate">{user.name}</p>
@@ -130,7 +168,12 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                   <FormLabel htmlFor="title">Title</FormLabel>
 
                   <FormControl>
-                    <Input id="title" placeholder="Enter a title" data-invalid={fieldState.invalid} {...field} />
+                    <Input
+                      id="title"
+                      placeholder="Enter a title"
+                      data-invalid={fieldState.invalid}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -150,7 +193,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                       <SingleDayPicker
                         id="startDate"
                         value={field.value}
-                        onSelect={date => field.onChange(date as Date)}
+                        onSelect={(date) => field.onChange(date as Date)}
                         placeholder="Select a date"
                         data-invalid={fieldState.invalid}
                       />
@@ -169,7 +212,12 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                     <FormLabel>Start Time</FormLabel>
 
                     <FormControl>
-                      <TimeInput value={field.value as TimeValue} onChange={field.onChange} hourCycle={12} data-invalid={fieldState.invalid} />
+                      <TimeInput
+                        value={field.value as TimeValue}
+                        onChange={field.onChange}
+                        hourCycle={12}
+                        data-invalid={fieldState.invalid}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -188,7 +236,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                     <FormControl>
                       <SingleDayPicker
                         value={field.value}
-                        onSelect={date => field.onChange(date as Date)}
+                        onSelect={(date) => field.onChange(date as Date)}
                         placeholder="Select a date"
                         data-invalid={fieldState.invalid}
                       />
@@ -206,7 +254,12 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                     <FormLabel>End Time</FormLabel>
 
                     <FormControl>
-                      <TimeInput value={field.value as TimeValue} onChange={field.onChange} hourCycle={12} data-invalid={fieldState.invalid} />
+                      <TimeInput
+                        value={field.value as TimeValue}
+                        onChange={field.onChange}
+                        hourCycle={12}
+                        data-invalid={fieldState.invalid}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -292,7 +345,11 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                   <FormLabel>Description</FormLabel>
 
                   <FormControl>
-                    <Textarea {...field} value={field.value} data-invalid={fieldState.invalid} />
+                    <Textarea
+                      {...field}
+                      value={field.value}
+                      data-invalid={fieldState.invalid}
+                    />
                   </FormControl>
 
                   <FormMessage />
