@@ -16,12 +16,12 @@ export function StudySection() {
   }, [refetch]);
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-4 lg:px-0">
-      <div className="mb-6 flex items-center justify-between">
+    <section className="max-w-main mx-auto w-full px-4 lg:px-0">
+      <div className="mb-6 flex items-end justify-between gap-4">
         <h2 className="text-heading-l-mobile tracking-1 text-text-basic sm:text-heading-l font-bold">
           {year}-{semester} 스터디 소개
         </h2>
-        <Link href="/studies/list" className="flex items-center gap-1">
+        <Link href="/studies/list" className="flex shrink-0 items-center gap-1">
           <Label size="m" className="text-text-basic">
             더보기
           </Label>

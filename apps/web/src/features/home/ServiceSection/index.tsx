@@ -25,7 +25,7 @@ export function ServiceSection() {
   );
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-4 lg:px-0">
+    <section className="max-w-main mx-auto w-full px-4 lg:px-0">
       <div className="mb-6">
         <h2 className="text-heading-l-mobile tracking-1 text-text-basic sm:text-heading-l font-bold">
           부가 서비스

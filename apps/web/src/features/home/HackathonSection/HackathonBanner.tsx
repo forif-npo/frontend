@@ -26,7 +26,7 @@ export function HackathonBanner() {
       </div>
       <div className="flex justify-end">
         <Image
-          src="/images/hackathon/study-img.png"
+          src="/images/default-study-img.png"
           alt="해커톤 배너 이미지"
           width={183}
           height={117}

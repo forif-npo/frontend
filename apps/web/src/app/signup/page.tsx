@@ -91,7 +91,7 @@ export default async function Page() {
   }
 
   return (
-    <div className="mx-auto mb-16 mt-8 min-h-screen max-w-[800px]">
+    <div className="min-h-viewport mx-auto mb-16 mt-8 max-w-[800px]">
       <Heading size="xxs" className="text-text-subtle text-left">
         포리프 부원 회원가입
       </Heading>

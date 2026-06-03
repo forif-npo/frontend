@@ -22,70 +22,9 @@ export const hackathonBanner = {
   title: "포리프의 해커톤에 대해 알아보세요",
   description:
     "포리프는 매 학기 해커톤을 개최하고 있어요. 구체적으로 알아보세요.",
-  ctaText: "자세히보기",
+  ctaText: "자세히 보기",
   ctaLink: "/hackathon",
 };
-
-// Hackathon Cards Data
-export const hackathonCards: HackathonData[] = [
-  {
-    id: "1",
-    title: "LMS 학습 지원 알리미 서비스 AI LME",
-    description:
-      "나의 일정을 알고, 생활 패턴을 아는 나만의 친구와 질문을 주고 받는 것. 그것이 우리가 주목한 포인트.",
-    date: "자세히보기",
-    thumbnail: "/images/hackathon/study-img.png",
-    link: "/hackathon/1",
-  },
-  {
-    id: "2",
-    title: "언제볼까?",
-    description: "약속 잡기 번거로운 현대인들을 위한 시간표 공유 서비스",
-    date: "자세히보기",
-    thumbnail: "/images/hackathon/study-img.png",
-    link: "/hackathon/2",
-  },
-  {
-    id: "3",
-    title: "포리프 DB 성장기",
-    description: "포리프 웹사이트 DB의 성장을 돕고자 나왔다! 포리프 DB 성장기",
-    date: "자세히 보기",
-    thumbnail: "/images/hackathon/study-img.png",
-    link: "/hackathon/3",
-  },
-  {
-    id: "4",
-    title: "포리프 DB 성장기",
-    description: "포리프 웹사이트 DB의 성장을 돕고자 나왔다! 포리프 DB 성장기",
-    date: "자세히 보기",
-    thumbnail: "/images/hackathon/study-img.png",
-    link: "/hackathon/3",
-  },
-  {
-    id: "5",
-    title: "포리프 DB 성장기",
-    description: "포리프 웹사이트 DB의 성장을 돕고자 나왔다! 포리프 DB 성장기",
-    date: "자세히 보기",
-    thumbnail: "/images/hackathon/study-img.png",
-    link: "/hackathon/3",
-  },
-  {
-    id: "6",
-    title: "포리프 DB 성장기",
-    description: "포리프 웹사이트 DB의 성장을 돕고자 나왔다! 포리프 DB 성장기",
-    date: "자세히 보기",
-    thumbnail: "/images/hackathon/study-img.png",
-    link: "/hackathon/3",
-  },
-  {
-    id: "7",
-    title: "포리프 DB 성장기",
-    description: "포리프 웹사이트 DB의 성장을 돕고자 나왔다! 포리프 DB 성장기",
-    date: "자세히 보기",
-    thumbnail: "/images/hackathon/study-img.png",
-    link: "/hackathon/3",
-  },
-];
 
 // Service Data
 export const serviceData: ServiceData[] = [

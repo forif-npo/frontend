@@ -7,7 +7,7 @@ export const NAV_MENUS = [
     subMenus: [
       {
         label: "동아리 소개",
-        href: "/club/about",
+        href: "/club/",
       },
       {
         label: "운영진 소개",
@@ -39,7 +39,7 @@ export const NAV_MENUS = [
       },
       {
         label: "스터디 가이드",
-        href: "/studies/members",
+        href: "/studies/guide",
       },
     ],
   },

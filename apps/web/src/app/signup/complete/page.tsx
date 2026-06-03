@@ -6,6 +6,7 @@ import { Body, Divider, Heading, LinkButton } from "@ui/components/server";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AuthSkeleton } from "@/components/skeleton/AuthSkeleton";
 
 export default function Page() {
   const router = useRouter();
@@ -30,15 +31,11 @@ export default function Page() {
   };
 
   if (status === "loading" || !session?.accessToken) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p>로그인 정보를 확인하는 중...</p>
-      </div>
-    );
+    return <AuthSkeleton />;
   }
 
   return (
-    <div className="mx-auto mt-8 min-h-screen max-w-[800px]">
+    <div className="min-h-viewport mx-auto mt-8 max-w-[800px]">
       <div className="flex flex-col items-center gap-6">
         <CheckCircle size={128} className="text-icon-primary" />
         <Heading size="xl" className="text-text-basic text-left">

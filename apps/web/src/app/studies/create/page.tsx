@@ -1,5 +1,6 @@
 "use client";
 
+import { StudyCreateSkeleton } from "@/components/skeleton/StudyCreateSkeleton";
 import {
   useStudyCreatePage,
   StudyHelpPanel,
@@ -26,16 +27,12 @@ export default function StudyCreatePage() {
   } = useStudyCreatePage();
 
   if (isLoading || !userInfo) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-text-subtle text-[17px]">로딩 중...</div>
-      </div>
-    );
+    return <StudyCreateSkeleton />;
   }
 
   if (step === 6) {
     return (
-      <div className="mx-auto min-h-screen max-w-[1200px] px-4 sm:px-6">
+      <div className="min-h-viewport max-w-main mx-auto px-4 sm:px-6">
         <StudyCreateComplete
           onGoToStudyList={goToStudyList}
           onGoToApplication={goToApplication}
@@ -45,7 +42,7 @@ export default function StudyCreatePage() {
   }
 
   return (
-    <div className="relative min-h-screen">
+    <div className="min-h-viewport relative">
       <StudyHelpPanel title="스터디 개설 중 어려움이 있으신가요?" />
       <div className="mx-auto flex max-w-[792px] justify-center px-4 sm:px-6">
         {step === 1 && (

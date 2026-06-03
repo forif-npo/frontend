@@ -10,6 +10,7 @@ import { SearchResultCount } from "@/features/support/components/SearchResultCou
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
 import { useAnnouncementList } from "@/features/support/announcements/hooks/useAnnouncementList";
 import { AnnouncementList } from "@/features/support/announcements/components/AnnouncementList";
+import { AnnouncementListSkeleton } from "@/components/skeleton/SupportListSkeleton";
 
 const PAGE_SIZE = 10;
 
@@ -31,7 +32,7 @@ export default function AnnouncementPage() {
     });
 
   return (
-    <main className="mx-auto w-full max-w-[1100px] px-6 py-10">
+    <main className="max-w-main mx-auto w-full px-6 py-10">
       <div className="mb-6">
         <Breadcrumb
           items={[
@@ -58,11 +59,7 @@ export default function AnnouncementPage() {
 
       <SearchResultCount count={total} />
 
-      {isLoading && (
-        <div className="py-12 text-center text-sm text-gray-500">
-          불러오는 중...
-        </div>
-      )}
+      {isLoading && <AnnouncementListSkeleton />}
 
       {errorMessage && !isLoading && (
         <div className="py-12 text-center text-sm text-red-600">

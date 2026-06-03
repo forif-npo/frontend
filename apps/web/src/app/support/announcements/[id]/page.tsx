@@ -9,6 +9,7 @@ import { Breadcrumb } from "@ui/components/server";
 
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 import { Button } from "@ui/components/client";
+import { AnnouncementDetailSkeleton } from "@/components/skeleton/AnnouncementDetailSkeleton";
 
 export default function AnnouncementDetailPage() {
   const params = useParams<{ id: string }>();
@@ -32,7 +33,7 @@ export default function AnnouncementDetailPage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-[1100px] px-6 py-10">
+    <main className="max-w-main mx-auto w-full px-6 py-10">
       <div className="mb-6">
         <Breadcrumb
           items={[
@@ -44,11 +45,7 @@ export default function AnnouncementDetailPage() {
         />
       </div>
 
-      {isLoading && (
-        <div className="py-12 text-center text-sm text-gray-500">
-          불러오는 중...
-        </div>
-      )}
+      {isLoading && <AnnouncementDetailSkeleton />}
       {errorMessage && !isLoading && (
         <div className="py-12 text-center text-sm text-red-600">
           {errorMessage}

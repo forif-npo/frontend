@@ -348,6 +348,21 @@ export interface PageResponse<T> {
 }
 
 /**
+ * 커서 기반 페이지네이션 응답 wrapper
+ *
+ * 목록 조회 API는 배열이 아닌 이 형태로 내려온다.
+ * 단건 조회 API는 기존처럼 `data: T` 형태.
+ */
+export interface CursorPageResponse<T> {
+  content: T[];
+  next_cursor: number | null;
+  has_next: boolean;
+  total_elements: number;
+  current_page: number | null;
+  total_pages: number | null;
+}
+
+/**
  * ============================================
  * Study Application Types
  * ============================================

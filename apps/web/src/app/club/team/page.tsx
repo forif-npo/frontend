@@ -83,7 +83,7 @@ export default function TeamPage() {
   }, [fetchTeam]);
 
   return (
-    <div className="mx-auto max-w-[1100px] px-6 py-20">
+    <div className="max-w-main mx-auto px-6 py-20">
       <div className="mb-6">
         <Breadcrumb
           items={[

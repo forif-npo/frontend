@@ -74,7 +74,7 @@ export function StudyCard(props: StudyCardProps) {
 
   // ── Image ──
   const imageSection = (
-    <div className="relative h-[196px] w-full overflow-hidden bg-[#DFE8F4]">
+    <div className="relative h-[176px] w-full overflow-hidden bg-[#DFE8F4] md:h-[196px]">
       <Image
         src={imgUrl}
         alt={studyName}
@@ -94,7 +94,7 @@ export function StudyCard(props: StudyCardProps) {
         className="rounded-3 border-border-gray-light bg-surface-white group flex flex-col overflow-hidden border transition-shadow hover:shadow-md"
       >
         {imageSection}
-        <div className="flex flex-1 flex-col p-8">
+        <div className="flex flex-1 flex-col p-5 md:p-8">
           <div className="mb-4 flex flex-wrap gap-2">
             <Badge
               label={getRecruitStatusLabel(s.recruit_status)}
@@ -132,7 +132,7 @@ export function StudyCard(props: StudyCardProps) {
               멘토: {getMentorText(primaryMentor, secondaryMentor)}
             </Body>
             <Label size="m" className="text-text-primary group-hover:underline">
-              자세히보기 →
+              자세히 보기 →
             </Label>
           </div>
         </div>

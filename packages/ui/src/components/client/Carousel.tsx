@@ -42,7 +42,7 @@ export function Carousel({ carouselItems }: CarouselProps) {
     <div className="flex w-full flex-col items-center gap-6">
       <div className="flex w-full items-center justify-between">
         <CarouselArrow align="left" title="이전" onClick={handlePrev} />
-        <div className="flex w-full max-w-[1200px] flex-row items-center justify-between">
+        <div className="bg-surface-white/85 border-border-gray-light flex w-full max-w-[1200px] flex-col-reverse gap-8 overflow-hidden rounded-[28px] border p-6 shadow-[0_18px_50px_rgba(11,80,208,0.12)] backdrop-blur md:flex-row md:items-center md:justify-between md:gap-0 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
           <div className="max-w-[600px]">
             <Display size="s" className="text-text-basic mb-6">
               {currentItem.title}
@@ -58,6 +58,13 @@ export function Carousel({ carouselItems }: CarouselProps) {
               </div>
             )}
           </div>
+          <Image
+            src={currentItem.imageSrc}
+            alt="Carousel Image"
+            width={344}
+            height={300}
+            className="rounded-2 mx-auto h-auto w-full max-w-[260px] md:hidden"
+          />
           <Image
             src={currentItem.imageSrc}
             alt="Carousel Image"
