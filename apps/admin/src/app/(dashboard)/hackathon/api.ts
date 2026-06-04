@@ -40,7 +40,7 @@ export async function createHackathon(
 ): Promise<void> {
   await apiClient
     .post("api/v1/admin/hackathons", { json: body })
-    .json<ApiResponse<Hackathon>>();
+    .json<ApiResponse<{ hackathon_id: number }>>();
 }
 
 /**
@@ -78,7 +78,7 @@ export async function updateHackathonStatus(
     .patch(`api/v1/admin/hackathons/${hackathonId}/status`, {
       json: { status },
     })
-    .json<ApiResponse<Hackathon>>();
+    .json<ApiResponse<null>>();
 }
 
 /**
