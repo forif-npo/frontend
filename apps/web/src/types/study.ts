@@ -9,9 +9,33 @@ export type StudyDifficulty =
 
 export type WeekDay = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0: 일요일, 6: 토요일
 
+export interface StudyPlan {
+  id: number;
+  week_num: number;
+  date: string | null;
+  section: string;
+  content: string;
+}
+
+export interface StudyReference {
+  id?: number;
+  title: string;
+  url: string;
+  category?: string;
+}
+
+export interface StudyMentor {
+  mentor_id: number;
+  mentor_name: string;
+  mentor_num: number;
+}
+
 export interface Study {
   id: number;
+  act_year: number;
+  act_semester: number;
   study_name: string;
+  sub_title: string | null;
   primary_mentor_name: string;
   secondary_mentor_name: string | null;
   tags: string[];
@@ -22,10 +46,18 @@ export interface Study {
   end_time: string; // HH:mm 형식
   week_day: WeekDay;
   location: string;
+  location_detail: string | null;
   difficulty: StudyDifficulty;
   img_url: string;
-  act_year: number;
-  act_semester: number;
+  thumbnail_image: string | null;
+  is_online: boolean | null;
+  goal: string | null;
+  selection_criteria: string | null;
+  capacity: number | null;
+  requires_interview: boolean | null;
+  plans: StudyPlan[];
+  references: StudyReference[];
+  mentors: StudyMentor[];
 }
 
 export interface StudyListParams {

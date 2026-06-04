@@ -2,21 +2,10 @@
 
 import { Button } from "@ui/components/client";
 import type { ApplicationDetail } from "@core/my-page/api";
-
-const DIFFICULTY_LABELS: Record<number, string> = {
-  1: "매우 쉬움",
-  2: "쉬움",
-  3: "보통",
-  4: "어려움",
-  5: "매우 어려움",
-};
-
-const STATUS_LABELS: Record<number, string> = {
-  0: "지원중",
-  1: "합격",
-  2: "불합격",
-  3: "취소",
-};
+import {
+  NUMERIC_DIFFICULTY_LABELS,
+  APPLICATION_STATUS_LABELS,
+} from "@/constants/study";
 
 interface ApplicationDetailViewProps {
   application: ApplicationDetail & {
@@ -72,8 +61,8 @@ export function ApplicationDetailView({
 }: ApplicationDetailViewProps) {
   const { study, priority, intro, status } = application;
   const priorityLabel = priority === "PRIMARY" ? "1순위" : "2순위";
-  const difficultyLabel = DIFFICULTY_LABELS[study.difficulty] ?? "보통";
-  const statusLabel = STATUS_LABELS[status] ?? "지원중";
+  const difficultyLabel = NUMERIC_DIFFICULTY_LABELS[study.difficulty] ?? "보통";
+  const statusLabel = APPLICATION_STATUS_LABELS[status] ?? "지원중";
   const charCount = intro.length;
 
   return (
