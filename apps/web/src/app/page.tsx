@@ -82,7 +82,7 @@ export default async function Page() {
         </div>
 
         {/* QuickMenu */}
-        <section className="max-w-main mx-auto w-full px-4 lg:px-0">
+        <section className="max-w-main mx-auto w-full px-4">
           <QuickMenu />
         </section>
 
