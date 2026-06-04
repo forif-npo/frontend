@@ -55,6 +55,10 @@ export const NAV_MENUS: NavMenu[] = [
         href: "/hackathon",
       },
       {
+        label: "해커톤 상세",
+        href: "/hackathon/detail",
+      },
+      {
         label: "아카이브",
         href: "/hackathon/archive",
       },

@@ -8,6 +8,8 @@ import { cn } from "@ui/utils/cn";
 import Image from "next/image";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
+import { useLogout } from "@/features/auth/logout/use-logout";
+
 export type NavMenu = {
   label: string;
   title?: string;
@@ -28,6 +30,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const { isPending: isLoggingOut, logout } = useLogout();
 
   const handleMenuClick = (label: string, hasSubMenus?: boolean) => {
     if (!hasSubMenus) return;
@@ -138,6 +141,19 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                 )}
                 {isLoggedIn ? "마이 페이지" : "로그인하기"}
               </Link>
+              {isLoggedIn && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    logout();
+                  }}
+                  disabled={isLoggingOut}
+                  className="text-text-subtle border-border-gray-light rounded-2 flex h-12 items-center justify-center border text-[16px] font-semibold leading-[1.5] disabled:opacity-60"
+                >
+                  {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
+                </button>
+              )}
             </div>
 
             <div className="grid grid-cols-1 gap-3">
@@ -255,11 +271,22 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
         </ul>
         <div className="flex items-center gap-1">
           {isLoggedIn ? (
-            <Link href="/my">
-              <Button variant="text" size="medium">
-                마이 페이지
+            <>
+              <Link href="/my">
+                <Button variant="text" size="medium">
+                  마이 페이지
+                </Button>
+              </Link>
+              <Button
+                variant="text"
+                size="medium"
+                onClick={logout}
+                disabled={isLoggingOut}
+                className="text-text-subtle"
+              >
+                {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
               </Button>
-            </Link>
+            </>
           ) : (
             <Link href="/signin">
               <Button variant="text" size="small">

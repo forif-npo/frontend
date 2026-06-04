@@ -5,6 +5,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
+import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { Button } from "@/components/ui/button";
@@ -26,21 +27,25 @@ import { SemesterLabel, Study, StudyEditForm } from "./types";
 interface StudiesViewProps {
   initialData: Study[];
   currentSemester: SemesterLabel;
-  hasNext?: boolean;
-  nextCursor?: number | null;
   totalElements?: number;
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
+  initialSearch?: string;
 }
 
 export function StudiesView({
   initialData,
   currentSemester,
-  hasNext = false,
-  nextCursor = null,
   totalElements = 0,
+  currentPage = 0,
+  totalPages = 1,
+  pageSize = 20,
+  initialSearch = "",
 }: StudiesViewProps) {
   const router = useRouter();
   const editRequestSeq = useRef(0);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [editingStudy, setEditingStudy] = useState<Study | null>(null);
   const [editForm, setEditForm] = useState<StudyEditForm>({
     ...EMPTY_STUDY_EDIT_FORM,
@@ -54,31 +59,64 @@ export function StudiesView({
   );
 
   const handleSemesterChange = (semester: string) => {
-    router.push(`/studies?semester=${semester}`);
+    const params = new URLSearchParams();
+
+    if (semester) {
+      params.set("semester", semester);
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    params.set("page", "0");
+
+    router.push(`/studies?${params.toString()}`);
   };
 
-  const filteredData = initialData.filter((study) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      study.study_name.toLowerCase().includes(query) ||
-      study.primary_mentor_name.toLowerCase().includes(query) ||
-      (study.secondary_mentor_name &&
-        study.secondary_mentor_name.toLowerCase().includes(query)) ||
-      study.tags.some((tag) => tag.toLowerCase().includes(query))
-    );
-  });
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+
+    if (currentSemester) {
+      params.set("semester", currentSemester);
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    params.set("page", "0");
+
+    router.push(`/studies?${params.toString()}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams();
+
+    if (currentSemester) {
+      params.set("semester", currentSemester);
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    params.set("page", String(page));
+
+    router.push(`/studies?${params.toString()}`);
+  };
 
   const displayTotalCount =
-    totalElements && totalElements > 0 ? totalElements : filteredData.length;
+    totalElements && totalElements > 0 ? totalElements : initialData.length;
 
   const handleDownloadExcel = () => {
-    if (filteredData.length === 0) {
+    if (initialData.length === 0) {
       alert("다운로드할 데이터가 없습니다.");
       return;
     }
 
     const ws = XLSX.utils.json_to_sheet(
-      filteredData.map((study) => ({
+      initialData.map((study) => ({
         ID: study.id,
         스터디명: study.study_name,
         멘토:
@@ -298,12 +336,14 @@ export function StudiesView({
         <SearchBar
           value={searchQuery}
           onChange={setSearchQuery}
+          onSearch={handleSearch}
           placeholder="스터디 목록 검색"
         />
 
         <DataTable
           columns={columns}
-          data={filteredData}
+          data={initialData}
+          showPagination={false}
           renderRowActions={(study) => (
             <>
               <DropdownMenuItem
@@ -332,12 +372,13 @@ export function StudiesView({
           )}
         />
 
-        <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {displayTotalCount}건</span>
-          {hasNext && nextCursor !== null && (
-            <span>다음 커서: {nextCursor}</span>
-          )}
-        </div>
+        <OffsetPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalElements={displayTotalCount}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+        />
       </div>
 
       <StudyEditDialog

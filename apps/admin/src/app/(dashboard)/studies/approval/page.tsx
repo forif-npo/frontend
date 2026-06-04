@@ -4,13 +4,14 @@ import { SemesterLabel } from "../types";
 import { ApprovalView } from "./approval-view";
 
 const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;
+const PAGE_SIZE = 20;
 
 interface PageProps {
   searchParams: Promise<{
     semester?: string;
     year?: string;
     search?: string;
-    cursor?: string;
+    page?: string;
   }>;
 }
 
@@ -39,7 +40,8 @@ export default async function Page({ searchParams }: PageProps) {
   const activeSemester = (params.semester as SemesterLabel) || defaultSemester;
   const semesterFilter = parseSemesterFilter(activeSemester);
   const search = params.search;
-  const cursor = params.cursor ? parseInt(params.cursor) : undefined;
+  const parsedPage = params.page ? parseInt(params.page, 10) : 0;
+  const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
   const accessToken = session?.access_token;
 
   if (!accessToken) {
@@ -54,8 +56,8 @@ export default async function Page({ searchParams }: PageProps) {
   try {
     const studiesData = await fetchStudiesWithFallback(
       {
-        size: 20,
-        cursor,
+        size: PAGE_SIZE,
+        page,
         ...semesterFilter,
         search,
         studyStatuses: ["PENDING", "RE_APPLIED"],
@@ -67,9 +69,14 @@ export default async function Page({ searchParams }: PageProps) {
       <ApprovalView
         initialData={studiesData.content}
         currentSemester={activeSemester}
-        hasNext={studiesData.has_next}
-        nextCursor={studiesData.next_cursor}
         totalElements={studiesData.total_elements}
+        currentPage={studiesData.current_page ?? page}
+        totalPages={
+          studiesData.total_pages ??
+          Math.ceil(studiesData.total_elements / PAGE_SIZE)
+        }
+        pageSize={PAGE_SIZE}
+        initialSearch={search ?? ""}
       />
     );
   } catch (error) {

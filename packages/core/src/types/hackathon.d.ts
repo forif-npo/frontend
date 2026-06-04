@@ -158,6 +158,20 @@ export interface EvaluationSummary {
 }
 
 /**
+ * 내 평가
+ */
+export interface Evaluation {
+  evaluation_id: number;
+  hackathon_id: number;
+  target_team_id: number;
+  evaluator_id: number;
+  evaluator_type: "ADMIN" | "PARTICIPANT";
+  total_score: number;
+  evaluated_at: string;
+  scores: EvaluationScore[];
+}
+
+/**
  * 수상
  */
 export interface Award {
@@ -213,7 +227,7 @@ export interface CreateHackathonRequest {
   held_year: number;
   held_semester: number;
   event_round: number;
-  title?: string;
+  title: string;
   description?: string;
   location?: string;
   recruit_starts_at?: string;
@@ -254,7 +268,7 @@ export interface UpdateHackathonStatusRequest {
  * PUT  /api/v1/admin/hackathons/{hackathonId}/criteria/{criterionId}
  */
 export interface CriterionRequest {
-  name?: string;
+  name: string;
   description?: string;
   max_score?: number;
   weight?: number;
@@ -268,7 +282,7 @@ export interface CriterionRequest {
  */
 export interface AwardRequest {
   hackathon_team_id: number;
-  award_name?: string;
+  award_name: string;
   award_rank?: number;
 }
 
@@ -285,6 +299,16 @@ export interface EvaluationScore {
  */
 export interface CreateTeamRequest {
   name: string;
+  topic?: string;
+  description?: string;
+  max_members?: number;
+}
+
+/**
+ * 팀 수정 요청
+ */
+export interface UpdateTeamRequest {
+  name?: string;
   topic?: string;
   description?: string;
   max_members?: number;

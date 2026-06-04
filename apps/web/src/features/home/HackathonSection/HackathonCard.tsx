@@ -3,6 +3,7 @@ import { Body, Label } from "@ui/components/server";
 import type { Submission } from "@core/types/hackathon";
 import Image from "next/image";
 import Link from "next/link";
+import { safeImageSrc } from "@/utils/image";
 
 interface HackathonCardProps {
   submission: Submission;
@@ -22,9 +23,9 @@ export function HackathonCard({
         className="rounded-3 relative h-[196px] w-full overflow-hidden"
         style={{ backgroundColor: bgColor }}
       >
-        {submission.image_url ? (
+        {safeImageSrc(submission.image_url) ? (
           <Image
-            src={submission.image_url}
+            src={safeImageSrc(submission.image_url)!}
             alt={submission.project_name}
             fill
             className="object-cover"

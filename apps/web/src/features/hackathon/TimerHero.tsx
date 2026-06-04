@@ -19,8 +19,10 @@ function statusVariant(stage: MainStage) {
   switch (stage) {
     case "RECRUITING":
       return "success" as const;
-    case "ACTIVE":
+    case "IN_PROGRESS":
       return "danger" as const;
+    case "JUDGING":
+      return "warning" as const;
     case "ENDED":
       return "disabled" as const;
     default:
@@ -58,14 +60,11 @@ export function TimerHero({ hackathon, stage }: TimerHeroProps) {
           </p>
         ) : (
           <>
-            <p className="text-label-xs text-text-subtle font-bold uppercase tracking-[0.15em]">
-              {target.label}
-            </p>
             <CountdownBlocks
               targetDate={target.date}
               serverTime={hackathon.server_time}
             />
-            <p className="text-body-s text-text-subtle">
+            <p className="text-body-m text-text-subtle font-semibold">
               {formatDateTime(target.date)}
             </p>
           </>

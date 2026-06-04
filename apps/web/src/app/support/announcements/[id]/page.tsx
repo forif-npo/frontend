@@ -10,6 +10,8 @@ import { Breadcrumb } from "@ui/components/server";
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 import { Button } from "@ui/components/client";
 import { AnnouncementDetailSkeleton } from "@/components/skeleton/AnnouncementDetailSkeleton";
+import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
+import { safeImageSrc } from "@/utils/image";
 
 export default function AnnouncementDetailPage() {
   const params = useParams<{ id: string }>();
@@ -81,29 +83,33 @@ export default function AnnouncementDetailPage() {
           </div>
 
           {/* Content */}
-          <div className="mt-10 space-y-6 text-[18px] leading-8 text-gray-900">
-            <div className="whitespace-pre-wrap">{item.content}</div>
+          <div className="mt-10">
+            <AnnouncementMarkdown content={item.content} />
           </div>
 
           {/* Images */}
           {item.imageUrls?.length > 0 && (
             <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {item.imageUrls.map((url, idx) => (
-                <div
-                  key={`${url}-${idx}`}
-                  className="overflow-hidden rounded-sm"
-                >
-                  <div className="flex justify-center">
-                    <Image
-                      src={url}
-                      alt={`announcement-image-${idx + 1}`}
-                      width={1200}
-                      height={800}
-                      className="h-auto w-full"
-                    />
+              {item.imageUrls.map((url, idx) => {
+                const src = safeImageSrc(url);
+                if (!src) return null;
+                return (
+                  <div
+                    key={`${url}-${idx}`}
+                    className="overflow-hidden rounded-sm"
+                  >
+                    <div className="flex justify-center">
+                      <Image
+                        src={src}
+                        alt={`announcement-image-${idx + 1}`}
+                        width={1200}
+                        height={800}
+                        className="h-auto w-full"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 

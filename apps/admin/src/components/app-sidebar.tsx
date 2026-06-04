@@ -32,7 +32,6 @@ import {
   UserCog,
   BookUser,
   Users,
-  Users2,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -58,14 +57,13 @@ const menuItems = {
       { title: "운영진", url: "/operators", icon: UserCog },
       { title: "멘토", url: "/mentors", icon: BookUser },
       { title: "부원", url: "/members", icon: Users },
-      { title: "웹사이트 회원", url: "/users", icon: Users2 },
     ],
   },
   postManagement: {
     label: "게시물 관리",
     items: [
-      { title: "공지사항", url: "/notices", icon: FileText },
-      { title: "Q & A", url: "/qna", icon: HelpCircle },
+      { title: "공지사항", url: "/announcements", icon: FileText },
+      { title: "FAQs", url: "/faqs", icon: HelpCircle },
       { title: "회계 공시", url: "/accounting", icon: CircleDollarSign },
       { title: "폼", url: "/forms", icon: Home },
     ],

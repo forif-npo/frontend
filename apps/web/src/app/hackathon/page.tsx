@@ -1,70 +1,38 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { useCurrentHackathon } from "@/hooks/hackathon";
-import { useHackathonData } from "@/hooks/hackathon";
 import {
+  EventFacts,
+  HackathonAbout,
   HackathonIntro,
   TimerHero,
-  EventFacts,
-  RecruitingMain,
-  WaitingStartMain,
-  ActiveHackathonMain,
-  EndedMain,
   getMainStage,
+  type MainStage,
 } from "@/features/hackathon";
-import { handleApiError } from "@core/utils/api-client";
-import { Body } from "@ui/components/server";
+import { useCurrentHackathon } from "@/hooks/hackathon";
 import { HackathonPageSkeleton } from "@/components/skeleton/HackathonSkeleton";
+import { Body, Heading, Link } from "@ui/components/server";
+import { Button } from "@ui/components/client";
+
+function detailCtaLabel(stage: MainStage): string {
+  switch (stage) {
+    case "RECRUITING":
+      return "참가 신청하러 가기";
+    case "TEAM_BUILDING":
+      return "팀 구성하러 가기";
+    case "IN_PROGRESS":
+      return "진행 상황 보러 가기";
+    case "JUDGING":
+      return "심사 참여하러 가기";
+    case "ENDED":
+      return "결과 보러 가기";
+    default:
+      return "자세히 보러 가기";
+  }
+}
 
 export default function HackathonPage() {
-  const {
-    hackathon: currentHackathon,
-    loading: listLoading,
-    error: listError,
-  } = useCurrentHackathon();
-
-  const {
-    hackathon,
-    participant,
-    teams,
-    myTeam,
-    submissions,
-    loading: dataLoading,
-    error: dataError,
-    refetch,
-    registerParticipant,
-  } = useHackathonData(currentHackathon?.hackathon_id ?? null);
-
-  const [actionError, setActionError] = useState<string | null>(null);
-
-  const loading = listLoading || dataLoading;
-  const error = listError || dataError;
-  const stage = getMainStage(hackathon, hackathon?.server_time);
-
-  const handleRegister = useCallback(async () => {
-    try {
-      setActionError(null);
-      await registerParticipant();
-      await refetch();
-    } catch (err) {
-      const msg = await handleApiError(err);
-      setActionError(msg);
-    }
-  }, [registerParticipant, refetch]);
-
-  const handleCreateTeam = useCallback(() => {
-    alert("팀 생성 기능이 곧 추가됩니다.");
-  }, []);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleJoinRequest = useCallback((teamId: number) => {
-    alert("가입 신청 기능이 곧 추가됩니다.");
-  }, []);
-
-  const handleSubmit = useCallback(() => {
-    alert("제출 기능이 곧 추가됩니다.");
-  }, []);
+  const { hackathon, loading, error } = useCurrentHackathon();
+  const stage = getMainStage(hackathon);
 
   if (loading) {
     return <HackathonPageSkeleton />;
@@ -87,43 +55,25 @@ export default function HackathonPage() {
   return (
     <>
       <TimerHero hackathon={hackathon} stage={stage} />
-      <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
+      <main className="max-w-main mx-auto flex w-full flex-col gap-8 px-4 py-10 lg:px-0">
         <EventFacts hackathon={hackathon} />
 
-        {actionError && (
-          <div className="bg-surface-danger-subtler border-border-danger-light rounded-3 text-text-danger text-body-s mb-6 border p-4">
-            {actionError}
-          </div>
-        )}
+        <HackathonAbout />
 
-        {stage === "RECRUITING" && (
-          <RecruitingMain
-            hackathon={hackathon}
-            onRegister={handleRegister}
-            isRegistered={participant?.status === "REGISTERED"}
-          />
-        )}
-        {stage === "WAITING_START" && (
-          <WaitingStartMain hackathon={hackathon} />
-        )}
-        {stage === "ACTIVE" && (
-          <ActiveHackathonMain
-            hackathon={hackathon}
-            myTeam={myTeam}
-            teams={teams}
-            submissions={submissions}
-            onCreateTeam={handleCreateTeam}
-            onJoinRequest={handleJoinRequest}
-            onSubmit={handleSubmit}
-          />
-        )}
-        {stage === "ENDED" && (
-          <EndedMain
-            hackathon={hackathon}
-            submissionCount={submissions.length}
-            awardCount={0}
-          />
-        )}
+        {/* 상세 페이지(지원·진행상황·심사)로 이동 */}
+        <section className="rounded-3 border-primary-20 from-primary-5 to-primary-5 flex flex-col items-center gap-4 border bg-gradient-to-br via-white p-8 text-center">
+          <Heading size="s" className="text-text-basic">
+            해커톤에 참여해보세요
+          </Heading>
+          <Body size="s" className="text-text-subtle max-w-md">
+            참가 신청, 팀 구성, 결과물 제출과 심사는 상세 페이지에서 진행됩니다.
+          </Body>
+          <Link href="/hackathon/detail">
+            <Button variant="primary" size="large">
+              {detailCtaLabel(stage)}
+            </Button>
+          </Link>
+        </section>
       </main>
     </>
   );

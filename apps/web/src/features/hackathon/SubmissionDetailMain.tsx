@@ -9,6 +9,7 @@ import { Button } from "@ui/components/client";
 
 import { useArchiveSubmissionDetail } from "@/hooks/hackathon";
 import { HackathonSubmissionDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
+import { safeImageSrc } from "@/utils/image";
 
 interface SubmissionDetailMainProps {
   submissionId: number;
@@ -143,10 +144,10 @@ export function SubmissionDetailMain({
       </section>
 
       {/* Cover image */}
-      {submission.image_url && (
+      {safeImageSrc(submission.image_url) && (
         <section className="rounded-3 border-border-gray-light bg-surface-white mb-8 overflow-hidden border shadow-sm">
           <Image
-            src={submission.image_url}
+            src={safeImageSrc(submission.image_url)!}
             alt={`${submission.project_name} 대표 이미지`}
             width={1200}
             height={675}

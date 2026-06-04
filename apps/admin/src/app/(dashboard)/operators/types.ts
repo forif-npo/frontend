@@ -10,9 +10,10 @@ export type Operator = {
 
 export type OperatorListResult = {
   content: Operator[];
-  nextCursor: number | null;
-  hasNext: boolean;
   totalElements: number;
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
 };
 
 export type OperatorSemesterLabel = "전체" | `${number}-${number}` | "그 외";

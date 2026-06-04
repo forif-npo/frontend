@@ -154,13 +154,13 @@ export type MentorLoginResponse = ApiResponse<MentorLoginData>;
  */
 
 /**
- * 관리자 스터디 목록 응답 타입 (커서 기반 페이지네이션)
+ * 관리자 스터디 목록 응답 타입 (오프셋 기반 페이지네이션)
  */
 export interface AdminStudyListResponse {
   content: AdminStudyResponse[];
-  next_cursor: number | null;
-  has_next: boolean;
   total_elements: number;
+  current_page: number | null;
+  total_pages: number | null;
 }
 
 /**
@@ -348,6 +348,16 @@ export interface PageResponse<T> {
   page_size: number;
   total_elements: number;
   total_pages: number;
+}
+
+/**
+ * 오프셋 기반 페이지네이션 응답 wrapper
+ */
+export interface OffsetPageResponse<T> {
+  content: T[];
+  total_elements: number;
+  current_page: number | null;
+  total_pages: number | null;
 }
 
 /**

@@ -52,7 +52,7 @@ export type StudyApprovalStatus =
 
 interface FetchStudiesParams {
   size: number;
-  cursor?: number;
+  page?: number;
   year?: number;
   semester?: number;
   search?: string;
@@ -73,11 +73,9 @@ export async function fetchStudiesWithFallback(
   });
 
   const searchParams = new URLSearchParams();
+  searchParams.set("page", (params.page ?? 0).toString());
   searchParams.set("size", params.size.toString());
 
-  if (params.cursor !== undefined) {
-    searchParams.set("cursor", params.cursor.toString());
-  }
   if (params.year !== undefined) {
     searchParams.set("year", params.year.toString());
   }
@@ -107,8 +105,9 @@ export async function fetchStudiesWithFallback(
 
   console.log("[Studies API] Success:", {
     count: response.data.content.length,
-    hasNext: response.data.has_next,
     total: response.data.total_elements,
+    page: response.data.current_page,
+    totalPages: response.data.total_pages,
   });
 
   return response.data;

@@ -1,5 +1,5 @@
 import { apiClient } from "@core/utils/api-client";
-import type { ApiResponse, CursorPageResponse } from "@core/types/api";
+import type { ApiResponse, OffsetPageResponse } from "@core/types/api";
 import type {
   Award,
   AwardRequest,
@@ -23,10 +23,10 @@ import type {
 export async function fetchHackathons(token?: string): Promise<Hackathon[]> {
   const res = await apiClient
     .get("api/v1/hackathons", {
-      searchParams: { size: "100" },
+      searchParams: { page: "0", size: "100" },
       ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
     })
-    .json<ApiResponse<CursorPageResponse<Hackathon>>>();
+    .json<ApiResponse<OffsetPageResponse<Hackathon>>>();
 
   return res.data?.content ?? [];
 }
@@ -40,7 +40,7 @@ export async function createHackathon(
 ): Promise<void> {
   await apiClient
     .post("api/v1/admin/hackathons", { json: body })
-    .json<ApiResponse<Hackathon>>();
+    .json<ApiResponse<{ hackathon_id: number }>>();
 }
 
 /**
@@ -78,7 +78,7 @@ export async function updateHackathonStatus(
     .patch(`api/v1/admin/hackathons/${hackathonId}/status`, {
       json: { status },
     })
-    .json<ApiResponse<Hackathon>>();
+    .json<ApiResponse<null>>();
 }
 
 /**
@@ -89,8 +89,10 @@ export async function fetchSubmissionStatuses(
   hackathonId: number,
 ): Promise<SubmissionStatus[]> {
   const res = await apiClient
-    .get(`api/v1/admin/hackathons/${hackathonId}/submissions`)
-    .json<ApiResponse<CursorPageResponse<SubmissionStatus>>>();
+    .get(`api/v1/admin/hackathons/${hackathonId}/submissions`, {
+      searchParams: { page: "0", size: "200" },
+    })
+    .json<ApiResponse<OffsetPageResponse<SubmissionStatus>>>();
 
   return res.data?.content ?? [];
 }
@@ -122,24 +124,24 @@ export async function fetchTeams(
 ): Promise<Team[]> {
   const res = await apiClient
     .get(`api/v1/admin/hackathons/${hackathonId}/teams`, {
-      searchParams: { size: "100" },
+      searchParams: { page: "0", size: "100" },
       ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
     })
-    .json<ApiResponse<CursorPageResponse<Team>>>();
+    .json<ApiResponse<OffsetPageResponse<Team>>>();
 
   return res.data?.content ?? [];
 }
 
 /**
  * 팀 삭제 (운영진)
- * DELETE /api/v1/hackathons/{hackathonId}/teams/{teamId}
+ * DELETE /api/v1/admin/hackathons/{hackathonId}/teams/{teamId}
  */
 export async function deleteTeam(
   hackathonId: number,
   teamId: number,
 ): Promise<void> {
   await apiClient
-    .delete(`api/v1/hackathons/${hackathonId}/teams/${teamId}`)
+    .delete(`api/v1/admin/hackathons/${hackathonId}/teams/${teamId}`)
     .json<ApiResponse<null>>();
 }
 
@@ -153,10 +155,10 @@ export async function fetchParticipants(
 ): Promise<Participant[]> {
   const res = await apiClient
     .get(`api/v1/admin/hackathons/${hackathonId}/participants`, {
-      searchParams: { size: "200" },
+      searchParams: { page: "0", size: "200" },
       ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
     })
-    .json<ApiResponse<CursorPageResponse<Participant>>>();
+    .json<ApiResponse<OffsetPageResponse<Participant>>>();
 
   return res.data?.content ?? [];
 }
@@ -175,9 +177,10 @@ export async function fetchCriteria(
 ): Promise<Criterion[]> {
   const res = await apiClient
     .get(`api/v1/hackathons/${hackathonId}/criteria`, {
+      searchParams: { page: "0", size: "100" },
       ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
     })
-    .json<ApiResponse<CursorPageResponse<Criterion>>>();
+    .json<ApiResponse<OffsetPageResponse<Criterion>>>();
 
   return (res.data?.content ?? [])
     .slice()
@@ -240,9 +243,10 @@ export async function fetchEvaluationSummary(
 ): Promise<EvaluationSummary[]> {
   const res = await apiClient
     .get(`api/v1/admin/hackathons/${hackathonId}/evaluations/summary`, {
+      searchParams: { page: "0", size: "200" },
       ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
     })
-    .json<ApiResponse<CursorPageResponse<EvaluationSummary>>>();
+    .json<ApiResponse<OffsetPageResponse<EvaluationSummary>>>();
 
   return res.data?.content ?? [];
 }
@@ -277,9 +281,10 @@ export async function fetchAwards(
 ): Promise<Award[]> {
   const res = await apiClient
     .get(`api/v1/hackathons/${hackathonId}/awards`, {
+      searchParams: { page: "0", size: "100" },
       ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
     })
-    .json<ApiResponse<CursorPageResponse<Award>>>();
+    .json<ApiResponse<OffsetPageResponse<Award>>>();
 
   return res.data?.content ?? [];
 }

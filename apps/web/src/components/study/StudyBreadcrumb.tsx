@@ -1,8 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { BreadHomeIcon } from "@repo/assets/icons/krds";
-import { Breadcrumb } from "@ui/components/server/Breadcrumb";
+import { Breadcrumb } from "@ui/components/server";
 
 export function StudyBreadcrumb() {
   const pathname = usePathname();
@@ -29,11 +28,8 @@ export function StudyBreadcrumb() {
   };
 
   return (
-    <div className="max-w-main mx-auto mb-3 mt-4 flex items-center md:mb-10 md:mt-6">
-      <div className="flex items-center px-1">
-        <BreadHomeIcon className="mb-0.5 h-4 w-4" />
-        <Breadcrumb items={getBreadcrumbItems()} />
-      </div>
+    <div className="mb-6">
+      <Breadcrumb items={getBreadcrumbItems()} />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import { Select } from "@ui/components/client";
-import { Breadcrumb } from "@ui/components/server";
+import { Badge, Breadcrumb } from "@ui/components/server";
 import Image from "next/image";
 
 interface TeamMember {
@@ -83,7 +83,7 @@ export default function TeamPage() {
   }, [fetchTeam]);
 
   return (
-    <div className="max-w-main mx-auto px-6 py-20">
+    <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
       <div className="mb-6">
         <Breadcrumb
           items={[
@@ -94,15 +94,13 @@ export default function TeamPage() {
         />
       </div>
 
-      {/* Title */}
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl font-bold md:text-5xl">FORIF TEAM</h1>
+      <div className="mb-8">
+        <h1 className="text-3xl font-semibold text-gray-900">운영진 소개</h1>
         <p className="mt-2 text-sm text-gray-500">
           지식의 선순환을 실천합니다.
         </p>
       </div>
 
-      {/* Filters */}
       <div className="mb-8 flex flex-col items-start justify-between gap-3 md:flex-row md:items-end">
         <div className="flex gap-3">
           <Select
@@ -122,24 +120,23 @@ export default function TeamPage() {
             options={SEMESTER_OPTIONS}
           />
         </div>
-        <p className="text-xs text-gray-400">
+        <p className="max-w-xl text-xs leading-5 text-gray-500 md:text-right">
           * 2024년 2학기 이전 운영진으로 활동하셨다면, contact@forif.org로
           문의해주세요!
         </p>
       </div>
 
-      {/* Team Grid */}
       {loading ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="h-[360px] animate-pulse rounded-2xl bg-gray-100"
+              className="rounded-3 border-border-gray-light h-[360px] animate-pulse border bg-gray-100"
             />
           ))}
         </div>
       ) : team.length === 0 ? (
-        <div className="py-20 text-center text-gray-400">
+        <div className="py-12 text-center text-sm text-gray-500">
           해당 학기의 운영진 정보가 없습니다.
         </div>
       ) : (
@@ -149,22 +146,37 @@ export default function TeamPage() {
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }
 
 function TeamCard({ member }: { member: TeamMember }) {
   const [hovered, setHovered] = useState(false);
+  const overlayText = [
+    `${member.act_year}-${member.act_semester}`,
+    member.club_department,
+    member.user_title,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div
-      className="relative overflow-hidden rounded-2xl border border-gray-200 p-6 text-center"
+      className="rounded-3 border-border-gray-light bg-surface-white focus-visible:ring-primary-20 relative cursor-pointer overflow-hidden border p-6 text-center shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => setHovered((prev) => !prev)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          setHovered((prev) => !prev);
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label={`${member.user_name} 운영진 정보`}
     >
-      {/* Profile Image */}
-      <div className="mx-auto mb-4 flex justify-center">
+      <div className="mx-auto mb-5 flex justify-center">
         <Image
           src={member.prof_img_url || "/forif-circle.png"}
           alt={member.user_name || "FORIF 운영진"}
@@ -174,34 +186,41 @@ function TeamCard({ member }: { member: TeamMember }) {
         />
       </div>
 
-      {/* Info */}
       <div className="flex min-h-[140px] flex-col items-center justify-center">
-        <p className="text-xl font-bold">{member.user_name}</p>
-        <p className="mb-2 text-sm text-gray-500">{member.club_department}</p>
-        <div className="mb-2 flex flex-wrap justify-center gap-1.5">
+        <p className="text-text-basic text-xl font-bold">{member.user_name}</p>
+        <p className="text-text-subtle mb-3 text-sm">
+          {member.club_department}
+        </p>
+        <div className="mb-3 flex flex-wrap justify-center gap-1.5">
           {member.user_title && (
-            <span className="rounded-full bg-[#1D40BA] px-3 py-1 text-xs font-medium text-white">
-              {member.user_title}
-            </span>
+            <Badge
+              label={member.user_title}
+              variant="primary"
+              appearance="solid-pastel"
+              size="small"
+            />
           )}
           {member.intro_tag && (
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
-              {member.intro_tag}
-            </span>
+            <Badge
+              label={member.intro_tag}
+              variant="info"
+              appearance="solid-pastel"
+              size="small"
+            />
           )}
         </div>
-        <p className="text-sm text-gray-600">{member.self_intro}</p>
+        <p className="text-text-subtle line-clamp-2 text-sm">
+          {member.self_intro}
+        </p>
       </div>
 
-      {/* Hover Overlay */}
       <div
-        className={`absolute inset-0 flex items-center justify-center bg-black/70 transition-opacity duration-300 ${
+        className={`pointer-events-none absolute inset-0 flex items-center justify-center bg-gray-900/75 px-6 transition-opacity duration-300 ${
           hovered ? "opacity-100" : "opacity-0"
         }`}
       >
-        <p className="text-lg font-bold text-white">
-          {member.act_year}-{member.act_semester} {member.club_department}{" "}
-          {member.user_title}
+        <p className="text-sm font-semibold leading-6 text-white">
+          {overlayText}
         </p>
       </div>
     </div>

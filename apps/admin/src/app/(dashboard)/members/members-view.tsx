@@ -5,6 +5,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
+import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { Button } from "@/components/ui/button";
@@ -19,18 +20,20 @@ import { Member, MemberSemesterLabel } from "./types";
 interface MembersViewProps {
   initialData: Member[];
   currentSemester: MemberSemesterLabel;
-  hasNext?: boolean;
-  nextCursor?: number | null;
   totalElements?: number;
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
   initialSearch?: string;
 }
 
 export function MembersView({
   initialData,
   currentSemester,
-  hasNext = false,
-  nextCursor = null,
   totalElements = 0,
+  currentPage = 0,
+  totalPages = 1,
+  pageSize = 20,
   initialSearch = "",
 }: MembersViewProps) {
   const router = useRouter();
@@ -42,6 +45,8 @@ export function MembersView({
     if (semester) {
       params.set("semester", semester);
     }
+
+    params.set("page", "0");
 
     router.push(`/members?${params.toString()}`);
   };
@@ -56,6 +61,24 @@ export function MembersView({
     if (searchQuery.trim()) {
       params.set("search", searchQuery.trim());
     }
+
+    params.set("page", "0");
+
+    router.push(`/members?${params.toString()}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams();
+
+    if (currentSemester) {
+      params.set("semester", currentSemester);
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    params.set("page", String(page));
 
     router.push(`/members?${params.toString()}`);
   };
@@ -142,6 +165,7 @@ export function MembersView({
         <DataTable
           columns={columns}
           data={initialData}
+          showPagination={false}
           renderRowActions={(member) => (
             <>
               <DropdownMenuItem onClick={() => handleEditMember(member)}>
@@ -167,12 +191,13 @@ export function MembersView({
           )}
         />
 
-        <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {displayTotalCount}건</span>
-          {hasNext && nextCursor !== null && (
-            <span>다음 커서: {nextCursor}</span>
-          )}
-        </div>
+        <OffsetPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalElements={displayTotalCount}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

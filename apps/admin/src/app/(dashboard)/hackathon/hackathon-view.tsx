@@ -119,11 +119,20 @@ function toInputDateTime(iso?: string) {
   )}:${pad(d.getMinutes())}`;
 }
 
-// datetime-local input value → ISO 8601 (없으면 undefined)
-function toIso(value: string) {
+// datetime-local input value → 백엔드 LocalDateTime 문자열 (없으면 undefined)
+// 백엔드가 타임존 없는 LocalDateTime을 받으므로 datetime-local 값을 그대로 전달한다.
+function toLocalDateTime(value: string) {
   if (!value) return undefined;
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
+  return value;
+}
+
+function getNextStatus(status: HackathonStatus) {
+  const index = HACKATHON_STATUS_FLOW.indexOf(status);
+  return index >= 0 ? HACKATHON_STATUS_FLOW[index + 1] : undefined;
+}
+
+function isActiveHackathon(status: HackathonStatus) {
+  return status !== "ENDED";
 }
 
 function toFormState(hackathon: Hackathon): HackathonFormState {
@@ -183,6 +192,9 @@ export function HackathonView({ initialData }: HackathonViewProps) {
       `${hackathon.held_year}-${hackathon.held_semester}`.includes(query)
     );
   });
+  const activeHackathon = initialData.find((hackathon) =>
+    isActiveHackathon(hackathon.status),
+  );
 
   const updateForm = <K extends keyof HackathonFormState>(
     field: K,
@@ -192,6 +204,13 @@ export function HackathonView({ initialData }: HackathonViewProps) {
   };
 
   const handleOpenCreate = () => {
+    if (activeHackathon) {
+      alert(
+        `${activeHackathon.title ?? "진행 중인 해커톤"}이 종료된 뒤 새 해커톤을 생성할 수 있습니다.`,
+      );
+      return;
+    }
+
     setEditingHackathon(null);
     setForm({ ...EMPTY_FORM });
     setIsFormOpen(true);
@@ -212,8 +231,8 @@ export function HackathonView({ initialData }: HackathonViewProps) {
   };
 
   const handleSubmitForm = async () => {
-    const startsAt = toIso(form.starts_at);
-    const endsAt = toIso(form.ends_at);
+    const startsAt = toLocalDateTime(form.starts_at);
+    const endsAt = toLocalDateTime(form.ends_at);
 
     if (!startsAt || !endsAt) {
       alert("시작/종료 일시를 입력해주세요.");
@@ -228,21 +247,35 @@ export function HackathonView({ initialData }: HackathonViewProps) {
           title: form.title.trim() || undefined,
           description: form.description.trim() || undefined,
           location: form.location.trim() || undefined,
-          recruit_starts_at: toIso(form.recruit_starts_at),
-          recruit_ends_at: toIso(form.recruit_ends_at),
-          team_building_starts_at: toIso(form.team_building_starts_at),
-          team_building_ends_at: toIso(form.team_building_ends_at),
+          recruit_starts_at: toLocalDateTime(form.recruit_starts_at),
+          recruit_ends_at: toLocalDateTime(form.recruit_ends_at),
+          team_building_starts_at: toLocalDateTime(
+            form.team_building_starts_at,
+          ),
+          team_building_ends_at: toLocalDateTime(form.team_building_ends_at),
           starts_at: startsAt,
           ends_at: endsAt,
         };
         await updateHackathon(editingHackathon.hackathon_id, body);
       } else {
+        if (activeHackathon) {
+          alert("진행 중인 해커톤이 있어 새 해커톤을 생성할 수 없습니다.");
+          setSubmitting(false);
+          return;
+        }
+
         const heldYear = Number(form.held_year);
         const heldSemester = Number(form.held_semester);
         const eventRound = Number(form.event_round);
+        const title = form.title.trim();
 
         if (!heldYear || !heldSemester || !eventRound) {
           alert("연도/학기/회차를 올바르게 입력해주세요.");
+          setSubmitting(false);
+          return;
+        }
+        if (!title) {
+          alert("해커톤명을 입력해주세요.");
           setSubmitting(false);
           return;
         }
@@ -251,13 +284,15 @@ export function HackathonView({ initialData }: HackathonViewProps) {
           held_year: heldYear,
           held_semester: heldSemester,
           event_round: eventRound,
-          title: form.title.trim() || undefined,
+          title,
           description: form.description.trim() || undefined,
           location: form.location.trim() || undefined,
-          recruit_starts_at: toIso(form.recruit_starts_at),
-          recruit_ends_at: toIso(form.recruit_ends_at),
-          team_building_starts_at: toIso(form.team_building_starts_at),
-          team_building_ends_at: toIso(form.team_building_ends_at),
+          recruit_starts_at: toLocalDateTime(form.recruit_starts_at),
+          recruit_ends_at: toLocalDateTime(form.recruit_ends_at),
+          team_building_starts_at: toLocalDateTime(
+            form.team_building_starts_at,
+          ),
+          team_building_ends_at: toLocalDateTime(form.team_building_ends_at),
           starts_at: startsAt,
           ends_at: endsAt,
         };
@@ -274,8 +309,13 @@ export function HackathonView({ initialData }: HackathonViewProps) {
   };
 
   const handleOpenStatus = (hackathon: Hackathon) => {
+    const nextStatus = getNextStatus(hackathon.status);
+    if (!nextStatus) {
+      alert("더 이상 변경할 수 있는 다음 상태가 없습니다.");
+      return;
+    }
     setStatusTarget(hackathon);
-    setSelectedStatus(hackathon.status);
+    setSelectedStatus(nextStatus);
   };
 
   const handleSubmitStatus = async () => {
@@ -332,7 +372,15 @@ export function HackathonView({ initialData }: HackathonViewProps) {
             해커톤을 생성하고 상태와 제출 현황을 관리할 수 있습니다.
           </p>
         </div>
-        <Button onClick={handleOpenCreate}>
+        <Button
+          onClick={handleOpenCreate}
+          disabled={activeHackathon !== undefined}
+          title={
+            activeHackathon
+              ? `${activeHackathon.title ?? "진행 중인 해커톤"} 종료 후 추가할 수 있습니다.`
+              : undefined
+          }
+        >
           <Plus className="mr-2 h-4 w-4" />
           해커톤 추가
         </Button>
@@ -604,11 +652,15 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {HACKATHON_STATUS_FLOW.map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {HACKATHON_STATUS_LABELS[status]}
+                {statusTarget && getNextStatus(statusTarget.status) && (
+                  <SelectItem value={getNextStatus(statusTarget.status)!}>
+                    {
+                      HACKATHON_STATUS_LABELS[
+                        getNextStatus(statusTarget.status)!
+                      ]
+                    }
                   </SelectItem>
-                ))}
+                )}
               </SelectContent>
             </Select>
           </div>

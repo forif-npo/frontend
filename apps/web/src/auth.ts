@@ -57,7 +57,15 @@ async function refreshBackendJwt(token: JWT): Promise<JWT> {
       error: undefined,
     };
   } catch (error) {
-    console.error("Backend token refresh failed:", error);
+    const { HTTPError } = await import("ky");
+    if (error instanceof HTTPError && error.response.status === 401) {
+      // refresh token 만료/무효 → 정상적인 세션 만료 흐름이므로 조용히 처리
+      console.warn(
+        "Backend refresh token expired (401) — 세션을 만료 처리합니다.",
+      );
+    } else {
+      console.error("Backend token refresh failed:", error);
+    }
     return { ...token, error: "RefreshAccessTokenError" };
   }
 }

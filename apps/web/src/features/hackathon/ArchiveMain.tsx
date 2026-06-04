@@ -1,8 +1,8 @@
 "use client";
 
 import type { Hackathon, Submission, Award } from "@core/types/hackathon";
-import { Badge, Body, Heading, Label } from "@ui/components/server";
-import { Pagination, TextInput } from "@ui/components/client";
+import { Badge, Body, Breadcrumb, Heading, Label } from "@ui/components/server";
+import { Pagination, Select, TextInput } from "@ui/components/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
@@ -20,7 +20,6 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
   const [selectedId, setSelectedId] = useState<number>(
     hackathons[0]?.hackathon_id ?? 0,
   );
-  const [detail, setDetail] = useState<ArchiveHackathonDetail | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [awards, setAwards] = useState<Award[]>([]);
   const [search, setSearch] = useState("");
@@ -41,7 +40,6 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
           .get(`api/v1/archive/hackathons/${id}/submissions`)
           .json<ApiResponse<CursorPageResponse<Submission>>>(),
       ]);
-      setDetail(detailRes.data);
       setSubmissions(submissionsRes.data?.content ?? []);
       setAwards(detailRes.data?.awards ?? []);
     } catch {
@@ -61,6 +59,18 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
       ...Array.from(new Set(submissions.flatMap((s) => s.tech_stacks))),
     ],
     [submissions],
+  );
+  const hackathonOptions = useMemo(
+    () =>
+      hackathons.map((h) => ({
+        value: String(h.hackathon_id),
+        label: h.title || `${h.event_round}회 해커톤`,
+      })),
+    [hackathons],
+  );
+  const techOptions = useMemo(
+    () => techStacks.map((tech) => ({ value: tech, label: tech })),
+    [techStacks],
   );
 
   const filtered = useMemo(() => {
@@ -89,8 +99,18 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
 
   return (
     <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
+      <div className="mb-6">
+        <Breadcrumb
+          items={[
+            { label: "홈", href: "/" },
+            { label: "해커톤", href: "/hackathon" },
+            { label: "아카이브" },
+          ]}
+        />
+      </div>
+
       {/* Header */}
-      <section className="bg-surface-white border-border-gray-light rounded-3 mb-8 grid grid-cols-1 gap-6 border p-8 shadow-sm md:grid-cols-[1fr_380px]">
+      <section className="bg-surface-white border-border-gray-light rounded-3 mb-8 border p-8 shadow-sm">
         <div>
           <Label
             size="xs"
@@ -105,39 +125,29 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
             종료된 해커톤의 제출작을 모아보고, 수상팀은 뱃지로 구분합니다.
           </Body>
         </div>
-        {detail && (
-          <div className="grid grid-cols-3 gap-3 self-center">
-            <Fact label="해커톤" value={`${detail.event_round}회`} />
-            <Fact label="제출작" value={`${detail.submission_count}개`} />
-            <Fact label="수상팀" value={`${detail.awards.length}팀`} />
-          </div>
-        )}
       </section>
 
       {/* Hackathon selector + Filters */}
       <section className="bg-surface-white border-border-gray-light rounded-3 mb-6 flex flex-wrap items-end gap-4 border p-5 shadow-sm">
         {hackathons.length > 1 && (
           <div className="min-w-[180px]">
-            <label className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5">
               <Label size="xs" className="text-text-subtle font-bold">
                 해커톤 선택
               </Label>
-              <select
-                value={selectedId}
-                onChange={(e) => {
-                  setSelectedId(Number(e.target.value));
+              <Select
+                id="archive-hackathon"
+                value={String(selectedId)}
+                onChange={(value) => {
+                  setSelectedId(Number(value));
                   setSearch("");
                   setSelectedTech("전체");
                 }}
-                className="border-input-border rounded-2 bg-input-surface text-text-basic text-body-s focus:border-input-border-active focus:ring-primary-20 h-12 border px-4 focus:outline-none focus:ring-1"
-              >
-                {hackathons.map((h) => (
-                  <option key={h.hackathon_id} value={h.hackathon_id}>
-                    {h.title || `${h.event_round}회 해커톤`}
-                  </option>
-                ))}
-              </select>
-            </label>
+                options={hackathonOptions}
+                placeholder="해커톤 선택"
+                size="md"
+              />
+            </div>
           </div>
         )}
         <div className="min-w-[200px] flex-1">
@@ -151,20 +161,19 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
           />
         </div>
         <div className="min-w-[180px]">
-          <label className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5">
             <Label size="xs" className="text-text-subtle font-bold">
               기술 스택
             </Label>
-            <select
+            <Select
+              id="archive-tech-stack"
               value={selectedTech}
-              onChange={(e) => setSelectedTech(e.target.value)}
-              className="border-input-border rounded-2 bg-input-surface text-text-basic text-body-s focus:border-input-border-active focus:ring-primary-20 h-12 border px-4 focus:outline-none focus:ring-1"
-            >
-              {techStacks.map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-          </label>
+              onChange={setSelectedTech}
+              options={techOptions}
+              placeholder="기술 스택"
+              size="md"
+            />
+          </div>
         </div>
       </section>
 
@@ -270,18 +279,5 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
         </div>
       )}
     </main>
-  );
-}
-
-function Fact({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="bg-surface-gray-subtler border-border-gray-light rounded-2 flex flex-col gap-1.5 border p-4">
-      <Label size="xs" className="text-text-subtle">
-        {label}
-      </Label>
-      <Body size="s" className="text-text-basic break-all font-bold">
-        {value}
-      </Body>
-    </div>
   );
 }
