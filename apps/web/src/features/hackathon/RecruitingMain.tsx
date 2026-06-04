@@ -8,13 +8,15 @@ import { InfoRow, Panel, PanelHeader } from "./shared";
 
 interface RecruitingMainProps {
   hackathon: Hackathon;
-  onRegister: () => void;
+  onRegister: () => Promise<void>;
+  onCancelRegistration: () => Promise<void>;
   isRegistered: boolean;
 }
 
 export function RecruitingMain({
   hackathon,
   onRegister,
+  onCancelRegistration,
   isRegistered,
 }: RecruitingMainProps) {
   return (
@@ -29,14 +31,28 @@ export function RecruitingMain({
           페이지에 표시됩니다.
         </Body>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Button
-            variant={isRegistered ? "secondary" : "primary"}
-            size="medium"
-            onClick={onRegister}
-            disabled={isRegistered}
-          >
-            {isRegistered ? "신청 완료" : "참가 신청"}
-          </Button>
+          {isRegistered ? (
+            <>
+              <Button variant="secondary" size="medium" disabled>
+                신청 완료
+              </Button>
+              <Button
+                variant="tertiary"
+                size="medium"
+                onClick={() => void onCancelRegistration().catch(() => {})}
+              >
+                신청 취소
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="primary"
+              size="medium"
+              onClick={() => void onRegister().catch(() => {})}
+            >
+              참가 신청
+            </Button>
+          )}
         </div>
       </Panel>
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { BreadHomeIcon } from "@repo/assets/icons/krds";
 
 interface BreadcrumbItem {
   label: string;
@@ -74,6 +75,19 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
           return (
             <li key={index} className="m-0 flex items-center">
               {index > 0 && <ChevronIcon className="text-text-basic" />}
+              {index === 0 && (
+                <span
+                  className="text-text-basic mr-1 flex h-4 w-4 shrink-0 items-center justify-center"
+                  aria-hidden="true"
+                >
+                  <BreadHomeIcon
+                    width={16}
+                    height={16}
+                    color="currentColor"
+                    className="h-4 w-4"
+                  />
+                </span>
+              )}
               {index === 1 && items.length > maxItems && (
                 <>
                   <EllipsisIcon className="text-text-basic" />

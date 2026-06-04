@@ -7,7 +7,7 @@ interface PageProps {
   searchParams: Promise<{
     semester?: string;
     search?: string;
-    cursor?: string;
+    page?: string;
   }>;
 }
 
@@ -15,6 +15,9 @@ export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
 
   const activeSemester = (params.semester as OperatorSemesterLabel) || "전체";
+  const search = params.search;
+  const parsedPage = params.page ? parseInt(params.page, 10) : 0;
+  const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
 
   const session = await auth();
   const accessToken = session?.access_token;
@@ -31,6 +34,9 @@ export default async function Page({ searchParams }: PageProps) {
   try {
     const operatorsData = await fetchOperators({
       semester: activeSemester,
+      page,
+      size: 20,
+      search,
       accessToken,
     });
 
@@ -38,10 +44,11 @@ export default async function Page({ searchParams }: PageProps) {
       <OperatorsView
         initialData={operatorsData.content}
         currentSemester={activeSemester}
-        hasNext={false}
-        nextCursor={null}
-        totalElements={operatorsData.content.length}
-        initialSearch={params.search ?? ""}
+        totalElements={operatorsData.totalElements}
+        currentPage={operatorsData.currentPage}
+        totalPages={operatorsData.totalPages}
+        pageSize={operatorsData.pageSize}
+        initialSearch={search ?? ""}
       />
     );
   } catch (error) {

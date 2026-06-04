@@ -8,6 +8,9 @@ interface ForifTeamItem {
 
 interface FetchOperatorsParams {
   semester: OperatorSemesterLabel;
+  page?: number;
+  size: number;
+  search?: string;
   accessToken: string;
 }
 
@@ -96,16 +99,24 @@ function mapToOperator(item: ForifTeamItem): Operator {
   };
 }
 
+function compareSemesterDesc(a: Operator, b: Operator) {
+  const yearDiff = b.actYear - a.actYear;
+
+  if (yearDiff !== 0) {
+    return yearDiff;
+  }
+
+  return b.actSemester - a.actSemester;
+}
+
 export async function fetchOperators({
   semester,
+  page = 0,
+  size,
+  search,
   accessToken,
 }: FetchOperatorsParams): Promise<OperatorListResult> {
   const endpoint = getOperatorsEndpoint(semester);
-
-  console.log("[Operators API] Fetching from API:", {
-    endpoint,
-    semester,
-  });
 
   const response = await apiClient
     .get(endpoint, {
@@ -119,9 +130,7 @@ export async function fetchOperators({
     throw new Error("Invalid API response structure");
   }
 
-  console.log("[Operators API] first raw item:", response.data[0]);
-
-  let content = response.data.map(mapToOperator);
+  let content = response.data.map(mapToOperator).sort(compareSemesterDesc);
 
   if (semester === "그 외") {
     content = content.filter((item) => {
@@ -130,12 +139,32 @@ export async function fetchOperators({
     });
   }
 
-  console.log("[Operators API] first mapped item:", content[0]);
+  const normalizedSearch = search?.trim().toLowerCase();
+  if (normalizedSearch) {
+    content = content.filter((operator) =>
+      [
+        operator.userId,
+        operator.department,
+        operator.name,
+        operator.phoneNum,
+        operator.title,
+      ]
+        .map(String)
+        .some((value) => value.toLowerCase().includes(normalizedSearch)),
+    );
+  }
+
+  const currentPage = Math.max(page, 0);
+  const pageSize = Math.max(size, 1);
+  const totalElements = content.length;
+  const totalPages = Math.ceil(totalElements / pageSize);
+  const from = currentPage * pageSize;
 
   return {
-    content,
-    nextCursor: null,
-    hasNext: false,
-    totalElements: content.length,
+    content: content.slice(from, from + pageSize),
+    totalElements,
+    currentPage,
+    totalPages,
+    pageSize,
   };
 }

@@ -5,6 +5,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
+import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { Button } from "@/components/ui/button";
@@ -19,39 +20,24 @@ import { Operator, OperatorSemesterLabel } from "./types";
 interface OperatorsViewProps {
   initialData: Operator[];
   currentSemester: OperatorSemesterLabel;
-  hasNext?: boolean;
-  nextCursor?: number | null;
   totalElements?: number;
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
   initialSearch?: string;
 }
 
 export function OperatorsView({
   initialData,
   currentSemester,
-  hasNext = false,
-  nextCursor = null,
   totalElements = 0,
+  currentPage = 0,
+  totalPages = 1,
+  pageSize = 20,
   initialSearch = "",
 }: OperatorsViewProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState(initialSearch);
-  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
-  const filteredData =
-    normalizedSearchQuery.length > 0
-      ? initialData.filter((operator) =>
-          [
-            operator.userId,
-            operator.department,
-            operator.name,
-            operator.phoneNum,
-            operator.title,
-          ]
-            .map(String)
-            .some((value) =>
-              value.toLowerCase().includes(normalizedSearchQuery),
-            ),
-        )
-      : initialData;
 
   const handleSemesterChange = (semester: string) => {
     const params = new URLSearchParams();
@@ -63,6 +49,8 @@ export function OperatorsView({
     if (searchQuery.trim()) {
       params.set("search", searchQuery.trim());
     }
+
+    params.set("page", "0");
 
     router.push(`/operators?${params.toString()}`);
   };
@@ -78,22 +66,40 @@ export function OperatorsView({
       params.set("search", searchQuery.trim());
     }
 
+    params.set("page", "0");
+
+    router.push(`/operators?${params.toString()}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams();
+
+    if (currentSemester) {
+      params.set("semester", currentSemester);
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    params.set("page", String(page));
+
     router.push(`/operators?${params.toString()}`);
   };
 
   const handleDownloadExcel = () => {
-    if (filteredData.length === 0) {
+    if (initialData.length === 0) {
       alert("다운로드할 데이터가 없습니다.");
       return;
     }
 
     const ws = XLSX.utils.json_to_sheet(
-      filteredData.map((operator) => ({
+      initialData.map((operator) => ({
         학번: operator.userId,
-        학과: operator.department,
+        부서: operator.department,
+        직급: operator.title,
         이름: operator.name,
         전화번호: operator.phoneNum,
-        직급: operator.title,
       })),
     );
 
@@ -121,11 +127,7 @@ export function OperatorsView({
   };
 
   const displayTotalCount =
-    normalizedSearchQuery.length > 0
-      ? filteredData.length
-      : totalElements && totalElements > 0
-        ? totalElements
-        : initialData.length;
+    totalElements && totalElements > 0 ? totalElements : initialData.length;
 
   return (
     <div className="space-y-6 p-8">
@@ -161,7 +163,8 @@ export function OperatorsView({
 
         <DataTable
           columns={columns}
-          data={filteredData}
+          data={initialData}
+          showPagination={false}
           renderRowActions={(operator) => (
             <>
               <DropdownMenuItem onClick={() => handleEditOperator(operator)}>
@@ -188,12 +191,13 @@ export function OperatorsView({
           )}
         />
 
-        <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {displayTotalCount}건</span>
-          {hasNext && nextCursor !== null && (
-            <span>다음 커서: {nextCursor}</span>
-          )}
-        </div>
+        <OffsetPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalElements={displayTotalCount}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

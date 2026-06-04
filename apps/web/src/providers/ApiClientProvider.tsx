@@ -7,7 +7,7 @@ import {
   setOnUnauthorized,
 } from "@core/utils/api-client";
 import { useSession, signOut } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * apiClient에 NextAuth 세션 토큰 getter를 주입하는 Provider
@@ -18,6 +18,16 @@ import { useEffect } from "react";
  */
 export function ApiClientProvider({ children }: { children: React.ReactNode }) {
   const { data: session, update } = useSession();
+  const isSigningOut = useRef(false);
+
+  // 서버 jwt 콜백에서 refresh token 갱신이 실패하면 session.error가 세팅됨.
+  // 이 경우 만료된 세션을 정리하고 로그인 페이지로 보낸다.
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError" && !isSigningOut.current) {
+      isSigningOut.current = true;
+      signOut({ callbackUrl: "/signin" });
+    }
+  }, [session?.error]);
 
   useEffect(() => {
     // NextAuth 세션에서 토큰 가져오는 getter 설정

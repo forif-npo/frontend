@@ -245,9 +245,9 @@ export function ManagementView({
         alert(`'${criterion.name}' 점수를 입력해주세요.`);
         return;
       }
-      if (value < 0 || value > criterion.max_score) {
+      if (value < 1 || value > criterion.max_score) {
         alert(
-          `'${criterion.name}' 점수는 0~${criterion.max_score} 사이여야 합니다.`,
+          `'${criterion.name}' 점수는 1~${criterion.max_score} 사이여야 합니다.`,
         );
         return;
       }
@@ -293,14 +293,19 @@ export function ManagementView({
 
   const submitAward = async () => {
     const teamId = Number(awardForm.hackathon_team_id);
+    const awardName = awardForm.award_name.trim();
     if (!teamId) {
       alert("수상 팀을 선택해주세요.");
+      return;
+    }
+    if (!awardName) {
+      alert("수상명을 입력해주세요.");
       return;
     }
 
     const body: AwardRequest = {
       hackathon_team_id: teamId,
-      award_name: awardForm.award_name.trim() || undefined,
+      award_name: awardName,
       award_rank: awardForm.award_rank
         ? Number(awardForm.award_rank)
         : undefined,
@@ -847,13 +852,13 @@ export function ManagementView({
                   <Label htmlFor={`score-${criterion.criterion_id}`}>
                     {criterion.name}{" "}
                     <span className="text-muted-foreground">
-                      (0~{criterion.max_score})
+                      (1~{criterion.max_score})
                     </span>
                   </Label>
                   <Input
                     id={`score-${criterion.criterion_id}`}
                     type="number"
-                    min={0}
+                    min={1}
                     max={criterion.max_score}
                     value={scores[criterion.criterion_id] ?? ""}
                     disabled={submitting}

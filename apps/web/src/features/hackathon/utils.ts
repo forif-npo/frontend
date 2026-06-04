@@ -3,8 +3,9 @@ import type { Hackathon, HackathonStatus } from "@core/types/hackathon";
 export type MainStage =
   | "BEFORE_CREATED"
   | "RECRUITING"
-  | "WAITING_START"
-  | "ACTIVE"
+  | "TEAM_BUILDING"
+  | "IN_PROGRESS"
+  | "JUDGING"
   | "ENDED";
 
 export const statusLabel: Record<HackathonStatus, string> = {
@@ -15,33 +16,26 @@ export const statusLabel: Record<HackathonStatus, string> = {
   ENDED: "종료",
 };
 
-export function getMainStage(
-  hackathon: Hackathon | null,
-  serverTime?: string,
-): MainStage {
+export function getMainStage(hackathon: Hackathon | null): MainStage {
   if (!hackathon) return "BEFORE_CREATED";
-  if (hackathon.status === "ENDED") return "ENDED";
-
-  const now = serverTime ? new Date(serverTime) : new Date();
-  const recruitEndsAt = hackathon.recruit_ends_at
-    ? new Date(hackathon.recruit_ends_at)
-    : null;
-  const startsAt = new Date(hackathon.starts_at);
-
-  if (recruitEndsAt && now < recruitEndsAt) return "RECRUITING";
-  if (now < startsAt) return "WAITING_START";
-  return "ACTIVE";
+  return hackathon.status;
 }
 
 export function getCountdownTarget(hackathon: Hackathon, stage: MainStage) {
   if (stage === "RECRUITING" && hackathon.recruit_ends_at) {
     return { label: "모집 마감까지", date: hackathon.recruit_ends_at };
   }
-  if (stage === "WAITING_START") {
-    return { label: "시작까지", date: hackathon.starts_at };
+  if (stage === "TEAM_BUILDING") {
+    return {
+      label: "팀 구성 마감까지",
+      date: hackathon.team_building_ends_at ?? hackathon.starts_at,
+    };
   }
-  if (stage === "ACTIVE") {
+  if (stage === "IN_PROGRESS") {
     return { label: "제출 마감까지", date: hackathon.ends_at };
+  }
+  if (stage === "JUDGING") {
+    return { label: "심사 진행중", date: hackathon.ends_at };
   }
   return { label: "종료", date: hackathon.ends_at };
 }

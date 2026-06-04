@@ -94,7 +94,7 @@ const MoreLinkButton = ({ link, title }: { link: string; title?: string }) => {
     >
       <Label
         size="m"
-        className="text-text-basic hidden cursor-pointer md:inline-block"
+        className="text-text-basic mr-1 hidden cursor-pointer md:inline-block"
       >
         자세히 보기
       </Label>

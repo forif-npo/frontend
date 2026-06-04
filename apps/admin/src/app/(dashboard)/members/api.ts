@@ -12,7 +12,7 @@ import { Member, MemberListResult, MemberSemesterLabel } from "./types";
 
 interface FetchMembersParams {
   size: number;
-  cursor?: number;
+  page?: number;
   search?: string;
   semester?: MemberSemesterLabel;
   accessToken: string;
@@ -26,9 +26,9 @@ interface MemberPageData extends PaginationInterface {
   content: MemberItem[];
 }
 
-function mapToMember(
-  item: MemberItem,
-): Member & { actYear?: number; actSemester?: number } {
+type MemberWithSemester = Member & { actYear?: number; actSemester?: number };
+
+function mapToMember(item: MemberItem): MemberWithSemester {
   return {
     userId: pickNumber(item.userId, item.user_id),
     department: pickString(item.department),
@@ -41,9 +41,54 @@ function mapToMember(
   };
 }
 
+function stripSemester({
+  userId,
+  department,
+  userName,
+  phoneNum,
+  isMentor,
+  isAdmin,
+}: MemberWithSemester): Member {
+  return {
+    userId,
+    department,
+    userName,
+    phoneNum,
+    isMentor,
+    isAdmin,
+  };
+}
+
+function filterOtherSemester(content: MemberWithSemester[]) {
+  return content.filter(
+    (item) => !isMainSemester(item.actYear, item.actSemester),
+  );
+}
+
+function paginateLocally(
+  content: MemberWithSemester[],
+  page: number,
+  size: number,
+): MemberListResult {
+  const currentPage = Math.max(page, 0);
+  const pageSize = Math.max(size, 1);
+  const totalElements = content.length;
+  const totalPages = Math.ceil(totalElements / pageSize);
+  const from = currentPage * pageSize;
+  const pageContent = content.slice(from, from + pageSize);
+
+  return {
+    content: pageContent.map(stripSemester),
+    totalElements,
+    currentPage,
+    totalPages,
+    pageSize,
+  };
+}
+
 export async function fetchMembers({
   size,
-  cursor,
+  page = 0,
   search,
   semester,
   accessToken,
@@ -51,15 +96,37 @@ export async function fetchMembers({
   const endpoint = buildSemesterEndpoint("api/v1/admin/users", semester);
 
   const searchParams: Record<string, string> = {
+    page: page.toString(),
     size: size.toString(),
   };
 
-  if (cursor !== undefined) {
-    searchParams.cursor = cursor.toString();
-  }
-
   if (search) {
     searchParams.search = search;
+  }
+
+  if (semester === "그 외") {
+    const response = await apiClient
+      .get(endpoint, {
+        searchParams: {
+          ...searchParams,
+          page: "0",
+          size: "10000",
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .json<ApiResponse<MemberPageData>>();
+
+    if (!response.data || !Array.isArray(response.data.content)) {
+      throw new Error("Invalid API response structure");
+    }
+
+    return paginateLocally(
+      filterOtherSemester(response.data.content.map(mapToMember)),
+      page,
+      size,
+    );
   }
 
   const response = await apiClient
@@ -75,27 +142,14 @@ export async function fetchMembers({
     throw new Error("Invalid API response structure");
   }
 
-  let content = response.data.content.map(mapToMember);
-
-  if (semester === "그 외") {
-    content = content.filter(
-      (item) => !isMainSemester(item.actYear, item.actSemester),
-    );
-  }
+  const content = response.data.content.map(mapToMember);
+  const totalElements = response.data.total_elements ?? content.length;
 
   return {
-    content: content.map(
-      ({ userId, department, userName, phoneNum, isMentor, isAdmin }) => ({
-        userId,
-        department,
-        userName,
-        phoneNum,
-        isMentor,
-        isAdmin,
-      }),
-    ),
-    nextCursor: response.data.next_cursor ?? null,
-    hasNext: response.data.has_next ?? false,
-    totalElements: response.data.total_elements ?? 0,
+    content: content.map(stripSemester),
+    totalElements,
+    currentPage: response.data.current_page ?? page,
+    totalPages: response.data.total_pages ?? Math.ceil(totalElements / size),
+    pageSize: size,
   };
 }

@@ -2,6 +2,7 @@
 
 import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
+import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import {
   DEFAULT_SEMESTER_OPTIONS,
@@ -32,20 +33,24 @@ const APPROVAL_SEMESTER_OPTIONS = DEFAULT_SEMESTER_OPTIONS.filter(
 interface ApprovalViewProps {
   initialData: Study[];
   currentSemester: SemesterLabel;
-  hasNext?: boolean;
-  nextCursor?: number | null;
   totalElements?: number;
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
+  initialSearch?: string;
 }
 
 export function ApprovalView({
   initialData,
   currentSemester,
-  hasNext = false,
-  nextCursor = null,
   totalElements = 0,
+  currentPage = 0,
+  totalPages = 1,
+  pageSize = 20,
+  initialSearch = "",
 }: ApprovalViewProps) {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [rejectingStudy, setRejectingStudy] = useState<Study | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
@@ -53,24 +58,55 @@ export function ApprovalView({
   );
 
   const handleSemesterChange = (semester: string) => {
-    router.push(`/studies/approval?semester=${semester}`);
+    const params = new URLSearchParams();
+
+    if (semester) {
+      params.set("semester", semester);
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    params.set("page", "0");
+
+    router.push(`/studies/approval?${params.toString()}`);
   };
 
-  const filteredData = initialData.filter((study) => {
-    const query = searchQuery.toLowerCase();
+  const handleSearch = () => {
+    const params = new URLSearchParams();
 
-    return (
-      study.study_name.toLowerCase().includes(query) ||
-      study.primary_mentor_name.toLowerCase().includes(query) ||
-      (study.secondary_mentor_name &&
-        study.secondary_mentor_name.toLowerCase().includes(query)) ||
-      study.one_liner.toLowerCase().includes(query) ||
-      study.tags.some((tag) => tag.toLowerCase().includes(query))
-    );
-  });
+    if (currentSemester) {
+      params.set("semester", currentSemester);
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    params.set("page", "0");
+
+    router.push(`/studies/approval?${params.toString()}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams();
+
+    if (currentSemester) {
+      params.set("semester", currentSemester);
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    params.set("page", String(page));
+
+    router.push(`/studies/approval?${params.toString()}`);
+  };
 
   const displayTotalCount =
-    totalElements && totalElements > 0 ? totalElements : filteredData.length;
+    totalElements && totalElements > 0 ? totalElements : initialData.length;
 
   const handleApproveStudy = async (study: Study) => {
     try {
@@ -128,12 +164,14 @@ export function ApprovalView({
         <SearchBar
           value={searchQuery}
           onChange={setSearchQuery}
+          onSearch={handleSearch}
           placeholder="승인 대기 스터디 검색"
         />
 
         <DataTable
           columns={approvalColumns}
-          data={filteredData}
+          data={initialData}
+          showPagination={false}
           renderRowActions={(study) => (
             <>
               <DropdownMenuItem
@@ -155,12 +193,13 @@ export function ApprovalView({
           )}
         />
 
-        <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {displayTotalCount}건</span>
-          {hasNext && nextCursor !== null && (
-            <span>다음 커서: {nextCursor}</span>
-          )}
-        </div>
+        <OffsetPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalElements={displayTotalCount}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+        />
       </div>
 
       <Dialog

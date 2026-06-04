@@ -7,7 +7,7 @@ interface PageProps {
   searchParams: Promise<{
     semester?: string;
     search?: string;
-    cursor?: string;
+    page?: string;
   }>;
 }
 
@@ -17,7 +17,8 @@ export default async function Page({ searchParams }: PageProps) {
   const activeSemester = (params.semester as MemberSemesterLabel) || "전체";
 
   const search = params.search;
-  const cursor = params.cursor ? parseInt(params.cursor, 10) : undefined;
+  const parsedPage = params.page ? parseInt(params.page, 10) : 0;
+  const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
 
   const session = await auth();
   const accessToken = session?.access_token;
@@ -34,7 +35,7 @@ export default async function Page({ searchParams }: PageProps) {
   try {
     const membersData = await fetchMembers({
       size: 20,
-      cursor,
+      page,
       search,
       semester: activeSemester,
       accessToken,
@@ -44,9 +45,10 @@ export default async function Page({ searchParams }: PageProps) {
       <MembersView
         initialData={membersData.content}
         currentSemester={activeSemester}
-        hasNext={membersData.hasNext}
-        nextCursor={membersData.nextCursor}
         totalElements={membersData.totalElements}
+        currentPage={membersData.currentPage}
+        totalPages={membersData.totalPages}
+        pageSize={membersData.pageSize}
         initialSearch={search ?? ""}
       />
     );

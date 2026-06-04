@@ -2,6 +2,7 @@
 
 import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
+import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { Button } from "@/components/ui/button";
@@ -16,18 +17,20 @@ import { Mentor, MentorSemesterLabel } from "./types";
 interface MentorsViewProps {
   initialData: Mentor[];
   currentSemester: MentorSemesterLabel;
-  hasNext?: boolean;
-  nextCursor?: number | null;
   totalElements?: number;
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
   initialSearch?: string;
 }
 
 export function MentorsView({
   initialData,
   currentSemester,
-  hasNext = false,
-  nextCursor = null,
   totalElements = 0,
+  currentPage = 0,
+  totalPages = 1,
+  pageSize = 20,
   initialSearch = "",
 }: MentorsViewProps) {
   const router = useRouter();
@@ -44,6 +47,8 @@ export function MentorsView({
       params.set("search", searchQuery.trim());
     }
 
+    params.set("page", "0");
+
     router.push(`/mentors?${params.toString()}`);
   };
 
@@ -57,6 +62,24 @@ export function MentorsView({
     if (searchQuery.trim()) {
       params.set("search", searchQuery.trim());
     }
+
+    params.set("page", "0");
+
+    router.push(`/mentors?${params.toString()}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams();
+
+    if (currentSemester) {
+      params.set("semester", currentSemester);
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    params.set("page", String(page));
 
     router.push(`/mentors?${params.toString()}`);
   };
@@ -126,6 +149,7 @@ export function MentorsView({
         <DataTable
           columns={columns}
           data={initialData}
+          showPagination={false}
           renderRowActions={(mentor) => (
             <DropdownMenuItem
               className="text-destructive focus:text-destructive"
@@ -136,12 +160,13 @@ export function MentorsView({
           )}
         />
 
-        <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span>총 {displayTotalCount}건</span>
-          {hasNext && nextCursor !== null && (
-            <span>다음 커서: {nextCursor}</span>
-          )}
-        </div>
+        <OffsetPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalElements={displayTotalCount}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

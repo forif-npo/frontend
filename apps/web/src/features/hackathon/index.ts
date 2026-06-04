@@ -1,4 +1,5 @@
 export { HackathonIntro } from "./HackathonIntro";
+export { HackathonAbout } from "./HackathonAbout";
 export { TimerHero } from "./TimerHero";
 export { EventFacts } from "./EventFacts";
 export { RecruitingMain } from "./RecruitingMain";

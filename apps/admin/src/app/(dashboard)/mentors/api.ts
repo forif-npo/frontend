@@ -11,7 +11,7 @@ import { Mentor, MentorListResult, MentorSemesterLabel } from "./types";
 
 interface FetchMentorsParams {
   size: number;
-  cursor?: number;
+  page?: number;
   search?: string;
   semester?: MentorSemesterLabel;
   accessToken: string;
@@ -25,9 +25,9 @@ interface MentorPageData extends PaginationInterface {
   content: MentorItem[];
 }
 
-function mapToMentor(
-  item: MentorItem,
-): Mentor & { actYear?: number; actSemester?: number } {
+type MentorWithSemester = Mentor & { actYear?: number; actSemester?: number };
+
+function mapToMentor(item: MentorItem): MentorWithSemester {
   return {
     userId: pickNumber(item.userId, item.user_id),
     name: pickString(item.name, item.userName, item.user_name),
@@ -43,9 +43,52 @@ function mapToMentor(
   };
 }
 
+function stripSemester({
+  userId,
+  name,
+  department,
+  phoneNum,
+  studyName,
+}: MentorWithSemester): Mentor {
+  return {
+    userId,
+    name,
+    department,
+    phoneNum,
+    studyName,
+  };
+}
+
+function filterOtherSemester(content: MentorWithSemester[]) {
+  return content.filter(
+    (item) => !isMainSemester(item.actYear, item.actSemester),
+  );
+}
+
+function paginateLocally(
+  content: MentorWithSemester[],
+  page: number,
+  size: number,
+): MentorListResult {
+  const currentPage = Math.max(page, 0);
+  const pageSize = Math.max(size, 1);
+  const totalElements = content.length;
+  const totalPages = Math.ceil(totalElements / pageSize);
+  const from = currentPage * pageSize;
+  const pageContent = content.slice(from, from + pageSize);
+
+  return {
+    content: pageContent.map(stripSemester),
+    totalElements,
+    currentPage,
+    totalPages,
+    pageSize,
+  };
+}
+
 export async function fetchMentors({
   size,
-  cursor,
+  page = 0,
   search,
   semester,
   accessToken,
@@ -53,15 +96,37 @@ export async function fetchMentors({
   const endpoint = buildSemesterEndpoint("api/v1/admin/mentors", semester);
 
   const searchParams: Record<string, string> = {
+    page: page.toString(),
     size: size.toString(),
   };
 
-  if (cursor !== undefined) {
-    searchParams.cursor = cursor.toString();
-  }
-
   if (search) {
     searchParams.search = search;
+  }
+
+  if (semester === "그 외") {
+    const response = await apiClient
+      .get(endpoint, {
+        searchParams: {
+          ...searchParams,
+          page: "0",
+          size: "10000",
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .json<ApiResponse<MentorPageData>>();
+
+    if (!response.data || !Array.isArray(response.data.content)) {
+      throw new Error("Invalid API response structure");
+    }
+
+    return paginateLocally(
+      filterOtherSemester(response.data.content.map(mapToMentor)),
+      page,
+      size,
+    );
   }
 
   const response = await apiClient
@@ -77,26 +142,14 @@ export async function fetchMentors({
     throw new Error("Invalid API response structure");
   }
 
-  let content = response.data.content.map(mapToMentor);
-
-  if (semester === "그 외") {
-    content = content.filter(
-      (item) => !isMainSemester(item.actYear, item.actSemester),
-    );
-  }
+  const content = response.data.content.map(mapToMentor);
+  const totalElements = response.data.total_elements ?? content.length;
 
   return {
-    content: content.map(
-      ({ userId, name, department, phoneNum, studyName }) => ({
-        userId,
-        name,
-        department,
-        phoneNum,
-        studyName,
-      }),
-    ),
-    nextCursor: response.data.next_cursor ?? null,
-    hasNext: response.data.has_next ?? false,
-    totalElements: response.data.total_elements ?? 0,
+    content: content.map(stripSemester),
+    totalElements,
+    currentPage: response.data.current_page ?? page,
+    totalPages: response.data.total_pages ?? Math.ceil(totalElements / size),
+    pageSize: size,
   };
 }

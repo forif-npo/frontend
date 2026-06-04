@@ -10,6 +10,7 @@ import { Breadcrumb } from "@ui/components/server";
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 import { Button } from "@ui/components/client";
 import { AnnouncementDetailSkeleton } from "@/components/skeleton/AnnouncementDetailSkeleton";
+import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
 
 export default function AnnouncementDetailPage() {
   const params = useParams<{ id: string }>();
@@ -81,8 +82,8 @@ export default function AnnouncementDetailPage() {
           </div>
 
           {/* Content */}
-          <div className="mt-10 space-y-6 text-[18px] leading-8 text-gray-900">
-            <div className="whitespace-pre-wrap">{item.content}</div>
+          <div className="mt-10">
+            <AnnouncementMarkdown content={item.content} />
           </div>
 
           {/* Images */}
