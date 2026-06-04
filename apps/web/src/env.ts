@@ -6,6 +6,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     AUTH_SECRET: z.string().min(1),
+    NAVER_MAP_CLIENT_SECRET: z.string().min(1),
   },
 
   /**
@@ -16,6 +17,7 @@ export const env = createEnv({
 
   client: {
     NEXT_PUBLIC_SERVER_URL: z.string().min(1),
+    NEXT_PUBLIC_NAVER_MAP_CLIENT_ID: z.string().min(1),
   },
 
   /**
