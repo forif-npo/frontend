@@ -3,6 +3,7 @@
 import { Body, Label } from "@ui/components/server";
 import Image from "next/image";
 import { CircleUser, Pencil } from "lucide-react";
+import { safeImageSrc } from "@/utils/image";
 
 interface ProfileSidebarProps {
   profile: {
@@ -162,9 +163,9 @@ export function ProfileSidebar({
     <aside className="hidden w-[224px] shrink-0 flex-col items-center border-r border-[#cdd1d5] px-6 py-10 md:flex">
       {/* Profile Picture */}
       <div className="relative mb-4">
-        {profile.img_url ? (
+        {safeImageSrc(profile.img_url) ? (
           <Image
-            src={profile.img_url}
+            src={safeImageSrc(profile.img_url)!}
             alt={profile.user_name}
             width={120}
             height={120}

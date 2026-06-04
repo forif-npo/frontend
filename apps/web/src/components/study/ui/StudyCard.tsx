@@ -12,6 +12,7 @@ import { Button } from "@ui/components/client";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
 import Image from "next/image";
 import Link from "next/link";
+import { safeImageSrc } from "@/utils/image";
 
 // ── Variant-specific props ──────────────────────────────────────────
 
@@ -68,7 +69,7 @@ export function StudyCard(props: StudyCardProps) {
 
   const studyName = study.study_name;
   const oneLiner = study.one_liner;
-  const imgUrl = study.img_url || "/images/default-study-img.png";
+  const imgUrl = safeImageSrc(study.img_url) || "/images/default-study-img.png";
   const primaryMentor = study.primary_mentor_name;
   const secondaryMentor = study.secondary_mentor_name;
 

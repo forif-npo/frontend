@@ -2,6 +2,7 @@ import { Body, Label } from "@ui/components/server";
 import Image from "next/image";
 import Link from "next/link";
 import type { NewsData } from "@core/types/api";
+import { safeImageSrc } from "@/utils/image";
 
 interface NewsCardProps {
   news: NewsData;
@@ -21,10 +22,10 @@ export function NewsCard({ news }: NewsCardProps) {
       className="border-border-gray bg-surface-white-subtle group flex h-[240px] min-h-[240px] gap-6 rounded-xl border p-8 transition-shadow hover:shadow-md"
     >
       {/* 썸네일 (있는 경우만) */}
-      {news.thumbnail && (
+      {safeImageSrc(news.thumbnail) && (
         <div className="relative h-[176px] w-[200px] shrink-0 overflow-hidden rounded-lg max-sm:hidden">
           <Image
-            src={news.thumbnail}
+            src={safeImageSrc(news.thumbnail)!}
             alt={news.title}
             fill
             sizes="200px"
