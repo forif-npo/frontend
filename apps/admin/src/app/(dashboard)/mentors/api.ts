@@ -1,6 +1,7 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { PaginationInterface } from "@/types/pagination";
+import { paginateLocally } from "@/lib/paginate";
 import {
   buildSemesterEndpoint,
   isMainSemester,
@@ -65,27 +66,6 @@ function filterOtherSemester(content: MentorWithSemester[]) {
   );
 }
 
-function paginateLocally(
-  content: MentorWithSemester[],
-  page: number,
-  size: number,
-): MentorListResult {
-  const currentPage = Math.max(page, 0);
-  const pageSize = Math.max(size, 1);
-  const totalElements = content.length;
-  const totalPages = Math.ceil(totalElements / pageSize);
-  const from = currentPage * pageSize;
-  const pageContent = content.slice(from, from + pageSize);
-
-  return {
-    content: pageContent.map(stripSemester),
-    totalElements,
-    currentPage,
-    totalPages,
-    pageSize,
-  };
-}
-
 export async function fetchMentors({
   size,
   page = 0,
@@ -123,7 +103,9 @@ export async function fetchMentors({
     }
 
     return paginateLocally(
-      filterOtherSemester(response.data.content.map(mapToMentor)),
+      filterOtherSemester(response.data.content.map(mapToMentor)).map(
+        stripSemester,
+      ),
       page,
       size,
     );

@@ -119,8 +119,9 @@ function toInputDateTime(iso?: string) {
   )}:${pad(d.getMinutes())}`;
 }
 
-// datetime-local input value → LocalDateTime 문자열 (없으면 undefined)
-function toIso(value: string) {
+// datetime-local input value → 백엔드 LocalDateTime 문자열 (없으면 undefined)
+// 백엔드가 타임존 없는 LocalDateTime을 받으므로 datetime-local 값을 그대로 전달한다.
+function toLocalDateTime(value: string) {
   if (!value) return undefined;
   return value;
 }
@@ -230,8 +231,8 @@ export function HackathonView({ initialData }: HackathonViewProps) {
   };
 
   const handleSubmitForm = async () => {
-    const startsAt = toIso(form.starts_at);
-    const endsAt = toIso(form.ends_at);
+    const startsAt = toLocalDateTime(form.starts_at);
+    const endsAt = toLocalDateTime(form.ends_at);
 
     if (!startsAt || !endsAt) {
       alert("시작/종료 일시를 입력해주세요.");
@@ -246,10 +247,12 @@ export function HackathonView({ initialData }: HackathonViewProps) {
           title: form.title.trim() || undefined,
           description: form.description.trim() || undefined,
           location: form.location.trim() || undefined,
-          recruit_starts_at: toIso(form.recruit_starts_at),
-          recruit_ends_at: toIso(form.recruit_ends_at),
-          team_building_starts_at: toIso(form.team_building_starts_at),
-          team_building_ends_at: toIso(form.team_building_ends_at),
+          recruit_starts_at: toLocalDateTime(form.recruit_starts_at),
+          recruit_ends_at: toLocalDateTime(form.recruit_ends_at),
+          team_building_starts_at: toLocalDateTime(
+            form.team_building_starts_at,
+          ),
+          team_building_ends_at: toLocalDateTime(form.team_building_ends_at),
           starts_at: startsAt,
           ends_at: endsAt,
         };
@@ -284,10 +287,12 @@ export function HackathonView({ initialData }: HackathonViewProps) {
           title,
           description: form.description.trim() || undefined,
           location: form.location.trim() || undefined,
-          recruit_starts_at: toIso(form.recruit_starts_at),
-          recruit_ends_at: toIso(form.recruit_ends_at),
-          team_building_starts_at: toIso(form.team_building_starts_at),
-          team_building_ends_at: toIso(form.team_building_ends_at),
+          recruit_starts_at: toLocalDateTime(form.recruit_starts_at),
+          recruit_ends_at: toLocalDateTime(form.recruit_ends_at),
+          team_building_starts_at: toLocalDateTime(
+            form.team_building_starts_at,
+          ),
+          team_building_ends_at: toLocalDateTime(form.team_building_ends_at),
           starts_at: startsAt,
           ends_at: endsAt,
         };
