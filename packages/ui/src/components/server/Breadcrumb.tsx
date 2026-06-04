@@ -77,7 +77,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
               {index > 0 && <ChevronIcon className="text-text-basic" />}
               {index === 0 && (
                 <span
-                  className="text-text-basic mr-1 flex h-4 w-4 shrink-0 items-center justify-center"
+                  className="text-text-basic mb-[0.5px] mr-1 flex h-4 w-4 shrink-0 items-center justify-center"
                   aria-hidden="true"
                 >
                   <BreadHomeIcon

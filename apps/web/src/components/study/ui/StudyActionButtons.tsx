@@ -21,18 +21,9 @@ export const StudyActionButtons: React.FC<StudyActionButtonsProps> = ({
         variant="primary"
         size={size}
         disabled={true}
-        className={size === "large" ? "px-8" : "px-4"}
         onClick={onApplyClick}
       >
         스터디 개설하기
-      </Button>
-      <Button
-        variant="primary"
-        size={size}
-        className={size === "large" ? "px-5" : "px-3"}
-        onClick={onCreateClick}
-      >
-        스터디 가이드
       </Button>
     </div>
   );

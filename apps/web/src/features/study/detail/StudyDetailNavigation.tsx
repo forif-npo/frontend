@@ -18,8 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "overview", label: "스터디 개요" },
   { id: "intro", label: "스터디 상세 소개" },
   { id: "curriculum", label: "커리큘럼" },
-  { id: "process", label: "신청 방법 및 절차" },
-  { id: "criteria", label: "지원 대상 선정 기준" },
+  { id: "process", label: "신청 방법" },
   { id: "location", label: "부가 정보" },
   { id: "resources", label: "관련 자료" },
 ];
@@ -70,7 +69,7 @@ export function StudyDetailNavigation({
   };
 
   return (
-    <div className="sticky top-[120px] hidden h-fit w-[160px] shrink-0 gap-4 md:flex md:flex-col">
+    <div className="sticky top-[120px] hidden h-fit w-[160px] shrink-0 gap-4 self-start md:flex md:flex-col">
       <div className="flex flex-col gap-1">
         <p className="text-text-basic text-[13px] leading-[1.5]">스터디 정보</p>
         <p className="text-text-bolder text-[17px] font-bold leading-[1.5]">

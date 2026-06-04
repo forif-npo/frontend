@@ -34,8 +34,6 @@ export default function ClubPage() {
       <div
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/images/about-bg.png)`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
           width: "var(--vw)",
           height: "var(--vh)",
           position: "relative",
@@ -52,8 +50,8 @@ export default function ClubPage() {
             color: "white",
             fontSize: isMobile ? "80px" : "120px",
             lineHeight: isMobile ? "100px" : "140px",
-            fontWeight: 400,
-            letterSpacing: "-0.25pt",
+            fontWeight: 700,
+            letterSpacing: "-0.333333px",
           }}
         >
           about_

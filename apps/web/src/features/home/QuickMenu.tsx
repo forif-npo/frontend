@@ -45,11 +45,15 @@ interface QuickMenuItem {
 const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   { icon: CalendarDays, label: "스터디 신청", href: "/studies/list" },
   { icon: FaqIconAdapter, label: "자주 묻는 질문", href: "/support/faqs" },
-  { icon: FileCheck, label: "증명서 발급", href: "/certificate" },
-  { icon: FolderPlus, label: "운영진 지원", href: "/apply" },
-  { icon: MapPin, label: "동아리방 예약", href: "/reservation" },
+  { icon: FileCheck, label: "증명서 발급", href: "/my" },
+  {
+    icon: FolderPlus,
+    label: "운영진에 지원",
+    href: "/support/faqs?q=운영진+지원",
+  },
+  { icon: MapPin, label: "동아리방 예약", href: "/support/faqs?q=동아리방" },
   { icon: HeartPulse, label: "스터디 개설", href: "/studies/create" },
-  { icon: BookMarked, label: "스터디 가이드", href: "/guide" },
+  { icon: BookMarked, label: "스터디 가이드", href: "/studies/guide" },
   { icon: BarChart3, label: "공지사항", href: "/support/announcements" },
 ];
 

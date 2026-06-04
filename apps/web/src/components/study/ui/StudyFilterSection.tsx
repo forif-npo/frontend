@@ -149,10 +149,6 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
     })),
   ];
 
-  const labelClass = isCompact
-    ? "text-[14px] font-bold text-gray-900"
-    : "whitespace-nowrap text-[17px] font-bold text-gray-900";
-
   return (
     <div
       className={clsx(
@@ -161,7 +157,12 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
         className,
       )}
     >
-      <div className="flex items-start gap-6 pb-6 max-md:flex-col">
+      <div
+        className={clsx(
+          "flex items-start gap-6 max-md:flex-col",
+          filterTags.length > 0 && "pb-6",
+        )}
+      >
         <div className="flex items-center gap-3 max-md:w-full">
           <span className="whitespace-nowrap text-[17px] font-bold text-gray-900 max-md:w-20">
             진행 학기

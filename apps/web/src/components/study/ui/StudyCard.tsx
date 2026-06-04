@@ -86,53 +86,71 @@ export function StudyCard(props: StudyCardProps) {
     </div>
   );
 
-  // ── Home variant ──
   if (variant === "home") {
     const s = study as Study;
     return (
       <Link
-        href={`/studies/${s.id}`}
-        className="rounded-3 border-border-gray-light bg-surface-white group flex flex-col overflow-hidden border transition-shadow hover:shadow-md"
+        href={`/studies/detail/${s.id}`}
+        className="rounded-3 border-border-gray-light bg-surface-white group flex flex-row overflow-hidden border transition-shadow hover:shadow-md md:flex-col"
       >
-        {imageSection}
-        <div className="flex flex-1 flex-col p-5 md:p-8">
-          <div className="mb-4 flex flex-wrap gap-2">
+        {/* Mobile: small thumbnail / Desktop: full-width image */}
+        <div className="relative h-auto w-[120px] shrink-0 bg-[#DFE8F4] md:hidden">
+          <Image
+            src={imgUrl}
+            alt={studyName}
+            fill
+            className="object-cover"
+            sizes="120px"
+          />
+        </div>
+        <div className="hidden md:block">{imageSection}</div>
+
+        <div className="flex flex-1 flex-col p-4 md:p-8">
+          <div className="mb-2 flex flex-wrap gap-1 md:mb-4 md:gap-2">
             <Badge
               label={getRecruitStatusLabel(s.recruit_status)}
               variant={getRecruitStatusBadgeVariant(s.recruit_status)}
               appearance="solid-pastel"
-              size="medium"
+              size="small"
             />
-            <Badge
-              label={getDifficultyLabel(s.difficulty)}
-              variant={getDifficultyBadgeVariant(s.difficulty)}
-              appearance="solid-pastel"
-              size="medium"
-            />
-            {s.tags.map((tag) => (
+            {s.tags.slice(0, 1).map((tag) => (
               <Badge
                 key={tag}
                 label={tag}
                 variant="info"
                 appearance="solid-pastel"
-                size="medium"
+                size="small"
               />
             ))}
+            <span className="md:hidden" />
+            <Badge
+              label={getDifficultyLabel(s.difficulty)}
+              variant={getDifficultyBadgeVariant(s.difficulty)}
+              appearance="solid-pastel"
+              size="small"
+              // hide on mobile to save space — shown in desktop below
+            />
           </div>
           <Body
             size="l"
-            className="text-text-basic mb-2 line-clamp-1 font-bold"
+            className="text-text-basic mb-1 line-clamp-1 font-bold md:mb-2"
           >
             {studyName}
           </Body>
-          <Body size="m" className="text-text-subtle mb-4 line-clamp-3">
+          <Body
+            size="m"
+            className="text-text-subtle mb-2 line-clamp-2 md:mb-4 md:line-clamp-3"
+          >
             {oneLiner}
           </Body>
           <div className="mt-auto flex items-center justify-between">
-            <Body size="s" className="text-text-subtle">
+            <Body size="s" className="text-text-subtle truncate">
               멘토: {getMentorText(primaryMentor, secondaryMentor)}
             </Body>
-            <Label size="m" className="text-text-primary group-hover:underline">
+            <Label
+              size="m"
+              className="text-text-primary ml-2 shrink-0 group-hover:underline"
+            >
               자세히 보기 →
             </Label>
           </div>

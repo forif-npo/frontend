@@ -69,7 +69,7 @@ const UrgentBadge = ({ variant }: { variant: AlertVariant }) => {
   return (
     <span
       className={cn(
-        "inline-flex h-[48px] shrink-0 items-center justify-center gap-1 rounded-[6px] px-[10px] py-2",
+        "inline-flex h-[48px] shrink-0 items-center justify-center gap-1 rounded-[6px] py-2 pl-[12px] pr-[14px]",
         variantClaases[variant],
       )}
     >

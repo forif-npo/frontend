@@ -33,11 +33,11 @@ export default async function RootLayout({
     <html
       lang={"ko"}
       suppressHydrationWarning
-      className={`${pretendard.variable} overflow-x-hidden`}
+      className={`${pretendard.variable} overflow-x-clip`}
     >
       <body
         style={{ backgroundColor: "var(--background)" }}
-        className="scrollbar-hidden overflow-x-hidden"
+        className="scrollbar-hidden overflow-x-clip"
       >
         <SessionProvider session={session}>
           <ApiClientProvider>
