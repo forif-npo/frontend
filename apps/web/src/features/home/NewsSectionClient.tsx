@@ -27,10 +27,13 @@ interface Props {
 export function NewsSectionClient({ announcements, mediumPosts }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("all");
 
-  const allItems = [
-    ...announcements.slice(0, 2),
-    ...mediumPosts.slice(0, 2),
-  ].slice(0, 4);
+  const allItems = [...announcements.slice(0, 6), ...mediumPosts.slice(0, 6)]
+    .sort((a, b) => {
+      const da = a.date ? new Date(a.date).getTime() : 0;
+      const db = b.date ? new Date(b.date).getTime() : 0;
+      return db - da;
+    })
+    .slice(0, 4);
 
   const itemsMap: Record<Tab, NewsItem[]> = {
     all: allItems,

@@ -12,6 +12,7 @@ const publicRoutes = [
   "/support/faqs",
   "/support/announcements",
   "/studies/list",
+  "/studies/guide",
   "/club/",
   "/club/team",
   "/club/rule",

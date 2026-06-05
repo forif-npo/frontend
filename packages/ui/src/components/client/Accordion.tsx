@@ -43,7 +43,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   return (
     <div className="border-divider-gray-light w-full border-b">
       <button
-        className="focus:ring-border-primary flex w-full items-center justify-between px-6 py-6 text-left focus:outline-none focus:ring-2"
+        className="focus:ring-border-primary flex w-full items-center justify-between px-6 py-6 text-left focus:outline-none focus:ring-2 focus:ring-inset"
         onClick={onClick}
         aria-expanded={isOpen}
         aria-controls={contentId}
@@ -78,10 +78,14 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 
 interface AccordionProps {
   items: Omit<AccordionItemProps, "isOpen" | "onClick">[];
+  defaultOpenIndex?: number | null;
 }
 
-export const Accordion: React.FC<AccordionProps> = ({ items }) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+export const Accordion: React.FC<AccordionProps> = ({
+  items,
+  defaultOpenIndex = null,
+}) => {
+  const [openIndex, setOpenIndex] = useState<number | null>(defaultOpenIndex);
 
   const handleItemClick = (index: number) => {
     setOpenIndex((prevIndex) => (prevIndex === index ? null : index));

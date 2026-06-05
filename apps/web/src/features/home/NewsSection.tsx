@@ -9,6 +9,7 @@ export type NewsItem = {
   imageUrl?: string;
   href: string;
   linkLabel: string;
+  date?: string; // ISO string
 };
 
 async function getMediumPosts(): Promise<NewsItem[]> {
@@ -38,6 +39,7 @@ async function getMediumPosts(): Promise<NewsItem[]> {
         imageUrl,
         href: item.link,
         linkLabel: "자세히보기 →",
+        date: item.pubDate ?? undefined,
       };
     });
   } catch {
@@ -59,6 +61,7 @@ export async function NewsSection() {
     imageUrl: a.imageUrls?.[0],
     href: `/support/announcements/${a.postId}`,
     linkLabel: "자세히보기 →",
+    date: a.createdAt,
   }));
 
   return (

@@ -44,7 +44,7 @@ export default function FaqPage() {
         <Breadcrumb
           items={[
             { label: "홈", href: "/" },
-            { label: "지원", href: "/support" },
+            { label: "지원" },
             { label: "자주 묻는 질문" },
           ]}
         />
@@ -78,7 +78,7 @@ export default function FaqPage() {
       )}
 
       {!isLoading && !errorMessage && items.length > 0 && (
-        <FaqAccordionList key={query} items={items} />
+        <FaqAccordionList key={query} items={items} hasQuery={!!query} />
       )}
 
       <div className="mt-8">

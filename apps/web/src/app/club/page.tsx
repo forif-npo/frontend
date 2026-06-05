@@ -160,6 +160,7 @@ export default function ClubPage() {
           }}
         >
           <h2
+            id="history"
             style={{
               fontSize: "36pt",
               lineHeight: "44pt",

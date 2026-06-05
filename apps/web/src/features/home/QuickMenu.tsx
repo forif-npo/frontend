@@ -48,8 +48,8 @@ const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   { icon: FileCheck, label: "증명서 발급", href: "/my" },
   {
     icon: FolderPlus,
-    label: "운영진에 지원",
-    href: "/support/faqs?q=운영진+지원",
+    label: "운영진 지원",
+    href: "/support/faqs?q=운영진에+지원",
   },
   { icon: MapPin, label: "동아리방 예약", href: "/support/faqs?q=동아리방" },
   { icon: HeartPulse, label: "스터디 개설", href: "/studies/create" },

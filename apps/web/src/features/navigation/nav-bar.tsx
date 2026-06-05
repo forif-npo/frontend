@@ -162,22 +162,6 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                   key={menu.label}
                   className="rounded-3 bg-surface-white border-border-gray-light overflow-hidden border"
                 >
-                  <Link
-                    href={menu.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="border-divider-gray-light flex items-center justify-between border-b px-5 py-4"
-                  >
-                    <span className="text-text-basic text-[17px] font-bold leading-[1.5]">
-                      {menu.label}
-                    </span>
-                    <span
-                      className="text-text-subtle text-[15px] leading-[1.5]"
-                      aria-hidden="true"
-                    >
-                      바로가기
-                    </span>
-                  </Link>
-
                   {/* Sub Menu Grid */}
                   {menu.subMenus && (
                     <div className="grid grid-cols-2 gap-x-3 gap-y-1 p-3">
@@ -239,17 +223,6 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                   className="bg-surface-white border-divider-gray-light shadow-divider-primary-light absolute left-0 top-full z-50 w-full border-t px-16 py-4 shadow"
                   role="menubar"
                 >
-                  <div className="mb-4 flex flex-row items-center gap-4">
-                    <Title className="py-2.5">{title || label}</Title>
-                    <LinkButton
-                      onClick={() => setOpenMenu(null)}
-                      href={href}
-                      size="small"
-                      className="hidden sm:block"
-                    >
-                      {navigate}
-                    </LinkButton>
-                  </div>
                   <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 md:grid-cols-4">
                     {subMenus.map(({ label: subLabel, href: subHref }) => (
                       <li key={subLabel} className="py-2.5" role="menuitem">

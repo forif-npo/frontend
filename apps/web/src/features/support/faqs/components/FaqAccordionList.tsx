@@ -7,9 +7,13 @@ import type { FaqPost } from "../types/faq.type";
 
 type FaqAccordionListProps = {
   items: FaqPost[];
+  hasQuery?: boolean;
 };
 
-export function FaqAccordionList({ items }: FaqAccordionListProps) {
+export function FaqAccordionList({
+  items,
+  hasQuery = false,
+}: FaqAccordionListProps) {
   if (items.length === 0) {
     return (
       <div className="py-12 text-center text-sm text-gray-500">
@@ -32,7 +36,10 @@ export function FaqAccordionList({ items }: FaqAccordionListProps) {
 
   return (
     <div className="mt-6">
-      <Accordion items={accordionItems} />
+      <Accordion
+        items={accordionItems}
+        defaultOpenIndex={hasQuery ? 0 : null}
+      />
     </div>
   );
 }
