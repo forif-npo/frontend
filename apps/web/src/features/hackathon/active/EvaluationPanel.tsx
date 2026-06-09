@@ -6,10 +6,12 @@ import { Panel, PanelHeader } from "../shared";
 export function EvaluationPanel({
   criteria,
   teams,
+  evaluatedTeamIds,
   onEvaluate,
 }: {
   criteria: Criterion[];
   teams: Team[];
+  evaluatedTeamIds: Set<number>;
   onEvaluate: (team: Team) => void;
 }) {
   return (
@@ -29,28 +31,33 @@ export function EvaluationPanel({
         </Body>
       ) : (
         <div className="border-divider-gray-light mt-2 border-t">
-          {teams.map((team) => (
-            <article
-              key={team.hackathon_team_id}
-              className="border-divider-gray-light -mx-6 flex flex-col gap-3 border-b px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div>
-                <Label size="s" className="text-text-basic block font-bold">
-                  {team.name}
-                </Label>
-                <Body size="s" className="text-text-subtle mt-1">
-                  {team.topic || "주제 미정"}
-                </Body>
-              </div>
-              <Button
-                variant="primary"
-                size="x-small"
-                onClick={() => onEvaluate(team)}
+          {teams.map((team) => {
+            const isEvaluated = evaluatedTeamIds.has(team.hackathon_team_id);
+
+            return (
+              <article
+                key={team.hackathon_team_id}
+                className="border-divider-gray-light -mx-6 flex flex-col gap-3 border-b px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
               >
-                평가하기
-              </Button>
-            </article>
-          ))}
+                <div>
+                  <Label size="s" className="text-text-basic block font-bold">
+                    {team.name}
+                  </Label>
+                  <Body size="s" className="text-text-subtle mt-1">
+                    {team.topic || "주제 미정"}
+                  </Body>
+                </div>
+                <Button
+                  variant={isEvaluated ? "secondary" : "primary"}
+                  size="x-small"
+                  disabled={isEvaluated}
+                  onClick={() => onEvaluate(team)}
+                >
+                  {isEvaluated ? "평가 완료" : "평가하기"}
+                </Button>
+              </article>
+            );
+          })}
         </div>
       )}
     </Panel>

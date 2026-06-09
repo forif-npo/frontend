@@ -111,6 +111,9 @@ export function ActiveHackathonMain({
   >({});
   const [existingEvaluation, setExistingEvaluation] =
     useState<Evaluation | null>(null);
+  const [evaluatedTeamIds, setEvaluatedTeamIds] = useState<Set<number>>(
+    () => new Set(),
+  );
 
   const isRegistered = participant?.status === "REGISTERED";
   const isTeamBuilding = stage === "TEAM_BUILDING";
@@ -160,6 +163,7 @@ export function ActiveHackathonMain({
     let ignore = false;
     if (!isJudging) {
       setCriteria([]);
+      setEvaluatedTeamIds(new Set());
       return;
     }
 
@@ -177,6 +181,38 @@ export function ActiveHackathonMain({
       ignore = true;
     };
   }, [isJudging, onFetchCriteria]);
+
+  useEffect(() => {
+    let ignore = false;
+    if (!isJudging || evaluableTeams.length === 0) {
+      setEvaluatedTeamIds(new Set());
+      return;
+    }
+
+    const load = async () => {
+      const results = await Promise.all(
+        evaluableTeams.map(async (team) => {
+          const evaluation = await onGetMyEvaluation(team.hackathon_team_id);
+          return evaluation ? team.hackathon_team_id : null;
+        }),
+      );
+
+      if (!ignore) {
+        setEvaluatedTeamIds(
+          new Set(
+            results.filter(
+              (teamId): teamId is number => typeof teamId === "number",
+            ),
+          ),
+        );
+      }
+    };
+
+    void load();
+    return () => {
+      ignore = true;
+    };
+  }, [evaluableTeams, isJudging, onGetMyEvaluation]);
 
   const runModalAction = async (action: () => Promise<void>) => {
     try {
@@ -327,7 +363,11 @@ export function ActiveHackathonMain({
   };
 
   const openEvaluation = async (team: Team) => {
-    setEvaluationTarget(team);
+    if (evaluatedTeamIds.has(team.hackathon_team_id)) {
+      return;
+    }
+
+    setLocalError(null);
     setExistingEvaluation(null);
     setEvaluationScores(
       Object.fromEntries(criteria.map((c) => [c.criterion_id, ""])) as Record<
@@ -338,19 +378,16 @@ export function ActiveHackathonMain({
 
     try {
       const evaluation = await onGetMyEvaluation(team.hackathon_team_id);
-      setExistingEvaluation(evaluation);
       if (evaluation) {
-        setEvaluationScores(
-          Object.fromEntries(
-            criteria.map((criterion) => {
-              const score = evaluation.scores.find(
-                (item) => item.criterion_id === criterion.criterion_id,
-              );
-              return [criterion.criterion_id, score ? String(score.score) : ""];
-            }),
-          ) as Record<number, string>,
-        );
+        setEvaluatedTeamIds((prev) => {
+          const next = new Set(prev);
+          next.add(team.hackathon_team_id);
+          return next;
+        });
+        return;
       }
+      setExistingEvaluation(null);
+      setEvaluationTarget(team);
     } catch (error) {
       setLocalError(await handleApiError(error));
     }
@@ -381,6 +418,11 @@ export function ActiveHackathonMain({
         scores,
         !!existingEvaluation,
       );
+      setEvaluatedTeamIds((prev) => {
+        const next = new Set(prev);
+        next.add(evaluationTarget.hackathon_team_id);
+        return next;
+      });
       setEvaluationTarget(null);
     });
   };
@@ -426,6 +468,7 @@ export function ActiveHackathonMain({
           <EvaluationPanel
             criteria={criteria}
             teams={evaluableTeams}
+            evaluatedTeamIds={evaluatedTeamIds}
             onEvaluate={(team) => void openEvaluation(team)}
           />
         )}
