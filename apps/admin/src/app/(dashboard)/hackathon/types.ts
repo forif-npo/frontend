@@ -37,4 +37,5 @@ export interface HackathonFormState {
   team_building_ends_at: string;
   starts_at: string;
   ends_at: string;
+  duration_hours: string;
 }

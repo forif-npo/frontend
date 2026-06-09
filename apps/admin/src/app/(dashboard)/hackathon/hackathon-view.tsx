@@ -29,7 +29,7 @@ import type {
   HackathonStatus,
   UpdateHackathonRequest,
 } from "@core/types/hackathon";
-import { ClipboardList, Loader2, Plus } from "lucide-react";
+import { ClipboardList, Download, Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -65,6 +65,7 @@ const EMPTY_FORM: HackathonFormState = {
   team_building_ends_at: "",
   starts_at: "",
   ends_at: "",
+  duration_hours: "8",
 };
 
 // 상태별 행 액션 노출 규칙
@@ -126,6 +127,46 @@ function toLocalDateTime(value: string) {
   return value;
 }
 
+function toDateTimeInputValue(date: Date) {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate(),
+  )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function toDateTimeMs(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.getTime();
+}
+
+function addHoursToDateTime(value: string, hours: number) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return undefined;
+  date.setMinutes(date.getMinutes() + hours * 60);
+  return toDateTimeInputValue(date);
+}
+
+function calculateDurationHours(startsAt?: string, endsAt?: string) {
+  if (!startsAt || !endsAt) return EMPTY_FORM.duration_hours;
+
+  const startsAtMs = toDateTimeMs(startsAt);
+  const endsAtMs = toDateTimeMs(endsAt);
+  if (startsAtMs === null || endsAtMs === null || endsAtMs <= startsAtMs) {
+    return EMPTY_FORM.duration_hours;
+  }
+
+  const hours = (endsAtMs - startsAtMs) / (1000 * 60 * 60);
+  return Number.isInteger(hours) ? String(hours) : hours.toFixed(1);
+}
+
+function formatDateTimeLabel(value?: string) {
+  if (!value) return "-";
+  const [date, time] = value.split("T");
+  if (!date || !time) return value;
+  return `${date.replaceAll("-", ". ")} ${time}`;
+}
+
 function getNextStatus(status: HackathonStatus) {
   const index = HACKATHON_STATUS_FLOW.indexOf(status);
   return index >= 0 ? HACKATHON_STATUS_FLOW[index + 1] : undefined;
@@ -135,7 +176,25 @@ function isActiveHackathon(status: HackathonStatus) {
   return status !== "ENDED";
 }
 
+function toPresentationDownloadUrl(fileUrl?: string | null) {
+  if (!fileUrl || !fileUrl.includes("/api/v1/files/")) {
+    return null;
+  }
+
+  try {
+    const url = new URL(fileUrl);
+    url.searchParams.set("download", "true");
+    return url.toString();
+  } catch {
+    const separator = fileUrl.includes("?") ? "&" : "?";
+    return `${fileUrl}${separator}download=true`;
+  }
+}
+
 function toFormState(hackathon: Hackathon): HackathonFormState {
+  const startsAt = toInputDateTime(hackathon.starts_at);
+  const endsAt = toInputDateTime(hackathon.ends_at);
+
   return {
     held_year: String(hackathon.held_year),
     held_semester: String(hackathon.held_semester),
@@ -147,8 +206,9 @@ function toFormState(hackathon: Hackathon): HackathonFormState {
     recruit_ends_at: toInputDateTime(hackathon.recruit_ends_at),
     team_building_starts_at: toInputDateTime(hackathon.team_building_starts_at),
     team_building_ends_at: toInputDateTime(hackathon.team_building_ends_at),
-    starts_at: toInputDateTime(hackathon.starts_at),
-    ends_at: toInputDateTime(hackathon.ends_at),
+    starts_at: startsAt,
+    ends_at: endsAt,
+    duration_hours: calculateDurationHours(startsAt, endsAt),
   };
 }
 
@@ -231,11 +291,42 @@ export function HackathonView({ initialData }: HackathonViewProps) {
   };
 
   const handleSubmitForm = async () => {
+    const recruitStartsAt = toLocalDateTime(form.recruit_starts_at);
+    const teamBuildingStartsAt = toLocalDateTime(form.team_building_starts_at);
     const startsAt = toLocalDateTime(form.starts_at);
-    const endsAt = toLocalDateTime(form.ends_at);
+    const durationHours = Number(form.duration_hours);
+    const endsAt = addHoursToDateTime(form.starts_at, durationHours);
 
-    if (!startsAt || !endsAt) {
-      alert("시작/종료 일시를 입력해주세요.");
+    if (!recruitStartsAt || !teamBuildingStartsAt || !startsAt) {
+      alert("모집 시작/팀 빌딩 시작/해커톤 시작 일시를 입력해주세요.");
+      return;
+    }
+
+    if (!Number.isFinite(durationHours) || durationHours <= 0 || !endsAt) {
+      alert("진행 시간을 올바르게 입력해주세요.");
+      return;
+    }
+
+    const recruitStartsAtMs = toDateTimeMs(form.recruit_starts_at);
+    const teamBuildingStartsAtMs = toDateTimeMs(form.team_building_starts_at);
+    const startsAtMs = toDateTimeMs(form.starts_at);
+
+    if (
+      recruitStartsAtMs === null ||
+      teamBuildingStartsAtMs === null ||
+      startsAtMs === null
+    ) {
+      alert("일시 형식을 확인해주세요.");
+      return;
+    }
+
+    if (recruitStartsAtMs >= teamBuildingStartsAtMs) {
+      alert("모집 시작은 팀 빌딩 시작보다 빨라야 합니다.");
+      return;
+    }
+
+    if (teamBuildingStartsAtMs >= startsAtMs) {
+      alert("팀 빌딩 시작은 해커톤 시작보다 빨라야 합니다.");
       return;
     }
 
@@ -247,12 +338,10 @@ export function HackathonView({ initialData }: HackathonViewProps) {
           title: form.title.trim() || undefined,
           description: form.description.trim() || undefined,
           location: form.location.trim() || undefined,
-          recruit_starts_at: toLocalDateTime(form.recruit_starts_at),
-          recruit_ends_at: toLocalDateTime(form.recruit_ends_at),
-          team_building_starts_at: toLocalDateTime(
-            form.team_building_starts_at,
-          ),
-          team_building_ends_at: toLocalDateTime(form.team_building_ends_at),
+          recruit_starts_at: recruitStartsAt,
+          recruit_ends_at: teamBuildingStartsAt,
+          team_building_starts_at: teamBuildingStartsAt,
+          team_building_ends_at: startsAt,
           starts_at: startsAt,
           ends_at: endsAt,
         };
@@ -287,12 +376,10 @@ export function HackathonView({ initialData }: HackathonViewProps) {
           title,
           description: form.description.trim() || undefined,
           location: form.location.trim() || undefined,
-          recruit_starts_at: toLocalDateTime(form.recruit_starts_at),
-          recruit_ends_at: toLocalDateTime(form.recruit_ends_at),
-          team_building_starts_at: toLocalDateTime(
-            form.team_building_starts_at,
-          ),
-          team_building_ends_at: toLocalDateTime(form.team_building_ends_at),
+          recruit_starts_at: recruitStartsAt,
+          recruit_ends_at: teamBuildingStartsAt,
+          team_building_starts_at: teamBuildingStartsAt,
+          team_building_ends_at: startsAt,
           starts_at: startsAt,
           ends_at: endsAt,
         };
@@ -362,6 +449,11 @@ export function HackathonView({ initialData }: HackathonViewProps) {
   };
 
   const submittedCount = submissionStatuses.filter((s) => s.submitted).length;
+  const formDurationHours = Number(form.duration_hours);
+  const calculatedHackathonEndsAt =
+    Number.isFinite(formDurationHours) && formDurationHours > 0
+      ? addHoursToDateTime(form.starts_at, formDurationHours)
+      : undefined;
 
   return (
     <div className="space-y-6 p-8">
@@ -538,7 +630,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="recruit-start">모집 시작</Label>
+                <Label htmlFor="recruit-start">모집 시작 *</Label>
                 <Input
                   id="recruit-start"
                   type="datetime-local"
@@ -550,19 +642,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="recruit-end">모집 종료</Label>
-                <Input
-                  id="recruit-end"
-                  type="datetime-local"
-                  value={form.recruit_ends_at}
-                  disabled={submitting}
-                  onChange={(e) =>
-                    updateForm("recruit_ends_at", e.target.value)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="team-start">팀 빌딩 시작</Label>
+                <Label htmlFor="team-start">팀 빌딩 시작 *</Label>
                 <Input
                   id="team-start"
                   type="datetime-local"
@@ -570,18 +650,6 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                   disabled={submitting}
                   onChange={(e) =>
                     updateForm("team_building_starts_at", e.target.value)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="team-end">팀 빌딩 종료</Label>
-                <Input
-                  id="team-end"
-                  type="datetime-local"
-                  value={form.team_building_ends_at}
-                  disabled={submitting}
-                  onChange={(e) =>
-                    updateForm("team_building_ends_at", e.target.value)
                   }
                 />
               </div>
@@ -596,14 +664,47 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="ends-at">종료 일시 *</Label>
-                <Input
-                  id="ends-at"
-                  type="datetime-local"
-                  value={form.ends_at}
-                  disabled={submitting}
-                  onChange={(e) => updateForm("ends_at", e.target.value)}
-                />
+                <Label htmlFor="duration-hours">진행 시간 *</Label>
+                <div className="relative">
+                  <Input
+                    id="duration-hours"
+                    type="number"
+                    min={1}
+                    step={0.5}
+                    className="pr-12"
+                    value={form.duration_hours}
+                    disabled={submitting}
+                    onChange={(e) =>
+                      updateForm("duration_hours", e.target.value)
+                    }
+                  />
+                  <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm">
+                    시간
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-muted/40 rounded-md border p-4">
+              <div className="grid gap-3 text-sm md:grid-cols-3">
+                <div className="space-y-1">
+                  <p className="text-muted-foreground">모집 종료</p>
+                  <p className="font-medium">
+                    {formatDateTimeLabel(form.team_building_starts_at)}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-muted-foreground">팀 빌딩 종료</p>
+                  <p className="font-medium">
+                    {formatDateTimeLabel(form.starts_at)}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-muted-foreground">종료 일시</p>
+                  <p className="font-medium">
+                    {formatDateTimeLabel(calculatedHackathonEndsAt)}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -756,32 +857,50 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                 총 {submissionStatuses.length}팀 중 {submittedCount}팀 제출 완료
               </div>
               <div className="divide-border divide-y rounded-md border">
-                {submissionStatuses.map((status) => (
-                  <div
-                    key={status.hackathon_team_id}
-                    className="flex items-center justify-between gap-4 px-4 py-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate font-medium">{status.team_name}</p>
-                      <p className="text-muted-foreground text-sm">
-                        {status.leader_name} · {status.member_count}명
-                        {status.submission
-                          ? ` · ${status.submission.project_name}`
-                          : ""}
-                      </p>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className={
-                        status.submitted
-                          ? "border-green-500 bg-green-50 text-green-700"
-                          : "border-gray-400 bg-gray-50 text-gray-600"
-                      }
+                {submissionStatuses.map((status) => {
+                  const presentationDownloadUrl = toPresentationDownloadUrl(
+                    status.submission?.presentation_file,
+                  );
+
+                  return (
+                    <div
+                      key={status.hackathon_team_id}
+                      className="flex items-center justify-between gap-4 px-4 py-3"
                     >
-                      {status.submitted ? "제출 완료" : "미제출"}
-                    </Badge>
-                  </div>
-                ))}
+                      <div className="min-w-0">
+                        <p className="truncate font-medium">
+                          {status.team_name}
+                        </p>
+                        <p className="text-muted-foreground text-sm">
+                          {status.leader_name} · {status.member_count}명
+                          {status.submission
+                            ? ` · ${status.submission.project_name}`
+                            : ""}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        {presentationDownloadUrl && (
+                          <Button asChild size="sm" variant="outline">
+                            <a href={presentationDownloadUrl}>
+                              <Download className="h-4 w-4" />
+                              발표 자료
+                            </a>
+                          </Button>
+                        )}
+                        <Badge
+                          variant="outline"
+                          className={
+                            status.submitted
+                              ? "border-green-500 bg-green-50 text-green-700"
+                              : "border-gray-400 bg-gray-50 text-gray-600"
+                          }
+                        >
+                          {status.submitted ? "제출 완료" : "미제출"}
+                        </Badge>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
