@@ -39,9 +39,8 @@ export const serviceData: ServiceData[] = [
   {
     id: "2",
     badge: "해커톤",
-    title: "포리톤",
-    description:
-      "다음 학기 포리프를 이끌어나갈 멘토에 지원하세요. 여러분들의 많은 참여를 부탁드립니다! 문의는 '문의하기' 탭을 참조해주세요.",
+    title: "포리프 해커톤",
+    description: "저희 동아리의 대표 행사, 포리프 해커톤에 대해 알아보세요.",
     link: "/hackathon",
   },
   {
@@ -49,7 +48,7 @@ export const serviceData: ServiceData[] = [
     badge: "회계",
     title: "회계 공시",
     description:
-      "스터디 수료 완료 시 해당 스터디를 수료했다는 증명서를 발급받을 수 있습니다.",
+      "포리프는 회비 및 운영 예산의 사용 내역을 투명하게 공개합니다. 수입·지출 내역을 정리해 회원 누구나 확인할 수 있도록 공시하고 있습니다.",
     link: "/accounting",
   },
   {

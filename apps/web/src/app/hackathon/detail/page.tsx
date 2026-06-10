@@ -10,7 +10,7 @@ import {
   getMainStage,
 } from "@/features/hackathon";
 import { statusBadgeClass, statusLabel } from "@/features/hackathon/utils";
-import { HackathonPageSkeleton } from "@/components/skeleton/HackathonSkeleton";
+import { HackathonDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { handleApiError } from "@core/utils/api-client";
 import { Body, Breadcrumb, Heading, Link } from "@ui/components/server";
 import { Button } from "@ui/components/client";
@@ -151,7 +151,7 @@ export default function HackathonDetailPage() {
   );
 
   if (loading) {
-    return <HackathonPageSkeleton />;
+    return <HackathonDetailSkeleton />;
   }
 
   if (error) {

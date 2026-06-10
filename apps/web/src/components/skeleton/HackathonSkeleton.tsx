@@ -6,22 +6,68 @@ import { Bone } from "./Bone";
 export function HackathonPageSkeleton() {
   return (
     <div>
-      {/* Timer hero skeleton */}
+      {/* Timer hero skeleton - TimerHero 레이아웃과 동일하게 정렬 */}
       <div className="bg-surface-gray-subtler flex min-h-[calc(var(--vh)-80px)] items-center justify-center px-6 py-20">
         <div className="flex w-full max-w-5xl flex-col items-center gap-8">
+          {/* Badge */}
           <Bone className="h-7 w-20 rounded-full" />
-          <Bone className="h-9 w-72" />
-          <Bone className="h-4 w-32" />
-          <div className="my-4 flex items-center gap-4 sm:gap-8">
-            <Bone className="h-24 w-20 sm:h-40 sm:w-32 lg:h-52 lg:w-44" />
-            <Bone className="h-24 w-20 sm:h-40 sm:w-32 lg:h-52 lg:w-44" />
-            <Bone className="h-24 w-20 sm:h-40 sm:w-32 lg:h-52 lg:w-44" />
-            <Bone className="h-24 w-20 sm:h-40 sm:w-32 lg:h-52 lg:w-44" />
+          {/* Title */}
+          <Bone className="h-9 w-72 sm:h-12 sm:w-96" />
+          {/* Countdown blocks */}
+          <div className="flex items-start justify-center gap-4 sm:gap-8 lg:gap-12">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex flex-col items-center gap-2">
+                <Bone className="h-24 w-20 sm:h-40 sm:w-32 lg:h-52 lg:w-44" />
+                <Bone className="h-3 w-10 sm:h-4 sm:w-12" />
+              </div>
+            ))}
           </div>
+          {/* Date */}
           <Bone className="h-4 w-40" />
+          {/* Scroll hint */}
+          <Bone className="mt-8 h-9 w-16" />
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * 해커톤 상세 페이지 스켈레톤 (타이머 히어로 없음)
+ */
+export function HackathonDetailSkeleton() {
+  return (
+    <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
+      {/* 헤더: 브레드크럼 + 제목 + 상태 */}
+      <div className="mb-6 flex flex-col gap-3">
+        <Bone className="h-4 w-48" />
+        <div className="flex flex-wrap items-center gap-3">
+          <Bone className="h-8 w-64" />
+          <Bone className="h-6 w-16 rounded-full" />
+        </div>
+      </div>
+
+      {/* EventFacts */}
+      <div className="bg-surface-white border-border-gray-light rounded-3 mb-6 grid grid-cols-2 gap-3 border p-4 shadow-sm sm:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="bg-surface-gray-subtler border-border-gray-light rounded-2 flex flex-col gap-1.5 border p-4"
+          >
+            <Bone className="h-3 w-10" />
+            <Bone className="h-5 w-24" />
+          </div>
+        ))}
+      </div>
+
+      {/* 본문 */}
+      <div className="rounded-3 border-border-gray-light bg-surface-white border p-8">
+        <Bone className="mb-4 h-7 w-48" />
+        <Bone className="mb-2 h-4 w-full" />
+        <Bone className="mb-2 h-4 w-full" />
+        <Bone className="h-4 w-2/3" />
+      </div>
+    </main>
   );
 }
 

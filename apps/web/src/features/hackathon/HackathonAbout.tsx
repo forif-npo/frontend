@@ -2,10 +2,10 @@ import { Body, Heading, Label } from "@ui/components/server";
 
 const STEPS = [
   { num: 1, title: "참가 신청", desc: "현재 학기 부원 누구나" },
-  { num: 2, title: "팀 구성", desc: "팀장 승인으로 합류" },
-  { num: 3, title: "개발 및 제출", desc: "24시간 집중 개발" },
+  { num: 2, title: "팀 구성", desc: "스터디, 개별 참가 가능" },
+  { num: 3, title: "개발 및 제출", desc: "12시간 집중 개발" },
   { num: 4, title: "상호 평가", desc: "참가자 투표로 심사" },
-  { num: 5, title: "수상 및 아카이브", desc: "결과물 영구 보존" },
+  { num: 5, title: "수상 및 아카이브", desc: "결과물 보존" },
 ];
 
 /**
@@ -31,8 +31,8 @@ export function HackathonAbout() {
             아이디어를 팀 프로젝트로 완성하는 하루
           </Heading>
           <Body size="m" className="text-text-subtle max-w-lg">
-            FORIF 해커톤은 학기 중 쌓은 기술과 관심사를 바탕으로 팀을 만들고,
-            짧은 시간 안에 문제 정의부터 결과물 발표까지 경험하는 행사입니다.
+            FORIF 해커톤은 학기 중 쌓은 기술과 관심사를 바탕으로 팀을 꾸려, 짧은
+            시간 안에 기획, 개발 및 결과물 발표까지 경험하는 행사입니다.
           </Body>
         </div>
       </section>
