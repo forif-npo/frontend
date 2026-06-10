@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { ImageWithFallback } from "@/components/ImageWithFallback";
 import type { NewsItem } from "./NewsSection";
 
 type Tab = "all" | "announcement" | "medium";
@@ -108,17 +108,16 @@ function NewsCard({ item }: { item: NewsItem }) {
     >
       {/* content row */}
       <div className="flex flex-1 gap-0">
-        {item.imageUrl && (
-          <div className="relative w-[180px] shrink-0 overflow-hidden">
-            <Image
-              src={item.imageUrl}
-              alt={item.title}
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
-        )}
+        {/* 썸네일 (로드 실패/부재 시 기본 이미지로 폴백) */}
+        <div className="relative w-[180px] shrink-0 overflow-hidden bg-[#dfe8f4]">
+          <ImageWithFallback
+            src={item.imageUrl}
+            alt={item.title}
+            fill
+            className="object-cover"
+            unoptimized
+          />
+        </div>
         <div className="flex min-w-0 flex-1 flex-col justify-between p-5 md:p-6">
           <div className="flex flex-col gap-2">
             <p className="text-text-bolder truncate text-[17px] font-bold leading-[1.5]">

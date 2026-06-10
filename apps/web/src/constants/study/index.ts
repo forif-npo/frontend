@@ -16,6 +16,8 @@ export { DEFAULT_PAGE_SIZE } from "./defaults";
 
 // Utils
 export {
+  formatStudyTime,
+  formatStudyTimeRange,
   getWeekDayLabel,
   getDifficultyLabel,
   getDifficultyBadgeVariant,

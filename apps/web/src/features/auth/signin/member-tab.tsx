@@ -15,7 +15,7 @@ export default function MemberLogin() {
         <br />
         로그인을 하시면 보다 더 많은 정보와 서비스를 이용하실 수 있습니다.
       </Body>
-      <div className="border-divider-gray-light rounded-3 flex flex-col gap-6 border px-10 py-8 shadow">
+      <div className="border-divider-gray-light rounded-3 flex flex-col gap-6 border px-6 py-6 shadow sm:px-10 sm:py-8">
         <form action={handleSignIn} className="w-full">
           <GoogleButton type="submit" className="w-full" variant="secondary">
             한양대학교 이메일로 로그인

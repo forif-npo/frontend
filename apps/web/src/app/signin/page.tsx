@@ -11,7 +11,7 @@ export default async function Page() {
   }
 
   return (
-    <div className="min-h-viewport mx-auto mt-8 max-w-[800px]">
+    <div className="min-h-viewport mx-auto mt-8 max-w-[800px] px-5 sm:px-6 lg:px-0">
       <Heading size="xxs" className="text-text-subtle text-left">
         포리프 부원/멘토 로그인
       </Heading>

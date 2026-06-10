@@ -11,6 +11,32 @@ export function getWeekDayLabel(weekDay: number): string {
 }
 
 /**
+ * 스터디 시간 문자열을 HH:mm 형태로 변환
+ *
+ * 백엔드가 "18:00:00.000000" 같은 raw 시간 값을 내려주는 경우가 있어
+ * 시/분만 추출해 "18:00"으로 표시한다. 이미 "18:00"인 값도 그대로 처리된다.
+ */
+export function formatStudyTime(time?: string | null): string {
+  if (!time) return "";
+  const match = time.match(/(\d{1,2}):(\d{2})/);
+  if (!match) return time;
+  return `${match[1].padStart(2, "0")}:${match[2]}`;
+}
+
+/**
+ * 스터디 시작/종료 시간을 "HH:mm - HH:mm" 형태로 변환
+ */
+export function formatStudyTimeRange(
+  start?: string | null,
+  end?: string | null,
+): string {
+  const s = formatStudyTime(start);
+  const e = formatStudyTime(end);
+  if (!s && !e) return "";
+  return `${s} - ${e}`;
+}
+
+/**
  * 난이도 라벨 가져오기
  */
 export function getDifficultyLabel(difficulty: string): string {

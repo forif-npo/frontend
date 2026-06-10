@@ -2,7 +2,7 @@ import { InfoBox, Link } from "@ui/components/server";
 
 const InfoBoxContent = () => {
   return (
-    <div className="mx-7">
+    <div className="mx-1 sm:mx-7">
       <ul className="list-inside list-disc space-y-2">
         <li className="text-text-subtle">
           로그인{" "}

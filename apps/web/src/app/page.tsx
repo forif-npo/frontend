@@ -29,7 +29,7 @@ export default async function Page() {
           <Link href="/club/" className="w-full sm:w-auto">
             <Button className="w-full sm:w-auto">자세히 보러가기</Button>
           </Link>
-          <Link href="/club/members" className="w-full sm:w-auto">
+          <Link href="/club/recruit" className="w-full sm:w-auto">
             <Button variant="tertiary" className="w-full sm:w-auto">
               운영진 지원하기
             </Button>

@@ -1,8 +1,7 @@
-import { Body, Label } from "@ui/components/server";
-import Image from "next/image";
+import { Body } from "@ui/components/server";
 import Link from "next/link";
 import type { NewsData } from "@core/types/api";
-import { safeImageSrc } from "@/utils/image";
+import { ImageWithFallback } from "@/components/ImageWithFallback";
 
 interface NewsCardProps {
   news: NewsData;
@@ -21,18 +20,16 @@ export function NewsCard({ news }: NewsCardProps) {
       href={news.link}
       className="border-border-gray bg-surface-white-subtle group flex h-[240px] min-h-[240px] gap-6 rounded-xl border p-8 transition-shadow hover:shadow-md"
     >
-      {/* 썸네일 (있는 경우만) */}
-      {safeImageSrc(news.thumbnail) && (
-        <div className="relative h-[176px] w-[200px] shrink-0 overflow-hidden rounded-lg max-sm:hidden">
-          <Image
-            src={safeImageSrc(news.thumbnail)!}
-            alt={news.title}
-            fill
-            sizes="200px"
-            className="object-cover"
-          />
-        </div>
-      )}
+      {/* 썸네일 (로드 실패/부재 시 기본 이미지로 폴백) */}
+      <div className="relative h-[176px] w-[200px] shrink-0 overflow-hidden rounded-lg max-sm:hidden">
+        <ImageWithFallback
+          src={news.thumbnail}
+          alt={news.title}
+          fill
+          sizes="200px"
+          className="object-cover"
+        />
+      </div>
 
       {/* 콘텐츠 영역 */}
       <div className="flex flex-1 flex-col justify-between overflow-hidden">

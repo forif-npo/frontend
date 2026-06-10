@@ -6,6 +6,7 @@ import { Study } from "@/types/study";
 import { NaverMap } from "@/components/NaverMap";
 import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
 import {
+  formatStudyTimeRange,
   getDifficultyLabel,
   getRecruitStatusLabel,
   getRecruitStatusBadgeVariant,
@@ -151,7 +152,8 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
                 요일/시간
               </td>
               <td className="text-text-basic py-3 text-[15px] leading-[1.5] md:py-4 md:text-[17px]">
-                매주 {weekDayName}요일 {study.start_time} - {study.end_time}
+                매주 {weekDayName}요일{" "}
+                {formatStudyTimeRange(study.start_time, study.end_time)}
               </td>
             </tr>
             <tr>

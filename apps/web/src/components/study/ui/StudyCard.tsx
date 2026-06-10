@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  formatStudyTimeRange,
   getDifficultyBadgeVariant,
   getDifficultyLabel,
   getRecruitStatusBadgeVariant,
@@ -10,9 +11,8 @@ import {
 import type { Study, RecruitStatus, StudyDifficulty } from "@/types/study";
 import { Button } from "@ui/components/client";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
-import Image from "next/image";
 import Link from "next/link";
-import { safeImageSrc } from "@/utils/image";
+import { StudyImage } from "./StudyImage";
 
 // ── Variant-specific props ──────────────────────────────────────────
 
@@ -69,14 +69,14 @@ export function StudyCard(props: StudyCardProps) {
 
   const studyName = study.study_name;
   const oneLiner = study.one_liner;
-  const imgUrl = safeImageSrc(study.img_url) || "/images/default-study-img.png";
+  const imgUrl = study.img_url;
   const primaryMentor = study.primary_mentor_name;
   const secondaryMentor = study.secondary_mentor_name;
 
   // ── Image ──
   const imageSection = (
     <div className="relative h-[176px] w-full overflow-hidden bg-[#DFE8F4] md:h-[196px]">
-      <Image
+      <StudyImage
         src={imgUrl}
         alt={studyName}
         fill
@@ -95,7 +95,7 @@ export function StudyCard(props: StudyCardProps) {
       >
         {/* Mobile: small thumbnail / Desktop: full-width image */}
         <div className="relative h-auto w-[120px] shrink-0 bg-[#DFE8F4] md:hidden">
-          <Image
+          <StudyImage
             src={imgUrl}
             alt={studyName}
             fill
@@ -159,7 +159,7 @@ export function StudyCard(props: StudyCardProps) {
   // ── List variant ──
   if (variant === "list") {
     const s = study as Study;
-    const schedule = `${s.start_time}-${s.end_time}`;
+    const schedule = formatStudyTimeRange(s.start_time, s.end_time);
     const instructors = getMentorText(primaryMentor, secondaryMentor, "·");
 
     return (
@@ -241,7 +241,12 @@ export function StudyCard(props: StudyCardProps) {
   return (
     <div className="flex min-w-[240px] flex-col overflow-clip">
       <div className="relative h-[196px] w-full rounded-t-[12px] border border-[#c6c6c6] bg-[#dfe8f4]">
-        <Image src={imgUrl} alt={studyName} fill className="object-cover" />
+        <StudyImage
+          src={imgUrl}
+          alt={studyName}
+          fill
+          className="object-cover"
+        />
       </div>
       <div className="flex flex-col gap-4 rounded-b-[12px] border-b border-l border-r border-[#b1b8be] bg-white px-8 py-8">
         <div className="flex flex-col gap-4">
@@ -257,8 +262,8 @@ export function StudyCard(props: StudyCardProps) {
         </div>
         <div className="flex items-center gap-2 text-[17px] leading-[1.5]">
           <span className="whitespace-nowrap">
-            {getWeekDayLabel(study.week_day)} {study.start_time} -{" "}
-            {study.end_time}
+            {getWeekDayLabel(study.week_day)}{" "}
+            {formatStudyTimeRange(study.start_time, study.end_time)}
           </span>
           <span className="h-[21px] w-px bg-[#b1b8be]" />
           <span className="whitespace-nowrap">{mentorNames}</span>

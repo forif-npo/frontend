@@ -43,7 +43,7 @@ export default function MentorLogin() {
 
   return (
     <div className="mt-10 flex flex-col gap-6">
-      <div className="border-divider-gray-light rounded-3 flex flex-col gap-6 border px-10 py-8 shadow">
+      <div className="border-divider-gray-light rounded-3 flex flex-col gap-6 border px-6 py-6 shadow sm:px-10 sm:py-8">
         <form
           onSubmit={handleSubmit}
           className="flex flex-col justify-center gap-6"
