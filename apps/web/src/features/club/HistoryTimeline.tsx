@@ -1,5 +1,11 @@
-const history = [
-  { year: 2025, content: ["포리프 10주년 기념 행사"] },
+"use client";
+
+import { motion } from "motion/react";
+import { Body, Title } from "@ui/components/server";
+
+const history: { year: number; content: string[] }[] = [
+  { year: 2026, content: ["FORIF 웹 리뉴얼", "제 1회 초청 강연"] },
+  { year: 2025, content: ["포리프 10주년 기념 행사", "제 15·16회 해커톤"] },
   {
     year: 2024,
     content: [
@@ -21,156 +27,85 @@ const history = [
   },
   { year: 2021, content: ["한양대학교 중앙동아리 승격", "프로젝트 뭉공포"] },
   { year: 2020, content: ["한양대학교 준동아리 승격", "프로젝트 잔디심기"] },
-  { year: 2018, content: "청년참 지원사업선정" },
-  { year: 2017, content: "한양 학술타운 총장상 수상" },
-  { year: 2015, content: ["FORIF 창립", "소셜 벤쳐 동아리 선정"] },
+  { year: 2018, content: ["청년참 지원사업 선정"] },
+  { year: 2017, content: ["한양 학술타운 총장상 수상"] },
+  { year: 2015, content: ["FORIF 창립", "소셜 벤처 동아리 선정"] },
 ];
 
-function HistoryLine({
+function TimelineRow({
   year,
   content,
-  idx,
+  isLast,
 }: {
   year: number;
-  content: string | string[];
-  idx: number;
+  content: string[];
+  isLast: boolean;
 }) {
-  const isFirst = idx === 0;
-  const isLast = idx === history.length - 1;
-
-  // Timeline vertical line positioning
-  let lineStyle: React.CSSProperties;
-  if (isFirst) {
-    lineStyle = { top: "50%", height: "50%", bottom: 0 };
-  } else if (isLast) {
-    lineStyle = { top: 0, height: "50%" };
-  } else {
-    lineStyle = { top: 0, height: "100%" };
-  }
-
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        paddingLeft: 16,
-        paddingRight: 16,
-      }}
+    <motion.div
+      className="relative flex gap-5 sm:gap-8"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ staggerChildren: 0.08 }}
     >
       {/* Year */}
-      <div style={{ minWidth: 48, flexShrink: 0 }}>
-        <p
-          style={{
-            fontSize: "12pt",
-            lineHeight: "16pt",
-            letterSpacing: "0.4pt",
-          }}
-        >
-          {year}
-        </p>
-      </div>
-
-      {/* Dot + line */}
-      <div
-        style={{
-          position: "relative",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          alignSelf: "stretch",
-          marginLeft: 24,
-          marginRight: 24,
+      <motion.div
+        className="w-12 shrink-0 pt-0.5 text-right sm:w-16"
+        variants={{
+          hidden: { opacity: 0, y: 16 },
+          visible: { opacity: 1, y: 0 },
         }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        {/* Vertical line */}
-        <div
-          style={{
-            content: '""',
-            position: "absolute",
-            display: "block",
-            zIndex: 0,
-            left: 7,
-            width: "0.1rem",
-            backgroundColor: "rgba(0,0,0,0.12)",
-            ...lineStyle,
+        <Title size="s" className="text-text-primary">
+          {year}
+        </Title>
+      </motion.div>
+
+      {/* Dot + vertical line */}
+      <div className="relative flex flex-col items-center">
+        <motion.span
+          className="border-surface-white bg-button-primary-fill z-10 mt-1 h-4 w-4 rounded-full border-2 shadow-sm"
+          variants={{
+            hidden: { scale: 0 },
+            visible: { scale: 1 },
           }}
+          transition={{ duration: 0.4, ease: "backOut" }}
         />
-        {/* Dot */}
-        <div
-          style={{
-            width: 16,
-            height: 16,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 16,
-            marginBottom: 16,
-            zIndex: 1,
-          }}
-        >
-          <div
-            style={{
-              width: 16,
-              height: "auto",
-              aspectRatio: 1,
-              borderRadius: "50%",
-              border: "2px solid #fff",
-              backgroundColor: "#1D40BA",
-            }}
-          />
-        </div>
+        {!isLast && (
+          <span className="bg-border-gray-light absolute top-1 h-full w-0.5" />
+        )}
       </div>
 
       {/* Content */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: typeof content === "string" ? 0 : 8,
-          paddingTop: 32,
-          paddingBottom: 32,
-          width: "100%",
+      <motion.div
+        className="flex flex-col gap-1.5 pb-10"
+        variants={{
+          hidden: { opacity: 0, y: 16 },
+          visible: { opacity: 1, y: 0 },
         }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        {typeof content === "string" ? (
-          <p
-            style={{
-              fontSize: "12pt",
-              lineHeight: "16pt",
-              letterSpacing: "0.4pt",
-            }}
-          >
-            {content}
-          </p>
-        ) : (
-          content.map((label) => (
-            <p
-              key={label}
-              style={{
-                fontSize: "12pt",
-                lineHeight: "16pt",
-                letterSpacing: "0.4pt",
-              }}
-            >
-              {label}
-            </p>
-          ))
-        )}
-      </div>
-    </div>
+        {content.map((label) => (
+          <Body key={label} size="m" className="text-text-basic">
+            {label}
+          </Body>
+        ))}
+      </motion.div>
+    </motion.div>
   );
 }
 
 export function HistoryTimeline() {
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div className="mx-auto flex w-full max-w-xl flex-col">
       {history.map((item, idx) => (
-        <HistoryLine
-          key={idx}
+        <TimelineRow
+          key={item.year}
           year={item.year}
           content={item.content}
-          idx={idx}
+          isLast={idx === history.length - 1}
         />
       ))}
     </div>

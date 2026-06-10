@@ -3,155 +3,77 @@
 import { type ReactNode } from "react";
 import { motion } from "motion/react";
 
-const marqueeVariants = {
-  animate: {
-    x: [0, -1300],
-    transition: {
-      x: {
-        repeat: Infinity,
-        repeatType: "loop" as const,
-        duration: 8,
-        ease: "linear" as const,
-      },
-    },
-  },
-};
+const ROW_ONE = [
+  { label: "# 한양대학교 중앙동아리", wide: true },
+  { label: "# SHARE", wide: false },
+  { label: "# 프로그래밍 동아리", wide: true },
+  { label: "# 지식의 선순환", wide: false },
+];
 
-const marqueeVariants2 = {
-  animate: {
-    x: [-1300, 0],
-    transition: {
-      x: {
-        repeat: Infinity,
-        repeatType: "loop" as const,
-        duration: 8,
-        ease: "linear" as const,
-      },
-    },
-  },
-};
+const ROW_TWO = [
+  { label: "# FORIF", wide: true },
+  { label: "# 비전공자도 환영", wide: false },
+  { label: "# 전공자도 환영", wide: true },
+  { label: "# GROWTH", wide: false },
+];
 
-function FlowBox({
-  children,
-  type,
-}: {
-  children: ReactNode;
-  type: "narrow" | "wide";
-}) {
-  const isWide = type === "wide";
+function FlowBox({ children, wide }: { children: ReactNode; wide: boolean }) {
   return (
     <div
-      style={{
-        paddingTop: 24,
-        paddingBottom: 24,
-        paddingLeft: isWide ? 48 : 32,
-        paddingRight: isWide ? 48 : 32,
-        borderRadius: 40,
-        backgroundColor: isWide ? "white" : "rgba(255,255,255,0.5)",
-        whiteSpace: "nowrap",
-      }}
+      className={`whitespace-nowrap rounded-full py-5 ${
+        wide ? "bg-surface-white px-12" : "bg-surface-white/50 px-8"
+      }`}
     >
-      <span
-        style={{
-          fontSize: "22pt",
-          lineHeight: "28pt",
-          color: "#1D40BA",
-        }}
-      >
+      <span className="text-text-primary text-xl font-bold sm:text-2xl">
         {children}
       </span>
     </div>
   );
 }
 
+function MarqueeRow({
+  items,
+  direction,
+}: {
+  items: typeof ROW_ONE;
+  direction: "left" | "right";
+}) {
+  const distance = direction === "left" ? [0, -1300] : [-1300, 0];
+
+  return (
+    <div className="relative w-full overflow-hidden">
+      <motion.div
+        className="flex w-max gap-8"
+        animate={{ x: distance }}
+        transition={{
+          x: {
+            repeat: Infinity,
+            repeatType: "loop",
+            duration: 18,
+            ease: "linear",
+          },
+        }}
+      >
+        {/* 끊김 없는 무한 루프를 위해 같은 묶음을 두 번 렌더 */}
+        {[0, 1].map((dup) => (
+          <div key={dup} className="flex shrink-0 items-center gap-8">
+            {items.map((item) => (
+              <FlowBox key={item.label} wide={item.wide}>
+                {item.label}
+              </FlowBox>
+            ))}
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
 export function Marquee() {
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "var(--vw)",
-        maxWidth: "100%",
-        height: 240,
-        overflow: "hidden",
-      }}
-    >
-      <motion.div
-        style={{
-          position: "absolute",
-          whiteSpace: "nowrap",
-          display: "flex",
-        }}
-        variants={marqueeVariants}
-        animate="animate"
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 32,
-            alignItems: "center",
-            marginRight: 32,
-          }}
-        >
-          <FlowBox type="wide"># 한양대학교 중앙동아리</FlowBox>
-          <FlowBox type="narrow"># SHARE</FlowBox>
-          <FlowBox type="wide"># 프로그래밍 동아리</FlowBox>
-          <FlowBox type="narrow"># 프로그래밍 동아리</FlowBox>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 32,
-            alignItems: "center",
-            marginRight: 32,
-          }}
-        >
-          <FlowBox type="wide"># 한양대학교 중앙동아리</FlowBox>
-          <FlowBox type="narrow"># SHARE</FlowBox>
-          <FlowBox type="wide"># 프로그래밍 동아리</FlowBox>
-          <FlowBox type="narrow"># 프로그래밍 동아리</FlowBox>
-        </div>
-      </motion.div>
-      <motion.div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          whiteSpace: "nowrap",
-          display: "flex",
-        }}
-        variants={marqueeVariants2}
-        animate="animate"
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 32,
-            alignItems: "center",
-            marginRight: 32,
-          }}
-        >
-          <FlowBox type="wide"># FORIF</FlowBox>
-          <FlowBox type="narrow"># 비전공자도 환영</FlowBox>
-          <FlowBox type="wide"># 전공자도 환영</FlowBox>
-          <FlowBox type="narrow"># GROWTH</FlowBox>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 32,
-            alignItems: "center",
-            marginRight: 32,
-          }}
-        >
-          <FlowBox type="wide"># FORIF</FlowBox>
-          <FlowBox type="narrow"># 비전공자도 환영</FlowBox>
-          <FlowBox type="wide"># 전공자도 환영</FlowBox>
-          <FlowBox type="narrow"># GROWTH</FlowBox>
-        </div>
-      </motion.div>
+    <div className="flex w-full flex-col gap-6">
+      <MarqueeRow items={ROW_ONE} direction="left" />
+      <MarqueeRow items={ROW_TWO} direction="right" />
     </div>
   );
 }

@@ -1,193 +1,292 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import Image from "next/image";
+import { motion } from "motion/react";
+import { Body, Display, Heading, Label, Title } from "@ui/components/server";
 import { Marquee } from "@/features/club/Marquee";
 import { HistoryTimeline } from "@/features/club/HistoryTimeline";
+import { StatCounter } from "@/features/club/StatCounter";
+import { Reveal } from "@/features/club/Reveal";
+import {
+  CLUB_STATS,
+  CLUB_VALUES,
+  GALLERY_ITEMS,
+} from "@/features/club/constants";
 
-const PRIMARY = "#1D40BA";
+const fadeUp = {
+  initial: { opacity: 0, y: 28 },
+  animate: { opacity: 1, y: 0 },
+};
 
-function useDeviceSize() {
-  const [size, setSize] = useState({ isMobile: false, isTablet: false });
+function HeroSection() {
+  return (
+    <section className="relative flex h-[calc(var(--vh)-64px)] min-h-[560px] items-center justify-center overflow-hidden md:h-[calc(var(--vh)-80px)]">
+      {/* Background */}
+      <Image
+        src="/images/about-bg.png"
+        alt=""
+        fill
+        priority
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-black/55" />
 
-  useEffect(() => {
-    function update() {
-      setSize({
-        isMobile: window.innerWidth < 600,
-        isTablet: window.innerWidth < 900,
-      });
-    }
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
+      {/* Title */}
+      <div className="relative z-10 px-6 text-center">
+        <motion.div
+          variants={fadeUp}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <p className="text-[64px] font-bold leading-[1.05] tracking-tight text-white sm:text-[100px] lg:text-[140px]">
+            about_
+          </p>
+        </motion.div>
 
-  return size;
+        <motion.div
+          variants={fadeUp}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+        >
+          <p className="text-[52px] font-bold leading-[1.1] tracking-tight text-white sm:text-[100px] lg:text-[140px]">
+            <span className="text-text-primary">{"{ "}</span>
+            FORIF
+            <span className="text-text-primary">{" }"}</span>
+          </p>
+        </motion.div>
+
+        <motion.div
+          variants={fadeUp}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
+        >
+          <Body
+            size="l"
+            className="mx-auto mt-6 max-w-xl break-keep text-white/80"
+          >
+            프로그래밍을 하고 싶은 누구나, 포리프와 함께. 지식의 선순환을 꿈꾸는
+            한양대학교 중앙 프로그래밍 동아리입니다.
+          </Body>
+        </motion.div>
+      </div>
+
+      {/* Scroll hint */}
+      <motion.button
+        type="button"
+        aria-label="다음 섹션으로 이동"
+        onClick={() =>
+          document
+            .getElementById("club-marquee")
+            ?.scrollIntoView({ behavior: "smooth" })
+        }
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer p-2"
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M12 5v14M19 12l-7 7-7-7"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </motion.button>
+    </section>
+  );
+}
+
+function MarqueeSection() {
+  return (
+    <section
+      id="club-marquee"
+      className="bg-button-primary-fill flex scroll-mt-16 flex-col gap-10 overflow-hidden px-6 py-20 md:scroll-mt-0 md:px-16 md:py-28"
+    >
+      <Heading size="l" className="text-white">
+        프로그래밍을 하고 싶은 누구나,
+        <br />
+        포리프와 함께.
+      </Heading>
+      <Marquee />
+      <Heading size="l" className="self-end text-right text-white">
+        지식의 선순환을.
+      </Heading>
+    </section>
+  );
+}
+
+function StatsSection() {
+  return (
+    <section className="bg-surface-white px-6 py-20 md:py-28">
+      <div className="max-w-main mx-auto">
+        <Reveal className="mb-12 text-center">
+          <Label size="m" weight="bold" className="text-text-primary">
+            FORIF IN NUMBERS
+          </Label>
+          <Heading size="m" className="mt-2">
+            숫자로 보는 포리프
+          </Heading>
+        </Reveal>
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+          {CLUB_STATS.map((stat) => (
+            <StatCounter
+              key={stat.label}
+              value={stat.value}
+              suffix={stat.suffix}
+              label={stat.label}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function GallerySection() {
+  return (
+    <section className="bg-surface-gray-subtler px-6 py-20 md:py-28">
+      <div className="max-w-main mx-auto">
+        <Reveal className="mb-12 text-center">
+          <Label size="m" weight="bold" className="text-text-primary">
+            ACTIVITIES
+          </Label>
+          <Heading size="m" className="mt-2">
+            우리는 이렇게 활동해요
+          </Heading>
+        </Reveal>
+
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {GALLERY_ITEMS.map((item, idx) => (
+            <Reveal
+              key={item.src}
+              delay={idx * 0.08}
+              // 첫 번째 항목을 가로 2칸으로 키워 bento 느낌을 준다
+              className={idx === 0 ? "col-span-2 row-span-1" : "col-span-1"}
+            >
+              <div className="rounded-4 group relative aspect-[4/3] w-full overflow-hidden">
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <Label
+                  size="m"
+                  weight="bold"
+                  className="absolute bottom-4 left-4 text-white"
+                >
+                  {item.caption}
+                </Label>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HistorySection() {
+  return (
+    <section className="bg-surface-white px-6 py-20 md:py-28">
+      <div className="max-w-main mx-auto">
+        <Reveal className="mb-16 text-center">
+          <Label size="m" weight="bold" className="text-text-primary">
+            HISTORY
+          </Label>
+          <Heading size="m" className="mt-2">
+            강렬한 <span className="text-text-primary">FORIF</span>의 역사
+          </Heading>
+        </Reveal>
+        <HistoryTimeline />
+      </div>
+    </section>
+  );
+}
+
+function ValuesSection() {
+  return (
+    <section className="bg-surface-gray-subtler px-6 py-20 md:py-28">
+      <div className="max-w-main mx-auto">
+        <Reveal className="mb-12 text-center">
+          <Label size="m" weight="bold" className="text-text-primary">
+            OUR VALUES
+          </Label>
+          <Heading size="m" className="mt-2">
+            포리프를 움직이는 <span className="text-text-primary">세 가지</span>
+          </Heading>
+        </Reveal>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {CLUB_VALUES.map((value, idx) => (
+            <Reveal key={value.keyword} delay={idx * 0.1}>
+              <div className="border-border-gray-light bg-surface-white rounded-4 flex h-full flex-col gap-3 border p-8">
+                <Display size="s" className="text-text-primary">
+                  0{idx + 1}
+                </Display>
+                <Label size="s" weight="bold" className="text-text-primary">
+                  {value.keyword}
+                </Label>
+                <Title size="s">{value.title}</Title>
+                <Body size="m" className="text-text-subtle leading-7">
+                  {value.description}
+                </Body>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ClosingCTA() {
+  return (
+    <section className="bg-button-primary-fill flex flex-col items-center px-6 py-28 text-center md:py-36">
+      <Reveal>
+        <Heading size="l" className="text-white/70">
+          <span className="text-white underline decoration-white/30 underline-offset-[6px]">
+            지식의 선순환
+          </span>
+          이 일어날 수 있도록.
+        </Heading>
+      </Reveal>
+
+      <Reveal delay={0.15}>
+        <Body size="m" className="mt-4 text-white/60">
+          한양대학교 중앙 프로그래밍 동아리
+        </Body>
+      </Reveal>
+
+      <Reveal delay={0.3}>
+        <Image
+          src="/images/black_title.png"
+          alt="FORIF"
+          width={3600}
+          height={1800}
+          priority={false}
+          className="mt-10 h-auto w-[200px] brightness-0 invert sm:w-[260px] lg:w-[320px]"
+        />
+      </Reveal>
+    </section>
+  );
 }
 
 export default function ClubPage() {
-  const { isMobile, isTablet } = useDeviceSize();
-
   return (
     <div>
-      {/* Hero background */}
-      <div
-        style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/images/about-bg.png)`,
-          width: "var(--vw)",
-          height: "var(--vh)",
-          position: "relative",
-        }}
-      >
-        {/* Title - absolute centered */}
-        <div
-          className="font-pretendard font-bold"
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            color: "white",
-            fontSize: isMobile ? "80px" : "120px",
-            lineHeight: isMobile ? "100px" : "140px",
-            fontWeight: 700,
-            letterSpacing: "-0.333333px",
-          }}
-        >
-          about_
-          <br />
-          <span
-            style={{
-              fontSize: isMobile ? "60px" : "120px",
-            }}
-          >
-            <span style={{ color: PRIMARY }}>{"{"}</span> FORIF{" "}
-            <span style={{ color: PRIMARY }}>{"}"}</span>
-          </span>
-        </div>
-      </div>
-
-      {/* Marquee section */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          height: "var(--vh)",
-          backgroundColor: PRIMARY,
-          position: "relative",
-          paddingLeft: isMobile ? 32 : isTablet ? 64 : 96,
-          paddingRight: isMobile ? 32 : isTablet ? 64 : 96,
-          paddingBottom: 32,
-          margin: "auto",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "36pt",
-            lineHeight: "44pt",
-            color: "white",
-            fontWeight: 700,
-            position: "absolute",
-            top: 32,
-          }}
-        >
-          프로그래밍을 하고 싶은 누구나,
-          <br />
-          포리프와 함께.
-        </p>
-        <Marquee />
-        <p
-          style={{
-            fontSize: "36pt",
-            lineHeight: "44pt",
-            color: "white",
-            fontWeight: 700,
-            position: "absolute",
-            bottom: 32,
-            right: 64,
-          }}
-        >
-          지식의 선순환을.
-        </p>
-      </div>
-
-      {/* History section */}
-      <div
-        style={{
-          minHeight: "var(--vh)",
-          position: "relative",
-          paddingLeft: isMobile ? 32 : isTablet ? 64 : 96,
-          paddingRight: isMobile ? 32 : isTablet ? 64 : 96,
-          paddingBottom: 32,
-          margin: "auto",
-        }}
-      >
-        {/* Decorative images */}
-        {!isTablet && (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/hackathon2.jpg"
-              alt="해커톤 사진 1"
-              style={{
-                position: "absolute",
-                top: "50%",
-                width: "16vw",
-              }}
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/ot_2024_1.jpeg"
-              alt="2024년 1학기 OT"
-              style={{
-                position: "absolute",
-                right: 20,
-                bottom: "20%",
-                width: "16vw",
-                height: "auto",
-              }}
-            />
-          </>
-        )}
-
-        {/* Centered content */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <h2
-            id="history"
-            style={{
-              fontSize: "36pt",
-              lineHeight: "44pt",
-              fontWeight: 700,
-              marginTop: 160,
-              marginBottom: 80,
-            }}
-          >
-            강렬한 <span style={{ color: PRIMARY }}>FORIF</span>의 역사
-          </h2>
-
-          <HistoryTimeline />
-
-          <h2
-            style={{
-              fontSize: "36pt",
-              lineHeight: "44pt",
-              fontWeight: 700,
-              marginTop: 160,
-              marginBottom: 80,
-            }}
-          >
-            <span style={{ color: PRIMARY }}>지식의 선순환</span>이 일어날 수
-            있도록.
-          </h2>
-        </div>
-      </div>
+      <HeroSection />
+      <MarqueeSection />
+      <StatsSection />
+      <GallerySection />
+      <HistorySection />
+      <ValuesSection />
+      <ClosingCTA />
     </div>
   );
 }
