@@ -46,7 +46,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "next": "15.3.2",
+    "next": "15.5.19",
     "typescript": "^5"
   },
   "peerDependencies": {
