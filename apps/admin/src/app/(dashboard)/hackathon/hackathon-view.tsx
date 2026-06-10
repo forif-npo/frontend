@@ -23,6 +23,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  addHoursToDateTime,
+  formatDateTimeLabel,
+  toDateTimeMs,
+  toLocalDateTime,
+} from "@/utils/datetime";
 import { handleApiError } from "@core/utils/api-client";
 import type {
   CreateHackathonRequest,
@@ -41,175 +47,22 @@ import {
 } from "./api";
 import { columns } from "./columns";
 import {
-  HACKATHON_STATUS_FLOW,
   HACKATHON_STATUS_LABELS,
   type Hackathon,
   type HackathonFormState,
   type SubmissionStatus,
 } from "./types";
+import {
+  ACTION_VISIBILITY,
+  EMPTY_FORM,
+  getNextStatus,
+  isActiveHackathon,
+  toFormState,
+  toPresentationDownloadUrl,
+} from "./utils";
 
 interface HackathonViewProps {
   initialData: Hackathon[];
-}
-
-const EMPTY_FORM: HackathonFormState = {
-  held_year: String(new Date().getFullYear()),
-  held_semester: "1",
-  event_round: "1",
-  title: "",
-  description: "",
-  location: "",
-  recruit_starts_at: "",
-  recruit_ends_at: "",
-  team_building_starts_at: "",
-  team_building_ends_at: "",
-  starts_at: "",
-  ends_at: "",
-  duration_hours: "8",
-};
-
-// 상태별 행 액션 노출 규칙
-type RowAction = "manage" | "edit" | "status" | "submissions" | "delete";
-
-const ACTION_VISIBILITY: Record<HackathonStatus, Record<RowAction, boolean>> = {
-  RECRUITING: {
-    manage: true,
-    edit: true,
-    status: true,
-    submissions: false,
-    delete: true,
-  },
-  TEAM_BUILDING: {
-    manage: true,
-    edit: true,
-    status: true,
-    submissions: false,
-    delete: true,
-  },
-  IN_PROGRESS: {
-    manage: true,
-    edit: true,
-    status: true,
-    submissions: true,
-    delete: false,
-  },
-  JUDGING: {
-    manage: true,
-    edit: true,
-    status: true,
-    submissions: true,
-    delete: false,
-  },
-  ENDED: {
-    manage: true,
-    edit: true,
-    status: true,
-    submissions: true,
-    delete: true,
-  },
-};
-
-// ISO 8601 → datetime-local input value (로컬 시간)
-function toInputDateTime(iso?: string) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-    d.getHours(),
-  )}:${pad(d.getMinutes())}`;
-}
-
-// datetime-local input value → 백엔드 LocalDateTime 문자열 (없으면 undefined)
-// 백엔드가 타임존 없는 LocalDateTime을 받으므로 datetime-local 값을 그대로 전달한다.
-function toLocalDateTime(value: string) {
-  if (!value) return undefined;
-  return value;
-}
-
-function toDateTimeInputValue(date: Date) {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-    date.getDate(),
-  )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-function toDateTimeMs(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.getTime();
-}
-
-function addHoursToDateTime(value: string, hours: number) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return undefined;
-  date.setMinutes(date.getMinutes() + hours * 60);
-  return toDateTimeInputValue(date);
-}
-
-function calculateDurationHours(startsAt?: string, endsAt?: string) {
-  if (!startsAt || !endsAt) return EMPTY_FORM.duration_hours;
-
-  const startsAtMs = toDateTimeMs(startsAt);
-  const endsAtMs = toDateTimeMs(endsAt);
-  if (startsAtMs === null || endsAtMs === null || endsAtMs <= startsAtMs) {
-    return EMPTY_FORM.duration_hours;
-  }
-
-  const hours = (endsAtMs - startsAtMs) / (1000 * 60 * 60);
-  return Number.isInteger(hours) ? String(hours) : hours.toFixed(1);
-}
-
-function formatDateTimeLabel(value?: string) {
-  if (!value) return "-";
-  const [date, time] = value.split("T");
-  if (!date || !time) return value;
-  return `${date.replaceAll("-", ". ")} ${time}`;
-}
-
-function getNextStatus(status: HackathonStatus) {
-  const index = HACKATHON_STATUS_FLOW.indexOf(status);
-  return index >= 0 ? HACKATHON_STATUS_FLOW[index + 1] : undefined;
-}
-
-function isActiveHackathon(status: HackathonStatus) {
-  return status !== "ENDED";
-}
-
-function toPresentationDownloadUrl(fileUrl?: string | null) {
-  if (!fileUrl || !fileUrl.includes("/api/v1/files/")) {
-    return null;
-  }
-
-  try {
-    const url = new URL(fileUrl);
-    url.searchParams.set("download", "true");
-    return url.toString();
-  } catch {
-    const separator = fileUrl.includes("?") ? "&" : "?";
-    return `${fileUrl}${separator}download=true`;
-  }
-}
-
-function toFormState(hackathon: Hackathon): HackathonFormState {
-  const startsAt = toInputDateTime(hackathon.starts_at);
-  const endsAt = toInputDateTime(hackathon.ends_at);
-
-  return {
-    held_year: String(hackathon.held_year),
-    held_semester: String(hackathon.held_semester),
-    event_round: String(hackathon.event_round),
-    title: hackathon.title ?? "",
-    description: hackathon.description ?? "",
-    location: hackathon.location ?? "",
-    recruit_starts_at: toInputDateTime(hackathon.recruit_starts_at),
-    recruit_ends_at: toInputDateTime(hackathon.recruit_ends_at),
-    team_building_starts_at: toInputDateTime(hackathon.team_building_starts_at),
-    team_building_ends_at: toInputDateTime(hackathon.team_building_ends_at),
-    starts_at: startsAt,
-    ends_at: endsAt,
-    duration_hours: calculateDurationHours(startsAt, endsAt),
-  };
 }
 
 export function HackathonView({ initialData }: HackathonViewProps) {
