@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Badge } from "@ui/components/server";
 import { Study } from "@/types/study";
-import { NaverMap } from "@/components/NaverMap";
+import { KakaoMap } from "@/components/KakaoMap";
 import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
 import {
   formatStudyTimeRange,
@@ -320,7 +320,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
             {study.location_detail && ` ${study.location_detail}`}
           </p>
 
-          <NaverMap location={study.location} />
+          <KakaoMap placeName={study.location} />
         </div>
       </section>
 

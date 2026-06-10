@@ -11,12 +11,11 @@ const SOCIAL_LINKS = {
 } as const;
 
 const UTILITY_LINKS = [
-  { label: "이용안내", href: "/guide" },
   { label: "찾아오시는 길", href: "/directions" },
 ] as const;
 
 const POLICY_LINKS = [
-  { label: "이용안내", href: "/terms", bold: false },
+  { label: "이용약관", href: "/terms", bold: true },
   { label: "개인정보처리방침", href: "/privacy", bold: true },
 ] as const;
 
