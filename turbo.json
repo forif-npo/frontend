@@ -8,10 +8,18 @@
       "env": [
         "NEXT_PUBLIC_API_HOST",
         "NEXT_PUBLIC_SERVER_URL",
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_NAVER_MAP_CLIENT_ID",
         "NEXTAUTH_URL",
+        "AUTH_URL",
+        "AUTH_SECRET",
         "NEXT_RUNTIME",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
+        "GOOGLE_SERVICE_ACCOUNT_EMAIL",
+        "GOOGLE_PRIVATE_KEY",
+        "GOOGLE_CALENDAR_ID",
+        "NAVER_MAP_CLIENT_SECRET",
         "CI",
         "NODE_ENV",
         "USE_MOCK_DATA"
