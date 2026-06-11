@@ -43,6 +43,7 @@ export default async function RootLayout({
           <ApiClientProvider>
             <NuqsAdapter>
               <NavBar items={NAV_MENUS} isLoggedIn={isLoggedIn} />
+              <div className="h-[64px] md:h-[80px]" />
               {children}
               <Footer />
             </NuqsAdapter>

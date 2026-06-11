@@ -43,15 +43,19 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   return (
     <div className="border-divider-gray-light w-full border-b">
       <button
-        className="focus:ring-border-primary flex w-full items-center justify-between px-6 py-6 text-left focus:outline-none focus:ring-2 focus:ring-inset"
+        className="focus:ring-border-primary flex w-full items-center justify-between px-4 py-4 text-left focus:outline-none focus:ring-2 focus:ring-inset md:px-6 md:py-6"
         onClick={onClick}
         aria-expanded={isOpen}
         aria-controls={contentId}
       >
-        <Label size="l" weight="bold" className="cursor-pointer">
+        <Label
+          size="l"
+          weight="bold"
+          className="min-w-0 flex-1 cursor-pointer break-words text-left"
+        >
           {title}
         </Label>
-        <span className="ml-6 flex items-center gap-2">
+        <span className="ml-3 flex flex-shrink-0 items-center gap-2">
           {tagSlot}
           <span className="flex-shrink-0">
             <ChevronIcon isOpen={isOpen} className="text-text-basic" />

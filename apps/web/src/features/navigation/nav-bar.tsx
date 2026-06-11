@@ -85,7 +85,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       )}
 
       {/* Mobile NavBar */}
-      <nav className="bg-surface-white/95 border-divider-gray-light sticky top-0 z-50 flex h-[64px] items-center justify-between gap-4 border-b px-4 backdrop-blur md:hidden">
+      <nav className="bg-surface-white/95 border-divider-gray-light fixed left-0 right-0 top-0 z-50 flex h-[64px] items-center justify-between gap-4 border-b px-4 backdrop-blur md:hidden">
         <Link href="/" className="flex items-center">
           <Image src={NavLogo} width={62} height={40} alt="FORIF Logo" />
         </Link>
@@ -197,7 +197,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       <nav
         ref={navRef}
         className={cn(
-          "bg-surface-white border-divider-gray-light relative z-50 hidden h-[80px] items-center gap-16 border-b px-16 md:flex",
+          "bg-surface-white border-divider-gray-light fixed left-0 right-0 top-0 z-50 hidden h-[80px] items-center gap-16 border-b px-16 md:flex",
         )}
       >
         <Link

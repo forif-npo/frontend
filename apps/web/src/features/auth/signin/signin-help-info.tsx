@@ -6,17 +6,31 @@ const InfoBoxContent = () => {
       <ul className="list-inside list-disc space-y-2">
         <li className="text-text-subtle">
           로그인{" "}
-          <Link size="m" href="" className="underline underline-offset-2">
+          <Link
+            size="m"
+            href="/support/faqs"
+            className="underline underline-offset-2"
+          >
             관련 도움말
           </Link>
           이나 다른 사용자가{" "}
-          <Link size="m" href="" className="underline underline-offset-2">
+          <Link
+            size="m"
+            href="/support/faqs"
+            className="underline underline-offset-2"
+          >
             자주 묻는 질문
           </Link>
           을 확인해보세요.
         </li>
         <li className="text-text-subtle">
-          <Link size="m" href="" className="underline underline-offset-2">
+          <Link
+            size="m"
+            href="https://pf.kakao.com/_xnRxhxmG"
+            className="underline underline-offset-2"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             카카오톡 오픈 채널
           </Link>
           로 연락주세요. 서비스에 로그인할 수 있도록 도와드리겠습니다.
