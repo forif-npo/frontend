@@ -49,20 +49,39 @@ export interface GalleryItem {
   src: string;
   alt: string;
   caption: string;
+  /** 데스크탑 그리드에서 차지할 가로 칸 수 (기본 1) */
+  colSpan?: 1 | 2;
+  /** 데스크탑 그리드에서 차지할 세로 칸 수 (기본 1) */
+  rowSpan?: 1 | 2;
 }
 
 // 실제 활동 사진. 새 사진이 생기면 src/caption을 교체하세요.
+// 데스크탑은 4열×3행(12칸) 고정 높이 그리드. 2×2 두 개 + 1×1 네 개로 빈칸 없이 채운다.
+//   [정규][정규][ MT  ][프로젝트]
+//   [정규][정규][해커톤][해커톤]
+//   [ OT ][정기모임][해커톤][해커톤]
+// 배열 순서가 곧 배치 순서다(좌→우, 위→아래 자동 배치). 순서를 바꾸면 배치가 바뀐다.
 export const GALLERY_ITEMS: GalleryItem[] = [
-  { src: "/images/hackathon2.jpg", alt: "해커톤 현장", caption: "해커톤" },
-  { src: "/images/ot_2024_1.jpeg", alt: "신학기 OT", caption: "신학기 OT" },
   {
-    src: "/images/carousel/carousel-img-1.png",
-    alt: "정기 활동",
-    caption: "정기 모임",
+    src: "/images/study-25-2.jpg",
+    alt: "정규 스터디",
+    caption: "정규 스터디",
+    colSpan: 2,
+    rowSpan: 2,
   },
+  { src: "/images/MT.jpg", alt: "MT 단체 사진", caption: "MT" },
   {
     src: "/images/about-bg.png",
     alt: "프로젝트 발표",
     caption: "프로젝트 발표",
   },
+  {
+    src: "/images/hackathon.jpg",
+    alt: "해커톤 현장",
+    caption: "해커톤",
+    colSpan: 2,
+    rowSpan: 2,
+  },
+  { src: "/images/ot_2024_1.jpeg", alt: "신학기 OT", caption: "신학기 OT" },
+  { src: "/images/moim.jpg", alt: "정기 모임", caption: "정기 모임" },
 ];

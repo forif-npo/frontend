@@ -159,32 +159,39 @@ function GallerySection() {
           </Heading>
         </Reveal>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {GALLERY_ITEMS.map((item, idx) => (
-            <Reveal
-              key={item.src}
-              delay={idx * 0.08}
-              // 첫 번째 항목을 가로 2칸으로 키워 bento 느낌을 준다
-              className={idx === 0 ? "col-span-2 row-span-1" : "col-span-1"}
-            >
-              <div className="rounded-4 group relative aspect-[4/3] w-full overflow-hidden">
-                <Image
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <Label
-                  size="m"
-                  weight="bold"
-                  className="absolute bottom-4 left-4 text-white"
-                >
-                  {item.caption}
-                </Label>
-              </div>
-            </Reveal>
-          ))}
+        {/* 고정 행 높이 그리드: 2×2 타일이 단독으로 한 행을 차지해도
+            높이가 무너지지 않도록 auto-rows로 행 높이를 고정한다. */}
+        <div className="grid auto-rows-[34vw] grid-cols-2 gap-4 md:auto-rows-[clamp(140px,18vw,210px)] md:grid-cols-4">
+          {GALLERY_ITEMS.map((item, idx) => {
+            // colSpan/rowSpan은 constants.ts에서 지정. Tailwind가 정적으로
+            // 스캔할 수 있도록 완성된 클래스명을 그대로 매핑한다.
+            const colClass = item.colSpan === 2 ? "col-span-2" : "col-span-1";
+            const rowClass = item.rowSpan === 2 ? "row-span-2" : "row-span-1";
+            return (
+              <Reveal
+                key={item.src}
+                delay={idx * 0.08}
+                className={`${colClass} ${rowClass}`}
+              >
+                <div className="rounded-4 group relative h-full w-full overflow-hidden">
+                  <Image
+                    src={item.src}
+                    alt={item.alt}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <Label
+                    size="m"
+                    weight="bold"
+                    className="absolute bottom-4 left-4 text-white"
+                  >
+                    {item.caption}
+                  </Label>
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>
