@@ -1,17 +1,28 @@
 "use client";
 
+import { SearchBar } from "@/components/list/search-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type {
   Award,
   Criterion,
   EvaluationSummary,
   Participant,
+  ParticipantStatus,
   Team,
 } from "@core/types/hackathon";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
 import {
   PARTICIPANT_STATUS_LABELS,
+  PARTICIPANT_STUDY_ROLE_LABELS,
   TEAM_STATUS_LABELS,
   formatDate,
 } from "./types";
@@ -29,10 +40,119 @@ export function ParticipantsTab({
 }: {
   participants: Participant[];
 }) {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<ParticipantStatus | "ALL">(
+    "ALL",
+  );
+  const [studyFilter, setStudyFilter] = useState<string>("ALL");
+
+  const studyOptions = useMemo(() => {
+    const optionMap = new Map<number, string>();
+
+    participants.forEach((participant) => {
+      participant.studies?.forEach((study) => {
+        optionMap.set(study.study_id, study.study_name ?? "이름 없는 스터디");
+      });
+    });
+
+    return Array.from(optionMap.entries())
+      .map(([studyId, studyName]) => ({ studyId, studyName }))
+      .sort((a, b) => a.studyName.localeCompare(b.studyName, "ko"));
+  }, [participants]);
+
+  const filteredParticipants = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+
+    return participants.filter((participant) => {
+      const studies = participant.studies ?? [];
+      const userName = participant.user_name ?? "";
+      const matchesSearch =
+        keyword.length === 0 ||
+        userName.toLowerCase().includes(keyword) ||
+        String(participant.user_id).includes(keyword) ||
+        studies.some((study) =>
+          (study.study_name ?? "").toLowerCase().includes(keyword),
+        );
+
+      const matchesStatus =
+        statusFilter === "ALL" || participant.status === statusFilter;
+
+      const matchesStudy =
+        studyFilter === "ALL" ||
+        studies.some((study) => String(study.study_id) === studyFilter);
+
+      return matchesSearch && matchesStatus && matchesStudy;
+    });
+  }, [participants, search, statusFilter, studyFilter]);
+
+  const hasFilter =
+    search.trim().length > 0 || statusFilter !== "ALL" || studyFilter !== "ALL";
+
+  const resetFilters = () => {
+    setSearch("");
+    setStatusFilter("ALL");
+    setStudyFilter("ALL");
+  };
+
   return (
     <>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder="이름, 학번, 스터디 검색"
+        />
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <Select
+            value={studyFilter}
+            onValueChange={(value) => setStudyFilter(value)}
+          >
+            <SelectTrigger className="h-10 w-full sm:w-56">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">전체 스터디</SelectItem>
+              {studyOptions.map((study) => (
+                <SelectItem key={study.studyId} value={String(study.studyId)}>
+                  {study.studyName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) =>
+              setStatusFilter(value as ParticipantStatus | "ALL")
+            }
+          >
+            <SelectTrigger className="h-10 w-full sm:w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">전체 상태</SelectItem>
+              <SelectItem value="REGISTERED">참가</SelectItem>
+              <SelectItem value="CANCELED">취소</SelectItem>
+            </SelectContent>
+          </Select>
+          {hasFilter && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-10"
+              onClick={resetFilters}
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              초기화
+            </Button>
+          )}
+        </div>
+      </div>
+
       {participants.length === 0 ? (
         <EmptyState>참가자가 없습니다.</EmptyState>
+      ) : filteredParticipants.length === 0 ? (
+        <EmptyState>조건에 맞는 참가자가 없습니다.</EmptyState>
       ) : (
         <div className="overflow-hidden rounded-md border">
           <table className="w-full text-sm">
@@ -40,18 +160,43 @@ export function ParticipantsTab({
               <tr>
                 <th className="px-4 py-3 text-left font-medium">이름</th>
                 <th className="px-4 py-3 text-left font-medium">학번</th>
+                <th className="px-4 py-3 text-left font-medium">스터디</th>
                 <th className="px-4 py-3 text-center font-medium">상태</th>
                 <th className="px-4 py-3 text-right font-medium">등록일</th>
               </tr>
             </thead>
             <tbody className="divide-border divide-y">
-              {participants.map((participant) => (
+              {filteredParticipants.map((participant) => (
                 <tr key={participant.participant_id}>
                   <td className="px-4 py-3 font-medium">
-                    {participant.user_name}
+                    {participant.user_name ?? "-"}
                   </td>
                   <td className="text-muted-foreground px-4 py-3">
                     {participant.user_id}
+                  </td>
+                  <td className="px-4 py-3">
+                    {(participant.studies?.length ?? 0) > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {participant.studies?.map((study) => (
+                          <Badge
+                            key={`${study.role}-${study.study_id}`}
+                            variant="outline"
+                            className={
+                              study.role === "MENTOR"
+                                ? "border-blue-500 bg-blue-50 text-blue-700"
+                                : "border-slate-300 bg-slate-50 text-slate-700"
+                            }
+                          >
+                            {study.study_name ?? "-"}
+                            <span className="ml-1 text-[11px] opacity-70">
+                              {PARTICIPANT_STUDY_ROLE_LABELS[study.role]}
+                            </span>
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-center">
                     <Badge
@@ -75,7 +220,7 @@ export function ParticipantsTab({
         </div>
       )}
       <div className="text-muted-foreground text-sm">
-        총 {participants.length}명
+        총 {filteredParticipants.length}명 / 전체 {participants.length}명
       </div>
     </>
   );

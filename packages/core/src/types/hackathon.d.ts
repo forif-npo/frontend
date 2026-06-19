@@ -41,6 +41,14 @@ export interface Hackathon {
 /**
  * 참가자
  */
+export type ParticipantStudyRole = "MENTEE" | "MENTOR";
+
+export interface ParticipantStudy {
+  study_id: number;
+  study_name: string;
+  role: ParticipantStudyRole;
+}
+
 export interface Participant {
   participant_id: number;
   hackathon_id: number;
@@ -49,6 +57,7 @@ export interface Participant {
   status: ParticipantStatus;
   registered_at: string;
   canceled_at?: string;
+  studies?: ParticipantStudy[];
 }
 
 /**

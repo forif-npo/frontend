@@ -6,6 +6,11 @@ export const PARTICIPANT_STATUS_LABELS: Record<Participant["status"], string> =
     CANCELED: "취소",
   };
 
+export const PARTICIPANT_STUDY_ROLE_LABELS = {
+  MENTEE: "수강",
+  MENTOR: "멘토",
+} as const;
+
 export const TEAM_STATUS_LABELS: Record<Team["status"], string> = {
   FORMING: "구성중",
   CONFIRMED: "확정",
