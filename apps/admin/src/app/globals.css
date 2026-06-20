@@ -148,3 +148,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 발표 화면 슬라이드 전환 (reduced-motion 존중) */
+@keyframes result-slide-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-slide-enter {
+  animation: result-slide-enter 320ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result-slide-enter {
+    animation: none;
+  }
+}

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ResultsEditor } from "@/features/hackathon-results/components/results-editor";
 import { handleApiError } from "@core/utils/api-client";
 import type {
   Award,
@@ -337,6 +338,7 @@ export function ManagementView({
           <TabsTrigger value="criteria">평가 기준</TabsTrigger>
           <TabsTrigger value="evaluation">심사 · 집계</TabsTrigger>
           <TabsTrigger value="awards">수상</TabsTrigger>
+          <TabsTrigger value="results">결과 발표</TabsTrigger>
         </TabsList>
 
         <TabsContent value="participants" className="space-y-4 pt-4">
@@ -371,6 +373,14 @@ export function ManagementView({
             onCreate={openCreateAward}
             onEdit={openEditAward}
             onDelete={setAwardDeleteTarget}
+          />
+        </TabsContent>
+
+        <TabsContent value="results" className="space-y-4 pt-4">
+          <ResultsEditor
+            hackathonId={hackathonId}
+            eventTitle={hackathon.title || `${hackathon.event_round}회 해커톤`}
+            teams={teams}
           />
         </TabsContent>
       </Tabs>
