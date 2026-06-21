@@ -40,7 +40,9 @@ export function TeamWorkspacePanel({
   onSubmit: () => void;
   submitting: boolean;
 }) {
-  const canEditTeam = stage === "TEAM_BUILDING" && isLeader;
+  const canEditTeam =
+    (stage === "TEAM_BUILDING" || stage === "IN_PROGRESS") && isLeader;
+  const canDisbandTeam = stage === "TEAM_BUILDING" && isLeader;
   const canSubmit = stage === "IN_PROGRESS" && isLeader;
 
   return (
@@ -68,19 +70,23 @@ export function TeamWorkspacePanel({
         ))}
       </div>
 
-      {canEditTeam && (
+      {(canEditTeam || canDisbandTeam) && (
         <div className="mb-4 flex flex-wrap gap-2">
-          <Button variant="tertiary" size="small" onClick={onEditTeam}>
-            팀 정보 수정
-          </Button>
-          <Button
-            variant="tertiary"
-            size="small"
-            disabled={submitting}
-            onClick={onDisbandTeam}
-          >
-            팀 해산
-          </Button>
+          {canEditTeam && (
+            <Button variant="tertiary" size="small" onClick={onEditTeam}>
+              팀 정보 수정
+            </Button>
+          )}
+          {canDisbandTeam && (
+            <Button
+              variant="tertiary"
+              size="small"
+              disabled={submitting}
+              onClick={onDisbandTeam}
+            >
+              팀 해산
+            </Button>
+          )}
         </div>
       )}
 
