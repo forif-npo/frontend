@@ -80,7 +80,7 @@ export function Footer() {
                 <Body size="m" weight="bold" className="shrink-0">
                   회장 연락처
                 </Body>
-                <Body size="m">010-2078-9868</Body>
+                <Body size="m">010-3981-2273</Body>
               </div>
             </div>
           </div>

@@ -112,14 +112,16 @@ export function SubmissionDetailMain({
 
         {/* Links */}
         <div className="mt-6 flex flex-wrap gap-2">
-          <a
-            href={submission.github_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-2 border-border-gray-light text-label-s text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-10 items-center border px-4 font-semibold transition-colors"
-          >
-            GitHub
-          </a>
+          {submission.github_url && (
+            <a
+              href={submission.github_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2 border-border-gray-light text-label-s text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-10 items-center border px-4 font-semibold transition-colors"
+            >
+              GitHub
+            </a>
+          )}
           {submission.deploy_url && (
             <a
               href={submission.deploy_url}

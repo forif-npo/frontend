@@ -18,7 +18,7 @@ const LNG = 127.0475;
 const INFO_ITEMS = [
   { label: "주소", value: ADDRESS },
   { label: "이메일", value: "contact@forif.org" },
-  { label: "회장 연락처", value: "010-2078-9868" },
+  { label: "회장 연락처", value: "010-3981-2273" },
 ];
 
 export default function DirectionsPage() {

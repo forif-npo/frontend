@@ -108,6 +108,10 @@ export function JoinRequestModal({
   );
 }
 
+export type SubmissionFieldErrors = Partial<
+  Record<"projectName" | "summary", string>
+>;
+
 export function SubmissionModal({
   isOpen,
   isEdit,
@@ -116,6 +120,8 @@ export function SubmissionModal({
   setPresentation,
   onClose,
   onConfirm,
+  error,
+  fieldErrors,
 }: {
   isOpen: boolean;
   isEdit: boolean;
@@ -124,6 +130,8 @@ export function SubmissionModal({
   setPresentation: Dispatch<SetStateAction<File | null>>;
   onClose: () => void;
   onConfirm: () => void;
+  error?: string | null;
+  fieldErrors?: SubmissionFieldErrors;
 }) {
   return (
     <Modal
@@ -135,9 +143,23 @@ export function SubmissionModal({
       width="l"
     >
       <div className="grid grid-cols-1 gap-4 pb-6 md:grid-cols-2">
+        {error && (
+          <div
+            role="alert"
+            className="bg-surface-danger-subtler border-border-danger-light rounded-3 text-text-danger text-body-s border p-4 md:col-span-2"
+          >
+            {error}
+          </div>
+        )}
+        <Body size="s" className="text-text-subtle md:col-span-2">
+          <span className="text-text-danger">*</span> 표시는 필수 입력
+          항목입니다.
+        </Body>
         <TextInput
           id="submission-project"
           title="프로젝트명"
+          required
+          error={fieldErrors?.projectName}
           length="full"
           value={form.projectName}
           onChange={(e) =>
@@ -157,6 +179,8 @@ export function SubmissionModal({
           <TextInput
             id="submission-summary"
             title="한 줄 소개"
+            required
+            error={fieldErrors?.summary}
             length="full"
             value={form.summary}
             onChange={(e) =>

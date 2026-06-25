@@ -11,6 +11,7 @@ type TextInputProps = {
   description?: string;
   helpText?: string;
   error?: string;
+  required?: boolean;
   length?: "x-short" | "short" | "middle" | "long" | "full";
   className?: string;
 } & Omit<TextInputBaseProps, "id" | "className">;
@@ -24,6 +25,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       description,
       helpText,
       error,
+      required = false,
       length = "middle",
       className = "",
       type = "text",
@@ -46,6 +48,11 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         {title && (
           <Label htmlFor={id} className="text-text-basic">
             {title}
+            {required && (
+              <span className="text-text-danger ml-0.5" aria-hidden="true">
+                *
+              </span>
+            )}
           </Label>
         )}
         {description && (
@@ -62,6 +69,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
               error ? errorId : helpText ? helperTextId : undefined
             }
             aria-invalid={error ? "true" : undefined}
+            aria-required={required || undefined}
             className={`rounded-2 text-gray-70 focus:border-input-border-active focus:ring-border-input-border-active border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1 ${
               inputProps.disabled || inputProps.readOnly
                 ? "bg-input-surface-disabled border-input-border-disabled"

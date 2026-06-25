@@ -26,6 +26,7 @@ import {
   JoinRequestModal,
   SubmissionModal,
   TeamFormModal,
+  type SubmissionFieldErrors,
 } from "./active/modals";
 import {
   EMPTY_SUBMISSION_FORM,
@@ -103,6 +104,9 @@ export function ActiveHackathonMain({
   const [submissionForm, setSubmissionForm] = useState<SubmissionFormState>(
     EMPTY_SUBMISSION_FORM,
   );
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
+  const [submissionFieldErrors, setSubmissionFieldErrors] =
+    useState<SubmissionFieldErrors>({});
   const [presentation, setPresentation] = useState<File | null>(null);
   const [criteria, setCriteria] = useState<Criterion[]>([]);
   const [evaluationTarget, setEvaluationTarget] = useState<Team | null>(null);
@@ -317,7 +321,7 @@ export function ActiveHackathonMain({
             projectName: mySubmission.project_name,
             summary: mySubmission.summary,
             description: mySubmission.description ?? "",
-            githubUrl: mySubmission.github_url,
+            githubUrl: mySubmission.github_url ?? "",
             deployUrl: mySubmission.deploy_url ?? "",
             imageUrl: mySubmission.image_url ?? "",
             techStacks: mySubmission.tech_stacks.join(", "),
@@ -325,6 +329,8 @@ export function ActiveHackathonMain({
         : EMPTY_SUBMISSION_FORM,
     );
     setPresentation(null);
+    setSubmissionError(null);
+    setSubmissionFieldErrors({});
     setSubmissionOpen(true);
   };
 
@@ -333,16 +339,23 @@ export function ActiveHackathonMain({
     const projectName = submissionForm.projectName.trim();
     const summary = submissionForm.summary.trim();
     const githubUrl = submissionForm.githubUrl.trim();
-    if (!projectName || !summary || !githubUrl) {
-      setLocalError("프로젝트명, 한 줄 소개, GitHub URL을 입력해주세요.");
+
+    const fieldErrors: SubmissionFieldErrors = {};
+    if (!projectName) fieldErrors.projectName = "프로젝트명을 입력해주세요.";
+    if (!summary) fieldErrors.summary = "한 줄 소개를 입력해주세요.";
+    if (Object.keys(fieldErrors).length > 0) {
+      setSubmissionFieldErrors(fieldErrors);
+      setSubmissionError("필수 항목을 입력해주세요.");
       return;
     }
+    setSubmissionFieldErrors({});
+    setSubmissionError(null);
 
     const body: SubmissionRequest = {
       project_name: projectName,
       summary,
       description: submissionForm.description.trim() || undefined,
-      github_url: githubUrl,
+      github_url: githubUrl || undefined,
       deploy_url: submissionForm.deployUrl.trim() || undefined,
       image_url: submissionForm.imageUrl.trim() || undefined,
       tech_stacks: submissionForm.techStacks
@@ -351,7 +364,8 @@ export function ActiveHackathonMain({
         .filter(Boolean),
     };
 
-    await runModalAction(async () => {
+    try {
+      setSubmitting(true);
       await onSubmitProject(
         myTeam.hackathon_team_id,
         body,
@@ -359,7 +373,11 @@ export function ActiveHackathonMain({
         mySubmission ? "PUT" : "POST",
       );
       setSubmissionOpen(false);
-    });
+    } catch (error) {
+      setSubmissionError(await handleApiError(error));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const openEvaluation = async (team: Team) => {
@@ -532,7 +550,13 @@ export function ActiveHackathonMain({
         form={submissionForm}
         setForm={setSubmissionForm}
         setPresentation={setPresentation}
-        onClose={() => setSubmissionOpen(false)}
+        error={submissionError}
+        fieldErrors={submissionFieldErrors}
+        onClose={() => {
+          setSubmissionOpen(false);
+          setSubmissionError(null);
+          setSubmissionFieldErrors({});
+        }}
         onConfirm={() => void submitSubmission()}
       />
 

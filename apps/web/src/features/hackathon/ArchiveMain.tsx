@@ -243,15 +243,17 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
 
               {/* Links */}
               <div className="border-divider-gray-light flex flex-wrap gap-2 border-t pt-3">
-                <a
-                  href={submission.github_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="rounded-2 border-border-gray-light text-label-xs text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-8 items-center border px-3 font-semibold transition-colors"
-                >
-                  GitHub
-                </a>
+                {submission.github_url && (
+                  <a
+                    href={submission.github_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="rounded-2 border-border-gray-light text-label-xs text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-8 items-center border px-3 font-semibold transition-colors"
+                  >
+                    GitHub
+                  </a>
+                )}
                 {submission.deploy_url && (
                   <a
                     href={submission.deploy_url}

@@ -115,7 +115,7 @@ export interface Submission {
   project_name: string;
   summary: string;
   description?: string;
-  github_url: string;
+  github_url?: string;
   deploy_url?: string;
   presentation_file?: string;
   image_url?: string;
@@ -330,7 +330,7 @@ export interface SubmissionRequest {
   project_name: string;
   summary: string;
   description?: string;
-  github_url: string;
+  github_url?: string;
   deploy_url?: string;
   image_url?: string;
   tech_stacks: string[];
