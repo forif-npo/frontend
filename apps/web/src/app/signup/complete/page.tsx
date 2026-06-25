@@ -50,16 +50,16 @@ export default function Page() {
               standardstar@hanyang.ac.kr
             </Body>
             <Body size="l" className="text-text-basic">
-              2023063845
+              2025074102
             </Body>
             <Body size="l" className="text-text-basic">
               정보시스템학과
             </Body>
             <Body size="l" className="text-text-basic">
-              표준성
+              조민성
             </Body>
             <Body size="l" className="text-text-basic">
-              010-2078-9868
+              010-3981-2273
             </Body>
           </div>
         </section>
