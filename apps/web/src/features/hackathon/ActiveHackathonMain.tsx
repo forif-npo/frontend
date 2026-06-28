@@ -13,6 +13,7 @@ import type {
   SubmissionRequest,
   Team,
 } from "@core/types/hackathon";
+import { isHackathonTechStack } from "@core/hackathon/tags";
 import { handleApiError } from "@core/utils/api-client";
 import { Heading } from "@ui/components/server";
 import { useEffect, useMemo, useState } from "react";
@@ -324,7 +325,7 @@ export function ActiveHackathonMain({
             githubUrl: mySubmission.github_url ?? "",
             deployUrl: mySubmission.deploy_url ?? "",
             imageUrl: mySubmission.image_url ?? "",
-            techStacks: mySubmission.tech_stacks.join(", "),
+            techStacks: mySubmission.tech_stacks.filter(isHackathonTechStack),
           }
         : EMPTY_SUBMISSION_FORM,
     );
@@ -358,10 +359,7 @@ export function ActiveHackathonMain({
       github_url: githubUrl || undefined,
       deploy_url: submissionForm.deployUrl.trim() || undefined,
       image_url: submissionForm.imageUrl.trim() || undefined,
-      tech_stacks: submissionForm.techStacks
-        .split(",")
-        .map((stack) => stack.trim())
-        .filter(Boolean),
+      tech_stacks: submissionForm.techStacks,
     };
 
     try {

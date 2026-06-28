@@ -1,4 +1,8 @@
 import type { Criterion, Team } from "@core/types/hackathon";
+import {
+  HACKATHON_TECH_STACK_LIMIT,
+  HACKATHON_TECH_STACK_OPTIONS,
+} from "@core/hackathon/tags";
 import { Body, Label } from "@ui/components/server";
 import { Modal, TextArea, TextInput } from "@ui/components/client";
 import type { Dispatch, SetStateAction } from "react";
@@ -133,6 +137,26 @@ export function SubmissionModal({
   error?: string | null;
   fieldErrors?: SubmissionFieldErrors;
 }) {
+  const toggleTechStack = (techStack: string) => {
+    setForm((prev) => {
+      if (prev.techStacks.includes(techStack)) {
+        return {
+          ...prev,
+          techStacks: prev.techStacks.filter((stack) => stack !== techStack),
+        };
+      }
+
+      if (prev.techStacks.length >= HACKATHON_TECH_STACK_LIMIT) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        techStacks: [...prev.techStacks, techStack],
+      };
+    });
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -207,16 +231,42 @@ export function SubmissionModal({
           }
         />
         <div className="md:col-span-2">
-          <TextInput
-            id="submission-tech"
-            title="기술 스택"
-            description="쉼표로 구분"
-            length="full"
-            value={form.techStacks}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, techStacks: e.target.value }))
-            }
-          />
+          <div className="flex flex-col gap-2">
+            <Label size="s" className="text-text-basic">
+              기술 스택
+            </Label>
+            <Body size="s" className="text-text-subtle">
+              대표 스택을 최대 {HACKATHON_TECH_STACK_LIMIT}개까지 선택할 수
+              있습니다.
+            </Body>
+            <div className="flex flex-wrap gap-2">
+              {HACKATHON_TECH_STACK_OPTIONS.map((techStack) => {
+                const selected = form.techStacks.includes(techStack);
+                const disabled =
+                  !selected &&
+                  form.techStacks.length >= HACKATHON_TECH_STACK_LIMIT;
+
+                return (
+                  <button
+                    key={techStack}
+                    type="button"
+                    aria-pressed={selected}
+                    disabled={disabled}
+                    onClick={() => toggleTechStack(techStack)}
+                    className={[
+                      "rounded-2 text-body-s border px-4 py-2 transition-colors",
+                      selected
+                        ? "border-border-primary bg-action-primary-selected text-text-primary"
+                        : "border-border-gray bg-surface-white text-text-subtle hover:bg-surface-gray-subtle",
+                      disabled ? "cursor-not-allowed opacity-45" : "",
+                    ].join(" ")}
+                  >
+                    {techStack}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
         <div className="md:col-span-2">
           <TextArea

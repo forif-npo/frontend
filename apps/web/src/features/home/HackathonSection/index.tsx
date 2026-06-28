@@ -4,13 +4,33 @@ import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import type { Hackathon, Submission } from "@core/types/hackathon";
 import { apiClient } from "@core/utils/api-client";
 import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
+import { Select } from "@ui/components/client";
 import { useEffect, useState } from "react";
 import { HackathonBanner } from "./HackathonBanner";
 import { HackathonCard } from "./HackathonCard";
 
 const CARD_COLORS = ["#e5e2ef", "#cee4ee", "#f5f5f5"];
 
+function orderHackathons(hackathons: Hackathon[]) {
+  return [...hackathons].sort(
+    (a, b) =>
+      b.held_year - a.held_year ||
+      b.held_semester - a.held_semester ||
+      b.event_round - a.event_round,
+  );
+}
+
+function hackathonRoundLabel(hackathon: Hackathon) {
+  return hackathon.title
+    ? `${hackathon.event_round}회 · ${hackathon.title}`
+    : `${hackathon.held_year}-${hackathon.held_semester} · ${hackathon.event_round}회`;
+}
+
 export function HackathonSection() {
+  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
+  const [selectedHackathonId, setSelectedHackathonId] = useState<number | null>(
+    null,
+  );
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
@@ -18,40 +38,59 @@ export function HackathonSection() {
   useEffect(() => {
     let ignore = false;
 
-    const fetchSubmissions = async () => {
+    const fetchHackathons = async () => {
       setLoading(true);
       try {
         const hackathonsRes = await apiClient
           .get("api/v1/archive/hackathons")
           .json<ApiResponse<CursorPageResponse<Hackathon>>>();
-        const hackathons = hackathonsRes.data?.content ?? [];
+        const list = orderHackathons(hackathonsRes.data?.content ?? []);
 
-        const latest = [...hackathons].sort(
-          (a, b) =>
-            b.held_year - a.held_year ||
-            b.held_semester - a.held_semester ||
-            b.event_round - a.event_round,
-        )[0];
-
-        if (!latest) {
-          if (!ignore) setSubmissions([]);
-          return;
+        if (!ignore) {
+          setHackathons(list);
+          setSelectedHackathonId(list[0]?.hackathon_id ?? null);
+          if (list.length === 0) {
+            setSubmissions([]);
+            setLoading(false);
+          }
         }
-
-        const res = await apiClient
-          .get(`api/v1/archive/hackathons/${latest.hackathon_id}/submissions`)
-          .json<ApiResponse<CursorPageResponse<Submission>>>();
-        const list = (res.data?.content ?? [])
-          .slice()
-          .sort(
-            (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime(),
-          );
-
-        if (!ignore) setSubmissions(list);
       } catch {
-        if (!ignore) setSubmissions([]);
+        if (!ignore) {
+          setHackathons([]);
+          setSelectedHackathonId(null);
+          setSubmissions([]);
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchHackathons();
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedHackathonId) return;
+
+    let ignore = false;
+
+    const fetchSubmissions = async () => {
+      setLoading(true);
+      try {
+        const res = await apiClient
+          .get(`api/v1/archive/hackathons/${selectedHackathonId}/submissions`)
+          .json<ApiResponse<CursorPageResponse<Submission>>>();
+
+        if (!ignore) {
+          setSubmissions(res.data?.content ?? []);
+          setCurrentPage(0);
+        }
+      } catch {
+        if (!ignore) {
+          setSubmissions([]);
+          setCurrentPage(0);
+        }
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -61,18 +100,30 @@ export function HackathonSection() {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [selectedHackathonId]);
+
+  const hackathonOptions = hackathons.map((hackathon) => ({
+    value: String(hackathon.hackathon_id),
+    label: hackathonRoundLabel(hackathon),
+  }));
+
+  const handleRoundChange = (value: string) => {
+    setSelectedHackathonId(Number(value));
+    setCurrentPage(0);
+  };
 
   // Mobile: 1 card per page / Desktop: 3 cards per page
   const mobileTotal = submissions.length;
   const desktopTotal = Math.ceil(submissions.length / 3);
 
   const handlePrev = (perPage: number) => {
+    if (submissions.length === 0) return;
     const total = Math.ceil(submissions.length / perPage);
     setCurrentPage((p) => (p === 0 ? total - 1 : p - 1));
   };
 
   const handleNext = (perPage: number) => {
+    if (submissions.length === 0) return;
     const total = Math.ceil(submissions.length / perPage);
     setCurrentPage((p) => (p === total - 1 ? 0 : p + 1));
   };
@@ -88,26 +139,38 @@ export function HackathonSection() {
     <section className="mx-auto w-full max-w-[1200px] px-4 lg:px-0">
       {/* ── Mobile layout ── */}
       <div className="md:hidden">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-heading-l-mobile tracking-1 text-text-basic font-bold">
-            해커톤
-          </h2>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handlePrev(1)}
-              className="border-border-gray-light bg-surface-white flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border"
-              aria-label="이전"
-            >
-              <ArrowLeft className="text-text-basic" size={18} />
-            </button>
-            <button
-              onClick={() => handleNext(1)}
-              className="border-border-gray-light bg-surface-white flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border"
-              aria-label="다음"
-            >
-              <ArrowRight className="text-text-basic" size={18} />
-            </button>
+        <div className="mb-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-heading-l-mobile tracking-1 text-text-basic font-bold">
+              해커톤
+            </h2>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handlePrev(1)}
+                className="border-border-gray-light bg-surface-white flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border"
+                aria-label="이전"
+              >
+                <ArrowLeft className="text-text-basic" size={18} />
+              </button>
+              <button
+                onClick={() => handleNext(1)}
+                className="border-border-gray-light bg-surface-white flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border"
+                aria-label="다음"
+              >
+                <ArrowRight className="text-text-basic" size={18} />
+              </button>
+            </div>
           </div>
+          {hackathonOptions.length > 0 && selectedHackathonId && (
+            <Select
+              id="home-hackathon-round-mobile"
+              value={String(selectedHackathonId)}
+              onChange={handleRoundChange}
+              options={hackathonOptions}
+              placeholder="해커톤 회차"
+              size="sm"
+            />
+          )}
         </div>
 
         {loading ? (
@@ -143,10 +206,22 @@ export function HackathonSection() {
 
       {/* ── Desktop layout ── */}
       <div className="hidden md:block">
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between gap-4">
           <h2 className="text-heading-l tracking-1 text-text-basic font-bold">
             해커톤
           </h2>
+          {hackathonOptions.length > 0 && selectedHackathonId && (
+            <div className="w-72">
+              <Select
+                id="home-hackathon-round-desktop"
+                value={String(selectedHackathonId)}
+                onChange={handleRoundChange}
+                options={hackathonOptions}
+                placeholder="해커톤 회차"
+                size="md"
+              />
+            </div>
+          )}
         </div>
         <div className="flex items-start gap-6">
           <div className="w-[282px] flex-shrink-0 self-stretch">

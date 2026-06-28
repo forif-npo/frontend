@@ -19,7 +19,7 @@ export type SubmissionFormState = {
   githubUrl: string;
   deployUrl: string;
   imageUrl: string;
-  techStacks: string;
+  techStacks: string[];
 };
 
 export const EMPTY_TEAM_FORM: TeamFormState = {
@@ -36,7 +36,7 @@ export const EMPTY_SUBMISSION_FORM: SubmissionFormState = {
   githubUrl: "",
   deployUrl: "",
   imageUrl: "",
-  techStacks: "",
+  techStacks: [],
 };
 
 export function statusValue(current: ActiveStage, target: ActiveStage) {

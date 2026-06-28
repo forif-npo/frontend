@@ -6,6 +6,7 @@ import { Pagination, Select, TextInput } from "@ui/components/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
+import { HACKATHON_TECH_STACK_OPTIONS } from "@core/hackathon/tags";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
@@ -53,24 +54,25 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
     if (selectedId) fetchDetail(selectedId);
   }, [selectedId, fetchDetail]);
 
-  const techStacks = useMemo(
-    () => [
-      "전체",
-      ...Array.from(new Set(submissions.flatMap((s) => s.tech_stacks))),
-    ],
-    [submissions],
-  );
   const hackathonOptions = useMemo(
     () =>
-      hackathons.map((h) => ({
+      [...hackathons].map((h) => ({
         value: String(h.hackathon_id),
-        label: h.title || `${h.event_round}회 해커톤`,
+        label: h.title
+          ? `${h.event_round}회 · ${h.title}`
+          : `${h.held_year}-${h.held_semester} · ${h.event_round}회`,
       })),
     [hackathons],
   );
   const techOptions = useMemo(
-    () => techStacks.map((tech) => ({ value: tech, label: tech })),
-    [techStacks],
+    () => [
+      { value: "전체", label: "전체" },
+      ...HACKATHON_TECH_STACK_OPTIONS.map((tech) => ({
+        value: tech,
+        label: tech,
+      })),
+    ],
+    [],
   );
 
   const filtered = useMemo(() => {
@@ -129,27 +131,26 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
 
       {/* Hackathon selector + Filters */}
       <section className="bg-surface-white border-border-gray-light rounded-3 mb-6 flex flex-wrap items-end gap-4 border p-5 shadow-sm">
-        {hackathons.length > 1 && (
-          <div className="min-w-[180px]">
-            <div className="flex flex-col gap-1.5">
-              <Label size="xs" className="text-text-subtle font-bold">
-                해커톤 선택
-              </Label>
-              <Select
-                id="archive-hackathon"
-                value={String(selectedId)}
-                onChange={(value) => {
-                  setSelectedId(Number(value));
-                  setSearch("");
-                  setSelectedTech("전체");
-                }}
-                options={hackathonOptions}
-                placeholder="해커톤 선택"
-                size="md"
-              />
-            </div>
+        <div className="min-w-[180px]">
+          <div className="flex flex-col gap-1.5">
+            <Label size="xs" className="text-text-subtle font-bold">
+              해커톤 회차
+            </Label>
+            <Select
+              id="archive-hackathon"
+              value={String(selectedId)}
+              onChange={(value) => {
+                setSelectedId(Number(value));
+                setSearch("");
+                setSelectedTech("전체");
+                setCurrentPage(1);
+              }}
+              options={hackathonOptions}
+              placeholder="회차 선택"
+              size="md"
+            />
           </div>
-        )}
+        </div>
         <div className="min-w-[200px] flex-1">
           <TextInput
             id="archive-search"
