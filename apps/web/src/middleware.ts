@@ -19,13 +19,13 @@ const publicRoutes = [
   "/club/rule",
   "/club/accounting",
   "/hackathon",
-  "/hackathon/archive",
 ];
 const publicParamsList = [
   "/studies/detail",
   "/studies/apply",
   "/studies/about",
   "/club",
+  "/hackathon/archive",
 ];
 const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
