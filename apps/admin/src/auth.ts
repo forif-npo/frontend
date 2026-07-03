@@ -35,7 +35,12 @@ function shouldRefreshBackendJwt(token: JWT): boolean {
 
 async function refreshBackendJwt(token: JWT): Promise<JWT> {
   if (!token.backendRefreshToken) {
-    return { ...token, error: "RefreshAccessTokenError" };
+    // 만료된 토큰을 남겨두면 API 클라이언트가 갱신에 성공한 것으로 착각하므로 제거한다
+    return {
+      ...token,
+      backendJwt: undefined,
+      error: "RefreshAccessTokenError",
+    };
   }
 
   try {
@@ -56,7 +61,11 @@ async function refreshBackendJwt(token: JWT): Promise<JWT> {
     };
   } catch (error) {
     console.error("Backend token refresh failed:", error);
-    return { ...token, error: "RefreshAccessTokenError" };
+    return {
+      ...token,
+      backendJwt: undefined,
+      error: "RefreshAccessTokenError",
+    };
   }
 }
 
@@ -208,8 +217,13 @@ const result = NextAuth({
             token.staffAffiliation = staff.affiliation ?? null;
             token.role = staff.role;
           }
-        } catch {
-          // staff 정보를 가져올 수 없으면 토큰이 만료된 것으로 간주
+        } catch (error) {
+          // 401이면 백엔드 토큰이 만료된 것 → 세션 만료 처리
+          const { HTTPError } = await import("ky");
+          if (error instanceof HTTPError && error.response.status === 401) {
+            token.backendJwt = undefined;
+            token.error = "RefreshAccessTokenError";
+          }
         }
       }
 
