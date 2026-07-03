@@ -73,6 +73,7 @@ function pickNumber(...values: unknown[]): number {
 
 function mapToOperator(item: ForifTeamItem): Operator {
   return {
+    id: pickNumber(item.id, item.forif_team_id),
     userId: pickNumber(
       item.userId,
       item.user_id,
@@ -96,6 +97,15 @@ function mapToOperator(item: ForifTeamItem): Operator {
     ),
     actYear: pickNumber(item.actYear, item.act_year, item.year),
     actSemester: pickNumber(item.actSemester, item.act_semester, item.semester),
+    introTag: pickString(item.introTag, item.intro_tag),
+    selfIntro: pickString(item.selfIntro, item.self_intro),
+    profImgUrl: pickString(item.profImgUrl, item.prof_img_url),
+    graduateYear:
+      typeof item.graduate_year === "number"
+        ? item.graduate_year
+        : typeof item.graduateYear === "number"
+          ? item.graduateYear
+          : null,
   };
 }
 
@@ -107,6 +117,35 @@ function compareSemesterDesc(a: Operator, b: Operator) {
   }
 
   return b.actSemester - a.actSemester;
+}
+
+/**
+ * 운영진 이력 수정 (PATCH /api/v1/admin/forif-team/{id})
+ * null이 아닌 필드만 반영된다.
+ */
+export async function updateOperator(
+  forifTeamId: number,
+  body: {
+    user_title?: string;
+    club_department?: string;
+    intro_tag?: string;
+    self_intro?: string;
+    prof_img_url?: string;
+    graduate_year?: number;
+  },
+): Promise<void> {
+  await apiClient
+    .patch(`api/v1/admin/forif-team/${forifTeamId}`, { json: body })
+    .json<ApiResponse<ForifTeamItem>>();
+}
+
+/**
+ * 운영진 이력 삭제 (DELETE /api/v1/admin/forif-team/{id})
+ */
+export async function deleteOperator(forifTeamId: number): Promise<void> {
+  await apiClient
+    .delete(`api/v1/admin/forif-team/${forifTeamId}`)
+    .json<ApiResponse<null>>();
 }
 
 export async function fetchOperators({

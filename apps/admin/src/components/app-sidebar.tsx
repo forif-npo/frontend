@@ -29,6 +29,7 @@ import {
   LayoutGrid,
   MessageSquare,
   Settings,
+  ShieldCheck,
   UserCog,
   BookUser,
   Users,
@@ -54,9 +55,22 @@ const menuItems = {
   memberManagement: {
     label: "회원 관리",
     items: [
-      { title: "운영진", url: "/operators", icon: UserCog },
+      // 운영진 명단 관리는 회장단 전용 (presidentTeamOnly)
+      {
+        title: "운영진",
+        url: "/operators",
+        icon: UserCog,
+        presidentTeamOnly: true,
+      },
       { title: "멘토", url: "/mentors", icon: BookUser },
       { title: "부원", url: "/members", icon: Users },
+    ],
+  },
+  // 회장단(회장/부회장)에게만 노출
+  presidentOnly: {
+    label: "회장단",
+    items: [
+      { title: "운영진 계정 관리", url: "/admin-accounts", icon: ShieldCheck },
     ],
   },
   postManagement: {
@@ -82,7 +96,9 @@ const menuItems = {
 export function AppSidebar() {
   const pathname = usePathname();
   const { data, status } = useSession();
-  console.log("session data in sidebar:", data);
+  const isPresidentTeam = ["회장", "부회장"].includes(
+    data?.user?.affiliation ?? "",
+  );
 
   return (
     <Sidebar collapsible="icon" className="scrollbar-hidden">
@@ -165,22 +181,57 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.memberManagement.items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname.startsWith(item.url)}
-                  >
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {menuItems.memberManagement.items
+                .filter(
+                  (item) =>
+                    !("presidentTeamOnly" in item && item.presidentTeamOnly) ||
+                    isPresidentTeam,
+                )
+                .map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname.startsWith(item.url)}
+                    >
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* 회장단 전용 */}
+        {isPresidentTeam && (
+          <>
+            <SidebarSeparator />
+            <SidebarGroup>
+              <SidebarGroupLabel>
+                {menuItems.presidentOnly.label}
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {menuItems.presidentOnly.items.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname.startsWith(item.url)}
+                      >
+                        <Link href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
 
         <SidebarSeparator />
 

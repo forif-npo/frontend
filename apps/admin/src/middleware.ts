@@ -11,7 +11,9 @@ const authMiddleware = auth((req) => {
     /^\/[a-z]{2}(?:-[A-Z]{2})?(?=\/|$)/,
     "",
   );
-  const isLoggedIn = !!req.auth;
+  // admin 앱은 운영진(ADMIN) 세션만 로그인으로 인정한다.
+  // 멘토/부원 세션(role: MENTOR/USER)은 로그인 안 된 것으로 취급해 /signin으로 보낸다.
+  const isLoggedIn = !!req.auth && req.auth.role === "ADMIN";
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isAuthRoute = authRoutes.includes(pathname);
   const isPublicRoute = publicRoutes.includes(pathname);
