@@ -9,6 +9,7 @@ import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { Button } from "@/components/ui/button";
+import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import type { StudyUpdateRequest } from "@core/types/api";
 import { handleApiError } from "@core/utils/api-client";
 import { Download } from "lucide-react";
@@ -43,9 +44,19 @@ export function StudiesView({
   pageSize = 20,
   initialSearch = "",
 }: StudiesViewProps) {
+  const {
+    searchQuery,
+    setSearchQuery,
+    handleSemesterChange,
+    handleSearch,
+    handlePageChange,
+  } = useListViewFilters({
+    route: "/studies",
+    currentSemester,
+    initialSearch,
+  });
   const router = useRouter();
   const editRequestSeq = useRef(0);
-  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [editingStudy, setEditingStudy] = useState<Study | null>(null);
   const [editForm, setEditForm] = useState<StudyEditForm>({
     ...EMPTY_STUDY_EDIT_FORM,
@@ -57,54 +68,6 @@ export function StudiesView({
   const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
     null,
   );
-
-  const handleSemesterChange = (semester: string) => {
-    const params = new URLSearchParams();
-
-    if (semester) {
-      params.set("semester", semester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", "0");
-
-    router.push(`/studies?${params.toString()}`);
-  };
-
-  const handleSearch = () => {
-    const params = new URLSearchParams();
-
-    if (currentSemester) {
-      params.set("semester", currentSemester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", "0");
-
-    router.push(`/studies?${params.toString()}`);
-  };
-
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams();
-
-    if (currentSemester) {
-      params.set("semester", currentSemester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", String(page));
-
-    router.push(`/studies?${params.toString()}`);
-  };
 
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;

@@ -1,9 +1,8 @@
 "use client";
 
+import { SortableHeader } from "@/components/list/sortable-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import { Study } from "../types";
 
 const STATUS_LABELS: Record<Study["study_status"], string> = {
@@ -49,14 +48,7 @@ export const approvalColumns: ColumnDef<Study>[] = [
   {
     accessorKey: "study_name",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-      >
-        스터디명
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
+      <SortableHeader column={column}>스터디명</SortableHeader>
     ),
     cell: ({ row }) => (
       <div className="text-center font-medium">
@@ -67,14 +59,7 @@ export const approvalColumns: ColumnDef<Study>[] = [
   {
     accessorKey: "primary_mentor_name",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-      >
-        멘토
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
+      <SortableHeader column={column}>멘토</SortableHeader>
     ),
     cell: ({ row }) => {
       const primary = row.original.primary_mentor_name;
@@ -110,14 +95,7 @@ export const approvalColumns: ColumnDef<Study>[] = [
   {
     accessorKey: "created_at",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-      >
-        신청일
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
+      <SortableHeader column={column}>신청일</SortableHeader>
     ),
     cell: ({ row }) => (
       <div className="text-center text-sm">

@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
 import { Check, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -49,61 +50,23 @@ export function ApprovalView({
   pageSize = 20,
   initialSearch = "",
 }: ApprovalViewProps) {
+  const {
+    searchQuery,
+    setSearchQuery,
+    handleSemesterChange,
+    handleSearch,
+    handlePageChange,
+  } = useListViewFilters({
+    route: "/studies/approval",
+    currentSemester,
+    initialSearch,
+  });
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [rejectingStudy, setRejectingStudy] = useState<Study | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
     null,
   );
-
-  const handleSemesterChange = (semester: string) => {
-    const params = new URLSearchParams();
-
-    if (semester) {
-      params.set("semester", semester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", "0");
-
-    router.push(`/studies/approval?${params.toString()}`);
-  };
-
-  const handleSearch = () => {
-    const params = new URLSearchParams();
-
-    if (currentSemester) {
-      params.set("semester", currentSemester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", "0");
-
-    router.push(`/studies/approval?${params.toString()}`);
-  };
-
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams();
-
-    if (currentSemester) {
-      params.set("semester", currentSemester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", String(page));
-
-    router.push(`/studies/approval?${params.toString()}`);
-  };
 
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;

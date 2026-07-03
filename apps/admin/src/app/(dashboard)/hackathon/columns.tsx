@@ -1,9 +1,8 @@
 "use client";
 
+import { SortableHeader } from "@/components/list/sortable-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import { HACKATHON_STATUS_LABELS, type Hackathon } from "./types";
 
 const STATUS_BADGE_CLASS: Record<Hackathon["status"], string> = {
@@ -25,14 +24,7 @@ export const columns: ColumnDef<Hackathon>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-      >
-        해커톤
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
+      <SortableHeader column={column}>해커톤</SortableHeader>
     ),
     cell: ({ row }) => (
       <div className="text-center font-medium">
@@ -67,14 +59,7 @@ export const columns: ColumnDef<Hackathon>[] = [
   {
     accessorKey: "starts_at",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-      >
-        기간
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
+      <SortableHeader column={column}>기간</SortableHeader>
     ),
     cell: ({ row }) => (
       <div className="text-center text-sm">

@@ -9,9 +9,8 @@ import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { Button } from "@/components/ui/button";
+import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { Download } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import * as XLSX from "xlsx";
 
 import { columns } from "./columns";
@@ -36,56 +35,17 @@ export function OperatorsView({
   pageSize = 20,
   initialSearch = "",
 }: OperatorsViewProps) {
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState(initialSearch);
-
-  const handleSemesterChange = (semester: string) => {
-    const params = new URLSearchParams();
-
-    if (semester) {
-      params.set("semester", semester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", "0");
-
-    router.push(`/operators?${params.toString()}`);
-  };
-
-  const handleSearch = () => {
-    const params = new URLSearchParams();
-
-    if (currentSemester) {
-      params.set("semester", currentSemester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", "0");
-
-    router.push(`/operators?${params.toString()}`);
-  };
-
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams();
-
-    if (currentSemester) {
-      params.set("semester", currentSemester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", String(page));
-
-    router.push(`/operators?${params.toString()}`);
-  };
+  const {
+    searchQuery,
+    setSearchQuery,
+    handleSemesterChange,
+    handleSearch,
+    handlePageChange,
+  } = useListViewFilters({
+    route: "/operators",
+    currentSemester,
+    initialSearch,
+  });
 
   const handleDownloadExcel = () => {
     if (initialData.length === 0) {
