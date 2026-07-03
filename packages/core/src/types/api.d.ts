@@ -67,10 +67,12 @@ export type UserLoginResponse = ApiResponse<UserLoginData>;
 
 /**
  * 스태프(멘토/운영진) 로그인 요청 타입
+ * role 미지정 시 비밀번호가 일치하는 계정으로 로그인 (ADMIN 우선)
  */
 export interface StaffLoginRequest {
   user_id: number;
   password: string;
+  role?: "MENTOR" | "ADMIN";
 }
 
 /**
@@ -84,6 +86,8 @@ export interface Staff {
   department: string;
   img_url: string | null;
   role: "MENTOR" | "ADMIN";
+  /** 멘토: 스터디명, 운영진: 회장/부회장/운영진 등 소속 */
+  affiliation: string | null;
 }
 
 /**

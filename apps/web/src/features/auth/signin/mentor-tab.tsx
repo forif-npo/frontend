@@ -26,7 +26,8 @@ export default function MentorLogin() {
       });
 
       if (result?.error) {
-        setError(result.error);
+        // StaffSignInError가 code에 실어 보낸 실제 실패 사유를 우선 표시
+        setError(result.code ?? "로그인에 실패했습니다. 다시 시도해주세요.");
         return;
       }
 
