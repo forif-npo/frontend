@@ -14,7 +14,7 @@ export interface StudyDetail {
   study_name: string;
   primary_mentor_name: string;
   secondary_mentor_name: string | null;
-  tag: string;
+  tags: string[];
   one_liner: string;
   start_time: string;
   end_time: string;
@@ -41,6 +41,21 @@ export interface StudyBySemester {
 export type UserStudiesResponse = StudyBySemester[];
 
 /**
+ * Raw backend response for GET /api/v1/users/me/studies.
+ * The backend wraps semesters in an object and returns a single
+ * study per semester (current policy: one study per semester).
+ */
+interface RawUserStudiesData {
+  semesters: {
+    year: number;
+    semester: number;
+    semester_label: string;
+    is_current: boolean;
+    study: StudyDetail | null;
+  }[];
+}
+
+/**
  * Get user profile
  */
 export async function getUserProfile(token?: string): Promise<UserProfile> {
@@ -65,9 +80,12 @@ export async function getUserStudies(
     : {};
   const response = await apiClient
     .get("api/v1/users/me/studies", options)
-    .json<ApiResponse<UserStudiesResponse>>();
-  const data = response.data;
-  return Array.isArray(data) ? data : [];
+    .json<ApiResponse<RawUserStudiesData>>();
+  const semesters = response.data?.semesters ?? [];
+  return semesters.map(({ study, ...semester }) => ({
+    ...semester,
+    studies: study ? [study] : [],
+  }));
 }
 
 /**
