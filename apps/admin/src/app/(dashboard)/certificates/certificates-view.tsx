@@ -26,11 +26,39 @@ import { SemesterTabs } from "@/components/list/semester-tabs";
 import { handleApiError } from "@core/utils/api-client";
 import type { SemesterLabel, Study } from "../studies/types";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
   getCertificateTargets,
   issueCertificates,
+  issueManualCertificate,
   type CertificateTargetsData,
   type IssueCertificatesData,
 } from "./api";
+
+interface ManualForm {
+  userName: string;
+  studentNumber: string;
+  department: string;
+  studyName: string;
+  activityPeriod: string;
+  issueDate: string;
+}
+
+const EMPTY_MANUAL_FORM: ManualForm = {
+  userName: "",
+  studentNumber: "",
+  department: "",
+  studyName: "",
+  activityPeriod: "",
+  issueDate: "",
+};
 
 interface CertificatesViewProps {
   studies: Study[];
@@ -53,6 +81,11 @@ export function CertificatesView({
   const [lastResult, setLastResult] = useState<IssueCertificatesData | null>(
     null,
   );
+
+  const [manualOpen, setManualOpen] = useState(false);
+  const [manualForm, setManualForm] = useState<ManualForm>(EMPTY_MANUAL_FORM);
+  const [manualResultUrl, setManualResultUrl] = useState<string | null>(null);
+  const [isManualIssuing, setIsManualIssuing] = useState(false);
 
   const fetchTargets = useCallback(async (studyId: number) => {
     setIsLoading(true);
@@ -129,20 +162,65 @@ export function CertificatesView({
     }
   };
 
+  const handleManualIssue = async () => {
+    if (isManualIssuing) return;
+    const required: [string, string][] = [
+      [manualForm.userName, "이름"],
+      [manualForm.studentNumber, "학번"],
+      [manualForm.department, "학과"],
+      [manualForm.studyName, "스터디명"],
+      [manualForm.activityPeriod, "활동 기간"],
+    ];
+    const missing = required.find(([value]) => !value.trim());
+    if (missing) {
+      toast.error(`${missing[1]}을(를) 입력해주세요.`);
+      return;
+    }
+
+    setIsManualIssuing(true);
+    try {
+      const url = await issueManualCertificate({
+        user_name: manualForm.userName.trim(),
+        student_number: manualForm.studentNumber.trim(),
+        department: manualForm.department.trim(),
+        study_name: manualForm.studyName.trim(),
+        activity_period: manualForm.activityPeriod.trim(),
+        issue_date: manualForm.issueDate.trim() || undefined,
+      });
+      setManualResultUrl(url);
+      toast.success("수료증이 생성되었습니다.");
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsManualIssuing(false);
+    }
+  };
+
+  const closeManualDialog = () => {
+    setManualOpen(false);
+    setManualForm(EMPTY_MANUAL_FORM);
+    setManualResultUrl(null);
+  };
+
   const targets = targetsData?.targets ?? [];
   const eligibleCount = targets.filter((t) => t.eligible).length;
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold">
-          <Award className="h-6 w-6" />
-          인증서 발급
-        </h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          수료 기준(출석 {targetsData?.required_attendance ?? 5}회 이상 + 해당
-          학기 해커톤 참여)을 충족한 부원에게 수료증을 발급합니다.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="flex items-center gap-2 text-2xl font-bold">
+            <Award className="h-6 w-6" />
+            인증서 발급
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            수료 기준(출석 {targetsData?.required_attendance ?? 5}회 이상 + 해당
+            학기 해커톤 참여)을 충족한 부원에게 수료증을 발급합니다.
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => setManualOpen(true)}>
+          수동 발급
+        </Button>
       </div>
 
       <SemesterTabs
@@ -311,6 +389,126 @@ export function CertificatesView({
           </div>
         </div>
       )}
+
+      {/* 수동 발급 다이얼로그 */}
+      <Dialog
+        open={manualOpen}
+        onOpenChange={(open) => !open && closeManualDialog()}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>수료증 수동 발급</DialogTitle>
+            <DialogDescription>
+              특수한 경우(자료 누락, 과거 학기 재발행 등)를 위해 모든 정보를
+              직접 입력해 발급합니다. 발급 이력은 부원 계정에 기록되지 않습니다.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="manual-name">이름</Label>
+                <Input
+                  id="manual-name"
+                  placeholder="홍길동"
+                  value={manualForm.userName}
+                  onChange={(e) =>
+                    setManualForm((f) => ({ ...f, userName: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="manual-student-number">학번</Label>
+                <Input
+                  id="manual-student-number"
+                  placeholder="2024000000"
+                  value={manualForm.studentNumber}
+                  onChange={(e) =>
+                    setManualForm((f) => ({
+                      ...f,
+                      studentNumber: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="manual-department">학과</Label>
+              <Input
+                id="manual-department"
+                placeholder="정보시스템학과"
+                value={manualForm.department}
+                onChange={(e) =>
+                  setManualForm((f) => ({ ...f, department: e.target.value }))
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="manual-study-name">스터디명</Label>
+              <Input
+                id="manual-study-name"
+                placeholder="README.md"
+                value={manualForm.studyName}
+                onChange={(e) =>
+                  setManualForm((f) => ({ ...f, studyName: e.target.value }))
+                }
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="manual-activity-period">활동 기간</Label>
+                <Input
+                  id="manual-activity-period"
+                  placeholder="2026.03.02.~2026.06.20."
+                  value={manualForm.activityPeriod}
+                  onChange={(e) =>
+                    setManualForm((f) => ({
+                      ...f,
+                      activityPeriod: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="manual-issue-date">발급일 (선택)</Label>
+                <Input
+                  id="manual-issue-date"
+                  placeholder="미입력 시 오늘 날짜"
+                  value={manualForm.issueDate}
+                  onChange={(e) =>
+                    setManualForm((f) => ({
+                      ...f,
+                      issueDate: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            {manualResultUrl && (
+              <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm">
+                <p className="mb-1 font-medium">수료증이 생성되었습니다</p>
+                <a
+                  href={manualResultUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 break-all text-blue-600 hover:underline"
+                >
+                  {manualResultUrl}{" "}
+                  <ExternalLink className="h-3 w-3 shrink-0" />
+                </a>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={closeManualDialog}>
+              닫기
+            </Button>
+            <Button onClick={handleManualIssue} disabled={isManualIssuing}>
+              {isManualIssuing ? "생성 중..." : "발급"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

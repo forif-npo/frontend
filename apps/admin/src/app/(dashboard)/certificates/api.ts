@@ -51,6 +51,35 @@ export async function getCertificateTargets(
   return response.data;
 }
 
+export interface ManualCertificateBody {
+  user_name: string;
+  student_number: string;
+  department: string;
+  study_name: string;
+  activity_period: string;
+  issue_date?: string;
+}
+
+/**
+ * 수료증 수동 발급 — 모든 표기 정보를 직접 입력해 생성.
+ * 자격 검증/DB 기록 없이 생성된 이미지 URL만 반환한다.
+ */
+export async function issueManualCertificate(
+  body: ManualCertificateBody,
+): Promise<string> {
+  const response = await apiClient
+    .post("api/v1/admin/certificates/manual", {
+      json: body,
+      timeout: 60000,
+    })
+    .json<ApiResponse<{ certificate_url: string }>>();
+
+  if (!response.data?.certificate_url) {
+    throw new Error("수료증 생성 결과를 받지 못했습니다.");
+  }
+  return response.data.certificate_url;
+}
+
 export async function issueCertificates(
   studyId: number,
   userIds: number[],
