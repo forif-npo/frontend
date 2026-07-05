@@ -36,8 +36,10 @@ import {
 import { Label } from "@/components/ui/label";
 import {
   getCertificateTargets,
+  getMySignature,
   issueCertificates,
   issueManualCertificate,
+  uploadMySignature,
   type CertificateTargetsData,
   type IssueCertificatesData,
 } from "./api";
@@ -88,6 +90,43 @@ export function CertificatesView({
   const [manualForm, setManualForm] = useState<ManualForm>(EMPTY_MANUAL_FORM);
   const [manualResultUrl, setManualResultUrl] = useState<string | null>(null);
   const [isManualIssuing, setIsManualIssuing] = useState(false);
+
+  const [signatureOpen, setSignatureOpen] = useState(false);
+  const [signatureUrl, setSignatureUrl] = useState<string | null>(null);
+  const [signatureFile, setSignatureFile] = useState<File | null>(null);
+  const [isSignatureLoading, setIsSignatureLoading] = useState(false);
+  const [isSignatureUploading, setIsSignatureUploading] = useState(false);
+
+  const openSignatureDialog = async () => {
+    setSignatureOpen(true);
+    setSignatureFile(null);
+    setIsSignatureLoading(true);
+    try {
+      setSignatureUrl(await getMySignature());
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsSignatureLoading(false);
+    }
+  };
+
+  const handleSignatureUpload = async () => {
+    if (!signatureFile || isSignatureUploading) {
+      if (!signatureFile) toast.error("서명 이미지 파일을 선택해주세요.");
+      return;
+    }
+    setIsSignatureUploading(true);
+    try {
+      const url = await uploadMySignature(signatureFile);
+      setSignatureUrl(url);
+      setSignatureFile(null);
+      toast.success("서명이 등록되었습니다.");
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsSignatureUploading(false);
+    }
+  };
 
   const fetchTargets = useCallback(async (studyId: number) => {
     setIsLoading(true);
@@ -221,9 +260,14 @@ export function CertificatesView({
             학기 해커톤 참여)을 충족한 부원에게 수료증을 발급합니다.
           </p>
         </div>
-        <Button variant="outline" onClick={() => setManualOpen(true)}>
-          수동 발급
-        </Button>
+        <div className="flex shrink-0 gap-2">
+          <Button variant="outline" onClick={openSignatureDialog}>
+            서명 등록
+          </Button>
+          <Button variant="outline" onClick={() => setManualOpen(true)}>
+            수동 발급
+          </Button>
+        </div>
       </div>
 
       <SemesterTabs
@@ -392,6 +436,67 @@ export function CertificatesView({
           </div>
         </div>
       )}
+
+      {/* 서명 등록 다이얼로그 */}
+      <Dialog
+        open={signatureOpen}
+        onOpenChange={(open) => !open && setSignatureOpen(false)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>수료증 서명 등록</DialogTitle>
+            <DialogDescription>
+              로그인한 본인 계정에 서명 이미지를 등록합니다. 수료증에는 발급
+              시점의{" "}
+              <span className="font-medium">회장 계정에 등록된 서명</span>이
+              합성되며, 회장 서명이 없으면 발급이 차단됩니다.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label>현재 등록된 서명</Label>
+              {isSignatureLoading ? (
+                <p className="text-muted-foreground text-sm">불러오는 중...</p>
+              ) : signatureUrl ? (
+                <div className="rounded-md border bg-gray-50 p-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={signatureUrl}
+                    alt="등록된 서명"
+                    className="mx-auto max-h-24 object-contain"
+                  />
+                </div>
+              ) : (
+                <p className="text-destructive text-sm">
+                  등록된 서명이 없습니다.
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="signature-file">
+                새 서명 이미지 (투명 배경 PNG 권장)
+              </Label>
+              <Input
+                id="signature-file"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={(e) => setSignatureFile(e.target.files?.[0] ?? null)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSignatureOpen(false)}>
+              닫기
+            </Button>
+            <Button
+              onClick={handleSignatureUpload}
+              disabled={!signatureFile || isSignatureUploading}
+            >
+              {isSignatureUploading ? "업로드 중..." : "등록"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* 수동 발급 다이얼로그 */}
       <Dialog

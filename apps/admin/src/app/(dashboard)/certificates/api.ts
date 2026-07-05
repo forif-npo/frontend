@@ -51,6 +51,36 @@ export async function getCertificateTargets(
   return response.data;
 }
 
+/**
+ * 로그인한 운영진 본인의 등록된 서명 URL 조회 (미등록 시 null)
+ */
+export async function getMySignature(): Promise<string | null> {
+  const response = await apiClient
+    .get("api/v1/admin/certificates/signature")
+    .json<ApiResponse<{ signature_url: string | null }>>();
+  return response.data?.signature_url ?? null;
+}
+
+/**
+ * 로그인한 운영진 본인의 서명 이미지 업로드 (투명 배경 PNG 권장)
+ */
+export async function uploadMySignature(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await apiClient
+    .post("api/v1/admin/certificates/signature", {
+      body: formData,
+      timeout: 30000,
+    })
+    .json<ApiResponse<{ signature_url: string }>>();
+
+  if (!response.data?.signature_url) {
+    throw new Error("서명 업로드 결과를 받지 못했습니다.");
+  }
+  return response.data.signature_url;
+}
+
 export interface ManualCertificateBody {
   user_name: string;
   student_number: string;
