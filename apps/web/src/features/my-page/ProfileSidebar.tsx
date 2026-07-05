@@ -15,6 +15,8 @@ interface ProfileSidebarProps {
   };
   activeNav: string;
   onNavChange: (nav: string) => void;
+  /** 개설한 스터디가 있는 멘토에게만 스터디 관리 메뉴 활성화 */
+  canManageStudies?: boolean;
 }
 
 function TaskSquareIcon({ className }: { className?: string }) {
@@ -138,27 +140,28 @@ function SettingIcon({ className }: { className?: string }) {
   );
 }
 
-const navItems = [
-  {
-    id: "my-studies",
-    label: "내 스터디",
-    Icon: TaskSquareIcon,
-    disabled: false,
-  },
-  {
-    id: "study-manage",
-    label: "스터디 관리",
-    Icon: ProfileUsersIcon,
-    disabled: true,
-  },
-  { id: "settings", label: "설정", Icon: SettingIcon, disabled: true },
-];
-
 export function ProfileSidebar({
   profile,
   activeNav,
   onNavChange,
+  canManageStudies = false,
 }: ProfileSidebarProps) {
+  const navItems = [
+    {
+      id: "my-studies",
+      label: "내 스터디",
+      Icon: TaskSquareIcon,
+      disabled: false,
+    },
+    {
+      id: "study-manage",
+      label: "스터디 관리",
+      Icon: ProfileUsersIcon,
+      disabled: !canManageStudies,
+    },
+    { id: "settings", label: "설정", Icon: SettingIcon, disabled: true },
+  ];
+
   return (
     <aside className="hidden w-[224px] shrink-0 flex-col items-center border-r border-[#cdd1d5] px-6 py-10 md:flex">
       {/* Profile Picture */}

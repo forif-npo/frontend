@@ -35,7 +35,12 @@ function shouldRefreshBackendJwt(token: JWT): boolean {
 
 async function refreshBackendJwt(token: JWT): Promise<JWT> {
   if (!token.backendRefreshToken) {
-    return { ...token, error: "RefreshAccessTokenError" };
+    // 만료된 토큰을 남겨두면 API 클라이언트가 갱신에 성공한 것으로 착각하므로 제거한다
+    return {
+      ...token,
+      backendJwt: undefined,
+      error: "RefreshAccessTokenError",
+    };
   }
 
   try {
@@ -56,7 +61,11 @@ async function refreshBackendJwt(token: JWT): Promise<JWT> {
     };
   } catch (error) {
     console.error("Backend token refresh failed:", error);
-    return { ...token, error: "RefreshAccessTokenError" };
+    return {
+      ...token,
+      backendJwt: undefined,
+      error: "RefreshAccessTokenError",
+    };
   }
 }
 
@@ -90,9 +99,11 @@ const result = NextAuth({
         try {
           const { staffLogin, getStaff } = await import("@core/auth/api");
 
+          // admin 앱은 운영진 계정 전용 (멘토 계정은 웹 앱에서 로그인)
           const response = await staffLogin({
             user_id: Number(credentials.id),
             password: credentials.password,
+            role: "ADMIN",
           });
 
           if (!response.data?.access_token) {
@@ -117,6 +128,7 @@ const result = NextAuth({
             access_token: response.data.access_token,
             backendRefreshToken: response.data.refresh_token,
             role: response.data.role,
+            affiliation: staff.affiliation ?? null,
           };
         } catch (error) {
           console.error("Authorize error:", error);
@@ -126,6 +138,23 @@ const result = NextAuth({
     }),
   ],
   trustHost: true,
+  // 웹 앱(3000)과 쿠키 이름을 분리한다.
+  // 같은 호스트(localhost)에서 두 앱이 기본 쿠키 이름(authjs.session-token)을 공유하면
+  // 웹 앱의 멘토/부원 세션이 admin 앱 세션으로 읽히는 문제가 있다.
+  cookies: {
+    sessionToken: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? "__Secure-admin.session-token"
+          : "admin.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
   session: {
     strategy: "jwt",
     maxAge: 60 * 60 * 24 * 30, // 30 days
@@ -161,6 +190,7 @@ const result = NextAuth({
         token.staffPhoneNum = user.phoneNum ?? "";
         token.staffDepartment = user.department ?? "";
         token.staffImgUrl = user.imgUrl ?? null;
+        token.staffAffiliation = user.affiliation ?? null;
       }
 
       if (shouldRefreshBackendJwt(token)) {
@@ -168,7 +198,11 @@ const result = NextAuth({
       }
 
       // 토큰은 있지만 staff 정보가 없는 경우 (기존 세션 복원 시) API로 가져옴
-      if (token.backendJwt && !token.staffName) {
+      // affiliation은 나중에 추가된 필드라 기존 세션에는 없을 수 있어 함께 백필한다
+      if (
+        token.backendJwt &&
+        (!token.staffName || token.staffAffiliation === undefined)
+      ) {
         try {
           const { getStaff } = await import("@core/auth/api");
           const staffRes = await getStaff(token.backendJwt as string);
@@ -180,10 +214,16 @@ const result = NextAuth({
             token.staffPhoneNum = staff.phone_num;
             token.staffDepartment = staff.department;
             token.staffImgUrl = staff.img_url;
+            token.staffAffiliation = staff.affiliation ?? null;
             token.role = staff.role;
           }
-        } catch {
-          // staff 정보를 가져올 수 없으면 토큰이 만료된 것으로 간주
+        } catch (error) {
+          // 401이면 백엔드 토큰이 만료된 것 → 세션 만료 처리
+          const { HTTPError } = await import("ky");
+          if (error instanceof HTTPError && error.response.status === 401) {
+            token.backendJwt = undefined;
+            token.error = "RefreshAccessTokenError";
+          }
         }
       }
 
@@ -202,6 +242,7 @@ const result = NextAuth({
         department: (token.staffDepartment as string) || "",
         imgUrl: (token.staffImgUrl as string | null) ?? null,
         role: (token.role as "MENTOR" | "ADMIN") || "MENTOR",
+        affiliation: (token.staffAffiliation as string | null) ?? null,
       };
       return session;
     },
