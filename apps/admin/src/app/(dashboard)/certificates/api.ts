@@ -58,6 +58,8 @@ export interface ManualCertificateBody {
   study_name: string;
   activity_period: string;
   issue_date?: string;
+  /** 미입력 시 현재 회장 이름으로 표기 */
+  president_name?: string;
 }
 
 /**

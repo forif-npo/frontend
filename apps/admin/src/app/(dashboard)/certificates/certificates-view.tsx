@@ -49,6 +49,7 @@ interface ManualForm {
   studyName: string;
   activityPeriod: string;
   issueDate: string;
+  presidentName: string;
 }
 
 const EMPTY_MANUAL_FORM: ManualForm = {
@@ -58,6 +59,7 @@ const EMPTY_MANUAL_FORM: ManualForm = {
   studyName: "",
   activityPeriod: "",
   issueDate: "",
+  presidentName: "",
 };
 
 interface CertificatesViewProps {
@@ -186,6 +188,7 @@ export function CertificatesView({
         study_name: manualForm.studyName.trim(),
         activity_period: manualForm.activityPeriod.trim(),
         issue_date: manualForm.issueDate.trim() || undefined,
+        president_name: manualForm.presidentName.trim() || undefined,
       });
       setManualResultUrl(url);
       toast.success("수료증이 생성되었습니다.");
@@ -482,6 +485,20 @@ export function CertificatesView({
                   }
                 />
               </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="manual-president-name">회장 이름 (선택)</Label>
+              <Input
+                id="manual-president-name"
+                placeholder="미입력 시 현재 회장 이름"
+                value={manualForm.presidentName}
+                onChange={(e) =>
+                  setManualForm((f) => ({
+                    ...f,
+                    presidentName: e.target.value,
+                  }))
+                }
+              />
             </div>
 
             {manualResultUrl && (
