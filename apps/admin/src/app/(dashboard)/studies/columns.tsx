@@ -1,44 +1,25 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { SortableHeader } from "@/components/list/sortable-header";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import { Study } from "./types";
 
 export const columns: ColumnDef<Study>[] = [
   {
     accessorKey: "study_name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-        >
-          스터디명
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <SortableHeader column={column}>스터디명</SortableHeader>
+    ),
     cell: ({ row }) => (
       <div className="text-center">{row.getValue("study_name")}</div>
     ),
   },
   {
     accessorKey: "primary_mentor_name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-        >
-          멘토
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <SortableHeader column={column}>멘토</SortableHeader>
+    ),
     cell: ({ row }) => {
       const primary = row.original.primary_mentor_name;
       const secondary = row.original.secondary_mentor_name;
@@ -92,18 +73,9 @@ export const columns: ColumnDef<Study>[] = [
   },
   {
     accessorKey: "mentee_count",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto justify-center p-0 text-sm hover:bg-transparent"
-        >
-          멘티수
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <SortableHeader column={column}>멘티수</SortableHeader>
+    ),
     cell: ({ row }) => {
       const count = row.getValue("mentee_count") as number;
       return <div className="text-center">{count}명</div>;

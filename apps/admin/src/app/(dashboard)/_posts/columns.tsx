@@ -1,9 +1,8 @@
 "use client";
 
+import { SortableHeader } from "@/components/list/sortable-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import type { AdminPost } from "./types";
 
 function formatDate(value: string) {
@@ -17,29 +16,13 @@ function formatDate(value: string) {
 export const postColumns: ColumnDef<AdminPost>[] = [
   {
     accessorKey: "postId",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-      >
-        ID
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: ({ column }) => <SortableHeader column={column}>ID</SortableHeader>,
     cell: ({ row }) => <div className="text-center">{row.original.postId}</div>,
   },
   {
     accessorKey: "title",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-      >
-        제목
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
+      <SortableHeader column={column}>제목</SortableHeader>
     ),
     cell: ({ row }) => (
       <div className="max-w-[360px] truncate font-medium">
@@ -70,14 +53,7 @@ export const postColumns: ColumnDef<AdminPost>[] = [
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
-      >
-        작성일
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
+      <SortableHeader column={column}>작성일</SortableHeader>
     ),
     cell: ({ row }) => (
       <div className="text-center text-sm">

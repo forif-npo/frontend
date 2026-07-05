@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
 import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -56,7 +57,18 @@ export function OperatorsView({
   initialSearch = "",
 }: OperatorsViewProps) {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const {
+    searchQuery,
+    setSearchQuery,
+    handleSemesterChange,
+    handleSearch,
+    handlePageChange,
+  } = useListViewFilters({
+    route: "/operators",
+    currentSemester,
+    initialSearch,
+  });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editTarget, setEditTarget] = useState<Operator | null>(null);
   const [editForm, setEditForm] = useState<OperatorEditForm>({
@@ -66,54 +78,6 @@ export function OperatorsView({
     selfIntro: "",
     graduateYear: "",
   });
-
-  const handleSemesterChange = (semester: string) => {
-    const params = new URLSearchParams();
-
-    if (semester) {
-      params.set("semester", semester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", "0");
-
-    router.push(`/operators?${params.toString()}`);
-  };
-
-  const handleSearch = () => {
-    const params = new URLSearchParams();
-
-    if (currentSemester) {
-      params.set("semester", currentSemester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", "0");
-
-    router.push(`/operators?${params.toString()}`);
-  };
-
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams();
-
-    if (currentSemester) {
-      params.set("semester", currentSemester);
-    }
-
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
-    }
-
-    params.set("page", String(page));
-
-    router.push(`/operators?${params.toString()}`);
-  };
 
   const handleDownloadExcel = () => {
     if (initialData.length === 0) {
