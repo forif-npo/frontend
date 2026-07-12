@@ -39,9 +39,11 @@ import {
   getMySignature,
   issueCertificates,
   issueManualCertificate,
+  searchMembers,
   uploadMySignature,
   type CertificateTargetsData,
   type IssueCertificatesData,
+  type MemberSearchItem,
 } from "./api";
 
 interface ManualForm {
@@ -49,7 +51,9 @@ interface ManualForm {
   studentNumber: string;
   department: string;
   studyName: string;
-  activityPeriod: string;
+  /** yyyy-MM-dd (date input 값) */
+  startDate: string;
+  endDate: string;
   issueDate: string;
   presidentName: string;
 }
@@ -59,10 +63,16 @@ const EMPTY_MANUAL_FORM: ManualForm = {
   studentNumber: "",
   department: "",
   studyName: "",
-  activityPeriod: "",
+  startDate: "",
+  endDate: "",
   issueDate: "",
   presidentName: "",
 };
+
+/** yyyy-MM-dd → 수료증 표기용 "yyyy.MM.dd." */
+const toDotDate = (isoDate: string) => `${isoDate.replaceAll("-", ".")}.`;
+/** yyyy-MM-dd → 발급일 표기용 "yyyy. MM. dd." */
+const toIssueDate = (isoDate: string) => `${isoDate.split("-").join(". ")}.`;
 
 interface CertificatesViewProps {
   studies: Study[];
@@ -90,6 +100,41 @@ export function CertificatesView({
   const [manualForm, setManualForm] = useState<ManualForm>(EMPTY_MANUAL_FORM);
   const [manualResultUrl, setManualResultUrl] = useState<string | null>(null);
   const [isManualIssuing, setIsManualIssuing] = useState(false);
+
+  const [memberQuery, setMemberQuery] = useState("");
+  const [memberResults, setMemberResults] = useState<MemberSearchItem[]>([]);
+  const [isMemberSearching, setIsMemberSearching] = useState(false);
+
+  const handleMemberSearch = async () => {
+    const query = memberQuery.trim();
+    if (!query || isMemberSearching) return;
+    setIsMemberSearching(true);
+    try {
+      const results = await searchMembers(query);
+      setMemberResults(results);
+      if (results.length === 0) {
+        toast.info("검색 결과가 없습니다.");
+      }
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsMemberSearching(false);
+    }
+  };
+
+  const applyMember = (member: MemberSearchItem) => {
+    setManualForm((f) => ({
+      ...f,
+      userName: member.user_name,
+      studentNumber: String(member.user_id),
+      department: member.department ?? "",
+      studyName: member.current_study_name ?? f.studyName,
+    }));
+    setMemberResults([]);
+    setMemberQuery("");
+  };
+
+  const [forceWarnOpen, setForceWarnOpen] = useState(false);
 
   const [signatureOpen, setSignatureOpen] = useState(false);
   const [signatureUrl, setSignatureUrl] = useState<string | null>(null);
@@ -170,26 +215,21 @@ export function CertificatesView({
     });
   };
 
-  const handleIssue = async () => {
-    if (selectedStudyId == null || selectedIds.size === 0 || isIssuing) return;
-    if (!activityPeriod.trim()) {
-      toast.error("활동 기간을 입력해주세요. 예: 2026.03.02.~2026.06.20.");
-      return;
-    }
-    if (
-      !confirm(
-        `선택한 ${selectedIds.size}명의 수료증을 발급할까요?\n이미 발급된 부원은 재발급됩니다.`,
-      )
-    ) {
-      return;
-    }
+  // 선택된 대상 중 자격 미달자
+  const ineligibleSelected = (targetsData?.targets ?? []).filter(
+    (t) => selectedIds.has(t.user_id) && !t.eligible,
+  );
 
+  const executeIssue = async (ignoreEligibility: boolean) => {
+    if (selectedStudyId == null || isIssuing) return;
+    setForceWarnOpen(false);
     setIsIssuing(true);
     try {
       const result = await issueCertificates(
         selectedStudyId,
         Array.from(selectedIds),
         activityPeriod.trim(),
+        ignoreEligibility,
       );
       setLastResult(result);
       toast.success(
@@ -203,6 +243,29 @@ export function CertificatesView({
     }
   };
 
+  const handleIssue = async () => {
+    if (selectedStudyId == null || selectedIds.size === 0 || isIssuing) return;
+    if (!activityPeriod.trim()) {
+      toast.error("활동 기간을 입력해주세요. 예: 2026.03.02.~2026.06.20.");
+      return;
+    }
+
+    // 자격 미달자가 포함돼 있으면 경고 모달로 안내 후 진행
+    if (ineligibleSelected.length > 0) {
+      setForceWarnOpen(true);
+      return;
+    }
+
+    if (
+      !confirm(
+        `선택한 ${selectedIds.size}명의 수료증을 발급할까요?\n이미 발급된 부원은 재발급됩니다.`,
+      )
+    ) {
+      return;
+    }
+    await executeIssue(false);
+  };
+
   const handleManualIssue = async () => {
     if (isManualIssuing) return;
     const required: [string, string][] = [
@@ -210,11 +273,16 @@ export function CertificatesView({
       [manualForm.studentNumber, "학번"],
       [manualForm.department, "학과"],
       [manualForm.studyName, "스터디명"],
-      [manualForm.activityPeriod, "활동 기간"],
+      [manualForm.startDate, "활동 시작일"],
+      [manualForm.endDate, "활동 종료일"],
     ];
     const missing = required.find(([value]) => !value.trim());
     if (missing) {
       toast.error(`${missing[1]}을(를) 입력해주세요.`);
+      return;
+    }
+    if (manualForm.startDate > manualForm.endDate) {
+      toast.error("활동 시작일이 종료일보다 늦을 수 없습니다.");
       return;
     }
 
@@ -225,8 +293,10 @@ export function CertificatesView({
         student_number: manualForm.studentNumber.trim(),
         department: manualForm.department.trim(),
         study_name: manualForm.studyName.trim(),
-        activity_period: manualForm.activityPeriod.trim(),
-        issue_date: manualForm.issueDate.trim() || undefined,
+        activity_period: `${toDotDate(manualForm.startDate)}~${toDotDate(manualForm.endDate)}`,
+        issue_date: manualForm.issueDate
+          ? toIssueDate(manualForm.issueDate)
+          : undefined,
         president_name: manualForm.presidentName.trim() || undefined,
       });
       setManualResultUrl(url);
@@ -242,6 +312,8 @@ export function CertificatesView({
     setManualOpen(false);
     setManualForm(EMPTY_MANUAL_FORM);
     setManualResultUrl(null);
+    setMemberQuery("");
+    setMemberResults([]);
   };
 
   const targets = targetsData?.targets ?? [];
@@ -437,6 +509,59 @@ export function CertificatesView({
         </div>
       )}
 
+      {/* 자격 미달자 강제 발급 경고 모달 */}
+      <Dialog
+        open={forceWarnOpen}
+        onOpenChange={(open) => !open && setForceWarnOpen(false)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-destructive">
+              자격 미달자가 포함되어 있습니다
+            </DialogTitle>
+            <DialogDescription>
+              아래 {ineligibleSelected.length}명은 수료 기준(출석{" "}
+              {targetsData?.required_attendance ?? 5}회 이상 + 해당 학기 해커톤
+              참여)을 충족하지 못했습니다. 그래도 발급하시겠습니까?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-60 overflow-y-auto rounded-md border border-amber-200 bg-amber-50 p-3 text-sm">
+            <ul className="flex flex-col gap-1">
+              {ineligibleSelected.map((t) => (
+                <li key={t.user_id}>
+                  <span className="font-medium">{t.user_name}</span> (
+                  {t.user_id}) —{" "}
+                  {[
+                    t.attendance_count < (targetsData?.required_attendance ?? 5)
+                      ? `출석 ${t.attendance_count}/${targetsData?.required_attendance ?? 5}회`
+                      : null,
+                    !t.hackathon_participated ? "해커톤 미참여" : null,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="text-muted-foreground text-sm">
+            발급 시 자격 충족자와 동일하게 수료증이 생성되고 부원 계정에
+            기록됩니다. 선택 {selectedIds.size}명 전원이 발급 대상입니다.
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setForceWarnOpen(false)}>
+              취소
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => executeIssue(true)}
+              disabled={isIssuing}
+            >
+              {isIssuing ? "발급 중..." : "무시하고 발급"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* 서명 등록 다이얼로그 */}
       <Dialog
         open={signatureOpen}
@@ -512,6 +637,57 @@ export function CertificatesView({
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
+            {/* 부원 검색으로 이름/학번/학과/스터디명 자동 채움 */}
+            <div className="flex flex-col gap-2 rounded-md border bg-gray-50 p-3">
+              <Label htmlFor="manual-member-search">
+                부원 검색 (이름 또는 학번으로 자동 채움)
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="manual-member-search"
+                  placeholder="홍길동 또는 2024000000"
+                  value={memberQuery}
+                  onChange={(e) => setMemberQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleMemberSearch();
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleMemberSearch}
+                  disabled={isMemberSearching}
+                >
+                  {isMemberSearching ? "검색 중..." : "검색"}
+                </Button>
+              </div>
+              {memberResults.length > 0 && (
+                <ul className="flex flex-col divide-y rounded-md border bg-white">
+                  {memberResults.map((member) => (
+                    <li key={member.user_id}>
+                      <button
+                        type="button"
+                        className="hover:bg-accent w-full px-3 py-2 text-left text-sm"
+                        onClick={() => applyMember(member)}
+                      >
+                        <span className="font-medium">{member.user_name}</span>{" "}
+                        ({member.user_id}) · {member.department ?? "학과 없음"}
+                        {member.current_study_name && (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            · {member.current_study_name}
+                          </span>
+                        )}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="manual-name">이름</Label>
@@ -561,18 +737,26 @@ export function CertificatesView({
                 }
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="manual-activity-period">활동 기간</Label>
+                <Label htmlFor="manual-start-date">활동 시작일</Label>
                 <Input
-                  id="manual-activity-period"
-                  placeholder="2026.03.02.~2026.06.20."
-                  value={manualForm.activityPeriod}
+                  id="manual-start-date"
+                  type="date"
+                  value={manualForm.startDate}
                   onChange={(e) =>
-                    setManualForm((f) => ({
-                      ...f,
-                      activityPeriod: e.target.value,
-                    }))
+                    setManualForm((f) => ({ ...f, startDate: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="manual-end-date">활동 종료일</Label>
+                <Input
+                  id="manual-end-date"
+                  type="date"
+                  value={manualForm.endDate}
+                  onChange={(e) =>
+                    setManualForm((f) => ({ ...f, endDate: e.target.value }))
                   }
                 />
               </div>
@@ -580,17 +764,26 @@ export function CertificatesView({
                 <Label htmlFor="manual-issue-date">발급일 (선택)</Label>
                 <Input
                   id="manual-issue-date"
-                  placeholder="미입력 시 오늘 날짜"
+                  type="date"
                   value={manualForm.issueDate}
                   onChange={(e) =>
-                    setManualForm((f) => ({
-                      ...f,
-                      issueDate: e.target.value,
-                    }))
+                    setManualForm((f) => ({ ...f, issueDate: e.target.value }))
                   }
                 />
               </div>
             </div>
+            <p className="text-muted-foreground -mt-2 text-xs">
+              수료증에는 &ldquo;
+              {manualForm.startDate
+                ? toDotDate(manualForm.startDate)
+                : "yyyy.mm.dd."}
+              ~
+              {manualForm.endDate
+                ? toDotDate(manualForm.endDate)
+                : "yyyy.mm.dd."}
+              &rdquo; 형식으로 표기됩니다. 발급일 미선택 시 오늘 날짜로
+              표기됩니다.
+            </p>
             <div className="flex flex-col gap-2">
               <Label htmlFor="manual-president-name">회장 이름 (선택)</Label>
               <Input

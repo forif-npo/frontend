@@ -81,6 +81,30 @@ export async function uploadMySignature(file: File): Promise<string> {
   return response.data.signature_url;
 }
 
+/**
+ * 수동 발급 자동 채움용 부원 검색 결과
+ */
+export interface MemberSearchItem {
+  user_id: number;
+  user_name: string;
+  department: string | null;
+  current_study_name: string | null;
+}
+
+/**
+ * 이름/학번으로 부원 검색 (수동 발급 자동 채움용)
+ */
+export async function searchMembers(
+  search: string,
+): Promise<MemberSearchItem[]> {
+  const response = await apiClient
+    .get("api/v1/admin/users", {
+      searchParams: { page: 0, size: 5, search },
+    })
+    .json<ApiResponse<{ content: MemberSearchItem[] }>>();
+  return response.data?.content ?? [];
+}
+
 export interface ManualCertificateBody {
   user_name: string;
   student_number: string;
@@ -116,10 +140,15 @@ export async function issueCertificates(
   studyId: number,
   userIds: number[],
   activityPeriod: string,
+  ignoreEligibility = false,
 ): Promise<IssueCertificatesData> {
   const response = await apiClient
     .post(`api/v1/admin/studies/${studyId}/certificates`, {
-      json: { user_ids: userIds, activity_period: activityPeriod },
+      json: {
+        user_ids: userIds,
+        activity_period: activityPeriod,
+        ignore_eligibility: ignoreEligibility,
+      },
       timeout: 60000, // 이미지 생성이 포함되므로 여유 있게
     })
     .json<ApiResponse<IssueCertificatesData>>();
