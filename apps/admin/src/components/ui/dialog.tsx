@@ -76,7 +76,9 @@ function DialogFooter({
   return (
     <div
       className={cn(
-        "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+        // sm: 변형이 @repo/ui 프리빌드 CSS와의 레이어 병합 순서 문제로 무력화되어
+        // 버튼이 세로로 붙어 보이던 문제 → 변형 없이 항상 가로 정렬 + 간격 고정
+        "flex flex-row flex-wrap justify-end gap-2",
         className,
       )}
       {...props}
