@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
 import { toast } from "sonner";
-import { Award, ExternalLink } from "lucide-react";
+import { Award, Eraser, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { SingleDayPicker } from "@/components/ui/single-day-picker";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   getCertificateTargets,
   getMySignature,
@@ -73,6 +76,20 @@ const EMPTY_MANUAL_FORM: ManualForm = {
 const toDotDate = (isoDate: string) => `${isoDate.replaceAll("-", ".")}.`;
 /** yyyy-MM-dd → 발급일 표기용 "yyyy. MM. dd." */
 const toIssueDate = (isoDate: string) => `${isoDate.split("-").join(". ")}.`;
+/** date picker 값 ↔ 폼의 yyyy-MM-dd 문자열 변환 */
+const isoToDate = (iso: string) =>
+  iso ? new Date(`${iso}T00:00:00`) : undefined;
+const dateToIso = (date: Date | undefined) =>
+  date ? format(date, "yyyy-MM-dd") : "";
+
+/** 수동 발급 작성 내용 임시저장 키 (localStorage) */
+const MANUAL_DRAFT_KEY = "forif-admin-manual-cert-draft";
+
+/** 서명 합성 영역 비율(115:52)에 맞춘 미리보기/내보내기 크기 */
+const SIG_PREVIEW_W = 460;
+const SIG_PREVIEW_H = 208;
+const SIG_EXPORT_W = 1150;
+const SIG_EXPORT_H = 520;
 
 interface CertificatesViewProps {
   studies: Study[];
@@ -100,6 +117,41 @@ export function CertificatesView({
   const [manualForm, setManualForm] = useState<ManualForm>(EMPTY_MANUAL_FORM);
   const [manualResultUrl, setManualResultUrl] = useState<string | null>(null);
   const [isManualIssuing, setIsManualIssuing] = useState(false);
+  const [hasDraft, setHasDraft] = useState(false);
+
+  // 수동 발급 중간저장: 작성 내용을 localStorage에 보존해 창을 닫아도 유지
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(MANUAL_DRAFT_KEY);
+      if (raw) {
+        setManualForm({ ...EMPTY_MANUAL_FORM, ...JSON.parse(raw) });
+        setHasDraft(true);
+      }
+    } catch {
+      // 저장본이 깨졌으면 무시
+    }
+  }, []);
+
+  useEffect(() => {
+    const isEmpty = Object.values(manualForm).every((v) => !v);
+    const timer = setTimeout(() => {
+      if (isEmpty) {
+        localStorage.removeItem(MANUAL_DRAFT_KEY);
+        setHasDraft(false);
+      } else {
+        localStorage.setItem(MANUAL_DRAFT_KEY, JSON.stringify(manualForm));
+        setHasDraft(true);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [manualForm]);
+
+  const resetManualForm = () => {
+    setManualForm(EMPTY_MANUAL_FORM);
+    setManualResultUrl(null);
+    localStorage.removeItem(MANUAL_DRAFT_KEY);
+    setHasDraft(false);
+  };
 
   const [memberQuery, setMemberQuery] = useState("");
   const [memberResults, setMemberResults] = useState<MemberSearchItem[]>([]);
@@ -138,13 +190,69 @@ export function CertificatesView({
 
   const [signatureOpen, setSignatureOpen] = useState(false);
   const [signatureUrl, setSignatureUrl] = useState<string | null>(null);
-  const [signatureFile, setSignatureFile] = useState<File | null>(null);
   const [isSignatureLoading, setIsSignatureLoading] = useState(false);
   const [isSignatureUploading, setIsSignatureUploading] = useState(false);
 
+  const [sigTab, setSigTab] = useState<"upload" | "draw">("upload");
+  const [sigScale, setSigScale] = useState(100);
+  const [uploadedSigImage, setUploadedSigImage] =
+    useState<HTMLImageElement | null>(null);
+  const [hasDrawn, setHasDrawn] = useState(false);
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const drawCanvasRef = useRef<HTMLCanvasElement>(null);
+  const isDrawingRef = useRef(false);
+
+  /** 소스(업로드 이미지 or 그린 캔버스)를 배율 적용해 대상 캔버스 중앙에 렌더링 */
+  const renderSignatureTo = useCallback(
+    (canvas: HTMLCanvasElement | null, scalePercent: number) => {
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const source =
+        sigTab === "draw" ? drawCanvasRef.current : uploadedSigImage;
+      if (!source || (sigTab === "draw" && !hasDrawn)) return;
+
+      const sourceW =
+        source instanceof HTMLImageElement ? source.naturalWidth : source.width;
+      const sourceH =
+        source instanceof HTMLImageElement
+          ? source.naturalHeight
+          : source.height;
+      if (!sourceW || !sourceH) return;
+
+      const fit =
+        Math.min(canvas.width / sourceW, canvas.height / sourceH) *
+        (scalePercent / 100);
+      const w = sourceW * fit;
+      const h = sourceH * fit;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(
+        source,
+        (canvas.width - w) / 2,
+        (canvas.height - h) / 2,
+        w,
+        h,
+      );
+    },
+    [sigTab, uploadedSigImage, hasDrawn],
+  );
+
+  const renderSigPreview = useCallback(() => {
+    renderSignatureTo(previewCanvasRef.current, sigScale);
+  }, [renderSignatureTo, sigScale]);
+
+  useEffect(() => {
+    renderSigPreview();
+  }, [renderSigPreview, signatureOpen]);
+
   const openSignatureDialog = async () => {
     setSignatureOpen(true);
-    setSignatureFile(null);
+    setUploadedSigImage(null);
+    setHasDrawn(false);
+    setSigScale(100);
+    setSigTab("upload");
     setIsSignatureLoading(true);
     try {
       setSignatureUrl(await getMySignature());
@@ -155,16 +263,101 @@ export function CertificatesView({
     }
   };
 
-  const handleSignatureUpload = async () => {
-    if (!signatureFile || isSignatureUploading) {
-      if (!signatureFile) toast.error("서명 이미지 파일을 선택해주세요.");
+  const handleSignatureFileChange = (file: File | null) => {
+    if (!file) {
+      setUploadedSigImage(null);
       return;
     }
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      setUploadedSigImage(image);
+      URL.revokeObjectURL(url);
+    };
+    image.onerror = () => {
+      toast.error("이미지를 읽을 수 없습니다.");
+      URL.revokeObjectURL(url);
+    };
+    image.src = url;
+  };
+
+  // 직접 그리기 (마우스/터치)
+  const drawPointAt = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = drawCanvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: ((event.clientX - rect.left) / rect.width) * canvas.width,
+      y: ((event.clientY - rect.top) / rect.height) * canvas.height,
+    };
+  };
+
+  const handleDrawStart = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const point = drawPointAt(event);
+    const ctx = drawCanvasRef.current?.getContext("2d");
+    if (!point || !ctx) return;
+    isDrawingRef.current = true;
+    drawCanvasRef.current?.setPointerCapture(event.pointerId);
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#111";
+    ctx.beginPath();
+    ctx.moveTo(point.x, point.y);
+  };
+
+  const handleDrawMove = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!isDrawingRef.current) return;
+    const point = drawPointAt(event);
+    const ctx = drawCanvasRef.current?.getContext("2d");
+    if (!point || !ctx) return;
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
+    if (!hasDrawn) setHasDrawn(true);
+  };
+
+  const handleDrawEnd = () => {
+    isDrawingRef.current = false;
+    renderSigPreview();
+  };
+
+  const clearDrawing = () => {
+    const canvas = drawCanvasRef.current;
+    canvas?.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
+    setHasDrawn(false);
+  };
+
+  const handleSignatureUpload = async () => {
+    if (isSignatureUploading) return;
+    const hasSource = sigTab === "draw" ? hasDrawn : !!uploadedSigImage;
+    if (!hasSource) {
+      toast.error(
+        sigTab === "draw"
+          ? "서명을 먼저 그려주세요."
+          : "서명 이미지 파일을 선택해주세요.",
+      );
+      return;
+    }
+
     setIsSignatureUploading(true);
     try {
-      const url = await uploadMySignature(signatureFile);
+      // 배율이 반영된 고해상도 PNG로 내보내기
+      const exportCanvas = document.createElement("canvas");
+      exportCanvas.width = SIG_EXPORT_W;
+      exportCanvas.height = SIG_EXPORT_H;
+      renderSignatureTo(exportCanvas, sigScale);
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        exportCanvas.toBlob(resolve, "image/png"),
+      );
+      if (!blob) throw new Error("서명 이미지를 생성하지 못했습니다.");
+
+      const url = await uploadMySignature(
+        new File([blob], "signature.png", { type: "image/png" }),
+      );
       setSignatureUrl(url);
-      setSignatureFile(null);
+      setUploadedSigImage(null);
+      clearDrawing();
       toast.success("서명이 등록되었습니다.");
     } catch (error) {
       toast.error(await handleApiError(error));
@@ -301,6 +494,9 @@ export function CertificatesView({
       });
       setManualResultUrl(url);
       toast.success("수료증이 생성되었습니다.");
+      // 발급이 끝났으므로 임시저장 제거 (결과 URL은 다이얼로그에 유지)
+      localStorage.removeItem(MANUAL_DRAFT_KEY);
+      setHasDraft(false);
     } catch (error) {
       toast.error(await handleApiError(error));
     } finally {
@@ -308,9 +504,9 @@ export function CertificatesView({
     }
   };
 
+  // 작성 내용은 임시저장으로 보존하고, 검색 상태만 정리한다
   const closeManualDialog = () => {
     setManualOpen(false);
-    setManualForm(EMPTY_MANUAL_FORM);
     setManualResultUrl(null);
     setMemberQuery("");
     setMemberResults([]);
@@ -583,12 +779,12 @@ export function CertificatesView({
               {isSignatureLoading ? (
                 <p className="text-muted-foreground text-sm">불러오는 중...</p>
               ) : signatureUrl ? (
-                <div className="rounded-md border bg-gray-50 p-3">
+                <div className="rounded-md border bg-gray-50 p-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={signatureUrl}
                     alt="등록된 서명"
-                    className="mx-auto max-h-24 object-contain"
+                    className="mx-auto max-h-16 object-contain"
                   />
                 </div>
               ) : (
@@ -597,15 +793,88 @@ export function CertificatesView({
                 </p>
               )}
             </div>
+
+            <Tabs
+              value={sigTab}
+              onValueChange={(v) => setSigTab(v as "upload" | "draw")}
+            >
+              <TabsList className="w-full">
+                <TabsTrigger value="upload" className="flex-1">
+                  파일 업로드
+                </TabsTrigger>
+                <TabsTrigger value="draw" className="flex-1">
+                  직접 그리기
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="upload" className="mt-3">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="signature-file">
+                    서명 이미지 (투명 배경 PNG 권장, 흰 배경은 자동 제거)
+                  </Label>
+                  <Input
+                    id="signature-file"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={(e) =>
+                      handleSignatureFileChange(e.target.files?.[0] ?? null)
+                    }
+                  />
+                </div>
+              </TabsContent>
+              <TabsContent value="draw" className="mt-3">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <Label>마우스/터치로 서명을 그려주세요</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearDrawing}
+                      disabled={!hasDrawn}
+                    >
+                      <Eraser className="mr-1 h-3.5 w-3.5" />
+                      지우기
+                    </Button>
+                  </div>
+                  <canvas
+                    ref={drawCanvasRef}
+                    width={SIG_PREVIEW_W}
+                    height={SIG_PREVIEW_H}
+                    className="w-full cursor-crosshair touch-none rounded-md border bg-white"
+                    onPointerDown={handleDrawStart}
+                    onPointerMove={handleDrawMove}
+                    onPointerUp={handleDrawEnd}
+                    onPointerLeave={handleDrawEnd}
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+
             <div className="flex flex-col gap-2">
-              <Label htmlFor="signature-file">
-                새 서명 이미지 (투명 배경 PNG 권장)
+              <div className="flex items-center justify-between">
+                <Label htmlFor="signature-scale">크기 조절</Label>
+                <span className="text-muted-foreground text-xs">
+                  {sigScale}%
+                </span>
+              </div>
+              <input
+                id="signature-scale"
+                type="range"
+                min={30}
+                max={100}
+                step={5}
+                value={sigScale}
+                onChange={(e) => setSigScale(Number(e.target.value))}
+                className="accent-primary w-full"
+              />
+              <Label className="text-muted-foreground text-xs font-normal">
+                합성 미리보기 (수료증 우하단 서명 영역 기준)
               </Label>
-              <Input
-                id="signature-file"
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                onChange={(e) => setSignatureFile(e.target.files?.[0] ?? null)}
+              <canvas
+                ref={previewCanvasRef}
+                width={SIG_PREVIEW_W}
+                height={SIG_PREVIEW_H}
+                className="w-full rounded-md border border-dashed bg-gray-50"
               />
             </div>
           </div>
@@ -615,7 +884,10 @@ export function CertificatesView({
             </Button>
             <Button
               onClick={handleSignatureUpload}
-              disabled={!signatureFile || isSignatureUploading}
+              disabled={
+                isSignatureUploading ||
+                (sigTab === "draw" ? !hasDrawn : !uploadedSigImage)
+              }
             >
               {isSignatureUploading ? "업로드 중..." : "등록"}
             </Button>
@@ -740,34 +1012,37 @@ export function CertificatesView({
             <div className="grid grid-cols-3 gap-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="manual-start-date">활동 시작일</Label>
-                <Input
+                <SingleDayPicker
                   id="manual-start-date"
-                  type="date"
-                  value={manualForm.startDate}
-                  onChange={(e) =>
-                    setManualForm((f) => ({ ...f, startDate: e.target.value }))
+                  placeholder="시작일 선택"
+                  labelVariant="P"
+                  value={isoToDate(manualForm.startDate)}
+                  onSelect={(date) =>
+                    setManualForm((f) => ({ ...f, startDate: dateToIso(date) }))
                   }
                 />
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="manual-end-date">활동 종료일</Label>
-                <Input
+                <SingleDayPicker
                   id="manual-end-date"
-                  type="date"
-                  value={manualForm.endDate}
-                  onChange={(e) =>
-                    setManualForm((f) => ({ ...f, endDate: e.target.value }))
+                  placeholder="종료일 선택"
+                  labelVariant="P"
+                  value={isoToDate(manualForm.endDate)}
+                  onSelect={(date) =>
+                    setManualForm((f) => ({ ...f, endDate: dateToIso(date) }))
                   }
                 />
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="manual-issue-date">발급일 (선택)</Label>
-                <Input
+                <SingleDayPicker
                   id="manual-issue-date"
-                  type="date"
-                  value={manualForm.issueDate}
-                  onChange={(e) =>
-                    setManualForm((f) => ({ ...f, issueDate: e.target.value }))
+                  placeholder="미선택 시 오늘"
+                  labelVariant="P"
+                  value={isoToDate(manualForm.issueDate)}
+                  onSelect={(date) =>
+                    setManualForm((f) => ({ ...f, issueDate: dateToIso(date) }))
                   }
                 />
               </div>
@@ -815,6 +1090,18 @@ export function CertificatesView({
             )}
           </div>
           <DialogFooter>
+            {hasDraft && (
+              <span className="text-muted-foreground mr-auto self-center text-xs">
+                작성 내용이 자동 저장됩니다 (창을 닫아도 유지)
+              </span>
+            )}
+            <Button
+              variant="ghost"
+              onClick={resetManualForm}
+              disabled={isManualIssuing}
+            >
+              초기화
+            </Button>
             <Button variant="outline" onClick={closeManualDialog}>
               닫기
             </Button>
