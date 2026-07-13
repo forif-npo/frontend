@@ -86,10 +86,3 @@ export async function submitStudyCreate(values: StudyOpenValues) {
 
   return response;
 }
-
-export async function saveDraft(values: Partial<StudyOpenValues>) {
-  // Draft saving - store locally for now
-  const { thumbnail: _thumbnail, ...draftValues } = values;
-  localStorage.setItem("study-create-draft", JSON.stringify(draftValues));
-  return { success: true };
-}

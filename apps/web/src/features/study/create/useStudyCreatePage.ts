@@ -1,12 +1,17 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { studyOpenSchema, StudyOpenValues } from "@core/schemas";
 import { useStudyCreateData } from "./useStudyCreateData";
-import { submitStudyCreate, saveDraft } from "./actions";
+import { submitStudyCreate } from "./actions";
+import {
+  clearStudyCreateDraft,
+  loadStudyCreateDraft,
+  saveStudyCreateDraft,
+} from "./draft-storage";
 import { DEFAULT_CURRICULUM } from "./constants";
 import type { StudyCreateStep } from "./types";
 
@@ -51,6 +56,7 @@ const STEP_FIELDS: Record<number, (keyof StudyOpenValues)[]> = {
 
 export function useStudyCreatePage() {
   const router = useRouter();
+  const hasCheckedDraftRef = useRef(false);
   const [step, setStep] = useState<StudyCreateStep>(1);
   const { userInfo, isLoading } = useStudyCreateData();
 
@@ -60,6 +66,29 @@ export function useStudyCreatePage() {
     mode: "onBlur",
     reValidateMode: "onBlur",
   });
+
+  useEffect(() => {
+    if (hasCheckedDraftRef.current) return;
+    hasCheckedDraftRef.current = true;
+
+    const draft = loadStudyCreateDraft();
+    if (!draft) return;
+
+    const shouldRestore = window.confirm(
+      "임시저장된 스터디 개설 내용이 있습니다. 불러오시겠습니까?",
+    );
+
+    if (!shouldRestore) {
+      clearStudyCreateDraft();
+      return;
+    }
+
+    form.reset({
+      ...DEFAULT_VALUES,
+      ...draft,
+      thumbnail: null,
+    });
+  }, [form]);
 
   const goToNext = useCallback(async () => {
     const fields = STEP_FIELDS[step];
@@ -91,6 +120,7 @@ export function useStudyCreatePage() {
     try {
       const values = form.getValues();
       await submitStudyCreate(values);
+      clearStudyCreateDraft();
       setStep(6);
     } catch (err) {
       console.error("Failed to submit study:", err);
@@ -100,8 +130,14 @@ export function useStudyCreatePage() {
 
   const handleSaveDraft = useCallback(() => {
     const values = form.getValues();
-    saveDraft(values);
-    alert("임시저장되었습니다.");
+    const isSaved = saveStudyCreateDraft(values);
+
+    if (isSaved) {
+      alert("임시저장되었습니다.");
+      return;
+    }
+
+    alert("임시저장을 사용할 수 없는 환경입니다.");
   }, [form]);
 
   const goToStudyList = useCallback(() => {

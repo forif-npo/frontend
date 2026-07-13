@@ -325,7 +325,7 @@ export function Step1InfoVerification({
             onClick={onCancel}
             className="h-14 min-w-[90px]"
           >
-            취소하기
+            취소
           </Button>
           {!showMentorCard && (
             <Button
