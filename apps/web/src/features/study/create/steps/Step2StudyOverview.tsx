@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   TextInput,
@@ -59,11 +59,31 @@ export function Step2StudyOverview({
     control,
     watch,
     setValue,
+    clearErrors,
     formState: { errors },
   } = form;
 
   const selectedTags = watch("tags") || [];
   const thumbnail = watch("thumbnail");
+  const selectedLocation = watch("location");
+  const selectedRoom = watch("room");
+  const isLocationUndecided = selectedLocation === "장소 미정";
+  const isClubRoomSelected = selectedLocation === "동아리방";
+  const hasRoomValue =
+    typeof selectedRoom === "string" && selectedRoom.trim().length > 0;
+
+  useEffect(() => {
+    if (isLocationUndecided) {
+      setValue("room", "", { shouldDirty: true, shouldValidate: true });
+      clearErrors("room");
+      return;
+    }
+
+    if (isClubRoomSelected) {
+      setValue("room", "B214", { shouldDirty: true, shouldValidate: true });
+      clearErrors("room");
+    }
+  }, [clearErrors, isClubRoomSelected, isLocationUndecided, setValue]);
 
   const handleTagsConfirm = (tags: string[]) => {
     setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
@@ -261,13 +281,25 @@ export function Step2StudyOverview({
               </div>
               {/* 강의실 */}
               <div className="flex flex-1 items-center max-md:w-full">
-                <TextInput
-                  id="room"
-                  length="full"
-                  placeholder="강의실(호)"
-                  error={errors.room?.message}
-                  {...register("room")}
-                />
+                <div className="relative w-full">
+                  <TextInput
+                    id="room"
+                    length="full"
+                    placeholder="강의실(호)"
+                    error={errors.room?.message}
+                    disabled={isLocationUndecided}
+                    className={hasRoomValue ? "pr-10" : ""}
+                    {...register("room")}
+                  />
+                  {hasRoomValue && (
+                    <span
+                      aria-hidden="true"
+                      className="text-text-subtle pointer-events-none absolute right-4 top-[25px] -translate-y-1/2 text-[17px] leading-[1.5]"
+                    >
+                      호
+                    </span>
+                  )}
+                </div>
               </div>
               {/* 요일 */}
               <div className="flex-1 max-md:w-full">

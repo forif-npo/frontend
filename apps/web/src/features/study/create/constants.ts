@@ -1,11 +1,13 @@
 export { TAG_OPTIONS, getStudyTagId } from "@/constants/study-tags";
 
 export const LOCATION_OPTIONS = [
+  { value: "장소 미정", label: "장소 미정" },
+  { value: "동아리방", label: "동아리방" },
   { value: "IT/BT관", label: "IT/BT관" },
+  { value: "FTC", label: "FTC" },
   { value: "신소재공학관", label: "신소재공학관" },
-  { value: "제4공학관", label: "제4공학관" },
+  { value: "제1공학관", label: "제1공학관" },
   { value: "온라인", label: "온라인" },
-  { value: "기타", label: "기타" },
 ] as const;
 
 export const WEEKDAY_OPTIONS = [

@@ -65,6 +65,8 @@ export const Select = ({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if (disabled) return;
+
       switch (e.key) {
         case "Enter":
           if (isOpen && focusedIndex !== null) {
@@ -86,7 +88,7 @@ export const Select = ({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isOpen, focusedIndex, options],
+    [disabled, isOpen, focusedIndex, options],
   );
 
   useEffect(() => {
@@ -125,11 +127,14 @@ export const Select = ({
       <button
         onClick={(e) => {
           e.preventDefault();
+          if (disabled) return;
           setIsOpen(!isOpen);
         }}
         onKeyDown={handleKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        aria-disabled={disabled}
+        disabled={disabled}
         ref={triggerRef}
         className={cn(
           "rounded-2 flex w-full items-center justify-between text-left transition duration-150 ease-in-out",
@@ -167,7 +172,7 @@ export const Select = ({
           />
         </span>
       </button>
-      {isOpen && (
+      {isOpen && !disabled && (
         <div
           role="listbox"
           aria-activedescendant={

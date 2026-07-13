@@ -39,6 +39,7 @@ const STEP_FIELDS: Record<number, (keyof StudyOpenValues)[]> = {
     "tags",
     "introduction",
     "location",
+    "room",
     "weekDay",
     "startTime",
     "endTime",
