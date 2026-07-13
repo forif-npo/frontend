@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { motion } from "motion/react";
 import { Body, Detail, Heading, Label } from "@ui/components/server";
 import { Button, Modal } from "@ui/components/client";
 import {
@@ -11,8 +12,11 @@ import {
   getStudyRecommendation,
   type ProgrammingCard,
 } from "@/constants/study-guide";
+import { useScrollFollower, useScrollSpy } from "@/hooks/useScrollSpy";
 
 // --- Components ---
+
+const GUIDE_TAB_IDS = GUIDE_TABS.map(({ id }) => id);
 
 function ProgrammingCardButton({
   card,
@@ -221,14 +225,19 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
 }
 
 export default function StudyGuidePage() {
-  const [activeTab, setActiveTab] = useState("introduction");
+  const activeTab = useScrollSpy(GUIDE_TAB_IDS, { offset: 140 });
+  const recommendationPanel = useScrollFollower<HTMLDivElement, HTMLDivElement>(
+    {
+      topOffset: 120,
+      bottomOffset: 32,
+    },
+  );
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<ProgrammingCard | null>(
     null,
   );
 
   const handleTabClick = (id: string) => {
-    setActiveTab(id);
     const el = document.getElementById(id);
     if (el) {
       const y = el.getBoundingClientRect().top + window.scrollY - 64;
@@ -256,21 +265,32 @@ export default function StudyGuidePage() {
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id)}
-                className={`shrink-0 px-4 py-3 transition-colors ${
+                className={`relative shrink-0 px-4 py-3 transition-colors ${
                   activeTab === tab.id
-                    ? "border-border-primary text-text-primary border-b-2"
+                    ? "text-text-primary"
                     : "text-text-subtle hover:text-text-basic"
                 }`}
               >
                 <Label size="m" weight="bold">
                   {tab.label}
                 </Label>
+                {activeTab === tab.id && (
+                  <motion.span
+                    layoutId="study-guide-active-tab"
+                    className="bg-primary-50 absolute bottom-0 left-3 right-3 h-0.5 rounded-full"
+                    transition={{
+                      type: "spring",
+                      stiffness: 420,
+                      damping: 34,
+                    }}
+                  />
+                )}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="flex gap-8 pt-6">
+        <div ref={recommendationPanel.containerRef} className="flex gap-8 pt-6">
           {/* Main Content */}
           <div className="min-w-0 flex-1">
             {/* 스터디 소개 */}
@@ -513,7 +533,11 @@ export default function StudyGuidePage() {
 
           {/* Side Panel (Desktop) */}
           <aside className="hidden w-72 shrink-0 md:block">
-            <div className="border-border-gray-light rounded-3 sticky top-16 border p-6 text-center">
+            <motion.div
+              ref={recommendationPanel.followerRef}
+              style={{ y: recommendationPanel.y }}
+              className="border-border-gray-light rounded-3 border p-6 text-center will-change-transform"
+            >
               <Body size="s" className="text-text-basic leading-6">
                 포리프의 다양한 스터디 중 <br />
                 어떤 스터디가 나에게 맞을까?
@@ -526,7 +550,7 @@ export default function StudyGuidePage() {
               >
                 나에게 맞는 스터디 알아보기
               </Button>
-            </div>
+            </motion.div>
           </aside>
         </div>
       </div>
