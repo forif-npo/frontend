@@ -15,6 +15,7 @@ const DEFAULT_VALUES: StudyOpenValues = {
   studyName: "",
   oneLiner: "",
   tags: [],
+  thumbnail: null,
   introduction: "",
   isOnline: false,
   location: "",

@@ -1,6 +1,9 @@
 import { z } from "zod/v4";
 import { createSchema } from "../utils/schema.util";
 
+const isFileValue = (value: unknown): value is File | null =>
+  value === null || (typeof File !== "undefined" && value instanceof File);
+
 export const studyOpenSchema = createSchema()(
   z.object({
     // Step 1: 신청 정보 확인
@@ -19,6 +22,7 @@ export const studyOpenSchema = createSchema()(
       .array(z.string())
       .min(1, "태그를 최소 1개 이상 선택해주세요.")
       .max(4, "태그는 최대 4개까지 선택 가능합니다."),
+    thumbnail: z.custom<File | null>(isFileValue).default(null),
     introduction: z
       .string()
       .min(50, "스터디 소개는 최소 50자 이상 작성해주세요.")

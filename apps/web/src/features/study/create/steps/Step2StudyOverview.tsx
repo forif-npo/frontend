@@ -6,9 +6,10 @@ import {
   TextInput,
   TextArea,
   Checkbox,
+  FileUpload,
   SelectBox,
 } from "@ui/components/client";
-import { CirclePlus, Minus, Search } from "@repo/assets/icons/lucide";
+import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
 import { TagSelectModal } from "../components/TagSelectModal";
@@ -62,6 +63,7 @@ export function Step2StudyOverview({
   } = form;
 
   const selectedTags = watch("tags") || [];
+  const thumbnail = watch("thumbnail");
 
   const handleTagsConfirm = (tags: string[]) => {
     setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
@@ -74,6 +76,27 @@ export function Step2StudyOverview({
       selectedTags.filter((t) => t !== tagToRemove),
       { shouldDirty: true, shouldValidate: true },
     );
+  };
+
+  const handleThumbnailUpload = async (file: File) => {
+    const allowedTypes = ["image/jpeg", "image/png"];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.");
+      return false;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("이미지 파일은 최대 5MB까지 업로드할 수 있습니다.");
+      return false;
+    }
+
+    setValue("thumbnail", file, { shouldDirty: true, shouldValidate: true });
+    return true;
+  };
+
+  const handleThumbnailRemove = () => {
+    setValue("thumbnail", null, { shouldDirty: true, shouldValidate: true });
   };
 
   return (
@@ -148,15 +171,18 @@ export function Step2StudyOverview({
           <SectionTitle>썸네일</SectionTitle>
           <div className="flex flex-col gap-2">
             <HintText>
-              부원들이 한 눈에 보일 수 있는 썸네일을 선택해주세요. 최적의 사진
-              크기는 1080px * 720px 입니다.
+              부원들이 한 눈에 볼 수 있는 썸네일을 선택해주세요.
             </HintText>
-            <div className="flex items-center gap-4 rounded-lg border border-[#cdd1d5] bg-white p-4">
-              <span className="text-text-bolder flex-1 text-[17px] leading-[1.5]">
-                이미지 파일 업로드 (jpg, jpeg, png)
-              </span>
-              <Search className="h-5 w-5 shrink-0 text-[#58616a]" />
-            </div>
+            <FileUpload
+              title="이미지 파일 업로드 (jpg, jpeg, png)"
+              description="권장 크기 1080px * 720px, 최대 5MB"
+              accept="image/jpeg,image/png"
+              multiple={false}
+              maxFiles={1}
+              files={thumbnail ? [thumbnail] : []}
+              onUpload={handleThumbnailUpload}
+              onRemove={handleThumbnailRemove}
+            />
           </div>
         </div>
 
