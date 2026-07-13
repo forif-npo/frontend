@@ -170,7 +170,7 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
           <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
             <SelectBox
               id={isCompact ? "mobile-semester-filter" : "semester-filter"}
-              value={selectedSemester || null}
+              value={selectedSemester}
               onChange={(value) => onSemesterChange(value || "")}
               placeholder="전체"
               options={semesterOptions}
@@ -189,7 +189,7 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
           <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
             <SelectBox
               id={isCompact ? "mobile-difficulty-filter" : "difficulty-filter"}
-              value={selectedDifficulty || null}
+              value={selectedDifficulty}
               onChange={(value) => onDifficultyChange(value || "")}
               placeholder="전체"
               options={difficultyOptions}
@@ -205,7 +205,7 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
           <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
             <SelectBox
               id={isCompact ? "mobile-tag-filter" : "tag-filter"}
-              value={selectedTag || null}
+              value={selectedTag}
               onChange={(value) => onTagChange(value || "")}
               placeholder="전체"
               options={tagOptions}
