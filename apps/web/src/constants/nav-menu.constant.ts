@@ -16,10 +16,6 @@ export const NAV_MENUS: NavMenu[] = [
         href: "/club/team",
       },
       {
-        label: "연혁",
-        href: "/club#history",
-      },
-      {
         label: "회칙",
         href: "/club/rule",
       },

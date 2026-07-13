@@ -14,10 +14,6 @@ export const NAV_MENUS = [
         href: "/club/members",
       },
       {
-        label: "연혁",
-        href: "/club/activities",
-      },
-      {
         label: "회칙",
         href: "/club/activities",
       },
