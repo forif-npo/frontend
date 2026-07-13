@@ -490,7 +490,7 @@ export default function StudyGuidePage() {
 
             {/* 스터디 이수 */}
             <section id="completion" className="mt-12">
-              <SectionEyebrow>스터디 수료</SectionEyebrow>
+              <SectionEyebrow>스터디 이수</SectionEyebrow>
               <Heading size="s" className="mb-3 mt-1">
                 스터디 이수와 수료증
               </Heading>
@@ -509,7 +509,7 @@ export default function StudyGuidePage() {
                 나에게 맞는 스터디는?
               </Heading>
               <Body size="m" className="text-text-basic leading-7">
-                포리프의 스터디를 듣고싶지만, 어떤 스터디를 들어야 할 지 고민이
+                포리프의 스터디를 듣고싶지만, 어떤 스터디를 들어야 할지 고민이
                 된다면,
                 <br />
                 저희가 스터디 선택을 도와드릴게요!
