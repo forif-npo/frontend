@@ -23,7 +23,8 @@ type TProps = Omit<
   onSelect: (value: Date | undefined) => void;
   value?: Date | undefined;
   placeholder: string;
-  labelVariant?: "P" | "PP" | "PPP";
+  /** date-fns format 문자열 (예: "PPP", "yyyy. MM. dd.") */
+  labelVariant?: string;
 };
 
 function SingleDayPicker({

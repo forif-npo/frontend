@@ -108,7 +108,9 @@ export function CertificatesView({
   const [isLoading, setIsLoading] = useState(false);
   const [isIssuing, setIsIssuing] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [activityPeriod, setActivityPeriod] = useState("");
+  // 일괄 발급 활동 기간 (yyyy-MM-dd, 수료증에는 yyyy.MM.dd.~yyyy.MM.dd.로 표기)
+  const [batchStartDate, setBatchStartDate] = useState("");
+  const [batchEndDate, setBatchEndDate] = useState("");
   const [lastResult, setLastResult] = useState<IssueCertificatesData | null>(
     null,
   );
@@ -421,7 +423,7 @@ export function CertificatesView({
       const result = await issueCertificates(
         selectedStudyId,
         Array.from(selectedIds),
-        activityPeriod.trim(),
+        `${toDotDate(batchStartDate)}~${toDotDate(batchEndDate)}`,
         ignoreEligibility,
       );
       setLastResult(result);
@@ -438,8 +440,12 @@ export function CertificatesView({
 
   const handleIssue = async () => {
     if (selectedStudyId == null || selectedIds.size === 0 || isIssuing) return;
-    if (!activityPeriod.trim()) {
-      toast.error("활동 기간을 입력해주세요. 예: 2026.03.02.~2026.06.20.");
+    if (!batchStartDate || !batchEndDate) {
+      toast.error("활동 기간(시작일·종료일)을 선택해주세요.");
+      return;
+    }
+    if (batchStartDate > batchEndDate) {
+      toast.error("활동 시작일이 종료일보다 늦을 수 없습니다.");
       return;
     }
 
@@ -564,12 +570,23 @@ export function CertificatesView({
         </div>
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium">활동 기간 (수료증 표기)</label>
-          <Input
-            className="w-[280px]"
-            placeholder="2026.03.02.~2026.06.20."
-            value={activityPeriod}
-            onChange={(e) => setActivityPeriod(e.target.value)}
-          />
+          <div className="flex items-center gap-2">
+            <SingleDayPicker
+              className="w-[160px]"
+              placeholder="시작일 선택"
+              labelVariant="yyyy. MM. dd."
+              value={isoToDate(batchStartDate)}
+              onSelect={(date) => setBatchStartDate(dateToIso(date))}
+            />
+            <span className="text-muted-foreground">~</span>
+            <SingleDayPicker
+              className="w-[160px]"
+              placeholder="종료일 선택"
+              labelVariant="yyyy. MM. dd."
+              value={isoToDate(batchEndDate)}
+              onSelect={(date) => setBatchEndDate(dateToIso(date))}
+            />
+          </div>
         </div>
         <Button
           onClick={handleIssue}
@@ -1015,7 +1032,7 @@ export function CertificatesView({
                 <SingleDayPicker
                   id="manual-start-date"
                   placeholder="시작일 선택"
-                  labelVariant="P"
+                  labelVariant="yyyy. MM. dd."
                   value={isoToDate(manualForm.startDate)}
                   onSelect={(date) =>
                     setManualForm((f) => ({ ...f, startDate: dateToIso(date) }))
@@ -1027,7 +1044,7 @@ export function CertificatesView({
                 <SingleDayPicker
                   id="manual-end-date"
                   placeholder="종료일 선택"
-                  labelVariant="P"
+                  labelVariant="yyyy. MM. dd."
                   value={isoToDate(manualForm.endDate)}
                   onSelect={(date) =>
                     setManualForm((f) => ({ ...f, endDate: dateToIso(date) }))
@@ -1039,7 +1056,7 @@ export function CertificatesView({
                 <SingleDayPicker
                   id="manual-issue-date"
                   placeholder="미선택 시 오늘"
-                  labelVariant="P"
+                  labelVariant="yyyy. MM. dd."
                   value={isoToDate(manualForm.issueDate)}
                   onSelect={(date) =>
                     setManualForm((f) => ({ ...f, issueDate: dateToIso(date) }))
@@ -1063,7 +1080,7 @@ export function CertificatesView({
               <Label htmlFor="manual-president-name">회장 이름 (선택)</Label>
               <Input
                 id="manual-president-name"
-                placeholder="미입력 시 현재 회장 이름"
+                placeholder="미입력 시 현재 회장 이름 + 서명"
                 value={manualForm.presidentName}
                 onChange={(e) =>
                   setManualForm((f) => ({
@@ -1072,6 +1089,10 @@ export function CertificatesView({
                   }))
                 }
               />
+              <p className="text-muted-foreground text-xs">
+                현재 회장과 다른 이름을 입력하면(과거 학기 재발행용) 서명 없이
+                생성됩니다.
+              </p>
             </div>
 
             {manualResultUrl && (
