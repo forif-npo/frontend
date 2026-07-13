@@ -23,10 +23,6 @@ export const NAV_MENUS: NavMenu[] = [
         label: "회칙",
         href: "/club/rule",
       },
-      {
-        label: "회계",
-        href: "/club/accounting",
-      },
     ],
   },
   {

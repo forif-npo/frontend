@@ -21,10 +21,6 @@ export const NAV_MENUS = [
         label: "회칙",
         href: "/club/activities",
       },
-      {
-        label: "회계",
-        href: "/club/activities",
-      },
     ],
   },
   {
