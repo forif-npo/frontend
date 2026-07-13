@@ -36,6 +36,10 @@ export const NAV_MENUS: NavMenu[] = [
         href: "/studies/list",
       },
       {
+        label: "스터디 개설",
+        href: "/studies/create",
+      },
+      {
         label: "스터디 가이드",
         href: "/studies/guide",
       },

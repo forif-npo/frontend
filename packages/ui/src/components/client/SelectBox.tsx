@@ -8,13 +8,28 @@ type SelectBoxProps = {
   description?: string;
   helpText?: string;
   error?: string;
+  invalid?: boolean;
+  ariaDescribedBy?: string;
 } & SelectProps;
 
 export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
-  ({ title, description, helpText, error, id, ...props }, ref) => {
+  (
+    {
+      title,
+      description,
+      helpText,
+      error,
+      invalid = false,
+      ariaDescribedBy,
+      id,
+      ...props
+    },
+    ref,
+  ) => {
     const inputId = id;
     const helperTextId = `${inputId}-help`;
     const errorId = `${inputId}-error`;
+    const isInvalid = invalid || Boolean(error);
 
     return (
       <div className="flex h-16 flex-col justify-center gap-1">
@@ -28,7 +43,12 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
             {description}
           </Label>
         )}
-        <Select id={id} {...props} />
+        <Select
+          id={id}
+          invalid={isInvalid}
+          ariaDescribedBy={error ? errorId : ariaDescribedBy}
+          {...props}
+        />
         {error ? (
           <Label id={errorId} size={"s"} className="text-text-danger mt-1">
             {error}

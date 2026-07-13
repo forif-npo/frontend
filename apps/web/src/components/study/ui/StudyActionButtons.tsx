@@ -20,8 +20,8 @@ export const StudyActionButtons: React.FC<StudyActionButtonsProps> = ({
       <Button
         variant="primary"
         size={size}
-        disabled={true}
-        onClick={onApplyClick}
+        disabled={false}
+        onClick={onCreateClick}
       >
         스터디 개설하기
       </Button>

@@ -76,6 +76,9 @@ export async function submitStudyCreate(values: StudyOpenValues) {
     "studyRequest",
     new Blob([JSON.stringify(studyRequest)], { type: "application/json" }),
   );
+  if (values.thumbnail) {
+    formData.append("thumbnail", values.thumbnail);
+  }
 
   const response = await apiClient
     .post("api/v1/study-apply", { body: formData })
@@ -86,6 +89,7 @@ export async function submitStudyCreate(values: StudyOpenValues) {
 
 export async function saveDraft(values: Partial<StudyOpenValues>) {
   // Draft saving - store locally for now
-  localStorage.setItem("study-create-draft", JSON.stringify(values));
+  const { thumbnail: _thumbnail, ...draftValues } = values;
+  localStorage.setItem("study-create-draft", JSON.stringify(draftValues));
   return { success: true };
 }

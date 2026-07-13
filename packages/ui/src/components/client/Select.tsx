@@ -20,6 +20,8 @@ export interface SelectProps {
   variant?: "default" | "text";
   disabled?: boolean;
   error?: string;
+  invalid?: boolean;
+  ariaDescribedBy?: string;
   dropdownAlign?: "left" | "right";
   noPadding?: boolean;
 }
@@ -40,6 +42,8 @@ export const Select = ({
   variant = "default",
   disabled,
   error,
+  invalid = false,
+  ariaDescribedBy,
   dropdownAlign = "left",
   noPadding = false,
 }: SelectProps) => {
@@ -65,6 +69,8 @@ export const Select = ({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if (disabled) return;
+
       switch (e.key) {
         case "Enter":
           if (isOpen && focusedIndex !== null) {
@@ -86,7 +92,7 @@ export const Select = ({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isOpen, focusedIndex, options],
+    [disabled, isOpen, focusedIndex, options],
   );
 
   useEffect(() => {
@@ -119,17 +125,22 @@ export const Select = ({
       "border-gray-30 focus:ring-primary-50 border bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:outline-none",
     text: "border-none bg-transparent",
   };
+  const isInvalid = invalid || Boolean(error);
 
   return (
     <div className="relative" id={id} ref={containerRef}>
       <button
         onClick={(e) => {
           e.preventDefault();
+          if (disabled) return;
           setIsOpen(!isOpen);
         }}
         onKeyDown={handleKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        aria-disabled={disabled}
+        aria-describedby={ariaDescribedBy}
+        disabled={disabled}
         ref={triggerRef}
         className={cn(
           "rounded-2 flex w-full items-center justify-between text-left transition duration-150 ease-in-out",
@@ -139,7 +150,7 @@ export const Select = ({
           disabled
             ? "bg-input-surface-disabled border-input-border-disabled"
             : "bg-input-surface border-input-border",
-          error && "border-input-border-error",
+          isInvalid && "border-input-border-error",
         )}
       >
         <Label
@@ -167,7 +178,7 @@ export const Select = ({
           />
         </span>
       </button>
-      {isOpen && (
+      {isOpen && !disabled && (
         <div
           role="listbox"
           aria-activedescendant={

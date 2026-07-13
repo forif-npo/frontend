@@ -11,6 +11,7 @@ type TextInputProps = {
   description?: string;
   helpText?: string;
   error?: string;
+  invalid?: boolean;
   required?: boolean;
   length?: "x-short" | "short" | "middle" | "long" | "full";
   className?: string;
@@ -25,6 +26,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       description,
       helpText,
       error,
+      invalid = false,
       required = false,
       length = "middle",
       className = "",
@@ -42,6 +44,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       long: "w-128",
       full: "w-full",
     }[length];
+    const isInvalid = invalid || Boolean(error);
 
     return (
       <div className="flex flex-col justify-center gap-1">
@@ -68,13 +71,13 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             aria-describedby={
               error ? errorId : helpText ? helperTextId : undefined
             }
-            aria-invalid={error ? "true" : undefined}
+            aria-invalid={isInvalid ? "true" : undefined}
             aria-required={required || undefined}
             className={`rounded-2 text-gray-70 focus:border-input-border-active focus:ring-border-input-border-active border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1 ${
               inputProps.disabled || inputProps.readOnly
                 ? "bg-input-surface-disabled border-input-border-disabled"
                 : "bg-input-surface border-input-border"
-            } ${error ? "border-input-border-error" : ""} ${lengthClasses} ${className}`}
+            } ${isInvalid ? "border-input-border-error" : ""} ${lengthClasses} ${className}`}
             {...inputProps}
           />
         </div>

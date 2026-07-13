@@ -1,96 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   TextInput,
   TextArea,
   Checkbox,
+  FileUpload,
   SelectBox,
 } from "@ui/components/client";
+import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
+import { useTimeInput } from "@/hooks/useTimeInput";
 import { TagSelectModal } from "../components/TagSelectModal";
 import { LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "../constants";
-
-function AnnotationIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M12 8V13M12 16H12.01"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function CirclePlusIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M8 12h8M12 8v8" />
-    </svg>
-  );
-}
-
-function MinusIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5 12h14" />
-    </svg>
-  );
-}
-
-function SearchIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-        stroke="#58616a"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 /** 섹션 타이틀 */
 function SectionTitle({
@@ -136,13 +60,46 @@ export function Step2StudyOverview({
     control,
     watch,
     setValue,
+    clearErrors,
     formState: { errors },
   } = form;
+  const { registerTimeInput } = useTimeInput({ register, setValue });
 
   const selectedTags = watch("tags") || [];
+  const thumbnail = watch("thumbnail");
+  const selectedLocation = watch("location");
+  const selectedRoom = watch("room");
+  const isLocationUndecided = selectedLocation === "장소 미정";
+  const isClubRoomSelected = selectedLocation === "동아리방";
+  const hasRoomValue =
+    typeof selectedRoom === "string" && selectedRoom.trim().length > 0;
+  const locationErrorMessages = [
+    errors.location?.message,
+    errors.room?.message,
+    errors.weekDay?.message,
+  ].filter((message): message is string => Boolean(message));
+  const timeErrorMessages = [
+    errors.startTime?.message,
+    errors.endTime?.message,
+  ].filter((message): message is string => Boolean(message));
+  const hasLocationError = locationErrorMessages.length > 0;
+  const hasTimeError = timeErrorMessages.length > 0;
+
+  useEffect(() => {
+    if (isLocationUndecided) {
+      setValue("room", "", { shouldDirty: true, shouldValidate: true });
+      clearErrors("room");
+      return;
+    }
+
+    if (isClubRoomSelected) {
+      setValue("room", "B214", { shouldDirty: true, shouldValidate: true });
+      clearErrors("room");
+    }
+  }, [clearErrors, isClubRoomSelected, isLocationUndecided, setValue]);
 
   const handleTagsConfirm = (tags: string[]) => {
-    setValue("tags", tags, { shouldValidate: true });
+    setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
     setIsTagModalOpen(false);
   };
 
@@ -150,8 +107,29 @@ export function Step2StudyOverview({
     setValue(
       "tags",
       selectedTags.filter((t) => t !== tagToRemove),
-      { shouldValidate: true },
+      { shouldDirty: true, shouldValidate: true },
     );
+  };
+
+  const handleThumbnailUpload = async (file: File) => {
+    const allowedTypes = ["image/jpeg", "image/png"];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.");
+      return false;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("이미지 파일은 최대 5MB까지 업로드할 수 있습니다.");
+      return false;
+    }
+
+    setValue("thumbnail", file, { shouldDirty: true, shouldValidate: true });
+    return true;
+  };
+
+  const handleThumbnailRemove = () => {
+    setValue("thumbnail", null, { shouldDirty: true, shouldValidate: true });
   };
 
   return (
@@ -162,7 +140,7 @@ export function Step2StudyOverview({
         <input
           id="studyName"
           type="text"
-          placeholder="스터디 이름을 입력해주세요..."
+          placeholder="스터디 이름을 입력해주세요"
           className="text-text-bolder placeholder:text-text-subtle-inverse w-full bg-transparent text-[28px] font-bold leading-[1.5] tracking-[1px] outline-none sm:text-[40px]"
           {...register("studyName")}
         />
@@ -188,11 +166,7 @@ export function Step2StudyOverview({
 
         {/* 태그 */}
         <div className="flex flex-col gap-2">
-          <SectionTitle
-            icon={<AnnotationIcon className="text-text-subtle h-6 w-6" />}
-          >
-            태그
-          </SectionTitle>
+          <SectionTitle>태그</SectionTitle>
           <div className="flex flex-wrap items-center gap-2">
             {selectedTags.map((tag) => (
               <button
@@ -212,7 +186,7 @@ export function Step2StudyOverview({
               className="text-text-subtle hover:text-text-basic transition-colors"
               aria-label="태그 추가"
             >
-              <CirclePlusIcon className="h-6 w-6" />
+              <CirclePlus className="h-6 w-6" />
             </button>
           </div>
           {errors.tags && (
@@ -227,22 +201,21 @@ export function Step2StudyOverview({
       <div className="flex flex-col gap-10">
         {/* 썸네일 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle
-            icon={<AnnotationIcon className="text-text-subtle h-6 w-6" />}
-          >
-            썸네일
-          </SectionTitle>
+          <SectionTitle>썸네일</SectionTitle>
           <div className="flex flex-col gap-2">
             <HintText>
-              부원들이 한 눈에 보일 수 있는 썸네일을 선택해주세요. 최적의 사진
-              크기는 1080px * 720px 입니다.
+              부원들이 한 눈에 볼 수 있는 썸네일을 선택해주세요.
             </HintText>
-            <div className="flex items-center gap-4 rounded-lg border border-[#cdd1d5] bg-white p-4">
-              <span className="text-text-bolder flex-1 text-[17px] leading-[1.5]">
-                이미지 파일 업로드 (jpg, jpeg, png)
-              </span>
-              <SearchIcon className="h-5 w-5 shrink-0" />
-            </div>
+            <FileUpload
+              title="이미지 파일 업로드 (jpg, jpeg, png)"
+              description="권장 크기 1080px * 720px, 최대 5MB"
+              accept="image/jpeg,image/png"
+              multiple={false}
+              maxFiles={1}
+              files={thumbnail ? [thumbnail] : []}
+              onUpload={handleThumbnailUpload}
+              onRemove={handleThumbnailRemove}
+            />
           </div>
         </div>
 
@@ -314,20 +287,38 @@ export function Step2StudyOverview({
                       options={[...LOCATION_OPTIONS]}
                       placeholder="장소를 선택해주세요"
                       onChange={onChange}
-                      error={errors.location?.message}
+                      invalid={Boolean(errors.location)}
+                      ariaDescribedBy={
+                        hasLocationError ? "study-location-error" : undefined
+                      }
                     />
                   )}
                 />
               </div>
               {/* 강의실 */}
               <div className="flex flex-1 items-center max-md:w-full">
-                <TextInput
-                  id="room"
-                  length="full"
-                  placeholder="강의실(호)"
-                  error={errors.room?.message}
-                  {...register("room")}
-                />
+                <div className="relative w-full">
+                  <TextInput
+                    id="room"
+                    length="full"
+                    placeholder="강의실(호)"
+                    invalid={Boolean(errors.room)}
+                    aria-describedby={
+                      hasLocationError ? "study-location-error" : undefined
+                    }
+                    disabled={isLocationUndecided}
+                    className={hasRoomValue ? "pr-10" : ""}
+                    {...register("room")}
+                  />
+                  {hasRoomValue && (
+                    <span
+                      aria-hidden="true"
+                      className="text-text-subtle pointer-events-none absolute right-4 top-[25px] -translate-y-1/2 text-[17px] leading-[1.5]"
+                    >
+                      호
+                    </span>
+                  )}
+                </div>
               </div>
               {/* 요일 */}
               <div className="flex-1 max-md:w-full">
@@ -341,12 +332,27 @@ export function Step2StudyOverview({
                       options={[...WEEKDAY_OPTIONS]}
                       placeholder="요일"
                       onChange={onChange}
-                      error={errors.weekDay?.message}
+                      invalid={Boolean(errors.weekDay)}
+                      ariaDescribedBy={
+                        hasLocationError ? "study-location-error" : undefined
+                      }
                     />
                   )}
                 />
               </div>
             </div>
+            {hasLocationError && (
+              <div id="study-location-error" className="flex flex-col gap-1">
+                {locationErrorMessages.map((message, index) => (
+                  <p
+                    key={`${message}-${index}`}
+                    className="text-text-danger text-[14px] leading-[1.5]"
+                  >
+                    {message}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -354,28 +360,45 @@ export function Step2StudyOverview({
         <div className="flex flex-col gap-6">
           <SectionTitle>진행 시간</SectionTitle>
           <div className="flex flex-col gap-2">
-            <HintText>HH:MM ~ HH:MM</HintText>
             <div className="flex items-center gap-2">
               <div className="flex-1">
                 <TextInput
                   id="startTime"
                   length="full"
                   placeholder="HH:MM"
-                  error={errors.startTime?.message}
-                  {...register("startTime")}
+                  invalid={Boolean(errors.startTime)}
+                  aria-describedby={
+                    hasTimeError ? "study-time-error" : undefined
+                  }
+                  {...registerTimeInput("startTime")}
                 />
               </div>
-              <MinusIcon className="h-6 w-6 shrink-0 text-[#58616a]" />
+              <Minus className="h-6 w-6 shrink-0 text-[#58616a]" />
               <div className="flex-1">
                 <TextInput
                   id="endTime"
                   length="full"
                   placeholder="HH:MM"
-                  error={errors.endTime?.message}
-                  {...register("endTime")}
+                  invalid={Boolean(errors.endTime)}
+                  aria-describedby={
+                    hasTimeError ? "study-time-error" : undefined
+                  }
+                  {...registerTimeInput("endTime")}
                 />
               </div>
             </div>
+            {hasTimeError && (
+              <div id="study-time-error" className="flex flex-col gap-1">
+                {timeErrorMessages.map((message, index) => (
+                  <p
+                    key={`${message}-${index}`}
+                    className="text-text-danger text-[14px] leading-[1.5]"
+                  >
+                    {message}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

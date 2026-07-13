@@ -133,7 +133,9 @@ export default function StudyListPage() {
                 resetPage();
               }}
             />
-            <StudyActionButtons />
+            <StudyActionButtons
+              onCreateClick={() => router.push("/studies/create")}
+            />
           </div>
 
           <div className="mb-7">
