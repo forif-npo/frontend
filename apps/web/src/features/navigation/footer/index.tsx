@@ -1,8 +1,9 @@
 import { InstagramIcon, KakaotalkIcon } from "@repo/assets/icons/krds";
 import { ChevronRight, Github } from "@repo/assets/icons/lucide";
-import NavLogo from "@repo/assets/images/nav_logo.png";
 import { Body, Link } from "@ui/components/server";
 import Image from "next/image";
+
+const NAV_LOGO_SRC = "/black_title.svg";
 
 const SOCIAL_LINKS = {
   github: "https://github.com/forif-npo",
@@ -26,8 +27,7 @@ export function Footer() {
       <div className="footer-main max-w-main mx-auto flex flex-col">
         {/* Brand + Social Links */}
         <div className="flex items-center gap-[10px]">
-          {/* TODO: footer 전용 black_title 로고로 교체 필요 */}
-          <Image src={NavLogo} width={81} height={52} alt="FORIF 로고" />
+          <Image src={NAV_LOGO_SRC} width={81} height={52} alt="FORIF 로고" />
 
           <div className="border-divider-gray-light h-7 border-l" />
 

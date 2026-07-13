@@ -44,14 +44,6 @@ export const serviceData: ServiceData[] = [
     link: "/hackathon",
   },
   {
-    id: "3",
-    badge: "회계",
-    title: "회계 공시",
-    description:
-      "포리프는 회비 및 운영 예산의 사용 내역을 투명하게 공개합니다. 수입·지출 내역을 정리해 회원 누구나 확인할 수 있도록 공시하고 있습니다.",
-    link: "/accounting",
-  },
-  {
     id: "4",
     badge: "스터디",
     title: "스터디 개설",

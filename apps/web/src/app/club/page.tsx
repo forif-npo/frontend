@@ -272,7 +272,7 @@ function ClosingCTA() {
 
       <Reveal delay={0.3}>
         <Image
-          src="/images/black_title.png"
+          src="/black_title.svg"
           alt="FORIF"
           width={3600}
           height={1800}
