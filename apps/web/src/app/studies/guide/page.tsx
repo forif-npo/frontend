@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { motion } from "motion/react";
 import { Body, Detail, Heading, Label } from "@ui/components/server";
 import { Button, Modal } from "@ui/components/client";
 import {
@@ -11,8 +12,11 @@ import {
   getStudyRecommendation,
   type ProgrammingCard,
 } from "@/constants/study-guide";
+import { useScrollFollower, useScrollSpy } from "@/hooks/useScrollSpy";
 
 // --- Components ---
+
+const GUIDE_TAB_IDS = GUIDE_TABS.map(({ id }) => id);
 
 function ProgrammingCardButton({
   card,
@@ -221,14 +225,18 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
 }
 
 export default function StudyGuidePage() {
-  const [activeTab, setActiveTab] = useState("introduction");
+  const activeTab = useScrollSpy(GUIDE_TAB_IDS, { offset: 140 });
+  const recommendationPanel = useScrollFollower<HTMLDivElement, HTMLDivElement>(
+    {
+      topOffset: 120,
+    },
+  );
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<ProgrammingCard | null>(
     null,
   );
 
   const handleTabClick = (id: string) => {
-    setActiveTab(id);
     const el = document.getElementById(id);
     if (el) {
       const y = el.getBoundingClientRect().top + window.scrollY - 64;
@@ -256,21 +264,32 @@ export default function StudyGuidePage() {
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id)}
-                className={`shrink-0 px-4 py-3 transition-colors ${
+                className={`relative shrink-0 px-4 py-3 transition-colors ${
                   activeTab === tab.id
-                    ? "border-border-primary text-text-primary border-b-2"
+                    ? "text-text-primary"
                     : "text-text-subtle hover:text-text-basic"
                 }`}
               >
                 <Label size="m" weight="bold">
                   {tab.label}
                 </Label>
+                {activeTab === tab.id && (
+                  <motion.span
+                    layoutId="study-guide-active-tab"
+                    className="bg-primary-50 absolute bottom-0 left-3 right-3 h-0.5 rounded-full"
+                    transition={{
+                      type: "spring",
+                      stiffness: 420,
+                      damping: 34,
+                    }}
+                  />
+                )}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="flex gap-8 pt-6">
+        <div ref={recommendationPanel.containerRef} className="flex gap-8 pt-6">
           {/* Main Content */}
           <div className="min-w-0 flex-1">
             {/* 스터디 소개 */}
@@ -471,7 +490,7 @@ export default function StudyGuidePage() {
 
             {/* 스터디 이수 */}
             <section id="completion" className="mt-12">
-              <SectionEyebrow>스터디 수료</SectionEyebrow>
+              <SectionEyebrow>스터디 이수</SectionEyebrow>
               <Heading size="s" className="mb-3 mt-1">
                 스터디 이수와 수료증
               </Heading>
@@ -490,7 +509,7 @@ export default function StudyGuidePage() {
                 나에게 맞는 스터디는?
               </Heading>
               <Body size="m" className="text-text-basic leading-7">
-                포리프의 스터디를 듣고싶지만, 어떤 스터디를 들어야 할 지 고민이
+                포리프의 스터디를 듣고싶지만, 어떤 스터디를 들어야 할지 고민이
                 된다면,
                 <br />
                 저희가 스터디 선택을 도와드릴게요!
@@ -513,7 +532,11 @@ export default function StudyGuidePage() {
 
           {/* Side Panel (Desktop) */}
           <aside className="hidden w-72 shrink-0 md:block">
-            <div className="border-border-gray-light rounded-3 sticky top-16 border p-6 text-center">
+            <div
+              ref={recommendationPanel.followerRef}
+              style={{ marginTop: recommendationPanel.offset }}
+              className="border-border-gray-light rounded-3 border p-6 text-center"
+            >
               <Body size="s" className="text-text-basic leading-6">
                 포리프의 다양한 스터디 중 <br />
                 어떤 스터디가 나에게 맞을까?

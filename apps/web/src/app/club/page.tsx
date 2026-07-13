@@ -200,7 +200,7 @@ function GallerySection() {
 
 function HistorySection() {
   return (
-    <section className="bg-surface-white px-6 py-20 md:py-28">
+    <section id="history" className="bg-surface-white px-6 py-20 md:py-28">
       <div className="max-w-main mx-auto">
         <Reveal className="mb-16 text-center">
           <Label size="m" weight="bold" className="text-text-primary">
