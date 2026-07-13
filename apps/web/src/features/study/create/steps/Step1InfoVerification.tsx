@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import { Button, CriticalAlert, TextInput } from "@ui/components/client";
-import {
-  AnnotationIcon,
-  GuideCheckIcon,
-  SearchIcon,
-} from "@ui/components/server";
+import { GuideCheckIcon, SearchIcon } from "@ui/components/server";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { StudyOpenValues } from "@core/schemas";
@@ -116,11 +112,7 @@ function MentorAddCard({
       <InfoField label="학과" value={mentorInfo?.department || ""} />
 
       {/* 휴대폰번호 */}
-      <InfoField
-        label="휴대폰번호"
-        value={mentorInfo?.phone || ""}
-        icon={<AnnotationIcon className="text-text-subtle h-6 w-6" />}
-      />
+      <InfoField label="휴대폰번호" value={mentorInfo?.phone || ""} />
     </div>
   );
 }
@@ -226,11 +218,7 @@ export function Step1InfoVerification({
           <InfoField label="학번" value={userInfo.studentId} />
           <InfoField label="이름" value={userInfo.name} />
           <InfoField label="학과" value={userInfo.department} />
-          <InfoField
-            label="휴대폰번호"
-            value={userInfo.phone}
-            icon={<AnnotationIcon className="text-text-subtle h-6 w-6" />}
-          />
+          <InfoField label="휴대폰번호" value={userInfo.phone} />
         </div>
 
         {/* 알림 메시지 */}

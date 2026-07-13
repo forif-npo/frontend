@@ -13,27 +13,6 @@ import type { StudyOpenValues } from "@core/schemas";
 import { TagSelectModal } from "../components/TagSelectModal";
 import { LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "../constants";
 
-function AnnotationIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M12 8V13M12 16H12.01"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 function CirclePlusIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -188,11 +167,7 @@ export function Step2StudyOverview({
 
         {/* 태그 */}
         <div className="flex flex-col gap-2">
-          <SectionTitle
-            icon={<AnnotationIcon className="text-text-subtle h-6 w-6" />}
-          >
-            태그
-          </SectionTitle>
+          <SectionTitle>태그</SectionTitle>
           <div className="flex flex-wrap items-center gap-2">
             {selectedTags.map((tag) => (
               <button
@@ -227,11 +202,7 @@ export function Step2StudyOverview({
       <div className="flex flex-col gap-10">
         {/* 썸네일 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle
-            icon={<AnnotationIcon className="text-text-subtle h-6 w-6" />}
-          >
-            썸네일
-          </SectionTitle>
+          <SectionTitle>썸네일</SectionTitle>
           <div className="flex flex-col gap-2">
             <HintText>
               부원들이 한 눈에 보일 수 있는 썸네일을 선택해주세요. 최적의 사진
