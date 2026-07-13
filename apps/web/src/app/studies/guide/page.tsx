@@ -17,6 +17,7 @@ import { useScrollFollower, useScrollSpy } from "@/hooks/useScrollSpy";
 // --- Components ---
 
 const GUIDE_TAB_IDS = GUIDE_TABS.map(({ id }) => id);
+const GUIDE_TAB_SCROLL_OFFSET = 96;
 
 function ProgrammingCardButton({
   card,
@@ -239,7 +240,10 @@ export default function StudyGuidePage() {
   const handleTabClick = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const y = el.getBoundingClientRect().top + window.scrollY - 64;
+      const y =
+        el.getBoundingClientRect().top +
+        window.scrollY -
+        GUIDE_TAB_SCROLL_OFFSET;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
@@ -490,7 +494,7 @@ export default function StudyGuidePage() {
 
             {/* 스터디 이수 */}
             <section id="completion" className="mt-12">
-              <SectionEyebrow>스터디 이수</SectionEyebrow>
+              <SectionEyebrow>스터디 수료</SectionEyebrow>
               <Heading size="s" className="mb-3 mt-1">
                 스터디 이수와 수료증
               </Heading>
@@ -509,7 +513,7 @@ export default function StudyGuidePage() {
                 나에게 맞는 스터디는?
               </Heading>
               <Body size="m" className="text-text-basic leading-7">
-                포리프의 스터디를 듣고싶지만, 어떤 스터디를 들어야 할지 고민이
+                포리프의 스터디를 듣고싶지만, 어떤 스터디를 들어야 할 지 고민이
                 된다면,
                 <br />
                 저희가 스터디 선택을 도와드릴게요!
