@@ -9,6 +9,7 @@ export type CheckboxProps = {
   label?: string;
   name?: string;
   value?: string;
+  checked?: boolean;
   defaultChecked?: boolean;
   disabled?: boolean;
   indeterminate?: boolean; // static presentation only
@@ -21,6 +22,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   label,
   name,
   value = "on",
+  checked,
   defaultChecked = false,
   disabled = false,
   indeterminate = false,
@@ -31,6 +33,8 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     md: { box: "w-5 h-5", label: "m" as const, icon: "w-3 h-3" },
     lg: { box: "w-6 h-6", label: "l" as const, icon: "w-4 h-4" },
   }[size];
+  const checkedProps =
+    checked === undefined ? { defaultChecked } : { checked, readOnly: true };
 
   return (
     <div className={`inline-flex items-center gap-3 ${className}`}>
@@ -40,7 +44,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
           name={name}
           value={value}
           type="checkbox"
-          defaultChecked={defaultChecked}
+          {...checkedProps}
           disabled={disabled}
           aria-disabled={disabled}
           aria-checked={indeterminate ? "mixed" : undefined}
@@ -50,32 +54,33 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         <span
           aria-hidden="true"
           className={`flex items-center justify-center rounded border transition-colors duration-200 ${sizeClasses.box} ${disabled ? "cursor-not-allowed" : "cursor-pointer"} bg-surface-white border-border-gray peer-hover:border-border-primary peer-checked:bg-button-primary-fill peer-checked:border-border-primary peer-disabled:bg-surface-gray-subtle peer-disabled:border-border-gray peer-disabled:text-text-disabled`}
+        />
+        {/* Check icon */}
+        <svg
+          className={`pointer-events-none absolute left-1/2 top-1/2 ${sizeClasses.icon} -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity duration-150 ease-in-out ${indeterminate ? "" : "peer-checked:opacity-100"}`}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
         >
-          {/* Check icon */}
-          <svg
-            className={`${sizeClasses.icon} text-text-bolder-inverse opacity-0 transition-opacity duration-150 ease-in-out peer-checked:opacity-100 peer-data-[indeterminate=true]:opacity-0`}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M20 6L9 17L4 12" />
-          </svg>
-          {/* Indeterminate icon */}
-          <svg
-            className={`${sizeClasses.icon} text-text-bolder-inverse transition-opacity duration-150 ease-in-out ${indeterminate ? "opacity-100" : "opacity-0"}`}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M5 12H19" />
-          </svg>
-        </span>
+          <path d="M20 6L9 17L4 12" />
+        </svg>
+        {/* Indeterminate icon */}
+        <svg
+          className={`pointer-events-none absolute left-1/2 top-1/2 ${sizeClasses.icon} -translate-x-1/2 -translate-y-1/2 text-white transition-opacity duration-150 ease-in-out ${indeterminate ? "opacity-100" : "opacity-0"}`}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M5 12H19" />
+        </svg>
       </span>
       {label && (
         <Label

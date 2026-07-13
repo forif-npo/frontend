@@ -62,7 +62,7 @@ export const Checkbox: React.FC<InteractiveCheckboxProps> = ({
         label={label}
         size={size}
         disabled={disabled}
-        defaultChecked={checked}
+        checked={checked}
         indeterminate={indeterminate}
         className={className}
       />

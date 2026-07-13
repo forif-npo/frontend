@@ -141,7 +141,7 @@ export function Step2StudyOverview({
         <input
           id="studyName"
           type="text"
-          placeholder="스터디 이름을 입력해주세요..."
+          placeholder="스터디 이름을 입력해주세요"
           className="text-text-bolder placeholder:text-text-subtle-inverse w-full bg-transparent text-[28px] font-bold leading-[1.5] tracking-[1px] outline-none sm:text-[40px]"
           {...register("studyName")}
         />
