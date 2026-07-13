@@ -1,7 +1,6 @@
 "use client";
 import { CloseIcon, LoginIcon } from "@repo/assets/icons/krds";
 import { Home, Menu } from "@repo/assets/icons/lucide";
-import NavLogo from "@repo/assets/images/nav_logo.png";
 import { Button } from "@ui/components/client";
 import { Link, LinkButton, Title } from "@ui/components/server";
 import { cn } from "@ui/utils/cn";
@@ -9,6 +8,8 @@ import Image from "next/image";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
 import { useLogout } from "@/features/auth/logout/use-logout";
+
+const NAV_LOGO_SRC = "/black_title.svg";
 
 export type NavMenu = {
   label: string;
@@ -87,7 +88,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       {/* Mobile NavBar */}
       <nav className="bg-surface-white/95 border-divider-gray-light fixed left-0 right-0 top-0 z-50 flex h-[64px] items-center justify-between gap-4 border-b px-4 backdrop-blur md:hidden">
         <Link href="/" className="flex items-center">
-          <Image src={NavLogo} width={62} height={40} alt="FORIF Logo" />
+          <Image src={NAV_LOGO_SRC} width={62} height={40} alt="FORIF Logo" />
         </Link>
         <button
           onClick={() => setMobileMenuOpen(true)}
@@ -109,7 +110,12 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-2"
             >
-              <Image src={NavLogo} width={62} height={40} alt="FORIF Logo" />
+              <Image
+                src={NAV_LOGO_SRC}
+                width={62}
+                height={40}
+                alt="FORIF Logo"
+              />
             </Link>
             <button
               onClick={() => setMobileMenuOpen(false)}
@@ -205,7 +211,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
           href="/"
           className="flex items-center gap-8"
         >
-          <Image src={NavLogo} width={87} height={56} alt="FORIF Logo" />
+          <Image src={NAV_LOGO_SRC} width={87} height={56} alt="FORIF Logo" />
         </Link>
         <ul className="flex flex-grow justify-center gap-4">
           {navMenus.map(({ label, href, subMenus, title, navigate }) => (
