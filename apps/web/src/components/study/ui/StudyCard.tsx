@@ -41,6 +41,7 @@ interface MyPageVariantProps {
     end_time: string;
     week_day: number;
     location: string;
+    certificate_issued: boolean;
   };
   semesterLabel: string;
   isCurrent?: boolean;
@@ -284,7 +285,9 @@ export function StudyCard(props: StudyCardProps) {
             variant="primary"
             size="medium"
             className="min-w-[78px] whitespace-nowrap"
-            disabled={props.isCurrent}
+            disabled={
+              !(study as MyPageVariantProps["study"]).certificate_issued
+            }
             onClick={props.onDownloadCertificate}
           >
             인증서 다운로드
