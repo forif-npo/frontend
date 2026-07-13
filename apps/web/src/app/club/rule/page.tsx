@@ -11,7 +11,6 @@ export default function RulePage() {
   const activeChapterId = useScrollSpy(RULE_CHAPTER_IDS, { offset: 140 });
   const chapterNavigator = useScrollFollower<HTMLDivElement, HTMLDivElement>({
     topOffset: 120,
-    bottomOffset: 32,
   });
 
   const scrollToChapter = (chapter: number) => {

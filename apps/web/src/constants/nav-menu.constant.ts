@@ -8,8 +8,12 @@ export const NAV_MENUS: NavMenu[] = [
     href: "/club",
     subMenus: [
       {
-        label: "동아리 소개",
+        label: "FORIF 소개",
         href: "/club",
+      },
+      {
+        label: "연혁",
+        href: "/club#history",
       },
       {
         label: "운영진 소개",

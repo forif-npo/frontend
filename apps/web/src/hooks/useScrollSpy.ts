@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useMotionValue, useSpring } from "motion/react";
+import { useMotionValue } from "motion/react";
 
 interface UseScrollSpyOptions {
   offset?: number;
@@ -47,21 +47,15 @@ export function useScrollSpy(
 
 interface UseScrollFollowerOptions {
   topOffset?: number;
-  bottomOffset?: number;
 }
 
 export function useScrollFollower<
   TContainer extends HTMLElement,
   TFollower extends HTMLElement,
->({ topOffset = 120, bottomOffset = 32 }: UseScrollFollowerOptions = {}) {
+>({ topOffset = 120 }: UseScrollFollowerOptions = {}) {
   const containerRef = useRef<TContainer | null>(null);
   const followerRef = useRef<TFollower | null>(null);
-  const targetY = useMotionValue(0);
-  const y = useSpring(targetY, {
-    stiffness: 520,
-    damping: 46,
-    mass: 0.35,
-  });
+  const y = useMotionValue(0);
 
   useEffect(() => {
     let frame = 0;
@@ -78,13 +72,9 @@ export function useScrollFollower<
         const containerTop =
           container.getBoundingClientRect().top + window.scrollY;
         const scrollStart = containerTop - topOffset;
-        const maxY = Math.max(
-          0,
-          container.offsetHeight - follower.offsetHeight - bottomOffset,
-        );
-        const nextY = Math.min(Math.max(window.scrollY - scrollStart, 0), maxY);
+        const nextY = Math.max(window.scrollY - scrollStart, 0);
 
-        targetY.set(nextY);
+        y.set(nextY);
       });
     };
 
@@ -97,7 +87,7 @@ export function useScrollFollower<
       window.removeEventListener("scroll", updatePosition);
       window.removeEventListener("resize", updatePosition);
     };
-  }, [bottomOffset, targetY, topOffset]);
+  }, [topOffset, y]);
 
   return { containerRef, followerRef, y };
 }

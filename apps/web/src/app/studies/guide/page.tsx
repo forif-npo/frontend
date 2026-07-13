@@ -229,7 +229,6 @@ export default function StudyGuidePage() {
   const recommendationPanel = useScrollFollower<HTMLDivElement, HTMLDivElement>(
     {
       topOffset: 120,
-      bottomOffset: 32,
     },
   );
   const [modalOpen, setModalOpen] = useState(false);
