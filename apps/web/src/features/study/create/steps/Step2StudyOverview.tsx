@@ -73,6 +73,17 @@ export function Step2StudyOverview({
   const isClubRoomSelected = selectedLocation === "동아리방";
   const hasRoomValue =
     typeof selectedRoom === "string" && selectedRoom.trim().length > 0;
+  const locationErrorMessages = [
+    errors.location?.message,
+    errors.room?.message,
+    errors.weekDay?.message,
+  ].filter((message): message is string => Boolean(message));
+  const timeErrorMessages = [
+    errors.startTime?.message,
+    errors.endTime?.message,
+  ].filter((message): message is string => Boolean(message));
+  const hasLocationError = locationErrorMessages.length > 0;
+  const hasTimeError = timeErrorMessages.length > 0;
 
   useEffect(() => {
     if (isLocationUndecided) {
@@ -276,7 +287,10 @@ export function Step2StudyOverview({
                       options={[...LOCATION_OPTIONS]}
                       placeholder="장소를 선택해주세요"
                       onChange={onChange}
-                      error={errors.location?.message}
+                      invalid={Boolean(errors.location)}
+                      ariaDescribedBy={
+                        hasLocationError ? "study-location-error" : undefined
+                      }
                     />
                   )}
                 />
@@ -288,7 +302,10 @@ export function Step2StudyOverview({
                     id="room"
                     length="full"
                     placeholder="강의실(호)"
-                    error={errors.room?.message}
+                    invalid={Boolean(errors.room)}
+                    aria-describedby={
+                      hasLocationError ? "study-location-error" : undefined
+                    }
                     disabled={isLocationUndecided}
                     className={hasRoomValue ? "pr-10" : ""}
                     {...register("room")}
@@ -315,12 +332,27 @@ export function Step2StudyOverview({
                       options={[...WEEKDAY_OPTIONS]}
                       placeholder="요일"
                       onChange={onChange}
-                      error={errors.weekDay?.message}
+                      invalid={Boolean(errors.weekDay)}
+                      ariaDescribedBy={
+                        hasLocationError ? "study-location-error" : undefined
+                      }
                     />
                   )}
                 />
               </div>
             </div>
+            {hasLocationError && (
+              <div id="study-location-error" className="flex flex-col gap-1">
+                {locationErrorMessages.map((message, index) => (
+                  <p
+                    key={`${message}-${index}`}
+                    className="text-text-danger text-[14px] leading-[1.5]"
+                  >
+                    {message}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -334,7 +366,10 @@ export function Step2StudyOverview({
                   id="startTime"
                   length="full"
                   placeholder="HH:MM"
-                  error={errors.startTime?.message}
+                  invalid={Boolean(errors.startTime)}
+                  aria-describedby={
+                    hasTimeError ? "study-time-error" : undefined
+                  }
                   {...registerTimeInput("startTime")}
                 />
               </div>
@@ -344,11 +379,26 @@ export function Step2StudyOverview({
                   id="endTime"
                   length="full"
                   placeholder="HH:MM"
-                  error={errors.endTime?.message}
+                  invalid={Boolean(errors.endTime)}
+                  aria-describedby={
+                    hasTimeError ? "study-time-error" : undefined
+                  }
                   {...registerTimeInput("endTime")}
                 />
               </div>
             </div>
+            {hasTimeError && (
+              <div id="study-time-error" className="flex flex-col gap-1">
+                {timeErrorMessages.map((message, index) => (
+                  <p
+                    key={`${message}-${index}`}
+                    className="text-text-danger text-[14px] leading-[1.5]"
+                  >
+                    {message}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

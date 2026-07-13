@@ -20,6 +20,8 @@ export interface SelectProps {
   variant?: "default" | "text";
   disabled?: boolean;
   error?: string;
+  invalid?: boolean;
+  ariaDescribedBy?: string;
   dropdownAlign?: "left" | "right";
   noPadding?: boolean;
 }
@@ -40,6 +42,8 @@ export const Select = ({
   variant = "default",
   disabled,
   error,
+  invalid = false,
+  ariaDescribedBy,
   dropdownAlign = "left",
   noPadding = false,
 }: SelectProps) => {
@@ -121,6 +125,7 @@ export const Select = ({
       "border-gray-30 focus:ring-primary-50 border bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:outline-none",
     text: "border-none bg-transparent",
   };
+  const isInvalid = invalid || Boolean(error);
 
   return (
     <div className="relative" id={id} ref={containerRef}>
@@ -134,6 +139,7 @@ export const Select = ({
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-disabled={disabled}
+        aria-describedby={ariaDescribedBy}
         disabled={disabled}
         ref={triggerRef}
         className={cn(
@@ -144,7 +150,7 @@ export const Select = ({
           disabled
             ? "bg-input-surface-disabled border-input-border-disabled"
             : "bg-input-surface border-input-border",
-          error && "border-input-border-error",
+          isInvalid && "border-input-border-error",
         )}
       >
         <Label
