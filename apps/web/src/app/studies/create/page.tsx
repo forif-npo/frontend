@@ -32,7 +32,7 @@ export default function StudyCreatePage() {
 
   if (step === 6) {
     return (
-      <div className="min-h-viewport max-w-main mx-auto px-4 sm:px-6">
+      <div className="min-h-viewport max-w-main mx-auto px-4 pb-24 sm:px-6 md:pb-32">
         <StudyCreateComplete
           onGoToStudyList={goToStudyList}
           onGoToApplication={goToApplication}
@@ -42,7 +42,7 @@ export default function StudyCreatePage() {
   }
 
   return (
-    <div className="min-h-viewport relative">
+    <div className="min-h-viewport relative pb-24 md:pb-32">
       <StudyHelpPanel title="스터디 개설 중 어려움이 있으신가요?" />
       <div className="mx-auto flex max-w-[792px] justify-center px-4 sm:px-6">
         {step === 1 && (
