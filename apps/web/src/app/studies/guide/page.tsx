@@ -157,7 +157,7 @@ function RecommendationModal({
           }`;
 
           return (
-            <div className="flex flex-col items-center gap-4 pb-2 text-center">
+            <div className="flex flex-col items-center gap-5 pb-8 text-center">
               <Label size="s" weight="bold" className="text-text-primary">
                 추천 결과
               </Label>
@@ -206,7 +206,7 @@ function RecommendationModal({
           );
         })()
       ) : (
-        <div className="flex flex-col gap-4 pb-2">
+        <div className="flex flex-col gap-5 pb-6">
           <div className="flex items-center justify-between">
             <Label size="s" weight="bold" className="text-text-primary">
               {q.title}
@@ -218,7 +218,7 @@ function RecommendationModal({
           <Body size="m" weight="bold">
             {q.text}
           </Body>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {q.options.map((opt) => (
               <button
                 key={opt}
