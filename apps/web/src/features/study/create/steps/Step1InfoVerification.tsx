@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, CriticalAlert, TextInput } from "@ui/components/client";
 import { GuideCheckIcon, SearchIcon } from "@ui/components/server";
 import { apiClient } from "@core/utils/api-client";
@@ -10,6 +10,28 @@ import type { UseFormReturn } from "react-hook-form";
 import { useFormattedPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { StudyCreateStepIndicator } from "./StudyCreateStepIndicator";
 import type { UserInfo } from "../types";
+
+type UserResponseData = {
+  user_id: number;
+  user_name: string;
+  department: string;
+  phone_num: string;
+};
+
+async function fetchUserInfo(studentId: string) {
+  const response = await apiClient
+    .get(`api/v1/users/${studentId}`)
+    .json<ApiResponse<UserResponseData>>();
+
+  if (!response.data) return null;
+
+  return {
+    studentId: String(response.data.user_id),
+    name: response.data.user_name,
+    department: response.data.department,
+    phone: response.data.phone_num,
+  };
+}
 
 /** 읽기 전용 정보 필드 */
 function InfoField({
@@ -133,43 +155,96 @@ export function Step1InfoVerification({
   onNext,
   onCancel,
 }: Step1InfoVerificationProps) {
-  const [showMentorCard, setShowMentorCard] = useState(false);
+  const [isMentorCardOpen, setIsMentorCardOpen] = useState(false);
   const [mentorSearchValue, setMentorSearchValue] = useState("");
   const [mentorInfo, setMentorInfo] = useState<UserInfo | null>(null);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const formattedUserPhone = useFormattedPhoneNumber(userInfo.phone);
+  const selectedMentorId = form.watch("mentorIds")?.[0] ?? null;
+  const showMentorCard = isMentorCardOpen || selectedMentorId !== null;
 
-  const handleMentorSearch = async () => {
-    if (!mentorSearchValue.trim()) return;
-    try {
-      const response = await apiClient
-        .get(`api/v1/users/${mentorSearchValue}`)
-        .json<
-          ApiResponse<{
-            user_id: number;
-            user_name: string;
-            department: string;
-            phone_num: string;
-          }>
-        >();
-      if (response.data) {
-        if (String(response.data.user_id) === userInfo.studentId) {
+  useEffect(() => {
+    if (selectedMentorId === null) {
+      if (!isMentorCardOpen) {
+        setMentorSearchValue("");
+        setMentorInfo(null);
+      }
+      return;
+    }
+
+    const mentorIdText = String(selectedMentorId);
+
+    if (mentorInfo?.studentId === mentorIdText) {
+      setMentorSearchValue(mentorIdText);
+      return;
+    }
+
+    let isCanceled = false;
+
+    const restoreMentorInfo = async () => {
+      try {
+        const restoredMentorInfo = await fetchUserInfo(mentorIdText);
+        if (isCanceled) return;
+
+        if (!restoredMentorInfo) {
+          setMentorSearchValue(mentorIdText);
+          setMentorInfo(null);
+          return;
+        }
+
+        if (restoredMentorInfo.studentId === userInfo.studentId) {
           setAlertMessage("본인은 추가 멘토로 등록할 수 없습니다.");
           setMentorInfo(null);
           form.setValue("mentorIds", [], { shouldDirty: true });
           return;
         }
 
-        setMentorInfo({
-          studentId: String(response.data.user_id),
-          name: response.data.user_name,
-          department: response.data.department,
-          phone: response.data.phone_num,
-        });
-        form.setValue("mentorIds", [response.data.user_id], {
-          shouldDirty: true,
-        });
+        setMentorSearchValue(restoredMentorInfo.studentId);
+        setMentorInfo(restoredMentorInfo);
+        setAlertMessage(null);
+      } catch {
+        if (isCanceled) return;
+        setMentorSearchValue(mentorIdText);
+        setMentorInfo(null);
+        setAlertMessage("멘토 정보를 불러오지 못했습니다.");
       }
+    };
+
+    restoreMentorInfo();
+
+    return () => {
+      isCanceled = true;
+    };
+  }, [
+    form,
+    isMentorCardOpen,
+    mentorInfo?.studentId,
+    selectedMentorId,
+    userInfo.studentId,
+  ]);
+
+  const handleMentorSearch = async () => {
+    if (!mentorSearchValue.trim()) return;
+    try {
+      const searchedMentorInfo = await fetchUserInfo(mentorSearchValue.trim());
+
+      if (!searchedMentorInfo) {
+        throw new Error("Mentor not found");
+      }
+
+      if (searchedMentorInfo.studentId === userInfo.studentId) {
+        setAlertMessage("본인은 추가 멘토로 등록할 수 없습니다.");
+        setMentorInfo(null);
+        form.setValue("mentorIds", [], { shouldDirty: true });
+        return;
+      }
+
+      setMentorInfo(searchedMentorInfo);
+      setMentorSearchValue(searchedMentorInfo.studentId);
+      setAlertMessage(null);
+      form.setValue("mentorIds", [Number(searchedMentorInfo.studentId)], {
+        shouldDirty: true,
+      });
     } catch {
       setAlertMessage("해당 학번의 사용자를 찾을 수 없습니다.");
       setMentorInfo(null);
@@ -178,7 +253,7 @@ export function Step1InfoVerification({
   };
 
   const handleRemoveMentor = () => {
-    setShowMentorCard(false);
+    setIsMentorCardOpen(false);
     setMentorSearchValue("");
     setMentorInfo(null);
     form.setValue("mentorIds", [], { shouldDirty: true });
@@ -186,6 +261,7 @@ export function Step1InfoVerification({
 
   const handleMentorSearchChange = (value: string) => {
     setMentorSearchValue(value);
+    setAlertMessage(null);
     setMentorInfo(null);
     form.setValue("mentorIds", [], { shouldDirty: true });
   };
@@ -255,7 +331,7 @@ export function Step1InfoVerification({
             <Button
               variant="secondary"
               size="large"
-              onClick={() => setShowMentorCard(true)}
+              onClick={() => setIsMentorCardOpen(true)}
               className="h-14 min-w-[90px]"
             >
               멘토 추가
