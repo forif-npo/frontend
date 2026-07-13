@@ -7,6 +7,7 @@ import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { StudyOpenValues } from "@core/schemas";
 import type { UseFormReturn } from "react-hook-form";
+import { useFormattedPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { StudyCreateStepIndicator } from "./StudyCreateStepIndicator";
 import type { UserInfo } from "../types";
 
@@ -47,6 +48,8 @@ function MentorAddCard({
   searchValue: string;
   onSearchChange: (value: string) => void;
 }) {
+  const formattedMentorPhone = useFormattedPhoneNumber(mentorInfo?.phone);
+
   return (
     <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
       <div className="flex items-center justify-between">
@@ -112,7 +115,7 @@ function MentorAddCard({
       <InfoField label="학과" value={mentorInfo?.department || ""} />
 
       {/* 휴대폰번호 */}
-      <InfoField label="휴대폰번호" value={mentorInfo?.phone || ""} />
+      <InfoField label="휴대폰번호" value={formattedMentorPhone} />
     </div>
   );
 }
@@ -134,6 +137,7 @@ export function Step1InfoVerification({
   const [mentorSearchValue, setMentorSearchValue] = useState("");
   const [mentorInfo, setMentorInfo] = useState<UserInfo | null>(null);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const formattedUserPhone = useFormattedPhoneNumber(userInfo.phone);
 
   const handleMentorSearch = async () => {
     if (!mentorSearchValue.trim()) return;
@@ -218,7 +222,7 @@ export function Step1InfoVerification({
           <InfoField label="학번" value={userInfo.studentId} />
           <InfoField label="이름" value={userInfo.name} />
           <InfoField label="학과" value={userInfo.department} />
-          <InfoField label="휴대폰번호" value={userInfo.phone} />
+          <InfoField label="휴대폰번호" value={formattedUserPhone} />
         </div>
 
         {/* 알림 메시지 */}
