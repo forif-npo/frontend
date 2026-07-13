@@ -42,6 +42,31 @@ function ProgrammingCardButton({
   );
 }
 
+function ProgrammingCardContent({ content }: { content: string }) {
+  return (
+    <div className="flex flex-col gap-6">
+      {content.split("\n\n").map((section) => {
+        const [rawTitle, ...bodyLines] = section.split("\n");
+        const title = rawTitle.match(/^-([^-]+)-$/)?.[1] ?? rawTitle;
+
+        return (
+          <section key={rawTitle} className="flex flex-col gap-2">
+            <Label size="s" weight="bold" className="text-text-primary">
+              {title}
+            </Label>
+            <Body
+              size="s"
+              className="text-text-basic whitespace-pre-wrap leading-7"
+            >
+              {bodyLines.join("\n")}
+            </Body>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
 function ProgrammingCardModal({
   card,
   onClose,
@@ -58,7 +83,7 @@ function ProgrammingCardModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-surface-white rounded-4 relative w-full max-w-md p-8 shadow-lg">
+      <div className="bg-surface-white rounded-4 relative w-full max-w-4xl p-8 shadow-lg md:p-10">
         <button
           type="button"
           onClick={onClose}
@@ -78,12 +103,7 @@ function ProgrammingCardModal({
         <Heading size="xs" className="mb-4 pr-6">
           {card.title}
         </Heading>
-        <Body
-          size="s"
-          className="text-text-basic max-h-[60vh] overflow-y-auto whitespace-pre-wrap leading-7"
-        >
-          {card.content}
-        </Body>
+        <ProgrammingCardContent content={card.content} />
       </div>
     </div>
   );
