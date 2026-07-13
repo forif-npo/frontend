@@ -14,7 +14,7 @@ import Link from "next/link";
 export default async function Page() {
   const carouselItems: CarouselItem[] = [
     {
-      imageSrc: "/images/carousel/carousel-img-1.png",
+      imageSrc: "/images/carousel-img.png",
       title: (
         <>
           한양대학교 최대 규모의 중앙 프로그래밍 <br /> 동아리,
