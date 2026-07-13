@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useMotionValue } from "motion/react";
 
 interface UseScrollSpyOptions {
   offset?: number;
@@ -55,7 +54,7 @@ export function useScrollFollower<
 >({ topOffset = 120 }: UseScrollFollowerOptions = {}) {
   const containerRef = useRef<TContainer | null>(null);
   const followerRef = useRef<TFollower | null>(null);
-  const y = useMotionValue(0);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     let frame = 0;
@@ -69,12 +68,27 @@ export function useScrollFollower<
 
         if (!container || !follower) return;
 
-        const containerTop =
-          container.getBoundingClientRect().top + window.scrollY;
-        const scrollStart = containerTop - topOffset;
-        const nextY = Math.max(window.scrollY - scrollStart, 0);
+        const zoomValue = Number.parseFloat(
+          window.getComputedStyle(document.documentElement).zoom,
+        );
+        const pageZoom =
+          Number.isFinite(zoomValue) && zoomValue > 0 ? zoomValue : 1;
+        const currentMarginTop = Number.parseFloat(
+          window.getComputedStyle(follower).marginTop,
+        );
+        const normalizedMarginTop = Number.isFinite(currentMarginTop)
+          ? currentMarginTop
+          : 0;
+        const naturalTop =
+          follower.getBoundingClientRect().top +
+          window.scrollY -
+          normalizedMarginTop * pageZoom;
+        const nextY = Math.max(
+          (window.scrollY + topOffset - naturalTop) / pageZoom,
+          0,
+        );
 
-        y.set(nextY);
+        setOffset((prev) => (Math.abs(prev - nextY) < 0.5 ? prev : nextY));
       });
     };
 
@@ -87,7 +101,7 @@ export function useScrollFollower<
       window.removeEventListener("scroll", updatePosition);
       window.removeEventListener("resize", updatePosition);
     };
-  }, [topOffset, y]);
+  }, [topOffset]);
 
-  return { containerRef, followerRef, y };
+  return { containerRef, followerRef, offset };
 }

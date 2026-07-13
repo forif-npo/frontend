@@ -532,10 +532,10 @@ export default function StudyGuidePage() {
 
           {/* Side Panel (Desktop) */}
           <aside className="hidden w-72 shrink-0 md:block">
-            <motion.div
+            <div
               ref={recommendationPanel.followerRef}
-              style={{ y: recommendationPanel.y }}
-              className="border-border-gray-light rounded-3 border p-6 text-center will-change-transform"
+              style={{ marginTop: recommendationPanel.offset }}
+              className="border-border-gray-light rounded-3 border p-6 text-center"
             >
               <Body size="s" className="text-text-basic leading-6">
                 포리프의 다양한 스터디 중 <br />
@@ -549,7 +549,7 @@ export default function StudyGuidePage() {
               >
                 나에게 맞는 스터디 알아보기
               </Button>
-            </motion.div>
+            </div>
           </aside>
         </div>
       </div>

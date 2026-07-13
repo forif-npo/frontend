@@ -108,10 +108,9 @@ export default function RulePage() {
         </div>
 
         <div className="hidden w-[160px] shrink-0 md:block">
-          <motion.div
+          <div
             ref={chapterNavigator.followerRef}
-            style={{ y: chapterNavigator.y }}
-            className="will-change-transform"
+            style={{ marginTop: chapterNavigator.offset }}
           >
             <div className="flex gap-3">
               <div className="my-7 w-[3px] rounded bg-gray-200" />
@@ -146,7 +145,7 @@ export default function RulePage() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </main>
