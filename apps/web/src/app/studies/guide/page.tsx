@@ -342,7 +342,7 @@ export default function StudyGuidePage() {
                     개설합니다. 이렇게 개설되는 스터디를
                     &apos;정규스터디&apos;라고 합니다.
                   </Body>
-                  <ul className="mt-3 flex flex-col gap-3">
+                  <ul className="border-border-gray-light bg-surface-white rounded-3 mt-4 overflow-hidden border shadow-sm">
                     {[
                       { label: "모집", desc: "3월 / 9월 초 부원 모집 기간" },
                       {
@@ -358,20 +358,37 @@ export default function StudyGuidePage() {
                         desc: "개설 스터디는 매 학기마다 다르며, 포리프는 매 학기 다양한 분야의 스터디가 개설되고 있습니다.",
                       },
                     ].map((item) => (
-                      <li key={item.label} className="flex gap-4">
-                        <Body size="s" weight="bold" className="w-20 shrink-0">
-                          {item.label}
-                        </Body>
-                        <Body size="s" className="text-text-basic leading-7">
-                          {item.desc}
-                        </Body>
+                      <li
+                        key={item.label}
+                        className="border-border-gray-light grid border-b last:border-b-0 md:grid-cols-[150px_minmax(0,1fr)]"
+                      >
+                        <div className="bg-primary-5 border-border-gray-light flex items-center justify-center px-5 py-4 text-center md:border-r">
+                          <Body
+                            size="s"
+                            weight="bold"
+                            className="text-text-basic text-center"
+                          >
+                            {item.label}
+                          </Body>
+                        </div>
+                        <div className="px-5 py-4">
+                          <Body size="s" className="text-text-basic leading-7">
+                            {item.desc}
+                          </Body>
+                        </div>
                       </li>
                     ))}
-                    <li className="flex gap-4">
-                      <Body size="s" weight="bold" className="w-20 shrink-0">
-                        진행 방식
-                      </Body>
-                      <div className="leading-7">
+                    <li className="border-border-gray-light grid border-b last:border-b-0 md:grid-cols-[150px_minmax(0,1fr)]">
+                      <div className="bg-primary-5 border-border-gray-light flex items-center justify-center px-5 py-4 text-center md:border-r">
+                        <Body
+                          size="s"
+                          weight="bold"
+                          className="text-text-basic text-center"
+                        >
+                          진행 방식
+                        </Body>
+                      </div>
+                      <div className="px-5 py-4 leading-7">
                         <Body size="s" className="text-text-basic">
                           강의형과 프로젝트형으로 나누어집니다.
                         </Body>
@@ -387,13 +404,21 @@ export default function StudyGuidePage() {
                         </Body>
                       </div>
                     </li>
-                    <li className="flex gap-4">
-                      <Body size="s" weight="bold" className="w-20 shrink-0">
-                        혜택
-                      </Body>
-                      <Body size="s" className="text-text-basic leading-7">
-                        일정 요건 충족 시 수료증이 발급됩니다.
-                      </Body>
+                    <li className="border-border-gray-light grid border-b last:border-b-0 md:grid-cols-[150px_minmax(0,1fr)]">
+                      <div className="bg-primary-5 border-border-gray-light flex items-center justify-center px-5 py-4 text-center md:border-r">
+                        <Body
+                          size="s"
+                          weight="bold"
+                          className="text-text-basic text-center"
+                        >
+                          혜택
+                        </Body>
+                      </div>
+                      <div className="px-5 py-4">
+                        <Body size="s" className="text-text-basic leading-7">
+                          일정 요건 충족 시 수료증이 발급됩니다.
+                        </Body>
+                      </div>
                     </li>
                   </ul>
                 </div>
@@ -409,7 +434,7 @@ export default function StudyGuidePage() {
                     &apos;멘토&apos;는 존재하지 않으며, 함께 공부할 사람들이
                     모여 스터디를 진행합니다.
                   </Body>
-                  <ul className="mt-3 flex flex-col gap-3">
+                  <ul className="border-border-gray-light bg-surface-white rounded-3 mt-4 overflow-hidden border shadow-sm">
                     {[
                       { label: "모집", desc: "3월 / 9월 중순" },
                       {
@@ -421,20 +446,37 @@ export default function StudyGuidePage() {
                         desc: "운영진측에 스터디 계획서를 제출하면 스터디 홍보가 진행됩니다.",
                       },
                     ].map((item) => (
-                      <li key={item.label} className="flex gap-4">
-                        <Body size="s" weight="bold" className="w-24 shrink-0">
-                          {item.label}
-                        </Body>
-                        <Body size="s" className="text-text-basic leading-7">
-                          {item.desc}
-                        </Body>
+                      <li
+                        key={item.label}
+                        className="border-border-gray-light grid border-b last:border-b-0 md:grid-cols-[150px_minmax(0,1fr)]"
+                      >
+                        <div className="bg-primary-5 border-border-gray-light flex items-center justify-center px-5 py-4 text-center md:border-r">
+                          <Body
+                            size="s"
+                            weight="bold"
+                            className="text-text-basic text-center"
+                          >
+                            {item.label}
+                          </Body>
+                        </div>
+                        <div className="px-5 py-4">
+                          <Body size="s" className="text-text-basic leading-7">
+                            {item.desc}
+                          </Body>
+                        </div>
                       </li>
                     ))}
-                    <li className="flex gap-4">
-                      <Body size="s" weight="bold" className="w-24 shrink-0">
-                        혜택
-                      </Body>
-                      <div className="leading-7">
+                    <li className="border-border-gray-light grid border-b last:border-b-0 md:grid-cols-[150px_minmax(0,1fr)]">
+                      <div className="bg-primary-5 border-border-gray-light flex items-center justify-center px-5 py-4 text-center md:border-r">
+                        <Body
+                          size="s"
+                          weight="bold"
+                          className="text-text-basic text-center"
+                        >
+                          혜택
+                        </Body>
+                      </div>
+                      <div className="px-5 py-4 leading-7">
                         <Body size="s" className="text-text-basic">
                           스터디 별 기준에 따라 최대 5만원 지급
                         </Body>
