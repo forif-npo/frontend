@@ -12,6 +12,7 @@ import {
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
+import { useTimeInput } from "@/hooks/useTimeInput";
 import { TagSelectModal } from "../components/TagSelectModal";
 import { LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "../constants";
 
@@ -62,6 +63,7 @@ export function Step2StudyOverview({
     clearErrors,
     formState: { errors },
   } = form;
+  const { registerTimeInput } = useTimeInput({ register, setValue });
 
   const selectedTags = watch("tags") || [];
   const thumbnail = watch("thumbnail");
@@ -326,7 +328,6 @@ export function Step2StudyOverview({
         <div className="flex flex-col gap-6">
           <SectionTitle>진행 시간</SectionTitle>
           <div className="flex flex-col gap-2">
-            <HintText>HH:MM ~ HH:MM</HintText>
             <div className="flex items-center gap-2">
               <div className="flex-1">
                 <TextInput
@@ -334,7 +335,7 @@ export function Step2StudyOverview({
                   length="full"
                   placeholder="HH:MM"
                   error={errors.startTime?.message}
-                  {...register("startTime")}
+                  {...registerTimeInput("startTime")}
                 />
               </div>
               <Minus className="h-6 w-6 shrink-0 text-[#58616a]" />
@@ -344,7 +345,7 @@ export function Step2StudyOverview({
                   length="full"
                   placeholder="HH:MM"
                   error={errors.endTime?.message}
-                  {...register("endTime")}
+                  {...registerTimeInput("endTime")}
                 />
               </div>
             </div>

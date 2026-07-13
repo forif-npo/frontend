@@ -4,6 +4,8 @@ import { createSchema } from "../utils/schema.util";
 const isFileValue = (value: unknown): value is File | null =>
   value === null || (typeof File !== "undefined" && value instanceof File);
 
+const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
+
 export const studyOpenSchema = createSchema()(
   z
     .object({
@@ -38,11 +40,11 @@ export const studyOpenSchema = createSchema()(
       startTime: z
         .string()
         .min(1, "시작 시간을 입력해주세요.")
-        .regex(/^\d{2}:\d{2}$/, "HH:MM 형식으로 입력해주세요."),
+        .regex(timeRegex, "올바른 시작 시간을 입력해주세요."),
       endTime: z
         .string()
         .min(1, "종료 시간을 입력해주세요.")
-        .regex(/^\d{2}:\d{2}$/, "HH:MM 형식으로 입력해주세요."),
+        .regex(timeRegex, "올바른 종료 시간을 입력해주세요."),
 
       // Step 3: 주차별 계획
       curriculum: z
