@@ -64,7 +64,7 @@ export function Step2StudyOverview({
   const selectedTags = watch("tags") || [];
 
   const handleTagsConfirm = (tags: string[]) => {
-    setValue("tags", tags, { shouldValidate: true });
+    setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
     setIsTagModalOpen(false);
   };
 
@@ -72,7 +72,7 @@ export function Step2StudyOverview({
     setValue(
       "tags",
       selectedTags.filter((t) => t !== tagToRemove),
-      { shouldValidate: true },
+      { shouldDirty: true, shouldValidate: true },
     );
   };
 

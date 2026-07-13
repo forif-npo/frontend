@@ -5,6 +5,7 @@ import { Checkbox as ServerCheckbox } from "../server/Checkbox";
 export type InteractiveCheckboxProps = {
   id: string;
   label?: string;
+  checked?: boolean;
   defaultChecked?: boolean;
   indeterminate?: boolean;
   disabled?: boolean;
@@ -19,6 +20,7 @@ export type InteractiveCheckboxProps = {
 export const Checkbox: React.FC<InteractiveCheckboxProps> = ({
   id,
   label,
+  checked: checkedProp,
   defaultChecked = false,
   indeterminate = false,
   disabled = false,
@@ -28,13 +30,18 @@ export const Checkbox: React.FC<InteractiveCheckboxProps> = ({
   onChange,
   className,
 }) => {
-  const [checked, setChecked] = useState(defaultChecked);
+  const [uncontrolledChecked, setUncontrolledChecked] =
+    useState(defaultChecked);
+  const checked = checkedProp ?? uncontrolledChecked;
+
   const handleToggle = useCallback(() => {
     if (disabled) return;
     const next = !checked;
-    setChecked(next);
+    if (checkedProp === undefined) {
+      setUncontrolledChecked(next);
+    }
     onChange?.(next);
-  }, [checked, disabled, onChange]);
+  }, [checked, checkedProp, disabled, onChange]);
 
   return (
     <button

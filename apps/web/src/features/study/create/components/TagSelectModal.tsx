@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Modal, Checkbox } from "@ui/components/client";
 import { TAG_OPTIONS } from "../constants";
 
@@ -18,14 +18,25 @@ export function TagSelectModal({
   selectedTags,
 }: TagSelectModalProps) {
   const [localTags, setLocalTags] = useState<string[]>(selectedTags);
+  const wasOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (isOpen && !wasOpenRef.current) {
+      setLocalTags(selectedTags);
+    }
+
+    wasOpenRef.current = isOpen;
+  }, [isOpen, selectedTags]);
 
   const handleToggle = (tag: string, checked: boolean) => {
-    if (checked) {
-      if (localTags.length >= 4) return;
-      setLocalTags([...localTags, tag]);
-    } else {
-      setLocalTags(localTags.filter((t) => t !== tag));
-    }
+    setLocalTags((prevTags) => {
+      if (checked) {
+        if (prevTags.includes(tag) || prevTags.length >= 4) return prevTags;
+        return [...prevTags, tag];
+      }
+
+      return prevTags.filter((t) => t !== tag);
+    });
   };
 
   const handleConfirm = () => {
@@ -60,7 +71,7 @@ export function TagSelectModal({
               key={tag}
               id={`tag-${tag}`}
               label={tag}
-              defaultChecked={localTags.includes(tag)}
+              checked={localTags.includes(tag)}
               onChange={(checked) => handleToggle(tag, checked)}
               disabled={!localTags.includes(tag) && localTags.length >= 4}
             />
