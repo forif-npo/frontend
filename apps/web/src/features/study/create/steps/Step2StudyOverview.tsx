@@ -8,68 +8,11 @@ import {
   Checkbox,
   SelectBox,
 } from "@ui/components/client";
+import { CirclePlus, Minus, Search } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
 import { TagSelectModal } from "../components/TagSelectModal";
 import { LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "../constants";
-
-function CirclePlusIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M8 12h8M12 8v8" />
-    </svg>
-  );
-}
-
-function MinusIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5 12h14" />
-    </svg>
-  );
-}
-
-function SearchIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-        stroke="#58616a"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 /** 섹션 타이틀 */
 function SectionTitle({
@@ -187,7 +130,7 @@ export function Step2StudyOverview({
               className="text-text-subtle hover:text-text-basic transition-colors"
               aria-label="태그 추가"
             >
-              <CirclePlusIcon className="h-6 w-6" />
+              <CirclePlus className="h-6 w-6" />
             </button>
           </div>
           {errors.tags && (
@@ -212,7 +155,7 @@ export function Step2StudyOverview({
               <span className="text-text-bolder flex-1 text-[17px] leading-[1.5]">
                 이미지 파일 업로드 (jpg, jpeg, png)
               </span>
-              <SearchIcon className="h-5 w-5 shrink-0" />
+              <Search className="h-5 w-5 shrink-0 text-[#58616a]" />
             </div>
           </div>
         </div>
@@ -336,7 +279,7 @@ export function Step2StudyOverview({
                   {...register("startTime")}
                 />
               </div>
-              <MinusIcon className="h-6 w-6 shrink-0 text-[#58616a]" />
+              <Minus className="h-6 w-6 shrink-0 text-[#58616a]" />
               <div className="flex-1">
                 <TextInput
                   id="endTime"

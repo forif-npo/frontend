@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, TextInput, Checkbox, SelectBox } from "@ui/components/client";
+import { Minus } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
 import { DIFFICULTY_OPTIONS, REFERENCE_TYPE_OPTIONS } from "../constants";
@@ -11,26 +12,6 @@ interface Step4TargetAndOperationProps {
   onPrevious: () => void;
   onNext: () => void;
   onSaveDraft: () => void;
-}
-
-function MinusIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M3 8H13"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
 }
 
 export function Step4TargetAndOperation({
@@ -176,7 +157,7 @@ export function Step4TargetAndOperation({
                   onClick={() => removeReference(index)}
                   className="mt-2 rounded p-1 text-red-500 hover:bg-red-50"
                 >
-                  <MinusIcon className="h-4 w-4" />
+                  <Minus className="h-4 w-4" />
                 </button>
               </div>
             ))}
