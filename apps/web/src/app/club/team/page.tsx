@@ -6,6 +6,7 @@ import type { ApiResponse } from "@core/types/api";
 import { Select } from "@ui/components/client";
 import { Badge, Breadcrumb } from "@ui/components/server";
 import Image from "next/image";
+import { safeImageSrc } from "@/utils/image";
 
 interface TeamMember {
   id: number;
@@ -26,6 +27,7 @@ const DEFAULT_YEAR = 2026;
 const DEFAULT_SEMESTER = 1;
 const LATEST_YEAR = 2026;
 const EARLIEST_YEAR = 2018;
+const DEFAULT_PROFILE_IMAGE_SRC = "/forif-circle.svg";
 
 const YEAR_OPTIONS = Array.from(
   { length: LATEST_YEAR - EARLIEST_YEAR + 1 },
@@ -152,6 +154,9 @@ export default function TeamPage() {
 
 function TeamCard({ member }: { member: TeamMember }) {
   const [hovered, setHovered] = useState(false);
+  const profileImageSrc =
+    safeImageSrc(member.prof_img_url) ?? DEFAULT_PROFILE_IMAGE_SRC;
+  const [imageSrc, setImageSrc] = useState(profileImageSrc);
   const overlayText = [
     `${member.act_year}-${member.act_semester}`,
     member.club_department,
@@ -160,9 +165,13 @@ function TeamCard({ member }: { member: TeamMember }) {
     .filter(Boolean)
     .join(" ");
 
+  useEffect(() => {
+    setImageSrc(profileImageSrc);
+  }, [profileImageSrc]);
+
   return (
     <div
-      className="rounded-3 border-border-gray-light bg-surface-white focus-visible:ring-primary-20 relative cursor-pointer overflow-hidden border p-6 text-center shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2"
+      className="rounded-3 border-border-gray-light bg-surface-white focus-visible:ring-primary-20 relative flex cursor-pointer flex-col overflow-hidden border px-6 pb-6 pt-14 text-center shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => setHovered((prev) => !prev)}
@@ -178,11 +187,16 @@ function TeamCard({ member }: { member: TeamMember }) {
     >
       <div className="mx-auto mb-5 flex justify-center">
         <Image
-          src={member.prof_img_url || "/forif-circle.png"}
+          src={imageSrc}
           alt={member.user_name || "FORIF 운영진"}
           width={120}
           height={120}
           className="h-[120px] w-[120px] rounded-full object-cover"
+          onError={() => {
+            if (imageSrc !== DEFAULT_PROFILE_IMAGE_SRC) {
+              setImageSrc(DEFAULT_PROFILE_IMAGE_SRC);
+            }
+          }}
         />
       </div>
 
