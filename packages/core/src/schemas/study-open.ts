@@ -1,10 +1,29 @@
 import { z } from "zod/v4";
 import { createSchema } from "../utils/schema.util";
 
+const isFile = (value: unknown): value is File =>
+  typeof File !== "undefined" && value instanceof File;
+
 const isFileValue = (value: unknown): value is File | null =>
-  value === null || (typeof File !== "undefined" && value instanceof File);
+  value === null || isFile(value);
 
 const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
+const shortDateRegex = /^\d{6}$/;
+
+function isValidShortDate(value: string) {
+  if (!shortDateRegex.test(value)) return false;
+
+  const year = 2000 + Number(value.slice(0, 2));
+  const month = Number(value.slice(2, 4));
+  const day = Number(value.slice(4, 6));
+  const date = new Date(year, month - 1, day);
+
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+}
 
 export const studyOpenSchema = createSchema()(
   z
@@ -51,14 +70,21 @@ export const studyOpenSchema = createSchema()(
         .array(
           z.object({
             week: z.number(),
-            date: z.string(),
+            date: z
+              .string()
+              .min(1, "진행 날짜를 입력해주세요.")
+              .regex(
+                shortDateRegex,
+                "진행 날짜는 YYMMDD 형식으로 입력해주세요.",
+              )
+              .refine(isValidShortDate, "올바른 진행 날짜를 입력해주세요."),
             topic: z.string().min(1, "주제를 입력해주세요."),
             contents: z
               .array(z.string().min(1, "내용을 입력해주세요."))
               .min(1, "내용을 최소 1개 이상 입력해주세요."),
           }),
         )
-        .length(8, "8주차 커리큘럼을 모두 작성해주세요."),
+        .min(8, "8주차 이상 커리큘럼을 작성해주세요."),
 
       // Step 4: 난이도 및 운영 방식
       difficulty: z.string().min(1, "난이도를 선택해주세요."),
@@ -68,7 +94,7 @@ export const studyOpenSchema = createSchema()(
         .array(
           z.object({
             type: z.string().min(1, "유형을 선택해주세요."),
-            value: z.string().min(1, "값을 입력해주세요."),
+            value: z.union([z.string(), z.custom<File | null>(isFileValue)]),
           }),
         )
         .default([]),
@@ -81,6 +107,28 @@ export const studyOpenSchema = createSchema()(
           message: "강의실(호)을 입력해주세요.",
         });
       }
+
+      values.references.forEach((reference, index) => {
+        if (
+          reference.type === "LINK" &&
+          (typeof reference.value !== "string" ||
+            reference.value.trim().length === 0)
+        ) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["references", index, "value"],
+            message: "링크를 입력해주세요.",
+          });
+        }
+
+        if (reference.type === "DOWNLOAD" && !isFile(reference.value)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["references", index, "value"],
+            message: "자료 파일을 업로드해주세요.",
+          });
+        }
+      });
     }),
 );
 

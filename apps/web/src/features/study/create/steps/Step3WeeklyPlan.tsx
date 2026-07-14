@@ -1,14 +1,71 @@
 "use client";
 
-import { Button } from "@ui/components/client";
 import { UseFormReturn } from "react-hook-form";
+import { HintText } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";
+import { useDateInput } from "@/hooks/useDateInput";
+import { StudyCurriculumTable } from "../../components/StudyCurriculumTable";
+import { StepNavigation } from "../components/StepNavigation";
 
 interface Step3WeeklyPlanProps {
   form: UseFormReturn<StudyOpenValues>;
   onPrevious: () => void;
   onNext: () => void;
   onSaveDraft: () => void;
+}
+
+const CURRICULUM_ERROR_MESSAGES = {
+  date: "진행 날짜를 모두 작성해주세요.",
+  topic: "주제를 모두 작성해주세요.",
+  contents: "내용을 모두 작성해주세요.",
+} as const;
+
+function getErrorMessage(error: unknown) {
+  if (!error || typeof error !== "object") return null;
+
+  const message = (error as { message?: unknown }).message;
+  return typeof message === "string" ? message : null;
+}
+
+function hasContentError(error: unknown) {
+  if (!error) return false;
+  if (Array.isArray(error)) return error.some(Boolean);
+  return true;
+}
+
+function getCurriculumErrorMessages(curriculumError: unknown) {
+  const messages = new Set<string>();
+
+  if (Array.isArray(curriculumError)) {
+    curriculumError.forEach((weekError) => {
+      if (!weekError || typeof weekError !== "object") return;
+
+      const fieldErrors = weekError as Record<string, unknown>;
+
+      if (fieldErrors.date) {
+        messages.add(CURRICULUM_ERROR_MESSAGES.date);
+      }
+
+      if (fieldErrors.topic) {
+        messages.add(CURRICULUM_ERROR_MESSAGES.topic);
+      }
+
+      if (hasContentError(fieldErrors.contents)) {
+        messages.add(CURRICULUM_ERROR_MESSAGES.contents);
+      }
+    });
+  }
+
+  if (messages.size === 0) {
+    const fallbackMessage =
+      getErrorMessage(curriculumError) ??
+      getErrorMessage((curriculumError as { root?: unknown } | null)?.root) ??
+      "커리큘럼을 모두 작성해주세요.";
+
+    messages.add(fallbackMessage);
+  }
+
+  return Array.from(messages);
 }
 
 export function Step3WeeklyPlan({
@@ -25,6 +82,8 @@ export function Step3WeeklyPlan({
   } = form;
 
   const curriculum = watch("curriculum");
+  const { registerShortDateInput } = useDateInput({ register, setValue });
+  const curriculumErrorMessages = getCurriculumErrorMessages(errors.curriculum);
 
   const addContent = (weekIndex: number) => {
     const updated = [...curriculum];
@@ -32,7 +91,64 @@ export function Step3WeeklyPlan({
       ...updated[weekIndex],
       contents: [...updated[weekIndex].contents, ""],
     };
-    setValue("curriculum", updated);
+    setValue("curriculum", updated, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const addWeek = () => {
+    const lastWeekNumber = curriculum.at(-1)?.week ?? curriculum.length;
+
+    setValue(
+      "curriculum",
+      [
+        ...curriculum,
+        {
+          week: lastWeekNumber + 1,
+          date: "",
+          topic: "",
+          contents: [""],
+        },
+      ],
+      {
+        shouldDirty: true,
+        shouldValidate: true,
+      },
+    );
+  };
+
+  const removeContent = (weekIndex: number, contentIndex: number) => {
+    const targetWeek = curriculum[weekIndex];
+    if (!targetWeek || targetWeek.contents.length <= 1) return;
+
+    const updated = [...curriculum];
+    updated[weekIndex] = {
+      ...targetWeek,
+      contents: targetWeek.contents.filter(
+        (_, index) => index !== contentIndex,
+      ),
+    };
+    setValue("curriculum", updated, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const removeWeek = (weekIndex: number) => {
+    if (weekIndex < 8 || curriculum.length <= 8) return;
+
+    const updated = curriculum
+      .filter((_, index) => index !== weekIndex)
+      .map((week, index) => ({
+        ...week,
+        week: index + 1,
+      }));
+
+    setValue("curriculum", updated, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   return (
@@ -50,149 +166,70 @@ export function Step3WeeklyPlan({
             커리큘럼
           </h3>
 
-          {/* 테이블 */}
-          <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-            <div className="min-w-[640px]">
-              {/* 테이블 헤더 */}
-              <div className="flex">
-                <div className="text-text-bolder w-[120px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-4 py-2 text-[15px] font-bold leading-[1.5]">
-                  주차
-                </div>
-                <div className="text-text-bolder w-[120px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-4 py-2 text-[15px] font-bold leading-[1.5]">
-                  진행 날짜
-                </div>
-                <div className="text-text-bolder w-[320px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-4 py-2 text-[15px] font-bold leading-[1.5]">
-                  주제
-                </div>
-                <div className="text-text-bolder flex-1 border-b border-[#d6e0eb] bg-[#eef2f7] px-4 py-2 text-[15px] font-bold leading-[1.5]">
-                  내용
-                </div>
-              </div>
+          <div className="flex flex-col gap-3">
+            <HintText>
+              스터디는 최소 8주차 이상 진행되어야 합니다. 중간고사/기말고사
+              기간을 유의하여 계획을 세워주세요.
+            </HintText>
 
-              {/* 테이블 바디 */}
-              {curriculum.map((week, weekIndex) => (
-                <div key={weekIndex}>
-                  {week.contents.map((_, contentIndex) => (
-                    <div
-                      key={`${weekIndex}-${contentIndex}`}
-                      className="flex items-center"
-                    >
-                      {/* 주차 */}
-                      <div className="text-text-disabled w-[120px] shrink-0 border-b border-[#cdd1d5] bg-white px-4 py-3 text-[17px] leading-[1.5]">
-                        {contentIndex === 0 ? week.week : ""}
-                      </div>
-
-                      {/* 진행 날짜 */}
-                      <div className="w-[120px] shrink-0 border-b border-[#cdd1d5] bg-white px-2 py-1">
-                        {contentIndex === 0 ? (
-                          <input
-                            className="text-text-basic w-full rounded border border-transparent px-2 py-2 text-[17px] leading-[1.5] outline-none focus:border-blue-500"
-                            placeholder="25.09.07"
-                            {...register(`curriculum.${weekIndex}.date`)}
-                          />
-                        ) : (
-                          <div className="px-2 py-2 text-[17px] leading-[1.5]">
-                            &nbsp;
-                          </div>
-                        )}
-                      </div>
-
-                      {/* 주제 */}
-                      <div className="w-[320px] shrink-0 border-b border-[#cdd1d5] bg-white px-2 py-1">
-                        {contentIndex === 0 ? (
-                          <input
-                            className="text-text-basic placeholder:text-text-disabled w-full rounded border border-transparent px-2 py-2 text-[17px] leading-[1.5] outline-none focus:border-blue-500"
-                            placeholder={`${week.week}주차 주제를 입력해주세요.`}
-                            {...register(`curriculum.${weekIndex}.topic`)}
-                          />
-                        ) : (
-                          <div className="px-2 py-2 text-[17px] leading-[1.5]">
-                            &nbsp;
-                          </div>
-                        )}
-                      </div>
-
-                      {/* 내용 */}
-                      <div className="flex-1 border-b border-[#cdd1d5] bg-white px-2 py-1">
-                        <input
-                          className="text-text-basic placeholder:text-text-disabled w-full rounded border border-transparent px-2 py-2 text-[17px] leading-[1.5] outline-none focus:border-blue-500"
-                          placeholder={`${week.week}주차 내용을 입력해주세요.`}
-                          {...register(
-                            `curriculum.${weekIndex}.contents.${contentIndex}`,
-                          )}
-                        />
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* + 내용 추가 */}
-                  <div className="flex justify-end border-b border-[#e5e8eb] bg-white px-4 py-2">
-                    <button
-                      type="button"
-                      onClick={() => addContent(weekIndex)}
-                      className="text-text-primary text-[15px] leading-[1.5] hover:underline"
-                    >
-                      + 내용 추가
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <StudyCurriculumTable
+              rows={curriculum.map((week) => ({
+                id: week.week,
+                week: week.week,
+                contents: week.contents,
+              }))}
+              renderDateInput={(weekIndex, inputClassName) => (
+                <input
+                  className={inputClassName}
+                  placeholder="YYMMDD"
+                  {...registerShortDateInput(`curriculum.${weekIndex}.date`)}
+                />
+              )}
+              renderTopicInput={(weekIndex, inputClassName) => (
+                <textarea
+                  rows={1}
+                  className={`${inputClassName} resize-none overflow-y-auto whitespace-pre-wrap break-words [field-sizing:content]`}
+                  placeholder={`${curriculum[weekIndex].week}주차 주제를 입력해주세요.`}
+                  {...register(`curriculum.${weekIndex}.topic`)}
+                />
+              )}
+              renderContentInput={(weekIndex, contentIndex, inputClassName) => (
+                <textarea
+                  rows={1}
+                  className={`${inputClassName} resize-none overflow-y-auto whitespace-pre-wrap break-words [field-sizing:content]`}
+                  placeholder={`${curriculum[weekIndex].week}주차 내용을 입력해주세요.`}
+                  {...register(
+                    `curriculum.${weekIndex}.contents.${contentIndex}`,
+                  )}
+                />
+              )}
+              onAddContent={addContent}
+              onRemoveContent={removeContent}
+              onAddWeek={addWeek}
+              onRemoveWeek={removeWeek}
+            />
           </div>
 
           {errors.curriculum && (
-            <p className="text-text-danger text-[14px]">
-              {typeof errors.curriculum.message === "string"
-                ? errors.curriculum.message
-                : "커리큘럼을 모두 작성해주세요."}
-            </p>
+            <div className="flex flex-col gap-1">
+              {curriculumErrorMessages.map((message) => (
+                <p key={message} className="text-text-danger text-[14px]">
+                  {message}
+                </p>
+              ))}
+            </div>
           )}
         </div>
       </div>
 
-      {/* 하단 버튼 */}
-      <div className="flex items-start gap-4">
-        <div className="flex flex-1 gap-4">
-          <Button
-            variant="secondary"
-            size="large"
-            onClick={onSaveDraft}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            임시저장
-          </Button>
-          <Button
-            variant="secondary"
-            size="large"
-            onClick={() => {}}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            미리보기
-          </Button>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="tertiary"
-            size="large"
-            onClick={onPrevious}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            이전
-          </Button>
-          <Button
-            variant="primary"
-            size="large"
-            onClick={onNext}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            다음
-          </Button>
-        </div>
-      </div>
+      <StepNavigation
+        onSaveDraft={onSaveDraft}
+        onPrevious={onPrevious}
+        onNext={onNext}
+        leadingActions={[
+          { label: "미리보기", onClick: () => {}, variant: "secondary" },
+        ]}
+      />
     </div>
   );
 }

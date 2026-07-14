@@ -170,7 +170,7 @@ export function Step5ReviewAndSubmit({
                     [{ref.type}]
                   </span>
                   <span className="text-text-basic text-[15px] leading-[1.5]">
-                    {ref.value}
+                    {ref.value instanceof File ? ref.value.name : ref.value}
                   </span>
                 </div>
               ))}

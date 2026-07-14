@@ -1,5 +1,6 @@
 "use client";
 import React, { forwardRef, useState } from "react";
+import { CharacterCount } from "../server/CharacterCount";
 import { Label } from "../server/Label";
 
 type TextAreaProps = {
@@ -61,17 +62,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             onChange={handleChange}
             {...props}
           />
-          {maxLength && (
-            <div className="flex justify-end gap-1">
-              <Label size={"xs"} className="text-text-primary">
-                {charCount}
-              </Label>
-              <Label
-                size={"xs"}
-                className="text-gray-70"
-              >{`/${maxLength}`}</Label>
-            </div>
-          )}
+          {maxLength && <CharacterCount count={charCount} max={maxLength} />}
         </div>
       </div>
     );

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@ui/components/client";
+import { CharacterCount } from "@ui/components/server";
 import type { ApplicationDetail } from "@core/my-page/api";
 import {
   NUMERIC_DIFFICULTY_LABELS,
@@ -125,10 +126,7 @@ export function ApplicationDetailView({
                   {intro}
                 </p>
               </div>
-              <div className="flex justify-end gap-0.5 text-[15px] leading-[1.5]">
-                <span className="text-[#0b50d0]">{charCount}</span>
-                <span className="text-[#464c53]">/500</span>
-              </div>
+              <CharacterCount count={charCount} max={500} />
             </div>
           </div>
         </div>

@@ -2,18 +2,19 @@
 
 import { useEffect, useState } from "react";
 import {
-  Button,
   TextInput,
   TextArea,
   Checkbox,
   FileUpload,
   SelectBox,
 } from "@ui/components/client";
+import { HintText } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { TagSelectModal } from "../components/TagSelectModal";
+import { StepNavigation } from "../components/StepNavigation";
 import { LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "../constants";
 
 /** 섹션 타이틀 */
@@ -31,13 +32,6 @@ function SectionTitle({
       </h3>
       {icon}
     </div>
-  );
-}
-
-/** 힌트 텍스트 */
-function HintText({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-text-subtle text-[13px] leading-[1.5]">{children}</p>
   );
 }
 
@@ -222,10 +216,11 @@ export function Step2StudyOverview({
         {/* 스터디 소개 */}
         <div className="flex flex-col gap-6">
           <SectionTitle>스터디 소개</SectionTitle>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             <HintText>
-              스터디에 대해 소개해주세요. 최소 50자 이상, 최대 500자 이내로
-              작성해주세요.
+              어떤 스터디인가요? 사용 기술스택 및 언어, 학습목표, 스터디 방식,
+              지원 요건, 멘토 소개, 문의처 등 멘티들이 궁금할 만한 내용을
+              자유롭게 적어주세요. 최소 50자 이상 적어주세요.
             </HintText>
             <TextArea
               id="introduction"
@@ -242,35 +237,34 @@ export function Step2StudyOverview({
           </div>
 
           {/* 온라인 체크박스 */}
-          <Controller
-            control={control}
-            name="isOnline"
-            render={({ field: { value, onChange } }) => (
-              <div className="flex items-start gap-2">
-                <Checkbox
-                  id="isOnline"
-                  defaultChecked={value}
-                  onChange={onChange}
-                  size="lg"
-                />
-                <div className="flex flex-col gap-1">
-                  <span className="text-text-bolder text-[19px] leading-[1.5]">
+          <div className="flex flex-col gap-4">
+            <HintText>
+              스터디를 온라인으로 진행할 시 스터디 지원금이 나오지 않습니다.
+            </HintText>
+            <Controller
+              control={control}
+              name="isOnline"
+              render={({ field: { value, onChange } }) => (
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="isOnline"
+                    checked={value}
+                    onChange={onChange}
+                    size="lg"
+                  />
+                  <span className="text-text-bolder text-[16px] leading-[1.5]">
                     온라인으로 진행합니다.
                   </span>
-                  <span className="text-text-subtle text-[17px] leading-[1.5]">
-                    스터디를 온라인으로 진행할 시 스터디 지원금이 나오지
-                    않습니다.
-                  </span>
                 </div>
-              </div>
-            )}
-          />
+              )}
+            />
+          </div>
         </div>
 
         {/* 진행 장소 / 요일 */}
         <div className="flex flex-col gap-6">
           <SectionTitle>진행 장소 / 요일</SectionTitle>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             <HintText>
               장소가 확정되지 않았다면 &apos;장소 미정&apos;을 선택해주세요.
             </HintText>
@@ -403,49 +397,14 @@ export function Step2StudyOverview({
         </div>
       </div>
 
-      {/* 하단 버튼 */}
-      <div className="flex items-start gap-4">
-        <div className="flex flex-1 gap-4">
-          <Button
-            variant="secondary"
-            size="large"
-            onClick={onSaveDraft}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            임시저장
-          </Button>
-          <Button
-            variant="secondary"
-            size="large"
-            onClick={() => {}}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            미리보기
-          </Button>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="tertiary"
-            size="large"
-            onClick={onPrevious}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            이전
-          </Button>
-          <Button
-            variant="primary"
-            size="large"
-            onClick={onNext}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            다음
-          </Button>
-        </div>
-      </div>
+      <StepNavigation
+        onSaveDraft={onSaveDraft}
+        onPrevious={onPrevious}
+        onNext={onNext}
+        leadingActions={[
+          { label: "미리보기", onClick: () => {}, variant: "secondary" },
+        ]}
+      />
 
       <TagSelectModal
         isOpen={isTagModalOpen}
