@@ -62,7 +62,7 @@ export const StudyResultsHeader: React.FC<StudyResultsHeaderProps> = ({
               }
               className="bg-action-secondary border-border-transparency rounded-small2 text-label-medium text-text-basic border px-2 py-0"
             >
-              {sortBy === "latest" ? "최신순" : "오래된 순"}
+              {sortBy === "latest" ? "최신순" : "오래된순"}
             </button>
           </div>
         </div>

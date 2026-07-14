@@ -81,7 +81,7 @@ export function ApplicationSection({
           dropdownAlign="right"
           options={[
             { value: "newest", label: "최신순" },
-            { value: "oldest", label: "오래된 순" },
+            { value: "oldest", label: "오래된순" },
           ]}
         />
       </div>
