@@ -1,10 +1,6 @@
 "use client";
 import { getRecentSemesters, getSemesterLabel } from "@/constants/study";
-import {
-  QuestionBubble,
-  ResetIcon,
-  XCircleGrayIcon,
-} from "@repo/assets/icons/krds";
+import { ResetIcon, XCircleGrayIcon } from "@repo/assets/icons/krds";
 import { SelectBox } from "@ui/components/client";
 import clsx from "clsx";
 import React from "react";
@@ -159,13 +155,13 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
     >
       <div
         className={clsx(
-          "flex items-start gap-6 max-md:flex-col",
+          "flex items-start gap-14 max-md:flex-col",
           filterTags.length > 0 && "pb-6",
         )}
       >
         <div className="flex items-center gap-3 max-md:w-full">
           <span className="whitespace-nowrap text-[17px] font-bold text-gray-900 max-md:w-20">
-            진행 학기
+            학기
           </span>
           <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
             <SelectBox
@@ -183,7 +179,6 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
           <div className="flex items-center gap-1">
             <span className="flex gap-4 whitespace-nowrap text-[17px] font-bold text-gray-900 max-md:w-20">
               난이도
-              <QuestionBubble />
             </span>
           </div>
           <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
