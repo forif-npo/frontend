@@ -24,14 +24,14 @@ interface StudyCurriculumTableProps<TContent> {
 const HEADER_CELL_CLASS =
   "border-b border-secondary-10 bg-secondary-5 px-2 py-2 text-left text-[15px] font-bold leading-[1.5] text-text-bolder";
 const SPANNED_BODY_CELL_CLASS =
-  "border-b border-gray-20 bg-surface-white px-2 py-1.5 text-[14px] leading-[1.5] align-middle";
+  "border-b border-gray-20 bg-surface-white px-2 py-2 text-[15px] leading-[1.5] align-top";
 const INPUT_CELL_CLASS =
-  "border-b border-gray-20 bg-surface-white px-2 py-0 align-middle";
+  "border-b border-gray-20 bg-surface-white px-2 py-2 align-top";
 const CONTENT_CELL_CLASS =
-  "border-b border-gray-20 bg-surface-white px-2 py-0 align-middle";
-const CONTENT_ROW_CLASS = "flex min-h-[40px] items-center";
+  "border-b border-gray-20 bg-surface-white px-2 py-2 align-top";
+const CONTENT_ROW_CLASS = "flex items-start";
 const TABLE_INPUT_CLASS =
-  "w-full rounded border border-transparent px-2 py-1 text-[15px] leading-[1.5] text-text-basic outline-none placeholder:text-text-disabled focus:border-primary-50";
+  "block w-full rounded border border-transparent px-2 py-0 text-[15px] leading-[1.5] text-text-basic outline-none placeholder:text-text-disabled focus:border-primary-50";
 
 const TABLE_HEADERS = ["주차", "진행 날짜", "주제", "내용"] as const;
 
@@ -47,8 +47,8 @@ export function StudyCurriculumTable<TContent>({
     <div className="w-full">
       <table className="w-full table-fixed border-collapse">
         <colgroup>
-          <col className="w-[60px]" />
-          <col className="w-[100px]" />
+          <col className="w-[50px]" />
+          <col className="w-[90px]" />
           <col className="w-[240px]" />
           <col />
         </colgroup>
@@ -74,7 +74,7 @@ export function StudyCurriculumTable<TContent>({
                       <>
                         <td
                           rowSpan={rowSpan}
-                          className={`${SPANNED_BODY_CELL_CLASS} text-text-disabled`}
+                          className={`${SPANNED_BODY_CELL_CLASS} text-text-basic text-center`}
                         >
                           {row.week}
                         </td>
