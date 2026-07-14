@@ -13,6 +13,60 @@ interface Step3WeeklyPlanProps {
   onSaveDraft: () => void;
 }
 
+const CURRICULUM_ERROR_MESSAGES = {
+  date: "진행 날짜를 모두 작성해주세요.",
+  topic: "주제를 모두 작성해주세요.",
+  contents: "내용을 모두 작성해주세요.",
+} as const;
+
+function getErrorMessage(error: unknown) {
+  if (!error || typeof error !== "object") return null;
+
+  const message = (error as { message?: unknown }).message;
+  return typeof message === "string" ? message : null;
+}
+
+function hasContentError(error: unknown) {
+  if (!error) return false;
+  if (Array.isArray(error)) return error.some(Boolean);
+  return true;
+}
+
+function getCurriculumErrorMessages(curriculumError: unknown) {
+  const messages = new Set<string>();
+
+  if (Array.isArray(curriculumError)) {
+    curriculumError.forEach((weekError) => {
+      if (!weekError || typeof weekError !== "object") return;
+
+      const fieldErrors = weekError as Record<string, unknown>;
+
+      if (fieldErrors.date) {
+        messages.add(CURRICULUM_ERROR_MESSAGES.date);
+      }
+
+      if (fieldErrors.topic) {
+        messages.add(CURRICULUM_ERROR_MESSAGES.topic);
+      }
+
+      if (hasContentError(fieldErrors.contents)) {
+        messages.add(CURRICULUM_ERROR_MESSAGES.contents);
+      }
+    });
+  }
+
+  if (messages.size === 0) {
+    const fallbackMessage =
+      getErrorMessage(curriculumError) ??
+      getErrorMessage((curriculumError as { root?: unknown } | null)?.root) ??
+      "커리큘럼을 모두 작성해주세요.";
+
+    messages.add(fallbackMessage);
+  }
+
+  return Array.from(messages);
+}
+
 export function Step3WeeklyPlan({
   form,
   onPrevious,
@@ -28,6 +82,7 @@ export function Step3WeeklyPlan({
 
   const curriculum = watch("curriculum");
   const { registerShortDateInput } = useDateInput({ register, setValue });
+  const curriculumErrorMessages = getCurriculumErrorMessages(errors.curriculum);
 
   const addContent = (weekIndex: number) => {
     const updated = [...curriculum];
@@ -148,11 +203,13 @@ export function Step3WeeklyPlan({
           />
 
           {errors.curriculum && (
-            <p className="text-text-danger text-[14px]">
-              {typeof errors.curriculum.message === "string"
-                ? errors.curriculum.message
-                : "커리큘럼을 모두 작성해주세요."}
-            </p>
+            <div className="flex flex-col gap-1">
+              {curriculumErrorMessages.map((message) => (
+                <p key={message} className="text-text-danger text-[14px]">
+                  {message}
+                </p>
+              ))}
+            </div>
           )}
         </div>
       </div>
