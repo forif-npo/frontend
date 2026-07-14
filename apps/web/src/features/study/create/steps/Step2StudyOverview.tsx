@@ -236,30 +236,28 @@ export function Step2StudyOverview({
           </div>
 
           {/* 온라인 체크박스 */}
-          <Controller
-            control={control}
-            name="isOnline"
-            render={({ field: { value, onChange } }) => (
-              <div className="flex items-start gap-2">
-                <Checkbox
-                  id="isOnline"
-                  defaultChecked={value}
-                  onChange={onChange}
-                  size="lg"
-                  className="mt-[2px]"
-                />
-                <div className="flex flex-col gap-1">
-                  <span className="text-text-bolder text-[19px] leading-[1.5]">
+          <div className="flex flex-col gap-4">
+            <HintText>
+              스터디를 온라인으로 진행할 시 스터디 지원금이 나오지 않습니다.
+            </HintText>
+            <Controller
+              control={control}
+              name="isOnline"
+              render={({ field: { value, onChange } }) => (
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="isOnline"
+                    checked={value}
+                    onChange={onChange}
+                    size="lg"
+                  />
+                  <span className="text-text-bolder text-[16px] leading-[1.5]">
                     온라인으로 진행합니다.
                   </span>
-                  <span className="text-text-subtle text-[17px] leading-[1.5]">
-                    스터디를 온라인으로 진행할 시 스터디 지원금이 나오지
-                    않습니다.
-                  </span>
                 </div>
-              </div>
-            )}
-          />
+              )}
+            />
+          </div>
         </div>
 
         {/* 진행 장소 / 요일 */}
