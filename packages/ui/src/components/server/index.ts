@@ -1,6 +1,7 @@
 export * from "./Badge";
 export * from "./Body";
 export * from "./Breadcrumb";
+export * from "./CharacterCount";
 export * from "./Checkbox";
 export * from "./Chip";
 export * from "./Detail";
