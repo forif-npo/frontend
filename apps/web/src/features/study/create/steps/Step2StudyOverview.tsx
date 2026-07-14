@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  Button,
   TextInput,
   TextArea,
   Checkbox,
@@ -15,6 +14,7 @@ import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { TagSelectModal } from "../components/TagSelectModal";
+import { StepNavigation } from "../components/StepNavigation";
 import { LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "../constants";
 
 /** 섹션 타이틀 */
@@ -396,49 +396,14 @@ export function Step2StudyOverview({
         </div>
       </div>
 
-      {/* 하단 버튼 */}
-      <div className="flex items-start gap-4">
-        <div className="flex flex-1 gap-4">
-          <Button
-            variant="secondary"
-            size="large"
-            onClick={onSaveDraft}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            임시저장
-          </Button>
-          <Button
-            variant="secondary"
-            size="large"
-            onClick={() => {}}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            미리보기
-          </Button>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="tertiary"
-            size="large"
-            onClick={onPrevious}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            이전
-          </Button>
-          <Button
-            variant="primary"
-            size="large"
-            onClick={onNext}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            다음
-          </Button>
-        </div>
-      </div>
+      <StepNavigation
+        onSaveDraft={onSaveDraft}
+        onPrevious={onPrevious}
+        onNext={onNext}
+        leadingActions={[
+          { label: "미리보기", onClick: () => {}, variant: "secondary" },
+        ]}
+      />
 
       <TagSelectModal
         isOpen={isTagModalOpen}

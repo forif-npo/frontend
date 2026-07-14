@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@ui/components/client";
 import { UseFormReturn } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
+import { StepNavigation } from "../components/StepNavigation";
 
 interface Step3WeeklyPlanProps {
   form: UseFormReturn<StudyOpenValues>;
@@ -154,49 +154,14 @@ export function Step3WeeklyPlan({
         </div>
       </div>
 
-      {/* 하단 버튼 */}
-      <div className="flex items-start gap-4">
-        <div className="flex flex-1 gap-4">
-          <Button
-            variant="secondary"
-            size="large"
-            onClick={onSaveDraft}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            임시저장
-          </Button>
-          <Button
-            variant="secondary"
-            size="large"
-            onClick={() => {}}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            미리보기
-          </Button>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="tertiary"
-            size="large"
-            onClick={onPrevious}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            이전
-          </Button>
-          <Button
-            variant="primary"
-            size="large"
-            onClick={onNext}
-            className="h-14 min-w-[90px]"
-            type="button"
-          >
-            다음
-          </Button>
-        </div>
-      </div>
+      <StepNavigation
+        onSaveDraft={onSaveDraft}
+        onPrevious={onPrevious}
+        onNext={onNext}
+        leadingActions={[
+          { label: "미리보기", onClick: () => {}, variant: "secondary" },
+        ]}
+      />
     </div>
   );
 }

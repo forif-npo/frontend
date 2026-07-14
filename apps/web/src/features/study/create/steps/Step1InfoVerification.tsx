@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, CriticalAlert, TextInput } from "@ui/components/client";
+import { CriticalAlert, TextInput } from "@ui/components/client";
 import { GuideCheckIcon, SearchIcon } from "@ui/components/server";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
@@ -9,6 +9,7 @@ import type { StudyOpenValues } from "@core/schemas";
 import type { UseFormReturn } from "react-hook-form";
 import { useFormattedPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { StudyCreateStepIndicator } from "./StudyCreateStepIndicator";
+import { StepNavigation } from "../components/StepNavigation";
 import type { UserInfo } from "../types";
 
 type UserResponseData = {
@@ -316,37 +317,21 @@ export function Step1InfoVerification({
         )}
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex items-start gap-4">
-        <div className="flex flex-1 gap-4">
-          <Button
-            variant="tertiary"
-            size="large"
-            onClick={onCancel}
-            className="h-14 min-w-[90px]"
-          >
-            취소
-          </Button>
-          {!showMentorCard && (
-            <Button
-              variant="secondary"
-              size="large"
-              onClick={() => setIsMentorCardOpen(true)}
-              className="h-14 min-w-[90px]"
-            >
-              멘토 추가
-            </Button>
-          )}
-        </div>
-        <Button
-          variant="primary"
-          size="large"
-          onClick={onNext}
-          className="h-14 min-w-[90px]"
-        >
-          다음
-        </Button>
-      </div>
+      <StepNavigation
+        onNext={onNext}
+        leadingActions={[
+          { label: "취소", onClick: onCancel, variant: "tertiary" },
+          ...(!showMentorCard
+            ? [
+                {
+                  label: "멘토 추가",
+                  onClick: () => setIsMentorCardOpen(true),
+                  variant: "secondary" as const,
+                },
+              ]
+            : []),
+        ]}
+      />
     </div>
   );
 }
