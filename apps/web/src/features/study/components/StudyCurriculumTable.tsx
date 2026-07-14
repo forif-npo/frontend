@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, type ReactNode } from "react";
+import { CircleMinus } from "@repo/assets/icons/lucide";
 
 interface StudyCurriculumTableRow<TContent> {
   id?: string | number;
@@ -18,6 +19,7 @@ interface StudyCurriculumTableProps<TContent> {
     inputClassName: string,
   ) => ReactNode;
   onAddContent: (weekIndex: number) => void;
+  onRemoveContent?: (weekIndex: number, contentIndex: number) => void;
   addContentLabel?: string;
 }
 
@@ -41,6 +43,7 @@ export function StudyCurriculumTable<TContent>({
   renderTopicInput,
   renderContentInput,
   onAddContent,
+  onRemoveContent,
   addContentLabel = "+ 내용 추가",
 }: StudyCurriculumTableProps<TContent>) {
   return (
@@ -65,6 +68,8 @@ export function StudyCurriculumTable<TContent>({
           {rows.map((row, weekIndex) => {
             const rowKey = row.id ?? weekIndex;
             const rowSpan = Math.max(row.contents.length, 1);
+            const canRemoveContent =
+              Boolean(onRemoveContent) && row.contents.length > 1;
 
             return (
               <Fragment key={rowKey}>
@@ -87,11 +92,25 @@ export function StudyCurriculumTable<TContent>({
                       </>
                     )}
                     <td className={CONTENT_CELL_CLASS}>
-                      <div className={CONTENT_ROW_CLASS}>
-                        {renderContentInput(
-                          weekIndex,
-                          contentIndex,
-                          TABLE_INPUT_CLASS,
+                      <div className={`${CONTENT_ROW_CLASS} gap-2`}>
+                        <div className="min-w-0 flex-1">
+                          {renderContentInput(
+                            weekIndex,
+                            contentIndex,
+                            TABLE_INPUT_CLASS,
+                          )}
+                        </div>
+                        {canRemoveContent && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onRemoveContent?.(weekIndex, contentIndex)
+                            }
+                            className="text-text-danger mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
+                            aria-label={`${row.week}주차 ${contentIndex + 1}번째 내용 삭제`}
+                          >
+                            <CircleMinus className="h-5 w-5" />
+                          </button>
                         )}
                       </div>
                     </td>
