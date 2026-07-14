@@ -122,25 +122,6 @@ const InfoBoxContent = () => {
     <div className="mx-7">
       <ul className="list-inside list-disc space-y-2">
         <li className="text-text-subtle">
-          회원가입{" "}
-          <Link
-            size="m"
-            href="/support/faqs"
-            className="underline underline-offset-2"
-          >
-            관련 도움말
-          </Link>
-          이나 다른 사용자가{" "}
-          <Link
-            size="m"
-            href="/support/faqs"
-            className="underline underline-offset-2"
-          >
-            자주 묻는 질문
-          </Link>
-          을 확인해보세요.
-        </li>
-        <li className="text-text-subtle">
           <Link
             size="m"
             href="https://pf.kakao.com/_xnRxhxmG"

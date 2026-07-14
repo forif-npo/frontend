@@ -27,14 +27,14 @@ export default function MemberLogin() {
           로그인/회원가입을 진행하고 있습니다. 아직 한양메일을 만드시지 않았다면{" "}
           <Link
             size="s"
-            href="https://hanyang.ac.kr"
+            href="https://portal.hanyang.ac.kr"
             rel="noopener noreferrer"
             target="_blank"
             className="text-text-primary"
           >
-            다음 링크
+            한양인포털
           </Link>
-          를 따라 만드실 수 있습니다.
+          에서 만드실 수 있습니다.
         </InfoText>
       </div>
     </div>

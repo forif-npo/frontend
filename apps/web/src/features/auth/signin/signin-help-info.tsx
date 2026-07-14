@@ -4,30 +4,11 @@ const InfoBoxContent = () => {
   return (
     <div className="mx-1 sm:mx-7">
       <ul className="list-inside list-disc space-y-2">
-        <li className="text-text-subtle">
-          로그인{" "}
+        <li className="text-text-subtle text-body-s-mobile sm:text-body-s">
           <Link
-            size="m"
-            href="/support/faqs"
-            className="underline underline-offset-2"
-          >
-            관련 도움말
-          </Link>
-          이나 다른 사용자가{" "}
-          <Link
-            size="m"
-            href="/support/faqs"
-            className="underline underline-offset-2"
-          >
-            자주 묻는 질문
-          </Link>
-          을 확인해보세요.
-        </li>
-        <li className="text-text-subtle">
-          <Link
-            size="m"
+            size="s"
             href="https://pf.kakao.com/_xnRxhxmG"
-            className="underline underline-offset-2"
+            className="text-body-s-mobile sm:text-body-s underline underline-offset-2"
             target="_blank"
             rel="noopener noreferrer"
           >
