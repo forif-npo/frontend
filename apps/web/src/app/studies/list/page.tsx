@@ -14,11 +14,23 @@ import { getStudyTagName } from "@/constants/study-tags";
 import { Pagination } from "@ui/components/client";
 import { Heading } from "@ui/components/server";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+type StudySort = "latest" | "oldest";
+
+function compareStudySemester(a: Study, b: Study) {
+  const yearDiff = a.act_year - b.act_year;
+  if (yearDiff !== 0) return yearDiff;
+
+  const semesterDiff = a.act_semester - b.act_semester;
+  if (semesterDiff !== 0) return semesterDiff;
+
+  return a.id - b.id;
+}
 
 export default function StudyListPage() {
   const router = useRouter();
-  const [sortBy, setSortBy] = useState<"latest" | "popular">("latest");
+  const [sortBy, setSortBy] = useState<StudySort>("latest");
   const [searchInput, setSearchInput] = useState<string>("");
 
   const debouncedSearch = useDebounce(searchInput, 500);
@@ -27,18 +39,21 @@ export default function StudyListPage() {
     useStudyFilters();
 
   const [pageSize, setPageSize] = useState(12);
+  const [fetchSize, setFetchSize] = useState(12);
   const [currentPage, setCurrentPage] = useState(0);
+  const resetPage = useCallback(() => setCurrentPage(0), []);
 
   useEffect(() => {
+    resetPage();
     updateFilter("search", debouncedSearch || undefined);
-  }, [debouncedSearch, updateFilter]);
+  }, [debouncedSearch, resetPage, updateFilter]);
 
   const apiParams: StudyListParams = useMemo(() => {
     const studyTagName = filters.tag ? getStudyTagName(filters.tag) : null;
 
     return {
-      page: currentPage,
-      size: pageSize,
+      page: 0,
+      size: fetchSize,
       year: filters.year,
       semester: filters.semester,
       difficulties: filters.difficulty ? [filters.difficulty] : undefined,
@@ -47,8 +62,7 @@ export default function StudyListPage() {
       search: filters.search,
     };
   }, [
-    currentPage,
-    pageSize,
+    fetchSize,
     filters.year,
     filters.semester,
     filters.difficulty,
@@ -63,6 +77,22 @@ export default function StudyListPage() {
   useEffect(() => {
     refetch(apiParams);
   }, [apiParams, refetch]);
+
+  useEffect(() => {
+    const nextFetchSize = Math.max(totalElements, pageSize);
+    setFetchSize((prev) => (prev === nextFetchSize ? prev : nextFetchSize));
+  }, [pageSize, totalElements]);
+
+  const sortedStudies = useMemo(() => {
+    const direction = sortBy === "latest" ? -1 : 1;
+
+    return [...studies].sort((a, b) => compareStudySemester(a, b) * direction);
+  }, [sortBy, studies]);
+
+  const paginatedStudies = useMemo(() => {
+    const startIndex = currentPage * pageSize;
+    return sortedStudies.slice(startIndex, startIndex + pageSize);
+  }, [currentPage, pageSize, sortedStudies]);
 
   const handleCardClick = (study: Study) => {
     router.push(`/studies/detail/${study.id}`);
@@ -88,6 +118,7 @@ export default function StudyListPage() {
       : "";
 
   const handleSemesterChange = (value: string) => {
+    resetPage();
     if (value) {
       const [year, semester] = value.split("-").map(Number);
       updateMultipleFilters({ year, semester });
@@ -96,7 +127,30 @@ export default function StudyListPage() {
     }
   };
 
-  const resetPage = () => setCurrentPage(0);
+  const handleDifficultyChange = (value: string) => {
+    resetPage();
+    updateFilter("difficulty", value || undefined);
+  };
+
+  const handleTagChange = (value: string) => {
+    resetPage();
+    updateFilter("tag", value || undefined);
+  };
+
+  const handleClearAllFilters = () => {
+    resetPage();
+    clearAllFilters();
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    resetPage();
+    setPageSize(size);
+  };
+
+  const handleSortChange = (sort: StudySort) => {
+    resetPage();
+    setSortBy(sort);
+  };
 
   return (
     <div className="bg-bg-base min-h-viewport pb-20">
@@ -116,10 +170,10 @@ export default function StudyListPage() {
           selectedDifficulty={filters.difficulty || ""}
           selectedTag={filters.tag || ""}
           onSemesterChange={handleSemesterChange}
-          onDifficultyChange={(value) => updateFilter("difficulty", value)}
-          onTagChange={(value) => updateFilter("tag", value || undefined)}
-          onClearAllFilters={clearAllFilters}
-          totalItems={studies.length}
+          onDifficultyChange={handleDifficultyChange}
+          onTagChange={handleTagChange}
+          onClearAllFilters={handleClearAllFilters}
+          totalItems={totalElements}
           loading={loading}
         />
 
@@ -144,19 +198,19 @@ export default function StudyListPage() {
               selectedDifficulty={filters.difficulty || ""}
               selectedTag={filters.tag || ""}
               onSemesterChange={handleSemesterChange}
-              onDifficultyChange={(value) => updateFilter("difficulty", value)}
-              onTagChange={(value) => updateFilter("tag", value || undefined)}
-              onClearAll={clearAllFilters}
+              onDifficultyChange={handleDifficultyChange}
+              onTagChange={handleTagChange}
+              onClearAll={handleClearAllFilters}
             />
           </div>
 
           <div className="mb-6">
             <StudyResultsHeader
-              totalItems={studies.length}
+              totalItems={totalElements}
               pageSize={pageSize}
-              onPageSizeChange={setPageSize}
+              onPageSizeChange={handlePageSizeChange}
               sortBy={sortBy}
-              onSortChange={setSortBy}
+              onSortChange={handleSortChange}
             />
           </div>
         </div>
@@ -167,13 +221,13 @@ export default function StudyListPage() {
           <>
             <div className="mb-10">
               <StudyCardGrid
-                studies={studies}
+                studies={paginatedStudies}
                 onCardClick={handleCardClick}
                 onApplyClick={handleApplyClick}
               />
             </div>
 
-            {studies.length > 0 && (
+            {totalElements > 0 && (
               <Pagination
                 currentPage={currentPage + 1}
                 totalPages={Math.ceil(totalElements / pageSize) || 1}

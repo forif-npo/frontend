@@ -6,8 +6,8 @@ interface StudyResultsHeaderProps {
   totalItems: number;
   pageSize: number;
   onPageSizeChange: (size: number) => void;
-  sortBy: "latest" | "popular";
-  onSortChange: (sort: "latest" | "popular") => void;
+  sortBy: "latest" | "oldest";
+  onSortChange: (sort: "latest" | "oldest") => void;
   className?: string;
 }
 
@@ -58,7 +58,7 @@ export const StudyResultsHeader: React.FC<StudyResultsHeaderProps> = ({
           <div className="flex items-center font-normal">
             <button
               onClick={() =>
-                onSortChange(sortBy === "latest" ? "popular" : "latest")
+                onSortChange(sortBy === "latest" ? "oldest" : "latest")
               }
               className="bg-action-secondary border-border-transparency rounded-small2 text-label-medium text-text-basic border px-2 py-0"
             >
