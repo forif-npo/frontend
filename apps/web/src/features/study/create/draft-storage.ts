@@ -23,7 +23,12 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function toDraftValues(values: Partial<StudyOpenValues>) {
   const { thumbnail: _thumbnail, ...draftValues } = values;
-  return draftValues;
+  return {
+    ...draftValues,
+    references: draftValues.references?.map((reference) =>
+      reference.type === "DOWNLOAD" ? { ...reference, value: null } : reference,
+    ),
+  };
 }
 
 function isDraftPayload(value: unknown): value is StudyCreateDraftPayload {

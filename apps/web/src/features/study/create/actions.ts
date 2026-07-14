@@ -11,6 +11,13 @@ const DIFFICULTY_MAP: Record<string, number> = {
   SEMI_HARD: 4,
   HARD: 5,
 };
+const REFERENCE_FILE_FIELD_NAME = "reference_files";
+
+function isFileValue(
+  value: StudyOpenValues["references"][number]["value"],
+): value is File {
+  return typeof File !== "undefined" && value instanceof File;
+}
 
 function toLocalDateTime(value: string | null | undefined) {
   if (!value) return null;
@@ -62,11 +69,21 @@ function buildStudyRequest(values: StudyOpenValues) {
     capacity: 30,
     requires_interview: values.hasInterview,
     interview_date: toLocalDateTime(values.interviewDate),
-    references: values.references.map((ref) => ({
-      type: "URL",
-      url: ref.value,
-      file_name: null,
-    })),
+    references: values.references.map((ref) => {
+      if (ref.type === "DOWNLOAD" && isFileValue(ref.value)) {
+        return {
+          type: "FILE",
+          url: "",
+          file_name: ref.value.name,
+        };
+      }
+
+      return {
+        type: "URL",
+        url: typeof ref.value === "string" ? ref.value : "",
+        file_name: null,
+      };
+    }),
     secondary_mentor_id: secondaryMentorId,
   };
 }
@@ -82,6 +99,11 @@ export async function submitStudyCreate(values: StudyOpenValues) {
   if (values.thumbnail) {
     formData.append("thumbnail", values.thumbnail);
   }
+  values.references.forEach((reference) => {
+    if (isFileValue(reference.value)) {
+      formData.append(REFERENCE_FILE_FIELD_NAME, reference.value);
+    }
+  });
 
   const response = await apiClient
     .post("api/v1/study-apply", { body: formData })

@@ -254,6 +254,7 @@ export interface Reference {
 export interface ReferenceInput {
   type: "URL" | "FILE"; // Request uses 'type'
   url: string; // Request uses 'url'
+  file_name?: string | null; // FILE references use uploaded file name
 }
 
 /**

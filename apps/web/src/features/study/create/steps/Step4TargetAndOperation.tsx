@@ -1,11 +1,11 @@
 "use client";
 
-import { Button, TextInput, Checkbox, SelectBox } from "@ui/components/client";
-import { Minus } from "@repo/assets/icons/lucide";
+import { TextInput, Checkbox, SelectBox } from "@ui/components/client";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
 import { useDateInput } from "@/hooks/useDateInput";
-import { DIFFICULTY_OPTIONS, REFERENCE_TYPE_OPTIONS } from "../constants";
+import { DIFFICULTY_OPTIONS } from "../constants";
+import { ReferenceFields } from "../components/ReferenceFields";
 import { StepNavigation } from "../components/StepNavigation";
 
 interface Step4TargetAndOperationProps {
@@ -30,22 +30,10 @@ export function Step4TargetAndOperation({
   } = form;
 
   const hasInterview = watch("hasInterview");
-  const references = watch("references") || [];
   const { registerShortDateInput } = useDateInput<StudyOpenValues>({
     register,
     setValue,
   });
-
-  const addReference = () => {
-    setValue("references", [...references, { type: "LINK", value: "" }]);
-  };
-
-  const removeReference = (index: number) => {
-    setValue(
-      "references",
-      references.filter((_, i) => i !== index),
-    );
-  };
 
   return (
     <div className="flex w-full flex-col gap-12">
@@ -110,62 +98,7 @@ export function Step4TargetAndOperation({
           )}
         </div>
 
-        {/* 참고자료 */}
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-              참고자료
-            </h3>
-            <Button
-              variant="secondary"
-              size="small"
-              onClick={addReference}
-              type="button"
-            >
-              + 추가
-            </Button>
-          </div>
-
-          {references.map((ref, index) => (
-            <div key={index} className="flex items-start gap-3">
-              <div className="w-[120px] shrink-0">
-                <Controller
-                  control={control}
-                  name={`references.${index}.type`}
-                  render={({ field: { value, onChange } }) => (
-                    <SelectBox
-                      id={`references.${index}.type`}
-                      value={value || null}
-                      options={[...REFERENCE_TYPE_OPTIONS]}
-                      placeholder="유형"
-                      onChange={onChange}
-                      size="sm"
-                    />
-                  )}
-                />
-              </div>
-              <div className="flex-1">
-                <TextInput
-                  id={`references.${index}.value`}
-                  length="full"
-                  placeholder={
-                    ref.type === "LINK"
-                      ? "웹사이트 링크를 입력해주세요"
-                      : "자료 다운로드 링크를 입력해주세요"
-                  }
-                  {...register(`references.${index}.value`)}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => removeReference(index)}
-                className="mt-2 rounded p-1 text-red-500 hover:bg-red-50"
-              >
-                <Minus className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-        </div>
+        <ReferenceFields form={form} />
       </div>
 
       <StepNavigation
