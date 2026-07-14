@@ -2,6 +2,7 @@
 
 import { UseFormReturn } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
+import { StudyCurriculumTable } from "../../components/StudyCurriculumTable";
 import { StepNavigation } from "../components/StepNavigation";
 
 interface Step3WeeklyPlanProps {
@@ -10,18 +11,6 @@ interface Step3WeeklyPlanProps {
   onNext: () => void;
   onSaveDraft: () => void;
 }
-
-const curriculumGridColumns = "grid-cols-[120px_120px_320px_minmax(320px,1fr)]";
-const tableHeaderCellClass =
-  "text-text-bolder border-b border-[#d6e0eb] bg-[#eef2f7] px-4 py-2 text-[15px] font-bold leading-[1.5]";
-const tableBodyCellClass =
-  "flex min-h-[40px] items-center border-b border-[#cdd1d5] bg-white px-4 py-1.5 text-[17px] leading-[1.5]";
-const tableInputCellClass =
-  "flex min-h-[40px] items-center border-b border-[#cdd1d5] bg-white px-2 py-0";
-const tableContentListClass = "border-b border-[#cdd1d5] bg-white";
-const tableContentRowClass = "flex min-h-[40px] items-center px-2 py-0";
-const tableInputClass =
-  "text-text-basic placeholder:text-text-disabled w-full rounded border border-transparent px-2 py-1 text-[17px] leading-[1.5] outline-none focus:border-blue-500";
 
 export function Step3WeeklyPlan({
   form,
@@ -62,87 +51,37 @@ export function Step3WeeklyPlan({
             커리큘럼
           </h3>
 
-          {/* 테이블 */}
-          <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-            <div className="min-w-[880px]">
-              {/* 테이블 헤더 */}
-              <div className={`grid ${curriculumGridColumns}`}>
-                <div className={tableHeaderCellClass}>주차</div>
-                <div className={tableHeaderCellClass}>진행 날짜</div>
-                <div className={tableHeaderCellClass}>주제</div>
-                <div className={tableHeaderCellClass}>내용</div>
-              </div>
-
-              {/* 테이블 바디 */}
-              {curriculum.map((week, weekIndex) => (
-                <div key={weekIndex}>
-                  <div
-                    className={`grid ${curriculumGridColumns} items-stretch`}
-                  >
-                    {/* 주차 */}
-                    <div className={`${tableBodyCellClass} text-text-disabled`}>
-                      {week.week}
-                    </div>
-
-                    {/* 진행 날짜 */}
-                    <div className={tableInputCellClass}>
-                      <input
-                        className={tableInputClass}
-                        placeholder="25.09.07"
-                        {...register(`curriculum.${weekIndex}.date`)}
-                      />
-                    </div>
-
-                    {/* 주제 */}
-                    <div className={tableInputCellClass}>
-                      <input
-                        className={tableInputClass}
-                        placeholder={`${week.week}주차 주제를 입력해주세요.`}
-                        {...register(`curriculum.${weekIndex}.topic`)}
-                      />
-                    </div>
-
-                    {/* 내용 */}
-                    <div className={tableContentListClass}>
-                      {week.contents.map((_, contentIndex) => (
-                        <div
-                          key={`${weekIndex}-${contentIndex}`}
-                          className={`${tableContentRowClass} ${
-                            contentIndex < week.contents.length - 1
-                              ? "border-b border-[#cdd1d5]"
-                              : ""
-                          }`}
-                        >
-                          <input
-                            className={tableInputClass}
-                            placeholder={`${week.week}주차 내용을 입력해주세요.`}
-                            {...register(
-                              `curriculum.${weekIndex}.contents.${contentIndex}`,
-                            )}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* + 내용 추가 */}
-                  <div
-                    className={`grid ${curriculumGridColumns} border-b border-[#e5e8eb] bg-white`}
-                  >
-                    <div className="col-span-4 flex min-h-[40px] items-center justify-end px-4 py-0">
-                      <button
-                        type="button"
-                        onClick={() => addContent(weekIndex)}
-                        className="text-text-primary text-[15px] leading-[1.5] hover:underline"
-                      >
-                        + 내용 추가
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <StudyCurriculumTable
+            rows={curriculum.map((week) => ({
+              id: week.week,
+              week: week.week,
+              contents: week.contents,
+            }))}
+            renderDateInput={(weekIndex, inputClassName) => (
+              <input
+                className={inputClassName}
+                placeholder="25.09.07"
+                {...register(`curriculum.${weekIndex}.date`)}
+              />
+            )}
+            renderTopicInput={(weekIndex, inputClassName) => (
+              <input
+                className={inputClassName}
+                placeholder={`${curriculum[weekIndex].week}주차 주제를 입력해주세요.`}
+                {...register(`curriculum.${weekIndex}.topic`)}
+              />
+            )}
+            renderContentInput={(weekIndex, contentIndex, inputClassName) => (
+              <input
+                className={inputClassName}
+                placeholder={`${curriculum[weekIndex].week}주차 내용을 입력해주세요.`}
+                {...register(
+                  `curriculum.${weekIndex}.contents.${contentIndex}`,
+                )}
+              />
+            )}
+            onAddContent={addContent}
+          />
 
           {errors.curriculum && (
             <p className="text-text-danger text-[14px]">
