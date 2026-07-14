@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, type ReactNode } from "react";
-import { CircleMinus } from "@repo/assets/icons/lucide";
+import { CircleMinus, CirclePlus } from "@repo/assets/icons/lucide";
 
 interface StudyCurriculumTableRow<TContent> {
   id?: string | number;
@@ -88,80 +88,80 @@ export function StudyCurriculumTable<TContent>({
 
             return (
               <Fragment key={rowKey}>
-                {row.contents.map((_, contentIndex) => (
-                  <tr key={`${rowKey}-${contentIndex}`}>
-                    {contentIndex === 0 && (
-                      <>
-                        <td
-                          rowSpan={rowSpan}
-                          className={SPANNED_BODY_CELL_CLASS}
-                        >
-                          {canRemoveWeek && (
+                {row.contents.map((_, contentIndex) => {
+                  const isLastContent =
+                    contentIndex === row.contents.length - 1;
+
+                  return (
+                    <tr key={`${rowKey}-${contentIndex}`}>
+                      {contentIndex === 0 && (
+                        <>
+                          <td
+                            rowSpan={rowSpan}
+                            className={SPANNED_BODY_CELL_CLASS}
+                          >
+                            {canRemoveWeek && (
+                              <button
+                                type="button"
+                                onClick={() => onRemoveWeek?.(weekIndex)}
+                                className="text-text-danger flex h-4 w-4 items-center justify-center"
+                                aria-label={`${row.week}주차 삭제`}
+                              >
+                                <CircleMinus className="h-4 w-4" />
+                              </button>
+                            )}
+                          </td>
+                          <td
+                            rowSpan={rowSpan}
+                            className={`${SPANNED_BODY_CELL_CLASS} text-text-basic text-center`}
+                          >
+                            {row.week}
+                          </td>
+                          <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
+                            {renderDateInput(weekIndex, TABLE_INPUT_CLASS)}
+                          </td>
+                          <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
+                            {renderTopicInput(weekIndex, TABLE_INPUT_CLASS)}
+                          </td>
+                        </>
+                      )}
+                      <td className={CONTENT_CELL_CLASS}>
+                        <div className={`${CONTENT_ROW_CLASS} gap-2`}>
+                          <div className="min-w-0 flex-1">
+                            {renderContentInput(
+                              weekIndex,
+                              contentIndex,
+                              TABLE_INPUT_CLASS,
+                            )}
+                          </div>
+                          {canRemoveContent && (
                             <button
                               type="button"
-                              onClick={() => onRemoveWeek?.(weekIndex)}
-                              className="text-text-danger flex h-4 w-4 items-center justify-center"
-                              aria-label={`${row.week}주차 삭제`}
+                              onClick={() =>
+                                onRemoveContent?.(weekIndex, contentIndex)
+                              }
+                              className="text-text-danger mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
+                              aria-label={`${row.week}주차 ${contentIndex + 1}번째 내용 삭제`}
                             >
                               <CircleMinus className="h-4 w-4" />
                             </button>
                           )}
-                        </td>
-                        <td
-                          rowSpan={rowSpan}
-                          className={`${SPANNED_BODY_CELL_CLASS} text-text-basic text-center`}
-                        >
-                          {row.week}
-                        </td>
-                        <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
-                          {renderDateInput(weekIndex, TABLE_INPUT_CLASS)}
-                        </td>
-                        <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
-                          {renderTopicInput(weekIndex, TABLE_INPUT_CLASS)}
-                        </td>
-                      </>
-                    )}
-                    <td className={CONTENT_CELL_CLASS}>
-                      <div className={`${CONTENT_ROW_CLASS} gap-2`}>
-                        <div className="min-w-0 flex-1">
-                          {renderContentInput(
-                            weekIndex,
-                            contentIndex,
-                            TABLE_INPUT_CLASS,
+                          {isLastContent && (
+                            <button
+                              type="button"
+                              onClick={() => onAddContent(weekIndex)}
+                              className="text-text-primary mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
+                              aria-label={`${row.week}주차 ${addContentLabel.replace(/^\+\s*/, "")}`}
+                              title={addContentLabel}
+                            >
+                              <CirclePlus className="h-4 w-4" />
+                            </button>
                           )}
                         </div>
-                        {canRemoveContent && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              onRemoveContent?.(weekIndex, contentIndex)
-                            }
-                            className="text-text-danger mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
-                            aria-label={`${row.week}주차 ${contentIndex + 1}번째 내용 삭제`}
-                          >
-                            <CircleMinus className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                <tr key={`${rowKey}-add`}>
-                  <td
-                    colSpan={TABLE_COLUMN_COUNT}
-                    className="border-gray-10 bg-surface-white border-b px-4 py-0"
-                  >
-                    <div className="flex min-h-[40px] items-center justify-end">
-                      <button
-                        type="button"
-                        onClick={() => onAddContent(weekIndex)}
-                        className="text-text-primary text-[13px] leading-[1.5] hover:underline"
-                      >
-                        {addContentLabel}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                      </td>
+                    </tr>
+                  );
+                })}
               </Fragment>
             );
           })}
