@@ -321,14 +321,14 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
           있습니다. 아직 한양메일을 만드시지 않았다면{" "}
           <Link
             size="s"
-            href="https://hanyang.ac.kr"
+            href="https://portal.hanyang.ac.kr"
             rel="noopener noreferrer"
             target="_blank"
-            className="text-text-primary"
+            className="text-text-primary text-body-s-mobile sm:text-body-s"
           >
-            다음 링크
+            한양인포털
           </Link>
-          를 따라 만드실 수 있습니다.
+          에서 만드실 수 있습니다.
         </InfoText>
       </Form>
 

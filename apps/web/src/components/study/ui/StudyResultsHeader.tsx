@@ -6,8 +6,8 @@ interface StudyResultsHeaderProps {
   totalItems: number;
   pageSize: number;
   onPageSizeChange: (size: number) => void;
-  sortBy: "latest" | "popular";
-  onSortChange: (sort: "latest" | "popular") => void;
+  sortBy: "latest" | "oldest";
+  onSortChange: (sort: "latest" | "oldest") => void;
   className?: string;
 }
 
@@ -25,7 +25,7 @@ export const StudyResultsHeader: React.FC<StudyResultsHeaderProps> = ({
     <div className={`flex items-center gap-7 ${className}`}>
       <p className="text-body-large grow font-bold">
         <span>검색 결과 </span>
-        <span className="text-primary-primary-50">{totalItems}</span>개
+        <span className="text-text-primary">{totalItems}</span>개
       </p>
 
       <div className="flex shrink-0 items-center gap-3">
@@ -58,11 +58,11 @@ export const StudyResultsHeader: React.FC<StudyResultsHeaderProps> = ({
           <div className="flex items-center font-normal">
             <button
               onClick={() =>
-                onSortChange(sortBy === "latest" ? "popular" : "latest")
+                onSortChange(sortBy === "latest" ? "oldest" : "latest")
               }
               className="bg-action-secondary border-border-transparency rounded-small2 text-label-medium text-text-basic border px-2 py-0"
             >
-              {sortBy === "latest" ? "최신순" : "오래된 순"}
+              {sortBy === "latest" ? "최신순" : "오래된순"}
             </button>
           </div>
         </div>

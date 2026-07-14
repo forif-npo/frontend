@@ -46,15 +46,16 @@ export function Step5ReviewAndSubmit({
   };
 
   return (
-    <div className="mx-auto mb-16 flex w-full max-w-[792px] flex-col gap-6 sm:gap-10">
-      {/* 스터디 개요 */}
-      <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
-        <h2 className="text-text-bolder text-[24px] font-bold leading-[1.5]">
-          입력 정보 확인
-        </h2>
+    <div className="flex w-full flex-col gap-12">
+      <p className="text-text-basic text-[24px] font-bold leading-[1.5]">
+        입력 정보 확인
+      </p>
+
+      <div className="flex flex-col gap-10">
+        {/* 스터디 개요 */}
 
         <section className="flex flex-col gap-4">
-          <h3 className="text-text-bolder text-[20px] font-bold leading-[1.5]">
+          <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
             스터디 개요
           </h3>
 
@@ -107,7 +108,7 @@ export function Step5ReviewAndSubmit({
 
         {/* 스터디 소개 */}
         <section className="flex flex-col gap-4">
-          <h3 className="text-text-bolder text-[20px] font-bold leading-[1.5]">
+          <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
             스터디 소개
           </h3>
           <div className="rounded-[12px] bg-[#f4f5f6] p-4 md:p-6">
@@ -119,7 +120,7 @@ export function Step5ReviewAndSubmit({
 
         {/* 커리큘럼 */}
         <section className="flex flex-col gap-4">
-          <h3 className="text-text-bolder text-[20px] font-bold leading-[1.5]">
+          <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
             커리큘럼
           </h3>
           <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
@@ -157,7 +158,7 @@ export function Step5ReviewAndSubmit({
         {/* 참고자료 */}
         {values.references.length > 0 && (
           <section className="flex flex-col gap-4">
-            <h3 className="text-text-bolder text-[20px] font-bold leading-[1.5]">
+            <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
               참고자료
             </h3>
             <div className="flex flex-col gap-2">

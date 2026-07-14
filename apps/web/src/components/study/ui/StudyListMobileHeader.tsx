@@ -119,8 +119,7 @@ export const StudyListMobileHeader: React.FC<StudyListMobileHeaderProps> = ({
             <span className="inline-block h-4 w-16 animate-pulse rounded bg-gray-200" />
           ) : (
             <>
-              결과 <span className="text-primary-primary-50">{totalItems}</span>
-              개
+              결과 <span className="text-text-primary">{totalItems}</span>개
             </>
           )}
         </p>

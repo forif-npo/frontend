@@ -63,6 +63,20 @@ function getMentorText(
   return secondary ? `${primary}${separator}${secondary}` : primary;
 }
 
+function getVisibleTagLabels(tags: unknown) {
+  if (!Array.isArray(tags)) return [];
+
+  return tags
+    .map((tag) => (typeof tag === "string" ? tag.trim() : ""))
+    .filter(Boolean);
+}
+
+function getVisibleDifficultyLabel(difficulty: unknown) {
+  if (typeof difficulty !== "string") return "";
+
+  return getDifficultyLabel(difficulty).trim();
+}
+
 // ── Component ───────────────────────────────────────────────────────
 
 export function StudyCard(props: StudyCardProps) {
@@ -89,6 +103,9 @@ export function StudyCard(props: StudyCardProps) {
 
   if (variant === "home") {
     const s = study as Study;
+    const tagLabels = getVisibleTagLabels(s.tags);
+    const difficultyLabel = getVisibleDifficultyLabel(s.difficulty);
+
     return (
       <Link
         href={`/studies/detail/${s.id}`}
@@ -114,7 +131,7 @@ export function StudyCard(props: StudyCardProps) {
               appearance="solid-pastel"
               size="small"
             />
-            {s.tags.slice(0, 1).map((tag) => (
+            {tagLabels.slice(0, 1).map((tag) => (
               <Badge
                 key={tag}
                 label={tag}
@@ -124,13 +141,15 @@ export function StudyCard(props: StudyCardProps) {
               />
             ))}
             <span className="md:hidden" />
-            <Badge
-              label={getDifficultyLabel(s.difficulty)}
-              variant={getDifficultyBadgeVariant(s.difficulty)}
-              appearance="solid-pastel"
-              size="small"
-              // hide on mobile to save space — shown in desktop below
-            />
+            {difficultyLabel && (
+              <Badge
+                label={difficultyLabel}
+                variant={getDifficultyBadgeVariant(s.difficulty)}
+                appearance="solid-pastel"
+                size="small"
+                // hide on mobile to save space — shown in desktop below
+              />
+            )}
           </div>
           <Body
             size="l"
@@ -162,6 +181,8 @@ export function StudyCard(props: StudyCardProps) {
     const s = study as Study;
     const schedule = formatStudyTimeRange(s.start_time, s.end_time);
     const instructors = getMentorText(primaryMentor, secondaryMentor, "·");
+    const tagLabels = getVisibleTagLabels(s.tags);
+    const difficultyLabel = getVisibleDifficultyLabel(s.difficulty);
 
     return (
       <div className="flex w-full flex-col overflow-hidden rounded-b-xl border border-gray-200 bg-white">
@@ -174,28 +195,36 @@ export function StudyCard(props: StudyCardProps) {
               appearance="solid-pastel"
               size="small"
             />
-            {s.tags[0] && (
+            <Badge
+              label={`${s.act_year}-${s.act_semester}`}
+              variant="info"
+              appearance="solid-pastel"
+              size="small"
+            />
+            {tagLabels[0] && (
               <Badge
-                label={s.tags[0]}
+                label={tagLabels[0]}
                 variant="danger"
                 appearance="solid-pastel"
                 size="small"
               />
             )}
-            {s.tags[1] && (
+            {tagLabels[1] && (
               <Badge
-                label={s.tags[1]}
+                label={tagLabels[1]}
                 variant="primary"
                 appearance="solid-pastel"
                 size="small"
               />
             )}
-            <Badge
-              label={getDifficultyLabel(s.difficulty)}
-              variant={getDifficultyBadgeVariant(s.difficulty)}
-              appearance="solid-pastel"
-              size="small"
-            />
+            {difficultyLabel && (
+              <Badge
+                label={difficultyLabel}
+                variant={getDifficultyBadgeVariant(s.difficulty)}
+                appearance="solid-pastel"
+                size="small"
+              />
+            )}
           </div>
           <div className="flex flex-1 flex-col gap-4">
             <Heading size="xs" className="text-text-basic line-clamp-1">

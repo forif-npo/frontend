@@ -199,7 +199,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
             dropdownAlign="right"
             options={[
               { value: "DESC", label: "최신순" },
-              { value: "ASC", label: "오래된 순" },
+              { value: "ASC", label: "오래된순" },
             ]}
           />
           <Button
