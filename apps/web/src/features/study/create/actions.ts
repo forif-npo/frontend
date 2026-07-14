@@ -1,6 +1,7 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { StudyOpenValues } from "@core/schemas";
+import { toLocalDateTimeFromDateInput } from "@/utils/dateInput";
 import { getStudyTagId } from "./constants";
 
 const DIFFICULTY_MAP: Record<string, number> = {
@@ -13,6 +14,8 @@ const DIFFICULTY_MAP: Record<string, number> = {
 
 function toLocalDateTime(value: string | null | undefined) {
   if (!value) return null;
+  const parsedDateTime = toLocalDateTimeFromDateInput(value);
+  if (parsedDateTime) return parsedDateTime;
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return `${value}T00:00:00`;
 
   const shortDate = value.match(/^(\d{2})\.(\d{2})\.(\d{2})$/);

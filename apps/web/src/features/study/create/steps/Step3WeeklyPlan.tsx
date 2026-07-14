@@ -2,6 +2,7 @@
 
 import { UseFormReturn } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
+import { useDateInput } from "@/hooks/useDateInput";
 import { StudyCurriculumTable } from "../../components/StudyCurriculumTable";
 import { StepNavigation } from "../components/StepNavigation";
 
@@ -26,6 +27,7 @@ export function Step3WeeklyPlan({
   } = form;
 
   const curriculum = watch("curriculum");
+  const { registerShortDateInput } = useDateInput({ register, setValue });
 
   const addContent = (weekIndex: number) => {
     const updated = [...curriculum];
@@ -60,8 +62,8 @@ export function Step3WeeklyPlan({
             renderDateInput={(weekIndex, inputClassName) => (
               <input
                 className={inputClassName}
-                placeholder="260908"
-                {...register(`curriculum.${weekIndex}.date`)}
+                placeholder="YYMMDD"
+                {...registerShortDateInput(`curriculum.${weekIndex}.date`)}
               />
             )}
             renderTopicInput={(weekIndex, inputClassName) => (

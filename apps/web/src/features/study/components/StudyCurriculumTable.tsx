@@ -48,7 +48,7 @@ export function StudyCurriculumTable<TContent>({
       <table className="w-full table-fixed border-collapse">
         <colgroup>
           <col className="w-[50px]" />
-          <col className="w-[90px]" />
+          <col className="w-[100px]" />
           <col className="w-[240px]" />
           <col />
         </colgroup>

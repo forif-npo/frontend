@@ -5,6 +5,22 @@ const isFileValue = (value: unknown): value is File | null =>
   value === null || (typeof File !== "undefined" && value instanceof File);
 
 const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
+const shortDateRegex = /^\d{6}$/;
+
+function isValidShortDate(value: string) {
+  if (!shortDateRegex.test(value)) return false;
+
+  const year = 2000 + Number(value.slice(0, 2));
+  const month = Number(value.slice(2, 4));
+  const day = Number(value.slice(4, 6));
+  const date = new Date(year, month - 1, day);
+
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+}
 
 export const studyOpenSchema = createSchema()(
   z
@@ -51,7 +67,14 @@ export const studyOpenSchema = createSchema()(
         .array(
           z.object({
             week: z.number(),
-            date: z.string(),
+            date: z
+              .string()
+              .min(1, "진행 날짜를 입력해주세요.")
+              .regex(
+                shortDateRegex,
+                "진행 날짜는 YYMMDD 형식으로 입력해주세요.",
+              )
+              .refine(isValidShortDate, "올바른 진행 날짜를 입력해주세요."),
             topic: z.string().min(1, "주제를 입력해주세요."),
             contents: z
               .array(z.string().min(1, "내용을 입력해주세요."))
