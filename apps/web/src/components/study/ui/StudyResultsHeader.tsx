@@ -25,7 +25,7 @@ export const StudyResultsHeader: React.FC<StudyResultsHeaderProps> = ({
     <div className={`flex items-center gap-7 ${className}`}>
       <p className="text-body-large grow font-bold">
         <span>검색 결과 </span>
-        <span className="text-primary-primary-50">{totalItems}</span>개
+        <span className="text-text-primary">{totalItems}</span>개
       </p>
 
       <div className="flex shrink-0 items-center gap-3">
