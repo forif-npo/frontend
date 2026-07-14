@@ -7,6 +7,7 @@ export * from "./Detail";
 export * from "./Display";
 export * from "./Divider";
 export * from "./Heading";
+export * from "./HintText";
 export * from "./InfoBox";
 export * from "./InfoText";
 export * from "./Label";

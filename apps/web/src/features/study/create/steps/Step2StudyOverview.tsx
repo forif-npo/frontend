@@ -9,6 +9,7 @@ import {
   FileUpload,
   SelectBox,
 } from "@ui/components/client";
+import { HintText } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
@@ -31,13 +32,6 @@ function SectionTitle({
       </h3>
       {icon}
     </div>
-  );
-}
-
-/** 힌트 텍스트 */
-function HintText({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-text-subtle text-[13px] leading-[1.5]">{children}</p>
   );
 }
 
@@ -222,7 +216,7 @@ export function Step2StudyOverview({
         {/* 스터디 소개 */}
         <div className="flex flex-col gap-6">
           <SectionTitle>스터디 소개</SectionTitle>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             <HintText>
               스터디에 대해 소개해주세요. 최소 50자 이상, 최대 500자 이내로
               작성해주세요.
@@ -271,7 +265,7 @@ export function Step2StudyOverview({
         {/* 진행 장소 / 요일 */}
         <div className="flex flex-col gap-6">
           <SectionTitle>진행 장소 / 요일</SectionTitle>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             <HintText>
               장소가 확정되지 않았다면 &apos;장소 미정&apos;을 선택해주세요.
             </HintText>
