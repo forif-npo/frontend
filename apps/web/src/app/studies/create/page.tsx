@@ -3,7 +3,6 @@
 import { StudyCreateSkeleton } from "@/components/skeleton/StudyCreateSkeleton";
 import {
   useStudyCreatePage,
-  StudyHelpPanel,
   Step1InfoVerification,
   Step2StudyOverview,
   Step3WeeklyPlan,
@@ -43,7 +42,6 @@ export default function StudyCreatePage() {
 
   return (
     <div className="min-h-viewport relative pb-24 md:pb-32">
-      <StudyHelpPanel title="스터디 개설 중 어려움이 있으신가요?" />
       <div className="mx-auto flex max-w-[792px] justify-center px-4 sm:px-6">
         {step === 1 && (
           <Step1InfoVerification
