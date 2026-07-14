@@ -1,6 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
+import { HintText } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";
 import { useDateInput } from "@/hooks/useDateInput";
 import { StudyCurriculumTable } from "../../components/StudyCurriculumTable";
@@ -165,42 +166,49 @@ export function Step3WeeklyPlan({
             커리큘럼
           </h3>
 
-          <StudyCurriculumTable
-            rows={curriculum.map((week) => ({
-              id: week.week,
-              week: week.week,
-              contents: week.contents,
-            }))}
-            renderDateInput={(weekIndex, inputClassName) => (
-              <input
-                className={inputClassName}
-                placeholder="YYMMDD"
-                {...registerShortDateInput(`curriculum.${weekIndex}.date`)}
-              />
-            )}
-            renderTopicInput={(weekIndex, inputClassName) => (
-              <textarea
-                rows={1}
-                className={`${inputClassName} resize-none overflow-y-auto whitespace-pre-wrap break-words [field-sizing:content]`}
-                placeholder={`${curriculum[weekIndex].week}주차 주제를 입력해주세요.`}
-                {...register(`curriculum.${weekIndex}.topic`)}
-              />
-            )}
-            renderContentInput={(weekIndex, contentIndex, inputClassName) => (
-              <textarea
-                rows={1}
-                className={`${inputClassName} resize-none overflow-y-auto whitespace-pre-wrap break-words [field-sizing:content]`}
-                placeholder={`${curriculum[weekIndex].week}주차 내용을 입력해주세요.`}
-                {...register(
-                  `curriculum.${weekIndex}.contents.${contentIndex}`,
-                )}
-              />
-            )}
-            onAddContent={addContent}
-            onRemoveContent={removeContent}
-            onAddWeek={addWeek}
-            onRemoveWeek={removeWeek}
-          />
+          <div className="flex flex-col gap-3">
+            <HintText>
+              스터디는 최소 8주차 이상 진행되어야 합니다. 중간고사/기말고사
+              기간을 유의하여 계획을 세워주세요.
+            </HintText>
+
+            <StudyCurriculumTable
+              rows={curriculum.map((week) => ({
+                id: week.week,
+                week: week.week,
+                contents: week.contents,
+              }))}
+              renderDateInput={(weekIndex, inputClassName) => (
+                <input
+                  className={inputClassName}
+                  placeholder="YYMMDD"
+                  {...registerShortDateInput(`curriculum.${weekIndex}.date`)}
+                />
+              )}
+              renderTopicInput={(weekIndex, inputClassName) => (
+                <textarea
+                  rows={1}
+                  className={`${inputClassName} resize-none overflow-y-auto whitespace-pre-wrap break-words [field-sizing:content]`}
+                  placeholder={`${curriculum[weekIndex].week}주차 주제를 입력해주세요.`}
+                  {...register(`curriculum.${weekIndex}.topic`)}
+                />
+              )}
+              renderContentInput={(weekIndex, contentIndex, inputClassName) => (
+                <textarea
+                  rows={1}
+                  className={`${inputClassName} resize-none overflow-y-auto whitespace-pre-wrap break-words [field-sizing:content]`}
+                  placeholder={`${curriculum[weekIndex].week}주차 내용을 입력해주세요.`}
+                  {...register(
+                    `curriculum.${weekIndex}.contents.${contentIndex}`,
+                  )}
+                />
+              )}
+              onAddContent={addContent}
+              onRemoveContent={removeContent}
+              onAddWeek={addWeek}
+              onRemoveWeek={removeWeek}
+            />
+          </div>
 
           {errors.curriculum && (
             <div className="flex flex-col gap-1">
