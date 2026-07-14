@@ -252,6 +252,7 @@ export function Step2StudyOverview({
                   defaultChecked={value}
                   onChange={onChange}
                   size="lg"
+                  className="mt-[2px]"
                 />
                 <div className="flex flex-col gap-1">
                   <span className="text-text-bolder text-[19px] leading-[1.5]">
