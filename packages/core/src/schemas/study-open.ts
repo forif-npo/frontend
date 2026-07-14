@@ -81,7 +81,7 @@ export const studyOpenSchema = createSchema()(
               .min(1, "내용을 최소 1개 이상 입력해주세요."),
           }),
         )
-        .length(8, "8주차 커리큘럼을 모두 작성해주세요."),
+        .min(8, "8주차 이상 커리큘럼을 작성해주세요."),
 
       // Step 4: 난이도 및 운영 방식
       difficulty: z.string().min(1, "난이도를 선택해주세요."),

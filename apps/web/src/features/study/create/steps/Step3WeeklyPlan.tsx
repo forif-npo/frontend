@@ -41,6 +41,27 @@ export function Step3WeeklyPlan({
     });
   };
 
+  const addWeek = () => {
+    const lastWeekNumber = curriculum.at(-1)?.week ?? curriculum.length;
+
+    setValue(
+      "curriculum",
+      [
+        ...curriculum,
+        {
+          week: lastWeekNumber + 1,
+          date: "",
+          topic: "",
+          contents: [""],
+        },
+      ],
+      {
+        shouldDirty: true,
+        shouldValidate: true,
+      },
+    );
+  };
+
   const removeContent = (weekIndex: number, contentIndex: number) => {
     const targetWeek = curriculum[weekIndex];
     if (!targetWeek || targetWeek.contents.length <= 1) return;
@@ -52,6 +73,22 @@ export function Step3WeeklyPlan({
         (_, index) => index !== contentIndex,
       ),
     };
+    setValue("curriculum", updated, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const removeWeek = (weekIndex: number) => {
+    if (weekIndex < 8 || curriculum.length <= 8) return;
+
+    const updated = curriculum
+      .filter((_, index) => index !== weekIndex)
+      .map((week, index) => ({
+        ...week,
+        week: index + 1,
+      }));
+
     setValue("curriculum", updated, {
       shouldDirty: true,
       shouldValidate: true,
@@ -106,6 +143,8 @@ export function Step3WeeklyPlan({
             )}
             onAddContent={addContent}
             onRemoveContent={removeContent}
+            onAddWeek={addWeek}
+            onRemoveWeek={removeWeek}
           />
 
           {errors.curriculum && (

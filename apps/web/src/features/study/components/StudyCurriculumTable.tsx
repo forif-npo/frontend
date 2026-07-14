@@ -20,7 +20,10 @@ interface StudyCurriculumTableProps<TContent> {
   ) => ReactNode;
   onAddContent: (weekIndex: number) => void;
   onRemoveContent?: (weekIndex: number, contentIndex: number) => void;
+  onAddWeek?: () => void;
+  onRemoveWeek?: (weekIndex: number) => void;
   addContentLabel?: string;
+  addWeekLabel?: string;
 }
 
 const HEADER_CELL_CLASS =
@@ -35,7 +38,7 @@ const CONTENT_ROW_CLASS = "flex items-start";
 const TABLE_INPUT_CLASS =
   "block w-full rounded border border-transparent px-2 py-0 text-[15px] leading-[1.5] text-text-basic outline-none placeholder:text-text-disabled focus:border-primary-50";
 
-const TABLE_HEADERS = ["주차", "진행 날짜", "주제", "내용"] as const;
+const TABLE_COLUMN_COUNT = 5;
 
 export function StudyCurriculumTable<TContent>({
   rows,
@@ -44,24 +47,35 @@ export function StudyCurriculumTable<TContent>({
   renderContentInput,
   onAddContent,
   onRemoveContent,
+  onAddWeek,
+  onRemoveWeek,
   addContentLabel = "+ 내용 추가",
+  addWeekLabel = "+ 주차 추가",
 }: StudyCurriculumTableProps<TContent>) {
   return (
     <div className="w-full">
       <table className="w-full table-fixed border-collapse">
         <colgroup>
-          <col className="w-[50px]" />
+          <col className="w-[24px]" />
+          <col className="w-[36px]" />
           <col className="w-[100px]" />
           <col className="w-[240px]" />
           <col />
         </colgroup>
         <thead>
           <tr>
-            {TABLE_HEADERS.map((header) => (
-              <th key={header} scope="col" className={HEADER_CELL_CLASS}>
-                {header}
-              </th>
-            ))}
+            <th scope="col" colSpan={2} className={HEADER_CELL_CLASS}>
+              주차
+            </th>
+            <th scope="col" className={HEADER_CELL_CLASS}>
+              진행 날짜
+            </th>
+            <th scope="col" className={HEADER_CELL_CLASS}>
+              주제
+            </th>
+            <th scope="col" className={HEADER_CELL_CLASS}>
+              내용
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -70,6 +84,7 @@ export function StudyCurriculumTable<TContent>({
             const rowSpan = Math.max(row.contents.length, 1);
             const canRemoveContent =
               Boolean(onRemoveContent) && row.contents.length > 1;
+            const canRemoveWeek = Boolean(onRemoveWeek) && weekIndex >= 8;
 
             return (
               <Fragment key={rowKey}>
@@ -77,6 +92,21 @@ export function StudyCurriculumTable<TContent>({
                   <tr key={`${rowKey}-${contentIndex}`}>
                     {contentIndex === 0 && (
                       <>
+                        <td
+                          rowSpan={rowSpan}
+                          className={SPANNED_BODY_CELL_CLASS}
+                        >
+                          {canRemoveWeek && (
+                            <button
+                              type="button"
+                              onClick={() => onRemoveWeek?.(weekIndex)}
+                              className="text-text-danger flex h-4 w-4 items-center justify-center"
+                              aria-label={`${row.week}주차 삭제`}
+                            >
+                              <CircleMinus className="h-4 w-4" />
+                            </button>
+                          )}
+                        </td>
                         <td
                           rowSpan={rowSpan}
                           className={`${SPANNED_BODY_CELL_CLASS} text-text-basic text-center`}
@@ -109,7 +139,7 @@ export function StudyCurriculumTable<TContent>({
                             className="text-text-danger mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
                             aria-label={`${row.week}주차 ${contentIndex + 1}번째 내용 삭제`}
                           >
-                            <CircleMinus className="h-5 w-5" />
+                            <CircleMinus className="h-4 w-4" />
                           </button>
                         )}
                       </div>
@@ -118,7 +148,7 @@ export function StudyCurriculumTable<TContent>({
                 ))}
                 <tr key={`${rowKey}-add`}>
                   <td
-                    colSpan={TABLE_HEADERS.length}
+                    colSpan={TABLE_COLUMN_COUNT}
                     className="border-gray-10 bg-surface-white border-b px-4 py-0"
                   >
                     <div className="flex min-h-[40px] items-center justify-end">
@@ -135,6 +165,24 @@ export function StudyCurriculumTable<TContent>({
               </Fragment>
             );
           })}
+          {onAddWeek && (
+            <tr>
+              <td
+                colSpan={TABLE_COLUMN_COUNT}
+                className="border-gray-10 bg-surface-white border-b px-4 py-0"
+              >
+                <div className="flex min-h-[40px] items-center justify-start">
+                  <button
+                    type="button"
+                    onClick={onAddWeek}
+                    className="text-text-secondary text-[13px] leading-[1.5] hover:underline"
+                  >
+                    {addWeekLabel}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
