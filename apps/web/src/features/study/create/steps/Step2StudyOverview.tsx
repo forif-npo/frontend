@@ -218,8 +218,9 @@ export function Step2StudyOverview({
           <SectionTitle>스터디 소개</SectionTitle>
           <div className="flex flex-col gap-1">
             <HintText>
-              스터디에 대해 소개해주세요. 최소 50자 이상, 최대 500자 이내로
-              작성해주세요.
+              어떤 스터디인가요? 사용 기술스택 및 언어, 학습목표, 스터디 방식,
+              지원 요건, 멘토 소개, 문의처 등 멘티들이 궁금할 만한 내용을
+              자유롭게 적어주세요. 최소 50자 이상 적어주세요.
             </HintText>
             <TextArea
               id="introduction"

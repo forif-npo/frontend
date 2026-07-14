@@ -4,6 +4,7 @@ import { Button, TextInput, Checkbox, SelectBox } from "@ui/components/client";
 import { Minus } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
+import { useDateInput } from "@/hooks/useDateInput";
 import { DIFFICULTY_OPTIONS, REFERENCE_TYPE_OPTIONS } from "../constants";
 import { StepNavigation } from "../components/StepNavigation";
 
@@ -30,6 +31,10 @@ export function Step4TargetAndOperation({
 
   const hasInterview = watch("hasInterview");
   const references = watch("references") || [];
+  const { registerShortDateInput } = useDateInput<StudyOpenValues>({
+    register,
+    setValue,
+  });
 
   const addReference = () => {
     setValue("references", [...references, { type: "LINK", value: "" }]);
@@ -98,8 +103,8 @@ export function Step4TargetAndOperation({
               <TextInput
                 id="interviewDate"
                 length="middle"
-                placeholder="YYYY-MM-DD"
-                {...register("interviewDate")}
+                placeholder="YYMMDD"
+                {...registerShortDateInput("interviewDate")}
               />
             </div>
           )}
