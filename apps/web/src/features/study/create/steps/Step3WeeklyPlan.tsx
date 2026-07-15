@@ -12,6 +12,7 @@ interface Step3WeeklyPlanProps {
   onPrevious: () => void;
   onNext: () => void;
   onSaveDraft: () => void;
+  onPreview: () => void;
 }
 
 const CURRICULUM_ERROR_MESSAGES = {
@@ -73,6 +74,7 @@ export function Step3WeeklyPlan({
   onPrevious,
   onNext,
   onSaveDraft,
+  onPreview,
 }: Step3WeeklyPlanProps) {
   const {
     register,
@@ -227,7 +229,7 @@ export function Step3WeeklyPlan({
         onPrevious={onPrevious}
         onNext={onNext}
         leadingActions={[
-          { label: "미리보기", onClick: () => {}, variant: "secondary" },
+          { label: "미리보기", onClick: onPreview, variant: "secondary" },
         ]}
       />
     </div>
