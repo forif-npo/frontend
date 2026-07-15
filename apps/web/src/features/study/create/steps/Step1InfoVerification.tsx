@@ -3,36 +3,13 @@
 import { useEffect, useState } from "react";
 import { CriticalAlert, TextInput } from "@ui/components/client";
 import { GuideCheckIcon, SearchIcon } from "@ui/components/server";
-import { apiClient } from "@core/utils/api-client";
-import type { ApiResponse } from "@core/types/api";
 import type { StudyOpenValues } from "@core/schemas";
 import type { UseFormReturn } from "react-hook-form";
 import { useFormattedPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { StudyCreateStepIndicator } from "./StudyCreateStepIndicator";
 import { StepNavigation } from "../components/StepNavigation";
+import { fetchUserInfo } from "../user-info";
 import type { UserInfo } from "../types";
-
-type UserResponseData = {
-  user_id: number;
-  user_name: string;
-  department: string;
-  phone_num: string;
-};
-
-async function fetchUserInfo(studentId: string) {
-  const response = await apiClient
-    .get(`api/v1/users/${studentId}`)
-    .json<ApiResponse<UserResponseData>>();
-
-  if (!response.data) return null;
-
-  return {
-    studentId: String(response.data.user_id),
-    name: response.data.user_name,
-    department: response.data.department,
-    phone: response.data.phone_num,
-  };
-}
 
 /** 읽기 전용 정보 필드 */
 function InfoField({

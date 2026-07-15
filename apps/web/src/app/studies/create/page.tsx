@@ -78,6 +78,7 @@ export default function StudyCreatePage() {
         {step === 5 && (
           <Step5ReviewAndSubmit
             form={form}
+            userInfo={userInfo}
             onPrevious={goToPrevious}
             onSubmit={handleSubmit}
           />
