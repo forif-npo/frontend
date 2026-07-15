@@ -18,7 +18,7 @@ interface StudyCurriculumTableProps<TContent> {
     contentIndex: number,
     inputClassName: string,
   ) => ReactNode;
-  onAddContent: (weekIndex: number) => void;
+  onAddContent?: (weekIndex: number) => void;
   onRemoveContent?: (weekIndex: number, contentIndex: number) => void;
   onAddWeek?: () => void;
   onRemoveWeek?: (weekIndex: number) => void;
@@ -84,6 +84,7 @@ export function StudyCurriculumTable<TContent>({
             const rowSpan = Math.max(row.contents.length, 1);
             const canRemoveContent =
               Boolean(onRemoveContent) && row.contents.length > 1;
+            const canAddContent = Boolean(onAddContent);
             const canRemoveWeek = Boolean(onRemoveWeek) && weekIndex >= 8;
 
             return (
@@ -146,10 +147,10 @@ export function StudyCurriculumTable<TContent>({
                               <CircleMinus className="h-4 w-4" />
                             </button>
                           )}
-                          {isLastContent && (
+                          {isLastContent && canAddContent && (
                             <button
                               type="button"
-                              onClick={() => onAddContent(weekIndex)}
+                              onClick={() => onAddContent?.(weekIndex)}
                               className="text-text-primary mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
                               aria-label={`${row.week}주차 ${addContentLabel.replace(/^\+\s*/, "")}`}
                               title={addContentLabel}
