@@ -1,9 +1,19 @@
-type DateInputValue = string | number | null | undefined;
+type DateInputValue = string | number | Date | null | undefined;
 
 const SHORT_DATE_LENGTH = 6;
 const FULL_DATE_LENGTH = 8;
 
 function toShortDateParts(value: DateInputValue) {
+  if (value instanceof Date) {
+    if (Number.isNaN(value.getTime())) return null;
+
+    return {
+      year: value.getFullYear(),
+      month: value.getMonth() + 1,
+      day: value.getDate(),
+    };
+  }
+
   const rawValue = String(value ?? "").trim();
   if (!rawValue) return null;
 
@@ -40,7 +50,7 @@ function isValidDateParts(year: number, month: number, day: number) {
 
 export function normalizeShortDateInput(value: DateInputValue) {
   const rawValue = String(value ?? "").trim();
-  const dateParts = toShortDateParts(rawValue);
+  const dateParts = toShortDateParts(value);
 
   if (!dateParts) return rawValue;
 
@@ -65,4 +75,15 @@ export function toLocalDateTimeFromDateInput(value: DateInputValue) {
     2,
     "0",
   )}T00:00:00`;
+}
+
+export function formatKoreanDateFromDateInput(value: DateInputValue) {
+  const dateParts = toShortDateParts(value);
+
+  if (!dateParts) return null;
+
+  const { year, month, day } = dateParts;
+  if (!isValidDateParts(year, month, day)) return null;
+
+  return `${year}년 ${month}월 ${day}일`;
 }

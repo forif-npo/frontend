@@ -1,19 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "@ui/components/client";
 import { Badge } from "@ui/components/server";
 import { UseFormReturn } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
+import { formatKoreanDateFromDateInput } from "@/utils/dateInput";
 import { SubmitConfirmModal } from "../components/SubmitConfirmModal";
+import { fetchUserInfo } from "../user-info";
 import {
   WEEKDAY_OPTIONS,
   DIFFICULTY_OPTIONS,
   LOCATION_OPTIONS,
 } from "../constants";
+import type { UserInfo } from "../types";
 
 interface Step5ReviewAndSubmitProps {
   form: UseFormReturn<StudyOpenValues>;
+  userInfo: UserInfo;
   onPrevious: () => void;
   onSubmit: () => void;
   isSubmitting?: boolean;
@@ -21,12 +25,18 @@ interface Step5ReviewAndSubmitProps {
 
 export function Step5ReviewAndSubmit({
   form,
+  userInfo,
   onPrevious,
   onSubmit,
   isSubmitting = false,
 }: Step5ReviewAndSubmitProps) {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [additionalMentors, setAdditionalMentors] = useState<UserInfo[]>([]);
   const values = form.getValues();
+  const additionalMentorIds = values.mentorIds
+    .map(String)
+    .filter((mentorId) => mentorId !== userInfo.studentId);
+  const additionalMentorIdsKey = additionalMentorIds.join(",");
 
   const weekDayLabel =
     WEEKDAY_OPTIONS.find((w) => w.value === values.weekDay)?.label || "";
@@ -35,6 +45,8 @@ export function Step5ReviewAndSubmit({
   const locationLabel =
     LOCATION_OPTIONS.find((l) => l.value === values.location)?.label ||
     values.location;
+  const interviewDateLabel =
+    formatKoreanDateFromDateInput(values.interviewDate) ?? "날짜 미정";
 
   const handleSubmitClick = () => {
     setIsConfirmModalOpen(true);
@@ -44,6 +56,54 @@ export function Step5ReviewAndSubmit({
     setIsConfirmModalOpen(false);
     onSubmit();
   };
+
+  useEffect(() => {
+    const mentorIds = additionalMentorIdsKey
+      ? additionalMentorIdsKey.split(",")
+      : [];
+
+    if (mentorIds.length === 0) {
+      setAdditionalMentors([]);
+      return;
+    }
+
+    let isCanceled = false;
+
+    const loadMentors = async () => {
+      const mentors = await Promise.all(
+        mentorIds.map((mentorId) => fetchUserInfo(mentorId).catch(() => null)),
+      );
+
+      if (isCanceled) return;
+      setAdditionalMentors(
+        mentors.filter((mentor): mentor is UserInfo => mentor !== null),
+      );
+    };
+
+    loadMentors();
+
+    return () => {
+      isCanceled = true;
+    };
+  }, [additionalMentorIdsKey]);
+
+  const mentors = [
+    userInfo,
+    ...additionalMentorIds.map((mentorId) => {
+      const mentorInfo = additionalMentors.find(
+        (mentor) => mentor.studentId === mentorId,
+      );
+
+      return (
+        mentorInfo ?? {
+          studentId: mentorId,
+          name: "",
+          department: "",
+          phone: "",
+        }
+      );
+    }),
+  ];
 
   return (
     <div className="flex w-full flex-col gap-12">
@@ -61,6 +121,7 @@ export function Step5ReviewAndSubmit({
 
           <table className="w-full">
             <tbody className="divide-y divide-[#e5e8eb]">
+              <InfoRow label="멘토" value={<MentorList mentors={mentors} />} />
               <InfoRow label="스터디명" value={values.studyName} />
               <InfoRow label="한 줄 설명" value={values.oneLiner} />
               <tr>
@@ -97,9 +158,7 @@ export function Step5ReviewAndSubmit({
               <InfoRow
                 label="면접 여부"
                 value={
-                  values.hasInterview
-                    ? `있음 (${values.interviewDate || "날짜 미정"})`
-                    : "없음"
+                  values.hasInterview ? `있음 (${interviewDateLabel})` : "없음"
                 }
               />
             </tbody>
@@ -214,7 +273,16 @@ export function Step5ReviewAndSubmit({
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function MentorList({ mentors }: { mentors: UserInfo[] }) {
+  const mentorNames = mentors
+    .map((mentor) => mentor.name.trim())
+    .filter(Boolean)
+    .join(", ");
+
+  return <span>{mentorNames}</span>;
+}
+
+function InfoRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <tr>
       <td className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
