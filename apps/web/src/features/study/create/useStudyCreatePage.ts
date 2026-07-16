@@ -57,6 +57,7 @@ const STEP_FIELDS: Record<number, (keyof StudyOpenValues)[]> = {
 export function useStudyCreatePage() {
   const router = useRouter();
   const hasCheckedDraftRef = useRef(false);
+  const isSubmittedRef = useRef(false);
   const [step, setStep] = useState<StudyCreateStep>(1);
   const { userInfo, isLoading } = useStudyCreateData();
 
@@ -90,6 +91,25 @@ export function useStudyCreatePage() {
     });
   }, [form]);
 
+  // 작성 중 세션 만료 등으로 페이지를 벗어나도 내용이 남도록 자동 임시저장 (디바운스)
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const subscription = form.watch(() => {
+      if (!form.formState.isDirty) return;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (isSubmittedRef.current) return;
+        saveStudyCreateDraft(form.getValues());
+      }, 1000);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      if (timer) clearTimeout(timer);
+    };
+  }, [form]);
+
   const goToNext = useCallback(async () => {
     const fields = STEP_FIELDS[step];
     if (fields && fields.length > 0) {
@@ -120,11 +140,22 @@ export function useStudyCreatePage() {
     try {
       const values = form.getValues();
       await submitStudyCreate(values);
+      isSubmittedRef.current = true;
       clearStudyCreateDraft();
       setStep(6);
     } catch (err) {
       console.error("Failed to submit study:", err);
-      alert("제출에 실패했습니다. 다시 시도해주세요.");
+      // 실패 시 작성 내용을 보존해 재로그인/재시도 후 이어서 작성할 수 있게 한다
+      saveStudyCreateDraft(form.getValues());
+
+      const { HTTPError } = await import("ky");
+      if (err instanceof HTTPError && err.response.status === 401) {
+        alert(
+          "세션이 만료되어 제출하지 못했습니다.\n작성 내용은 임시저장되었으니 다시 로그인한 뒤 이어서 작성해주세요.",
+        );
+        return;
+      }
+      alert("제출에 실패했습니다. 작성 내용은 임시저장되었습니다.");
     }
   }, [form]);
 

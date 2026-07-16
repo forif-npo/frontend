@@ -166,7 +166,10 @@ const result = NextAuth({
   trustHost: true, // Trust the host to avoid issues with custom domains
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60, // 1 hour
+    // 개설 신청 등 긴 폼 작성 중 세션 쿠키가 만료되면 요청이 무토큰으로 나가
+    // unauthorized가 발생하므로 세션은 길게 유지하고, 백엔드 access token(1시간)은
+    // jwt 콜백의 refresh 로테이션으로 갱신한다.
+    maxAge: 60 * 60 * 24, // 24 hours
   },
   callbacks: {
     async signIn({ account, profile }) {

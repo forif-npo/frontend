@@ -11,7 +11,8 @@ const DIFFICULTY_MAP: Record<string, number> = {
   SEMI_HARD: 4,
   HARD: 5,
 };
-const REFERENCE_FILE_FIELD_NAME = "reference_files";
+// 백엔드 @RequestPart(value = "references")와 파트 이름이 일치해야 파일이 매칭된다
+const REFERENCE_FILE_FIELD_NAME = "references";
 
 function isFileValue(
   value: StudyOpenValues["references"][number]["value"],
