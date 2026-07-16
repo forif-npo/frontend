@@ -8,7 +8,6 @@ const publicRoutes = [
   "/terms",
   "/privacy",
   "/directions",
-  "/studies/create",
   "/signup/complete",
   "/support/faqs",
   "/support/announcements",
@@ -27,6 +26,8 @@ const publicParamsList = [
   "/club",
   "/hackathon/archive",
 ];
+// public 경로 하위여도 로그인이 필요한 경로 (예: 스터디 상세는 공개, 지원 폼은 로그인 필요)
+const protectedSubRoutes = [/^\/studies\/detail\/[^/]+\/apply(?:\/|$)/];
 const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
 
@@ -42,9 +43,12 @@ const authMiddleware = auth((req) => {
   const isPublicRoute =
     publicRoutes.includes(pathname) ||
     pathname.startsWith("/support/announcements/");
-  const isPublicParamsRoute = publicParamsList
-    .map((v) => pathname.startsWith(v))
-    .some(Boolean);
+  const isProtectedSubRoute = protectedSubRoutes.some((pattern) =>
+    pattern.test(pathname),
+  );
+  const isPublicParamsRoute =
+    !isProtectedSubRoute &&
+    publicParamsList.map((v) => pathname.startsWith(v)).some(Boolean);
 
   if (isApiAuthRoute) return;
   if (isLoggedIn && isAuthRoute) {
