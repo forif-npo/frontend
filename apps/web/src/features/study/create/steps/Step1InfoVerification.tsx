@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { HTTPError } from "ky";
 import { CriticalAlert, TextInput } from "@ui/components/client";
 import { GuideCheckIcon, SearchIcon } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";
@@ -223,10 +224,18 @@ export function Step1InfoVerification({
       form.setValue("mentorIds", [Number(searchedMentorInfo.studentId)], {
         shouldDirty: true,
       });
-    } catch {
-      setAlertMessage("해당 학번의 사용자를 찾을 수 없습니다.");
+    } catch (error) {
       setMentorInfo(null);
       form.setValue("mentorIds", [], { shouldDirty: true });
+
+      // 세션 만료(401)를 "사용자 없음"으로 안내하지 않도록 구분한다
+      if (error instanceof HTTPError && error.response.status === 401) {
+        setAlertMessage("세션이 만료되었습니다. 다시 로그인 후 검색해주세요.");
+        return;
+      }
+      setAlertMessage(
+        "해당 학번으로 가입된 부원을 찾을 수 없습니다. 함께하는 멘토도 홈페이지 회원가입을 마쳐야 검색할 수 있습니다.",
+      );
     }
   };
 
