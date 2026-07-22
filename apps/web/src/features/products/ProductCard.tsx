@@ -5,7 +5,7 @@ import {
   PRODUCT_STATUS_BADGE_VARIANTS,
   PRODUCT_STATUS_LABELS,
 } from "./constants";
-import type { ProductSummary } from "./types";
+import type { ProductSummary } from "./api";
 import { ProductThumbnail } from "./ProductThumbnail";
 
 interface ProductCardProps {

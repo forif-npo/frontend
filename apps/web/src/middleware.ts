@@ -28,7 +28,10 @@ const publicParamsList = [
   "/products",
 ];
 // public 경로 하위여도 로그인이 필요한 경로 (예: 스터디 상세는 공개, 지원 폼은 로그인 필요)
-const protectedSubRoutes = [/^\/studies\/detail\/[^/]+\/apply(?:\/|$)/];
+const protectedSubRoutes = [
+  /^\/studies\/detail\/[^/]+\/apply(?:\/|$)/,
+  /^\/products\/apply(?:\/|$)/,
+];
 const authRoutes = ["/signin", "/signup"];
 const apiAuthPrefix = "/api/auth";
 

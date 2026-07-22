@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Body, Heading } from "@ui/components/server";
 import { PRODUCT_SOURCE_FILTERS, type ProductSourceFilter } from "./constants";
-import type { ProductSummary } from "./types";
+import type { ProductSummary } from "./api";
 import { ProductCard } from "./ProductCard";
 
 interface ProductsViewProps {

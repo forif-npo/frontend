@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Badge, Body, Heading } from "@ui/components/server";
 import { Button, CriticalAlert } from "@ui/components/client";
-import type {
-  ProductApplication,
-  ProductApplicationStatus,
-  ProductSourceType,
-} from "./types";
-import { MOCK_MY_APPLICATIONS } from "./mock";
+import { handleApiError } from "@core/utils/api-client";
 import {
-  loadLocalApplications,
-  saveLocalApplication,
-} from "./application-storage";
+  applyProduct,
+  getMyProductApplications,
+  type ProductApplication,
+  type ProductApplicationStatus,
+  type ProductSourceType,
+} from "./api";
 
 const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,18})[a-z0-9]$/;
 const RESERVED_SLUGS = new Set([
@@ -22,6 +20,7 @@ const RESERVED_SLUGS = new Set([
   "admin",
   "mail",
   "apply",
+  "applications",
   "products",
   "forif",
 ]);
@@ -91,21 +90,34 @@ function FormField({
 
 export function ProductApplyView() {
   const [applications, setApplications] = useState<ProductApplication[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  useEffect(() => {
-    // 목업: 로컬 신청 + 평가 결과 예시(승인/반려)를 함께 보여준다
-    setApplications([...loadLocalApplications(), ...MOCK_MY_APPLICATIONS]);
+  const fetchApplications = useCallback(async () => {
+    try {
+      setApplications(await getMyProductApplications());
+    } catch {
+      // 세션 만료 등 — apiClient 공통 처리(onUnauthorized)에 위임
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchApplications();
+  }, [fetchApplications]);
 
   const update = (patch: Partial<FormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
     setErrorMessage(null);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+
     if (
       !form.name.trim() ||
       !form.oneLiner.trim() ||
@@ -116,47 +128,38 @@ export function ProductApplyView() {
     }
 
     const slug = form.slug.trim().toLowerCase();
-    if (!SLUG_PATTERN.test(slug)) {
+    if (!SLUG_PATTERN.test(slug) || RESERVED_SLUGS.has(slug)) {
       setErrorMessage(
-        "서브도메인은 영소문자·숫자·하이픈으로 3~20자여야 하며, 하이픈으로 시작하거나 끝날 수 없습니다.",
-      );
-      return;
-    }
-    if (RESERVED_SLUGS.has(slug)) {
-      setErrorMessage(`"${slug}"는 사용할 수 없는 예약된 이름입니다.`);
-      return;
-    }
-    if (applications.some((app) => app.slug === slug)) {
-      setErrorMessage(
-        `"${slug}"는 이미 신청했거나 사용 중인 서브도메인입니다.`,
+        "서브도메인은 영소문자·숫자·하이픈으로 3~20자여야 하며, 예약된 이름은 사용할 수 없습니다.",
       );
       return;
     }
 
-    const application: ProductApplication = {
-      application_id: `local-${slug}-${Date.now()}`,
-      name: form.name.trim(),
-      slug,
-      one_liner: form.oneLiner.trim(),
-      description: form.description.trim(),
-      source_type: form.sourceType,
-      service_url: form.serviceUrl.trim() || null,
-      github_url: form.githubUrl.trim() || null,
-      tech_stack: form.techStack
-        .split(",")
-        .map((tech) => tech.trim())
-        .filter(Boolean),
-      status: "PENDING",
-      reject_reason: null,
-      applied_at: new Date().toISOString().slice(0, 10),
-    };
+    setIsSubmitting(true);
+    try {
+      await applyProduct({
+        name: form.name.trim(),
+        slug,
+        one_liner: form.oneLiner.trim(),
+        description: form.description.trim(),
+        source_type: form.sourceType,
+        service_url: form.serviceUrl.trim() || null,
+        github_url: form.githubUrl.trim() || null,
+        tech_stack: form.techStack
+          .split(",")
+          .map((tech) => tech.trim())
+          .filter(Boolean),
+      });
 
-    // TODO(FOR-105): POST /api/v1/products/applications 로 교체
-    saveLocalApplication(application);
-    setApplications((prev) => [application, ...prev]);
-    setForm(EMPTY_FORM);
-    setIsSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+      setForm(EMPTY_FORM);
+      setIsSubmitted(true);
+      await fetchApplications();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      setErrorMessage(await handleApiError(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -187,7 +190,11 @@ export function ProductApplyView() {
         <Heading size="xs" className="text-text-bolder mb-4">
           내 신청 현황
         </Heading>
-        {applications.length === 0 ? (
+        {isLoading ? (
+          <p className="text-text-subtle py-6 text-center text-[15px]">
+            불러오는 중...
+          </p>
+        ) : applications.length === 0 ? (
           <p className="text-text-subtle py-6 text-center text-[15px]">
             아직 신청한 프로덕트가 없습니다.
           </p>
@@ -350,9 +357,10 @@ export function ProductApplyView() {
             variant="primary"
             size="large"
             onClick={handleSubmit}
+            disabled={isSubmitting}
             className="h-14 min-w-[140px]"
           >
-            신청하기
+            {isSubmitting ? "신청 중..." : "신청하기"}
           </Button>
         </div>
       </section>

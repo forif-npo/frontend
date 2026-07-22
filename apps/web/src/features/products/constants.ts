@@ -1,4 +1,4 @@
-import type { ProductSourceType, ProductStatus } from "./types";
+import type { ProductSourceType, ProductStatus } from "./api";
 
 export const PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
   LIVE: "서비스 중",

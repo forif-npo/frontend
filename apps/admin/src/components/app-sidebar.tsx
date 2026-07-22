@@ -28,6 +28,7 @@ import {
   Home,
   LayoutGrid,
   MessageSquare,
+  Rocket,
   Settings,
   ShieldCheck,
   UserCog,
@@ -50,6 +51,7 @@ const menuItems = {
       { title: "스터디 목록", url: "/studies", icon: BookOpen },
       { title: "스터디 승인", url: "/studies/approval", icon: CheckCircle },
       { title: "인증서 발급", url: "/certificates", icon: Award },
+      { title: "프로덕트", url: "/products", icon: Rocket },
     ],
   },
   memberManagement: {
