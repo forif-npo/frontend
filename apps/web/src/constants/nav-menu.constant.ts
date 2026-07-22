@@ -46,6 +46,21 @@ export const NAV_MENUS: NavMenu[] = [
     ],
   },
   {
+    label: "프로덕트",
+    title: "FORIF 부원들이 만들어 서비스 중인 프로덕트를 소개합니다.",
+    href: "/products",
+    subMenus: [
+      {
+        label: "프로덕트 목록",
+        href: "/products",
+      },
+      {
+        label: "프로덕트 등록 신청",
+        href: "/products/apply",
+      },
+    ],
+  },
+  {
     label: "해커톤",
     title: "FORIF 해커톤에 참가하고, 역대 결과물을 확인하세요.",
     href: "/hackathon",
