@@ -92,8 +92,10 @@ export function ProductsAdminView() {
   const [filter, setFilter] = useState<StatusFilter>("ALL");
 
   const [detailTarget, setDetailTarget] = useState<AdminProduct | null>(null);
+  const [approveTarget, setApproveTarget] = useState<AdminProduct | null>(null);
   const [rejectTarget, setRejectTarget] = useState<AdminProduct | null>(null);
   const [rejectReason, setRejectReason] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<AdminProduct | null>(null);
 
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
@@ -141,18 +143,12 @@ export function ProductsAdminView() {
     }
   };
 
-  const handleApprove = (product: AdminProduct) => {
-    if (
-      !confirm(
-        `"${product.name}" 신청을 승인할까요?\n승인 즉시 프로덕트 목록에 게시됩니다.`,
-      )
-    ) {
-      return;
-    }
-    runAction(
-      () => approveProduct(product.product_id),
-      "승인되었습니다. 프로덕트 목록에 게시됩니다.",
-    );
+  const handleApprove = () => {
+    if (!approveTarget) return;
+    runAction(async () => {
+      await approveProduct(approveTarget.product_id);
+      setApproveTarget(null);
+    }, "승인되었습니다. 프로덕트 목록에 게시됩니다.");
   };
 
   const handleReject = () => {
@@ -175,15 +171,12 @@ export function ProductsAdminView() {
     );
   };
 
-  const handleDelete = (product: AdminProduct) => {
-    if (
-      !confirm(
-        `"${product.name}" 프로덕트를 삭제할까요?\n삭제하면 목록과 신청 이력에서 모두 사라집니다.`,
-      )
-    ) {
-      return;
-    }
-    runAction(() => deleteProduct(product.product_id), "삭제되었습니다.");
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    runAction(async () => {
+      await deleteProduct(deleteTarget.product_id);
+      setDeleteTarget(null);
+    }, "삭제되었습니다.");
   };
 
   return (
@@ -280,7 +273,7 @@ export function ProductsAdminView() {
                         <>
                           <Button
                             size="sm"
-                            onClick={() => handleApprove(product)}
+                            onClick={() => setApproveTarget(product)}
                             disabled={isSubmitting}
                           >
                             승인
@@ -322,7 +315,7 @@ export function ProductsAdminView() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleDelete(product)}
+                        onClick={() => setDeleteTarget(product)}
                         disabled={isSubmitting}
                       >
                         삭제
@@ -433,8 +426,8 @@ export function ProductsAdminView() {
                   </Button>
                   <Button
                     onClick={() => {
+                      setApproveTarget(detailTarget);
                       setDetailTarget(null);
-                      handleApprove(detailTarget);
                     }}
                     disabled={isSubmitting}
                   >
@@ -492,6 +485,77 @@ export function ProductsAdminView() {
               disabled={isSubmitting}
             >
               반려하기
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 승인 확인 다이얼로그 */}
+      <Dialog
+        open={approveTarget !== null}
+        onOpenChange={(open) => !open && setApproveTarget(null)}
+      >
+        <DialogContent className="sm:max-w-[440px]">
+          <DialogHeader>
+            <DialogTitle>신청 승인</DialogTitle>
+            <DialogDescription>
+              &quot;{approveTarget?.name}&quot; 신청을 승인할까요?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded-md bg-emerald-50 p-3 text-sm text-emerald-900">
+            승인하면 <span className="font-semibold">서비스 중</span> 상태로
+            전환되어 홈페이지 프로덕트 목록에 바로 게시되고,{" "}
+            <span className="font-semibold">
+              {approveTarget?.slug}.forif.org
+            </span>{" "}
+            서브도메인 연결 대상이 됩니다.
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setApproveTarget(null)}
+              disabled={isSubmitting}
+            >
+              취소
+            </Button>
+            <Button onClick={handleApprove} disabled={isSubmitting}>
+              {isSubmitting ? "처리 중..." : "승인하기"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 삭제 확인 다이얼로그 */}
+      <Dialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+      >
+        <DialogContent className="sm:max-w-[440px]">
+          <DialogHeader>
+            <DialogTitle>프로덕트 삭제</DialogTitle>
+            <DialogDescription>
+              &quot;{deleteTarget?.name}&quot; ({deleteTarget?.slug}.forif.org)
+              프로덕트를 삭제할까요?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded-md bg-red-50 p-3 text-sm text-red-900">
+            삭제하면 프로덕트 목록과 신청 이력에서 모두 사라지며 되돌릴 수
+            없습니다.
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteTarget(null)}
+              disabled={isSubmitting}
+            >
+              취소
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "처리 중..." : "삭제하기"}
             </Button>
           </DialogFooter>
         </DialogContent>
