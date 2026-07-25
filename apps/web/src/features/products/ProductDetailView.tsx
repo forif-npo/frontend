@@ -12,8 +12,15 @@ interface ProductDetailViewProps {
   product: ProductDetail;
 }
 
+/** 링크 주입 방지: http(s) URL만 렌더링한다 */
+function safeExternalUrl(url: string | null): string | null {
+  return url && /^https?:\/\//i.test(url) ? url : null;
+}
+
 export function ProductDetailView({ product }: ProductDetailViewProps) {
-  const isVisitable = product.status === "LIVE" && !!product.service_url;
+  const serviceUrl = safeExternalUrl(product.service_url);
+  const githubUrl = safeExternalUrl(product.github_url);
+  const isVisitable = product.status === "LIVE" && !!serviceUrl;
 
   return (
     <div className="mx-auto max-w-[900px] px-4 py-10 sm:px-6 md:py-16">
@@ -74,9 +81,9 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
       {/* 액션 버튼 */}
       <div className="mb-10 flex flex-wrap gap-3">
-        {isVisitable && product.service_url && (
+        {isVisitable && serviceUrl && (
           <a
-            href={product.service_url}
+            href={serviceUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex h-12 items-center justify-center rounded-[8px] bg-[#0b50d0] px-6 text-[17px] font-bold text-white transition-colors hover:bg-[#063a74]"
@@ -84,9 +91,9 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
             방문하기
           </a>
         )}
-        {product.github_url && (
+        {githubUrl && (
           <a
-            href={product.github_url}
+            href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex h-12 items-center justify-center rounded-[8px] border border-[#cdd1d5] px-6 text-[17px] font-bold text-[#052b57] transition-colors hover:bg-[#f4f5f6]"

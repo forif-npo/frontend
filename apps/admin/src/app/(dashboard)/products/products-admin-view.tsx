@@ -44,6 +44,11 @@ import {
 
 type StatusFilter = "ALL" | "PENDING" | "PUBLISHED" | "REJECTED";
 
+/** 링크 주입 방지: http(s) URL만 렌더링한다 */
+function safeExternalUrl(url: string | null): string | null {
+  return url && /^https?:\/\//i.test(url) ? url : null;
+}
+
 const STATUS_LABELS: Record<string, string> = {
   PENDING: "검토 대기",
   REJECTED: "반려",
@@ -379,9 +384,9 @@ export function ProductsAdminView() {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  {detailTarget.service_url && (
+                  {safeExternalUrl(detailTarget.service_url) && (
                     <a
-                      href={detailTarget.service_url}
+                      href={safeExternalUrl(detailTarget.service_url)!}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary inline-flex items-center gap-1 hover:underline"
@@ -390,9 +395,9 @@ export function ProductsAdminView() {
                       배포된 서비스
                     </a>
                   )}
-                  {detailTarget.github_url && (
+                  {safeExternalUrl(detailTarget.github_url) && (
                     <a
-                      href={detailTarget.github_url}
+                      href={safeExternalUrl(detailTarget.github_url)!}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary inline-flex items-center gap-1 hover:underline"
