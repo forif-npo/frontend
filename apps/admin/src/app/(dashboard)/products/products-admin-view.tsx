@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +41,7 @@ import {
   type AdminProduct,
   type ProductStatus,
 } from "@core/products/api";
+import { ProductEditDialog } from "./product-edit-dialog";
 
 type StatusFilter = "ALL" | "PENDING" | "PUBLISHED" | "REJECTED";
 
@@ -101,6 +102,7 @@ export function ProductsAdminView() {
   const [rejectTarget, setRejectTarget] = useState<AdminProduct | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<AdminProduct | null>(null);
+  const [editTarget, setEditTarget] = useState<AdminProduct | null>(null);
 
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
@@ -320,6 +322,15 @@ export function ProductsAdminView() {
                       <Button
                         size="sm"
                         variant="outline"
+                        onClick={() => setEditTarget(product)}
+                        disabled={isSubmitting}
+                      >
+                        <Pencil className="mr-1 h-3.5 w-3.5" />
+                        수정
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => setDeleteTarget(product)}
                         disabled={isSubmitting}
                       >
@@ -354,6 +365,15 @@ export function ProductsAdminView() {
               </DialogHeader>
 
               <div className="flex flex-col gap-4 text-sm">
+                {detailTarget.thumbnail_url && (
+                  // next/image는 admin의 remotePatterns 제약이 있어 img를 쓴다
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={detailTarget.thumbnail_url}
+                    alt={`${detailTarget.name} 대표 이미지`}
+                    className="h-[160px] w-full rounded-md border object-cover"
+                  />
+                )}
                 <div>
                   <p className="mb-1 font-semibold">한 줄 소개</p>
                   <p>{detailTarget.one_liner}</p>
@@ -529,6 +549,13 @@ export function ProductsAdminView() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* 수정 다이얼로그 */}
+      <ProductEditDialog
+        product={editTarget}
+        onClose={() => setEditTarget(null)}
+        onSaved={fetchProducts}
+      />
 
       {/* 삭제 확인 다이얼로그 */}
       <Dialog
