@@ -79,7 +79,7 @@ function statusBadge(status: string) {
     case "REJECTED":
       return <Badge variant="destructive">반려</Badge>;
     case "LIVE":
-      return <Badge className="bg-emerald-600 text-white">서비스 중</Badge>;
+      return <Badge className="bg-emerald-600 text-white">운영 중</Badge>;
     case "DEV":
       return <Badge className="bg-blue-600 text-white">개발 중</Badge>;
     case "PAUSED":

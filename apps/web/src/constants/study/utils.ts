@@ -89,9 +89,15 @@ export function getSemesterLabel(year: number, semester: number): string {
 }
 
 /**
- * 학기 옵션 생성 (최근 N개 학기)
+ * 학기 옵션 생성 (from에서 과거로 N개)
+ *
+ * from은 운영진이 지정한 활동 학기를 넘겨야 한다(useActiveSemester).
+ * 생략하면 날짜 계산값을 쓰는데, 이는 활동 학기와 어긋날 수 있다.
  */
-export function getRecentSemesters(count: number = 5): Array<{
+export function getRecentSemesters(
+  count: number = 5,
+  from?: { year: number; semester: number },
+): Array<{
   value: { year: number; semester: number };
   label: string;
 }> {
@@ -99,7 +105,7 @@ export function getRecentSemesters(count: number = 5): Array<{
     value: { year: number; semester: number };
     label: string;
   }> = [];
-  const current = getCurrentSemester();
+  const current = from ?? getCurrentSemester();
   let year = current.year;
   let sem = current.semester;
 
