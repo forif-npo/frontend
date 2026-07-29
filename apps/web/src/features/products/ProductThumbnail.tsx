@@ -1,4 +1,8 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
+import { safeImageSrc } from "@/utils/image";
 
 interface ProductThumbnailProps {
   slug: string;
@@ -31,15 +35,20 @@ export function ProductThumbnail({
   thumbnailUrl,
   className = "",
 }: ProductThumbnailProps) {
-  if (thumbnailUrl) {
+  // 업로드된 이미지는 삭제·이동될 수 있으므로 로드 실패 시 그라디언트로 되돌린다
+  const [hasError, setHasError] = useState(false);
+  const validSrc = safeImageSrc(thumbnailUrl);
+
+  if (validSrc && !hasError) {
     return (
       <div className={`relative overflow-hidden bg-[#DFE8F4] ${className}`}>
         <Image
-          src={thumbnailUrl}
+          src={validSrc}
           alt={name}
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onError={() => setHasError(true)}
         />
       </div>
     );
