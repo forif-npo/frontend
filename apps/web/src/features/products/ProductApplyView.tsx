@@ -1,8 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Badge, Body, Heading } from "@ui/components/server";
-import { Button, CriticalAlert } from "@ui/components/client";
+import { Badge, Body, Heading, InfoBox } from "@ui/components/server";
+import {
+  Button,
+  CriticalAlert,
+  TextArea,
+  TextInput,
+} from "@ui/components/client";
 import { handleApiError } from "@core/utils/api-client";
 import {
   applyProduct,
@@ -43,6 +48,8 @@ const STATUS_BADGE_VARIANTS: Record<
 const INPUT_CLASS =
   "rounded-2 border-input-border bg-input-surface text-gray-70 h-14 w-full border px-4 transition duration-150 ease-in-out focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500";
 
+type FieldErrors = Partial<Record<keyof FormState, string>>;
+
 interface FormState {
   name: string;
   slug: string;
@@ -65,26 +72,24 @@ const EMPTY_FORM: FormState = {
   techStack: "",
 };
 
-function FormField({
-  label,
-  required,
-  hint,
+/** 라벨 + 필수 표시 (TextInput의 title과 동일한 형태를 커스텀 레이아웃 필드에 재현) */
+function FieldLabel({
+  htmlFor,
   children,
 }: {
-  label: string;
-  required?: boolean;
-  hint?: string;
+  htmlFor: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-text-basic text-[17px] font-bold leading-[1.5]">
-        {label}
-        {required && <span className="ml-1 text-[#d3302f]">*</span>}
-      </label>
+    <label
+      htmlFor={htmlFor}
+      className="text-text-basic text-[17px] font-bold leading-[1.5]"
+    >
       {children}
-      {hint && <p className="text-text-subtle text-[14px]">{hint}</p>}
-    </div>
+      <span className="text-text-danger ml-0.5" aria-hidden="true">
+        *
+      </span>
+    </label>
   );
 }
 
@@ -93,6 +98,7 @@ export function ProductApplyView() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -112,29 +118,71 @@ export function ProductApplyView() {
 
   const update = (patch: Partial<FormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
+    // 수정한 필드의 오류만 지운다
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      (Object.keys(patch) as (keyof FormState)[]).forEach((key) => {
+        delete next[key];
+      });
+      return next;
+    });
     setErrorMessage(null);
+  };
+
+  /** 필드별 검증 — 오류가 있는 필드만 담아 반환 */
+  const validate = (): FieldErrors => {
+    const errors: FieldErrors = {};
+
+    if (!form.name.trim()) {
+      errors.name = "프로덕트 이름을 입력해주세요.";
+    }
+
+    const slug = form.slug.trim().toLowerCase();
+    if (!slug) {
+      errors.slug = "희망 서브도메인을 입력해주세요.";
+    } else if (!SLUG_PATTERN.test(slug)) {
+      errors.slug =
+        "영소문자·숫자·하이픈 3~20자로, 하이픈으로 시작하거나 끝날 수 없습니다.";
+    } else if (RESERVED_SLUGS.has(slug)) {
+      errors.slug = `"${slug}"는 사용할 수 없는 예약된 주소입니다.`;
+    }
+
+    if (!form.oneLiner.trim()) {
+      errors.oneLiner = "한 줄 소개를 입력해주세요.";
+    }
+    if (!form.description.trim()) {
+      errors.description = "상세 소개를 입력해주세요.";
+    }
+
+    if (
+      form.serviceUrl.trim() &&
+      !/^https?:\/\//i.test(form.serviceUrl.trim())
+    ) {
+      errors.serviceUrl =
+        "http:// 또는 https:// 로 시작하는 주소를 입력해주세요.";
+    }
+    if (form.githubUrl.trim() && !/^https?:\/\//i.test(form.githubUrl.trim())) {
+      errors.githubUrl =
+        "http:// 또는 https:// 로 시작하는 주소를 입력해주세요.";
+    }
+
+    return errors;
   };
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
-    if (
-      !form.name.trim() ||
-      !form.oneLiner.trim() ||
-      !form.description.trim()
-    ) {
-      setErrorMessage("프로덕트 이름, 한 줄 소개, 상세 소개는 필수입니다.");
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setErrorMessage(null);
+      // 첫 오류 필드로 이동
+      document.getElementById(Object.keys(errors)[0]!)?.focus();
       return;
     }
 
     const slug = form.slug.trim().toLowerCase();
-    if (!SLUG_PATTERN.test(slug) || RESERVED_SLUGS.has(slug)) {
-      setErrorMessage(
-        "서브도메인은 영소문자·숫자·하이픈으로 3~20자여야 하며, 예약된 이름은 사용할 수 없습니다.",
-      );
-      return;
-    }
-
+    setFieldErrors({});
     setIsSubmitting(true);
     try {
       await applyProduct({
@@ -156,7 +204,13 @@ export function ProductApplyView() {
       await fetchApplications();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
-      setErrorMessage(await handleApiError(error));
+      const message = await handleApiError(error);
+      // 서브도메인 관련 오류는 해당 입력창 아래에 표시한다
+      if (message.includes("서브도메인")) {
+        setFieldErrors({ slug: message });
+      } else {
+        setErrorMessage(message);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -178,9 +232,15 @@ export function ProductApplyView() {
 
       {isSubmitted && (
         <div className="mb-8">
-          <CriticalAlert
-            text="신청이 접수되었습니다. 운영진 검토 후 결과를 알려드릴게요!"
+          <InfoBox
             variant="success"
+            title="신청이 접수되었습니다"
+            content={
+              <Body size="s" className="text-text-basic">
+                운영진 검토 후 결과를 알려드릴게요. 진행 상황은 아래 &lsquo;내
+                신청 현황&rsquo;에서 확인할 수 있습니다.
+              </Body>
+            }
           />
         </div>
       )}
@@ -246,24 +306,27 @@ export function ProductApplyView() {
           새 프로덕트 신청
         </Heading>
 
-        <FormField label="프로덕트 이름" required>
-          <input
-            className={INPUT_CLASS}
-            value={form.name}
-            onChange={(e) => update({ name: e.target.value })}
-            placeholder="예: Attendly"
-          />
-        </FormField>
-
-        <FormField
-          label="희망 서브도메인"
+        <TextInput
+          id="name"
+          title="프로덕트 이름"
           required
-          hint="영소문자·숫자·하이픈 3~20자. 승인되면 이 주소로 서비스됩니다."
-        >
+          length="full"
+          value={form.name}
+          error={fieldErrors.name}
+          onChange={(e) => update({ name: e.target.value })}
+          placeholder="예: Attendly"
+        />
+
+        {/* 서브도메인은 접미사가 붙는 커스텀 레이아웃이라 오류를 직접 렌더한다 */}
+        <div className="flex flex-col gap-2">
+          <FieldLabel htmlFor="slug">희망 서브도메인</FieldLabel>
           <div className="flex items-center gap-2">
             <input
-              className={INPUT_CLASS}
+              id="slug"
+              className={`${INPUT_CLASS} ${fieldErrors.slug ? "border-input-border-error" : ""}`}
               value={form.slug}
+              aria-invalid={fieldErrors.slug ? "true" : undefined}
+              aria-describedby={fieldErrors.slug ? "slug-error" : undefined}
               onChange={(e) => update({ slug: e.target.value })}
               placeholder="attendly"
             />
@@ -271,31 +334,55 @@ export function ProductApplyView() {
               .forif.org
             </span>
           </div>
-        </FormField>
+          {fieldErrors.slug ? (
+            <p id="slug-error" className="text-text-danger text-[14px]">
+              {fieldErrors.slug}
+            </p>
+          ) : (
+            <p className="text-text-subtle text-[14px]">
+              영소문자·숫자·하이픈 3~20자. 승인되면 이 주소로 서비스됩니다.
+            </p>
+          )}
+        </div>
 
-        <FormField label="한 줄 소개" required>
-          <input
-            className={INPUT_CLASS}
-            value={form.oneLiner}
-            onChange={(e) => update({ oneLiner: e.target.value })}
-            placeholder="서비스를 한 문장으로 소개해주세요"
-          />
-        </FormField>
-
-        <FormField
-          label="상세 소개"
+        <TextInput
+          id="oneLiner"
+          title="한 줄 소개"
           required
-          hint="어떤 문제를 풀고, 누구를 위한 서비스인지 적어주세요."
-        >
+          length="full"
+          value={form.oneLiner}
+          error={fieldErrors.oneLiner}
+          onChange={(e) => update({ oneLiner: e.target.value })}
+          placeholder="서비스를 한 문장으로 소개해주세요"
+        />
+
+        {/* TextArea에는 error prop이 없어 저장소 인라인 패턴으로 표시한다 */}
+        <div className="flex flex-col gap-2">
+          <FieldLabel htmlFor="description">상세 소개</FieldLabel>
           <textarea
-            className={`${INPUT_CLASS} h-40 resize-none py-4`}
+            id="description"
+            className={`${INPUT_CLASS} h-40 resize-none py-4 ${fieldErrors.description ? "border-input-border-error" : ""}`}
             value={form.description}
+            aria-invalid={fieldErrors.description ? "true" : undefined}
+            aria-describedby={
+              fieldErrors.description ? "description-error" : undefined
+            }
             onChange={(e) => update({ description: e.target.value })}
             placeholder="서비스 배경, 주요 기능, 앞으로의 계획 등"
           />
-        </FormField>
+          {fieldErrors.description ? (
+            <p id="description-error" className="text-text-danger text-[14px]">
+              {fieldErrors.description}
+            </p>
+          ) : (
+            <p className="text-text-subtle text-[14px]">
+              어떤 문제를 풀고, 누구를 위한 서비스인지 적어주세요.
+            </p>
+          )}
+        </div>
 
-        <FormField label="출처" required>
+        <div className="flex flex-col gap-2">
+          <FieldLabel htmlFor="sourceType">출처</FieldLabel>
           <div className="flex flex-wrap gap-2">
             {(
               [
@@ -306,6 +393,7 @@ export function ProductApplyView() {
             ).map((option) => (
               <button
                 key={option.value}
+                id={option.value === "STUDY" ? "sourceType" : undefined}
                 type="button"
                 onClick={() => update({ sourceType: option.value })}
                 className={`h-11 rounded-[8px] border px-4 text-[15px] font-bold transition-colors ${
@@ -318,37 +406,38 @@ export function ProductApplyView() {
               </button>
             ))}
           </div>
-        </FormField>
+        </div>
 
-        <FormField
-          label="배포된 서비스 URL"
-          hint="현재 배포 중인 주소가 있으면 검토가 빨라집니다."
-        >
-          <input
-            className={INPUT_CLASS}
-            value={form.serviceUrl}
-            onChange={(e) => update({ serviceUrl: e.target.value })}
-            placeholder="https://..."
-          />
-        </FormField>
+        <TextInput
+          id="serviceUrl"
+          title="배포된 서비스 URL"
+          length="full"
+          value={form.serviceUrl}
+          error={fieldErrors.serviceUrl}
+          helpText="현재 배포 중인 주소가 있으면 검토가 빨라집니다."
+          onChange={(e) => update({ serviceUrl: e.target.value })}
+          placeholder="https://..."
+        />
 
-        <FormField label="GitHub 저장소">
-          <input
-            className={INPUT_CLASS}
-            value={form.githubUrl}
-            onChange={(e) => update({ githubUrl: e.target.value })}
-            placeholder="https://github.com/..."
-          />
-        </FormField>
+        <TextInput
+          id="githubUrl"
+          title="GitHub 저장소"
+          length="full"
+          value={form.githubUrl}
+          error={fieldErrors.githubUrl}
+          onChange={(e) => update({ githubUrl: e.target.value })}
+          placeholder="https://github.com/..."
+        />
 
-        <FormField label="기술 스택" hint="쉼표로 구분해 입력해주세요.">
-          <input
-            className={INPUT_CLASS}
-            value={form.techStack}
-            onChange={(e) => update({ techStack: e.target.value })}
-            placeholder="Next.js, Spring Boot, MySQL"
-          />
-        </FormField>
+        <TextInput
+          id="techStack"
+          title="기술 스택"
+          length="full"
+          value={form.techStack}
+          helpText="쉼표로 구분해 입력해주세요."
+          onChange={(e) => update({ techStack: e.target.value })}
+          placeholder="Next.js, Spring Boot, MySQL"
+        />
 
         {errorMessage && <CriticalAlert text={errorMessage} variant="danger" />}
 
