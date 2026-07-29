@@ -6,6 +6,7 @@ import type {
   StudyUpdateRequest,
 } from "@core/types/api";
 import type { SemesterInfo } from "./types";
+import { getCurrentSemester as fetchActiveSemester } from "@core/semester/api";
 
 export interface AdminStudyDetail {
   id: number;
@@ -26,19 +27,12 @@ export interface AdminStudyDetail {
 }
 
 /**
- * Calculate current academic semester based on date
- * January-June (months 1-6) → semester 1
- * July-December (months 7-12) → semester 2
+ * 현재 활동 학기.
+ * 날짜로 계산하지 않고 운영진이 지정한 값을 서버에서 받는다.
  */
 export async function getCurrentSemester(): Promise<SemesterInfo> {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1; // getMonth() is 0-indexed
-
-  return {
-    year,
-    semester: month <= 6 ? 1 : 2,
-  };
+  const semester = await fetchActiveSemester();
+  return { year: semester.act_year, semester: semester.act_semester };
 }
 
 /**

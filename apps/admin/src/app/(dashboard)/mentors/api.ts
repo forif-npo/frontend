@@ -4,6 +4,7 @@ import type { PaginationInterface } from "@/types/pagination";
 import { paginateLocally } from "@/lib/paginate";
 import {
   buildSemesterEndpoint,
+  getMainSemesterLabels,
   isMainSemester,
   pickNumber,
   pickString,
@@ -60,9 +61,10 @@ function stripSemester({
   };
 }
 
-function filterOtherSemester(content: MentorWithSemester[]) {
+async function filterOtherSemester(content: MentorWithSemester[]) {
+  const mainLabels = await getMainSemesterLabels();
   return content.filter(
-    (item) => !isMainSemester(item.actYear, item.actSemester),
+    (item) => !isMainSemester(mainLabels, item.actYear, item.actSemester),
   );
 }
 
@@ -102,13 +104,11 @@ export async function fetchMentors({
       throw new Error("Invalid API response structure");
     }
 
-    return paginateLocally(
-      filterOtherSemester(response.data.content.map(mapToMentor)).map(
-        stripSemester,
-      ),
-      page,
-      size,
+    const otherSemester = await filterOtherSemester(
+      response.data.content.map(mapToMentor),
     );
+
+    return paginateLocally(otherSemester.map(stripSemester), page, size);
   }
 
   const response = await apiClient

@@ -1,6 +1,7 @@
 import type { RecruitStatus } from "@/types/study";
 import type { BadgeProps } from "@ui/components/server";
 import { DIFFICULTY_OPTIONS, RECRUIT_STATUS_OPTIONS } from "./options";
+import { fallbackSemester } from "@core/semester/api";
 
 /**
  * 요일 변환 함수
@@ -76,14 +77,8 @@ export function getRecruitStatusBadgeVariant(
  * 현재 학기 가져오기
  */
 export function getCurrentSemester(): { year: number; semester: number } {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1;
-
-  // 2월-7월: 1학기, 8월-1월: 2학기
-  const semester = month >= 2 && month <= 7 ? 1 : 2;
-
-  return { year, semester };
+  const { act_year, act_semester } = fallbackSemester();
+  return { year: act_year, semester: act_semester };
 }
 
 /**

@@ -99,7 +99,7 @@ export function MembersView({
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">부원 목록</h1>
         <p className="text-muted-foreground">
-          2018년 1학기부터 2026년 1학기까지의 부원 목록입니다.
+          학기별 부원 목록입니다.
         </p>
       </div>
 

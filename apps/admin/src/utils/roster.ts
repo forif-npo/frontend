@@ -3,18 +3,16 @@
  * (학기 라벨 파싱, 주요 학기 판별, 응답 필드 정규화)
  */
 
+import { loadSemesterOptions } from "@/lib/semester";
+
 /**
  * 주요(정규) 학기 목록. 그 외 학기를 거를 때 사용한다.
+ * 학기 탭에 노출되는 목록과 같은 기준이어야 하므로 서버 활동 학기에서 만든다.
  */
-export const MAIN_SEMESTERS = new Set([
-  "26-1",
-  "25-2",
-  "25-1",
-  "24-2",
-  "24-1",
-  "23-2",
-  "23-1",
-]);
+export async function getMainSemesterLabels(): Promise<Set<string>> {
+  const { recentLabels } = await loadSemesterOptions();
+  return new Set(recentLabels);
+}
 
 /**
  * "25-2" 형태의 학기 라벨을 { year, semester }로 파싱. 형식이 아니면 null.
@@ -51,9 +49,13 @@ export function buildSemesterEndpoint(base: string, semester?: string): string {
 /**
  * act_year / act_semester가 주요 학기에 속하는지 판별.
  */
-export function isMainSemester(year?: number, semester?: number): boolean {
+export function isMainSemester(
+  mainLabels: Set<string>,
+  year?: number,
+  semester?: number,
+): boolean {
   const label = `${String(year ?? 0).slice(2)}-${semester ?? 0}`;
-  return MAIN_SEMESTERS.has(label);
+  return mainLabels.has(label);
 }
 
 /**

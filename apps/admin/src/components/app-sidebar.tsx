@@ -21,6 +21,7 @@ import {
   BookOpen,
   Building2,
   CheckCircle,
+  CalendarRange,
   CircleDollarSign,
   Code2,
   FileText,
@@ -73,6 +74,7 @@ const menuItems = {
     label: "회장단",
     items: [
       { title: "운영진 계정 관리", url: "/admin-accounts", icon: ShieldCheck },
+      { title: "학기 관리", url: "/semester", icon: CalendarRange },
     ],
   },
   postManagement: {

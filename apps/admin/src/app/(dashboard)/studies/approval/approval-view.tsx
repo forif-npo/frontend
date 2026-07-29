@@ -5,7 +5,6 @@ import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import {
-  DEFAULT_SEMESTER_OPTIONS,
   SemesterTabs,
 } from "@/components/list/semester-tabs";
 import { Button } from "@/components/ui/button";
@@ -26,10 +25,6 @@ import { useState } from "react";
 import { approveStudy, rejectStudy } from "../api";
 import { SemesterLabel, Study } from "../types";
 import { approvalColumns } from "./approval-columns";
-
-const APPROVAL_SEMESTER_OPTIONS = DEFAULT_SEMESTER_OPTIONS.filter(
-  (option) => option !== "그 외",
-);
 
 interface ApprovalViewProps {
   initialData: Study[];
@@ -120,7 +115,7 @@ export function ApprovalView({
       <SemesterTabs
         currentSemester={currentSemester}
         onSemesterChange={handleSemesterChange}
-        options={APPROVAL_SEMESTER_OPTIONS}
+        includeEtc={false}
       />
 
       <div className="space-y-4">
