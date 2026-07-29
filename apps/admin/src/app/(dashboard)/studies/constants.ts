@@ -1,9 +1,4 @@
-import { DEFAULT_SEMESTER_OPTIONS } from "@/components/list/semester-tabs";
 import type { StudyEditForm } from "./types";
-
-export const STUDY_SEMESTER_OPTIONS = DEFAULT_SEMESTER_OPTIONS.filter(
-  (option) => option !== "그 외",
-);
 
 export const EMPTY_STUDY_EDIT_FORM: StudyEditForm = {
   study_name: "",

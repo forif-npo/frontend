@@ -4,11 +4,11 @@ import { useEffect } from "react";
 import { Label } from "@ui/components/server";
 import Link from "next/link";
 import { useStudyData } from "@/hooks/study/useStudyData";
-import { getCurrentSemester } from "@/constants/study";
 import { StudyCard } from "@/components/study/ui/StudyCard";
+import { useActiveSemester } from "@/hooks/useActiveSemester";
 
 export function StudySection() {
-  const { year, semester } = getCurrentSemester();
+  const { act_year: year, act_semester: semester } = useActiveSemester();
   const { studies, loading, refetch } = useStudyData();
 
   useEffect(() => {

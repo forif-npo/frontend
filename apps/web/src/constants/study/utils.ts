@@ -1,6 +1,7 @@
 import type { RecruitStatus } from "@/types/study";
 import type { BadgeProps } from "@ui/components/server";
 import { DIFFICULTY_OPTIONS, RECRUIT_STATUS_OPTIONS } from "./options";
+import { fallbackSemester } from "@core/semester/api";
 
 /**
  * 요일 변환 함수
@@ -76,14 +77,8 @@ export function getRecruitStatusBadgeVariant(
  * 현재 학기 가져오기
  */
 export function getCurrentSemester(): { year: number; semester: number } {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1;
-
-  // 2월-7월: 1학기, 8월-1월: 2학기
-  const semester = month >= 2 && month <= 7 ? 1 : 2;
-
-  return { year, semester };
+  const { act_year, act_semester } = fallbackSemester();
+  return { year: act_year, semester: act_semester };
 }
 
 /**
@@ -94,9 +89,15 @@ export function getSemesterLabel(year: number, semester: number): string {
 }
 
 /**
- * 학기 옵션 생성 (최근 N개 학기)
+ * 학기 옵션 생성 (from에서 과거로 N개)
+ *
+ * from은 운영진이 지정한 활동 학기를 넘겨야 한다(useActiveSemester).
+ * 생략하면 날짜 계산값을 쓰는데, 이는 활동 학기와 어긋날 수 있다.
  */
-export function getRecentSemesters(count: number = 5): Array<{
+export function getRecentSemesters(
+  count: number = 5,
+  from?: { year: number; semester: number },
+): Array<{
   value: { year: number; semester: number };
   label: string;
 }> {
@@ -104,7 +105,7 @@ export function getRecentSemesters(count: number = 5): Array<{
     value: { year: number; semester: number };
     label: string;
   }> = [];
-  const current = getCurrentSemester();
+  const current = from ?? getCurrentSemester();
   let year = current.year;
   let sem = current.semester;
 

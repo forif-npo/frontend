@@ -1,6 +1,7 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import { Operator, OperatorListResult, OperatorSemesterLabel } from "./types";
+import { loadSemesterOptions } from "@/lib/semester";
 
 interface ForifTeamItem {
   [key: string]: unknown;
@@ -16,15 +17,11 @@ interface FetchOperatorsParams {
 
 type ForifTeamListResponse = ForifTeamItem[];
 
-const MAIN_SEMESTERS = new Set([
-  "26-1",
-  "25-2",
-  "25-1",
-  "24-2",
-  "24-1",
-  "23-2",
-  "23-1",
-]);
+/** "그 외" 판정 기준은 학기 탭에 노출되는 목록과 동일하게 서버에서 받는다 */
+async function getMainSemesterLabels(): Promise<Set<string>> {
+  const { recentLabels } = await loadSemesterOptions();
+  return new Set(recentLabels);
+}
 
 function getOperatorsEndpoint(semester: OperatorSemesterLabel): string {
   if (semester === "전체" || semester === "그 외") {
@@ -142,6 +139,20 @@ export async function updateOperator(
 /**
  * 운영진 이력 삭제 (DELETE /api/v1/admin/forif-team/{id})
  */
+export interface AddOperatorBody {
+  user_id: number;
+  /** 미지정 시 현재 활동 학기 */
+  act_year?: number;
+  act_semester?: number;
+  club_department: string;
+  user_title?: string;
+}
+
+/** 운영진 명단에 추가 (회장단 전용) */
+export async function addOperator(body: AddOperatorBody): Promise<void> {
+  await apiClient.post("api/v1/admin/forif-team", { json: body }).json();
+}
+
 export async function deleteOperator(forifTeamId: number): Promise<void> {
   await apiClient
     .delete(`api/v1/admin/forif-team/${forifTeamId}`)
@@ -172,9 +183,10 @@ export async function fetchOperators({
   let content = response.data.map(mapToOperator).sort(compareSemesterDesc);
 
   if (semester === "그 외") {
+    const mainSemesters = await getMainSemesterLabels();
     content = content.filter((item) => {
       const label = `${String(item.actYear).slice(2)}-${item.actSemester}`;
-      return !MAIN_SEMESTERS.has(label);
+      return !mainSemesters.has(label);
     });
   }
 

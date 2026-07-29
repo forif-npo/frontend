@@ -1,7 +1,7 @@
 import type { ProductSourceType, ProductStatus } from "./api";
 
 export const PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
-  LIVE: "서비스 중",
+  LIVE: "운영 중",
   DEV: "개발 중",
   PAUSED: "운영 중단",
   RETIRED: "서비스 종료",

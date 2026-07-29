@@ -19,12 +19,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
-import { Download } from "lucide-react";
+import { Download, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
+import { AddOperatorDialog } from "./add-operator-dialog";
 import { deleteOperator, updateOperator } from "./api";
 import { columns } from "./columns";
 import { Operator, OperatorSemesterLabel } from "./types";
@@ -70,6 +71,7 @@ export function OperatorsView({
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Operator | null>(null);
   const [editForm, setEditForm] = useState<OperatorEditForm>({
     title: "",
@@ -190,7 +192,8 @@ export function OperatorsView({
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">운영진 목록</h1>
         <p className="text-muted-foreground">
-          2018년 1학기부터 2026년 1학기까지의 운영진 목록입니다.
+          학기별 운영진 명단입니다. 명단은 학기가 바뀌어도 이어지지 않으므로,
+          학기를 전환한 뒤 이번 학기 운영진을 새로 추가해주세요.
         </p>
       </div>
 
@@ -199,15 +202,27 @@ export function OperatorsView({
           currentSemester={currentSemester}
           onSemesterChange={handleSemesterChange}
         />
-        <Button
-          variant="outline"
-          className="gap-2"
-          onClick={handleDownloadExcel}
-        >
-          <Download className="h-4 w-4" />
-          엑셀로 다운로드
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button className="gap-2" onClick={() => setIsAddOpen(true)}>
+            <UserPlus className="h-4 w-4" />
+            운영진 추가
+          </Button>
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={handleDownloadExcel}
+          >
+            <Download className="h-4 w-4" />
+            엑셀로 다운로드
+          </Button>
+        </div>
       </div>
+
+      <AddOperatorDialog
+        open={isAddOpen}
+        onOpenChange={setIsAddOpen}
+        onAdded={() => router.refresh()}
+      />
 
       <div className="space-y-4">
         <SearchBar

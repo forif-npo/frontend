@@ -46,16 +46,16 @@ export const NAV_MENUS: NavMenu[] = [
     ],
   },
   {
-    label: "프로덕트",
-    title: "FORIF 부원들이 만들어 서비스 중인 프로덕트를 소개합니다.",
+    label: "서비스",
+    title: "FORIF 부원들이 만들어 운영 중인 서비스를 소개합니다.",
     href: "/products",
     subMenus: [
       {
-        label: "프로덕트 목록",
+        label: "서비스 목록",
         href: "/products",
       },
       {
-        label: "프로덕트 등록 신청",
+        label: "서비스 등록 신청",
         href: "/products/apply",
       },
     ],

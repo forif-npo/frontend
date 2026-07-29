@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function SignInForm() {
-  const [userId, setUserId] = useState("2024111111");
-  const [password, setPassword] = useState("12345678");
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -46,7 +46,7 @@ export function SignInForm() {
         id="id"
         length="full"
         title="아이디"
-        placeholder="2023063845"
+        placeholder="2024111111"
         value={userId}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setUserId(e.target.value)

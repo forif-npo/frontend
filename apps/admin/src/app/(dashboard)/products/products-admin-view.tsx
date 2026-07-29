@@ -53,7 +53,7 @@ function safeExternalUrl(url: string | null): string | null {
 const STATUS_LABELS: Record<string, string> = {
   PENDING: "검토 대기",
   REJECTED: "반려",
-  LIVE: "서비스 중",
+  LIVE: "운영 중",
   DEV: "개발 중",
   PAUSED: "운영 중단",
   RETIRED: "서비스 종료",
@@ -79,7 +79,7 @@ function statusBadge(status: string) {
     case "REJECTED":
       return <Badge variant="destructive">반려</Badge>;
     case "LIVE":
-      return <Badge className="bg-emerald-600 text-white">서비스 중</Badge>;
+      return <Badge className="bg-emerald-600 text-white">운영 중</Badge>;
     case "DEV":
       return <Badge className="bg-blue-600 text-white">개발 중</Badge>;
     case "PAUSED":
@@ -155,7 +155,7 @@ export function ProductsAdminView() {
     runAction(async () => {
       await approveProduct(approveTarget.product_id);
       setApproveTarget(null);
-    }, "승인되었습니다. 프로덕트 목록에 게시됩니다.");
+    }, "승인되었습니다. 서비스 목록에 게시됩니다.");
   };
 
   const handleReject = () => {
@@ -189,9 +189,9 @@ export function ProductsAdminView() {
   return (
     <div className="flex flex-col gap-4 p-6">
       <div>
-        <h1 className="text-2xl font-bold">프로덕트 관리</h1>
+        <h1 className="text-2xl font-bold">서비스 관리</h1>
         <p className="text-muted-foreground text-sm">
-          부원들의 프로덕트 등록 신청을 검토하고 게시 상태를 관리합니다.
+          부원들의 서비스 등록 신청을 검토하고 게시 상태를 관리합니다.
           {pendingCount > 0 && (
             <span className="ml-2 font-semibold text-amber-600">
               검토 대기 {pendingCount}건
@@ -217,7 +217,7 @@ export function ProductsAdminView() {
           <TableHeader>
             <TableRow>
               <TableHead>상태</TableHead>
-              <TableHead>프로덕트</TableHead>
+              <TableHead>서비스</TableHead>
               <TableHead>서브도메인</TableHead>
               <TableHead>출처</TableHead>
               <TableHead>신청자</TableHead>
@@ -241,7 +241,7 @@ export function ProductsAdminView() {
                   colSpan={7}
                   className="text-muted-foreground h-24 text-center"
                 >
-                  해당하는 프로덕트가 없습니다.
+                  해당하는 서비스가 없습니다.
                 </TableCell>
               </TableRow>
             ) : (
@@ -528,8 +528,8 @@ export function ProductsAdminView() {
             </DialogDescription>
           </DialogHeader>
           <div className="rounded-md bg-emerald-50 p-3 text-sm text-emerald-900">
-            승인하면 <span className="font-semibold">서비스 중</span> 상태로
-            전환되어 홈페이지 프로덕트 목록에 바로 게시되고,{" "}
+            승인하면 <span className="font-semibold">운영 중</span> 상태로
+            전환되어 홈페이지 서비스 목록에 바로 게시되고,{" "}
             <span className="font-semibold">
               {approveTarget?.slug}.forif.org
             </span>{" "}
@@ -564,14 +564,14 @@ export function ProductsAdminView() {
       >
         <DialogContent className="sm:max-w-[440px]">
           <DialogHeader>
-            <DialogTitle>프로덕트 삭제</DialogTitle>
+            <DialogTitle>서비스 삭제</DialogTitle>
             <DialogDescription>
               &quot;{deleteTarget?.name}&quot; ({deleteTarget?.slug}.forif.org)
-              프로덕트를 삭제할까요?
+              서비스를 삭제할까요?
             </DialogDescription>
           </DialogHeader>
           <div className="rounded-md bg-red-50 p-3 text-sm text-red-900">
-            삭제하면 프로덕트 목록과 신청 이력에서 모두 사라지며 되돌릴 수
+            삭제하면 서비스 목록과 신청 이력에서 모두 사라지며 되돌릴 수
             없습니다.
           </div>
           <DialogFooter>

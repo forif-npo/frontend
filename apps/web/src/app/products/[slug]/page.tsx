@@ -10,10 +10,10 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
-  if (!product) return { title: "프로덕트 | FORIF" };
+  if (!product) return { title: "서비스 | FORIF" };
 
   return {
-    title: `${product.name} | FORIF 프로덕트`,
+    title: `${product.name} | FORIF 서비스`,
     description: product.one_liner,
   };
 }

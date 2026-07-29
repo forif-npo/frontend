@@ -134,7 +134,7 @@ export function ProductApplyView() {
     const errors: FieldErrors = {};
 
     if (!form.name.trim()) {
-      errors.name = "프로덕트 이름을 입력해주세요.";
+      errors.name = "서비스 이름을 입력해주세요.";
     }
 
     const slug = form.slug.trim().toLowerCase();
@@ -221,12 +221,12 @@ export function ProductApplyView() {
       {/* 헤더 */}
       <div className="mb-10 flex flex-col gap-3">
         <Heading size="l" className="text-text-bolder">
-          프로덕트 등록 신청
+          서비스 등록 신청
         </Heading>
         <Body size="l" className="text-text-basic">
           직접 만든 서비스를 신청하면 운영진 검토 후{" "}
           <span className="font-bold">서브도메인(이름.forif.org)</span>과 함께
-          프로덕트 목록에 소개됩니다.
+          목록에 소개됩니다.
         </Body>
       </div>
 
@@ -256,7 +256,7 @@ export function ProductApplyView() {
           </p>
         ) : applications.length === 0 ? (
           <p className="text-text-subtle py-6 text-center text-[15px]">
-            아직 신청한 프로덕트가 없습니다.
+            아직 신청한 서비스가 없습니다.
           </p>
         ) : (
           <ul className="flex flex-col gap-3">
@@ -291,7 +291,7 @@ export function ProductApplyView() {
                   )}
                 {application.status === "APPROVED" && (
                   <p className="text-[14px] text-[#1e7b47]">
-                    프로덕트 목록에 게시되었습니다.
+                    서비스 목록에 게시되었습니다.
                   </p>
                 )}
               </li>
@@ -303,12 +303,12 @@ export function ProductApplyView() {
       {/* 신청 폼 */}
       <section className="rounded-3 flex flex-col gap-6 border border-[#b1b8be] bg-white p-5 sm:p-10">
         <Heading size="xs" className="text-text-bolder">
-          새 프로덕트 신청
+          새 서비스 신청
         </Heading>
 
         <TextInput
           id="name"
-          title="프로덕트 이름"
+          title="서비스 이름"
           required
           length="full"
           value={form.name}
@@ -340,7 +340,7 @@ export function ProductApplyView() {
             </p>
           ) : (
             <p className="text-text-subtle text-[14px]">
-              영소문자·숫자·하이픈 3~20자. 승인되면 이 주소로 서비스됩니다.
+              영소문자·숫자·하이픈 3~20자. 승인되면 이 주소로 공개됩니다.
             </p>
           )}
         </div>

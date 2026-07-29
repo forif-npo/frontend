@@ -7,6 +7,7 @@ import { Select } from "@ui/components/client";
 import { Badge, Breadcrumb } from "@ui/components/server";
 import Image from "next/image";
 import { safeImageSrc } from "@/utils/image";
+import { getCurrentSemester, type Semester } from "@core/semester/api";
 
 interface TeamMember {
   id: number;
@@ -23,23 +24,19 @@ interface TeamMember {
   graduate_year: number | null;
 }
 
-const DEFAULT_YEAR = 2026;
-const DEFAULT_SEMESTER = 1;
-const LATEST_YEAR = 2026;
 const EARLIEST_YEAR = 2018;
 const DEFAULT_PROFILE_IMAGE_SRC = "/forif-circle.svg";
 
-const YEAR_OPTIONS = Array.from(
-  { length: LATEST_YEAR - EARLIEST_YEAR + 1 },
-  (_, i) => {
-    const year = LATEST_YEAR - i;
+/** 선택 가능한 연도는 활동 학기(서버 기준)까지만 노출한다 */
+const buildYearOptions = (latestYear: number) =>
+  Array.from({ length: Math.max(latestYear - EARLIEST_YEAR + 1, 1) }, (_, i) => {
+    const year = latestYear - i;
 
     return {
       value: String(year),
       label: `${year}년`,
     };
-  },
-);
+  });
 
 const SEMESTER_OPTIONS = [
   { value: "1", label: "1학기" },
@@ -56,12 +53,23 @@ const getTitlePriority = (title: string | null) =>
   title ? (TITLE_PRIORITY[title] ?? 4) : 4;
 
 export default function TeamPage() {
-  const [year, setYear] = useState(DEFAULT_YEAR);
-  const [semester, setSemester] = useState(DEFAULT_SEMESTER);
+  // 활동 학기를 받아오기 전에는 조회하지 않는다 (없는 학기를 먼저 보여주지 않기 위함)
+  const [active, setActive] = useState<Semester | null>(null);
+  const [year, setYear] = useState<number | null>(null);
+  const [semester, setSemester] = useState<number | null>(null);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    getCurrentSemester().then((current) => {
+      setActive(current);
+      setYear(current.act_year);
+      setSemester(current.act_semester);
+    });
+  }, []);
+
   const fetchTeam = useCallback(async () => {
+    if (year === null || semester === null) return;
     setLoading(true);
     try {
       const res = await apiClient
@@ -108,15 +116,17 @@ export default function TeamPage() {
           <Select
             id="team-year"
             size="sm"
-            value={String(year)}
+            value={year === null ? "" : String(year)}
             onChange={(v) => setYear(Number(v))}
             placeholder="년도"
-            options={YEAR_OPTIONS}
+            options={buildYearOptions(
+              active?.act_year ?? new Date().getFullYear(),
+            )}
           />
           <Select
             id="team-semester"
             size="sm"
-            value={String(semester)}
+            value={semester === null ? "" : String(semester)}
             onChange={(v) => setSemester(Number(v))}
             placeholder="학기"
             options={SEMESTER_OPTIONS}

@@ -11,7 +11,7 @@ interface ProductThumbnailProps {
   className?: string;
 }
 
-/** 썸네일이 없는 프로덕트에 slug 기반 고정 그라디언트를 보여준다 */
+/** 썸네일이 없는 서비스에 slug 기반 고정 그라디언트를 보여준다 */
 const GRADIENTS = [
   "from-[#0b50d0] to-[#4f8ef7]",
   "from-[#063a74] to-[#0b50d0]",

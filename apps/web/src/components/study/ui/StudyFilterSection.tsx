@@ -1,5 +1,6 @@
 "use client";
 import { getRecentSemesters, getSemesterLabel } from "@/constants/study";
+import { useActiveSemester } from "@/hooks/useActiveSemester";
 import { ResetIcon, XCircleGrayIcon } from "@repo/assets/icons/krds";
 import { SelectBox } from "@ui/components/client";
 import clsx from "clsx";
@@ -100,7 +101,17 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
   variant = "default",
   className,
 }) => {
-  const semesters = getRecentSemesters(5);
+  // 학기 옵션은 운영진이 지정한 활동 학기를 기준으로 만든다.
+  // 날짜로 계산하면 전환 직후 새 학기가 목록에 없어 스터디를 못 찾는다.
+  const activeSemester = useActiveSemester();
+  const semesters = React.useMemo(
+    () =>
+      getRecentSemesters(5, {
+        year: activeSemester.act_year,
+        semester: activeSemester.act_semester,
+      }),
+    [activeSemester.act_year, activeSemester.act_semester],
+  );
   const isCompact = variant === "compact";
 
   const filterTags = React.useMemo(

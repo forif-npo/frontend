@@ -21,7 +21,7 @@ import { deleteStudy, fetchStudyDetail, updateStudy } from "./api";
 import { columns } from "./columns";
 import { StudyDeleteDialog } from "./components/StudyDeleteDialog";
 import { StudyEditDialog } from "./components/StudyEditDialog";
-import { EMPTY_STUDY_EDIT_FORM, STUDY_SEMESTER_OPTIONS } from "./constants";
+import { EMPTY_STUDY_EDIT_FORM } from "./constants";
 import { parseOptionalNumber, toStudyEditForm } from "./form-utils";
 import { SemesterLabel, Study, StudyEditForm } from "./types";
 
@@ -283,7 +283,7 @@ export function StudiesView({
         <SemesterTabs
           currentSemester={currentSemester}
           onSemesterChange={handleSemesterChange}
-          options={STUDY_SEMESTER_OPTIONS}
+          includeEtc={false}
         />
         <Button
           variant="outline"
