@@ -90,7 +90,7 @@ export function AddOperatorDialog({
             <Input
               id="operator-user-id"
               value={form.userId}
-              placeholder="예: 2024012345"
+              placeholder="예: 2024111111"
               onChange={(e) => setForm({ ...form, userId: e.target.value })}
             />
           </div>
