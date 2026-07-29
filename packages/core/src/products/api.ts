@@ -2,7 +2,7 @@ import type { ApiResponse } from "../types/api";
 import { apiClient } from "../utils/api-client";
 
 /**
- * 프로덕트 쇼케이스 API (FOR-105)
+ * 서비스 쇼케이스 API (FOR-105)
  */
 
 export type ProductStatus = "LIVE" | "DEV" | "PAUSED" | "RETIRED";

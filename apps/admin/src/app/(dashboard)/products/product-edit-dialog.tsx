@@ -73,7 +73,7 @@ export function ProductEditDialog({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 다이얼로그가 열릴 때마다 대상 프로덕트 값으로 초기화
+  // 다이얼로그가 열릴 때마다 대상 서비스 값으로 초기화
   useEffect(() => {
     if (!product) return;
     setForm(toForm(product));
@@ -188,7 +188,7 @@ export function ProductEditDialog({
       if (thumbnailFile) {
         await uploadProductThumbnail(product.product_id, thumbnailFile);
       }
-      toast.success("프로덕트 정보가 수정되었습니다.");
+      toast.success("서비스 정보가 수정되었습니다.");
       await onSaved();
       onClose();
     } catch (error) {
@@ -204,7 +204,7 @@ export function ProductEditDialog({
         {product && (
           <>
             <DialogHeader>
-              <DialogTitle>프로덕트 수정</DialogTitle>
+              <DialogTitle>서비스 수정</DialogTitle>
               <DialogDescription>
                 {product.slug}.forif.org · 수정 내용은 홈페이지에 바로
                 반영됩니다.

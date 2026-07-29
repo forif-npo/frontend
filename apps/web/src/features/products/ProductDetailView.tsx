@@ -29,7 +29,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
         href="/products"
         className="text-text-subtle mb-6 inline-flex items-center gap-1 text-[15px] hover:underline"
       >
-        ← 프로덕트 목록
+        ← 서비스 목록
       </Link>
 
       {/* 히어로 */}

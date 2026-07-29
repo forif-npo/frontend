@@ -1,5 +1,5 @@
 /**
- * 프로덕트 API — 공통 모듈(@core/products/api) 재노출.
+ * 서비스 API — 공통 모듈(@core/products/api) 재노출.
  * 페이지/컴포넌트는 이 파일을 통해 사용한다.
  */
 export {
