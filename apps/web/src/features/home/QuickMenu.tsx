@@ -2,8 +2,6 @@
 
 import { FaqIcon } from "@repo/assets/icons/krds";
 import {
-  ArrowLeft,
-  ArrowRight,
   BarChart3,
   BookMarked,
   CalendarDays,
@@ -12,7 +10,7 @@ import {
   HeartPulse,
   MapPin,
 } from "@repo/assets/icons/lucide";
-import { CarouselIndicators } from "@ui/components/client/Carousel";
+import { CarouselArrow, CarouselIndicators } from "@ui/components/client";
 import { Label } from "@ui/components/server";
 import Link from "next/link";
 import type { ComponentType, SVGProps } from "react";
@@ -64,11 +62,11 @@ export function QuickMenu() {
   const [currentPage, setCurrentPage] = useState(0);
 
   const handlePrev = () => {
-    setCurrentPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
+    setCurrentPage((prev) => Math.max(0, prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentPage((prev) => (prev === totalPages - 1 ? 0 : prev + 1));
+    setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
   };
 
   const visibleItems = QUICK_MENU_ITEMS.slice(
@@ -86,13 +84,13 @@ export function QuickMenu() {
 
       <div className="flex flex-col items-center gap-6">
         <div className="flex w-full items-center gap-4">
-          <button
+          <CarouselArrow
             onClick={handlePrev}
-            className="border-border-gray-light bg-surface-white hover:bg-surface-white-subtler hidden shrink-0 cursor-pointer items-center justify-center rounded-full border p-2 md:flex"
-            aria-label="이전"
-          >
-            <ArrowLeft className="text-text-basic" size={24} />
-          </button>
+            title="이전"
+            disabled={currentPage === 0}
+            isHidden={currentPage === 0}
+            className="hidden md:flex"
+          />
 
           <div className="grid min-w-0 flex-1 grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-8">
             {visibleItems.map((item) => (
@@ -117,13 +115,14 @@ export function QuickMenu() {
             ))}
           </div>
 
-          <button
+          <CarouselArrow
             onClick={handleNext}
-            className="border-border-gray-light bg-surface-white hover:bg-surface-white-subtler hidden shrink-0 cursor-pointer items-center justify-center rounded-full border p-2 md:flex"
-            aria-label="다음"
-          >
-            <ArrowRight className="text-text-basic" size={24} />
-          </button>
+            title="다음"
+            disabled={currentPage === totalPages - 1}
+            isHidden={currentPage === totalPages - 1}
+            align="right"
+            className="hidden md:flex"
+          />
         </div>
 
         <CarouselIndicators

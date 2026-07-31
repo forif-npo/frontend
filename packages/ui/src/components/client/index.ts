@@ -1,7 +1,7 @@
 export { Accordion } from "./Accordion";
 export { Button } from "./Button";
 export { Calendar } from "./Calendar";
-export { Carousel } from "./Carousel";
+export { Carousel, CarouselArrow, CarouselIndicators } from "./Carousel";
 export { Checkbox } from "./Checkbox";
 export { CriticalAlert } from "./CriticalAlert";
 export { Disclosure } from "./Disclosure";
