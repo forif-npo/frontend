@@ -1,4 +1,8 @@
-import { InstagramIcon, KakaotalkIcon } from "@repo/assets/icons/krds";
+import {
+  ChannelTalkIcon,
+  InstagramIcon,
+  KakaotalkIcon,
+} from "@repo/assets/icons/krds";
 import { ChevronRight, Github } from "@repo/assets/icons/lucide";
 import { Body, Link } from "@ui/components/server";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
@@ -37,13 +41,21 @@ export function Footer() {
           </a>
 
           <a
+            href={FORIF_EXTERNAL_LINKS.channelTalk}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="FORIF 채널톡"
+          >
+            <ChannelTalkIcon width={36} height={36} />
+          </a>
+
+          <a
             href={FORIF_EXTERNAL_LINKS.instagram}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="FORIF Instagram"
-            className="border-border-gray-light rounded-full border p-2"
           >
-            <InstagramIcon width={24} height={24} />
+            <InstagramIcon width={36} height={36} />
           </a>
 
           <a
