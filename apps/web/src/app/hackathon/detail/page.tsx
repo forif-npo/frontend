@@ -33,6 +33,7 @@ export default function HackathonDetailPage() {
     teams,
     myTeam,
     submissions,
+    participantCount,
     loading: dataLoading,
     error: dataError,
     refetch,
@@ -252,7 +253,10 @@ export default function HackathonDetailPage() {
         <EndedMain
           hackathon={hackathon}
           submissionCount={submissions.length}
-          awardCount={0}
+          participantCount={
+            participantCount ??
+            teams.reduce((count, team) => count + team.member_count, 0)
+          }
         />
       )}
     </main>

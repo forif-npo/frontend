@@ -9,13 +9,13 @@ import { InfoRow, Panel, PanelHeader } from "./shared";
 interface EndedMainProps {
   hackathon: Hackathon;
   submissionCount: number;
-  awardCount: number;
+  participantCount: number;
 }
 
 export function EndedMain({
   hackathon,
   submissionCount,
-  awardCount,
+  participantCount,
 }: EndedMainProps) {
   return (
     <section className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_320px]">
@@ -40,7 +40,7 @@ export function EndedMain({
         </Heading>
         <InfoRow label="해커톤" value={hackathon.title} />
         <InfoRow label="제출작" value={`${submissionCount}개`} />
-        <InfoRow label="수상팀" value={`${awardCount}팀`} />
+        <InfoRow label="참가 인원" value={`${participantCount}명`} />
       </Panel>
     </section>
   );

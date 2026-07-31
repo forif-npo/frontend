@@ -1,6 +1,7 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import type {
+  ArchiveHackathonDetail,
   CreateTeamRequest,
   Criterion,
   Evaluation,
@@ -21,6 +22,7 @@ interface UseHackathonDataReturn {
   teams: Team[];
   myTeam: Team | null;
   submissions: Submission[];
+  participantCount: number | null;
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
@@ -62,6 +64,7 @@ export const useHackathonData = (
   const [teams, setTeams] = useState<Team[]>([]);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [participantCount, setParticipantCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,6 +85,19 @@ export const useHackathonData = (
       setHackathon(h);
 
       if (!h) return;
+
+      if (h.status === "ENDED") {
+        try {
+          const archiveRes = await apiClient
+            .get(`api/v1/archive/hackathons/${hackathonId}`)
+            .json<ApiResponse<ArchiveHackathonDetail>>();
+          setParticipantCount(archiveRes.data?.participant_count ?? null);
+        } catch {
+          setParticipantCount(null);
+        }
+      } else {
+        setParticipantCount(null);
+      }
 
       // 참가 상태 조회 (실패 가능 - 미참가자)
       let myParticipant: Participant | null = null;
@@ -334,6 +350,7 @@ export const useHackathonData = (
     teams,
     myTeam,
     submissions,
+    participantCount,
     loading,
     error,
     refetch: fetchData,
