@@ -2,7 +2,6 @@ import { CTASection } from "@/features/home/CTASection";
 import { HackathonSection } from "@/features/home/HackathonSection";
 import { NewsSection } from "@/features/home/NewsSection";
 import { QuickMenu } from "@/features/home/QuickMenu";
-import { ServiceSection } from "@/features/home/ServiceSection";
 import { StudySection } from "@/features/home/StudySection";
 import { CriticalAlert } from "@repo/ui/components/client";
 import { Button, Carousel } from "@ui/components/client";
@@ -99,11 +98,6 @@ export default async function Page() {
         {/* NewsSection */}
         <section className="w-full">
           <NewsSection />
-        </section>
-
-        {/* ServiceSection */}
-        <section className="w-full">
-          <ServiceSection />
         </section>
 
         {/* CTASection */}
