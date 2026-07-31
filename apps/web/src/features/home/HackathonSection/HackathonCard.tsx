@@ -1,4 +1,3 @@
-import { ArrowRight } from "@repo/assets/icons/lucide";
 import { Body, Label } from "@ui/components/server";
 import type { Submission } from "@core/types/hackathon";
 import Image from "next/image";
@@ -17,7 +16,7 @@ export function HackathonCard({
   return (
     <Link
       href={`/hackathon/archive/submissions/${submission.submission_id}`}
-      className="group flex flex-col gap-6"
+      className="group flex h-full flex-col gap-6"
     >
       <div
         className="rounded-3 relative h-[196px] w-full overflow-hidden"
@@ -50,11 +49,10 @@ export function HackathonCard({
           {submission.summary}
         </Body>
       </div>
-      <div className="inline-flex items-center gap-1">
+      <div className="mt-auto inline-flex self-end">
         <Label size="m" className="text-text-basic group-hover:underline">
           자세히 보기
         </Label>
-        <ArrowRight size={20} className="text-text-basic" />
       </div>
     </Link>
   );

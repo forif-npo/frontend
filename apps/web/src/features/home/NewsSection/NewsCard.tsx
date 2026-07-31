@@ -47,9 +47,8 @@ export function NewsCard({ news }: NewsCardProps) {
 
         {/* CTA */}
         <div>
-          <span className="text-text-basic inline-flex items-center gap-1 text-[17px] group-hover:underline">
+          <span className="text-text-basic text-[17px] group-hover:underline">
             {ctaLabel}
-            <span aria-hidden="true">→</span>
           </span>
         </div>
       </div>

@@ -47,6 +47,7 @@ export default async function Page() {
             text="매 학기 어떤 스터디가 열리는지 궁금하신가요?"
             title="스터디 목록으로 이동"
             detailText="자세히 보기"
+            showArrow={false}
             className="shadow-sm"
           />
         </section>

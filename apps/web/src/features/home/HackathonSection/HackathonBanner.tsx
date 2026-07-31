@@ -1,4 +1,3 @@
-import { ArrowRight } from "@repo/assets/icons/lucide";
 import { Body, Heading, Label } from "@ui/components/server";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,14 +13,10 @@ export function HackathonBanner() {
         <Body size="m" className="text-text-subtle">
           {hackathonBanner.description}
         </Body>
-        <Link
-          href={hackathonBanner.ctaLink}
-          className="inline-flex items-center gap-1"
-        >
+        <Link href={hackathonBanner.ctaLink} className="inline-flex self-end">
           <Label size="m" className="text-text-basic hover:underline">
             {hackathonBanner.ctaText}
           </Label>
-          <ArrowRight size={20} className="text-text-basic" />
         </Link>
       </div>
       <div className="flex justify-end">

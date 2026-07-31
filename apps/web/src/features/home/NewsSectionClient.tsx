@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Label } from "@ui/components/server";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
 import type { NewsItem } from "./NewsSection";
@@ -76,10 +77,11 @@ export function NewsSectionClient({ announcements, mediumPosts }: Props) {
           href={moreHref}
           target={isExternal ? "_blank" : undefined}
           rel={isExternal ? "noopener noreferrer" : undefined}
-          className="text-text-subtle hover:text-text-basic mb-2 flex items-center gap-1 text-[15px] leading-[1.5]"
+          className="group mb-2 flex shrink-0"
         >
-          더보기
-          <span className="text-[18px] font-light">+</span>
+          <Label size="m" className="text-text-basic group-hover:underline">
+            더보기 +
+          </Label>
         </Link>
       </div>
 
