@@ -7,6 +7,7 @@ import {
   getRecruitStatusBadgeVariant,
   getRecruitStatusLabel,
   getWeekDayLabel,
+  NUMERIC_DIFFICULTY_LABELS,
 } from "@/constants/study";
 import type { Study, RecruitStatus, StudyDifficulty } from "@/types/study";
 import { Button } from "@ui/components/client";
@@ -42,6 +43,8 @@ interface MyPageVariantProps {
     week_day: number;
     location: string;
     certificate_issued: boolean;
+    tags: string[];
+    difficulty: number;
   };
   semesterLabel: string;
   isCurrent?: boolean;
@@ -86,6 +89,12 @@ function SemesterBadge({ label }: { label: string }) {
       size="small"
     />
   );
+}
+
+function getNumericDifficultyBadgeVariant(difficulty: number) {
+  if (difficulty <= 2) return "success" as const;
+  if (difficulty === 3) return "warning" as const;
+  return "danger" as const;
 }
 
 // ── Component ───────────────────────────────────────────────────────
@@ -274,6 +283,8 @@ export function StudyCard(props: StudyCardProps) {
 
   // ── MyPage variant ──
   const mentorNames = getMentorText(primaryMentor, secondaryMentor, "·");
+  const tagLabels = getVisibleTagLabels(study.tags);
+  const difficultyLabel = NUMERIC_DIFFICULTY_LABELS[study.difficulty] ?? "보통";
 
   return (
     <div className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border">
@@ -287,8 +298,29 @@ export function StudyCard(props: StudyCardProps) {
       </div>
       <div className="flex flex-col gap-4 px-8 py-8">
         <div className="flex flex-col gap-4">
-          <div>
+          <div className="flex flex-wrap gap-2">
+            <Badge
+              label={props.isCurrent ? "수강 중" : "수료"}
+              variant={props.isCurrent ? "success" : "disabled"}
+              appearance="solid-pastel"
+              size="small"
+            />
             <SemesterBadge label={props.semesterLabel} />
+            {tagLabels.slice(0, 2).map((tag) => (
+              <Badge
+                key={tag}
+                label={tag}
+                variant="info"
+                appearance="solid-pastel"
+                size="small"
+              />
+            ))}
+            <Badge
+              label={difficultyLabel}
+              variant={getNumericDifficultyBadgeVariant(study.difficulty)}
+              appearance="solid-pastel"
+              size="small"
+            />
           </div>
           <p className="text-text-basic whitespace-nowrap text-[17px] font-bold leading-[1.5]">
             {studyName}

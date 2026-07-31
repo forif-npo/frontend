@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Select } from "@ui/components/client";
 import { StudyCard } from "@/components/study/ui/StudyCard";
+import {
+  StudySortControl,
+  type StudySortOrder,
+} from "@/components/study/ui/StudySortControl";
 import type { UserStudiesResponse, StudyDetail } from "@core/my-page/api";
 
 interface StudySectionProps {
@@ -10,7 +13,7 @@ interface StudySectionProps {
 }
 
 export function StudySection({ studiesData }: StudySectionProps) {
-  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [sortOrder, setSortOrder] = useState<StudySortOrder>("latest");
   const [isPending, startTransition] = useTransition();
 
   type FlatStudy = StudyDetail & {
@@ -21,7 +24,7 @@ export function StudySection({ studiesData }: StudySectionProps) {
   const sortedSemesters = [...studiesData].sort((a, b) => {
     const aKey = a.year * 10 + a.semester;
     const bKey = b.year * 10 + b.semester;
-    return sortOrder === "newest" ? bKey - aKey : aKey - bKey;
+    return sortOrder === "latest" ? bKey - aKey : aKey - bKey;
   });
 
   const sortedStudies: FlatStudy[] = sortedSemesters.flatMap((sem) =>
@@ -55,19 +58,7 @@ export function StudySection({ studiesData }: StudySectionProps) {
           스터디 <span className="text-[#0b50d0]">{totalCount}</span>개
         </p>
 
-        <Select
-          id="study-sort"
-          variant="text"
-          size="sm"
-          value={sortOrder}
-          onChange={(v) => setSortOrder(v as "newest" | "oldest")}
-          placeholder="정렬기준"
-          dropdownAlign="right"
-          options={[
-            { value: "newest", label: "최신순" },
-            { value: "oldest", label: "오래된순" },
-          ]}
-        />
+        <StudySortControl value={sortOrder} onChange={setSortOrder} />
       </div>
 
       {/* Study List */}

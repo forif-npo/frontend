@@ -31,11 +31,19 @@ export function MyPageClient({
   const tabs = [
     {
       label: "수강한 스터디",
-      content: <StudySection studiesData={studiesData} />,
+      content: (
+        <div className="pt-6 md:pt-8">
+          <StudySection studiesData={studiesData} />
+        </div>
+      ),
     },
     {
       label: "지원서 보기",
-      content: <ApplicationSection applicationsData={applicationsData} />,
+      content: (
+        <div className="pt-6 md:pt-8">
+          <ApplicationSection applicationsData={applicationsData} />
+        </div>
+      ),
     },
   ];
 

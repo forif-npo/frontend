@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Select } from "@ui/components/client/Select";
+import { StudySortControl } from "./StudySortControl";
 
 interface StudyResultsHeaderProps {
   totalItems: number;
@@ -51,21 +52,7 @@ export const StudyResultsHeader: React.FC<StudyResultsHeaderProps> = ({
 
         <div className="bg-divider-gray h-4 w-[1px]" />
 
-        <div className="flex items-center gap-3">
-          <p className="text-body-medium whitespace-nowrap font-bold">
-            정렬기준
-          </p>
-          <div className="flex items-center font-normal">
-            <button
-              onClick={() =>
-                onSortChange(sortBy === "latest" ? "oldest" : "latest")
-              }
-              className="bg-action-secondary border-border-transparency rounded-small2 text-label-medium text-text-basic border px-2 py-0"
-            >
-              {sortBy === "latest" ? "최신순" : "오래된순"}
-            </button>
-          </div>
-        </div>
+        <StudySortControl value={sortBy} onChange={onSortChange} />
       </div>
     </div>
   );
