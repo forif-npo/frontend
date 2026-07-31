@@ -86,7 +86,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
             href={serviceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-12 items-center justify-center rounded-[8px] bg-[#0b50d0] px-6 text-[17px] font-bold text-white transition-colors hover:bg-[#063a74]"
+            className="bg-button-primary-fill hover:bg-button-primary-fill-hover text-text-inverse-static flex h-12 items-center justify-center rounded-[8px] px-6 text-[17px] font-bold transition-colors"
           >
             방문하기
           </a>
@@ -96,7 +96,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-12 items-center justify-center rounded-[8px] border border-[#cdd1d5] px-6 text-[17px] font-bold text-[#052b57] transition-colors hover:bg-[#f4f5f6]"
+            className="border-button-secondary-border bg-button-secondary-fill hover:bg-button-secondary-fill-hover text-text-primary flex h-12 items-center justify-center rounded-[8px] border px-6 text-[17px] font-bold transition-colors"
           >
             GitHub
           </a>
@@ -122,7 +122,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
           {product.tech_stack.map((tech) => (
             <span
               key={tech}
-              className="rounded-[6px] bg-[#ecf2fe] px-3 py-1.5 text-[15px] font-medium text-[#0b50d0]"
+              className="bg-surface-primary-subtler text-text-primary rounded-[6px] px-3 py-1.5 text-[15px] font-medium"
             >
               {tech}
             </span>

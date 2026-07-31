@@ -41,7 +41,7 @@ const STATUS_BADGE_VARIANTS: Record<
 };
 
 const INPUT_CLASS =
-  "rounded-2 border-input-border bg-input-surface text-gray-70 h-14 w-full border px-4 transition duration-150 ease-in-out focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500";
+  "rounded-2 border-input-border bg-input-surface text-gray-70 h-14 w-full border px-4 transition duration-150 ease-in-out focus:border-border-primary focus:outline-none focus:ring-1 focus:ring-primary-50";
 
 type FieldErrors = Partial<Record<keyof FormState, string>>;
 
@@ -267,13 +267,13 @@ export function ProductApplyView() {
                 </p>
                 {application.status === "REJECTED" &&
                   application.reject_reason && (
-                    <div className="rounded-2 mt-1 bg-[#fdefec] p-3 text-[14px] leading-[1.6] text-[#8a1f1c]">
+                    <div className="bg-surface-danger-subtler text-text-danger rounded-2 mt-1 p-3 text-[14px] leading-[1.6]">
                       <span className="font-bold">반려 사유</span> ·{" "}
                       {application.reject_reason}
                     </div>
                   )}
                 {application.status === "APPROVED" && (
-                  <p className="text-[14px] text-[#1e7b47]">
+                  <p className="text-text-success text-[14px]">
                     서비스 목록에 게시되었습니다.
                   </p>
                 )}
@@ -284,7 +284,7 @@ export function ProductApplyView() {
       </section>
 
       {/* 신청 폼 */}
-      <section className="rounded-3 flex flex-col gap-6 border border-[#b1b8be] bg-white p-5 sm:p-10">
+      <section className="border-gray-30 bg-surface-white rounded-3 flex flex-col gap-6 border p-5 sm:p-10">
         <Heading size="xs" className="text-text-bolder">
           새 서비스 신청
         </Heading>
@@ -381,8 +381,8 @@ export function ProductApplyView() {
                 onClick={() => update({ sourceType: option.value })}
                 className={`h-11 rounded-[8px] border px-4 text-[15px] font-bold transition-colors ${
                   form.sourceType === option.value
-                    ? "border-[#0b50d0] bg-[#ecf2fe] text-[#0b50d0]"
-                    : "border-[#cdd1d5] text-[#464c53] hover:bg-[#f4f5f6]"
+                    ? "border-border-primary bg-surface-primary-subtler text-text-primary"
+                    : "border-gray-20 text-gray-70 hover:bg-gray-5"
                 }`}
               >
                 {option.label}
