@@ -40,6 +40,7 @@ interface Step2StudyOverviewProps {
   onPrevious: () => void;
   onNext: () => void;
   onSaveDraft: () => void;
+  onPreview: () => void;
 }
 
 export function Step2StudyOverview({
@@ -47,6 +48,7 @@ export function Step2StudyOverview({
   onPrevious,
   onNext,
   onSaveDraft,
+  onPreview,
 }: Step2StudyOverviewProps) {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const {
@@ -402,7 +404,7 @@ export function Step2StudyOverview({
         onPrevious={onPrevious}
         onNext={onNext}
         leadingActions={[
-          { label: "미리보기", onClick: () => {}, variant: "secondary" },
+          { label: "미리보기", onClick: onPreview, variant: "secondary" },
         ]}
       />
 

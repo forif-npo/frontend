@@ -11,7 +11,7 @@ interface ModalProps {
   children: React.ReactNode;
   showCancelButton?: boolean;
   showCloseIcon?: boolean;
-  width?: "m" | "l";
+  width?: "m" | "l" | "xl";
   closeOnOverlayClick?: boolean;
   cancelLabel?: string;
   confirmLabel?: string;
@@ -85,6 +85,7 @@ export const Modal: React.FC<ModalProps> = ({
   const modalWidthStyle = {
     m: "w-[560px]",
     l: "w-[850px]",
+    xl: "w-[1040px]",
   }[width];
 
   return (

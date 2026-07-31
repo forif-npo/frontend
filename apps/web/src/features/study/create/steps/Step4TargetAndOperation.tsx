@@ -13,6 +13,7 @@ interface Step4TargetAndOperationProps {
   onPrevious: () => void;
   onNext: () => void;
   onSaveDraft: () => void;
+  onPreview: () => void;
 }
 
 export function Step4TargetAndOperation({
@@ -20,6 +21,7 @@ export function Step4TargetAndOperation({
   onPrevious,
   onNext,
   onSaveDraft,
+  onPreview,
 }: Step4TargetAndOperationProps) {
   const {
     register,
@@ -106,7 +108,7 @@ export function Step4TargetAndOperation({
         onPrevious={onPrevious}
         onNext={onNext}
         leadingActions={[
-          { label: "미리보기", onClick: () => {}, variant: "secondary" },
+          { label: "미리보기", onClick: onPreview, variant: "secondary" },
         ]}
       />
     </div>

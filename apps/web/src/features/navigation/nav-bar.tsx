@@ -1,8 +1,8 @@
 "use client";
-import { CloseIcon, LoginIcon } from "@repo/assets/icons/krds";
+import { CloseIcon } from "@repo/assets/icons/krds";
 import { Home, Menu } from "@repo/assets/icons/lucide";
 import { Button } from "@ui/components/client";
-import { Link, LinkButton, Title } from "@ui/components/server";
+import { Link } from "@ui/components/server";
 import { cn } from "@ui/utils/cn";
 import Image from "next/image";
 import { ReactNode, useEffect, useRef, useState } from "react";
@@ -142,10 +142,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                 onClick={() => setMobileMenuOpen(false)}
                 className="bg-primary-50 rounded-2 flex h-12 items-center justify-center gap-2 text-[17px] font-bold leading-[1.5] text-white hover:font-bold"
               >
-                {!isLoggedIn && (
-                  <LoginIcon width={18} height={18} className="fill-white" />
-                )}
-                {isLoggedIn ? "마이 페이지" : "로그인하기"}
+                {isLoggedIn ? "마이페이지" : "로그인"}
               </Link>
               {isLoggedIn && (
                 <button
@@ -214,7 +211,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
           <Image src={NAV_LOGO_SRC} width={87} height={56} alt="FORIF Logo" />
         </Link>
         <ul className="flex flex-grow justify-center gap-4">
-          {navMenus.map(({ label, href, subMenus, title, navigate }) => (
+          {navMenus.map(({ label, subMenus }) => (
             <li key={label}>
               <Button
                 size="medium"
@@ -253,7 +250,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
             <>
               <Link href="/my">
                 <Button variant="text" size="medium">
-                  마이 페이지
+                  마이페이지
                 </Button>
               </Link>
               <Button
@@ -268,12 +265,8 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
             </>
           ) : (
             <Link href="/signin">
-              <Button variant="text" size="small">
-                <LoginIcon
-                  width={18}
-                  height={18}
-                  className="fill-text-subtle"
-                />
+              <Button variant="text" size="medium">
+                로그인
               </Button>
             </Link>
           )}

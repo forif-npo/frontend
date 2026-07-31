@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { StudyCreateSkeleton } from "@/components/skeleton/StudyCreateSkeleton";
 import {
   useStudyCreatePage,
@@ -9,9 +10,11 @@ import {
   Step4TargetAndOperation,
   Step5ReviewAndSubmit,
   StudyCreateComplete,
+  StudyCreatePreviewModal,
 } from "@/features/study/create";
 
 export default function StudyCreatePage() {
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const {
     step,
     form,
@@ -57,6 +60,7 @@ export default function StudyCreatePage() {
             onPrevious={goToPrevious}
             onNext={goToNext}
             onSaveDraft={handleSaveDraft}
+            onPreview={() => setIsPreviewOpen(true)}
           />
         )}
         {step === 3 && (
@@ -65,6 +69,7 @@ export default function StudyCreatePage() {
             onPrevious={goToPrevious}
             onNext={goToNext}
             onSaveDraft={handleSaveDraft}
+            onPreview={() => setIsPreviewOpen(true)}
           />
         )}
         {step === 4 && (
@@ -73,6 +78,7 @@ export default function StudyCreatePage() {
             onPrevious={goToPrevious}
             onNext={goToNext}
             onSaveDraft={handleSaveDraft}
+            onPreview={() => setIsPreviewOpen(true)}
           />
         )}
         {step === 5 && (
@@ -84,6 +90,12 @@ export default function StudyCreatePage() {
           />
         )}
       </div>
+      <StudyCreatePreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        form={form}
+        userInfo={userInfo}
+      />
     </div>
   );
 }

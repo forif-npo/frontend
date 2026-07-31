@@ -6,3 +6,4 @@ export { Step3WeeklyPlan } from "./steps/Step3WeeklyPlan";
 export { Step4TargetAndOperation } from "./steps/Step4TargetAndOperation";
 export { Step5ReviewAndSubmit } from "./steps/Step5ReviewAndSubmit";
 export { StudyCreateComplete } from "./components/StudyCreateComplete";
+export { StudyCreatePreviewModal } from "./components/StudyCreatePreviewModal";
