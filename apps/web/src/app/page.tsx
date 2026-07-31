@@ -80,25 +80,27 @@ export default async function Page() {
           </div>
         </div>
 
-        {/* QuickMenu */}
-        <section className="max-w-main mx-auto w-full px-4">
-          <QuickMenu />
-        </section>
+        <div className="flex w-full flex-col gap-9 md:gap-[90px]">
+          {/* QuickMenu */}
+          <section className="max-w-main mx-auto w-full px-4 lg:px-0">
+            <QuickMenu />
+          </section>
 
-        {/* HackathonSection */}
-        <section className="w-full">
-          <HackathonSection />
-        </section>
+          {/* HackathonSection */}
+          <section className="w-full">
+            <HackathonSection />
+          </section>
 
-        {/* StudySection */}
-        <section className="w-full">
-          <StudySection />
-        </section>
+          {/* StudySection */}
+          <section className="w-full">
+            <StudySection />
+          </section>
 
-        {/* NewsSection */}
-        <section className="w-full">
-          <NewsSection />
-        </section>
+          {/* NewsSection */}
+          <section className="w-full">
+            <NewsSection />
+          </section>
+        </div>
 
         {/* CTASection */}
         <div className="w-full">
