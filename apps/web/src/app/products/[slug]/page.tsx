@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Breadcrumb } from "@ui/components/server";
 import { getProduct } from "@/features/products/api";
 import { ProductDetailView } from "@/features/products/ProductDetailView";
 
@@ -27,8 +28,17 @@ export default async function ProductDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-viewport">
+    <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
+      <div className="mb-6">
+        <Breadcrumb
+          items={[
+            { label: "홈", href: "/" },
+            { label: "서비스", href: "/products" },
+            { label: product.name },
+          ]}
+        />
+      </div>
       <ProductDetailView product={product} />
-    </div>
+    </main>
   );
 }

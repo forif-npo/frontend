@@ -23,7 +23,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
   const isVisitable = product.status === "LIVE" && !!serviceUrl;
 
   return (
-    <div className="mx-auto max-w-[900px] px-4 py-10 sm:px-6 md:py-16">
+    <div className="mx-auto max-w-[900px]">
       {/* 뒤로가기 */}
       <Link
         href="/products"

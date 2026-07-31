@@ -2,12 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Badge, Body, Heading, InfoBox } from "@ui/components/server";
-import {
-  Button,
-  CriticalAlert,
-  TextArea,
-  TextInput,
-} from "@ui/components/client";
+import { Button, CriticalAlert, TextInput } from "@ui/components/client";
 import { handleApiError } from "@core/utils/api-client";
 import {
   applyProduct,
@@ -217,19 +212,7 @@ export function ProductApplyView() {
   };
 
   return (
-    <div className="mx-auto max-w-[900px] px-4 py-10 sm:px-6 md:py-16">
-      {/* 헤더 */}
-      <div className="mb-10 flex flex-col gap-3">
-        <Heading size="l" className="text-text-bolder">
-          서비스 등록 신청
-        </Heading>
-        <Body size="l" className="text-text-basic">
-          직접 만든 서비스를 신청하면 운영진 검토 후{" "}
-          <span className="font-bold">서브도메인(이름.forif.org)</span>과 함께
-          목록에 소개됩니다.
-        </Body>
-      </div>
-
+    <div>
       {isSubmitted && (
         <div className="mb-8">
           <InfoBox

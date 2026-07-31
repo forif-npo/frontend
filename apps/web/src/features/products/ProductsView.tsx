@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { Body, Heading } from "@ui/components/server";
 import { PRODUCT_SOURCE_FILTERS, type ProductSourceFilter } from "./constants";
 import type { ProductSummary } from "./api";
 import { ProductCard } from "./ProductCard";
@@ -20,27 +18,7 @@ export function ProductsView({ products }: ProductsViewProps) {
   }, [products, sourceFilter]);
 
   return (
-    <div className="max-w-main mx-auto px-4 py-10 sm:px-6 md:py-16">
-      {/* 헤더 */}
-      <div className="mb-8 flex flex-col gap-4 md:mb-12 md:flex-row md:items-end md:justify-between">
-        <div className="flex flex-col gap-3">
-          <Heading size="l" className="text-text-bolder">
-            서비스
-          </Heading>
-          <Body size="l" className="text-text-basic">
-            FORIF 부원들이 스터디와 해커톤에서 만들어 실제로 운영 중인
-            서비스를 소개합니다.
-          </Body>
-        </div>
-        <Link
-          href="/products/apply"
-          className="flex h-12 w-fit shrink-0 items-center justify-center rounded-[8px] bg-[#0b50d0] px-6 text-[17px] font-bold text-white transition-colors hover:bg-[#063a74]"
-        >
-          서비스 등록 신청
-        </Link>
-      </div>
-
-      {/* 출처 필터 탭 */}
+    <section aria-label="서비스 목록">
       <div className="mb-6 flex gap-4 border-b border-[#cdd1d5] md:mb-8">
         {PRODUCT_SOURCE_FILTERS.map((filter) => {
           const isActive = sourceFilter === filter.value;
@@ -72,6 +50,6 @@ export function ProductsView({ products }: ProductsViewProps) {
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }
