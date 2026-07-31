@@ -430,7 +430,6 @@ export function ProductApplyView() {
             size="large"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="h-14 min-w-[140px]"
           >
             {isSubmitting ? "신청 중..." : "신청하기"}
           </Button>

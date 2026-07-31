@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Button } from "@ui/components/client";
 import { Body, Breadcrumb, Heading } from "@ui/components/server";
 import { getProducts } from "@/features/products/api";
 import { ProductsView } from "@/features/products/ProductsView";
@@ -28,11 +29,10 @@ export default async function ProductsPage() {
             소개합니다.
           </Body>
         </div>
-        <Link
-          href="/products/apply"
-          className="flex h-12 w-fit shrink-0 items-center justify-center rounded-[8px] bg-[#0b50d0] px-6 text-[17px] font-bold text-white transition-colors hover:bg-[#063a74]"
-        >
-          서비스 등록 신청
+        <Link href="/products/apply" className="w-fit shrink-0">
+          <Button variant="primary" size="medium">
+            서비스 등록 신청
+          </Button>
         </Link>
       </div>
 
