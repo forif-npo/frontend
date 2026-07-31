@@ -1,8 +1,21 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Badge, Body, Heading, InfoBox } from "@ui/components/server";
-import { Button, CriticalAlert, TextInput } from "@ui/components/client";
+import {
+  Badge,
+  Body,
+  Heading,
+  HintText,
+  InfoBox,
+  Label,
+} from "@ui/components/server";
+import {
+  Button,
+  CriticalAlert,
+  SelectBox,
+  TextArea,
+  TextInput,
+} from "@ui/components/client";
 import { handleApiError } from "@core/utils/api-client";
 import {
   applyProduct,
@@ -40,9 +53,6 @@ const STATUS_BADGE_VARIANTS: Record<
   REJECTED: "danger",
 };
 
-const INPUT_CLASS =
-  "rounded-2 border-input-border bg-input-surface text-gray-70 h-14 w-full border px-4 transition duration-150 ease-in-out focus:border-border-primary focus:outline-none focus:ring-1 focus:ring-primary-50";
-
 type FieldErrors = Partial<Record<keyof FormState, string>>;
 
 interface FormState {
@@ -67,26 +77,11 @@ const EMPTY_FORM: FormState = {
   techStack: "",
 };
 
-/** 라벨 + 필수 표시 (TextInput의 title과 동일한 형태를 커스텀 레이아웃 필드에 재현) */
-function FieldLabel({
-  htmlFor,
-  children,
-}: {
-  htmlFor: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label
-      htmlFor={htmlFor}
-      className="text-text-basic text-[17px] font-bold leading-[1.5]"
-    >
-      {children}
-      <span className="text-text-danger ml-0.5" aria-hidden="true">
-        *
-      </span>
-    </label>
-  );
-}
+const SOURCE_TYPE_OPTIONS = [
+  { value: "STUDY", label: "스터디" },
+  { value: "HACKATHON", label: "해커톤" },
+  { value: "SIDE", label: "자율 프로젝트" },
+];
 
 export function ProductApplyView() {
   const [applications, setApplications] = useState<ProductApplication[]>([]);
@@ -212,7 +207,7 @@ export function ProductApplyView() {
   };
 
   return (
-    <div>
+    <div className="mx-auto max-w-[792px]">
       {isSubmitted && (
         <div className="mb-8">
           <InfoBox
@@ -230,7 +225,7 @@ export function ProductApplyView() {
 
       {/* 내 신청 현황 */}
       <section className="mb-12">
-        <Heading size="xs" className="text-text-bolder mb-4">
+        <Heading size="m" className="text-text-bolder mb-6">
           내 신청 현황
         </Heading>
         {isLoading ? (
@@ -283,156 +278,144 @@ export function ProductApplyView() {
         )}
       </section>
 
-      {/* 신청 폼 */}
-      <section className="border-gray-30 bg-surface-white rounded-3 flex flex-col gap-6 border p-5 sm:p-10">
-        <Heading size="xs" className="text-text-bolder">
+      <section>
+        <Heading size="m" className="text-text-bolder mb-6">
           새 서비스 신청
         </Heading>
 
-        <TextInput
-          id="name"
-          title="서비스 이름"
-          required
-          length="full"
-          value={form.name}
-          error={fieldErrors.name}
-          onChange={(e) => update({ name: e.target.value })}
-          placeholder="예: Attendly"
-        />
+        <div className="flex flex-col gap-10">
+          <TextInput
+            id="name"
+            title="서비스 이름"
+            required
+            length="full"
+            value={form.name}
+            error={fieldErrors.name}
+            onChange={(e) => update({ name: e.target.value })}
+            placeholder="예: Attendly"
+          />
 
-        {/* 서브도메인은 접미사가 붙는 커스텀 레이아웃이라 오류를 직접 렌더한다 */}
-        <div className="flex flex-col gap-2">
-          <FieldLabel htmlFor="slug">희망 서브도메인</FieldLabel>
-          <div className="flex items-center gap-2">
-            <input
-              id="slug"
-              className={`${INPUT_CLASS} ${fieldErrors.slug ? "border-input-border-error" : ""}`}
-              value={form.slug}
-              aria-invalid={fieldErrors.slug ? "true" : undefined}
-              aria-describedby={fieldErrors.slug ? "slug-error" : undefined}
-              onChange={(e) => update({ slug: e.target.value })}
-              placeholder="attendly"
-            />
-            <span className="text-text-subtle shrink-0 text-[17px]">
-              .forif.org
-            </span>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="slug">
+              희망 서브도메인
+              <span className="text-text-danger ml-0.5" aria-hidden="true">
+                *
+              </span>
+            </Label>
+            <div className="flex items-center gap-2">
+              <div className="min-w-0 flex-1">
+                <TextInput
+                  id="slug"
+                  length="full"
+                  value={form.slug}
+                  aria-invalid={fieldErrors.slug ? "true" : undefined}
+                  aria-describedby={
+                    fieldErrors.slug ? "slug-error" : "slug-help"
+                  }
+                  className={
+                    fieldErrors.slug ? "border-input-border-error" : ""
+                  }
+                  onChange={(e) => update({ slug: e.target.value })}
+                  placeholder="attendly"
+                />
+              </div>
+              <span className="text-text-subtle shrink-0 text-[17px]">
+                .forif.org
+              </span>
+            </div>
+            {fieldErrors.slug ? (
+              <Label id="slug-error" size="s" className="text-text-danger mt-1">
+                {fieldErrors.slug}
+              </Label>
+            ) : (
+              <HintText id="slug-help" className="mt-1">
+                영소문자, 숫자, 하이픈 3~20자만 가능합니다. 승인되면 이 주소로
+                공개됩니다.
+              </HintText>
+            )}
           </div>
-          {fieldErrors.slug ? (
-            <p id="slug-error" className="text-text-danger text-[14px]">
-              {fieldErrors.slug}
-            </p>
-          ) : (
-            <p className="text-text-subtle text-[14px]">
-              영소문자·숫자·하이픈 3~20자. 승인되면 이 주소로 공개됩니다.
-            </p>
-          )}
-        </div>
 
-        <TextInput
-          id="oneLiner"
-          title="한 줄 소개"
-          required
-          length="full"
-          value={form.oneLiner}
-          error={fieldErrors.oneLiner}
-          onChange={(e) => update({ oneLiner: e.target.value })}
-          placeholder="서비스를 한 문장으로 소개해주세요"
-        />
+          <TextInput
+            id="oneLiner"
+            title="한 줄 소개"
+            required
+            length="full"
+            value={form.oneLiner}
+            error={fieldErrors.oneLiner}
+            onChange={(e) => update({ oneLiner: e.target.value })}
+            placeholder="서비스를 한 문장으로 소개해주세요"
+          />
 
-        {/* TextArea에는 error prop이 없어 저장소 인라인 패턴으로 표시한다 */}
-        <div className="flex flex-col gap-2">
-          <FieldLabel htmlFor="description">상세 소개</FieldLabel>
-          <textarea
+          <TextArea
             id="description"
-            className={`${INPUT_CLASS} h-40 resize-none py-4 ${fieldErrors.description ? "border-input-border-error" : ""}`}
+            title="상세 소개"
+            required
+            size="large"
             value={form.description}
-            aria-invalid={fieldErrors.description ? "true" : undefined}
-            aria-describedby={
-              fieldErrors.description ? "description-error" : undefined
-            }
+            error={fieldErrors.description}
+            helpText="어떤 문제를 풀고, 누구를 위한 서비스인지 적어주세요."
             onChange={(e) => update({ description: e.target.value })}
             placeholder="서비스 배경, 주요 기능, 앞으로의 계획 등"
           />
-          {fieldErrors.description ? (
-            <p id="description-error" className="text-text-danger text-[14px]">
-              {fieldErrors.description}
-            </p>
-          ) : (
-            <p className="text-text-subtle text-[14px]">
-              어떤 문제를 풀고, 누구를 위한 서비스인지 적어주세요.
-            </p>
-          )}
-        </div>
 
-        <div className="flex flex-col gap-2">
-          <FieldLabel htmlFor="sourceType">출처</FieldLabel>
-          <div className="flex flex-wrap gap-2">
-            {(
-              [
-                { value: "STUDY", label: "스터디" },
-                { value: "HACKATHON", label: "해커톤" },
-                { value: "SIDE", label: "자율 프로젝트" },
-              ] as const
-            ).map((option) => (
-              <button
-                key={option.value}
-                id={option.value === "STUDY" ? "sourceType" : undefined}
-                type="button"
-                onClick={() => update({ sourceType: option.value })}
-                className={`h-11 rounded-[8px] border px-4 text-[15px] font-bold transition-colors ${
-                  form.sourceType === option.value
-                    ? "border-border-primary bg-surface-primary-subtler text-text-primary"
-                    : "border-gray-20 text-gray-70 hover:bg-gray-5"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="sourceType">출처</Label>
+            <SelectBox
+              id="sourceType"
+              value={form.sourceType}
+              options={SOURCE_TYPE_OPTIONS}
+              placeholder="출처를 선택해주세요"
+              onChange={(value) =>
+                update({ sourceType: value as ProductSourceType })
+              }
+            />
           </div>
-        </div>
 
-        <TextInput
-          id="serviceUrl"
-          title="배포된 서비스 URL"
-          length="full"
-          value={form.serviceUrl}
-          error={fieldErrors.serviceUrl}
-          helpText="현재 배포 중인 주소가 있으면 검토가 빨라집니다."
-          onChange={(e) => update({ serviceUrl: e.target.value })}
-          placeholder="https://..."
-        />
+          <TextInput
+            id="serviceUrl"
+            title="배포된 서비스 URL"
+            length="full"
+            value={form.serviceUrl}
+            error={fieldErrors.serviceUrl}
+            helpText="현재 배포 중인 주소가 있으면 검토가 빨라집니다."
+            onChange={(e) => update({ serviceUrl: e.target.value })}
+            placeholder="https://..."
+          />
 
-        <TextInput
-          id="githubUrl"
-          title="GitHub 저장소"
-          length="full"
-          value={form.githubUrl}
-          error={fieldErrors.githubUrl}
-          onChange={(e) => update({ githubUrl: e.target.value })}
-          placeholder="https://github.com/..."
-        />
+          <TextInput
+            id="githubUrl"
+            title="GitHub 저장소"
+            length="full"
+            value={form.githubUrl}
+            error={fieldErrors.githubUrl}
+            onChange={(e) => update({ githubUrl: e.target.value })}
+            placeholder="https://github.com/..."
+          />
 
-        <TextInput
-          id="techStack"
-          title="기술 스택"
-          length="full"
-          value={form.techStack}
-          helpText="쉼표로 구분해 입력해주세요."
-          onChange={(e) => update({ techStack: e.target.value })}
-          placeholder="Next.js, Spring Boot, MySQL"
-        />
+          <TextInput
+            id="techStack"
+            title="기술 스택"
+            length="full"
+            value={form.techStack}
+            helpText="쉼표로 구분해 입력해주세요."
+            onChange={(e) => update({ techStack: e.target.value })}
+            placeholder="Next.js, Spring Boot, MySQL"
+          />
 
-        {errorMessage && <CriticalAlert text={errorMessage} variant="danger" />}
+          {errorMessage && (
+            <CriticalAlert text={errorMessage} variant="danger" />
+          )}
 
-        <div className="flex justify-end">
-          <Button
-            variant="primary"
-            size="large"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "신청 중..." : "신청하기"}
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              variant="primary"
+              size="large"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "신청 중..." : "신청하기"}
+            </Button>
+          </div>
         </div>
       </section>
     </div>
