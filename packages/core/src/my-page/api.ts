@@ -135,7 +135,7 @@ export interface ApplicationDetail {
   priority: string; // "PRIMARY" or "SECONDARY"
   study: StudyInfo;
   status: number;
-  intro: string;
+  intro: string | null;
 }
 
 /**

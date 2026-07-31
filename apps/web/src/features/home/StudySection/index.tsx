@@ -40,8 +40,8 @@ export function StudySection() {
   };
 
   return (
-    <section className="max-w-main mx-auto w-full px-4 lg:px-0">
-      <div className="mb-6 flex items-end justify-between gap-4">
+    <section className="mx-auto w-full max-w-[1320px] px-4 lg:px-0">
+      <div className="max-w-main mx-auto mb-6 flex items-end justify-between gap-4">
         <h2 className="text-heading-l-mobile tracking-1 text-text-basic sm:text-heading-l font-bold">
           스터디 소개
         </h2>
