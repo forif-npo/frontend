@@ -1,15 +1,10 @@
 import { InstagramIcon, KakaotalkIcon } from "@repo/assets/icons/krds";
 import { ChevronRight, Github } from "@repo/assets/icons/lucide";
 import { Body, Link } from "@ui/components/server";
+import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
 import Image from "next/image";
 
 const NAV_LOGO_SRC = "/black_title.svg";
-
-const SOCIAL_LINKS = {
-  github: "https://github.com/forif-npo",
-  instagram: "https://www.instagram.com/forif_hyu/",
-  kakaotalk: "https://pf.kakao.com/_xnRxhxmG",
-} as const;
 
 const UTILITY_LINKS = [
   { label: "찾아오시는 길", href: "/directions" },
@@ -32,7 +27,7 @@ export function Footer() {
           <div className="border-divider-gray-light h-7 border-l" />
 
           <a
-            href={SOCIAL_LINKS.github}
+            href={FORIF_EXTERNAL_LINKS.github}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="FORIF GitHub"
@@ -41,7 +36,7 @@ export function Footer() {
           </a>
 
           <a
-            href={SOCIAL_LINKS.instagram}
+            href={FORIF_EXTERNAL_LINKS.instagram}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="FORIF Instagram"
@@ -51,7 +46,7 @@ export function Footer() {
           </a>
 
           <a
-            href={SOCIAL_LINKS.kakaotalk}
+            href={FORIF_EXTERNAL_LINKS.kakaoTalk}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="FORIF 카카오톡"

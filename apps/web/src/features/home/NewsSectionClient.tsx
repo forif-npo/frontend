@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
+import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
 import type { NewsItem } from "./NewsSection";
 
 type Tab = "all" | "announcement" | "medium";
@@ -16,7 +17,7 @@ const TABS: { id: Tab; label: string }[] = [
 const MORE_HREF: Record<Tab, string> = {
   all: "/support/announcements",
   announcement: "/support/announcements",
-  medium: "https://medium.com/forif",
+  medium: FORIF_EXTERNAL_LINKS.medium,
 };
 
 interface Props {
