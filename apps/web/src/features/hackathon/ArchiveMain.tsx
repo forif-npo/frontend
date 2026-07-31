@@ -12,6 +12,14 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { SearchBar } from "@/components/SearchBar";
 import type { ArchiveHackathonDetail } from "@core/types/hackathon";
+import {
+  ARCHIVE_CARD_LINKS_CLASS_NAME,
+  ARCHIVE_CARD_SUMMARY_MIN_HEIGHT_CLASS_NAME,
+  ARCHIVE_ELEVATED_PANEL_CLASS_NAME,
+  ARCHIVE_FILTER_WIDTH_CLASS_NAME,
+  ArchiveExternalLinks,
+  ArchiveTechStackBadges,
+} from "./archive/ui";
 
 interface ArchiveMainProps {
   hackathons: Hackathon[];
@@ -140,7 +148,9 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
               <Label className="text-text-basic whitespace-nowrap font-bold max-md:w-20">
                 해커톤 회차
               </Label>
-              <div className="w-[280px] max-md:min-w-0 max-md:flex-1">
+              <div
+                className={`${ARCHIVE_FILTER_WIDTH_CLASS_NAME.hackathon} max-md:min-w-0 max-md:flex-1`}
+              >
                 <SelectBox
                   id="archive-hackathon"
                   value={String(selectedId)}
@@ -161,7 +171,9 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
               <Label className="text-text-basic whitespace-nowrap font-bold max-md:w-20">
                 기술 스택
               </Label>
-              <div className="w-[208px] max-md:min-w-0 max-md:flex-1">
+              <div
+                className={`${ARCHIVE_FILTER_WIDTH_CLASS_NAME.techStack} max-md:min-w-0 max-md:flex-1`}
+              >
                 <SelectBox
                   id="archive-tech-stack"
                   value={selectedTech}
@@ -200,11 +212,11 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
                   );
                 }
               }}
-              className="rounded-3 border-border-gray-light bg-surface-white focus-visible:ring-primary-20 group flex cursor-pointer flex-col border p-6 shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2"
+              className={`${ARCHIVE_ELEVATED_PANEL_CLASS_NAME} focus-visible:ring-primary-20 group flex cursor-pointer flex-col p-6 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2`}
             >
               {/* Meta */}
               <div className="mb-3 flex items-center justify-between gap-3">
-                <Label size="xs" className="text-text-subtle font-bold">
+                <Label size="m" className="text-text-basic font-bold">
                   {submission.team_name}
                 </Label>
                 {award && (
@@ -218,53 +230,31 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
               </div>
 
               {/* Content */}
-              <Heading size="xxs" className="text-text-basic mb-2">
+              <Heading size="s" className="text-text-basic mb-2">
                 {submission.project_name}
               </Heading>
               <Body
                 size="s"
-                className="text-text-subtle mb-4 line-clamp-3 min-h-[60px]"
+                className={`text-text-subtle mb-4 line-clamp-3 ${ARCHIVE_CARD_SUMMARY_MIN_HEIGHT_CLASS_NAME}`}
               >
                 {submission.summary}
               </Body>
 
               {/* Tags */}
               <div className="mb-4 mt-auto flex flex-wrap gap-1.5">
-                {submission.tech_stacks.map((t) => (
-                  <span
-                    key={t}
-                    className="bg-surface-primary-subtler text-text-primary text-label-xs inline-flex h-6 items-center rounded-full px-2.5 font-semibold"
-                  >
-                    {t}
-                  </span>
-                ))}
+                <ArchiveTechStackBadges techStacks={submission.tech_stacks} />
               </div>
 
               {/* Links */}
-              <div className="border-divider-gray-light flex min-h-[45px] flex-wrap gap-2 border-t pt-3">
-                {submission.github_url && (
-                  <a
-                    href={submission.github_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="rounded-2 border-border-gray-light text-label-xs text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-8 items-center border px-3 font-semibold transition-colors"
-                  >
-                    GitHub
-                  </a>
-                )}
-                {submission.deploy_url && (
-                  <a
-                    href={submission.deploy_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="rounded-2 border-border-gray-light text-label-xs text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-8 items-center border px-3 font-semibold transition-colors"
-                  >
-                    배포
-                  </a>
-                )}
-              </div>
+              <ArchiveExternalLinks
+                links={[
+                  { label: "GitHub", href: submission.github_url },
+                  { label: "배포", href: submission.deploy_url },
+                ]}
+                size="small"
+                className={ARCHIVE_CARD_LINKS_CLASS_NAME}
+                onLinkClick={(event) => event.stopPropagation()}
+              />
             </article>
           );
         })}

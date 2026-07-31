@@ -10,6 +10,12 @@ import { Button } from "@ui/components/client";
 import { useArchiveSubmissionDetail } from "@/hooks/hackathon";
 import { HackathonSubmissionDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { safeImageSrc } from "@/utils/image";
+import {
+  ARCHIVE_ELEVATED_PANEL_CLASS_NAME,
+  ARCHIVE_PANEL_CLASS_NAME,
+  ArchiveExternalLinks,
+  ArchiveTechStackBadges,
+} from "./archive/ui";
 
 interface SubmissionDetailMainProps {
   submissionId: number;
@@ -46,7 +52,9 @@ export function SubmissionDetailMain({
   if (error || !submission) {
     return (
       <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
-        <div className="rounded-3 border-border-gray-light bg-surface-white flex min-h-[40vh] flex-col items-center justify-center gap-4 border p-10 text-center">
+        <div
+          className={`${ARCHIVE_PANEL_CLASS_NAME} flex min-h-[40vh] flex-col items-center justify-center gap-4 p-10 text-center`}
+        >
           <Body size="m" className="text-text-subtle">
             {error ?? "제출물을 찾을 수 없습니다."}
           </Body>
@@ -72,9 +80,9 @@ export function SubmissionDetailMain({
       </div>
 
       {/* Hero */}
-      <section className="rounded-3 border-border-gray-light bg-surface-white mb-8 border p-8 shadow-sm">
+      <section className={`${ARCHIVE_ELEVATED_PANEL_CLASS_NAME} mb-8 p-8`}>
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <Label size="xs" className="text-text-subtle font-bold">
+          <Label size="m" className="text-text-basic font-bold">
             {submission.team_name}
           </Label>
           {submission.awarded &&
@@ -99,55 +107,27 @@ export function SubmissionDetailMain({
         {/* Tech stacks */}
         {submission.tech_stacks.length > 0 && (
           <div className="mt-5 flex flex-wrap gap-1.5">
-            {submission.tech_stacks.map((tech) => (
-              <span
-                key={tech}
-                className="bg-surface-primary-subtler text-text-primary text-label-xs inline-flex h-6 items-center rounded-full px-2.5 font-semibold"
-              >
-                {tech}
-              </span>
-            ))}
+            <ArchiveTechStackBadges techStacks={submission.tech_stacks} />
           </div>
         )}
 
         {/* Links */}
-        <div className="mt-6 flex flex-wrap gap-2">
-          {submission.github_url && (
-            <a
-              href={submission.github_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-2 border-border-gray-light text-label-s text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-10 items-center border px-4 font-semibold transition-colors"
-            >
-              GitHub
-            </a>
-          )}
-          {submission.deploy_url && (
-            <a
-              href={submission.deploy_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-2 border-border-gray-light text-label-s text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-10 items-center border px-4 font-semibold transition-colors"
-            >
-              배포 사이트
-            </a>
-          )}
-          {submission.presentation_file && (
-            <a
-              href={submission.presentation_file}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-2 border-border-gray-light text-label-s text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-10 items-center border px-4 font-semibold transition-colors"
-            >
-              발표 자료
-            </a>
-          )}
-        </div>
+        <ArchiveExternalLinks
+          links={[
+            { label: "GitHub", href: submission.github_url },
+            { label: "배포 사이트", href: submission.deploy_url },
+            { label: "발표 자료", href: submission.presentation_file },
+          ]}
+          size="medium"
+          className="mt-6"
+        />
       </section>
 
       {/* Cover image */}
       {safeImageSrc(submission.image_url) && (
-        <section className="rounded-3 border-border-gray-light bg-surface-white mb-8 overflow-hidden border shadow-sm">
+        <section
+          className={`${ARCHIVE_ELEVATED_PANEL_CLASS_NAME} mb-8 overflow-hidden`}
+        >
           <Image
             src={safeImageSrc(submission.image_url)!}
             alt={`${submission.project_name} 대표 이미지`}
@@ -182,7 +162,7 @@ export function SubmissionDetailMain({
         {/* Sidebar */}
         <aside className="flex flex-col gap-6">
           {/* Team members */}
-          <div className="rounded-3 border-border-gray-light bg-surface-white border p-5 shadow-sm">
+          <div className={`${ARCHIVE_ELEVATED_PANEL_CLASS_NAME} p-5`}>
             <Label size="xs" className="text-text-subtle mb-3 block font-bold">
               팀 ({submission.team_name})
             </Label>
@@ -211,7 +191,7 @@ export function SubmissionDetailMain({
 
           {/* Awards */}
           {submission.awarded && submission.awards.length > 0 && (
-            <div className="rounded-3 border-border-gray-light bg-surface-white border p-5 shadow-sm">
+            <div className={`${ARCHIVE_ELEVATED_PANEL_CLASS_NAME} p-5`}>
               <Label
                 size="xs"
                 className="text-text-subtle mb-3 block font-bold"
@@ -240,7 +220,7 @@ export function SubmissionDetailMain({
 
           {/* Meta */}
           {submittedAt && (
-            <div className="rounded-3 border-border-gray-light bg-surface-white border p-5 shadow-sm">
+            <div className={`${ARCHIVE_ELEVATED_PANEL_CLASS_NAME} p-5`}>
               <Label
                 size="xs"
                 className="text-text-subtle mb-1 block font-bold"
