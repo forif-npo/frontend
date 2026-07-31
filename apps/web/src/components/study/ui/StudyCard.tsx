@@ -168,7 +168,7 @@ export function StudyCard(props: StudyCardProps) {
               멘토: {getMentorText(primaryMentor, secondaryMentor)}
             </Body>
             <Label size="m" className="ml-2 shrink-0 group-hover:underline">
-              자세히 보기 →
+              자세히 보기
             </Label>
           </div>
         </div>
