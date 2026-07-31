@@ -6,6 +6,7 @@ import { CountdownBlocks } from "./CountdownBlocks";
 import {
   formatDateTime,
   getCountdownTarget,
+  statusBadgeVariant,
   statusLabel,
   type MainStage,
 } from "./utils";
@@ -15,21 +16,6 @@ interface TimerHeroProps {
   stage: MainStage;
 }
 
-function statusVariant(stage: MainStage) {
-  switch (stage) {
-    case "RECRUITING":
-      return "success" as const;
-    case "IN_PROGRESS":
-      return "danger" as const;
-    case "JUDGING":
-      return "warning" as const;
-    case "ENDED":
-      return "disabled" as const;
-    default:
-      return "primary" as const;
-  }
-}
-
 export function TimerHero({ hackathon, stage }: TimerHeroProps) {
   const target = getCountdownTarget(hackathon, stage);
   const isEnded = stage === "ENDED";
@@ -37,7 +23,7 @@ export function TimerHero({ hackathon, stage }: TimerHeroProps) {
   return (
     <section className="relative flex min-h-[calc(var(--vh)-80px)] items-center justify-center overflow-hidden px-6 py-20">
       {/* Background */}
-      <div className="from-primary-5 via-gray-5 to-primary-10 absolute inset-0 bg-gradient-to-br" />
+      <div className="from-primary-5 via-surface-gray-subtler to-primary-10 absolute inset-0 bg-gradient-to-br" />
       {/* Decorative blobs */}
       <div className="bg-primary-20 absolute -left-32 top-1/4 h-96 w-96 rounded-full opacity-20 blur-3xl" />
       <div className="bg-primary-30 absolute -right-32 bottom-1/4 h-96 w-96 rounded-full opacity-10 blur-3xl" />
@@ -45,7 +31,7 @@ export function TimerHero({ hackathon, stage }: TimerHeroProps) {
       <div className="relative z-10 flex w-full max-w-5xl flex-col items-center gap-8 text-center">
         <Badge
           label={statusLabel[hackathon.status]}
-          variant={statusVariant(stage)}
+          variant={statusBadgeVariant[hackathon.status]}
           appearance="solid-pastel"
           size="medium"
         />

@@ -9,10 +9,10 @@ import {
   RecruitingMain,
   getMainStage,
 } from "@/features/hackathon";
-import { statusBadgeClass, statusLabel } from "@/features/hackathon/utils";
+import { statusBadgeVariant, statusLabel } from "@/features/hackathon/utils";
 import { HackathonDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { handleApiError } from "@core/utils/api-client";
-import { Body, Breadcrumb, Heading, Link } from "@ui/components/server";
+import { Badge, Body, Breadcrumb, Heading, Link } from "@ui/components/server";
 import { Button } from "@ui/components/client";
 import type {
   CreateTeamRequest,
@@ -200,9 +200,12 @@ export default function HackathonDetailPage() {
           <Heading size="m" className="text-text-basic">
             {hackathon.title}
           </Heading>
-          <span className={statusBadgeClass(hackathon.status)}>
-            {statusLabel[hackathon.status]}
-          </span>
+          <Badge
+            label={statusLabel[hackathon.status]}
+            variant={statusBadgeVariant[hackathon.status]}
+            appearance="solid-pastel"
+            size="small"
+          />
         </div>
       </div>
 

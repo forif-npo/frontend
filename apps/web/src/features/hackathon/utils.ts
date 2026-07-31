@@ -16,6 +16,17 @@ export const statusLabel: Record<HackathonStatus, string> = {
   ENDED: "종료",
 };
 
+export const statusBadgeVariant: Record<
+  HackathonStatus,
+  "primary" | "success" | "warning" | "danger" | "disabled"
+> = {
+  RECRUITING: "success",
+  TEAM_BUILDING: "primary",
+  IN_PROGRESS: "danger",
+  JUDGING: "warning",
+  ENDED: "disabled",
+};
+
 export function getMainStage(hackathon: Hackathon | null): MainStage {
   if (!hackathon) return "BEFORE_CREATED";
   return hackathon.status;
@@ -38,23 +49,6 @@ export function getCountdownTarget(hackathon: Hackathon, stage: MainStage) {
     return { label: "심사 진행중", date: hackathon.ends_at };
   }
   return { label: "종료", date: hackathon.ends_at };
-}
-
-export function statusBadgeClass(status: HackathonStatus) {
-  const base =
-    "inline-flex items-center h-6 px-2.5 rounded-full text-xs font-bold";
-  switch (status) {
-    case "RECRUITING":
-      return `${base} bg-[var(--krds-color-success-5,#eaf6ec)] text-[var(--krds-color-success-60,#267337)]`;
-    case "IN_PROGRESS":
-      return `${base} bg-[var(--krds-color-danger-5)] text-[var(--krds-color-danger-60)]`;
-    case "JUDGING":
-      return `${base} bg-[var(--krds-color-warning-5)] text-[var(--krds-color-warning-50,#8a5c00)]`;
-    case "ENDED":
-      return `${base} bg-[var(--krds-color-gray-5)] text-[var(--krds-color-gray-50)]`;
-    default:
-      return `${base} bg-[var(--krds-color-primary-5)] text-[var(--krds-color-primary-50)]`;
-  }
 }
 
 export function formatDateTime(value: string) {

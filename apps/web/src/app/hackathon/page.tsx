@@ -61,7 +61,7 @@ export default function HackathonPage() {
         <HackathonAbout />
 
         {/* 상세 페이지(지원·진행상황·심사)로 이동 */}
-        <section className="rounded-3 border-primary-20 from-primary-5 to-primary-5 flex flex-col items-center gap-4 border bg-gradient-to-br via-white p-8 text-center">
+        <section className="rounded-3 border-primary-20 from-primary-5 to-primary-5 via-surface-white flex flex-col items-center gap-4 border bg-gradient-to-br p-8 text-center">
           <Heading size="s" className="text-text-basic">
             해커톤에 참여해보세요
           </Heading>
