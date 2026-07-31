@@ -1,6 +1,7 @@
 import { Button } from "@ui/components/client";
-import Image from "next/image";
+import { Badge } from "@ui/components/server";
 import type { ApplicationDetail } from "@core/my-page/api";
+import { StudyImage } from "@/components/study/ui/StudyImage";
 
 interface ApplicationCardProps {
   application: ApplicationDetail;
@@ -26,11 +27,11 @@ export function ApplicationCard({
   const difficultyLabel = DIFFICULTY_LABELS[study.difficulty] ?? "보통";
 
   return (
-    <div className="flex h-full min-w-[240px] flex-col overflow-clip">
+    <div className="rounded-3 border-border-gray-light bg-surface-white flex h-full min-w-[240px] flex-col overflow-hidden border">
       {/* Study Image */}
-      <div className="relative h-[196px] w-full rounded-t-[12px] border border-[#c6c6c6] bg-[#dfe8f4]">
-        <Image
-          src={study.img_url || "/images/default-study-img.png"}
+      <div className="relative h-[196px] w-full bg-[#dfe8f4]">
+        <StudyImage
+          src={study.img_url}
           alt={study.study_name}
           fill
           className="object-cover"
@@ -38,12 +39,15 @@ export function ApplicationCard({
       </div>
 
       {/* Card Content */}
-      <div className="flex flex-1 flex-col gap-4 rounded-b-[12px] border-b border-l border-r border-[#b1b8be] bg-white px-8 py-8">
+      <div className="flex flex-1 flex-col gap-4 px-8 py-8">
         {/* Badges */}
         <div className="flex flex-wrap gap-1">
-          <span className="inline-flex h-[24px] items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2 text-[15px] leading-[1.5] text-[#0b50d0]">
-            {semesterLabel}
-          </span>
+          <Badge
+            label={semesterLabel}
+            variant="info"
+            appearance="solid-pastel"
+            size="small"
+          />
           <span className="inline-flex h-[24px] items-center justify-center rounded-[4px] bg-[#e7f4fe] px-2 text-[15px] leading-[1.5] text-[#096ab3]">
             {priorityLabel}
           </span>

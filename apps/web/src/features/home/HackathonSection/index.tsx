@@ -3,8 +3,7 @@
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import type { Hackathon, Submission } from "@core/types/hackathon";
 import { apiClient } from "@core/utils/api-client";
-import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
-import { Select } from "@ui/components/client";
+import { CarouselArrow } from "@ui/components/client";
 import { useEffect, useState } from "react";
 import { HackathonBanner } from "./HackathonBanner";
 import { HackathonCard } from "./HackathonCard";
@@ -20,14 +19,7 @@ function orderHackathons(hackathons: Hackathon[]) {
   );
 }
 
-function hackathonRoundLabel(hackathon: Hackathon) {
-  return hackathon.title
-    ? `${hackathon.event_round}회 · ${hackathon.title}`
-    : `${hackathon.held_year}-${hackathon.held_semester} · ${hackathon.event_round}회`;
-}
-
 export function HackathonSection() {
-  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
   const [selectedHackathonId, setSelectedHackathonId] = useState<number | null>(
     null,
   );
@@ -47,7 +39,6 @@ export function HackathonSection() {
         const list = orderHackathons(hackathonsRes.data?.content ?? []);
 
         if (!ignore) {
-          setHackathons(list);
           setSelectedHackathonId(list[0]?.hackathon_id ?? null);
           if (list.length === 0) {
             setSubmissions([]);
@@ -56,7 +47,6 @@ export function HackathonSection() {
         }
       } catch {
         if (!ignore) {
-          setHackathons([]);
           setSelectedHackathonId(null);
           setSubmissions([]);
           setLoading(false);
@@ -102,34 +92,30 @@ export function HackathonSection() {
     };
   }, [selectedHackathonId]);
 
-  const hackathonOptions = hackathons.map((hackathon) => ({
-    value: String(hackathon.hackathon_id),
-    label: hackathonRoundLabel(hackathon),
-  }));
-
-  const handleRoundChange = (value: string) => {
-    setSelectedHackathonId(Number(value));
-    setCurrentPage(0);
-  };
-
   // Mobile: 1 card per page / Desktop: 3 cards per page
   const mobileTotal = submissions.length;
   const desktopTotal = Math.ceil(submissions.length / 3);
 
-  const handlePrev = (perPage: number) => {
-    if (submissions.length === 0) return;
-    const total = Math.ceil(submissions.length / perPage);
-    setCurrentPage((p) => (p === 0 ? total - 1 : p - 1));
+  const getCurrentPage = (total: number) =>
+    Math.min(currentPage, Math.max(total - 1, 0));
+
+  const handlePrev = (total: number) => {
+    if (total <= 1) return;
+    setCurrentPage((page) => Math.max(0, Math.min(page, total - 1) - 1));
   };
 
-  const handleNext = (perPage: number) => {
-    if (submissions.length === 0) return;
-    const total = Math.ceil(submissions.length / perPage);
-    setCurrentPage((p) => (p === total - 1 ? 0 : p + 1));
+  const handleNext = (total: number) => {
+    if (total <= 1) return;
+    setCurrentPage((page) => Math.min(Math.max(page, 0) + 1, total - 1));
   };
 
-  const mobileItem = submissions[currentPage] ?? null;
-  const desktopItems = submissions.slice(currentPage * 3, currentPage * 3 + 3);
+  const mobileCurrentPage = getCurrentPage(mobileTotal);
+  const desktopCurrentPage = getCurrentPage(desktopTotal);
+  const mobileItem = submissions[mobileCurrentPage] ?? null;
+  const desktopItems = submissions.slice(
+    desktopCurrentPage * 3,
+    desktopCurrentPage * 3 + 3,
+  );
 
   const skeletonCard = (
     <div className="rounded-3 border-border-gray-light h-[292px] animate-pulse border bg-gray-100" />
@@ -139,38 +125,35 @@ export function HackathonSection() {
     <section className="mx-auto w-full max-w-[1200px] px-4 lg:px-0">
       {/* ── Mobile layout ── */}
       <div className="md:hidden">
-        <div className="mb-4 flex flex-col gap-3">
+        <div className="mb-4">
           <div className="flex items-center justify-between">
             <h2 className="text-heading-l-mobile tracking-1 text-text-basic font-bold">
               해커톤
             </h2>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => handlePrev(1)}
-                className="border-border-gray-light bg-surface-white flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border"
-                aria-label="이전"
-              >
-                <ArrowLeft className="text-text-basic" size={18} />
-              </button>
-              <button
-                onClick={() => handleNext(1)}
-                className="border-border-gray-light bg-surface-white flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border"
-                aria-label="다음"
-              >
-                <ArrowRight className="text-text-basic" size={18} />
-              </button>
+              <CarouselArrow
+                onClick={() => handlePrev(mobileTotal)}
+                title="이전"
+                size={18}
+                disabled={mobileTotal <= 1 || mobileCurrentPage === 0}
+                isHidden={mobileTotal <= 1 || mobileCurrentPage === 0}
+                className="h-9 w-9 p-0"
+              />
+              <CarouselArrow
+                onClick={() => handleNext(mobileTotal)}
+                title="다음"
+                size={18}
+                disabled={
+                  mobileTotal <= 1 || mobileCurrentPage === mobileTotal - 1
+                }
+                isHidden={
+                  mobileTotal <= 1 || mobileCurrentPage === mobileTotal - 1
+                }
+                align="right"
+                className="h-9 w-9 p-0"
+              />
             </div>
           </div>
-          {hackathonOptions.length > 0 && selectedHackathonId && (
-            <Select
-              id="home-hackathon-round-mobile"
-              value={String(selectedHackathonId)}
-              onChange={handleRoundChange}
-              options={hackathonOptions}
-              placeholder="해커톤 회차"
-              size="sm"
-            />
-          )}
         </div>
 
         {loading ? (
@@ -184,7 +167,7 @@ export function HackathonSection() {
         ) : mobileItem ? (
           <HackathonCard
             submission={mobileItem}
-            bgColor={CARD_COLORS[currentPage % CARD_COLORS.length]}
+            bgColor={CARD_COLORS[mobileCurrentPage % CARD_COLORS.length]}
           />
         ) : null}
 
@@ -195,7 +178,9 @@ export function HackathonSection() {
                 key={i}
                 onClick={() => setCurrentPage(i)}
                 className={`h-2 rounded-full transition-all ${
-                  i === currentPage ? "bg-primary-50 w-5" : "w-2 bg-gray-200"
+                  i === mobileCurrentPage
+                    ? "bg-primary-50 w-5"
+                    : "w-2 bg-gray-200"
                 }`}
                 aria-label={`${i + 1}번째로 이동`}
               />
@@ -206,35 +191,23 @@ export function HackathonSection() {
 
       {/* ── Desktop layout ── */}
       <div className="hidden md:block">
-        <div className="mb-6 flex items-center justify-between gap-4">
+        <div className="mb-6">
           <h2 className="text-heading-l tracking-1 text-text-basic font-bold">
             해커톤
           </h2>
-          {hackathonOptions.length > 0 && selectedHackathonId && (
-            <div className="w-72">
-              <Select
-                id="home-hackathon-round-desktop"
-                value={String(selectedHackathonId)}
-                onChange={handleRoundChange}
-                options={hackathonOptions}
-                placeholder="해커톤 회차"
-                size="md"
-              />
-            </div>
-          )}
         </div>
         <div className="flex items-start gap-6">
           <div className="w-[282px] flex-shrink-0 self-stretch">
             <HackathonBanner />
           </div>
 
-          <button
-            onClick={() => handlePrev(3)}
-            className="border-border-gray-light bg-surface-white hover:bg-surface-white-subtler mt-[74px] flex h-12 w-12 flex-shrink-0 cursor-pointer items-center justify-center rounded-full border"
-            aria-label="이전"
-          >
-            <ArrowLeft className="text-text-basic" size={24} />
-          </button>
+          <CarouselArrow
+            onClick={() => handlePrev(desktopTotal)}
+            title="이전"
+            disabled={desktopTotal <= 1 || desktopCurrentPage === 0}
+            isHidden={desktopTotal <= 1 || desktopCurrentPage === 0}
+            className="mt-[74px] h-12 w-12 p-0"
+          />
 
           <div className="flex flex-1 flex-col gap-6">
             <div className="grid grid-cols-3 gap-6">
@@ -267,7 +240,9 @@ export function HackathonSection() {
                   key={i}
                   onClick={() => setCurrentPage(i)}
                   className={`h-2 rounded-full transition-all ${
-                    i === currentPage ? "bg-primary-50 w-5" : "w-2 bg-gray-50"
+                    i === desktopCurrentPage
+                      ? "bg-primary-50 w-5"
+                      : "w-2 bg-gray-50"
                   }`}
                   aria-label={`페이지 ${i + 1}로 이동`}
                 />
@@ -275,13 +250,18 @@ export function HackathonSection() {
             </div>
           </div>
 
-          <button
-            onClick={() => handleNext(3)}
-            className="border-border-gray-light bg-surface-white hover:bg-surface-white-subtler mt-[74px] flex h-12 w-12 flex-shrink-0 cursor-pointer items-center justify-center rounded-full border"
-            aria-label="다음"
-          >
-            <ArrowRight className="text-text-basic" size={24} />
-          </button>
+          <CarouselArrow
+            onClick={() => handleNext(desktopTotal)}
+            title="다음"
+            disabled={
+              desktopTotal <= 1 || desktopCurrentPage === desktopTotal - 1
+            }
+            isHidden={
+              desktopTotal <= 1 || desktopCurrentPage === desktopTotal - 1
+            }
+            align="right"
+            className="mt-[74px] h-12 w-12 p-0"
+          />
         </div>
       </div>
     </section>

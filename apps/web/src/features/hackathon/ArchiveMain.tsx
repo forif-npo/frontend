@@ -2,7 +2,7 @@
 
 import type { Hackathon, Submission, Award } from "@core/types/hackathon";
 import { Badge, Body, Breadcrumb, Heading, Label } from "@ui/components/server";
-import { Pagination, Select, TextInput } from "@ui/components/client";
+import { Pagination, SelectBox } from "@ui/components/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
@@ -10,7 +10,16 @@ import { HACKATHON_TECH_STACK_OPTIONS } from "@core/hackathon/tags";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
+import { SearchBar } from "@/components/SearchBar";
 import type { ArchiveHackathonDetail } from "@core/types/hackathon";
+import {
+  ARCHIVE_CARD_LINKS_CLASS_NAME,
+  ARCHIVE_CARD_SUMMARY_MIN_HEIGHT_CLASS_NAME,
+  ARCHIVE_ELEVATED_PANEL_CLASS_NAME,
+  ARCHIVE_FILTER_WIDTH_CLASS_NAME,
+  ArchiveExternalLinks,
+  ArchiveTechStackBadges,
+} from "./archive/ui";
 
 interface ArchiveMainProps {
   hackathons: Hackathon[];
@@ -112,68 +121,69 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
       </div>
 
       {/* Header */}
-      <section className="bg-surface-white border-border-gray-light rounded-3 mb-8 border p-8 shadow-sm">
+      <section className="mb-8">
         <div>
-          <Label
-            size="xs"
-            className="text-text-primary mb-3 block font-bold uppercase tracking-[0.15em]"
-          >
-            Archive
-          </Label>
-          <Heading size="l" className="text-text-basic mb-3">
+          <Heading size="l" className="text-text-basic mb-4">
             역대 해커톤 결과물
           </Heading>
           <Body size="m" className="text-text-subtle">
-            종료된 해커톤의 제출작을 모아보고, 수상팀은 뱃지로 구분합니다.
+            종료된 해커톤의 제출작을 확인해보세요.
           </Body>
         </div>
       </section>
 
-      {/* Hackathon selector + Filters */}
-      <section className="bg-surface-white border-border-gray-light rounded-3 mb-6 flex flex-wrap items-end gap-4 border p-5 shadow-sm">
-        <div className="min-w-[180px]">
-          <div className="flex flex-col gap-1.5">
-            <Label size="xs" className="text-text-subtle font-bold">
-              해커톤 회차
-            </Label>
-            <Select
-              id="archive-hackathon"
-              value={String(selectedId)}
-              onChange={(value) => {
-                setSelectedId(Number(value));
-                setSearch("");
-                setSelectedTech("전체");
-                setCurrentPage(1);
-              }}
-              options={hackathonOptions}
-              placeholder="회차 선택"
-              size="md"
-            />
-          </div>
-        </div>
-        <div className="min-w-[200px] flex-1">
-          <TextInput
-            id="archive-search"
-            title="검색"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="프로젝트명, 한 줄 소개"
-            length="full"
-          />
-        </div>
-        <div className="min-w-[180px]">
-          <div className="flex flex-col gap-1.5">
-            <Label size="xs" className="text-text-subtle font-bold">
-              기술 스택
-            </Label>
-            <Select
-              id="archive-tech-stack"
-              value={selectedTech}
-              onChange={setSelectedTech}
-              options={techOptions}
-              placeholder="기술 스택"
-              size="md"
-            />
+      {/* Search + Filters */}
+      <section className="mb-7">
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          onSubmit={() => setCurrentPage(1)}
+          placeholder="프로젝트명, 한 줄 소개를 검색해보세요"
+          className="mb-6 w-full md:!max-w-none"
+        />
+
+        <div className="bg-surface-secondary-subtler rounded-xl p-10">
+          <div className="flex items-start gap-14 max-md:flex-col">
+            <div className="flex items-center gap-3 max-md:w-full">
+              <Label className="text-text-basic whitespace-nowrap font-bold max-md:w-20">
+                해커톤 회차
+              </Label>
+              <div
+                className={`${ARCHIVE_FILTER_WIDTH_CLASS_NAME.hackathon} max-md:min-w-0 max-md:flex-1`}
+              >
+                <SelectBox
+                  id="archive-hackathon"
+                  value={String(selectedId)}
+                  onChange={(value) => {
+                    setSelectedId(Number(value));
+                    setSearch("");
+                    setSelectedTech("전체");
+                    setCurrentPage(1);
+                  }}
+                  options={hackathonOptions}
+                  placeholder="회차 선택"
+                  size="md"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 max-md:w-full">
+              <Label className="text-text-basic whitespace-nowrap font-bold max-md:w-20">
+                기술 스택
+              </Label>
+              <div
+                className={`${ARCHIVE_FILTER_WIDTH_CLASS_NAME.techStack} max-md:min-w-0 max-md:flex-1`}
+              >
+                <SelectBox
+                  id="archive-tech-stack"
+                  value={selectedTech}
+                  onChange={setSelectedTech}
+                  options={techOptions}
+                  placeholder="전체"
+                  size="md"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -202,11 +212,11 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
                   );
                 }
               }}
-              className="rounded-3 border-border-gray-light bg-surface-white focus-visible:ring-primary-20 group flex cursor-pointer flex-col border p-6 shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2"
+              className={`${ARCHIVE_ELEVATED_PANEL_CLASS_NAME} focus-visible:ring-primary-20 group flex cursor-pointer flex-col p-6 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2`}
             >
               {/* Meta */}
               <div className="mb-3 flex items-center justify-between gap-3">
-                <Label size="xs" className="text-text-subtle font-bold">
+                <Label size="m" className="text-text-basic font-bold">
                   {submission.team_name}
                 </Label>
                 {award && (
@@ -220,53 +230,31 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
               </div>
 
               {/* Content */}
-              <Heading size="xxs" className="text-text-basic mb-2">
+              <Heading size="s" className="text-text-basic mb-2">
                 {submission.project_name}
               </Heading>
               <Body
                 size="s"
-                className="text-text-subtle mb-4 line-clamp-3 min-h-[60px]"
+                className={`text-text-subtle mb-4 line-clamp-3 ${ARCHIVE_CARD_SUMMARY_MIN_HEIGHT_CLASS_NAME}`}
               >
                 {submission.summary}
               </Body>
 
               {/* Tags */}
               <div className="mb-4 mt-auto flex flex-wrap gap-1.5">
-                {submission.tech_stacks.map((t) => (
-                  <span
-                    key={t}
-                    className="bg-surface-primary-subtler text-text-primary text-label-xs inline-flex h-6 items-center rounded-full px-2.5 font-semibold"
-                  >
-                    {t}
-                  </span>
-                ))}
+                <ArchiveTechStackBadges techStacks={submission.tech_stacks} />
               </div>
 
               {/* Links */}
-              <div className="border-divider-gray-light flex flex-wrap gap-2 border-t pt-3">
-                {submission.github_url && (
-                  <a
-                    href={submission.github_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="rounded-2 border-border-gray-light text-label-xs text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-8 items-center border px-3 font-semibold transition-colors"
-                  >
-                    GitHub
-                  </a>
-                )}
-                {submission.deploy_url && (
-                  <a
-                    href={submission.deploy_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="rounded-2 border-border-gray-light text-label-xs text-text-basic hover:border-border-primary hover:text-text-primary inline-flex h-8 items-center border px-3 font-semibold transition-colors"
-                  >
-                    배포
-                  </a>
-                )}
-              </div>
+              <ArchiveExternalLinks
+                links={[
+                  { label: "GitHub", href: submission.github_url },
+                  { label: "배포", href: submission.deploy_url },
+                ]}
+                size="small"
+                className={ARCHIVE_CARD_LINKS_CLASS_NAME}
+                onLinkClick={(event) => event.stopPropagation()}
+              />
             </article>
           );
         })}

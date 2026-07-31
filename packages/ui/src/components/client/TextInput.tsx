@@ -1,6 +1,7 @@
 "use client";
 
 import React, { forwardRef } from "react";
+import { HintText } from "../server/HintText";
 import { Label } from "../server/Label";
 
 type TextInputBaseProps = React.InputHTMLAttributes<HTMLInputElement>;
@@ -86,9 +87,9 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             {error}
           </Label>
         ) : helpText ? (
-          <Label id={helperTextId} size="s" className="mt-1 text-gray-50">
+          <HintText id={helperTextId} className="mt-1">
             {helpText}
-          </Label>
+          </HintText>
         ) : null}
       </div>
     );

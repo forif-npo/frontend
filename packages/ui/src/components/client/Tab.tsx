@@ -28,10 +28,10 @@ const Tab: React.FC<{
       id={id}
       onClick={onClick}
       disabled={disabled}
-      className={`focus:ring-primary-50 duration-400 ease-in-out' px-6 py-3 transition-all focus:outline-none focus:ring-2 ${
+      className={`rounded-2 focus-visible:ring-border-gray-dark relative px-6 py-3 transition-colors duration-200 focus:outline-none focus-visible:ring-2 ${
         isSelected
-          ? "border-primary rounded-t-2 border-b-4"
-          : "rounded-t-2 border-b-4 border-transparent"
+          ? "after:bg-text-bolder after:absolute after:inset-x-0 after:bottom-0 after:h-1"
+          : ""
       } ${
         disabled
           ? "cursor-not-allowed opacity-50"

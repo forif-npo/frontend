@@ -18,7 +18,7 @@ export function HackathonAbout() {
   return (
     <div className="flex flex-col gap-8">
       {/* 소개 */}
-      <section className="rounded-3 border-primary-20 from-primary-5 to-primary-5 relative overflow-hidden border bg-gradient-to-br via-white p-8 sm:p-12">
+      <section className="rounded-3 border-primary-20 from-primary-5 to-primary-5 via-surface-white relative overflow-hidden border bg-gradient-to-br p-8 sm:p-12">
         <div className="bg-primary-10 absolute right-0 top-0 h-72 w-72 -translate-y-1/2 translate-x-1/3 rounded-full opacity-50 blur-3xl" />
         <div className="relative z-10 max-w-2xl">
           <Label
@@ -31,8 +31,9 @@ export function HackathonAbout() {
             아이디어를 팀 프로젝트로 완성하는 하루
           </Heading>
           <Body size="m" className="text-text-subtle max-w-lg">
-            FORIF 해커톤은 학기 중 쌓은 기술과 관심사를 바탕으로 팀을 꾸려, 짧은
-            시간 안에 기획, 개발 및 결과물 발표까지 경험하는 행사입니다.
+            FORIF 해커톤은 학기 중 쌓은 기술과 관심사를 바탕으로 팀을 꾸려,
+            <br />
+            짧은 시간 안에 기획, 개발 및 결과물 발표까지 경험하는 행사입니다.
           </Body>
         </div>
       </section>

@@ -9,10 +9,10 @@ import {
   RecruitingMain,
   getMainStage,
 } from "@/features/hackathon";
-import { statusBadgeClass, statusLabel } from "@/features/hackathon/utils";
+import { statusBadgeVariant, statusLabel } from "@/features/hackathon/utils";
 import { HackathonDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { handleApiError } from "@core/utils/api-client";
-import { Body, Breadcrumb, Heading, Link } from "@ui/components/server";
+import { Badge, Body, Breadcrumb, Heading, Link } from "@ui/components/server";
 import { Button } from "@ui/components/client";
 import type {
   CreateTeamRequest,
@@ -33,6 +33,7 @@ export default function HackathonDetailPage() {
     teams,
     myTeam,
     submissions,
+    participantCount,
     loading: dataLoading,
     error: dataError,
     refetch,
@@ -197,12 +198,15 @@ export default function HackathonDetailPage() {
           ]}
         />
         <div className="flex flex-wrap items-center gap-3">
-          <Heading size="m" className="text-text-basic">
+          <Heading size="l" className="text-text-basic">
             {hackathon.title}
           </Heading>
-          <span className={statusBadgeClass(hackathon.status)}>
-            {statusLabel[hackathon.status]}
-          </span>
+          <Badge
+            label={statusLabel[hackathon.status]}
+            variant={statusBadgeVariant[hackathon.status]}
+            appearance="solid-pastel"
+            size="small"
+          />
         </div>
       </div>
 
@@ -249,7 +253,10 @@ export default function HackathonDetailPage() {
         <EndedMain
           hackathon={hackathon}
           submissionCount={submissions.length}
-          awardCount={0}
+          participantCount={
+            participantCount ??
+            teams.reduce((count, team) => count + team.member_count, 0)
+          }
         />
       )}
     </main>

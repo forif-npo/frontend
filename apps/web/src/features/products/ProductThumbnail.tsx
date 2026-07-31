@@ -13,12 +13,12 @@ interface ProductThumbnailProps {
 
 /** 썸네일이 없는 서비스에 slug 기반 고정 그라디언트를 보여준다 */
 const GRADIENTS = [
-  "from-[#0b50d0] to-[#4f8ef7]",
-  "from-[#063a74] to-[#0b50d0]",
-  "from-[#2c7a5b] to-[#5fc39a]",
-  "from-[#7a4fc3] to-[#b18cf0]",
-  "from-[#c05621] to-[#f0a05a]",
-  "from-[#31597f] to-[#7fa8cf]",
+  "from-primary-60 to-primary-40",
+  "from-secondary-70 to-primary-60",
+  "from-success-70 to-success-30",
+  "from-point-70 to-point-30",
+  "from-warning-50 to-warning-20",
+  "from-graphic-70 to-graphic-30",
 ];
 
 function gradientFor(slug: string) {
@@ -41,7 +41,7 @@ export function ProductThumbnail({
 
   if (validSrc && !hasError) {
     return (
-      <div className={`relative overflow-hidden bg-[#DFE8F4] ${className}`}>
+      <div className={`bg-graphic-10 relative overflow-hidden ${className}`}>
         <Image
           src={validSrc}
           alt={name}
@@ -58,7 +58,7 @@ export function ProductThumbnail({
     <div
       className={`flex items-center justify-center overflow-hidden bg-gradient-to-br ${gradientFor(slug)} ${className}`}
     >
-      <span className="select-none text-[40px] font-bold tracking-tight text-white/90">
+      <span className="text-text-inverse-static select-none text-[40px] font-bold tracking-tight">
         {name.slice(0, 1)}
       </span>
     </div>

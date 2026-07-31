@@ -8,6 +8,7 @@ import { BlogIcon } from "./blog";
 import { BreadHomeIcon } from "./bread_home";
 import { CalendarIcon } from "./calendar";
 import { CallIcon } from "./call";
+import { ChannelTalkIcon } from "./channel_talk";
 import { CheckboxIcon } from "./checkbox";
 import { CheckboxCheckedIcon } from "./checkbox_checked";
 import { CloseIcon } from "./close";
@@ -99,6 +100,7 @@ export {
   BreadHomeIcon,
   CalendarIcon,
   CallIcon,
+  ChannelTalkIcon,
   CheckboxCheckedIcon,
   CheckboxIcon,
   CloseIcon,

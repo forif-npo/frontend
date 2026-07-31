@@ -1,15 +1,15 @@
-import { InstagramIcon, KakaotalkIcon } from "@repo/assets/icons/krds";
+import {
+  ChannelTalkIcon,
+  InstagramIcon,
+  KakaotalkIcon,
+} from "@repo/assets/icons/krds";
 import { ChevronRight, Github } from "@repo/assets/icons/lucide";
 import { Body, Link } from "@ui/components/server";
+import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
+import { FORIF_CONTACT_INFO } from "@/constants/organization";
 import Image from "next/image";
 
 const NAV_LOGO_SRC = "/black_title.svg";
-
-const SOCIAL_LINKS = {
-  github: "https://github.com/forif-npo",
-  instagram: "https://www.instagram.com/forif_hyu/",
-  kakaotalk: "https://pf.kakao.com/_xnRxhxmG",
-} as const;
 
 const UTILITY_LINKS = [
   { label: "찾아오시는 길", href: "/directions" },
@@ -32,7 +32,7 @@ export function Footer() {
           <div className="border-divider-gray-light h-7 border-l" />
 
           <a
-            href={SOCIAL_LINKS.github}
+            href={FORIF_EXTERNAL_LINKS.github}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="FORIF GitHub"
@@ -41,17 +41,25 @@ export function Footer() {
           </a>
 
           <a
-            href={SOCIAL_LINKS.instagram}
+            href={FORIF_EXTERNAL_LINKS.channelTalk}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="FORIF Instagram"
-            className="border-border-gray-light rounded-full border p-2"
+            aria-label="FORIF 채널톡"
           >
-            <InstagramIcon width={24} height={24} />
+            <ChannelTalkIcon width={36} height={36} />
           </a>
 
           <a
-            href={SOCIAL_LINKS.kakaotalk}
+            href={FORIF_EXTERNAL_LINKS.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="FORIF Instagram"
+          >
+            <InstagramIcon width={36} height={36} />
+          </a>
+
+          <a
+            href={FORIF_EXTERNAL_LINKS.kakaoTalk}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="FORIF 카카오톡"
@@ -64,23 +72,20 @@ export function Footer() {
         <div className="footer-info-grid flex items-start">
           {/* Address + Contact */}
           <div className="flex flex-1 flex-col gap-4">
-            <Body size="m">
-              (04763) 서울 성동구 왕십리로 222 한양대학교 대운동장 지하2층
-              B214호
-            </Body>
+            <Body size="m">{FORIF_CONTACT_INFO.address}</Body>
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <Body size="m" weight="bold" className="shrink-0">
                   이메일
                 </Body>
-                <Body size="m">contact@forif.org</Body>
+                <Body size="m">{FORIF_CONTACT_INFO.email}</Body>
               </div>
               <div className="flex items-center gap-2">
                 <Body size="m" weight="bold" className="shrink-0">
                   회장 연락처
                 </Body>
-                <Body size="m">010-3981-2273</Body>
+                <Body size="m">{FORIF_CONTACT_INFO.presidentPhone}</Body>
               </div>
             </div>
           </div>

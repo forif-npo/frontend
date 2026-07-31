@@ -9,6 +9,7 @@ export type CriticalAlertProps = {
   variant: AlertVariant;
   link?: string;
   detailText?: string;
+  showArrow?: boolean;
   title?: string;
   className?: string;
 };
@@ -31,6 +32,7 @@ export const CriticalAlert = ({
   link,
   title,
   detailText = "자세히 보기",
+  showArrow = true,
   className,
 }: CriticalAlertProps) => {
   return (
@@ -43,7 +45,14 @@ export const CriticalAlert = ({
           {text}
         </Label>
         <div className="hidden shrink-0 md:block">
-          {link && <MoreLinkButton link={link} title={title} />}
+          {link && (
+            <MoreLinkButton
+              link={link}
+              title={title}
+              detailText={detailText}
+              showArrow={showArrow}
+            />
+          )}
         </div>
         <div className="block shrink-0 md:hidden">
           {link && (
@@ -54,7 +63,13 @@ export const CriticalAlert = ({
                 textDecoration: "none",
               }}
             >
-              <ArrowIcon />
+              {showArrow ? (
+                <ArrowIcon />
+              ) : (
+                <Label size="m" className="text-text-basic">
+                  {detailText}
+                </Label>
+              )}
             </LinkButton>
           )}
         </div>
@@ -83,7 +98,17 @@ const UrgentBadge = ({ variant }: { variant: AlertVariant }) => {
   );
 };
 
-const MoreLinkButton = ({ link, title }: { link: string; title?: string }) => {
+const MoreLinkButton = ({
+  link,
+  title,
+  detailText,
+  showArrow,
+}: {
+  link: string;
+  title?: string;
+  detailText: string;
+  showArrow: boolean;
+}) => {
   return (
     <LinkButton
       href={link}
@@ -96,9 +121,9 @@ const MoreLinkButton = ({ link, title }: { link: string; title?: string }) => {
         size="m"
         className="text-text-basic mr-1 hidden cursor-pointer md:inline-block"
       >
-        자세히 보기
+        {detailText}
       </Label>
-      <ArrowIcon />
+      {showArrow && <ArrowIcon />}
     </LinkButton>
   );
 };

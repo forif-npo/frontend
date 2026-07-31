@@ -7,6 +7,7 @@ import {
   getRecruitStatusBadgeVariant,
   getRecruitStatusLabel,
   getWeekDayLabel,
+  NUMERIC_DIFFICULTY_LABELS,
 } from "@/constants/study";
 import type { Study, RecruitStatus, StudyDifficulty } from "@/types/study";
 import { Button } from "@ui/components/client";
@@ -42,6 +43,8 @@ interface MyPageVariantProps {
     week_day: number;
     location: string;
     certificate_issued: boolean;
+    tags: string[];
+    difficulty: number;
   };
   semesterLabel: string;
   isCurrent?: boolean;
@@ -75,6 +78,23 @@ function getVisibleDifficultyLabel(difficulty: unknown) {
   if (typeof difficulty !== "string") return "";
 
   return getDifficultyLabel(difficulty).trim();
+}
+
+function SemesterBadge({ label }: { label: string }) {
+  return (
+    <Badge
+      label={label}
+      variant="info"
+      appearance="solid-pastel"
+      size="small"
+    />
+  );
+}
+
+function getNumericDifficultyBadgeVariant(difficulty: number) {
+  if (difficulty <= 2) return "success" as const;
+  if (difficulty === 3) return "warning" as const;
+  return "danger" as const;
 }
 
 // ── Component ───────────────────────────────────────────────────────
@@ -131,6 +151,7 @@ export function StudyCard(props: StudyCardProps) {
               appearance="solid-pastel"
               size="small"
             />
+            <SemesterBadge label={`${s.act_year}-${s.act_semester}`} />
             {tagLabels.slice(0, 1).map((tag) => (
               <Badge
                 key={tag}
@@ -168,7 +189,7 @@ export function StudyCard(props: StudyCardProps) {
               멘토: {getMentorText(primaryMentor, secondaryMentor)}
             </Body>
             <Label size="m" className="ml-2 shrink-0 group-hover:underline">
-              자세히 보기 →
+              자세히 보기
             </Label>
           </div>
         </div>
@@ -185,7 +206,7 @@ export function StudyCard(props: StudyCardProps) {
     const difficultyLabel = getVisibleDifficultyLabel(s.difficulty);
 
     return (
-      <div className="flex w-full flex-col overflow-hidden rounded-b-xl border border-gray-200 bg-white">
+      <div className="rounded-3 border-border-gray-light bg-surface-white flex w-full flex-col overflow-hidden border">
         {imageSection}
         <div className="flex flex-col gap-4 p-8">
           <div className="flex gap-1 overflow-x-auto text-nowrap">
@@ -195,12 +216,7 @@ export function StudyCard(props: StudyCardProps) {
               appearance="solid-pastel"
               size="small"
             />
-            <Badge
-              label={`${s.act_year}-${s.act_semester}`}
-              variant="info"
-              appearance="solid-pastel"
-              size="small"
-            />
+            <SemesterBadge label={`${s.act_year}-${s.act_semester}`} />
             {tagLabels[0] && (
               <Badge
                 label={tagLabels[0]}
@@ -267,10 +283,12 @@ export function StudyCard(props: StudyCardProps) {
 
   // ── MyPage variant ──
   const mentorNames = getMentorText(primaryMentor, secondaryMentor, "·");
+  const tagLabels = getVisibleTagLabels(study.tags);
+  const difficultyLabel = NUMERIC_DIFFICULTY_LABELS[study.difficulty] ?? "보통";
 
   return (
-    <div className="flex min-w-[240px] flex-col overflow-clip">
-      <div className="relative h-[196px] w-full rounded-t-[12px] border border-[#c6c6c6] bg-[#dfe8f4]">
+    <div className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border">
+      <div className="relative h-[196px] w-full bg-[#dfe8f4]">
         <StudyImage
           src={imgUrl}
           alt={studyName}
@@ -278,11 +296,32 @@ export function StudyCard(props: StudyCardProps) {
           className="object-cover"
         />
       </div>
-      <div className="flex flex-col gap-4 rounded-b-[12px] border-b border-l border-r border-[#b1b8be] bg-white px-8 py-8">
+      <div className="flex flex-col gap-4 px-8 py-8">
         <div className="flex flex-col gap-4">
-          <span className="inline-flex h-[24px] w-fit items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2 text-[15px] leading-[1.5] text-[#0b50d0]">
-            {props.semesterLabel}
-          </span>
+          <div className="flex flex-wrap gap-2">
+            <Badge
+              label={props.isCurrent ? "수강 중" : "수료"}
+              variant={props.isCurrent ? "success" : "disabled"}
+              appearance="solid-pastel"
+              size="small"
+            />
+            <SemesterBadge label={props.semesterLabel} />
+            {tagLabels.slice(0, 2).map((tag) => (
+              <Badge
+                key={tag}
+                label={tag}
+                variant="info"
+                appearance="solid-pastel"
+                size="small"
+              />
+            ))}
+            <Badge
+              label={difficultyLabel}
+              variant={getNumericDifficultyBadgeVariant(study.difficulty)}
+              appearance="solid-pastel"
+              size="small"
+            />
+          </div>
           <p className="text-text-basic whitespace-nowrap text-[17px] font-bold leading-[1.5]">
             {studyName}
           </p>

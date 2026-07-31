@@ -1,4 +1,5 @@
 import { InfoBox, Link } from "@ui/components/server";
+import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
 
 const InfoBoxContent = () => {
   return (
@@ -7,7 +8,7 @@ const InfoBoxContent = () => {
         <li className="text-text-subtle text-body-s-mobile sm:text-body-s">
           <Link
             size="s"
-            href="https://pf.kakao.com/_xnRxhxmG"
+            href={FORIF_EXTERNAL_LINKS.kakaoTalk}
             className="text-body-s-mobile sm:text-body-s underline underline-offset-2"
             target="_blank"
             rel="noopener noreferrer"

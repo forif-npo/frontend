@@ -64,7 +64,8 @@ export function ApplicationDetailView({
   const priorityLabel = priority === "PRIMARY" ? "1순위" : "2순위";
   const difficultyLabel = NUMERIC_DIFFICULTY_LABELS[study.difficulty] ?? "보통";
   const statusLabel = APPLICATION_STATUS_LABELS[status] ?? "지원중";
-  const charCount = intro.length;
+  const applicationIntro = intro ?? "";
+  const charCount = applicationIntro.length;
 
   return (
     <div className="flex flex-col gap-4">
@@ -123,7 +124,7 @@ export function ApplicationDetailView({
               </p>
               <div className="h-[300px] overflow-y-auto rounded-md border border-[#58616a] bg-white px-4 py-2">
                 <p className="text-[17px] leading-[1.5] text-[#1e2124]">
-                  {intro}
+                  {applicationIntro}
                 </p>
               </div>
               <CharacterCount count={charCount} max={500} />

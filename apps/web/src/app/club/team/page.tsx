@@ -7,6 +7,7 @@ import { Select } from "@ui/components/client";
 import { Badge, Breadcrumb } from "@ui/components/server";
 import Image from "next/image";
 import { safeImageSrc } from "@/utils/image";
+import { FORIF_CONTACT_INFO } from "@/constants/organization";
 import { getCurrentSemester, type Semester } from "@core/semester/api";
 
 interface TeamMember {
@@ -29,14 +30,17 @@ const DEFAULT_PROFILE_IMAGE_SRC = "/forif-circle.svg";
 
 /** 선택 가능한 연도는 활동 학기(서버 기준)까지만 노출한다 */
 const buildYearOptions = (latestYear: number) =>
-  Array.from({ length: Math.max(latestYear - EARLIEST_YEAR + 1, 1) }, (_, i) => {
-    const year = latestYear - i;
+  Array.from(
+    { length: Math.max(latestYear - EARLIEST_YEAR + 1, 1) },
+    (_, i) => {
+      const year = latestYear - i;
 
-    return {
-      value: String(year),
-      label: `${year}년`,
-    };
-  });
+      return {
+        value: String(year),
+        label: `${year}년`,
+      };
+    },
+  );
 
 const SEMESTER_OPTIONS = [
   { value: "1", label: "1학기" },
@@ -133,8 +137,8 @@ export default function TeamPage() {
           />
         </div>
         <p className="max-w-xl text-xs leading-5 text-gray-500 md:text-right">
-          * 2024년 2학기 이전 운영진으로 활동하셨다면, contact@forif.org로
-          문의해주세요!
+          * 2024년 2학기 이전 운영진으로 활동하셨다면,{" "}
+          {FORIF_CONTACT_INFO.email}로 문의해주세요!
         </p>
       </div>
 

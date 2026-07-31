@@ -1,5 +1,6 @@
 import { CalendarDays, ChevronRight } from "@repo/assets/icons/lucide";
 import Link from "next/link";
+import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
 
 export function MobileBlogSection() {
   return (
@@ -16,7 +17,7 @@ export function MobileBlogSection() {
           </span>
         </div>
         <Link
-          href="https://medium.com/forif"
+          href={FORIF_EXTERNAL_LINKS.medium}
           target="_blank"
           rel="noopener noreferrer"
           className="flex h-8 items-center gap-1 px-0.5 text-[17px] leading-[1.5] text-[#1e2124]"

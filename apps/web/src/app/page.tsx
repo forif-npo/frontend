@@ -2,7 +2,6 @@ import { CTASection } from "@/features/home/CTASection";
 import { HackathonSection } from "@/features/home/HackathonSection";
 import { NewsSection } from "@/features/home/NewsSection";
 import { QuickMenu } from "@/features/home/QuickMenu";
-import { ServiceSection } from "@/features/home/ServiceSection";
 import { StudySection } from "@/features/home/StudySection";
 import { CriticalAlert } from "@repo/ui/components/client";
 import { Button, Carousel } from "@ui/components/client";
@@ -45,9 +44,10 @@ export default async function Page() {
           <CriticalAlert
             variant="information"
             link="/studies/list"
-            text="스터디 신청 절차를 자세히 알고 싶으신가요?"
-            title="스터디 신청 절차 안내 페이지로 이동"
+            text="매 학기 어떤 스터디가 열리는지 궁금하신가요?"
+            title="스터디 목록으로 이동"
             detailText="자세히 보기"
+            showArrow={false}
             className="shadow-sm"
           />
         </section>
@@ -81,30 +81,27 @@ export default async function Page() {
           </div>
         </div>
 
-        {/* QuickMenu */}
-        <section className="max-w-main mx-auto w-full px-4">
-          <QuickMenu />
-        </section>
+        <div className="flex w-full flex-col gap-9 md:gap-[90px]">
+          {/* QuickMenu */}
+          <section className="max-w-main mx-auto w-full px-4 lg:px-0">
+            <QuickMenu />
+          </section>
 
-        {/* HackathonSection */}
-        <section className="w-full">
-          <HackathonSection />
-        </section>
+          {/* HackathonSection */}
+          <section className="w-full">
+            <HackathonSection />
+          </section>
 
-        {/* StudySection */}
-        <section className="w-full">
-          <StudySection />
-        </section>
+          {/* StudySection */}
+          <section className="w-full">
+            <StudySection />
+          </section>
 
-        {/* NewsSection */}
-        <section className="w-full">
-          <NewsSection />
-        </section>
-
-        {/* ServiceSection */}
-        <section className="w-full">
-          <ServiceSection />
-        </section>
+          {/* NewsSection */}
+          <section className="w-full">
+            <NewsSection />
+          </section>
+        </div>
 
         {/* CTASection */}
         <div className="w-full">

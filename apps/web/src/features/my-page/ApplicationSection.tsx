@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Select } from "@ui/components/client";
 import { ApplicationCard } from "./ApplicationCard";
 import { ApplicationDetailView } from "./ApplicationDetailView";
+import {
+  StudySortControl,
+  type StudySortOrder,
+} from "@/components/study/ui/StudySortControl";
 import type {
   StudyApplicationsResponse,
   ApplicationDetail,
@@ -23,7 +26,7 @@ type FlatApplication = ApplicationDetail & {
 export function ApplicationSection({
   applicationsData,
 }: ApplicationSectionProps) {
-  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [sortOrder, setSortOrder] = useState<StudySortOrder>("latest");
   const [selectedApplication, setSelectedApplication] =
     useState<FlatApplication | null>(null);
 
@@ -52,7 +55,7 @@ export function ApplicationSection({
   const sortedApplications = [...allApplications].sort((a, b) => {
     const dateA = new Date(a.apply_date).getTime();
     const dateB = new Date(b.apply_date).getTime();
-    return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
   });
 
   if (selectedApplication) {
@@ -71,19 +74,7 @@ export function ApplicationSection({
           지원서{" "}
           <span className="text-[#0b50d0]">{sortedApplications.length}</span>개
         </p>
-        <Select
-          id="application-sort"
-          variant="text"
-          size="sm"
-          value={sortOrder}
-          onChange={(v) => setSortOrder(v as "newest" | "oldest")}
-          placeholder="정렬기준"
-          dropdownAlign="right"
-          options={[
-            { value: "newest", label: "최신순" },
-            { value: "oldest", label: "오래된순" },
-          ]}
-        />
+        <StudySortControl value={sortOrder} onChange={setSortOrder} />
       </div>
 
       {sortedApplications.length === 0 ? (
