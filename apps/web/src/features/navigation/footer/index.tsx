@@ -2,6 +2,7 @@ import { InstagramIcon, KakaotalkIcon } from "@repo/assets/icons/krds";
 import { ChevronRight, Github } from "@repo/assets/icons/lucide";
 import { Body, Link } from "@ui/components/server";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
+import { FORIF_CONTACT_INFO } from "@/constants/organization";
 import Image from "next/image";
 
 const NAV_LOGO_SRC = "/black_title.svg";
@@ -59,23 +60,20 @@ export function Footer() {
         <div className="footer-info-grid flex items-start">
           {/* Address + Contact */}
           <div className="flex flex-1 flex-col gap-4">
-            <Body size="m">
-              (04763) 서울 성동구 왕십리로 222 한양대학교 대운동장 지하2층
-              B214호
-            </Body>
+            <Body size="m">{FORIF_CONTACT_INFO.address}</Body>
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <Body size="m" weight="bold" className="shrink-0">
                   이메일
                 </Body>
-                <Body size="m">contact@forif.org</Body>
+                <Body size="m">{FORIF_CONTACT_INFO.email}</Body>
               </div>
               <div className="flex items-center gap-2">
                 <Body size="m" weight="bold" className="shrink-0">
                   회장 연락처
                 </Body>
-                <Body size="m">010-3981-2273</Body>
+                <Body size="m">{FORIF_CONTACT_INFO.presidentPhone}</Body>
               </div>
             </div>
           </div>

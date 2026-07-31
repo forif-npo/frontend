@@ -1,4 +1,5 @@
 import { KakaoMap } from "@/components/KakaoMap";
+import { FORIF_CONTACT_INFO, FORIF_LOCATION } from "@/constants/organization";
 import { Body, Heading } from "@ui/components/server";
 import type { Metadata } from "next";
 
@@ -7,18 +8,10 @@ export const metadata: Metadata = {
   description: "FORIF 동아리방 위치 및 찾아오시는 길 안내입니다.",
 };
 
-const PLACE_NAME = "한양대학교 FORIF 동아리방";
-const ADDRESS =
-  "(04763) 서울 성동구 왕십리로 222 한양대학교 대운동장 지하2층 B214호";
-
-// 지도 중심 좌표 (위도, 경도). 카카오맵에서 정확한 위치 좌표를 확인해 수정하세요.
-const LAT = 37.5551;
-const LNG = 127.0475;
-
 const INFO_ITEMS = [
-  { label: "주소", value: ADDRESS },
-  { label: "이메일", value: "contact@forif.org" },
-  { label: "회장 연락처", value: "010-3981-2273" },
+  { label: "주소", value: FORIF_CONTACT_INFO.address },
+  { label: "이메일", value: FORIF_CONTACT_INFO.email },
+  { label: "회장 연락처", value: FORIF_CONTACT_INFO.presidentPhone },
 ];
 
 export default function DirectionsPage() {
@@ -32,9 +25,9 @@ export default function DirectionsPage() {
       </Body>
 
       <KakaoMap
-        placeName={PLACE_NAME}
-        lat={LAT}
-        lng={LNG}
+        placeName={FORIF_LOCATION.placeName}
+        lat={FORIF_LOCATION.latitude}
+        lng={FORIF_LOCATION.longitude}
         className="h-[260px] w-full rounded-[12px] md:h-[360px]"
       />
 
