@@ -2,7 +2,7 @@
 
 import type { Hackathon, Submission, Award } from "@core/types/hackathon";
 import { Badge, Body, Breadcrumb, Heading, Label } from "@ui/components/server";
-import { Pagination, Select, TextInput } from "@ui/components/client";
+import { Pagination, SelectBox } from "@ui/components/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
@@ -10,6 +10,7 @@ import { HACKATHON_TECH_STACK_OPTIONS } from "@core/hackathon/tags";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
+import { SearchBar } from "@/components/SearchBar";
 import type { ArchiveHackathonDetail } from "@core/types/hackathon";
 
 interface ArchiveMainProps {
@@ -112,68 +113,65 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
       </div>
 
       {/* Header */}
-      <section className="bg-surface-white border-border-gray-light rounded-3 mb-8 border p-8 shadow-sm">
+      <section className="mb-8">
         <div>
-          <Label
-            size="xs"
-            className="text-text-primary mb-3 block font-bold uppercase tracking-[0.15em]"
-          >
-            Archive
-          </Label>
-          <Heading size="l" className="text-text-basic mb-3">
+          <Heading size="l" className="text-text-basic mb-4">
             역대 해커톤 결과물
           </Heading>
           <Body size="m" className="text-text-subtle">
-            종료된 해커톤의 제출작을 모아보고, 수상팀은 뱃지로 구분합니다.
+            종료된 해커톤의 제출작을 확인해보세요.
           </Body>
         </div>
       </section>
 
-      {/* Hackathon selector + Filters */}
-      <section className="bg-surface-white border-border-gray-light rounded-3 mb-6 flex flex-wrap items-end gap-4 border p-5 shadow-sm">
-        <div className="min-w-[180px]">
-          <div className="flex flex-col gap-1.5">
-            <Label size="xs" className="text-text-subtle font-bold">
-              해커톤 회차
-            </Label>
-            <Select
-              id="archive-hackathon"
-              value={String(selectedId)}
-              onChange={(value) => {
-                setSelectedId(Number(value));
-                setSearch("");
-                setSelectedTech("전체");
-                setCurrentPage(1);
-              }}
-              options={hackathonOptions}
-              placeholder="회차 선택"
-              size="md"
-            />
-          </div>
-        </div>
-        <div className="min-w-[200px] flex-1">
-          <TextInput
-            id="archive-search"
-            title="검색"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="프로젝트명, 한 줄 소개"
-            length="full"
-          />
-        </div>
-        <div className="min-w-[180px]">
-          <div className="flex flex-col gap-1.5">
-            <Label size="xs" className="text-text-subtle font-bold">
-              기술 스택
-            </Label>
-            <Select
-              id="archive-tech-stack"
-              value={selectedTech}
-              onChange={setSelectedTech}
-              options={techOptions}
-              placeholder="기술 스택"
-              size="md"
-            />
+      {/* Search + Filters */}
+      <section className="mb-7">
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          onSubmit={() => setCurrentPage(1)}
+          placeholder="프로젝트명, 한 줄 소개를 검색해보세요"
+          className="mb-6 w-full md:!max-w-none"
+        />
+
+        <div className="bg-surface-secondary-subtler rounded-xl p-10">
+          <div className="flex items-start gap-14 max-md:flex-col">
+            <div className="flex items-center gap-3 max-md:w-full">
+              <Label className="text-text-basic whitespace-nowrap font-bold max-md:w-20">
+                해커톤 회차
+              </Label>
+              <div className="w-[280px] max-md:min-w-0 max-md:flex-1">
+                <SelectBox
+                  id="archive-hackathon"
+                  value={String(selectedId)}
+                  onChange={(value) => {
+                    setSelectedId(Number(value));
+                    setSearch("");
+                    setSelectedTech("전체");
+                    setCurrentPage(1);
+                  }}
+                  options={hackathonOptions}
+                  placeholder="회차 선택"
+                  size="md"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 max-md:w-full">
+              <Label className="text-text-basic whitespace-nowrap font-bold max-md:w-20">
+                기술 스택
+              </Label>
+              <div className="w-[208px] max-md:min-w-0 max-md:flex-1">
+                <SelectBox
+                  id="archive-tech-stack"
+                  value={selectedTech}
+                  onChange={setSelectedTech}
+                  options={techOptions}
+                  placeholder="전체"
+                  size="md"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -243,7 +241,7 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
               </div>
 
               {/* Links */}
-              <div className="border-divider-gray-light flex flex-wrap gap-2 border-t pt-3">
+              <div className="border-divider-gray-light flex min-h-[45px] flex-wrap gap-2 border-t pt-3">
                 {submission.github_url && (
                   <a
                     href={submission.github_url}

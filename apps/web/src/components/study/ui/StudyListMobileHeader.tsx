@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import clsx from "clsx";
-import { StudySearchBar } from "./StudySearchBar";
+import { SearchBar } from "@/components/SearchBar";
 import { StudyFilterSection, getActiveFilterCount } from "./StudyFilterSection";
 import { StudyActionButtons } from "./StudyActionButtons";
 
@@ -58,7 +58,7 @@ export const StudyListMobileHeader: React.FC<StudyListMobileHeaderProps> = ({
   return (
     <div className="z-[9999] md:hidden">
       <div className="mb-4">
-        <StudySearchBar
+        <SearchBar
           value={searchInput}
           onChange={onSearchChange}
           onSubmit={onSearchSubmit}

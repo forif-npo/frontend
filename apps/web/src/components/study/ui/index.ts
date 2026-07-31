@@ -1,4 +1,3 @@
-export { StudySearchBar } from "./StudySearchBar";
 export { StudyActionButtons } from "./StudyActionButtons";
 export { StudyResultsHeader } from "./StudyResultsHeader";
 export { StudyCard } from "./StudyCard";

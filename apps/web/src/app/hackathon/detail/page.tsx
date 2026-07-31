@@ -198,7 +198,7 @@ export default function HackathonDetailPage() {
           ]}
         />
         <div className="flex flex-wrap items-center gap-3">
-          <Heading size="m" className="text-text-basic">
+          <Heading size="l" className="text-text-basic">
             {hackathon.title}
           </Heading>
           <Badge

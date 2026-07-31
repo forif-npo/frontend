@@ -1,6 +1,6 @@
 "use client";
 
-import { StudySearchBar } from "@/components/study";
+import { SearchBar } from "@/components/SearchBar";
 import { StudyListSkeleton } from "@/components/study/skeleton/StudyCardSkeleton";
 import { StudyActionButtons } from "@/components/study/ui/StudyActionButtons";
 import { StudyCardGrid } from "@/components/study/ui/StudyCardGrid";
@@ -179,7 +179,7 @@ export default function StudyListPage() {
 
         <div className="hidden md:block">
           <div className="mb-6 flex items-center justify-between gap-7">
-            <StudySearchBar
+            <SearchBar
               value={searchInput}
               onChange={(value) => setSearchInput(value)}
               onSubmit={() => {
