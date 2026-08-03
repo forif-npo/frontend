@@ -2,9 +2,9 @@ import { signUp } from "@/features/auth/signin/actions";
 import { auth, signOut } from "@/auth";
 import { SignOutButton } from "@/components/SignOutButton";
 import { SignUpForm } from "@/features/auth/signup/signup-form";
-import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
+import { AuthHelpInfo } from "@/features/auth/auth-help-info";
 import { signUpSchema, SignUpValues } from "@core/schemas";
-import { Body, Heading, InfoBox, Link } from "@ui/components/server";
+import { Body, Heading } from "@ui/components/server";
 import { redirect } from "next/navigation";
 import { z } from "zod/v4";
 
@@ -107,31 +107,7 @@ export default async function Page() {
       <section className="mb-10 w-full">
         <SignUpForm action={submitForm} email={session.user.email} />
       </section>
-      <InfoBox
-        title="회원가입에 어려움이 있으신가요?"
-        variant="information"
-        content={<InfoBoxContent />}
-      />
+      <AuthHelpInfo action="회원가입" />
     </div>
   );
 }
-const InfoBoxContent = () => {
-  return (
-    <div className="mx-7">
-      <ul className="list-inside list-disc space-y-2">
-        <li className="text-text-subtle">
-          <Link
-            size="m"
-            href={FORIF_EXTERNAL_LINKS.kakaoTalk}
-            className="underline underline-offset-2"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            카카오톡 오픈 채널
-          </Link>
-          로 연락주세요. 서비스에 회원가입할 수 있도록 도와드리겠습니다.
-        </li>
-      </ul>
-    </div>
-  );
-};

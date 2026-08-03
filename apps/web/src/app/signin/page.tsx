@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { SignInHelpInfo } from "@/features/auth/signin/signin-help-info";
+import { AuthHelpInfo } from "@/features/auth/auth-help-info";
 import { SignInTab } from "@/features/auth/signin/signin-tab";
 import { Heading } from "@ui/components/server";
 import { redirect } from "next/navigation";
@@ -22,7 +22,7 @@ export default async function Page() {
         <SignInTab />
       </section>
       <section className="mt-10 w-full">
-        <SignInHelpInfo />
+        <AuthHelpInfo action="로그인" />
       </section>
     </div>
   );
