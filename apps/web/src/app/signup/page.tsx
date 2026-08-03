@@ -92,17 +92,14 @@ export default async function Page() {
   }
 
   return (
-    <div className="min-h-viewport mx-auto mb-16 mt-8 max-w-[800px]">
-      <Heading size="xxs" className="text-text-subtle text-left">
-        포리프 부원 회원가입
-      </Heading>
-      <Heading size="l" className="text-text-basic mt-4 text-left">
+    <div className="min-h-viewport mx-auto mb-16 mt-8 max-w-[800px] px-5 sm:px-6 lg:px-0">
+      <Heading size="l" className="text-text-basic text-left">
         회원가입
       </Heading>
-      <Body size="m" className="text-text-subtle mt-12">
-        포리프 부원을 위한 회원가입입니다.
+      <Body size="m" className="text-text-subtle mt-4">
+        FORIF 부원을 위한 서비스 회원가입입니다.
         <br />
-        회원가입을 하시면 스터디 신청 / 회계 공시 서비스를 이용하실 수 있습니다.
+        스터디 신청, 스터디 개설, 해커톤 참여 등 더 많은 기능을 이용해보세요.
       </Body>
       <section className="mt-12 w-full">
         <SignOutButton />
