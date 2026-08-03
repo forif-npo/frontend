@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsEditor } from "@/features/hackathon-results/components/results-editor";
 import { handleApiError } from "@core/utils/api-client";
@@ -313,7 +314,7 @@ export function ManagementView({
 
   return (
     <div className="space-y-6 p-8">
-      <div className="space-y-2">
+      <div>
         <Button
           variant="ghost"
           className="h-auto p-0 text-sm"
@@ -322,14 +323,11 @@ export function ManagementView({
           <ArrowLeft className="mr-1 h-4 w-4" />
           해커톤 목록
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {hackathon.title || `${hackathon.event_round}회 해커톤`}
-        </h1>
-        <p className="text-muted-foreground">
-          {hackathon.held_year}-{hackathon.held_semester} /{" "}
-          {hackathon.event_round}회 · 평가 기준, 심사, 수상을 관리합니다.
-        </p>
       </div>
+      <PageHeader
+        title={hackathon.title || `${hackathon.event_round}회 해커톤`}
+        description={`${hackathon.held_year}-${hackathon.held_semester} / ${hackathon.event_round}회 · 평가 기준, 심사, 수상을 관리합니다.`}
+      />
 
       <Tabs defaultValue="participants" className="w-full">
         <TabsList>

@@ -2,6 +2,7 @@
 
 import { signInAction } from "@/features/auth/signin/action";
 import { Button, TextInput } from "@ui/components/client";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { useState } from "react";
 
 export function SignInForm() {
@@ -22,7 +23,11 @@ export function SignInForm() {
         setError(result.error);
         setIsLoading(false);
       }
-    } catch {
+    } catch (error) {
+      if (isRedirectError(error)) {
+        throw error;
+      }
+
       setError("로그인에 실패했습니다.");
       setIsLoading(false);
     }

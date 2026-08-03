@@ -3,6 +3,7 @@
 import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { SearchBar } from "@/components/list/search-bar";
+import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -310,26 +311,24 @@ export function HackathonView({ initialData }: HackathonViewProps) {
 
   return (
     <div className="space-y-6 p-8">
-      <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">해커톤 관리</h1>
-          <p className="text-muted-foreground">
-            해커톤을 생성하고 상태와 제출 현황을 관리할 수 있습니다.
-          </p>
-        </div>
-        <Button
-          onClick={handleOpenCreate}
-          disabled={activeHackathon !== undefined}
-          title={
-            activeHackathon
-              ? `${activeHackathon.title ?? "진행 중인 해커톤"} 종료 후 추가할 수 있습니다.`
-              : undefined
-          }
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          해커톤 추가
-        </Button>
-      </div>
+      <PageHeader
+        title="해커톤 관리"
+        description="해커톤을 생성하고 상태와 제출 현황을 관리할 수 있습니다."
+        actions={
+          <Button
+            onClick={handleOpenCreate}
+            disabled={activeHackathon !== undefined}
+            title={
+              activeHackathon
+                ? `${activeHackathon.title ?? "진행 중인 해커톤"} 종료 후 추가할 수 있습니다.`
+                : undefined
+            }
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            해커톤 추가
+          </Button>
+        }
+      />
 
       <div className="space-y-4">
         <SearchBar

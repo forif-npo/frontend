@@ -5,6 +5,7 @@ import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -189,13 +190,10 @@ export function OperatorsView({
 
   return (
     <div className="space-y-6 p-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">운영진 목록</h1>
-        <p className="text-muted-foreground">
-          학기별 운영진 명단입니다. 명단은 학기가 바뀌어도 이어지지 않으므로,
-          학기를 전환한 뒤 이번 학기 운영진을 새로 추가해주세요.
-        </p>
-      </div>
+      <PageHeader
+        title="운영진 목록"
+        description="학기별 운영진 명단입니다. 명단은 학기가 바뀌어도 이어지지 않으므로, 학기를 전환한 뒤 이번 학기 운영진을 새로 추가해주세요."
+      />
 
       <div className="flex items-center justify-between gap-4">
         <SemesterTabs

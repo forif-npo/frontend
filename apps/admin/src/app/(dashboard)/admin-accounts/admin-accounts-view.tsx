@@ -24,6 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SearchBar } from "@/components/list/search-bar";
+import { PageHeader } from "@/components/page-header";
 import { handleApiError } from "@core/utils/api-client";
 import {
   createAdminAccount,
@@ -251,17 +252,14 @@ export function AdminAccountsView({
   };
 
   return (
-    <div className="flex flex-col gap-4 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">운영진 계정 관리</h1>
-          <p className="text-muted-foreground text-sm">
-            admin 페이지에 로그인할 수 있는 운영진(ADMIN) 계정을 관리합니다.
-            회장 위임과 부회장 임명은 회장만 할 수 있습니다.
-          </p>
-        </div>
-        <Button onClick={() => setCreateOpen(true)}>운영진 계정 생성</Button>
-      </div>
+    <div className="space-y-6 p-8">
+      <PageHeader
+        title="운영진 계정 관리"
+        description="admin 페이지에 로그인할 수 있는 운영진(ADMIN) 계정을 관리합니다. 회장 위임과 부회장 임명은 회장만 할 수 있습니다."
+        actions={
+          <Button onClick={() => setCreateOpen(true)}>운영진 계정 생성</Button>
+        }
+      />
 
       <div className="flex items-center justify-between gap-4">
         <SearchBar

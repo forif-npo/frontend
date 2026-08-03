@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AlertTriangle, CalendarRange, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import {
   Dialog,
   DialogContent,
@@ -135,15 +136,11 @@ export function SemesterManageView({
   const next = nextSemester();
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-bold">학기 관리</h1>
-        <p className="text-muted-foreground text-sm">
-          동아리의 활동 학기를 지정합니다. 새로 등록되는 스터디 개설·수강
-          신청이 이 학기로 기록되고, 목록과 마이페이지의 현재 학기 판정이
-          바뀝니다.
-        </p>
-      </div>
+    <div className="space-y-6 p-8">
+      <PageHeader
+        title="학기 관리"
+        description="동아리의 활동 학기를 지정합니다. 새로 등록되는 스터디 개설·수강 신청이 이 학기로 기록되고, 목록과 마이페이지의 현재 학기 판정이 바뀝니다."
+      />
 
       {/* 현재 학기 */}
       <div className="flex flex-col gap-4 rounded-lg border p-6">
@@ -273,28 +270,30 @@ export function SemesterManageView({
                       {preview.target.label} 운영진이 아직 없습니다
                     </p>
                     <p className="mt-1 text-xs">
-                      전환 후 <span className="font-medium">회원 관리 &gt; 운영진</span>에서
-                      이번 학기 운영진을 지정해주세요. 지정 전까지 홈페이지 운영진 소개
-                      페이지가 비어 있습니다.
+                      전환 후{" "}
+                      <span className="font-medium">회원 관리 &gt; 운영진</span>
+                      에서 이번 학기 운영진을 지정해주세요. 지정 전까지 홈페이지
+                      운영진 소개 페이지가 비어 있습니다.
                     </p>
                   </div>
                 ) : (
                   <p className="text-muted-foreground flex items-start gap-1.5 text-xs">
                     <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    {preview.target.label} 운영진 {preview.target_team_member_count}명이
-                    이미 지정되어 있습니다.
+                    {preview.target.label} 운영진{" "}
+                    {preview.target_team_member_count}명이 이미 지정되어
+                    있습니다.
                   </p>
                 )}
 
                 {/* 해커톤 */}
                 {!preview.target_hackathon_exists && (
-                  <div className="rounded-md bg-muted p-3">
+                  <div className="bg-muted rounded-md p-3">
                     <p className="font-semibold">
                       {preview.target.label} 해커톤이 아직 없습니다
                     </p>
                     <p className="text-muted-foreground text-xs">
-                      해커톤을 진행한다면 전환 후 해커톤 메뉴에서 새로 만들어주세요.
-                      수료증 발급 자격 판정에도 사용됩니다.
+                      해커톤을 진행한다면 전환 후 해커톤 메뉴에서 새로
+                      만들어주세요. 수료증 발급 자격 판정에도 사용됩니다.
                     </p>
                   </div>
                 )}

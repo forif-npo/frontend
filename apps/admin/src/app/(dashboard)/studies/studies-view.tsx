@@ -8,6 +8,7 @@ import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import type { StudyUpdateRequest } from "@core/types/api";
@@ -272,12 +273,10 @@ export function StudiesView({
 
   return (
     <div className="space-y-6 p-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">스터디 목록</h1>
-        <p className="text-muted-foreground">
-          FORIF 스터디 강좌 목록을 확인하고 관리할 수 있습니다.
-        </p>
-      </div>
+      <PageHeader
+        title="스터디 목록"
+        description="FORIF 스터디 강좌 목록을 확인하고 관리할 수 있습니다."
+      />
 
       <div className="flex items-center justify-between">
         <SemesterTabs

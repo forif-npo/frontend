@@ -4,6 +4,7 @@ import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -175,19 +176,16 @@ export function PostManagementView({
 
   return (
     <div className="space-y-6 p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">
-            {labels.pageTitle}
-          </h1>
-          <p className="text-muted-foreground">{labels.pageDescription}</p>
-        </div>
-
-        <Button className="gap-2" onClick={handleOpenCreate}>
-          <Plus className="h-4 w-4" />
-          {labels.createButton}
-        </Button>
-      </div>
+      <PageHeader
+        title={labels.pageTitle}
+        description={labels.pageDescription}
+        actions={
+          <Button className="gap-2" onClick={handleOpenCreate}>
+            <Plus className="h-4 w-4" />
+            {labels.createButton}
+          </Button>
+        }
+      />
 
       <div className="space-y-4">
         <SearchBar

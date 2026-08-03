@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { PageHeader } from "@/components/page-header";
 import { handleApiError } from "@core/utils/api-client";
 import {
   approveProduct,
@@ -187,18 +188,20 @@ export function ProductsAdminView() {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-6">
-      <div>
-        <h1 className="text-2xl font-bold">서비스 관리</h1>
-        <p className="text-muted-foreground text-sm">
-          부원들의 서비스 등록 신청을 검토하고 게시 상태를 관리합니다.
-          {pendingCount > 0 && (
-            <span className="ml-2 font-semibold text-amber-600">
-              검토 대기 {pendingCount}건
-            </span>
-          )}
-        </p>
-      </div>
+    <div className="space-y-6 p-8">
+      <PageHeader
+        title="서비스 관리"
+        description={
+          <>
+            부원들의 서비스 등록 신청을 검토하고 게시 상태를 관리합니다.
+            {pendingCount > 0 && (
+              <span className="ml-2 font-semibold text-amber-600">
+                검토 대기 {pendingCount}건
+              </span>
+            )}
+          </>
+        }
+      />
 
       <Tabs
         value={filter}
