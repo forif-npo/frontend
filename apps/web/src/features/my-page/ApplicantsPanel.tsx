@@ -1,7 +1,8 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { Button, Select } from "@ui/components/client";
+import { Button, Pagination, Select } from "@ui/components/client";
+import { Badge, type BadgeProps } from "@ui/components/server";
 import {
   getApplicants,
   getApplicationDetail,
@@ -16,12 +17,12 @@ interface ApplicantsPanelProps {
   studyId: number;
 }
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
-const statusBadgeStyle: Record<string, string> = {
-  대기중: "bg-[#f4f5f6] text-[#464c53]",
-  승낙: "bg-[#ecf2fe] text-[#0b50d0]",
-  거절: "bg-[#fdefec] text-[#d3302f]",
+const statusBadgeVariant: Record<string, NonNullable<BadgeProps["variant"]>> = {
+  대기중: "warning",
+  승낙: "success",
+  거절: "danger",
 };
 
 function formatApplyDate(dateString: string) {
@@ -296,14 +297,15 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                       {formatApplyDate(applicant.apply_date)}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
-                      <span
-                        className={`inline-flex h-[24px] items-center rounded-[4px] px-2 text-[13px] ${
-                          statusBadgeStyle[applicant.study_status] ??
-                          "bg-[#f4f5f6] text-[#464c53]"
-                        }`}
-                      >
-                        {applicant.study_status}
-                      </span>
+                      <Badge
+                        label={applicant.study_status}
+                        variant={
+                          statusBadgeVariant[applicant.study_status] ??
+                          "disabled"
+                        }
+                        appearance="solid-pastel"
+                        size="small"
+                      />
                     </td>
                   </tr>
                   {expandedId === applicant.apply_id && (
@@ -327,26 +329,16 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
 
       {/* Pagination */}
       {applicantsPage.total_pages > 1 && (
-        <div className="mt-4 flex items-center justify-center gap-4">
-          <Button
-            variant="tertiary"
-            size="medium"
-            disabled={page === 0}
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-          >
-            이전
-          </Button>
-          <span className="text-[15px] text-[#464c53]">
-            {page + 1} / {applicantsPage.total_pages}
-          </span>
-          <Button
-            variant="tertiary"
-            size="medium"
-            disabled={page + 1 >= applicantsPage.total_pages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            다음
-          </Button>
+        <div className="mt-6 flex justify-center">
+          <Pagination
+            totalPages={applicantsPage.total_pages}
+            currentPage={page + 1}
+            onPageChange={(nextPage) => {
+              setPage(nextPage - 1);
+              setSelectedIds(new Set());
+              setExpandedId(null);
+            }}
+          />
         </div>
       )}
     </div>
