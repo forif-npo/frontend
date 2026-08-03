@@ -2,7 +2,16 @@
 
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { Button, Pagination, Select } from "@ui/components/client";
-import { Badge, type BadgeProps } from "@ui/components/server";
+import {
+  Badge,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  type BadgeProps,
+} from "@ui/components/server";
 import {
   getApplicants,
   getApplicationDetail,
@@ -160,18 +169,16 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
     <div>
       {/* Count, filters & bulk actions */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
+        <p className="text-text-basic text-body-l font-bold leading-normal">
           신청자{" "}
-          <span className="text-[#0b50d0]">
+          <span className="text-text-primary">
             {applicantsPage.total_elements}
           </span>
           명
         </p>
         <div className="flex flex-wrap items-center justify-end gap-4">
           <div className="flex shrink-0 items-center gap-3">
-            <p className="text-body-medium whitespace-nowrap font-bold">
-              신청상태
-            </p>
+            <p className="text-body-m whitespace-nowrap font-bold">신청상태</p>
             <Select
               id="manage-status-filter"
               variant="text"
@@ -194,9 +201,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
           </div>
           <div className="bg-divider-gray h-4 w-px" aria-hidden="true" />
           <div className="flex shrink-0 items-center gap-3">
-            <p className="text-body-medium whitespace-nowrap font-bold">
-              정렬기준
-            </p>
+            <p className="text-body-m whitespace-nowrap font-bold">정렬기준</p>
             <Select
               id="manage-sort"
               variant="text"
@@ -215,6 +220,108 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
               ]}
             />
           </div>
+        </div>
+      </div>
+
+      {errorMessage && (
+        <p className="text-text-danger text-body-s mb-4">{errorMessage}</p>
+      )}
+
+      {/* Applicant table */}
+      {isLoading ? (
+        <div className="flex items-center justify-center py-20 text-gray-500">
+          <p className="text-lg">불러오는 중...</p>
+        </div>
+      ) : applicants.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+          <p className="text-lg">신청자가 없습니다</p>
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-12">
+                <input
+                  type="checkbox"
+                  aria-label="전체 선택"
+                  checked={allSelected}
+                  onChange={toggleSelectAll}
+                />
+              </TableHead>
+              <TableHead>이름</TableHead>
+              <TableHead>순위</TableHead>
+              <TableHead>지원 동기</TableHead>
+              <TableHead>신청일</TableHead>
+              <TableHead>상태</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {applicants.map((applicant) => (
+              <Fragment key={applicant.apply_id}>
+                <TableRow
+                  interactive
+                  tabIndex={0}
+                  aria-expanded={expandedId === applicant.apply_id}
+                  onClick={() => toggleDetail(applicant)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      toggleDetail(applicant);
+                    }
+                  }}
+                >
+                  <TableCell>
+                    <input
+                      type="checkbox"
+                      aria-label={`${applicant.applier_name} 선택`}
+                      checked={selectedIds.has(applicant.apply_id)}
+                      onClick={(event) => event.stopPropagation()}
+                      onKeyDown={(event) => event.stopPropagation()}
+                      onChange={() => toggleSelect(applicant.apply_id)}
+                    />
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap font-bold">
+                    {applicant.applier_name}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    {applicant.priority}순위
+                  </TableCell>
+                  <TableCell className="max-w-[360px]">
+                    <span className="line-clamp-1 max-w-full text-left">
+                      {applicant.study_comment || "(내용 없음)"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    {formatApplyDate(applicant.apply_date)}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <Badge
+                      label={applicant.study_status}
+                      variant={
+                        statusBadgeVariant[applicant.study_status] ?? "disabled"
+                      }
+                      appearance="solid-pastel"
+                      size="small"
+                    />
+                  </TableCell>
+                </TableRow>
+                {expandedId === applicant.apply_id && (
+                  <TableRow className="bg-surface-gray-subtler">
+                    <TableCell colSpan={6} className="py-4">
+                      <p className="text-text-basic text-body-m">
+                        {detailCache[applicant.apply_id] ?? "불러오는 중..."}
+                      </p>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </Fragment>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+
+      {!isLoading && applicants.length > 0 && (
+        <div className="mt-4 flex justify-end gap-2">
           <Button
             variant="tertiary"
             size="medium"
@@ -231,99 +338,6 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
           >
             선택 합격
           </Button>
-        </div>
-      </div>
-
-      {errorMessage && (
-        <p className="mb-4 text-[15px] text-[#d3302f]">{errorMessage}</p>
-      )}
-
-      {/* Applicant table */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20 text-gray-500">
-          <p className="text-lg">불러오는 중...</p>
-        </div>
-      ) : applicants.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-          <p className="text-lg">신청자가 없습니다</p>
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-[8px] border border-[#cdd1d5]">
-          <table className="w-full text-left text-[15px] leading-[1.5]">
-            <thead className="border-b border-[#cdd1d5] bg-[#f4f5f6] text-[#464c53]">
-              <tr>
-                <th className="w-12 px-4 py-3">
-                  <input
-                    type="checkbox"
-                    aria-label="전체 선택"
-                    checked={allSelected}
-                    onChange={toggleSelectAll}
-                  />
-                </th>
-                <th className="px-4 py-3">이름</th>
-                <th className="px-4 py-3">순위</th>
-                <th className="px-4 py-3">지원 동기</th>
-                <th className="px-4 py-3">신청일</th>
-                <th className="px-4 py-3">상태</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applicants.map((applicant) => (
-                <Fragment key={applicant.apply_id}>
-                  <tr className="border-b border-[#e6e8ea] last:border-b-0 hover:bg-[#f8f9fa]">
-                    <td className="px-4 py-3">
-                      <input
-                        type="checkbox"
-                        aria-label={`${applicant.applier_name} 선택`}
-                        checked={selectedIds.has(applicant.apply_id)}
-                        onChange={() => toggleSelect(applicant.apply_id)}
-                      />
-                    </td>
-                    <td className="text-text-basic whitespace-nowrap px-4 py-3 font-bold">
-                      {applicant.applier_name}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3">
-                      {applicant.priority}순위
-                    </td>
-                    <td className="max-w-[360px] px-4 py-3">
-                      <button
-                        className="line-clamp-1 text-left underline-offset-2 hover:underline"
-                        onClick={() => toggleDetail(applicant)}
-                      >
-                        {applicant.study_comment || "(내용 없음)"}
-                      </button>
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3">
-                      {formatApplyDate(applicant.apply_date)}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3">
-                      <Badge
-                        label={applicant.study_status}
-                        variant={
-                          statusBadgeVariant[applicant.study_status] ??
-                          "disabled"
-                        }
-                        appearance="solid-pastel"
-                        size="small"
-                      />
-                    </td>
-                  </tr>
-                  {expandedId === applicant.apply_id && (
-                    <tr className="border-b border-[#e6e8ea] bg-[#f8f9fa] last:border-b-0">
-                      <td colSpan={6} className="px-4 py-4">
-                        <p className="mb-1 text-[13px] font-bold text-[#464c53]">
-                          지원 동기 전문
-                        </p>
-                        <p className="text-text-basic whitespace-pre-wrap">
-                          {detailCache[applicant.apply_id] ?? "불러오는 중..."}
-                        </p>
-                      </td>
-                    </tr>
-                  )}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
         </div>
       )}
 

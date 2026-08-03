@@ -47,7 +47,7 @@ export function StudyManageSection({
           {
             label: "신청자 관리",
             content: selectedStudyId != null && (
-              <div className="pt-4">
+              <div className="pt-6 md:pt-8">
                 <ApplicantsPanel studyId={selectedStudyId} />
               </div>
             ),
@@ -55,7 +55,7 @@ export function StudyManageSection({
           {
             label: "출석 관리",
             content: selectedStudyId != null && (
-              <div className="pt-4">
+              <div className="pt-6 md:pt-8">
                 <AttendancePanel studyId={selectedStudyId} />
               </div>
             ),

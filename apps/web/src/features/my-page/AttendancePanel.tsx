@@ -3,6 +3,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@ui/components/client";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@ui/components/server";
+import {
   getAttendance,
   updateAttendance,
   type AttendanceStatus,
@@ -130,9 +138,10 @@ export function AttendancePanel({ studyId }: AttendancePanelProps) {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
-          멘티 <span className="text-[#0b50d0]">{data.mentees.length}</span>명
-          <span className="ml-3 text-[15px] font-normal text-[#464c53]">
+        <p className="text-text-basic text-body-l font-bold leading-normal">
+          멘티 <span className="text-text-primary">{data.mentees.length}</span>
+          명
+          <span className="text-text-subtle text-body-s ml-3 font-normal">
             칸을 눌러 출석/결석을 표시한 뒤 저장하세요
           </span>
         </p>
@@ -159,79 +168,74 @@ export function AttendancePanel({ studyId }: AttendancePanelProps) {
       </div>
 
       {errorMessage && (
-        <p className="mb-4 text-[15px] text-[#d3302f]">{errorMessage}</p>
+        <p className="text-text-danger text-body-s mb-4">{errorMessage}</p>
       )}
 
-      <div className="overflow-x-auto rounded-[8px] border border-[#cdd1d5]">
-        <table className="w-full text-center text-[15px] leading-[1.5]">
-          <thead className="border-b border-[#cdd1d5] bg-[#f4f5f6] text-[#464c53]">
-            <tr>
-              <th className="whitespace-nowrap px-4 py-3 text-left">이름</th>
-              {weeks.map((week) => (
-                <th key={week} className="min-w-[52px] px-2 py-3">
-                  {week}주차
-                </th>
-              ))}
-              <th className="whitespace-nowrap px-4 py-3">출석</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.mentees.map((mentee) => {
-              const total = presentCount(mentee.user_id);
-              return (
-                <tr
-                  key={mentee.user_id}
-                  className="border-b border-[#e6e8ea] last:border-b-0"
-                >
-                  <td className="whitespace-nowrap px-4 py-2 text-left">
-                    <span className="text-text-basic font-bold">
-                      {mentee.user_name}
-                    </span>
-                    <span className="ml-2 text-[13px] text-[#767a80]">
-                      {mentee.user_id}
-                    </span>
-                  </td>
-                  {weeks.map((week) => {
-                    const key: CellKey = `${mentee.user_id}:${week}`;
-                    const status = cellStatus(key);
-                    const isDirty = pending.has(key);
-                    return (
-                      <td key={week} className="px-1 py-1">
-                        <button
-                          onClick={() => toggleCell(mentee.user_id, week)}
-                          aria-label={`${mentee.user_name} ${week}주차 출석 상태 변경`}
-                          className={`h-9 w-11 rounded-[6px] text-[13px] font-bold transition-colors ${
-                            status === "present"
-                              ? "bg-[#ecf2fe] text-[#0b50d0]"
-                              : status === "absent"
-                                ? "bg-[#fdefec] text-[#d3302f]"
-                                : "bg-[#f4f5f6] text-[#b1b8be] hover:bg-[#e6e8ea]"
-                          } ${isDirty ? "ring-1 ring-[#0b50d0]" : ""}`}
-                        >
-                          {status === "present"
-                            ? "출석"
+      <Table containerClassName="overflow-x-auto" className="text-center">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="whitespace-nowrap">이름</TableHead>
+            {weeks.map((week) => (
+              <TableHead key={week} className="min-w-[52px] px-2 text-center">
+                {week}주차
+              </TableHead>
+            ))}
+            <TableHead className="whitespace-nowrap text-center">
+              출석
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.mentees.map((mentee) => {
+            const total = presentCount(mentee.user_id);
+            return (
+              <TableRow key={mentee.user_id}>
+                <TableCell className="whitespace-nowrap py-2 text-left">
+                  <span className="font-bold">{mentee.user_name}</span>
+                  <span className="text-text-subtle text-body-xs ml-2">
+                    {mentee.user_id}
+                  </span>
+                </TableCell>
+                {weeks.map((week) => {
+                  const key: CellKey = `${mentee.user_id}:${week}`;
+                  const status = cellStatus(key);
+                  const isDirty = pending.has(key);
+                  return (
+                    <TableCell key={week} className="px-1 py-1">
+                      <button
+                        onClick={() => toggleCell(mentee.user_id, week)}
+                        aria-label={`${mentee.user_name} ${week}주차 출석 상태 변경`}
+                        className={`text-body-xs h-9 w-11 rounded-md font-bold transition-colors ${
+                          status === "present"
+                            ? "bg-surface-primary-subtler text-text-primary"
                             : status === "absent"
-                              ? "결석"
-                              : "－"}
-                        </button>
-                      </td>
-                    );
-                  })}
-                  <td
-                    className={`whitespace-nowrap px-4 py-2 font-bold ${
-                      total >= 5 ? "text-[#0b50d0]" : "text-[#464c53]"
-                    }`}
-                  >
-                    {total}회
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                              ? "bg-surface-danger-subtler text-text-danger"
+                              : "bg-surface-gray-subtler text-text-disabled hover:bg-surface-gray-subtle"
+                        } ${isDirty ? "ring-border-primary ring-1" : ""}`}
+                      >
+                        {status === "present"
+                          ? "출석"
+                          : status === "absent"
+                            ? "결석"
+                            : "－"}
+                      </button>
+                    </TableCell>
+                  );
+                })}
+                <TableCell
+                  className={`whitespace-nowrap px-4 py-2 font-bold ${
+                    total >= 5 ? "text-text-primary" : "text-text-subtle"
+                  }`}
+                >
+                  {total}회
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
 
-      <p className="mt-3 text-[13px] text-[#767a80]">
+      <p className="text-text-subtle text-body-xs mt-3">
         수료 기준: 출석 5회 이상 (수료증 발급은 운영진이 진행합니다)
       </p>
     </div>
