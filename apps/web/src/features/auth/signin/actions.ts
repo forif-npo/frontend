@@ -1,6 +1,7 @@
 "use server";
 
 import { auth, signIn, signOut, unstable_update } from "@/auth";
+import { getGoogleAccessToken } from "@/features/auth/signup/get-google-access-token";
 import { SignUpValues } from "@core/schemas";
 import {
   memberSignUp,
@@ -22,44 +23,65 @@ import { cookies } from "next/headers";
  * 5. Refresh Token은 HttpOnly 쿠키로 자동 관리
  */
 export const signInWithGoogle = async () => {
-  await signIn("google", { redirectTo: "/" });
+  await signIn("google", { redirectTo: "/auth/callback" });
 };
 
 /**
  * Google OAuth 콜백 후 백엔드 로그인 처리
  *
- * @param googleAccessToken - Google OAuth에서 받은 Access Token
- * @returns 백엔드 JWT Access Token과 사용자 역할
+ * @returns 로그인 완료 여부 또는 실패 사유
  */
-export const handleGoogleCallback = async (googleAccessToken: string) => {
+export const handleGoogleCallback = async () => {
+  const googleAccessToken = await getGoogleAccessToken();
+  if (!googleAccessToken) {
+    return {
+      status: "failed" as const,
+      message: "Google 인증 정보가 만료되었습니다. 다시 로그인해주세요.",
+    };
+  }
+
   try {
     const response = await userLogin({
       access_token: googleAccessToken,
     });
 
     if (response.data?.access_token) {
-      // JWT Access Token을 메모리(전역)에 저장 (클라이언트에서 실행됨)
-      // Refresh Token은 HttpOnly 쿠키로 자동 저장됨
-      return {
-        success: true,
+      // NextAuth 세션에 백엔드 JWT를 저장
+      await unstable_update({
         accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
         role: response.data.role,
-      };
+        provider: "google",
+      });
+
+      return { status: "signed_in" as const };
     }
 
     throw new Error("Access Token을 받지 못했습니다.");
   } catch (error) {
+    const { HTTPError } = await import("ky");
+    if (error instanceof HTTPError && error.response.status === 404) {
+      return { status: "not_registered" as const };
+    }
+
     const errorMessage = await handleApiError(error);
-    throw new Error(errorMessage);
+    return { status: "failed" as const, message: errorMessage };
   }
 };
 
 export const signUp = async (data: SignUpValues) => {
   try {
+    const googleAccessToken = await getGoogleAccessToken();
+    if (!googleAccessToken) {
+      throw new Error(
+        "Google 인증 정보가 만료되었습니다. 다시 로그인해주세요.",
+      );
+    }
+
     const response = await memberSignUp({
       student_id: Number(data.id), // string을 number로 변환
       user_name: data.name,
-      email: data.email,
+      access_token: googleAccessToken,
       phone_num: data.phoneNumber,
       department: data.department,
     });

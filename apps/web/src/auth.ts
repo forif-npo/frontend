@@ -182,38 +182,7 @@ const result = NextAuth({
           return false;
         }
 
-        try {
-          // 동적 import로 Edge Runtime 호환성 해결
-          const { userLogin } = await import("@core/auth/api");
-
-          // 서버에서 백엔드 API 호출 (Google Access Token → 백엔드 JWT)
-          const response = await userLogin({
-            access_token: account.access_token!,
-          });
-
-          console.log(response.data);
-
-          if (response.data?.access_token) {
-            // 백엔드 JWT를 account에 저장 (jwt 콜백에서 사용)
-            Object.assign(account, {
-              backendJwt: response.data.access_token,
-              backendRefreshToken: response.data.refresh_token,
-              role: response.data.role,
-            });
-            return true;
-          }
-
-          return false;
-        } catch (error) {
-          // 404 에러 = 등록되지 않은 사용자 → 회원가입 페이지로
-          const { HTTPError } = await import("ky");
-          if (error instanceof HTTPError && error.response.status === 404) {
-            // 회원가입 페이지로 리디렉션 (Google 정보 유지)
-            return "/signup";
-          }
-          console.error("Google OAuth backend login failed:", error);
-          return false;
-        }
+        return true;
       }
       return true;
     },

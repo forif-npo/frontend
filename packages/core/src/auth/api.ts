@@ -43,10 +43,10 @@ const withRefreshToken = async <T extends ApiResponse<unknown>>(
  *
  * @example
  * const response = await memberSignUp({
- *   studentId: 2021234567,
- *   userName: "홍길동",
- *   email: "hong@hanyang.ac.kr",
- *   phoneNum: "010-1234-5678",
+ *   student_id: 2021234567,
+ *   user_name: "홍길동",
+ *   access_token: "google-oauth-access-token",
+ *   phone_num: "010-1234-5678",
  *   department: "컴퓨터소프트웨어학부"
  * });
  */

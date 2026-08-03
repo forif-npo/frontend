@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { handleGoogleCallback } from "@/features/auth/signin/actions";
+import { Body } from "@ui/components/server";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { AuthSkeleton } from "@/components/skeleton/AuthSkeleton";
@@ -8,33 +10,57 @@ import { AuthSkeleton } from "@/components/skeleton/AuthSkeleton";
 /**
  * Google OAuth 콜백 페이지
  *
- * NextAuth의 signIn 콜백에서 이미 백엔드 로그인 처리가 완료되었으므로
- * 세션 상태를 확인하고 리디렉션합니다.
- * NextAuth 세션이 accessToken을 자동으로 관리합니다.
+ * Google OAuth 인증 후 기존 사용자 로그인 여부를 확인합니다.
  */
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
+  const hasRequested = useRef(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "loading") return;
 
     // 세션이 없으면 로그인 페이지로
-    if (!session) {
-      router.push("/signin");
+    if (status === "unauthenticated") {
+      router.replace("/signin");
       return;
     }
 
-    // 백엔드 JWT가 있으면 (로그인 완료)
-    if (session.accessToken) {
-      router.push("/");
-      return;
-    }
+    if (hasRequested.current) return;
+    hasRequested.current = true;
 
-    // JWT가 없으면 로그인 실패
-    console.error("❌ No JWT in session");
-    router.push("/signin?error=authentication_failed");
-  }, [session, status, router]);
+    const completeSignIn = async () => {
+      const result = await handleGoogleCallback();
+
+      if (result.status === "signed_in") {
+        router.replace("/");
+        return;
+      }
+
+      if (result.status === "not_registered") {
+        router.replace("/signup");
+        return;
+      }
+
+      setErrorMessage(result.message);
+    };
+
+    void completeSignIn();
+  }, [status, router]);
+
+  if (errorMessage) {
+    return (
+      <main className="min-h-viewport mx-auto flex max-w-[800px] flex-col justify-center gap-3 px-5">
+        <Body size="l" className="text-text-basic">
+          로그인에 실패했습니다.
+        </Body>
+        <Body size="m" className="text-text-subtle">
+          {errorMessage}
+        </Body>
+      </main>
+    );
+  }
 
   return <AuthSkeleton />;
 }
