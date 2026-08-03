@@ -83,9 +83,12 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <Body size="m" weight="bold" className="shrink-0">
-                  회장 연락처
+                  회장
                 </Body>
-                <Body size="m">{FORIF_CONTACT_INFO.presidentPhone}</Body>
+                <Body size="m">
+                  {FORIF_CONTACT_INFO.presidentName}(
+                  {FORIF_CONTACT_INFO.presidentPhone})
+                </Body>
               </div>
             </div>
           </div>
