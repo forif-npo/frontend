@@ -5,6 +5,7 @@ import { Tabs } from "@ui/components/client";
 import { ProfileSidebar } from "@/features/my-page/ProfileSidebar";
 import { StudySection } from "@/features/my-page/StudySection";
 import { ApplicationSection } from "@/features/my-page/ApplicationSection";
+import { SettingsSection } from "@/features/my-page/SettingsSection";
 import { StudyManageSection } from "@/features/my-page/StudyManageSection";
 import type {
   UserProfile,
@@ -66,11 +67,17 @@ export function MyPageClient({
       <div className="w-[1216px] flex-1 py-8 pl-8">
         {/* Title */}
         <p className="text-text-bolder mb-4 text-[40px] font-bold leading-[1.5] tracking-[1px]">
-          {activeNav === "study-manage" ? "스터디 관리" : "내 스터디"}
+          {activeNav === "study-manage"
+            ? "스터디 관리"
+            : activeNav === "settings"
+              ? "설정"
+              : "내 스터디"}
         </p>
 
         {activeNav === "study-manage" ? (
           <StudyManageSection createdStudies={createdStudies} />
+        ) : activeNav === "settings" ? (
+          <SettingsSection profile={profile} />
         ) : (
           <>
             <Tabs tabs={tabs} />

@@ -153,13 +153,17 @@ export function ProfileSidebar({
       Icon: TaskSquareIcon,
       disabled: false,
     },
-    {
-      id: "study-manage",
-      label: "스터디 관리",
-      Icon: ProfileUsersIcon,
-      disabled: !canManageStudies,
-    },
-    { id: "settings", label: "설정", Icon: SettingIcon, disabled: true },
+    ...(canManageStudies
+      ? [
+          {
+            id: "study-manage",
+            label: "스터디 관리",
+            Icon: ProfileUsersIcon,
+            disabled: false,
+          },
+        ]
+      : []),
+    { id: "settings", label: "설정", Icon: SettingIcon, disabled: false },
   ];
 
   return (
