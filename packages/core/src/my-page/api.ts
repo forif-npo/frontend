@@ -75,7 +75,7 @@ export async function getUserProfile(token?: string): Promise<UserProfile> {
     ? { headers: { Authorization: `Bearer ${token}` } }
     : {};
   const response = await apiClient
-    .get("api/v1/users/me", options)
+    .get("api/v1/users/me/profile", options)
     .json<ApiResponse<UserProfile>>();
   console.log("User profile response:", response.data);
   return response.data!;

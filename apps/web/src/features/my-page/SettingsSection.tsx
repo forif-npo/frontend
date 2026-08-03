@@ -205,9 +205,7 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
                 disabled={isPending}
               />
             ) : (
-              <Body size="m" className="text-text-disabled">
-                {profile.self_intro || "-"}
-              </Body>
+              <Body size="m">{profile.self_intro || "-"}</Body>
             )}
           </SettingsRow>
         </div>

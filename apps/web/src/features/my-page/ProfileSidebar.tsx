@@ -2,7 +2,7 @@
 
 import { Body, Label } from "@ui/components/server";
 import Image from "next/image";
-import { CircleUser, Pencil } from "lucide-react";
+import { CircleUser } from "lucide-react";
 import { safeImageSrc } from "@/utils/image";
 
 interface ProfileSidebarProps {
@@ -184,9 +184,6 @@ export function ProfileSidebar({
             strokeWidth={0.8}
           />
         )}
-        <button className="absolute bottom-1 right-1 flex h-7 w-7 items-center justify-center rounded-full bg-black p-2 shadow-sm">
-          <Pencil className="h-full w-full text-white" />
-        </button>
       </div>
 
       {/* User Info */}
