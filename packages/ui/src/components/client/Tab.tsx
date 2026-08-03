@@ -28,26 +28,23 @@ const Tab: React.FC<{
       id={id}
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-2 focus-visible:ring-border-gray-dark relative px-6 py-3 transition-colors duration-200 focus:outline-none focus-visible:ring-2 ${
-        isSelected
-          ? "after:bg-text-bolder after:absolute after:inset-x-0 after:bottom-0 after:h-1"
-          : ""
+      className={`focus-visible:ring-border-gray-dark relative flex h-12 min-w-16 items-center justify-center whitespace-nowrap border-b-[3px] px-2 transition-colors duration-200 focus:outline-none focus-visible:ring-2 ${
+        isSelected ? "border-border-secondary" : "border-transparent"
       } ${
         disabled
           ? "cursor-not-allowed opacity-50"
-          : "hover:bg-secondary-5 cursor-pointer"
+          : "hover:border-border-secondary/30 cursor-pointer"
       }`}
     >
       <Label
-        color={isSelected ? "text-text-primary" : "text-disabled-on"}
         className={
           disabled
-            ? "cursor-not-allowed"
+            ? "text-disabled-on cursor-not-allowed"
             : isSelected
-              ? "cursor-pointer"
-              : "hover:text-text-subtle cursor-pointer"
+              ? "text-text-secondary cursor-pointer"
+              : "text-text-secondary hover:text-text-subtle cursor-pointer"
         }
-        size="l"
+        size="m"
         weight="bold"
       >
         {label}

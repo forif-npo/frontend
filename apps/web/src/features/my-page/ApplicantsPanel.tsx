@@ -1,8 +1,7 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { Select } from "@ui/components/client";
-import { Button } from "@ui/components/client";
+import { Button, Select } from "@ui/components/client";
 import {
   getApplicants,
   getApplicationDetail,
@@ -167,41 +166,54 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
           </span>
           명
         </p>
-        <div className="flex items-center gap-2">
-          <Select
-            id="manage-status-filter"
-            variant="text"
-            size="sm"
-            value={statusFilter}
-            onChange={(v) => {
-              setStatusFilter(v as ApplyStatusFilter | "ALL");
-              resetListState();
-            }}
-            placeholder="상태"
-            dropdownAlign="right"
-            options={[
-              { value: "ALL", label: "전체" },
-              { value: "PENDING", label: "대기중" },
-              { value: "ACCEPT", label: "합격" },
-              { value: "REJECT", label: "불합격" },
-            ]}
-          />
-          <Select
-            id="manage-sort"
-            variant="text"
-            size="sm"
-            value={sortOrder}
-            onChange={(v) => {
-              setSortOrder(v as "DESC" | "ASC");
-              resetListState();
-            }}
-            placeholder="정렬기준"
-            dropdownAlign="right"
-            options={[
-              { value: "DESC", label: "최신순" },
-              { value: "ASC", label: "오래된순" },
-            ]}
-          />
+        <div className="flex flex-wrap items-center justify-end gap-4">
+          <div className="flex shrink-0 items-center gap-3">
+            <p className="text-body-medium whitespace-nowrap font-bold">
+              신청상태
+            </p>
+            <Select
+              id="manage-status-filter"
+              variant="text"
+              size="sm"
+              noPadding
+              value={statusFilter}
+              onChange={(v) => {
+                setStatusFilter(v as ApplyStatusFilter | "ALL");
+                resetListState();
+              }}
+              placeholder="상태"
+              dropdownAlign="right"
+              options={[
+                { value: "ALL", label: "전체" },
+                { value: "PENDING", label: "대기중" },
+                { value: "ACCEPT", label: "합격" },
+                { value: "REJECT", label: "불합격" },
+              ]}
+            />
+          </div>
+          <div className="bg-divider-gray h-4 w-px" aria-hidden="true" />
+          <div className="flex shrink-0 items-center gap-3">
+            <p className="text-body-medium whitespace-nowrap font-bold">
+              정렬기준
+            </p>
+            <Select
+              id="manage-sort"
+              variant="text"
+              size="sm"
+              noPadding
+              value={sortOrder}
+              onChange={(v) => {
+                setSortOrder(v as "DESC" | "ASC");
+                resetListState();
+              }}
+              placeholder="정렬기준"
+              dropdownAlign="right"
+              options={[
+                { value: "DESC", label: "최신순" },
+                { value: "ASC", label: "오래된순" },
+              ]}
+            />
+          </div>
           <Button
             variant="tertiary"
             size="medium"

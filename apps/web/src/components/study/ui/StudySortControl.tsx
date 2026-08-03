@@ -1,5 +1,8 @@
 "use client";
 
+import { useId } from "react";
+import { Select } from "@ui/components/client";
+
 export type StudySortOrder = "latest" | "oldest";
 
 interface StudySortControlProps {
@@ -8,16 +11,25 @@ interface StudySortControlProps {
 }
 
 export function StudySortControl({ value, onChange }: StudySortControlProps) {
+  const selectId = useId();
+
   return (
     <div className="flex shrink-0 items-center gap-3">
       <p className="text-body-medium whitespace-nowrap font-bold">정렬기준</p>
-      <button
-        type="button"
-        onClick={() => onChange(value === "latest" ? "oldest" : "latest")}
-        className="bg-action-secondary border-border-transparency rounded-small2 text-label-medium text-text-basic cursor-pointer border px-2 py-0"
-      >
-        {value === "latest" ? "최신순" : "오래된순"}
-      </button>
+      <Select
+        id={`study-sort-${selectId}`}
+        variant="text"
+        size="sm"
+        noPadding
+        value={value}
+        onChange={(nextValue) => onChange(nextValue as StudySortOrder)}
+        placeholder="정렬기준"
+        dropdownAlign="right"
+        options={[
+          { value: "latest", label: "최신순" },
+          { value: "oldest", label: "오래된순" },
+        ]}
+      />
     </div>
   );
 }
