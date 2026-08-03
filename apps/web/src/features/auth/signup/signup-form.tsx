@@ -137,13 +137,14 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
       <Form
         ref={formRef}
         action={formAction}
-        className="flex flex-col justify-center gap-6"
+        className="flex flex-col justify-center gap-8"
       >
         <TextInput
           autoComplete="email"
           id="email"
           length="full"
           title="이메일"
+          required
           error={errors.email?.message ? errors.email?.message : undefined}
           {...register("email")}
           value={email}
@@ -152,7 +153,8 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
         <TextInput
           length="full"
           title="학번"
-          description="학번은 입학년도로 시작하는 10자리로 구성되어 있습니다."
+          helpText="학번은 입학년도로 시작하는 10자리로 구성되어 있습니다."
+          required
           id="id"
           placeholder="2023063845"
           error={errors.id?.message}
@@ -163,6 +165,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
           autoComplete="name"
           length="full"
           title="이름"
+          required
           id="name"
           placeholder="홍길동"
           error={errors.name?.message}
@@ -181,6 +184,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                 options={departmentsOptions}
                 placeholder="정보시스템학과"
                 title="학과"
+                required
                 onChange={onChange}
                 error={errors.department?.message}
                 disabled={isLoading}
@@ -194,8 +198,9 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
         <TextInput
           length="full"
           title="전화번호"
+          required
           id="phoneNumber"
-          placeholder="010-1234-5678"
+          placeholder="010-0000-0000"
           error={errors.phoneNumber?.message}
           disabled={isLoading}
           {...register("phoneNumber", {

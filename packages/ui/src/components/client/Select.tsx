@@ -22,6 +22,7 @@ export interface SelectProps {
   error?: string;
   invalid?: boolean;
   ariaDescribedBy?: string;
+  ariaRequired?: boolean;
   dropdownAlign?: "left" | "right";
   noPadding?: boolean;
 }
@@ -44,6 +45,7 @@ export const Select = ({
   error,
   invalid = false,
   ariaDescribedBy,
+  ariaRequired,
   dropdownAlign = "left",
   noPadding = false,
 }: SelectProps) => {
@@ -128,8 +130,9 @@ export const Select = ({
   const isInvalid = invalid || Boolean(error);
 
   return (
-    <div className="relative" id={id} ref={containerRef}>
+    <div className="relative" ref={containerRef}>
       <button
+        id={id}
         onClick={(e) => {
           e.preventDefault();
           if (disabled) return;
@@ -140,6 +143,7 @@ export const Select = ({
         aria-haspopup="listbox"
         aria-disabled={disabled}
         aria-describedby={ariaDescribedBy}
+        aria-required={ariaRequired}
         disabled={disabled}
         ref={triggerRef}
         className={cn(
