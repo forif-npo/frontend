@@ -40,26 +40,24 @@ export const handleGoogleCallback = async () => {
     const response = await userLogin({
       access_token: googleAccessToken,
     });
-    const loginData = response.data;
+    if (response.data?.access_token) {
+      await unstable_update({
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+        role: response.data.role,
+        provider: "google",
+      });
 
-    if (!loginData) {
-      throw new Error("로그인 응답을 받지 못했습니다.");
+      return { status: "signed_in" as const };
     }
 
-    if (!loginData.registered) {
+    throw new Error("Access Token을 받지 못했습니다.");
+  } catch (error) {
+    const { HTTPError } = await import("ky");
+    if (error instanceof HTTPError && error.response.status === 404) {
       return { status: "not_registered" as const };
     }
 
-    // NextAuth 세션에 백엔드 JWT를 저장
-    await unstable_update({
-      accessToken: loginData.access_token,
-      refreshToken: loginData.refresh_token,
-      role: loginData.role,
-      provider: "google",
-    });
-
-    return { status: "signed_in" as const };
-  } catch (error) {
     const errorMessage = await handleApiError(error);
     return { status: "failed" as const, message: errorMessage };
   }

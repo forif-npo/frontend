@@ -12,10 +12,7 @@ export default async function Page() {
 
   return (
     <div className="min-h-viewport mx-auto mt-8 max-w-[800px] px-5 sm:px-6 lg:px-0">
-      <Heading size="xxs" className="text-text-subtle text-left">
-        FORIF 로그인
-      </Heading>
-      <Heading size="l" className="text-text-basic mt-4 text-left">
+      <Heading size="l" className="text-text-basic text-left">
         로그인 방식을 선택해주세요
       </Heading>
       <section className="mt-12 w-full">
