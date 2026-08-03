@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { SignOutButton } from "@/components/SignOutButton";
 import { signUp } from "@/features/auth/signin/actions";
 import { SignUpForm } from "@/features/auth/signup/signup-form";
 import { signUpSchema, SignUpValues } from "@core/schemas";
@@ -90,10 +89,7 @@ export default async function Page() {
         <br />
         스터디 신청, 스터디 개설, 해커톤 참여 등 더 많은 기능을 이용해보세요.
       </Body>
-      <section className="mt-12 w-full">
-        <SignOutButton callbackUrl="/signup" label="다른 이메일로 인증" />
-      </section>
-      <section className="mb-10 w-full">
+      <section className="mb-10 mt-12 w-full">
         <SignUpForm action={submitForm} email={session.user.email} />
       </section>
     </div>
