@@ -3,27 +3,23 @@
 import { auth, signIn, signOut, unstable_update } from "@/auth";
 import { getGoogleAccessToken } from "@/features/auth/signup/get-google-access-token";
 import { SignUpValues } from "@core/schemas";
-import {
-  memberSignUp,
-  userLogin,
-  staffLogin,
-  logout as logoutApi,
-} from "@core/auth/api";
+import { memberSignUp, userLogin, logout as logoutApi } from "@core/auth/api";
 import { handleApiError } from "@core/utils/api-client";
 import { cookies } from "next/headers";
 
 /**
- * Google OAuth를 통한 부원 로그인
- *
- * 플로우:
- * 1. NextAuth를 통해 Google OAuth 인증
- * 2. Google Access Token을 백엔드로 전송
- * 3. 백엔드에서 Google API로 이메일 검증 후 JWT 발급
- * 4. JWT Access Token을 메모리(전역)에 저장
- * 5. Refresh Token은 HttpOnly 쿠키로 자동 관리
+ * Google OAuth를 시작합니다.
  */
+const signInWithGoogleRedirect = async (redirectTo: string) => {
+  await signIn("google", { redirectTo });
+};
+
 export const signInWithGoogle = async () => {
-  await signIn("google", { redirectTo: "/auth/callback" });
+  await signInWithGoogleRedirect("/auth/callback?flow=signin");
+};
+
+export const signUpWithGoogle = async () => {
+  await signInWithGoogleRedirect("/auth/callback?flow=signup");
 };
 
 /**
@@ -44,26 +40,26 @@ export const handleGoogleCallback = async () => {
     const response = await userLogin({
       access_token: googleAccessToken,
     });
+    const loginData = response.data;
 
-    if (response.data?.access_token) {
-      // NextAuth 세션에 백엔드 JWT를 저장
-      await unstable_update({
-        accessToken: response.data.access_token,
-        refreshToken: response.data.refresh_token,
-        role: response.data.role,
-        provider: "google",
-      });
-
-      return { status: "signed_in" as const };
+    if (!loginData) {
+      throw new Error("로그인 응답을 받지 못했습니다.");
     }
 
-    throw new Error("Access Token을 받지 못했습니다.");
-  } catch (error) {
-    const { HTTPError } = await import("ky");
-    if (error instanceof HTTPError && error.response.status === 404) {
+    if (!loginData.registered) {
       return { status: "not_registered" as const };
     }
 
+    // NextAuth 세션에 백엔드 JWT를 저장
+    await unstable_update({
+      accessToken: loginData.access_token,
+      refreshToken: loginData.refresh_token,
+      role: loginData.role,
+      provider: "google",
+    });
+
+    return { status: "signed_in" as const };
+  } catch (error) {
     const errorMessage = await handleApiError(error);
     return { status: "failed" as const, message: errorMessage };
   }

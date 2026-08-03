@@ -54,11 +54,21 @@ export interface UserLoginRequest {
 /**
  * 부원 로그인 응답 데이터 타입
  */
-export interface UserLoginData {
+export interface RegisteredUserLoginData {
+  registered: true;
   access_token: string;
   refresh_token?: string;
   role: "USER";
 }
+
+export interface UnregisteredUserLoginData {
+  registered: false;
+  access_token: null;
+  refresh_token?: undefined;
+  role: null;
+}
+
+export type UserLoginData = RegisteredUserLoginData | UnregisteredUserLoginData;
 
 /**
  * 부원 로그인 응답 타입

@@ -3,7 +3,15 @@
 import { Button } from "@ui/components/client";
 import { useEffect, useState } from "react";
 
-export function SignOutButton() {
+interface SignOutButtonProps {
+  callbackUrl?: string;
+  label?: string;
+}
+
+export function SignOutButton({
+  callbackUrl = "/signin",
+  label = "로그인 화면으로",
+}: SignOutButtonProps) {
   const [csrfToken, setCsrfToken] = useState<string>("");
 
   useEffect(() => {
@@ -28,9 +36,9 @@ export function SignOutButton() {
       className="mb-2 flex cursor-pointer items-center justify-end"
     >
       <input type="hidden" name="csrfToken" value={csrfToken} />
-      <input type="hidden" name="callbackUrl" value="/signin" />
+      <input type="hidden" name="callbackUrl" value={callbackUrl} />
       <Button variant="secondary" size="medium" type="submit">
-        로그인 화면으로
+        {label}
       </Button>
     </form>
   );

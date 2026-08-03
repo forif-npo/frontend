@@ -1,16 +1,7 @@
 "use server";
-import { auth, signIn } from "@/auth";
-import { SignUpValues, StudyApplyValues } from "@core/schemas";
+import { auth } from "@/auth";
+import { StudyApplyValues } from "@core/schemas";
 import { apiClient } from "@core/utils/api-client";
-
-export const signInWithGoogle = async () => {
-  await signIn("google", { redirectTo: "/signup" });
-};
-
-export const signUp = async (data: SignUpValues) => {
-  // throw new Error("Unknown error")
-  console.log(data);
-};
 
 export const applyStudy = async (data: StudyApplyValues) => {
   const session = await auth();

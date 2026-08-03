@@ -1,93 +1,12 @@
-import { signUp } from "@/features/auth/signin/actions";
-import { auth, signOut } from "@/auth";
-import { SignOutButton } from "@/components/SignOutButton";
-import { SignUpForm } from "@/features/auth/signup/signup-form";
+import { auth } from "@/auth";
 import { AuthHelpInfo } from "@/features/auth/auth-help-info";
-import { signUpSchema, SignUpValues } from "@core/schemas";
+import { SignUpStart } from "@/features/auth/signup/signup-start";
 import { Body, Heading } from "@ui/components/server";
 import { redirect } from "next/navigation";
-import { z } from "zod/v4";
-
-type ActionState = {
-  errors: Record<string, { message: string }>;
-  values: z.infer<typeof signUpSchema>;
-  success?: boolean;
-  accessToken?: string;
-};
-
-const submitForm = async (_: ActionState, formData: FormData) => {
-  "use server";
-  const values: SignUpValues = {
-    name: String(formData.get("name") || ""),
-    department: String(formData.get("department") || ""),
-    email: String(formData.get("email") || ""),
-    id: String(formData.get("id") || ""),
-    phoneNumber: String(formData.get("phoneNumber") || ""),
-    serviceTermAgree:
-      formData.get("serviceTermAgree") === "on" ||
-      formData.get("serviceTermAgree") === "true",
-    privacyPolicyAgree:
-      formData.get("privacyPolicyAgree") === "on" ||
-      formData.get("privacyPolicyAgree") === "true",
-  };
-
-  const { error: parseError } = signUpSchema.safeParse(values);
-  const errors: ActionState["errors"] = {};
-  for (const { path, message } of parseError?.issues || []) {
-    errors[path.join(".")] = { message };
-  }
-  if (Object.keys(errors).length > 0) {
-    return {
-      values,
-      errors,
-    };
-  }
-  try {
-    const result = await signUp(values);
-
-    // 회원가입 성공 시 accessToken을 클라이언트로 반환
-    if (result.success && result.accessToken) {
-      return {
-        values: {
-          name: "",
-          department: "",
-          email: "",
-          id: "",
-          phoneNumber: "",
-          serviceTermAgree: false,
-          privacyPolicyAgree: false,
-        },
-        errors: {},
-        success: true,
-        accessToken: result.accessToken, // 토큰을 클라이언트로 전달
-      };
-    }
-  } catch (error) {
-    errors["root"] = {
-      message:
-        error instanceof Error
-          ? error.message
-          : "알 수 없는 오류가 발생했습니다.",
-    };
-    return {
-      values,
-      errors,
-    };
-  }
-
-  return {
-    values,
-    errors,
-  };
-};
 
 export default async function Page() {
   const session = await auth();
-  if (!session?.user?.email) {
-    await signOut();
-    redirect("/signin");
-  }
-  if (session.isSignUp) {
+  if (session?.isSignUp) {
     redirect("/");
   }
 
@@ -101,11 +20,8 @@ export default async function Page() {
         <br />
         스터디 신청, 스터디 개설, 해커톤 참여 등 더 많은 기능을 이용해보세요.
       </Body>
-      <section className="mt-12 w-full">
-        <SignOutButton />
-      </section>
-      <section className="mb-10 w-full">
-        <SignUpForm action={submitForm} email={session.user.email} />
+      <section className="mb-10 mt-12 w-full">
+        <SignUpStart />
       </section>
       <AuthHelpInfo action="회원가입" />
     </div>

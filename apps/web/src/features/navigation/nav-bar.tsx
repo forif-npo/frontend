@@ -144,6 +144,15 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
               >
                 {isLoggedIn ? "마이페이지" : "로그인"}
               </Link>
+              {!isLoggedIn && (
+                <Link
+                  href="/signup"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="border-border-gray-light text-text-basic rounded-2 flex h-12 items-center justify-center border text-[16px] font-semibold leading-[1.5]"
+                >
+                  회원가입
+                </Link>
+              )}
               {isLoggedIn && (
                 <button
                   type="button"
@@ -245,7 +254,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
             </li>
           ))}
         </ul>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-2">
           {isLoggedIn ? (
             <>
               <Link href="/my">
@@ -264,11 +273,26 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
               </Button>
             </>
           ) : (
-            <Link href="/signin">
-              <Button variant="text" size="medium">
-                로그인
-              </Button>
-            </Link>
+            <>
+              <Link href="/signup">
+                <Button
+                  variant="text"
+                  size="medium"
+                  className="whitespace-nowrap"
+                >
+                  회원가입
+                </Button>
+              </Link>
+              <Link href="/signin">
+                <Button
+                  variant="secondary"
+                  size="medium"
+                  className="whitespace-nowrap"
+                >
+                  로그인
+                </Button>
+              </Link>
+            </>
           )}
           {rightSlot}
         </div>

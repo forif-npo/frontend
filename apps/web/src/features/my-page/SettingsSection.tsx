@@ -1,6 +1,7 @@
 "use client";
 
 import { updateMyProfile } from "@/app/my/actions";
+import { useLogout } from "@/features/auth/logout/use-logout";
 import { departmentsOptions } from "@/constants/options.constant";
 import { safeImageSrc } from "@/utils/image";
 import type { UserProfile } from "@core/my-page/api";
@@ -17,6 +18,7 @@ interface SettingsSectionProps {
 
 export function SettingsSection({ profile }: SettingsSectionProps) {
   const router = useRouter();
+  const { isPending: isLoggingOut, logout } = useLogout();
   const [isEditing, setIsEditing] = useState(false);
   const [department, setDepartment] = useState(profile.department);
   const [phoneNumber, setPhoneNumber] = useState(profile.phone_num);
@@ -226,9 +228,10 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
           <Button
             variant="tertiary"
             size="small"
-            onClick={() => router.push("/logout")}
+            onClick={logout}
+            disabled={isLoggingOut}
           >
-            로그아웃
+            {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
           </Button>
         )}
         {isEditing ? (

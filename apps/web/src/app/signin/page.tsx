@@ -6,8 +6,8 @@ import { redirect } from "next/navigation";
 
 export default async function Page() {
   const session = await auth();
-  if (session && !session.isSignUp) {
-    redirect("/signup");
+  if (session?.isSignUp) {
+    redirect("/");
   }
 
   return (
