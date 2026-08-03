@@ -99,6 +99,7 @@ export interface User {
   email: string;
   phone_num: string;
   department: string;
+  self_intro: string | null;
   img_url: string | null;
   role: "USER";
 }

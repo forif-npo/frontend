@@ -23,6 +23,11 @@ const backendFileImagePattern = (() => {
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
+  },
   transpilePackages: [
     "@t3-oss/env-nextjs",
     "@t3-oss/env-core",

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Tabs } from "@ui/components/client";
+import { Body, Heading } from "@ui/components/server";
 import { ProfileSidebar } from "@/features/my-page/ProfileSidebar";
 import { StudySection } from "@/features/my-page/StudySection";
 import { ApplicationSection } from "@/features/my-page/ApplicationSection";
@@ -28,6 +29,21 @@ export function MyPageClient({
   createdStudies,
 }: MyPageClientProps) {
   const [activeNav, setActiveNav] = useState("my-studies");
+  const pageHeader =
+    activeNav === "study-manage"
+      ? {
+          title: "스터디 관리",
+          description: "개설한 스터디의 운영 현황을 관리할 수 있습니다.",
+        }
+      : activeNav === "settings"
+        ? {
+            title: "설정",
+            description: "계정 정보를 확인하고 수정할 수 있습니다.",
+          }
+        : {
+            title: "내 스터디",
+            description: "수강한 스터디와 지원 현황을 확인할 수 있습니다.",
+          };
 
   const tabs = [
     {
@@ -64,15 +80,15 @@ export function MyPageClient({
       />
 
       {/* Main Content */}
-      <div className="w-[1216px] flex-1 py-8 pl-8">
-        {/* Title */}
-        <p className="text-text-bolder mb-4 text-[40px] font-bold leading-[1.5] tracking-[1px]">
-          {activeNav === "study-manage"
-            ? "스터디 관리"
-            : activeNav === "settings"
-              ? "설정"
-              : "내 스터디"}
-        </p>
+      <div className="min-w-0 flex-1 px-4 py-10 lg:pl-10 lg:pr-0">
+        <div className="mb-8 flex flex-col gap-3 md:mb-12">
+          <Heading size="l" className="text-text-bolder">
+            {pageHeader.title}
+          </Heading>
+          <Body size="l" className="text-text-basic">
+            {pageHeader.description}
+          </Body>
+        </div>
 
         {activeNav === "study-manage" ? (
           <StudyManageSection createdStudies={createdStudies} />

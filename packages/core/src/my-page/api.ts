@@ -6,6 +6,16 @@ import { apiClient } from "../utils/api-client";
  */
 export type UserProfile = User;
 
+export interface UpdateUserProfileRequest {
+  department: string;
+  self_intro: string;
+  profile_image?: File | null;
+}
+
+export interface UpdateUserPhoneNumberRequest {
+  phone_num: string;
+}
+
 /**
  * Study detail within a semester
  */
@@ -68,6 +78,54 @@ export async function getUserProfile(token?: string): Promise<UserProfile> {
     .get("api/v1/users/me", options)
     .json<ApiResponse<UserProfile>>();
   console.log("User profile response:", response.data);
+  return response.data!;
+}
+
+/**
+ * Update user's profile information and optional profile image.
+ */
+export async function updateUserProfile(
+  { department, self_intro, profile_image }: UpdateUserProfileRequest,
+  token?: string,
+): Promise<UserProfile> {
+  const formData = new FormData();
+  formData.append(
+    "request",
+    new Blob([JSON.stringify({ department, self_intro })], {
+      type: "application/json",
+    }),
+  );
+  if (profile_image) {
+    formData.append("profileImage", profile_image);
+  }
+
+  const options = token
+    ? { body: formData, headers: { Authorization: `Bearer ${token}` } }
+    : { body: formData };
+  const response = await apiClient
+    .patch("api/v1/users/me/profile", options)
+    .json<ApiResponse<UserProfile>>();
+
+  return response.data!;
+}
+
+/**
+ * Update user's phone number.
+ */
+export async function updateUserPhoneNumber(
+  { phone_num }: UpdateUserPhoneNumberRequest,
+  token?: string,
+): Promise<UserProfile> {
+  const options = token
+    ? {
+        json: { phone_num },
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    : { json: { phone_num } };
+  const response = await apiClient
+    .patch("api/v1/users/me/phone-number", options)
+    .json<ApiResponse<UserProfile>>();
+
   return response.data!;
 }
 
