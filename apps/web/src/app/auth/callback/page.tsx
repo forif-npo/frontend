@@ -16,7 +16,7 @@ import { AuthSkeleton } from "@/components/skeleton/AuthSkeleton";
 export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { status } = useSession();
+  const { status, update } = useSession();
   const hasRequested = useRef(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isNotRegistered, setIsNotRegistered] = useState(false);
@@ -39,7 +39,9 @@ export default function AuthCallbackPage() {
       const result = await handleGoogleCallback();
 
       if (result.status === "signed_in") {
+        await update();
         router.replace("/");
+        router.refresh();
         return;
       }
 
@@ -58,7 +60,7 @@ export default function AuthCallbackPage() {
     };
 
     void completeSignIn();
-  }, [errorMessage, flow, isNotRegistered, router, status]);
+  }, [errorMessage, flow, isNotRegistered, router, status, update]);
 
   if (isNotRegistered) {
     return (

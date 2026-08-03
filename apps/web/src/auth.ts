@@ -174,15 +174,9 @@ const result = NextAuth({
   callbacks: {
     async signIn({ account, profile }) {
       if (account?.provider === "google") {
-        // 한양대 이메일 검증
-        if (
-          !profile?.email_verified ||
-          !profile.email!.endsWith("@hanyang.ac.kr")
-        ) {
-          return false;
-        }
-
-        return true;
+        return (
+          profile?.email?.toLowerCase().endsWith("@hanyang.ac.kr") ?? false
+        );
       }
       return true;
     },
