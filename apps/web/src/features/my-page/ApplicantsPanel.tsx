@@ -302,6 +302,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                 />
               </TableHead>
               <TableHead>이름</TableHead>
+              <TableHead>학과</TableHead>
               <TableHead>순위</TableHead>
               <TableHead>지원 동기</TableHead>
               <TableHead>신청일</TableHead>
@@ -336,6 +337,9 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                   <TableCell className="whitespace-nowrap font-bold">
                     {applicant.applier_name}
                   </TableCell>
+                  <TableCell className="max-w-[180px] truncate">
+                    {applicant.department}
+                  </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {applicant.priority}순위
                   </TableCell>
@@ -360,7 +364,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                 </TableRow>
                 {expandedId === applicant.apply_id && (
                   <TableRow className="bg-surface-gray-subtler">
-                    <TableCell colSpan={6} className="py-4">
+                    <TableCell colSpan={7} className="py-4">
                       <div className="flex flex-col gap-4">
                         <p className="text-text-basic text-body-m">
                           {detailCache[applicant.apply_id] ?? "불러오는 중..."}

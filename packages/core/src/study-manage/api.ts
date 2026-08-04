@@ -35,6 +35,7 @@ export type ApplyStatusFilter = "PENDING" | "ACCEPT" | "REJECT";
 export interface Applicant {
   apply_id: number;
   applier_name: string;
+  department: string;
   study_name: string;
   study_comment: string;
   apply_date: string;
