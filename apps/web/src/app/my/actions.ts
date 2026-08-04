@@ -6,7 +6,6 @@ import { updateUserPhoneNumber, updateUserProfile } from "@core/my-page/api";
 interface UpdateMyProfileInput {
   profile?: {
     department: string;
-    self_intro: string;
     profile_image: File | null;
   };
   phone_num?: string;

@@ -5,13 +5,7 @@ import { useLogout } from "@/features/auth/logout/use-logout";
 import { departmentsOptions } from "@/constants/options.constant";
 import { safeImageSrc } from "@/utils/image";
 import type { UserProfile } from "@core/my-page/api";
-import {
-  Button,
-  SelectBox,
-  Tabs,
-  TextArea,
-  TextInput,
-} from "@ui/components/client";
+import { Button, SelectBox, Tabs, TextInput } from "@ui/components/client";
 import { Body, HintText, Label } from "@ui/components/server";
 import { CircleUser } from "lucide-react";
 import Image from "next/image";
@@ -28,7 +22,6 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [department, setDepartment] = useState(profile.department ?? "");
   const [phoneNumber, setPhoneNumber] = useState(profile.phone_num ?? "");
-  const [introduction, setIntroduction] = useState(profile.self_intro ?? "");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -47,7 +40,6 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
   const handleCancel = () => {
     setDepartment(profile.department ?? "");
     setPhoneNumber(profile.phone_num ?? "");
-    setIntroduction(profile.self_intro ?? "");
     setImageFile(null);
     setImagePreview(null);
     setErrorMessage(null);
@@ -56,9 +48,7 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
 
   const handleSave = () => {
     const isProfileChanged =
-      department !== (profile.department ?? "") ||
-      introduction !== (profile.self_intro ?? "") ||
-      imageFile !== null;
+      department !== (profile.department ?? "") || imageFile !== null;
     const isPhoneNumberChanged = phoneNumber !== (profile.phone_num ?? "");
 
     if (!isProfileChanged && !isPhoneNumberChanged) {
@@ -73,7 +63,6 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
           profile: isProfileChanged
             ? {
                 department,
-                self_intro: introduction,
                 profile_image: imageFile,
               }
             : undefined,
@@ -202,24 +191,6 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
                         />
                       ) : (
                         <Body size="m">{profile.phone_num || "-"}</Body>
-                      )}
-                    </SettingsRow>
-
-                    <SettingsRow label="자기소개">
-                      {isEditing ? (
-                        <TextArea
-                          id="profile-introduction"
-                          value={introduction}
-                          onChange={(event) =>
-                            setIntroduction(event.target.value)
-                          }
-                          placeholder="자기소개를 입력해주세요."
-                          size="large"
-                          maxLength={500}
-                          disabled={isPending}
-                        />
-                      ) : (
-                        <Body size="m">{profile.self_intro || "-"}</Body>
                       )}
                     </SettingsRow>
                   </div>

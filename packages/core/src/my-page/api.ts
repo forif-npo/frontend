@@ -8,7 +8,6 @@ export type UserProfile = User;
 
 export interface UpdateUserProfileRequest {
   department: string;
-  self_intro: string;
   profile_image?: File | null;
 }
 
@@ -85,13 +84,13 @@ export async function getUserProfile(token?: string): Promise<UserProfile> {
  * Update user's profile information and optional profile image.
  */
 export async function updateUserProfile(
-  { department, self_intro, profile_image }: UpdateUserProfileRequest,
+  { department, profile_image }: UpdateUserProfileRequest,
   token?: string,
 ): Promise<UserProfile> {
   const formData = new FormData();
   formData.append(
     "request",
-    new Blob([JSON.stringify({ department, self_intro })], {
+    new Blob([JSON.stringify({ department })], {
       type: "application/json",
     }),
   );
