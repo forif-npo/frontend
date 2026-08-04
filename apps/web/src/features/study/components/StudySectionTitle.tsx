@@ -1,16 +1,16 @@
 import type { ReactNode } from "react";
 
-interface StudyCreateSectionTitleProps {
+interface StudySectionTitleProps {
   children: ReactNode;
   icon?: ReactNode;
   required?: boolean;
 }
 
-export function StudyCreateSectionTitle({
+export function StudySectionTitle({
   children,
   icon,
   required = false,
-}: StudyCreateSectionTitleProps) {
+}: StudySectionTitleProps) {
   return (
     <div className="flex items-center gap-2">
       <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">

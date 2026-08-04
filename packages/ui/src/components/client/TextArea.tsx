@@ -1,5 +1,6 @@
 "use client";
 import React, { forwardRef, useState } from "react";
+import { cn } from "../../utils/cn";
 import { CharacterCount } from "../server/CharacterCount";
 import { HintText } from "../server/HintText";
 import { Label } from "../server/Label";
@@ -28,6 +29,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       size = "medium",
       maxLength,
       onChange,
+      className,
       ...props
     },
     ref,
@@ -77,9 +79,12 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             aria-invalid={isInvalid ? "true" : undefined}
             aria-required={required || undefined}
             required={required}
-            className={`w-full ${sizeClasses} text-gray-70 focus:border-input-border-active focus:ring-border-input-border-active border-input-border rounded-2 resize-none border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1 ${
-              isInvalid ? "border-input-border-error" : ""
-            }`}
+            className={cn(
+              "border-input-border text-gray-70 focus:border-input-border-active focus:ring-border-input-border-active rounded-2 w-full resize-none border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1",
+              sizeClasses,
+              isInvalid && "border-input-border-error",
+              className,
+            )}
             placeholder={placeholder}
             maxLength={maxLength}
             onChange={handleChange}

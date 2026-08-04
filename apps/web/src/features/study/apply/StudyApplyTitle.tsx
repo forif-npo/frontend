@@ -1,5 +1,4 @@
 import { Badge } from "@ui/components/server";
-import { QuestionBubble } from "@repo/assets/icons/krds";
 import { BadgeTag } from "./utils";
 
 interface StudyApplyTitleProps {
@@ -25,11 +24,6 @@ export function StudyApplyTitle({ studyName, tags }: StudyApplyTitleProps) {
             size="large"
           />
         ))}
-        <QuestionBubble
-          width={24}
-          height={24}
-          className="text-text-subtle ml-1 shrink-0"
-        />
       </div>
     </div>
   );

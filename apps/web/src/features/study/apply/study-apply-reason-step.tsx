@@ -2,30 +2,16 @@
 
 import { studyApplySchema, StudyApplyValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { Button, TextArea } from "@ui/components/client";
+import { TextArea } from "@ui/components/client";
+import { HintText } from "@ui/components/server";
 import Form from "next/form";
 import { useActionState, useEffect, useRef, useTransition } from "react";
-import { Control, useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Study } from "@/types/study";
+import { StepNavigation } from "../create/components/StepNavigation";
+import { StudySectionTitle } from "../components/StudySectionTitle";
 import { StudyApplyTitle } from "./StudyApplyTitle";
 import { BadgeTag } from "./utils";
-
-const MIN_LENGTH = 50;
-
-function ReasonWarning({ control }: { control: Control<StudyApplyValues> }) {
-  const value = useWatch({ control, name: "primaryStudyApplyReason" }) ?? "";
-  const len = value.length;
-
-  if (len === 0) return null;
-  if (len < MIN_LENGTH) {
-    return (
-      <p className="text-text-danger text-[13px]">
-        최소 {MIN_LENGTH}자 이상 입력해주세요. (현재 {len}자)
-      </p>
-    );
-  }
-  return null;
-}
 
 type ActionState = {
   errors: Record<string, { message: string }>;
@@ -69,23 +55,14 @@ export function StudyApplyReasonStep({
     resolver: standardSchemaResolver(studyApplySchema),
     values: state.values,
     errors: state.errors,
-    mode: "onBlur",
-    reValidateMode: "onBlur",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
 
   const {
     register,
-    control,
     formState: { errors },
-    setError,
   } = form;
-
-  useEffect(() => {
-    if (state.errors?.root) {
-      setError("root", { message: state.errors.root.message });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.errors?.root]);
 
   const isLoading = isPending || isTransitionPending;
 
@@ -132,82 +109,40 @@ export function StudyApplyReasonStep({
       <StudyApplyTitle studyName={studyName} tags={tags} />
 
       <Form ref={formRef} action={formAction} className="flex flex-col gap-10">
-        {/* 스터디 지원서 카드 */}
-        <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
-          <h2 className="text-text-bolder text-[24px] font-bold leading-[1.5]">
-            스터디 지원서
-          </h2>
-
-          <div className="flex flex-col gap-6">
-            {/* 지원 사유 */}
-            <div className="flex items-center gap-0">
-              <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-                지원 사유
-              </h3>
-              <span className="ml-1 text-[19px] leading-[1.5] text-[#bd2c0f]">
-                *
-              </span>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <p className="text-text-subtle text-[13px] leading-[1.5]">
-                해당 스터디를 수강하고 싶은 사유를 작성해주세요. 최소 50자 이상,
-                최대 500자 이내로 작성해주세요.
-              </p>
-              <TextArea
-                id="primaryStudyApplyReason"
-                placeholder="내용을 입력하세요"
-                maxLength={500}
-                disabled={isLoading}
-                size="large"
-                style={{ height: "300px" }}
-                {...register("primaryStudyApplyReason")}
-              />
-              <ReasonWarning control={control} />
-              {errors.root && (
-                <p className="text-text-danger text-[13px]">
-                  {errors.root.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Hidden input for primaryStudyId */}
-          <input type="hidden" name="primaryStudyId" value={currentStudy.id} />
-        </div>
-
-        {/* 버튼 영역 */}
-        <div className="flex items-start justify-between">
-          <Button
-            type="button"
-            variant="tertiary"
-            size="large"
-            onClick={onCancel}
-            className="h-14 w-[90px]"
-          >
-            취소
-          </Button>
-          <div className="flex gap-4">
-            <Button
-              type="button"
-              variant="secondary"
-              size="large"
-              onClick={onPrevious}
-              className="h-14 w-[90px]"
-            >
-              이전
-            </Button>
-            <Button
-              type="button"
-              size="large"
+        <section className="flex flex-col gap-6">
+          <StudySectionTitle required>지원 사유</StudySectionTitle>
+          <div className="flex flex-col gap-1">
+            <HintText>
+              해당 스터디를 수강하고 싶은 사유를 작성해주세요. 최소 50자 이상,
+              최대 500자 이내로 작성해주세요.
+            </HintText>
+            <TextArea
+              id="primaryStudyApplyReason"
+              placeholder="내용을 입력하세요"
+              maxLength={500}
               disabled={isLoading}
-              onClick={handleSubmit}
-              className="h-14 w-[90px]"
-            >
-              제출
-            </Button>
+              size="large"
+              className="h-72"
+              error={errors.primaryStudyApplyReason?.message}
+              {...register("primaryStudyApplyReason")}
+            />
           </div>
-        </div>
+        </section>
+        {errors.root && (
+          <p className="text-text-danger text-[13px]">{errors.root.message}</p>
+        )}
+
+        <input type="hidden" name="primaryStudyId" value={currentStudy.id} />
+
+        <StepNavigation
+          onPrevious={onPrevious}
+          onNext={handleSubmit}
+          nextLabel="제출"
+          isSubmitting={isLoading}
+          leadingActions={[
+            { label: "취소", onClick: onCancel, variant: "tertiary" },
+          ]}
+        />
       </Form>
     </div>
   );

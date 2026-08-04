@@ -1,5 +1,7 @@
 "use client";
 
+import { StudyStepIndicator } from "../../components/StudyStepIndicator";
+
 const STEPS = [
   {
     number: 1,
@@ -31,45 +33,5 @@ const STEPS = [
 ] as const;
 
 export function StudyCreateStepIndicator() {
-  return (
-    <div className="flex w-full flex-col rounded-[12px] border border-[#b1b8be] bg-white p-8">
-      {STEPS.map((step, index) => (
-        <div key={step.number}>
-          {/* Step Item */}
-          <div className="flex gap-4">
-            {/* Number + Divider */}
-            <div className="flex shrink-0 flex-col items-start px-2">
-              <div className="flex h-6 w-6 items-center justify-center rounded-[4px] bg-[#063a74]">
-                <span className="text-[15px] font-bold leading-[1.5] text-white">
-                  {step.number}
-                </span>
-              </div>
-              {index < STEPS.length - 1 && (
-                <div className="flex flex-1 items-center justify-center self-stretch">
-                  <div className="h-full w-px bg-[#d6e0eb]" />
-                </div>
-              )}
-            </div>
-
-            {/* Text */}
-            <div className="flex flex-1 flex-col gap-1">
-              <p className="text-[17px] font-bold leading-[1.5] text-[#052b57]">
-                {step.title}
-              </p>
-              <p className="text-text-subtle text-[17px] leading-[1.5]">
-                {step.description}
-              </p>
-            </div>
-          </div>
-
-          {/* Divider between steps */}
-          {index < STEPS.length - 1 && (
-            <div className="flex h-8 w-10 items-center justify-center px-2">
-              <div className="h-full w-px bg-[#d6e0eb]" />
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
+  return <StudyStepIndicator steps={STEPS} />;
 }

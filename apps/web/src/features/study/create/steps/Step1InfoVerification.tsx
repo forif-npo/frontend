@@ -11,29 +11,7 @@ import { StudyCreateStepIndicator } from "./StudyCreateStepIndicator";
 import { StepNavigation } from "../components/StepNavigation";
 import { fetchUserInfo } from "../user-info";
 import type { UserInfo } from "../types";
-
-/** 읽기 전용 정보 필드 */
-function InfoField({
-  label,
-  value,
-  icon,
-}: {
-  label: string;
-  value: string;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-2">
-        <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-          {label}
-        </h3>
-        {icon}
-      </div>
-      <TextInput id={label} length="full" value={value} readOnly disabled />
-    </div>
-  );
-}
+import { StudyUserInfoField } from "../../components/StudyUserInfoField";
 
 /** 멘토 추가 카드 */
 function MentorAddCard({
@@ -110,13 +88,25 @@ function MentorAddCard({
       </div>
 
       {/* 이름 */}
-      <InfoField label="이름" value={mentorInfo?.name || ""} />
+      <StudyUserInfoField
+        id="mentor-name"
+        label="이름"
+        value={mentorInfo?.name || ""}
+      />
 
       {/* 학과 */}
-      <InfoField label="학과" value={mentorInfo?.department || ""} />
+      <StudyUserInfoField
+        id="mentor-department"
+        label="학과"
+        value={mentorInfo?.department || ""}
+      />
 
       {/* 휴대폰번호 */}
-      <InfoField label="휴대폰번호" value={formattedMentorPhone} />
+      <StudyUserInfoField
+        id="mentor-phone"
+        label="휴대폰번호"
+        value={formattedMentorPhone}
+      />
     </div>
   );
 }
@@ -282,10 +272,22 @@ export function Step1InfoVerification({
             기본 신청 정보를 확인해주세요
           </h2>
 
-          <InfoField label="학번" value={userInfo.studentId} />
-          <InfoField label="이름" value={userInfo.name} />
-          <InfoField label="학과" value={userInfo.department} />
-          <InfoField label="휴대폰번호" value={formattedUserPhone} />
+          <StudyUserInfoField
+            id="student-id"
+            label="학번"
+            value={userInfo.studentId}
+          />
+          <StudyUserInfoField id="name" label="이름" value={userInfo.name} />
+          <StudyUserInfoField
+            id="department"
+            label="학과"
+            value={userInfo.department}
+          />
+          <StudyUserInfoField
+            id="phone"
+            label="휴대폰번호"
+            value={formattedUserPhone}
+          />
         </div>
 
         {/* 알림 메시지 */}
