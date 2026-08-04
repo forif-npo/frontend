@@ -31,6 +31,8 @@ import {
 
 interface ApplicantsPanelProps {
   studyId: number;
+  /** 지난 학기 스터디는 조회만 가능하다 */
+  readOnly?: boolean;
 }
 
 interface ApplicationActionRequest {
@@ -53,7 +55,10 @@ function formatApplyDate(dateString: string) {
   return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
 }
 
-export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
+export function ApplicantsPanel({
+  studyId,
+  readOnly = false,
+}: ApplicantsPanelProps) {
   const [statusFilter, setStatusFilter] = useState<ApplyStatusFilter | "ALL">(
     "ALL",
   );
@@ -373,7 +378,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                           <Button
                             variant="tertiary"
                             size="x-small"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || readOnly}
                             onClick={() =>
                               openActionConfirmation({
                                 applyIds: [applicant.apply_id],
@@ -387,7 +392,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                           <Button
                             variant="primary"
                             size="x-small"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || readOnly}
                             onClick={() =>
                               openActionConfirmation({
                                 applyIds: [applicant.apply_id],
@@ -414,7 +419,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
           <Button
             variant="tertiary"
             size="medium"
-            disabled={selectedIds.size === 0 || isSubmitting}
+            disabled={selectedIds.size === 0 || isSubmitting || readOnly}
             onClick={() => handleBulkAction("reject")}
           >
             선택 거절
@@ -422,7 +427,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
           <Button
             variant="primary"
             size="medium"
-            disabled={selectedIds.size === 0 || isSubmitting}
+            disabled={selectedIds.size === 0 || isSubmitting || readOnly}
             onClick={() => handleBulkAction("accept")}
           >
             선택 승낙
