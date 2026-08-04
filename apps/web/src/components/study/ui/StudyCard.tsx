@@ -271,7 +271,7 @@ export function StudyCard(props: StudyCardProps) {
               variant="primary"
               size="medium"
               onClick={props.onApplyClick}
-              disabled={s.recruit_status === "CLOSED"}
+              disabled={s.recruit_status !== "APPLICABLE"}
             >
               신청하기
             </Button>
