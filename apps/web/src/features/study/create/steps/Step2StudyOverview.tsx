@@ -72,19 +72,19 @@ export function Step2StudyOverview({
 
   useEffect(() => {
     if (isRoomDisabled) {
-      setValue("room", "", { shouldDirty: true, shouldValidate: true });
+      setValue("room", "", { shouldDirty: true });
       clearErrors("room");
       return;
     }
 
     if (isClubRoomSelected) {
-      setValue("room", "B214", { shouldDirty: true, shouldValidate: true });
+      setValue("room", "B214", { shouldDirty: true });
       clearErrors("room");
     }
   }, [clearErrors, isClubRoomSelected, isRoomDisabled, setValue]);
 
   const handleTagsConfirm = (tags: string[]) => {
-    setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
+    setValue("tags", tags, { shouldDirty: true });
     setIsTagModalOpen(false);
   };
 
@@ -92,7 +92,7 @@ export function Step2StudyOverview({
     setValue(
       "tags",
       selectedTags.filter((t) => t !== tagToRemove),
-      { shouldDirty: true, shouldValidate: true },
+      { shouldDirty: true },
     );
   };
 
@@ -113,12 +113,12 @@ export function Step2StudyOverview({
       return false;
     }
 
-    setValue("thumbnail", file, { shouldDirty: true, shouldValidate: true });
+    setValue("thumbnail", file, { shouldDirty: true });
     return true;
   };
 
   const handleThumbnailRemove = () => {
-    setValue("thumbnail", null, { shouldDirty: true, shouldValidate: true });
+    setValue("thumbnail", null, { shouldDirty: true });
   };
 
   return (

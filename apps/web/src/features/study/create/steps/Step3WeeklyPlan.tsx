@@ -96,7 +96,6 @@ export function Step3WeeklyPlan({
     };
     setValue("curriculum", updated, {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
@@ -116,7 +115,6 @@ export function Step3WeeklyPlan({
       ],
       {
         shouldDirty: true,
-        shouldValidate: true,
       },
     );
   };
@@ -134,7 +132,6 @@ export function Step3WeeklyPlan({
     };
     setValue("curriculum", updated, {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
@@ -150,7 +147,6 @@ export function Step3WeeklyPlan({
 
     setValue("curriculum", updated, {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 

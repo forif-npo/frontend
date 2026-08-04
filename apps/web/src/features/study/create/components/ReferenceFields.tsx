@@ -53,7 +53,6 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
   const addReference = () => {
     setValue("references", [...references, { type: "LINK", value: "" }], {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
@@ -61,18 +60,16 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
     setValue(
       "references",
       references.filter((_, i) => i !== index),
-      { shouldDirty: true, shouldValidate: true },
+      { shouldDirty: true },
     );
   };
 
   const changeReferenceType = (index: number, type: string) => {
     setValue(`references.${index}.type`, type, {
       shouldDirty: true,
-      shouldValidate: true,
     });
     setValue(`references.${index}.value`, type === "DOWNLOAD" ? null : "", {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
@@ -86,7 +83,6 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
 
     setValue(`references.${index}.value`, file, {
       shouldDirty: true,
-      shouldValidate: true,
     });
 
     return true;
@@ -95,7 +91,6 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
   const removeReferenceFile = (index: number) => {
     setValue(`references.${index}.value`, null, {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 

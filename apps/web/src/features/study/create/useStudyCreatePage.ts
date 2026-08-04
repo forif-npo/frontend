@@ -72,8 +72,8 @@ export function useStudyCreatePage() {
   const form: UseFormReturn<StudyOpenValues> = useForm<StudyOpenValues>({
     resolver: standardSchemaResolver(studyOpenSchema),
     defaultValues: DEFAULT_VALUES,
-    mode: "onBlur",
-    reValidateMode: "onBlur",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
 
   useEffect(() => {
