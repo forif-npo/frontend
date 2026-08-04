@@ -7,6 +7,7 @@ import { useDateInput } from "@/hooks/useDateInput";
 import { DIFFICULTY_OPTIONS } from "../constants";
 import { ReferenceFields } from "../components/ReferenceFields";
 import { StepNavigation } from "../components/StepNavigation";
+import { StudyCreateSectionTitle } from "../components/StudyCreateSectionTitle";
 
 interface Step4TargetAndOperationProps {
   form: UseFormReturn<StudyOpenValues>;
@@ -46,9 +47,7 @@ export function Step4TargetAndOperation({
       <div className="flex flex-col gap-10">
         {/* 난이도 */}
         <div className="flex flex-col gap-3">
-          <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-            난이도
-          </h3>
+          <StudyCreateSectionTitle required>난이도</StudyCreateSectionTitle>
           <Controller
             control={control}
             name="difficulty"
@@ -67,9 +66,7 @@ export function Step4TargetAndOperation({
 
         {/* 면접 여부 */}
         <div className="flex flex-col gap-3">
-          <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-            면접 여부
-          </h3>
+          <StudyCreateSectionTitle>면접 여부</StudyCreateSectionTitle>
           <Controller
             control={control}
             name="hasInterview"

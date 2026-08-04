@@ -123,7 +123,7 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
 
             return (
               <div key={index} className="flex items-start gap-3">
-                <div className="-mt-2 w-[128px] shrink-0">
+                <div className="w-[128px] shrink-0">
                   <Controller
                     control={control}
                     name={`references.${index}.type`}

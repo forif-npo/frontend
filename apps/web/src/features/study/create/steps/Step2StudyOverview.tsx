@@ -16,25 +16,8 @@ import type { StudyOpenValues } from "@core/schemas";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { TagSelectModal } from "../components/TagSelectModal";
 import { StepNavigation } from "../components/StepNavigation";
+import { StudyCreateSectionTitle } from "../components/StudyCreateSectionTitle";
 import { LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "../constants";
-
-/** 섹션 타이틀 */
-function SectionTitle({
-  children,
-  icon,
-}: {
-  children: React.ReactNode;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-        {children}
-      </h3>
-      {icon}
-    </div>
-  );
-}
 
 interface Step2StudyOverviewProps {
   form: UseFormReturn<StudyOpenValues>;
@@ -172,7 +155,7 @@ export function Step2StudyOverview({
 
         {/* 태그 */}
         <div className="flex flex-col gap-2">
-          <SectionTitle>태그</SectionTitle>
+          <StudyCreateSectionTitle required>태그</StudyCreateSectionTitle>
           <div className="flex flex-wrap items-center gap-2">
             {selectedTags.map((tag) => (
               <button
@@ -207,7 +190,7 @@ export function Step2StudyOverview({
       <div className="flex flex-col gap-10">
         {/* 썸네일 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle>썸네일</SectionTitle>
+          <StudyCreateSectionTitle>썸네일</StudyCreateSectionTitle>
           <div className="flex flex-col gap-2">
             <HintText>
               부원들이 한 눈에 볼 수 있는 썸네일을 선택해주세요.
@@ -227,7 +210,9 @@ export function Step2StudyOverview({
 
         {/* 스터디 소개 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle>스터디 소개</SectionTitle>
+          <StudyCreateSectionTitle required>
+            스터디 소개
+          </StudyCreateSectionTitle>
           <div className="flex flex-col gap-1">
             <HintText>
               어떤 스터디인가요? 사용 기술스택 및 언어, 학습목표, 스터디 방식,
@@ -275,7 +260,9 @@ export function Step2StudyOverview({
 
         {/* 진행 장소 / 요일 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle>진행 장소 / 요일</SectionTitle>
+          <StudyCreateSectionTitle required>
+            진행 장소 / 요일
+          </StudyCreateSectionTitle>
           <div className="flex flex-col gap-1">
             <HintText>
               장소가 확정되지 않았다면 &apos;장소 미정&apos;을 선택해주세요.
@@ -364,7 +351,7 @@ export function Step2StudyOverview({
 
         {/* 진행 시간 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle>진행 시간</SectionTitle>
+          <StudyCreateSectionTitle required>진행 시간</StudyCreateSectionTitle>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <div className="flex-1">
