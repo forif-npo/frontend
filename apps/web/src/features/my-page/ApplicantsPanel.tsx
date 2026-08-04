@@ -34,6 +34,11 @@ const statusBadgeVariant: Record<string, NonNullable<BadgeProps["variant"]>> = {
   거절: "danger",
 };
 
+const statusLabel: Record<string, string> = {
+  승낙: "승인",
+  거절: "거절",
+};
+
 function formatApplyDate(dateString: string) {
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return dateString;
@@ -135,30 +140,39 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
     }
   };
 
-  const handleBulkAction = async (action: "accept" | "reject") => {
-    if (selectedIds.size === 0 || isSubmitting) {
+  const handleApplicationAction = async (
+    applyIds: number[],
+    action: "accept" | "reject",
+  ) => {
+    if (applyIds.length === 0 || isSubmitting) {
       return;
     }
-    const label = action === "accept" ? "합격" : "불합격";
-    if (!confirm(`선택한 ${selectedIds.size}명을 ${label} 처리할까요?`)) {
+    const label = action === "accept" ? "승인" : "거절";
+    const target =
+      applyIds.length === 1 ? "이 신청자를" : `선택한 ${applyIds.length}명을`;
+    if (!confirm(`${target} ${label} 처리할까요?`)) {
       return;
     }
     setIsSubmitting(true);
     setErrorMessage(null);
     try {
-      const applyIds = Array.from(selectedIds);
       if (action === "accept") {
         await acceptApplications(studyId, applyIds);
       } else {
         await rejectApplications(studyId, applyIds);
       }
       setSelectedIds(new Set());
+      setExpandedId(null);
       await fetchApplicants();
     } catch {
       setErrorMessage(`${label} 처리에 실패했습니다. 다시 시도해주세요.`);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBulkAction = (action: "accept" | "reject") => {
+    handleApplicationAction(Array.from(selectedIds), action);
   };
 
   const applicants = applicantsPage.content;
@@ -194,8 +208,8 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
               options={[
                 { value: "ALL", label: "전체" },
                 { value: "PENDING", label: "대기중" },
-                { value: "ACCEPT", label: "합격" },
-                { value: "REJECT", label: "불합격" },
+                { value: "ACCEPT", label: "승인" },
+                { value: "REJECT", label: "거절" },
               ]}
             />
           </div>
@@ -296,7 +310,10 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     <Badge
-                      label={applicant.study_status}
+                      label={
+                        statusLabel[applicant.study_status] ??
+                        applicant.study_status
+                      }
                       variant={
                         statusBadgeVariant[applicant.study_status] ?? "disabled"
                       }
@@ -308,9 +325,39 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                 {expandedId === applicant.apply_id && (
                   <TableRow className="bg-surface-gray-subtler">
                     <TableCell colSpan={6} className="py-4">
-                      <p className="text-text-basic text-body-m">
-                        {detailCache[applicant.apply_id] ?? "불러오는 중..."}
-                      </p>
+                      <div className="flex flex-col gap-4">
+                        <p className="text-text-basic text-body-m">
+                          {detailCache[applicant.apply_id] ?? "불러오는 중..."}
+                        </p>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="tertiary"
+                            size="x-small"
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              handleApplicationAction(
+                                [applicant.apply_id],
+                                "reject",
+                              )
+                            }
+                          >
+                            거절
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="x-small"
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              handleApplicationAction(
+                                [applicant.apply_id],
+                                "accept",
+                              )
+                            }
+                          >
+                            승인
+                          </Button>
+                        </div>
+                      </div>
                     </TableCell>
                   </TableRow>
                 )}
@@ -328,7 +375,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
             disabled={selectedIds.size === 0 || isSubmitting}
             onClick={() => handleBulkAction("reject")}
           >
-            선택 불합격
+            선택 거절
           </Button>
           <Button
             variant="primary"
@@ -336,7 +383,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
             disabled={selectedIds.size === 0 || isSubmitting}
             onClick={() => handleBulkAction("accept")}
           >
-            선택 합격
+            선택 승인
           </Button>
         </div>
       )}
