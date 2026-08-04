@@ -35,6 +35,7 @@ export type ApplyStatusFilter = "PENDING" | "ACCEPT" | "REJECT";
 export interface Applicant {
   apply_id: number;
   applier_name: string;
+  department: string;
   study_name: string;
   study_comment: string;
   apply_date: string;
@@ -119,7 +120,7 @@ export interface AttendanceRecord {
 export interface MenteeAttendance {
   user_id: number;
   user_name: string;
-  department: string | null;
+  department: string;
   records: AttendanceRecord[];
 }
 

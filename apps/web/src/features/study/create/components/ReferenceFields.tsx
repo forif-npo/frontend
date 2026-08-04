@@ -1,9 +1,15 @@
 "use client";
 
-import { FileUpload, SelectBox, TextInput } from "@ui/components/client";
+import {
+  AlertModal,
+  FileUpload,
+  SelectBox,
+  TextInput,
+} from "@ui/components/client";
 import { CircleMinus, CirclePlus } from "@repo/assets/icons/lucide";
 import type { StudyOpenValues } from "@core/schemas";
 import { Controller, type UseFormReturn } from "react-hook-form";
+import { useState } from "react";
 import { REFERENCE_TYPE_OPTIONS } from "../constants";
 
 const REFERENCE_FILE_MAX_SIZE_MB = 50;
@@ -32,6 +38,7 @@ function getReferenceErrors(
 }
 
 export function ReferenceFields({ form }: ReferenceFieldsProps) {
+  const [fileAlertMessage, setFileAlertMessage] = useState<string | null>(null);
   const {
     control,
     register,
@@ -46,7 +53,6 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
   const addReference = () => {
     setValue("references", [...references, { type: "LINK", value: "" }], {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
@@ -54,24 +60,22 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
     setValue(
       "references",
       references.filter((_, i) => i !== index),
-      { shouldDirty: true, shouldValidate: true },
+      { shouldDirty: true },
     );
   };
 
   const changeReferenceType = (index: number, type: string) => {
     setValue(`references.${index}.type`, type, {
       shouldDirty: true,
-      shouldValidate: true,
     });
     setValue(`references.${index}.value`, type === "DOWNLOAD" ? null : "", {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
   const uploadReferenceFile = async (index: number, file: File) => {
     if (file.size > REFERENCE_FILE_MAX_SIZE_BYTES) {
-      alert(
+      setFileAlertMessage(
         `자료 파일은 최대 ${REFERENCE_FILE_MAX_SIZE_MB}MB까지 업로드할 수 있습니다.`,
       );
       return false;
@@ -79,7 +83,6 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
 
     setValue(`references.${index}.value`, file, {
       shouldDirty: true,
-      shouldValidate: true,
     });
 
     return true;
@@ -88,7 +91,6 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
   const removeReferenceFile = (index: number) => {
     setValue(`references.${index}.value`, null, {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
@@ -116,7 +118,7 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
 
             return (
               <div key={index} className="flex items-start gap-3">
-                <div className="-mt-2 w-[128px] shrink-0">
+                <div className="w-[128px] shrink-0">
                   <Controller
                     control={control}
                     name={`references.${index}.type`}
@@ -180,6 +182,11 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
           })}
         </div>
       )}
+      <AlertModal
+        isOpen={fileAlertMessage !== null}
+        description={fileAlertMessage ?? ""}
+        onClose={() => setFileAlertMessage(null)}
+      />
     </div>
   );
 }

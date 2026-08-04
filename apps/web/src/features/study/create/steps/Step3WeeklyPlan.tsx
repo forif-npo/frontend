@@ -6,6 +6,7 @@ import type { StudyOpenValues } from "@core/schemas";
 import { useDateInput } from "@/hooks/useDateInput";
 import { StudyCurriculumTable } from "../../components/StudyCurriculumTable";
 import { StepNavigation } from "../components/StepNavigation";
+import { StudySectionTitle } from "../../components/StudySectionTitle";
 
 interface Step3WeeklyPlanProps {
   form: UseFormReturn<StudyOpenValues>;
@@ -95,7 +96,6 @@ export function Step3WeeklyPlan({
     };
     setValue("curriculum", updated, {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
@@ -115,7 +115,6 @@ export function Step3WeeklyPlan({
       ],
       {
         shouldDirty: true,
-        shouldValidate: true,
       },
     );
   };
@@ -133,7 +132,6 @@ export function Step3WeeklyPlan({
     };
     setValue("curriculum", updated, {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
@@ -149,7 +147,6 @@ export function Step3WeeklyPlan({
 
     setValue("curriculum", updated, {
       shouldDirty: true,
-      shouldValidate: true,
     });
   };
 
@@ -164,9 +161,7 @@ export function Step3WeeklyPlan({
       <div className="flex flex-col gap-6">
         {/* 커리큘럼 라벨 */}
         <div className="flex flex-col gap-6">
-          <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-            커리큘럼
-          </h3>
+          <StudySectionTitle required>커리큘럼</StudySectionTitle>
 
           <div className="flex flex-col gap-3">
             <HintText>

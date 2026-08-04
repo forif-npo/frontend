@@ -15,6 +15,12 @@ import {
 import { DEFAULT_CURRICULUM } from "./constants";
 import type { StudyCreateStep } from "./types";
 
+export interface StudyCreateAlert {
+  description: string;
+  onConfirm?: () => void;
+  onCancel?: () => void;
+}
+
 const DEFAULT_VALUES: StudyOpenValues = {
   mentorIds: [],
   studyName: "",
@@ -59,13 +65,15 @@ export function useStudyCreatePage() {
   const hasCheckedDraftRef = useRef(false);
   const isSubmittedRef = useRef(false);
   const [step, setStep] = useState<StudyCreateStep>(1);
+  const [studyCreateAlert, setStudyCreateAlert] =
+    useState<StudyCreateAlert | null>(null);
   const { userInfo, isLoading } = useStudyCreateData();
 
   const form: UseFormReturn<StudyOpenValues> = useForm<StudyOpenValues>({
     resolver: standardSchemaResolver(studyOpenSchema),
     defaultValues: DEFAULT_VALUES,
-    mode: "onBlur",
-    reValidateMode: "onBlur",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
 
   useEffect(() => {
@@ -75,19 +83,16 @@ export function useStudyCreatePage() {
     const draft = loadStudyCreateDraft();
     if (!draft) return;
 
-    const shouldRestore = window.confirm(
-      "임시저장된 스터디 개설 내용이 있습니다. 불러오시겠습니까?",
-    );
-
-    if (!shouldRestore) {
-      clearStudyCreateDraft();
-      return;
-    }
-
-    form.reset({
-      ...DEFAULT_VALUES,
-      ...draft,
-      thumbnail: null,
+    setStudyCreateAlert({
+      description: "임시저장된 스터디 개설 내용이 있습니다. 불러오시겠습니까?",
+      onConfirm: () => {
+        form.reset({
+          ...DEFAULT_VALUES,
+          ...draft,
+          thumbnail: null,
+        });
+      },
+      onCancel: clearStudyCreateDraft,
     });
   }, [form]);
 
@@ -150,12 +155,15 @@ export function useStudyCreatePage() {
 
       const { HTTPError } = await import("ky");
       if (err instanceof HTTPError && err.response.status === 401) {
-        alert(
-          "세션이 만료되어 제출하지 못했습니다.\n작성 내용은 임시저장되었으니 다시 로그인한 뒤 이어서 작성해주세요.",
-        );
+        setStudyCreateAlert({
+          description:
+            "세션이 만료되어 제출하지 못했습니다. 작성 내용은 임시저장되었으니 다시 로그인한 뒤 이어서 작성해주세요.",
+        });
         return;
       }
-      alert("제출에 실패했습니다. 작성 내용은 임시저장되었습니다.");
+      setStudyCreateAlert({
+        description: "제출에 실패했습니다. 작성 내용은 임시저장되었습니다.",
+      });
     }
   }, [form]);
 
@@ -164,11 +172,15 @@ export function useStudyCreatePage() {
     const isSaved = saveStudyCreateDraft(values);
 
     if (isSaved) {
-      alert("임시저장되었습니다.");
+      setStudyCreateAlert({
+        description: "임시저장되었습니다.",
+      });
       return;
     }
 
-    alert("임시저장을 사용할 수 없는 환경입니다.");
+    setStudyCreateAlert({
+      description: "임시저장을 사용할 수 없는 환경입니다.",
+    });
   }, [form]);
 
   const goToStudyList = useCallback(() => {
@@ -184,11 +196,13 @@ export function useStudyCreatePage() {
     form,
     userInfo,
     isLoading,
+    studyCreateAlert,
     goToNext,
     goToPrevious,
     goToStep,
     handleSubmit,
     handleSaveDraft,
+    closeStudyCreateAlert: () => setStudyCreateAlert(null),
     goToStudyList,
     goToApplication,
   };

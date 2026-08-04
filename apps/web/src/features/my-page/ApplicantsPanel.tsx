@@ -21,9 +21,22 @@ import {
   type ApplicantsPage,
   type ApplyStatusFilter,
 } from "@core/study-manage/api";
+import {
+  ApplicantActionConfirmModal,
+  ApplicantActionResultModal,
+  applicantActionLabel,
+  type ApplicantAction,
+  type ApplicantActionResult,
+} from "./ApplicantActionModal";
 
 interface ApplicantsPanelProps {
   studyId: number;
+}
+
+interface ApplicationActionRequest {
+  applyIds: number[];
+  action: ApplicantAction;
+  applicantName?: string;
 }
 
 const PAGE_SIZE = 10;
@@ -54,7 +67,10 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [actionRequest, setActionRequest] =
+    useState<ApplicationActionRequest | null>(null);
+  const [actionResult, setActionResult] =
+    useState<ApplicantActionResult | null>(null);
 
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [expandedId, setExpandedId] = useState<number | null>(null);
@@ -62,7 +78,6 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
 
   const fetchApplicants = useCallback(async () => {
     setIsLoading(true);
-    setErrorMessage(null);
     try {
       const data = await getApplicants(studyId, {
         page,
@@ -71,8 +86,13 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
         applyDateDirection: sortOrder,
       });
       setApplicantsPage(data);
+      return true;
     } catch {
-      setErrorMessage("신청자 목록을 불러오지 못했습니다.");
+      setActionResult({
+        type: "error",
+        message: "신청자 목록을 불러오지 못했습니다. 다시 시도해주세요.",
+      });
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -127,38 +147,75 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
         const reason = await getApplicationDetail(studyId, applicant.apply_id);
         setDetailCache((prev) => ({ ...prev, [applicant.apply_id]: reason }));
       } catch {
-        setDetailCache((prev) => ({
-          ...prev,
-          [applicant.apply_id]: "지원 동기를 불러오지 못했습니다.",
-        }));
+        setExpandedId((currentId) =>
+          currentId === applicant.apply_id ? null : currentId,
+        );
+        setActionResult({
+          type: "error",
+          message: "지원 동기를 불러오지 못했습니다. 다시 시도해주세요.",
+        });
       }
     }
   };
 
-  const handleBulkAction = async (action: "accept" | "reject") => {
-    if (selectedIds.size === 0 || isSubmitting) {
+  const getActionTarget = ({
+    applyIds,
+    applicantName,
+  }: ApplicationActionRequest) =>
+    applicantName
+      ? `${applicantName}님의 스터디 신청`
+      : `선택한 ${applyIds.length}명의 스터디 신청`;
+
+  const openActionConfirmation = (request: ApplicationActionRequest) => {
+    if (request.applyIds.length === 0 || isSubmitting) {
       return;
     }
-    const label = action === "accept" ? "합격" : "불합격";
-    if (!confirm(`선택한 ${selectedIds.size}명을 ${label} 처리할까요?`)) {
-      return;
-    }
+    setActionRequest(request);
+  };
+
+  const handleApplicationAction = async (request: ApplicationActionRequest) => {
+    const { applyIds, action } = request;
+    const label = applicantActionLabel[action];
     setIsSubmitting(true);
-    setErrorMessage(null);
     try {
-      const applyIds = Array.from(selectedIds);
       if (action === "accept") {
         await acceptApplications(studyId, applyIds);
       } else {
         await rejectApplications(studyId, applyIds);
       }
       setSelectedIds(new Set());
-      await fetchApplicants();
+      setExpandedId(null);
+      const refreshed = await fetchApplicants();
+      setActionResult({
+        type: refreshed ? "success" : "error",
+        action,
+        message: refreshed
+          ? `${getActionTarget(request)}을 ${label} 처리했습니다.`
+          : `${getActionTarget(request)}은 ${label} 처리했지만 목록을 새로고침하지 못했습니다.`,
+      });
     } catch {
-      setErrorMessage(`${label} 처리에 실패했습니다. 다시 시도해주세요.`);
+      setActionResult({
+        type: "error",
+        action,
+        message: `${getActionTarget(request)} ${label} 처리에 실패했습니다. 다시 시도해주세요.`,
+      });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBulkAction = (action: ApplicantAction) => {
+    openActionConfirmation({
+      applyIds: Array.from(selectedIds),
+      action,
+    });
+  };
+
+  const handleConfirmAction = () => {
+    if (!actionRequest) return;
+    const request = actionRequest;
+    setActionRequest(null);
+    void handleApplicationAction(request);
   };
 
   const applicants = applicantsPage.content;
@@ -194,8 +251,8 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
               options={[
                 { value: "ALL", label: "전체" },
                 { value: "PENDING", label: "대기중" },
-                { value: "ACCEPT", label: "합격" },
-                { value: "REJECT", label: "불합격" },
+                { value: "ACCEPT", label: "승낙" },
+                { value: "REJECT", label: "거절" },
               ]}
             />
           </div>
@@ -223,10 +280,6 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
         </div>
       </div>
 
-      {errorMessage && (
-        <p className="text-text-danger text-body-s mb-4">{errorMessage}</p>
-      )}
-
       {/* Applicant table */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20 text-gray-500">
@@ -249,6 +302,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                 />
               </TableHead>
               <TableHead>이름</TableHead>
+              <TableHead>학과</TableHead>
               <TableHead>순위</TableHead>
               <TableHead>지원 동기</TableHead>
               <TableHead>신청일</TableHead>
@@ -283,6 +337,9 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                   <TableCell className="whitespace-nowrap font-bold">
                     {applicant.applier_name}
                   </TableCell>
+                  <TableCell className="max-w-[180px] truncate">
+                    {applicant.department}
+                  </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {applicant.priority}순위
                   </TableCell>
@@ -307,10 +364,42 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
                 </TableRow>
                 {expandedId === applicant.apply_id && (
                   <TableRow className="bg-surface-gray-subtler">
-                    <TableCell colSpan={6} className="py-4">
-                      <p className="text-text-basic text-body-m">
-                        {detailCache[applicant.apply_id] ?? "불러오는 중..."}
-                      </p>
+                    <TableCell colSpan={7} className="py-4">
+                      <div className="flex flex-col gap-4">
+                        <p className="text-text-basic text-body-m">
+                          {detailCache[applicant.apply_id] ?? "불러오는 중..."}
+                        </p>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="tertiary"
+                            size="x-small"
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              openActionConfirmation({
+                                applyIds: [applicant.apply_id],
+                                action: "reject",
+                                applicantName: applicant.applier_name,
+                              })
+                            }
+                          >
+                            거절
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="x-small"
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              openActionConfirmation({
+                                applyIds: [applicant.apply_id],
+                                action: "accept",
+                                applicantName: applicant.applier_name,
+                              })
+                            }
+                          >
+                            승낙
+                          </Button>
+                        </div>
+                      </div>
                     </TableCell>
                   </TableRow>
                 )}
@@ -328,7 +417,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
             disabled={selectedIds.size === 0 || isSubmitting}
             onClick={() => handleBulkAction("reject")}
           >
-            선택 불합격
+            선택 거절
           </Button>
           <Button
             variant="primary"
@@ -336,7 +425,7 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
             disabled={selectedIds.size === 0 || isSubmitting}
             onClick={() => handleBulkAction("accept")}
           >
-            선택 합격
+            선택 승낙
           </Button>
         </div>
       )}
@@ -354,6 +443,24 @@ export function ApplicantsPanel({ studyId }: ApplicantsPanelProps) {
             }}
           />
         </div>
+      )}
+
+      {actionRequest && (
+        <ApplicantActionConfirmModal
+          isOpen
+          onClose={() => setActionRequest(null)}
+          onConfirm={handleConfirmAction}
+          action={actionRequest.action}
+          target={getActionTarget(actionRequest)}
+        />
+      )}
+
+      {actionResult && (
+        <ApplicantActionResultModal
+          isOpen
+          onClose={() => setActionResult(null)}
+          result={actionResult}
+        />
       )}
     </div>
   );

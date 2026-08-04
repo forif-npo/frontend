@@ -21,7 +21,7 @@ interface StudyCreateReviewContentProps {
   userInfo: UserInfo;
 }
 
-const EMPTY_VALUE = "아직 입력되지 않았어요";
+const EMPTY_VALUE = "-";
 
 export function StudyCreateReviewContent({
   values,
@@ -324,11 +324,7 @@ function ReviewText({ value }: { value: string | null | undefined }) {
 }
 
 function EmptyValue() {
-  return (
-    <span className="text-text-disabled border-gray-20 inline-flex rounded-[4px] border bg-[repeating-linear-gradient(135deg,#f4f5f6_0,#f4f5f6_6px,#e9ecef_6px,#e9ecef_10px)] px-2 py-0.5 text-[14px] leading-[1.5]">
-      {EMPTY_VALUE}
-    </span>
-  );
+  return <span className="text-text-subtle">{EMPTY_VALUE}</span>;
 }
 
 function isFileValue(value: ReferenceItem["value"]): value is File {

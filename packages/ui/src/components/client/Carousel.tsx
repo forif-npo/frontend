@@ -47,7 +47,7 @@ export function Carousel({ carouselItems }: CarouselProps) {
           className="hidden md:flex"
         />
         <div className="bg-surface-white/85 border-border-gray-light flex w-full max-w-[1200px] flex-col-reverse gap-8 overflow-hidden rounded-[28px] border p-6 shadow-[0_18px_50px_rgba(11,80,208,0.12)] backdrop-blur md:flex-row md:items-center md:justify-between md:gap-0 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
-          <div className="max-w-[600px]">
+          <div className="max-w-[800px]">
             <Display size="s" className="text-text-basic mb-6">
               {currentItem.title}
             </Display>

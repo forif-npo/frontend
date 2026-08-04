@@ -17,6 +17,9 @@ interface ModalProps {
   confirmLabel?: string;
   showHeaderBorder?: boolean;
   showFooterBorder?: boolean;
+  showHeader?: boolean;
+  ariaLabel?: string;
+  layout?: "default" | "compact";
 }
 
 const CloseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -50,6 +53,9 @@ export const Modal: React.FC<ModalProps> = ({
   confirmLabel = "확인",
   showHeaderBorder = true,
   showFooterBorder = true,
+  showHeader = true,
+  ariaLabel,
+  layout = "default",
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -88,6 +94,19 @@ export const Modal: React.FC<ModalProps> = ({
     xl: "w-[1040px]",
   }[width];
 
+  const layoutStyles = {
+    default: {
+      header: "p-5",
+      content: "px-6 pt-6",
+      footer: "p-6",
+    },
+    compact: {
+      header: "px-6 py-4",
+      content: "px-6 pt-3",
+      footer: "px-6 py-4",
+    },
+  }[layout];
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none"
@@ -102,34 +121,39 @@ export const Modal: React.FC<ModalProps> = ({
         className={`relative mx-auto my-6 rounded-lg bg-white shadow-lg ${modalWidthStyle}`}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={showHeader ? "modal-title" : undefined}
+        aria-label={showHeader ? undefined : ariaLabel}
         tabIndex={-1}
         onKeyDown={handleKeyDown}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex max-h-[90vh] flex-col">
-          <div
-            className={`flex items-start justify-between p-5 ${
-              showHeaderBorder ? "border-gray-10 border-b" : ""
-            }`}
-          >
-            <Label
-              id="modal-title"
-              size="l"
-              weight="bold"
-              className="text-gray-90"
+          {showHeader && (
+            <div
+              className={`flex items-start justify-between ${layoutStyles.header} ${
+                showHeaderBorder ? "border-gray-10 border-b" : ""
+              }`}
             >
-              {title}
-            </Label>
-          </div>
+              <Label
+                id="modal-title"
+                size="l"
+                weight="bold"
+                className="text-gray-90"
+              >
+                {title}
+              </Label>
+            </div>
+          )}
 
-          <div className="relative flex-auto overflow-y-auto px-6 pt-6">
+          <div
+            className={`relative flex-auto overflow-y-auto ${layoutStyles.content}`}
+          >
             {children}
           </div>
 
           {(onConfirm || showCancelButton) && (
             <div
-              className={`flex items-center justify-end gap-4 p-6 ${
+              className={`flex items-center justify-end gap-4 ${layoutStyles.footer} ${
                 showFooterBorder ? "border-gray-10 border-t" : ""
               }`}
             >

@@ -137,7 +137,7 @@ export function AttendancePanel({ studyId }: AttendancePanelProps) {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex items-center">
         <p className="text-text-basic text-body-l font-bold leading-normal">
           멘티 <span className="text-text-primary">{data.mentees.length}</span>
           명
@@ -145,26 +145,6 @@ export function AttendancePanel({ studyId }: AttendancePanelProps) {
             칸을 눌러 출석/결석을 표시한 뒤 저장하세요
           </span>
         </p>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="tertiary"
-            size="medium"
-            disabled={weekCount >= MAX_WEEK_COUNT}
-            onClick={() => setWeekCount((w) => Math.min(w + 1, MAX_WEEK_COUNT))}
-          >
-            주차 추가
-          </Button>
-          <Button
-            variant="primary"
-            size="medium"
-            disabled={pending.size === 0 || isSaving}
-            onClick={handleSave}
-          >
-            {isSaving
-              ? "저장 중..."
-              : `저장${pending.size > 0 ? ` (${pending.size})` : ""}`}
-          </Button>
-        </div>
       </div>
 
       {errorMessage && (
@@ -175,6 +155,7 @@ export function AttendancePanel({ studyId }: AttendancePanelProps) {
         <TableHeader>
           <TableRow>
             <TableHead className="whitespace-nowrap">이름</TableHead>
+            <TableHead>학과</TableHead>
             {weeks.map((week) => (
               <TableHead key={week} className="min-w-[52px] px-2 text-center">
                 {week}주차
@@ -190,11 +171,11 @@ export function AttendancePanel({ studyId }: AttendancePanelProps) {
             const total = presentCount(mentee.user_id);
             return (
               <TableRow key={mentee.user_id}>
-                <TableCell className="whitespace-nowrap py-2 text-left">
-                  <span className="font-bold">{mentee.user_name}</span>
-                  <span className="text-text-subtle text-body-xs ml-2">
-                    {mentee.user_id}
-                  </span>
+                <TableCell className="whitespace-nowrap font-bold">
+                  {mentee.user_name}
+                </TableCell>
+                <TableCell className="max-w-[180px] truncate">
+                  {mentee.department}
                 </TableCell>
                 {weeks.map((week) => {
                   const key: CellKey = `${mentee.user_id}:${week}`;
@@ -234,6 +215,27 @@ export function AttendancePanel({ studyId }: AttendancePanelProps) {
           })}
         </TableBody>
       </Table>
+
+      <div className="mt-4 flex justify-end gap-2">
+        <Button
+          variant="tertiary"
+          size="medium"
+          disabled={weekCount >= MAX_WEEK_COUNT}
+          onClick={() => setWeekCount((w) => Math.min(w + 1, MAX_WEEK_COUNT))}
+        >
+          주차 추가
+        </Button>
+        <Button
+          variant="primary"
+          size="medium"
+          disabled={pending.size === 0 || isSaving}
+          onClick={handleSave}
+        >
+          {isSaving
+            ? "저장 중..."
+            : `저장${pending.size > 0 ? ` (${pending.size})` : ""}`}
+        </Button>
+      </div>
 
       <p className="text-text-subtle text-body-xs mt-3">
         수료 기준: 출석 5회 이상 (수료증 발급은 운영진이 진행합니다)

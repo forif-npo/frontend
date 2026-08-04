@@ -7,6 +7,7 @@ import {
   Checkbox,
   FileUpload,
   SelectBox,
+  AlertModal,
 } from "@ui/components/client";
 import { HintText } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
@@ -15,25 +16,8 @@ import type { StudyOpenValues } from "@core/schemas";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { TagSelectModal } from "../components/TagSelectModal";
 import { StepNavigation } from "../components/StepNavigation";
+import { StudySectionTitle } from "../../components/StudySectionTitle";
 import { LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "../constants";
-
-/** 섹션 타이틀 */
-function SectionTitle({
-  children,
-  icon,
-}: {
-  children: React.ReactNode;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-        {children}
-      </h3>
-      {icon}
-    </div>
-  );
-}
 
 interface Step2StudyOverviewProps {
   form: UseFormReturn<StudyOpenValues>;
@@ -51,6 +35,9 @@ export function Step2StudyOverview({
   onPreview,
 }: Step2StudyOverviewProps) {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
+    string | null
+  >(null);
   const {
     register,
     control,
@@ -63,10 +50,12 @@ export function Step2StudyOverview({
 
   const selectedTags = watch("tags") || [];
   const thumbnail = watch("thumbnail");
+  const isOnline = watch("isOnline");
   const selectedLocation = watch("location");
   const selectedRoom = watch("room");
   const isLocationUndecided = selectedLocation === "장소 미정";
   const isClubRoomSelected = selectedLocation === "동아리방";
+  const isRoomDisabled = isOnline || isLocationUndecided;
   const hasRoomValue =
     typeof selectedRoom === "string" && selectedRoom.trim().length > 0;
   const locationErrorMessages = [
@@ -82,20 +71,20 @@ export function Step2StudyOverview({
   const hasTimeError = timeErrorMessages.length > 0;
 
   useEffect(() => {
-    if (isLocationUndecided) {
-      setValue("room", "", { shouldDirty: true, shouldValidate: true });
+    if (isRoomDisabled) {
+      setValue("room", "", { shouldDirty: true });
       clearErrors("room");
       return;
     }
 
     if (isClubRoomSelected) {
-      setValue("room", "B214", { shouldDirty: true, shouldValidate: true });
+      setValue("room", "B214", { shouldDirty: true });
       clearErrors("room");
     }
-  }, [clearErrors, isClubRoomSelected, isLocationUndecided, setValue]);
+  }, [clearErrors, isClubRoomSelected, isRoomDisabled, setValue]);
 
   const handleTagsConfirm = (tags: string[]) => {
-    setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
+    setValue("tags", tags, { shouldDirty: true });
     setIsTagModalOpen(false);
   };
 
@@ -103,7 +92,7 @@ export function Step2StudyOverview({
     setValue(
       "tags",
       selectedTags.filter((t) => t !== tagToRemove),
-      { shouldDirty: true, shouldValidate: true },
+      { shouldDirty: true },
     );
   };
 
@@ -111,21 +100,25 @@ export function Step2StudyOverview({
     const allowedTypes = ["image/jpeg", "image/png"];
 
     if (!allowedTypes.includes(file.type)) {
-      alert("jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.");
+      setThumbnailAlertMessage(
+        "jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.",
+      );
       return false;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert("이미지 파일은 최대 5MB까지 업로드할 수 있습니다.");
+      setThumbnailAlertMessage(
+        "이미지 파일은 최대 5MB까지 업로드할 수 있습니다.",
+      );
       return false;
     }
 
-    setValue("thumbnail", file, { shouldDirty: true, shouldValidate: true });
+    setValue("thumbnail", file, { shouldDirty: true });
     return true;
   };
 
   const handleThumbnailRemove = () => {
-    setValue("thumbnail", null, { shouldDirty: true, shouldValidate: true });
+    setValue("thumbnail", null, { shouldDirty: true });
   };
 
   return (
@@ -162,7 +155,7 @@ export function Step2StudyOverview({
 
         {/* 태그 */}
         <div className="flex flex-col gap-2">
-          <SectionTitle>태그</SectionTitle>
+          <StudySectionTitle required>태그</StudySectionTitle>
           <div className="flex flex-wrap items-center gap-2">
             {selectedTags.map((tag) => (
               <button
@@ -197,7 +190,7 @@ export function Step2StudyOverview({
       <div className="flex flex-col gap-10">
         {/* 썸네일 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle>썸네일</SectionTitle>
+          <StudySectionTitle>썸네일</StudySectionTitle>
           <div className="flex flex-col gap-2">
             <HintText>
               부원들이 한 눈에 볼 수 있는 썸네일을 선택해주세요.
@@ -217,7 +210,7 @@ export function Step2StudyOverview({
 
         {/* 스터디 소개 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle>스터디 소개</SectionTitle>
+          <StudySectionTitle required>스터디 소개</StudySectionTitle>
           <div className="flex flex-col gap-1">
             <HintText>
               어떤 스터디인가요? 사용 기술스택 및 언어, 학습목표, 스터디 방식,
@@ -265,7 +258,7 @@ export function Step2StudyOverview({
 
         {/* 진행 장소 / 요일 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle>진행 장소 / 요일</SectionTitle>
+          <StudySectionTitle required>진행 장소 / 요일</StudySectionTitle>
           <div className="flex flex-col gap-1">
             <HintText>
               장소가 확정되지 않았다면 &apos;장소 미정&apos;을 선택해주세요.
@@ -302,7 +295,7 @@ export function Step2StudyOverview({
                     aria-describedby={
                       hasLocationError ? "study-location-error" : undefined
                     }
-                    disabled={isLocationUndecided}
+                    disabled={isRoomDisabled}
                     className={hasRoomValue ? "pr-10" : ""}
                     {...register("room")}
                   />
@@ -354,7 +347,7 @@ export function Step2StudyOverview({
 
         {/* 진행 시간 */}
         <div className="flex flex-col gap-6">
-          <SectionTitle>진행 시간</SectionTitle>
+          <StudySectionTitle required>진행 시간</StudySectionTitle>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <div className="flex-1">
@@ -413,6 +406,11 @@ export function Step2StudyOverview({
         onClose={() => setIsTagModalOpen(false)}
         onConfirm={handleTagsConfirm}
         selectedTags={selectedTags}
+      />
+      <AlertModal
+        isOpen={thumbnailAlertMessage !== null}
+        description={thumbnailAlertMessage ?? ""}
+        onClose={() => setThumbnailAlertMessage(null)}
       />
     </div>
   );
