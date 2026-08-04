@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -156,12 +157,10 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
 
   return (
     <div className="space-y-6 p-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">문자 발송 서비스</h1>
-        <p className="text-muted-foreground">
-          카카오 알림톡을 통해 스터디 관련 알림을 발송할 수 있습니다.
-        </p>
-      </div>
+      <PageHeader
+        title="문자 발송 서비스"
+        description="카카오 알림톡을 통해 스터디 관련 알림을 발송할 수 있습니다."
+      />
 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* 발송 폼 */}

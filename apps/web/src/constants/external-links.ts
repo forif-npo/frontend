@@ -4,4 +4,5 @@ export const FORIF_EXTERNAL_LINKS = {
   channelTalk: "https://q01n8.channel.io/home",
   instagram: "https://www.instagram.com/forif_hyu/",
   medium: "https://blog.forif.org/",
+  hanyangPortal: "https://portal.hanyang.ac.kr/",
 } as const;

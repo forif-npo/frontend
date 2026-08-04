@@ -1,11 +1,12 @@
 "use client";
 import { TermsButton } from "@/components/terms-modal";
 import { departmentsOptions } from "@/constants/options.constant";
+import { MemberEligibilityInfo } from "@/features/auth/member-eligibility-info";
 import { autoHyphenPhoneNumber } from "@/utils/form";
 import { signUpSchema, SignUpValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Button, Checkbox, SelectBox, TextInput } from "@ui/components/client";
-import { InfoText, Label, Link } from "@ui/components/server";
+import { Label } from "@ui/components/server";
 import Form from "next/form";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -137,13 +138,14 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
       <Form
         ref={formRef}
         action={formAction}
-        className="flex flex-col justify-center gap-6"
+        className="flex flex-col justify-center gap-8"
       >
         <TextInput
           autoComplete="email"
           id="email"
           length="full"
           title="이메일"
+          required
           error={errors.email?.message ? errors.email?.message : undefined}
           {...register("email")}
           value={email}
@@ -152,7 +154,8 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
         <TextInput
           length="full"
           title="학번"
-          description="학번은 입학년도로 시작하는 10자리로 구성되어 있습니다."
+          helpText="학번은 입학년도로 시작하는 10자리로 구성되어 있습니다."
+          required
           id="id"
           placeholder="2023063845"
           error={errors.id?.message}
@@ -163,6 +166,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
           autoComplete="name"
           length="full"
           title="이름"
+          required
           id="name"
           placeholder="홍길동"
           error={errors.name?.message}
@@ -181,6 +185,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
                 options={departmentsOptions}
                 placeholder="정보시스템학과"
                 title="학과"
+                required
                 onChange={onChange}
                 error={errors.department?.message}
                 disabled={isLoading}
@@ -194,8 +199,9 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
         <TextInput
           length="full"
           title="전화번호"
+          required
           id="phoneNumber"
-          placeholder="010-1234-5678"
+          placeholder="010-0000-0000"
           error={errors.phoneNumber?.message}
           disabled={isLoading}
           {...register("phoneNumber", {
@@ -253,6 +259,10 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
               <TermsButton
                 type="service"
                 className="text-text-basic hover:text-text-primary transition-colors"
+                onConfirm={() => {
+                  setValue("serviceTermAgree", true);
+                  void trigger("serviceTermAgree");
+                }}
               >
                 보기
               </TermsButton>
@@ -290,6 +300,10 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
               <TermsButton
                 type="privacy"
                 className="text-text-basic hover:text-text-primary transition-colors"
+                onConfirm={() => {
+                  setValue("privacyPolicyAgree", true);
+                  void trigger("privacyPolicyAgree");
+                }}
               >
                 보기
               </TermsButton>
@@ -314,22 +328,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
         >
           회원가입
         </Button>
-        <InfoText>
-          회칙 2장 제4조(자격과 구성)에 의거하여 부원 가입대상을{" "}
-          <span className="font-bold">한양대학교 재·휴·졸업생</span>으로
-          한정함에 따라 한양대학교 이메일을 통한 로그인/회원가입을 진행하고
-          있습니다. 아직 한양메일을 만드시지 않았다면{" "}
-          <Link
-            size="s"
-            href="https://portal.hanyang.ac.kr"
-            rel="noopener noreferrer"
-            target="_blank"
-            className="text-text-primary text-body-s-mobile sm:text-body-s"
-          >
-            한양인포털
-          </Link>
-          에서 만드실 수 있습니다.
-        </InfoText>
+        <MemberEligibilityInfo />
       </Form>
 
       <SignUpConfirmationModal

@@ -1,4 +1,5 @@
 import { NavMenu } from "@/features/navigation/nav-bar";
+import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
 
 export const NAV_MENUS: NavMenu[] = [
   {
@@ -44,6 +45,11 @@ export const NAV_MENUS: NavMenu[] = [
         href: "/studies/guide",
       },
     ],
+  },
+  {
+    label: "기술블로그",
+    href: FORIF_EXTERNAL_LINKS.medium,
+    external: true,
   },
   {
     label: "서비스",

@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { Award, Eraser, ExternalLink } from "lucide-react";
+import { Eraser, ExternalLink } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -522,27 +523,26 @@ export function CertificatesView({
   const eligibleCount = targets.filter((t) => t.eligible).length;
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
-            <Award className="h-6 w-6" />
-            인증서 발급
-          </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+    <div className="space-y-6 p-8">
+      <PageHeader
+        title="인증서 발급"
+        description={
+          <>
             수료 기준(출석 {targetsData?.required_attendance ?? 5}회 이상 + 해당
             학기 해커톤 참여)을 충족한 부원에게 수료증을 발급합니다.
-          </p>
-        </div>
-        <div className="flex shrink-0 gap-2">
-          <Button variant="outline" onClick={openSignatureDialog}>
-            서명 등록
-          </Button>
-          <Button variant="outline" onClick={() => setManualOpen(true)}>
-            수동 발급
-          </Button>
-        </div>
-      </div>
+          </>
+        }
+        actions={
+          <div className="flex shrink-0 gap-2">
+            <Button variant="outline" onClick={openSignatureDialog}>
+              서명 등록
+            </Button>
+            <Button variant="outline" onClick={() => setManualOpen(true)}>
+              수동 발급
+            </Button>
+          </div>
+        }
+      />
 
       <SemesterTabs
         currentSemester={currentSemester}

@@ -24,7 +24,7 @@ export interface ApiErrorResponse {
 export interface SignUpRequest {
   student_id: number;
   user_name: string;
-  email: string;
+  access_token: string;
   phone_num: string;
   department: string;
 }

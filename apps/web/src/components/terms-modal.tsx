@@ -10,10 +10,16 @@ type TermsType = "service" | "privacy";
 interface TermsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onConfirm?: () => void;
   type: TermsType;
 }
 
-export function TermsModal({ isOpen, onClose, type }: TermsModalProps) {
+export function TermsModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  type,
+}: TermsModalProps) {
   const title = type === "service" ? "서비스 이용약관" : "개인정보 처리방침";
   const content = type === "service" ? TERMS_OF_SERVICE : PRIVACY_POLICY;
 
@@ -26,7 +32,10 @@ export function TermsModal({ isOpen, onClose, type }: TermsModalProps) {
       showCancelButton={false}
       showCloseIcon={true}
       confirmLabel="확인"
-      onConfirm={onClose}
+      onConfirm={() => {
+        onConfirm?.();
+        onClose();
+      }}
     >
       <Body size="s" className="whitespace-pre-line leading-relaxed">
         {content}
@@ -39,9 +48,15 @@ interface TermsButtonProps {
   type: TermsType;
   children: React.ReactNode;
   className?: string;
+  onConfirm?: () => void;
 }
 
-export function TermsButton({ type, children, className }: TermsButtonProps) {
+export function TermsButton({
+  type,
+  children,
+  className,
+  onConfirm,
+}: TermsButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -49,13 +64,14 @@ export function TermsButton({ type, children, className }: TermsButtonProps) {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={className}
+        className={`${className ?? ""} underline-offset-4 hover:font-semibold hover:underline`}
       >
         {children}
       </button>
       <TermsModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        onConfirm={onConfirm}
         type={type}
       />
     </>

@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import { HintText } from "../server/HintText";
 import { Label } from "../server/Label";
 import { Select, SelectProps } from "./Select";
 
@@ -9,6 +10,7 @@ type SelectBoxProps = {
   helpText?: string;
   error?: string;
   invalid?: boolean;
+  required?: boolean;
   ariaDescribedBy?: string;
 } & SelectProps;
 
@@ -20,6 +22,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
       helpText,
       error,
       invalid = false,
+      required = false,
       ariaDescribedBy,
       id,
       ...props
@@ -32,10 +35,15 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
     const isInvalid = invalid || Boolean(error);
 
     return (
-      <div className="flex h-16 flex-col justify-center gap-1">
+      <div className="flex flex-col justify-center gap-1">
         {title && (
-          <Label weight="bold" className="text-text-basic">
+          <Label htmlFor={id} className="text-text-basic">
             {title}
+            {required && (
+              <span className="text-text-danger ml-0.5" aria-hidden="true">
+                *
+              </span>
+            )}
           </Label>
         )}
         {description && (
@@ -47,6 +55,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
           id={id}
           invalid={isInvalid}
           ariaDescribedBy={error ? errorId : ariaDescribedBy}
+          ariaRequired={required || undefined}
           {...props}
         />
         {error ? (
@@ -54,9 +63,9 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
             {error}
           </Label>
         ) : helpText ? (
-          <Label id={helperTextId} size={"s"} className="mt-1 text-gray-50">
+          <HintText id={helperTextId} className="mt-1">
             {helpText}
-          </Label>
+          </HintText>
         ) : null}
       </div>
     );

@@ -5,6 +5,7 @@ import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { Download } from "lucide-react";
@@ -76,12 +77,7 @@ export function MentorsView({
 
   return (
     <div className="space-y-6 p-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">멘토 목록</h1>
-        <p className="text-muted-foreground">
-          학기별 멘토 목록입니다.
-        </p>
-      </div>
+      <PageHeader title="멘토 목록" description="학기별 멘토 목록입니다." />
 
       <div className="flex items-center justify-between gap-4">
         <SemesterTabs

@@ -32,7 +32,7 @@ const protectedSubRoutes = [
   /^\/studies\/detail\/[^/]+\/apply(?:\/|$)/,
   /^\/products\/apply(?:\/|$)/,
 ];
-const authRoutes = ["/signin", "/signup"];
+const authRoutes = ["/signin", "/signup", "/signup/form", "/auth/callback"];
 const apiAuthPrefix = "/api/auth";
 
 const authMiddleware = auth((req) => {

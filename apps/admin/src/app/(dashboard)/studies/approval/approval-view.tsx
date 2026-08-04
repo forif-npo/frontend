@@ -4,9 +4,8 @@ import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
-import {
-  SemesterTabs,
-} from "@/components/list/semester-tabs";
+import { SemesterTabs } from "@/components/list/semester-tabs";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -105,12 +104,10 @@ export function ApprovalView({
 
   return (
     <div className="space-y-6 p-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">스터디 승인</h1>
-        <p className="text-muted-foreground">
-          승인 대기 또는 재신청된 스터디 개설 요청을 검토할 수 있습니다.
-        </p>
-      </div>
+      <PageHeader
+        title="스터디 승인"
+        description="승인 대기 또는 재신청된 스터디 개설 요청을 검토할 수 있습니다."
+      />
 
       <SemesterTabs
         currentSemester={currentSemester}

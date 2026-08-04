@@ -16,6 +16,7 @@ export type NavMenu = {
   title?: string;
   navigate?: string;
   href: string;
+  external?: boolean;
   subMenus?: NavMenu[];
 };
 
@@ -144,6 +145,15 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
               >
                 {isLoggedIn ? "마이페이지" : "로그인"}
               </Link>
+              {!isLoggedIn && (
+                <Link
+                  href="/signup"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="border-border-gray-light text-text-basic rounded-2 flex h-12 items-center justify-center border text-[16px] font-semibold leading-[1.5]"
+                >
+                  회원가입
+                </Link>
+              )}
               {isLoggedIn && (
                 <button
                   type="button"
@@ -166,7 +176,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                   className="rounded-3 bg-surface-white border-border-gray-light overflow-hidden border"
                 >
                   {/* Sub Menu Grid */}
-                  {menu.subMenus && (
+                  {menu.subMenus ? (
                     <div className="grid grid-cols-2 gap-x-3 gap-y-1 p-3">
                       {menu.subMenus.map((subMenu) => (
                         <Link
@@ -179,6 +189,16 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                         </Link>
                       ))}
                     </div>
+                  ) : (
+                    <Link
+                      href={menu.href}
+                      target={menu.external ? "_blank" : undefined}
+                      rel={menu.external ? "noopener noreferrer" : undefined}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-text-basic block px-6 py-4 text-[17px] font-semibold leading-[1.5]"
+                    >
+                      {menu.label}
+                    </Link>
                   )}
                 </section>
               ))}
@@ -211,15 +231,27 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
           <Image src={NAV_LOGO_SRC} width={87} height={56} alt="FORIF Logo" />
         </Link>
         <ul className="flex flex-grow justify-center gap-4">
-          {navMenus.map(({ label, subMenus }) => (
+          {navMenus.map(({ label, href, external, subMenus }) => (
             <li key={label}>
-              <Button
-                size="medium"
-                onClick={() => handleMenuClick(label, !!subMenus)}
-                variant="text"
-              >
-                {label}
-              </Button>
+              {subMenus ? (
+                <Button
+                  size="medium"
+                  onClick={() => handleMenuClick(label, true)}
+                  variant="text"
+                >
+                  {label}
+                </Button>
+              ) : (
+                <Link
+                  href={href}
+                  target={external ? "_blank" : undefined}
+                  rel={external ? "noopener noreferrer" : undefined}
+                >
+                  <Button size="medium" variant="text">
+                    {label}
+                  </Button>
+                </Link>
+              )}
 
               {subMenus && openMenu === label && (
                 <div
@@ -245,7 +277,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
             </li>
           ))}
         </ul>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-2">
           {isLoggedIn ? (
             <>
               <Link href="/my">
@@ -264,11 +296,26 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
               </Button>
             </>
           ) : (
-            <Link href="/signin">
-              <Button variant="text" size="medium">
-                로그인
-              </Button>
-            </Link>
+            <>
+              <Link href="/signup">
+                <Button
+                  variant="text"
+                  size="medium"
+                  className="whitespace-nowrap"
+                >
+                  회원가입
+                </Button>
+              </Link>
+              <Link href="/signin">
+                <Button
+                  variant="secondary"
+                  size="medium"
+                  className="whitespace-nowrap"
+                >
+                  로그인
+                </Button>
+              </Link>
+            </>
           )}
           {rightSlot}
         </div>
