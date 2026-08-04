@@ -1,9 +1,15 @@
 "use client";
 
-import { FileUpload, SelectBox, TextInput } from "@ui/components/client";
+import {
+  AlertModal,
+  FileUpload,
+  SelectBox,
+  TextInput,
+} from "@ui/components/client";
 import { CircleMinus, CirclePlus } from "@repo/assets/icons/lucide";
 import type { StudyOpenValues } from "@core/schemas";
 import { Controller, type UseFormReturn } from "react-hook-form";
+import { useState } from "react";
 import { REFERENCE_TYPE_OPTIONS } from "../constants";
 
 const REFERENCE_FILE_MAX_SIZE_MB = 50;
@@ -32,6 +38,7 @@ function getReferenceErrors(
 }
 
 export function ReferenceFields({ form }: ReferenceFieldsProps) {
+  const [fileAlertMessage, setFileAlertMessage] = useState<string | null>(null);
   const {
     control,
     register,
@@ -71,7 +78,7 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
 
   const uploadReferenceFile = async (index: number, file: File) => {
     if (file.size > REFERENCE_FILE_MAX_SIZE_BYTES) {
-      alert(
+      setFileAlertMessage(
         `자료 파일은 최대 ${REFERENCE_FILE_MAX_SIZE_MB}MB까지 업로드할 수 있습니다.`,
       );
       return false;
@@ -180,6 +187,11 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
           })}
         </div>
       )}
+      <AlertModal
+        isOpen={fileAlertMessage !== null}
+        description={fileAlertMessage ?? ""}
+        onClose={() => setFileAlertMessage(null)}
+      />
     </div>
   );
 }

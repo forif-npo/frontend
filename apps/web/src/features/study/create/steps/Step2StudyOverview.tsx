@@ -7,6 +7,7 @@ import {
   Checkbox,
   FileUpload,
   SelectBox,
+  AlertModal,
 } from "@ui/components/client";
 import { HintText } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
@@ -51,6 +52,9 @@ export function Step2StudyOverview({
   onPreview,
 }: Step2StudyOverviewProps) {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
+    string | null
+  >(null);
   const {
     register,
     control,
@@ -63,10 +67,12 @@ export function Step2StudyOverview({
 
   const selectedTags = watch("tags") || [];
   const thumbnail = watch("thumbnail");
+  const isOnline = watch("isOnline");
   const selectedLocation = watch("location");
   const selectedRoom = watch("room");
   const isLocationUndecided = selectedLocation === "장소 미정";
   const isClubRoomSelected = selectedLocation === "동아리방";
+  const isRoomDisabled = isOnline || isLocationUndecided;
   const hasRoomValue =
     typeof selectedRoom === "string" && selectedRoom.trim().length > 0;
   const locationErrorMessages = [
@@ -82,7 +88,7 @@ export function Step2StudyOverview({
   const hasTimeError = timeErrorMessages.length > 0;
 
   useEffect(() => {
-    if (isLocationUndecided) {
+    if (isRoomDisabled) {
       setValue("room", "", { shouldDirty: true, shouldValidate: true });
       clearErrors("room");
       return;
@@ -92,7 +98,7 @@ export function Step2StudyOverview({
       setValue("room", "B214", { shouldDirty: true, shouldValidate: true });
       clearErrors("room");
     }
-  }, [clearErrors, isClubRoomSelected, isLocationUndecided, setValue]);
+  }, [clearErrors, isClubRoomSelected, isRoomDisabled, setValue]);
 
   const handleTagsConfirm = (tags: string[]) => {
     setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
@@ -111,12 +117,16 @@ export function Step2StudyOverview({
     const allowedTypes = ["image/jpeg", "image/png"];
 
     if (!allowedTypes.includes(file.type)) {
-      alert("jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.");
+      setThumbnailAlertMessage(
+        "jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.",
+      );
       return false;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert("이미지 파일은 최대 5MB까지 업로드할 수 있습니다.");
+      setThumbnailAlertMessage(
+        "이미지 파일은 최대 5MB까지 업로드할 수 있습니다.",
+      );
       return false;
     }
 
@@ -302,7 +312,7 @@ export function Step2StudyOverview({
                     aria-describedby={
                       hasLocationError ? "study-location-error" : undefined
                     }
-                    disabled={isLocationUndecided}
+                    disabled={isRoomDisabled}
                     className={hasRoomValue ? "pr-10" : ""}
                     {...register("room")}
                   />
@@ -413,6 +423,11 @@ export function Step2StudyOverview({
         onClose={() => setIsTagModalOpen(false)}
         onConfirm={handleTagsConfirm}
         selectedTags={selectedTags}
+      />
+      <AlertModal
+        isOpen={thumbnailAlertMessage !== null}
+        description={thumbnailAlertMessage ?? ""}
+        onClose={() => setThumbnailAlertMessage(null)}
       />
     </div>
   );

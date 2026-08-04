@@ -17,7 +17,8 @@ export default async function Page() {
       title: (
         <>
           한양대학교 최대 규모의 중앙 프로그래밍 동아리,
-          <br /> 포리프에 대해 알아보세요.
+          <br />
+          <span className="text-text-primary">포리프</span>에 대해 알아보세요.
         </>
       ),
       description:

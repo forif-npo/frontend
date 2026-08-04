@@ -1,4 +1,5 @@
 export { Accordion } from "./Accordion";
+export { AlertModal } from "./AlertModal";
 export { Button } from "./Button";
 export { Calendar } from "./Calendar";
 export { Carousel, CarouselArrow, CarouselIndicators } from "./Carousel";

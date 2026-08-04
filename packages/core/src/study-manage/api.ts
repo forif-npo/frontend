@@ -120,7 +120,7 @@ export interface AttendanceRecord {
 export interface MenteeAttendance {
   user_id: number;
   user_name: string;
-  department: string | null;
+  department: string;
   records: AttendanceRecord[];
 }
 

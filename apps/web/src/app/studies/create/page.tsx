@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AlertModal } from "@ui/components/client";
 import { StudyCreateSkeleton } from "@/components/skeleton/StudyCreateSkeleton";
 import {
   useStudyCreatePage,
@@ -20,10 +21,12 @@ export default function StudyCreatePage() {
     form,
     userInfo,
     isLoading,
+    studyCreateAlert,
     goToNext,
     goToPrevious,
     handleSubmit,
     handleSaveDraft,
+    closeStudyCreateAlert,
     goToStudyList,
     goToApplication,
   } = useStudyCreatePage();
@@ -96,6 +99,15 @@ export default function StudyCreatePage() {
         form={form}
         userInfo={userInfo}
       />
+      {studyCreateAlert && (
+        <AlertModal
+          isOpen
+          description={studyCreateAlert.description}
+          onClose={closeStudyCreateAlert}
+          onConfirm={studyCreateAlert.onConfirm}
+          onCancel={studyCreateAlert.onCancel}
+        />
+      )}
     </div>
   );
 }

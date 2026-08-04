@@ -100,7 +100,7 @@ export const studyOpenSchema = createSchema()(
         .default([]),
     })
     .superRefine((values, ctx) => {
-      if (values.location !== "장소 미정" && !values.room) {
+      if (!values.isOnline && values.location !== "장소 미정" && !values.room) {
         ctx.addIssue({
           code: "custom",
           path: ["room"],
