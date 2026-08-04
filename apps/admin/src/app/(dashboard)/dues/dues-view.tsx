@@ -5,6 +5,14 @@ import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -59,6 +67,10 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
   );
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingNavigation, setPendingNavigation] = useState<Record<
+    string,
+    string | null
+  > | null>(null);
   const currentSort =
     (searchParams.get("sort") as DuesSort | null) ?? "NEEDS_ATTENTION";
 
@@ -74,6 +86,21 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
       else params.delete(key);
     });
     router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const requestNavigation = (next: Record<string, string | null>) => {
+    if (pendingUpdates.size > 0) {
+      setPendingNavigation(next);
+      return;
+    }
+    navigate(next);
+  };
+
+  const discardChangesAndNavigate = () => {
+    if (!pendingNavigation) return;
+    setPendingUpdates(new Map());
+    navigate(pendingNavigation);
+    setPendingNavigation(null);
   };
 
   const handleStatusChange = (
@@ -160,13 +187,15 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
         <SearchBar
           value={search}
           onChange={setSearch}
-          onSearch={() => navigate({ search: search || null, page: "0" })}
+          onSearch={() =>
+            requestNavigation({ search: search || null, page: "0" })
+          }
           placeholder="이름 또는 학과 검색"
         />
         <div className="flex items-center gap-2">
           <Select
             value={currentSort}
-            onValueChange={(sort) => navigate({ sort, page: "0" })}
+            onValueChange={(sort) => requestNavigation({ sort, page: "0" })}
           >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="정렬 기준" />
@@ -285,8 +314,35 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
         totalPages={initialData.totalPages}
         totalElements={initialData.totalElements}
         pageSize={initialData.pageSize}
-        onPageChange={(page) => navigate({ page: page.toString() })}
+        onPageChange={(page) => requestNavigation({ page: page.toString() })}
       />
+
+      <Dialog
+        open={pendingNavigation !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingNavigation(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>저장하지 않은 변경사항이 있습니다</DialogTitle>
+            <DialogDescription>
+              이동하면 체크한 내용이 저장되지 않습니다.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setPendingNavigation(null)}
+            >
+              계속 수정
+            </Button>
+            <Button onClick={discardChangesAndNavigate}>
+              저장하지 않고 이동
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -115,11 +115,7 @@ export async function fetchDues({
 }
 
 export async function updateDues(updates: UpdateDuesPayload[]): Promise<void> {
-  const response = await apiClient
+  await apiClient
     .post("api/v1/admin/dues/batch", { json: { updates } })
-    .json<ApiResponse<unknown[]>>();
-
-  if (!response.data) {
-    throw new Error(response.message || "상태를 저장하지 못했습니다.");
-  }
+    .json<ApiResponse<null>>();
 }
