@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, CircleAlert, X } from "@repo/assets/icons/lucide";
+import { CircleAlert, X } from "@repo/assets/icons/lucide";
+import { SuccessFillIcon } from "@repo/assets/icons/krds";
 import { Modal } from "@ui/components/client";
 
 export type ApplicantAction = "accept" | "reject";
@@ -76,9 +77,15 @@ export function ApplicantActionResultModal({
       showFooterBorder={false}
     >
       <div className="flex flex-col items-center gap-6 pb-4 text-center">
-        <div className="bg-button-primary-fill flex h-16 w-16 items-center justify-center rounded-full">
-          {result.type === "success" ? (
-            isRejected ? (
+        {result.type === "success" && !isRejected ? (
+          <SuccessFillIcon
+            width={64}
+            height={64}
+            backgroundColor="var(--color-primary-50)"
+          />
+        ) : (
+          <div className="bg-button-primary-fill flex h-16 w-16 items-center justify-center rounded-full">
+            {isRejected ? (
               <X
                 size={40}
                 strokeWidth={3}
@@ -86,22 +93,15 @@ export function ApplicantActionResultModal({
                 aria-hidden="true"
               />
             ) : (
-              <Check
+              <CircleAlert
                 size={40}
-                strokeWidth={3}
+                strokeWidth={2.5}
                 className="text-text-inverse-static"
                 aria-hidden="true"
               />
-            )
-          ) : (
-            <CircleAlert
-              size={40}
-              strokeWidth={2.5}
-              className="text-text-inverse-static"
-              aria-hidden="true"
-            />
-          )}
-        </div>
+            )}
+          </div>
+        )}
         <p className="text-text-basic text-body-m">{result.message}</p>
       </div>
     </Modal>

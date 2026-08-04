@@ -1,31 +1,11 @@
 "use client";
 
+import { SuccessFillIcon } from "@repo/assets/icons/krds";
 import { Button } from "@ui/components/client";
 
 interface StudyCreateCompleteProps {
   onGoToStudyList: () => void;
   onGoToApplication?: () => void;
-}
-
-function CheckCircleIcon() {
-  return (
-    <svg
-      width="80"
-      height="80"
-      viewBox="0 0 80 80"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle cx="40" cy="40" r="36" fill="#063a74" />
-      <path
-        d="M24 40L35 51L56 29"
-        stroke="white"
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
 }
 
 export function StudyCreateComplete({
@@ -35,7 +15,11 @@ export function StudyCreateComplete({
   return (
     <div className="mx-auto mb-16 flex w-full max-w-[792px] flex-col items-center gap-8 pt-6 sm:gap-12 sm:pt-10">
       {/* Check Icon */}
-      <CheckCircleIcon />
+      <SuccessFillIcon
+        width={116}
+        height={116}
+        backgroundColor="var(--color-primary-50)"
+      />
 
       {/* Title */}
       <div className="text-center">
