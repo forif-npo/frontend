@@ -37,6 +37,7 @@ export interface DuesPageData {
 }
 
 export interface UpdateDuesPayload {
+  userId: number;
   duesPaid?: boolean;
   googleFormSubmitted?: boolean;
 }

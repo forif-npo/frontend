@@ -114,17 +114,12 @@ export async function fetchDues({
   return mapDuesPage(response.data);
 }
 
-export async function updateDues(
-  userId: number,
-  payload: UpdateDuesPayload,
-): Promise<DuesMember> {
+export async function updateDues(updates: UpdateDuesPayload[]): Promise<void> {
   const response = await apiClient
-    .patch(`api/v1/admin/dues/${userId}`, { json: payload })
-    .json<ApiResponse<unknown>>();
+    .post("api/v1/admin/dues/batch", { json: { updates } })
+    .json<ApiResponse<unknown[]>>();
 
   if (!response.data) {
     throw new Error(response.message || "상태를 저장하지 못했습니다.");
   }
-
-  return mapMember(response.data);
 }

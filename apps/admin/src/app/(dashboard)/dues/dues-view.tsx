@@ -3,7 +3,7 @@
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -36,28 +36,17 @@ const sortOptions: { value: DuesSort; label: string }[] = [
   { value: "NAME", label: "이름순" },
 ];
 
-function statusBadge(member: DuesMember) {
+function statusText(member: DuesMember) {
   if (member.duesPaid && member.googleFormSubmitted) {
-    return <Badge className="bg-green-600 hover:bg-green-600">확인 완료</Badge>;
+    return "확인 완료";
   }
   if (!member.duesPaid && !member.googleFormSubmitted) {
-    return <Badge variant="destructive">미납 · 미제출</Badge>;
+    return "미납 · 미제출";
   }
   if (!member.googleFormSubmitted) {
-    return (
-      <Badge
-        variant="outline"
-        className="border-orange-300 bg-orange-50 text-orange-700"
-      >
-        미제출
-      </Badge>
-    );
+    return "미제출";
   }
-  return (
-    <Badge variant="outline" className="border-red-300 bg-red-50 text-red-700">
-      미납
-    </Badge>
-  );
+  return "미납";
 }
 
 export function DuesView({ initialData, initialSearch }: DuesViewProps) {
@@ -65,15 +54,17 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(initialSearch);
-  const [members, setMembers] = useState(initialData.content);
-  const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
+  const [pendingUpdates, setPendingUpdates] = useState<Map<number, DuesMember>>(
+    new Map(),
+  );
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const currentSort =
     (searchParams.get("sort") as DuesSort | null) ?? "NEEDS_ATTENTION";
 
   useEffect(() => {
-    setMembers(initialData.content);
     setSearch(initialSearch);
+    setPendingUpdates(new Map());
   }, [initialData.content, initialSearch]);
 
   const navigate = (next: Record<string, string | null>) => {
@@ -85,18 +76,45 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const handleStatusChange = async (
+  const handleStatusChange = (
     member: DuesMember,
     field: "duesPaid" | "googleFormSubmitted",
     checked: boolean,
   ) => {
-    setUpdatingUserId(member.userId);
     setError(null);
+    setPendingUpdates((current) => {
+      const next = new Map(current);
+      const existing = next.get(member.userId) ?? member;
+      const updatedMember = { ...existing, [field]: checked };
+      const original = initialData.content.find(
+        (item) => item.userId === member.userId,
+      );
 
+      if (
+        original &&
+        original.duesPaid === updatedMember.duesPaid &&
+        original.googleFormSubmitted === updatedMember.googleFormSubmitted
+      ) {
+        next.delete(member.userId);
+      } else {
+        next.set(member.userId, updatedMember);
+      }
+      return next;
+    });
+  };
+
+  const handleSave = async () => {
+    if (pendingUpdates.size === 0) return;
+
+    setIsSaving(true);
+    setError(null);
     try {
-      const updated = await updateDues(member.userId, { [field]: checked });
-      setMembers((current) =>
-        current.map((item) => (item.userId === member.userId ? updated : item)),
+      await updateDues(
+        Array.from(pendingUpdates.values()).map((member) => ({
+          userId: member.userId,
+          duesPaid: member.duesPaid,
+          googleFormSubmitted: member.googleFormSubmitted,
+        })),
       );
       router.refresh();
     } catch (caughtError) {
@@ -106,7 +124,7 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
           : "상태를 저장하지 못했습니다.",
       );
     } finally {
-      setUpdatingUserId(null);
+      setIsSaving(false);
     }
   };
 
@@ -145,22 +163,36 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
           onSearch={() => navigate({ search: search || null, page: "0" })}
           placeholder="이름 또는 학과 검색"
         />
-        <Select
-          value={currentSort}
-          onValueChange={(sort) => navigate({ sort, page: "0" })}
-        >
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="정렬 기준" />
-          </SelectTrigger>
-          <SelectContent>
-            {sortOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select
+            value={currentSort}
+            onValueChange={(sort) => navigate({ sort, page: "0" })}
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="정렬 기준" />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            onClick={() => void handleSave()}
+            disabled={pendingUpdates.size === 0 || isSaving}
+          >
+            {isSaving ? "저장 중..." : "저장"}
+          </Button>
+        </div>
       </div>
+
+      {pendingUpdates.size > 0 && (
+        <p className="text-muted-foreground text-sm">
+          변경한 {pendingUpdates.size}건은 저장 버튼을 눌러야 반영됩니다.
+        </p>
+      )}
 
       {error && (
         <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -173,6 +205,7 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
           <TableHeader>
             <TableRow>
               <TableHead>이름</TableHead>
+              <TableHead>학번</TableHead>
               <TableHead>학과</TableHead>
               <TableHead>스터디</TableHead>
               <TableHead className="text-center">구글폼 제출</TableHead>
@@ -181,22 +214,25 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {members.length === 0 ? (
+            {initialData.content.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="text-muted-foreground h-32 text-center"
                 >
                   조건에 맞는 현재 학기 부원이 없습니다.
                 </TableCell>
               </TableRow>
             ) : (
-              members.map((member) => {
-                const isUpdating = updatingUserId === member.userId;
+              initialData.content.map((member) => {
+                const pendingMember = pendingUpdates.get(member.userId);
                 return (
                   <TableRow key={member.userId}>
                     <TableCell className="font-medium">
                       {member.userName}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {member.userId}
                     </TableCell>
                     <TableCell>{member.department || "-"}</TableCell>
                     <TableCell>{member.currentStudyName || "-"}</TableCell>
@@ -204,8 +240,11 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
                       <input
                         type="checkbox"
                         aria-label={`${member.userName} 구글폼 제출`}
-                        checked={member.googleFormSubmitted}
-                        disabled={isUpdating}
+                        checked={
+                          pendingMember?.googleFormSubmitted ??
+                          member.googleFormSubmitted
+                        }
+                        disabled={isSaving}
                         onChange={(event) =>
                           handleStatusChange(
                             member,
@@ -220,8 +259,8 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
                       <input
                         type="checkbox"
                         aria-label={`${member.userName} 회비 납부`}
-                        checked={member.duesPaid}
-                        disabled={isUpdating}
+                        checked={pendingMember?.duesPaid ?? member.duesPaid}
+                        disabled={isSaving}
                         onChange={(event) =>
                           handleStatusChange(
                             member,
@@ -232,7 +271,7 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
                         className="accent-primary size-4 cursor-pointer disabled:cursor-not-allowed"
                       />
                     </TableCell>
-                    <TableCell>{statusBadge(member)}</TableCell>
+                    <TableCell>{statusText(member)}</TableCell>
                   </TableRow>
                 );
               })
