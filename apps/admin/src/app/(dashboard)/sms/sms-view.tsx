@@ -140,8 +140,15 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
         .filter(Boolean);
 
       const response = await sendAlimTalk({
-        ...values,
         receivers,
+        templateCode: values.templateCode,
+        variables: {
+          "#{스터디명}": values.studyName,
+          "#{응답일정}": values.responseSchedule,
+          "#{일시}": values.dateTime,
+          "#{장소}": values.location,
+          "#{url}": values.url,
+        },
       });
 
       if (response.data) {
@@ -374,6 +381,13 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
 
           {result && (
             <div className="space-y-4">
+              <div className="bg-muted/30 rounded-md border px-3 py-2 text-sm">
+                <span className="text-muted-foreground">템플릿 ID: </span>
+                <code className="break-all font-medium">
+                  {result.templateId}
+                </code>
+              </div>
+
               <div className="flex gap-3">
                 <Badge
                   variant="outline"
@@ -400,11 +414,11 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
               </div>
 
               <div className="max-h-80 space-y-1 overflow-y-auto">
-                {result.results.map((item, index) => {
-                  const isSuccess = item.startsWith("Success");
+                {result.results.map((item) => {
+                  const isSuccess = item.success;
                   return (
                     <div
-                      key={index}
+                      key={item.receiver}
                       className={`rounded px-3 py-2 text-sm ${
                         isSuccess
                           ? "bg-green-50 text-green-800"
@@ -416,7 +430,16 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
                       ) : (
                         <XCircle className="mr-2 inline h-3 w-3" />
                       )}
-                      {item}
+                      <span className="font-medium">{item.receiver}</span>
+                      {isSuccess ? (
+                        <span className="ml-2">발송 성공</span>
+                      ) : (
+                        <span className="ml-2">
+                          발송 실패
+                          {item.errorCode && ` (${item.errorCode})`}
+                          {item.errorMessage && `: ${item.errorMessage}`}
+                        </span>
+                      )}
                     </div>
                   );
                 })}

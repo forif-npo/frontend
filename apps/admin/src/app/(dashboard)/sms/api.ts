@@ -11,20 +11,32 @@ export async function sendAlimTalk(
     })
     .json<
       ApiResponse<{
+        template_id: string;
         total_count: number;
         success_count: number;
         failure_count: number;
-        results: string[];
+        results: Array<{
+          receiver: string;
+          success: boolean;
+          error_code: string | null;
+          error_message: string | null;
+        }>;
       }>
     >()
     .then(({ data: raw, ...rest }) => ({
       ...rest,
       data: raw
         ? {
+            templateId: raw.template_id,
             totalCount: raw.total_count,
             successCount: raw.success_count,
             failureCount: raw.failure_count,
-            results: raw.results,
+            results: raw.results.map((result) => ({
+              receiver: result.receiver,
+              success: result.success,
+              errorCode: result.error_code,
+              errorMessage: result.error_message,
+            })),
           }
         : null,
     }));

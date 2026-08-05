@@ -302,7 +302,7 @@ export function OperatorsView({
               <Label htmlFor="op-intro-tag">소개 태그</Label>
               <Input
                 id="op-intro-tag"
-                placeholder="#백엔드 #커피러버"
+                placeholder="백엔드, 커피러버 (쉼표로 구분)"
                 value={editForm.introTag}
                 onChange={(e) =>
                   setEditForm((f) => ({ ...f, introTag: e.target.value }))
