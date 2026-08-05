@@ -149,7 +149,7 @@ export function CarouselIndicators({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex max-w-full flex-wrap items-center justify-center gap-2">
       {Array.from({ length: total }).map((_, index) => (
         <button
           key={index}

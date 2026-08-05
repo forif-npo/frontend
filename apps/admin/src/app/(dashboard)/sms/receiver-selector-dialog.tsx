@@ -27,6 +27,11 @@ import type { Receiver, ReceiverTarget } from "./types";
 const RECEIVER_TARGET_OPTIONS: { value: ReceiverTarget; label: string }[] = [
   { value: "CURRENT_SEMESTER_MEMBERS", label: "현재 학기 부원" },
   { value: "CURRENT_SEMESTER_APPLICANTS", label: "현재 학기 신청자" },
+  { value: "ACCEPTED_DUES_UNPAID", label: "회비 미납 합격자" },
+  {
+    value: "ACCEPTED_GOOGLE_FORM_NOT_SUBMITTED",
+    label: "구글폼 미제출 합격자",
+  },
   { value: "PREVIOUS_SEMESTER_MEMBERS", label: "직전 학기 부원" },
   { value: "ALL_MEMBERS", label: "전체 부원" },
 ];
