@@ -171,35 +171,36 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
 
             <div className="grid grid-cols-1 gap-3">
               {navMenus.map((menu) => (
-                <section
-                  key={menu.label}
-                  className="rounded-3 bg-surface-white border-border-gray-light overflow-hidden border"
-                >
-                  {/* Sub Menu Grid */}
-                  {menu.subMenus ? (
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-1 p-3">
-                      {menu.subMenus.map((subMenu) => (
-                        <Link
-                          key={subMenu.label}
-                          href={subMenu.href}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="text-text-basic rounded-2 px-3 py-3 text-[16px] leading-[1.5] hover:bg-[#eef4ff] hover:font-semibold"
-                        >
-                          {subMenu.label}
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <Link
-                      href={menu.href}
-                      target={menu.external ? "_blank" : undefined}
-                      rel={menu.external ? "noopener noreferrer" : undefined}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-text-basic block px-6 py-4 text-[17px] font-semibold leading-[1.5]"
-                    >
-                      {menu.label}
-                    </Link>
-                  )}
+                <section key={menu.label} className="flex flex-col gap-2">
+                  <h2 className="text-text-basic px-1 text-[17px] font-bold leading-[1.5]">
+                    {menu.label}
+                  </h2>
+                  <div className="rounded-3 bg-surface-white border-border-gray-light overflow-hidden border">
+                    {menu.subMenus ? (
+                      <div className="grid grid-cols-2 gap-x-3 gap-y-1 p-3">
+                        {menu.subMenus.map((subMenu) => (
+                          <Link
+                            key={subMenu.label}
+                            href={subMenu.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="text-text-basic rounded-2 px-3 py-3 text-[16px] leading-[1.5] hover:bg-[#eef4ff] hover:font-semibold"
+                          >
+                            {subMenu.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <Link
+                        href={menu.href}
+                        target={menu.external ? "_blank" : undefined}
+                        rel={menu.external ? "noopener noreferrer" : undefined}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-text-basic block px-3 py-3 text-[16px] leading-[1.5] hover:bg-[#eef4ff] hover:font-semibold"
+                      >
+                        {menu.label} 바로가기
+                      </Link>
+                    )}
+                  </div>
                 </section>
               ))}
             </div>
