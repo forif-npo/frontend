@@ -15,18 +15,16 @@ export default async function MyPage() {
   }
 
   const token = session.accessToken;
-  // 스터디 관리는 멘토 계정(웹 멘토 탭 로그인)에서만 노출한다.
-  // 구글(부원) 세션은 같은 사람이 멘토여도 관리 기능을 쓸 수 없다.
-  const isMentorSession = session.role === "MENTOR";
 
+  // 멘토 여부를 세션 role로 판정하지 않는다. 멘토는 계정 종류가 아니라
+  // "이 스터디의 멘토인가"라는 관계라, 부원 로그인으로도 본인이 개설한
+  // 스터디가 있으면 관리 기능이 열려야 한다.
   const [profile, studiesData, applicationsData, createdStudies] =
     await Promise.all([
       getUserProfile(token),
       getUserStudies(token).catch(() => []),
       getStudyApplications(token).catch(() => ({ applications: [] })),
-      isMentorSession
-        ? getMyCreatedStudies(token).catch(() => [])
-        : Promise.resolve([]),
+      getMyCreatedStudies(token).catch(() => []),
     ]);
 
   return (

@@ -98,6 +98,9 @@ const result = NextAuth({
         },
       },
     }),
+    // 웹에서 멘토 로그인 화면은 없앴지만(멘토도 구글로 들어온다) provider는
+    // 남겨둔다. 이미 발급된 멘토 세션이 갱신될 때 필요하고, 백엔드도 아직
+    // MENTOR 계정을 지우지 않았다. 전환이 끝나면 함께 제거한다.
     Credentials({
       id: "staff-credentials",
       name: "Staff Credentials",

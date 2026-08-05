@@ -19,6 +19,8 @@ import {
 
 interface AttendancePanelProps {
   studyId: number;
+  /** 지난 학기 스터디는 조회만 가능하다 */
+  readOnly?: boolean;
 }
 
 const DEFAULT_WEEK_COUNT = 8;
@@ -26,7 +28,10 @@ const MAX_WEEK_COUNT = 16;
 
 type CellKey = `${number}:${number}`; // "userId:weekNum"
 
-export function AttendancePanel({ studyId }: AttendancePanelProps) {
+export function AttendancePanel({
+  studyId,
+  readOnly = false,
+}: AttendancePanelProps) {
   const [data, setData] = useState<StudyAttendanceData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -220,7 +225,7 @@ export function AttendancePanel({ studyId }: AttendancePanelProps) {
         <Button
           variant="tertiary"
           size="medium"
-          disabled={weekCount >= MAX_WEEK_COUNT}
+          disabled={weekCount >= MAX_WEEK_COUNT || readOnly}
           onClick={() => setWeekCount((w) => Math.min(w + 1, MAX_WEEK_COUNT))}
         >
           주차 추가
@@ -228,7 +233,7 @@ export function AttendancePanel({ studyId }: AttendancePanelProps) {
         <Button
           variant="primary"
           size="medium"
-          disabled={pending.size === 0 || isSaving}
+          disabled={pending.size === 0 || isSaving || readOnly}
           onClick={handleSave}
         >
           {isSaving
