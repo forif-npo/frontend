@@ -22,18 +22,22 @@ const LEGACY_LABELS: Record<string, (typeof STUDY_TAG_OPTIONS)[number]> = {
 
 export const TAG_OPTIONS = STUDY_TAG_OPTIONS.map((tag) => tag.label);
 
-export function getStudyTagId(label: string): number | null {
-  const tag =
-    STUDY_TAG_OPTIONS.find((option) => option.label === label) ??
-    LEGACY_LABELS[label];
+function findStudyTag(value: string) {
+  return (
+    STUDY_TAG_OPTIONS.find(
+      (option) => option.name === value || option.label === value,
+    ) ?? LEGACY_LABELS[value]
+  );
+}
 
-  return tag?.id ?? null;
+export function getStudyTagId(label: string): number | null {
+  return findStudyTag(label)?.id ?? null;
 }
 
 export function getStudyTagName(label: string): string | null {
-  const tag =
-    STUDY_TAG_OPTIONS.find((option) => option.label === label) ??
-    LEGACY_LABELS[label];
+  return findStudyTag(label)?.name ?? null;
+}
 
-  return tag?.name ?? null;
+export function getStudyTagLabel(value: string): string {
+  return findStudyTag(value)?.label ?? value;
 }
