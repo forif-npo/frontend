@@ -31,6 +31,7 @@ import {
   type SemesterChangePreview,
 } from "@core/semester/api";
 import { getAdminCandidates, type AdminCandidate } from "./api";
+import { ScheduleSection } from "./schedule-section";
 
 function parseLabel(label: string): { year: number; semester: number } | null {
   const [yy, s] = label.split("-");
@@ -197,6 +198,15 @@ export function SemesterManageView({
           </div>
         </div>
       </div>
+
+      {/* 모집 일정 */}
+      {current && (
+        <ScheduleSection
+          actYear={current.act_year}
+          actSemester={current.act_semester}
+          semesterLabel={current.label}
+        />
+      )}
 
       {/* 전환 확인 다이얼로그 */}
       <Dialog
