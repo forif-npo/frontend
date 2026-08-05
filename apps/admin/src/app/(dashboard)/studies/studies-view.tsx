@@ -217,7 +217,6 @@ export function StudiesView({
       week_day: weekDay,
       location: editForm.location.trim(),
       location_detail: editForm.location_detail.trim(),
-      recruit_status: editForm.recruit_status,
       difficulty: difficulty as StudyUpdateRequest["difficulty"],
       capacity,
       study_tag_ids: editForm.tags,

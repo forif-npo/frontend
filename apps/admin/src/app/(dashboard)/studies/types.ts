@@ -43,7 +43,6 @@ export interface StudyEditForm {
   week_day: string;
   location: string;
   location_detail: string;
-  recruit_status: "APPLICABLE" | "CLOSED";
   difficulty: string;
   capacity: string;
   tags: number[];

@@ -19,14 +19,22 @@ export interface SendAlimTalkResult {
   results: SendAlimTalkMessageResult[];
 }
 
-export const TEMPLATE_OPTIONS = [
-  { value: "STUDY_RECRUITMENT_001", label: "스터디 모집 안내" },
-  { value: "STUDY_SCHEDULE_002", label: "스터디 일정 안내" },
-  { value: "STUDY_REMINDER_003", label: "스터디 리마인더" },
-] as const;
+export interface AlimTalkTemplate {
+  templateId: string;
+  name: string;
+  content: string;
+  status: string | null;
+  messageType: string | null;
+  dateCreated: string | null;
+  dateUpdated: string | null;
+  variables: string[];
+  buttonLinks: string[];
+}
 
 export interface Receiver {
+  userId: number;
   name: string;
   phoneNumber: string;
-  studentId: string;
+  department: string;
+  currentStudyName: string | null;
 }

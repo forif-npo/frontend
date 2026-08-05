@@ -54,7 +54,6 @@ export const toStudyEditForm = (
       : String(detail.week_day),
   location: detail?.location ?? "",
   location_detail: detail?.location_detail ?? "",
-  recruit_status: detail?.recruit_status ?? study.recruit_status,
   difficulty: detail?.difficulty
     ? (DIFFICULTY_TO_LEVEL[detail.difficulty] ?? detail.difficulty)
     : "",

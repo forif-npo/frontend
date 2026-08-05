@@ -19,7 +19,6 @@ import { LogoutIcon } from "@repo/assets/icons/krds";
 import {
   Award,
   BookOpen,
-  Building2,
   CheckCircle,
   CalendarRange,
   CircleDollarSign,
@@ -82,7 +81,6 @@ const menuItems = {
     items: [
       { title: "공지사항", url: "/announcements", icon: FileText },
       { title: "FAQs", url: "/faqs", icon: HelpCircle },
-      { title: "회계 공시", url: "/accounting", icon: CircleDollarSign },
       { title: "폼", url: "/forms", icon: Home },
     ],
   },
@@ -90,7 +88,6 @@ const menuItems = {
     label: "그 외",
     items: [
       { title: "문자 발송 서비스", url: "/sms", icon: MessageSquare },
-      { title: "동아리방 관리", url: "/room", icon: Building2 },
       { title: "회비 관리", url: "/dues", icon: CircleDollarSign },
       { title: "해커톤", url: "/hackathon", icon: Code2 },
     ],

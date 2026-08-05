@@ -245,29 +245,7 @@ export function StudyEditDialog({
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label>모집 상태</Label>
-              <Select
-                value={form.recruit_status}
-                disabled={isFormDisabled}
-                onValueChange={(value) =>
-                  onFieldChange(
-                    "recruit_status",
-                    value as StudyEditForm["recruit_status"],
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="APPLICABLE">모집중</SelectItem>
-                  <SelectItem value="CLOSED">마감</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label>난이도</Label>
               <Select
