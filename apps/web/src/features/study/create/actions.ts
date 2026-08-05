@@ -13,6 +13,7 @@ const DIFFICULTY_MAP: Record<string, number> = {
 };
 // 백엔드 @RequestPart(value = "references")와 파트 이름이 일치해야 파일이 매칭된다
 const REFERENCE_FILE_FIELD_NAME = "references";
+const STUDY_PLAN_CONTENT_SEPARATOR = "; ";
 
 function isFileValue(
   value: StudyOpenValues["references"][number]["value"],
@@ -57,14 +58,15 @@ function buildStudyRequest(values: StudyOpenValues) {
     week_day: Number(values.weekDay),
     start_time: values.startTime,
     end_time: values.endTime,
-    study_plan_list: values.curriculum.flatMap((week) =>
-      week.contents.map((content) => ({
-        week_num: week.week,
-        date: toLocalDateTime(week.date),
-        topic: week.topic,
-        content,
-      })),
-    ),
+    study_plan_list: values.curriculum.map((week) => ({
+      week_num: week.week,
+      date: toLocalDateTime(week.date),
+      topic: week.topic,
+      content: week.contents
+        .map((content) => content.trim())
+        .filter(Boolean)
+        .join(STUDY_PLAN_CONTENT_SEPARATOR),
+    })),
     difficulty: DIFFICULTY_MAP[values.difficulty] ?? 3,
     selection_criteria: "참여 의지와 스터디 목표 적합도를 기준으로 선정합니다.",
     capacity: 30,
