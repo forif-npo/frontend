@@ -56,6 +56,12 @@ const TITLE_PRIORITY: Record<string, number> = {
 const getTitlePriority = (title: string | null) =>
   title ? (TITLE_PRIORITY[title] ?? 4) : 4;
 
+const getIntroTags = (introTag: string | null) =>
+  (introTag ?? "")
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+
 export default function TeamPage() {
   // 활동 학기를 받아오기 전에는 조회하지 않는다 (없는 학기를 먼저 보여주지 않기 위함)
   const [active, setActive] = useState<Semester | null>(null);
@@ -171,6 +177,7 @@ function TeamCard({ member }: { member: TeamMember }) {
   const profileImageSrc =
     safeImageSrc(member.prof_img_url) ?? DEFAULT_PROFILE_IMAGE_SRC;
   const [imageSrc, setImageSrc] = useState(profileImageSrc);
+  const introTags = getIntroTags(member.intro_tag);
   const overlayText = [
     `${member.act_year}-${member.act_semester}`,
     member.club_department,
@@ -228,14 +235,15 @@ function TeamCard({ member }: { member: TeamMember }) {
               size="small"
             />
           )}
-          {member.intro_tag && (
+          {introTags.map((tag, index) => (
             <Badge
-              label={member.intro_tag}
+              key={`${tag}-${index}`}
+              label={tag}
               variant="info"
               appearance="solid-pastel"
               size="small"
             />
-          )}
+          ))}
         </div>
         <p className="text-text-subtle line-clamp-2 text-sm">
           {member.self_intro}
