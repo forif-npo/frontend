@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -32,77 +32,90 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import {
-  Send,
-  Loader2,
-  CheckCircle,
-  XCircle,
-  Users,
-  UserPlus,
-} from "lucide-react";
+import { Send, Loader2, CheckCircle, XCircle, UserPlus } from "lucide-react";
 import { handleApiError } from "@core/utils/api-client";
-import { sendAlimTalk } from "./api";
 import { sendAlimTalkSchema, type SendAlimTalkFormValues } from "./schema";
-import {
-  TEMPLATE_OPTIONS,
-  type SendAlimTalkResult,
-  type Receiver,
-} from "./types";
+import { type AlimTalkTemplate, type SendAlimTalkResult } from "./types";
+import { getAlimTalkTemplates, sendAlimTalk } from "./api";
+import { AlimTalkPreview } from "./alimtalk-preview";
+import { ReceiverSelectorDialog } from "./receiver-selector-dialog";
 
-interface SmsViewProps {
-  initialReceivers: Receiver[];
+const AUTO_FILLED_VARIABLES = new Set(["#{이름}"]);
+
+const VARIABLE_LABELS: Record<string, string> = {
+  "#{스터디명}": "스터디명",
+  "#{응답일정}": "응답 기한",
+  "#{일시}": "일시",
+  "#{장소}": "장소",
+  "#{url}": "URL",
+};
+
+function getVariableLabel(variable: string) {
+  return VARIABLE_LABELS[variable] ?? variable;
 }
 
-export function SmsView({ initialReceivers }: SmsViewProps) {
+function getTemplateVariables(template: AlimTalkTemplate | undefined) {
+  if (!template) return [];
+
+  const contentVariables = template.content.match(/#\{[^}]+\}/g) ?? [];
+  const buttonVariables = template.buttonLinks.flatMap(
+    (link) => link.match(/#\{[^}]+\}/g) ?? [],
+  );
+  return Array.from(
+    new Set([...template.variables, ...contentVariables, ...buttonVariables]),
+  );
+}
+
+export function SmsView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [templates, setTemplates] = useState<AlimTalkTemplate[]>([]);
+  const [isTemplatesLoading, setIsTemplatesLoading] = useState(true);
+  const [templateError, setTemplateError] = useState<string | null>(null);
+  const [variableError, setVariableError] = useState<string | null>(null);
   const [result, setResult] = useState<SendAlimTalkResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showReceiverList, setShowReceiverList] = useState(false);
-  const [selectedReceivers, setSelectedReceivers] = useState<Set<string>>(
-    new Set(),
-  );
 
   const form = useForm<SendAlimTalkFormValues>({
     resolver: zodResolver(sendAlimTalkSchema),
     defaultValues: {
       receivers: "",
       templateCode: "",
-      studyName: "",
-      responseSchedule: "",
-      dateTime: "",
-      location: "",
-      url: "https://forif.org/apply",
+      variables: {},
     },
   });
 
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        setTemplates(await getAlimTalkTemplates());
+      } catch (err) {
+        setTemplateError(await handleApiError(err));
+      } finally {
+        setIsTemplatesLoading(false);
+      }
+    };
+
+    void loadTemplates();
+  }, []);
+
   const receiversText = form.watch("receivers");
+  const selectedTemplateCode = form.watch("templateCode");
+  const variableValues = form.watch("variables");
+  const selectedTemplate = templates.find(
+    (template) => template.templateId === selectedTemplateCode,
+  );
+  const templateVariables = getTemplateVariables(selectedTemplate);
+  const requiredVariables = templateVariables.filter(
+    (variable) => !AUTO_FILLED_VARIABLES.has(variable),
+  );
   const receiverCount = receiversText
     .split("\n")
     .map((n) => n.trim())
     .filter(Boolean).length;
 
-  const toggleReceiver = (phoneNumber: string) => {
-    setSelectedReceivers((prev) => {
-      const next = new Set(prev);
-      if (next.has(phoneNumber)) {
-        next.delete(phoneNumber);
-      } else {
-        next.add(phoneNumber);
-      }
-      return next;
-    });
-  };
-
-  const toggleAll = () => {
-    if (selectedReceivers.size === initialReceivers.length) {
-      setSelectedReceivers(new Set());
-    } else {
-      setSelectedReceivers(new Set(initialReceivers.map((r) => r.phoneNumber)));
-    }
-  };
-
-  const applySelectedReceivers = () => {
+  const applySelectedReceivers = (phoneNumbers: string[]) => {
     const currentText = form.getValues("receivers");
     const currentNumbers = new Set(
       currentText
@@ -111,17 +124,27 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
         .filter(Boolean),
     );
 
-    selectedReceivers.forEach((num) => currentNumbers.add(num));
+    phoneNumbers.forEach((num) => currentNumbers.add(num));
 
     form.setValue("receivers", Array.from(currentNumbers).join("\n"), {
       shouldValidate: true,
     });
     setShowReceiverList(false);
-    setSelectedReceivers(new Set());
   };
 
   const handleFormSubmit = (values: SendAlimTalkFormValues) => {
-    void values;
+    const missingVariables = requiredVariables.filter(
+      (variable) => !values.variables[variable]?.trim(),
+    );
+
+    if (missingVariables.length > 0) {
+      setVariableError(
+        `${missingVariables.map(getVariableLabel).join(", ")} 항목을 입력해주세요.`,
+      );
+      return;
+    }
+
+    setVariableError(null);
     setShowConfirm(true);
   };
 
@@ -138,17 +161,17 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
         .split("\n")
         .map((n) => n.trim())
         .filter(Boolean);
+      const variables = Object.fromEntries(
+        requiredVariables.map((variable) => [
+          variable,
+          values.variables[variable]?.trim() ?? "",
+        ]),
+      );
 
       const response = await sendAlimTalk({
         receivers,
         templateCode: values.templateCode,
-        variables: {
-          "#{스터디명}": values.studyName,
-          "#{응답일정}": values.responseSchedule,
-          "#{일시}": values.dateTime,
-          "#{장소}": values.location,
-          "#{url}": values.url,
-        },
+        variables,
       });
 
       if (response.data) {
@@ -185,9 +208,12 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
                   <FormItem>
                     <FormLabel>템플릿</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setVariableError(null);
+                      }}
                       defaultValue={field.value}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || isTemplatesLoading}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -195,17 +221,47 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {TEMPLATE_OPTIONS.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
+                        {templates.map((template) => (
+                          <SelectItem
+                            key={template.templateId}
+                            value={template.templateId}
+                          >
+                            {template.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                    {isTemplatesLoading && (
+                      <FormDescription>
+                        발송 가능한 템플릿을 불러오는 중입니다.
+                      </FormDescription>
+                    )}
+                    {templateError && (
+                      <FormDescription className="text-destructive">
+                        템플릿을 불러오지 못했습니다: {templateError}
+                      </FormDescription>
+                    )}
+                    {!isTemplatesLoading &&
+                      !templateError &&
+                      templates.length === 0 && (
+                        <FormDescription className="text-destructive">
+                          발송 가능한 템플릿이 없습니다. Solapi에서 템플릿
+                          상태를 확인해주세요.
+                        </FormDescription>
+                      )}
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {selectedTemplate && (
+                <p className="text-muted-foreground text-xs">
+                  템플릿 ID: <code>{selectedTemplate.templateId}</code>
+                  {selectedTemplate.status && ` · ${selectedTemplate.status}`}
+                  {templateVariables.includes("#{이름}") &&
+                    " · #{이름}은 수신자 정보에서 자동 입력"}
+                </p>
+              )}
 
               <FormField
                 control={form.control}
@@ -248,95 +304,22 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="studyName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>스터디명</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Spring Boot 스터디"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {requiredVariables.map((variable) => (
+                <FormItem key={variable}>
+                  <FormLabel>{getVariableLabel(variable)}</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={isSubmitting}
+                      placeholder={`${getVariableLabel(variable)}을 입력해주세요.`}
+                      {...form.register(`variables.${variable}`)}
+                    />
+                  </FormControl>
+                </FormItem>
+              ))}
 
-              <FormField
-                control={form.control}
-                name="responseSchedule"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>응답 기한</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="2025-01-15까지"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="dateTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>일시</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="2025-01-20 14:00"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>장소</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="IT관 123호"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>URL</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="https://forif.org/apply"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {variableError && (
+                <p className="text-destructive text-sm">{variableError}</p>
+              )}
 
               <Button
                 type="submit"
@@ -359,93 +342,94 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
           </Form>
         </div>
 
-        {/* 발송 결과 */}
-        <div className="rounded-md border p-6">
-          <h2 className="mb-4 text-lg font-semibold">발송 결과</h2>
+        <div className="space-y-8">
+          <AlimTalkPreview
+            template={selectedTemplate}
+            variables={variableValues}
+          />
 
-          {!result && !error && (
-            <div className="text-muted-foreground flex h-48 items-center justify-center text-sm">
-              알림톡을 발송하면 결과가 여기에 표시됩니다.
-            </div>
-          )}
+          {/* 발송 결과 */}
+          <div className="rounded-md border p-6">
+            <h2 className="mb-4 text-lg font-semibold">발송 결과</h2>
 
-          {error && (
-            <div className="rounded-md border border-red-200 bg-red-50 p-4">
-              <div className="flex items-center gap-2 text-red-800">
-                <XCircle className="h-5 w-5" />
-                <span className="font-medium">발송 실패</span>
+            {!result && !error && (
+              <div className="text-muted-foreground flex h-48 items-center justify-center text-sm">
+                알림톡을 발송하면 결과가 여기에 표시됩니다.
               </div>
-              <p className="mt-2 text-sm text-red-700">{error}</p>
-            </div>
-          )}
+            )}
 
-          {result && (
-            <div className="space-y-4">
-              <div className="bg-muted/30 rounded-md border px-3 py-2 text-sm">
-                <span className="text-muted-foreground">템플릿 ID: </span>
-                <code className="break-all font-medium">
-                  {result.templateId}
-                </code>
+            {error && (
+              <div className="rounded-md border border-red-200 bg-red-50 p-4">
+                <div className="flex items-center gap-2 text-red-800">
+                  <XCircle className="h-5 w-5" />
+                  <span className="font-medium">발송 실패</span>
+                </div>
+                <p className="mt-2 text-sm text-red-700">{error}</p>
               </div>
+            )}
 
-              <div className="flex gap-3">
-                <Badge
-                  variant="outline"
-                  className="border-blue-200 bg-blue-50 text-blue-700"
-                >
-                  전체 {result.totalCount}건
-                </Badge>
-                <Badge
-                  variant="outline"
-                  className="border-green-200 bg-green-50 text-green-700"
-                >
-                  <CheckCircle className="mr-1 h-3 w-3" />
-                  성공 {result.successCount}건
-                </Badge>
-                {result.failureCount > 0 && (
+            {result && (
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <Badge variant="outline">
+                    템플릿 ID: {result.templateId}
+                  </Badge>
                   <Badge
                     variant="outline"
-                    className="border-red-200 bg-red-50 text-red-700"
+                    className="border-blue-200 bg-blue-50 text-blue-700"
                   >
-                    <XCircle className="mr-1 h-3 w-3" />
-                    실패 {result.failureCount}건
+                    전체 {result.totalCount}건
                   </Badge>
-                )}
-              </div>
-
-              <div className="max-h-80 space-y-1 overflow-y-auto">
-                {result.results.map((item) => {
-                  const isSuccess = item.success;
-                  return (
-                    <div
-                      key={item.receiver}
-                      className={`rounded px-3 py-2 text-sm ${
-                        isSuccess
-                          ? "bg-green-50 text-green-800"
-                          : "bg-red-50 text-red-800"
-                      }`}
+                  <Badge
+                    variant="outline"
+                    className="border-green-200 bg-green-50 text-green-700"
+                  >
+                    <CheckCircle className="mr-1 h-3 w-3" />
+                    성공 {result.successCount}건
+                  </Badge>
+                  {result.failureCount > 0 && (
+                    <Badge
+                      variant="outline"
+                      className="border-red-200 bg-red-50 text-red-700"
                     >
-                      {isSuccess ? (
-                        <CheckCircle className="mr-2 inline h-3 w-3" />
-                      ) : (
-                        <XCircle className="mr-2 inline h-3 w-3" />
-                      )}
-                      <span className="font-medium">{item.receiver}</span>
-                      {isSuccess ? (
-                        <span className="ml-2">발송 성공</span>
-                      ) : (
-                        <span className="ml-2">
-                          발송 실패
-                          {item.errorCode && ` (${item.errorCode})`}
-                          {item.errorMessage && `: ${item.errorMessage}`}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
+                      <XCircle className="mr-1 h-3 w-3" />
+                      실패 {result.failureCount}건
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="max-h-80 space-y-1 overflow-y-auto">
+                  {result.results.map((item) => {
+                    const isSuccess = item.success;
+                    return (
+                      <div
+                        key={item.receiver}
+                        className={`rounded px-3 py-2 text-sm ${
+                          isSuccess
+                            ? "bg-green-50 text-green-800"
+                            : "bg-red-50 text-red-800"
+                        }`}
+                      >
+                        {isSuccess ? (
+                          <CheckCircle className="mr-2 inline h-3 w-3" />
+                        ) : (
+                          <XCircle className="mr-2 inline h-3 w-3" />
+                        )}
+                        <span className="font-medium">{item.receiver}</span>
+                        {!isSuccess && (
+                          <span className="ml-2">
+                            {item.errorCode && `[${item.errorCode}] `}
+                            {item.errorMessage ??
+                              "Solapi에서 발송을 거절했습니다."}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
@@ -467,80 +451,11 @@ export function SmsView({ initialReceivers }: SmsViewProps) {
         </DialogContent>
       </Dialog>
 
-      {/* 수신자 목록 다이얼로그 */}
-      <Dialog open={showReceiverList} onOpenChange={setShowReceiverList}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              수신자 목록
-            </DialogTitle>
-            <DialogDescription>
-              알림톡을 발송할 수신자를 선택하세요.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between border-b pb-2">
-              <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300"
-                  checked={
-                    selectedReceivers.size === initialReceivers.length &&
-                    initialReceivers.length > 0
-                  }
-                  onChange={toggleAll}
-                />
-                전체 선택
-              </label>
-              <Badge variant="secondary">
-                {selectedReceivers.size}/{initialReceivers.length}
-              </Badge>
-            </div>
-
-            <div className="max-h-60 space-y-1 overflow-y-auto">
-              {initialReceivers.map((receiver) => (
-                <label
-                  key={receiver.phoneNumber}
-                  className="hover:bg-accent flex cursor-pointer items-center gap-3 rounded-md px-2 py-2"
-                >
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300"
-                    checked={selectedReceivers.has(receiver.phoneNumber)}
-                    onChange={() => toggleReceiver(receiver.phoneNumber)}
-                  />
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">{receiver.name}</div>
-                    <div className="text-muted-foreground text-xs">
-                      {receiver.phoneNumber} | {receiver.studentId}
-                    </div>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowReceiverList(false);
-                setSelectedReceivers(new Set());
-              }}
-            >
-              취소
-            </Button>
-            <Button
-              onClick={applySelectedReceivers}
-              disabled={selectedReceivers.size === 0}
-            >
-              {selectedReceivers.size}명 추가
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ReceiverSelectorDialog
+        open={showReceiverList}
+        onOpenChange={setShowReceiverList}
+        onApply={applySelectedReceivers}
+      />
     </div>
   );
 }

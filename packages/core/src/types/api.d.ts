@@ -199,7 +199,6 @@ export interface StudyUpdateRequest {
   location?: string;
   location_detail?: string;
   is_online?: boolean;
-  recruit_status?: "APPLICABLE" | "CLOSED";
   difficulty?: 1 | 2 | 3 | 4 | 5;
   capacity?: number;
   selection_criteria?: string;

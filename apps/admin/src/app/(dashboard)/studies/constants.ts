@@ -11,7 +11,6 @@ export const EMPTY_STUDY_EDIT_FORM: StudyEditForm = {
   week_day: "",
   location: "",
   location_detail: "",
-  recruit_status: "APPLICABLE",
   difficulty: "",
   capacity: "",
   tags: [],

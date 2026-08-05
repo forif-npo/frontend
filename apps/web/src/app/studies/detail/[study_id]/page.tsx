@@ -49,9 +49,16 @@ export default function StudyDetailPage({ params }: Props) {
         <h1 className="text-[24px] font-bold leading-[1.3] tracking-[-0.5px] md:text-[40px]">
           <span className="text-secondary">{study.study_name}</span>
         </h1>
-        <p className="text-text-subtle text-[14px] leading-[1.6] md:text-[17px]">
-          {study.one_liner}
-        </p>
+        {study.sub_title && (
+          <p className="text-text-basic text-[16px] font-semibold leading-[1.6] md:text-[20px]">
+            {study.sub_title}
+          </p>
+        )}
+        {study.one_liner && (
+          <p className="text-text-subtle text-[14px] leading-[1.6] md:text-[17px]">
+            {study.one_liner}
+          </p>
+        )}
       </div>
 
       <div className="flex gap-10 pb-28 md:pb-20">
