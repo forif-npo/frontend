@@ -53,7 +53,7 @@ export function StudySection() {
       </div>
       <div className="md:hidden">
         {loading ? (
-          <div className="rounded-3 border-border-gray-light h-[176px] animate-pulse border bg-gray-100" />
+          <div className="rounded-3 border-border-gray-light bg-gray-5 h-[176px] animate-pulse border" />
         ) : studies.length > 0 ? (
           <StudyCard variant="home" study={studies[mobileCurrentPage]!} />
         ) : (
@@ -105,7 +105,7 @@ export function StudySection() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="rounded-3 border-border-gray-light h-[400px] animate-pulse border bg-gray-100"
+                  className="rounded-3 border-border-gray-light bg-gray-5 h-[400px] animate-pulse border"
                 />
               ))}
             </div>

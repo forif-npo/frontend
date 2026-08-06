@@ -46,7 +46,7 @@ export function MobileStudySection() {
         {loading ? (
           <>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-7 animate-pulse rounded bg-gray-100" />
+              <div key={i} className="bg-gray-5 h-7 animate-pulse rounded" />
             ))}
           </>
         ) : (

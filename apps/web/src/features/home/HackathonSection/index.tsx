@@ -118,7 +118,7 @@ export function HackathonSection() {
   );
 
   const skeletonCard = (
-    <div className="rounded-3 border-border-gray-light h-[292px] animate-pulse border bg-gray-100" />
+    <div className="rounded-3 border-border-gray-light bg-gray-5 h-[292px] animate-pulse border" />
   );
 
   return (
@@ -215,7 +215,7 @@ export function HackathonSection() {
                 ? [1, 2, 3].map((i) => (
                     <div
                       key={i}
-                      className="rounded-3 border-border-gray-light h-[292px] animate-pulse border bg-gray-100"
+                      className="rounded-3 border-border-gray-light bg-gray-5 h-[292px] animate-pulse border"
                     />
                   ))
                 : desktopItems.map((submission, index) => (

@@ -256,7 +256,7 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
               {tag.label}
               <button
                 onClick={() => removeFilterTag(tag)}
-                className="ml-0.5 rounded-full p-0.5 transition-colors hover:bg-gray-100"
+                className="hover:bg-gray-5 active:bg-gray-10 ml-0.5 rounded-full p-0.5 transition-colors"
                 aria-label={`${tag.label} 필터 제거`}
               >
                 <XCircleGrayIcon
