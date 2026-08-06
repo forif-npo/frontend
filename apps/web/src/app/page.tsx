@@ -3,44 +3,30 @@ import { HackathonSection } from "@/features/home/HackathonSection";
 import { NewsSection } from "@/features/home/NewsSection";
 import { QuickMenu } from "@/features/home/QuickMenu";
 import { StudySection } from "@/features/home/StudySection";
+import { HOME_CAROUSEL_BANNERS } from "@/constants/home-carousel";
 import { CriticalAlert } from "@repo/ui/components/client";
-import { Button, Carousel } from "@ui/components/client";
+import { Carousel } from "@ui/components/client";
 import { CarouselItem } from "@ui/components/client/Carousel";
 import { Heading } from "@ui/components/server";
 import Image from "next/image";
-import Link from "next/link";
 
 export default async function Page() {
-  const carouselItems: CarouselItem[] = [
-    {
-      imageSrc: "/images/carousel-img.png",
-      title: (
-        <>
-          한양대학교 최대 규모의 중앙 프로그래밍 동아리,
-          <br />
-          <span className="text-text-primary">포리프</span>에 대해 알아보세요.
-        </>
-      ),
-      description:
-        "전공과 관계없이 프로그래밍을 배우고 경험을 쌓으며 함께 성장해요.",
-      footer: (
-        <div className="flex flex-row gap-3 max-sm:flex-col sm:gap-4">
-          <Link href="/club/" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto">자세히 보러가기</Button>
-          </Link>
-          <Link href="/club/recruit" className="w-full sm:w-auto">
-            <Button variant="tertiary" className="w-full sm:w-auto">
-              운영진 지원하기
-            </Button>
-          </Link>
-        </div>
-      ),
-    },
-  ];
+  const carouselItems: CarouselItem[] = HOME_CAROUSEL_BANNERS.map((banner) => {
+    if (banner.type === "tsx") {
+      const BannerComponent = banner.component;
+      return { id: banner.id, content: <BannerComponent /> };
+    }
+
+    const BannerComponent = banner.component;
+    return {
+      id: banner.id,
+      content: <BannerComponent href={banner.href} image={banner.image} />,
+    };
+  });
   return (
     <div className="min-h-viewport overflow-x-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f7faff_42%,#ffffff_100%)] md:bg-none">
       <main className="main-gap flex flex-col items-center">
-        <section className="alert-section max-w-main flex w-full flex-col items-center gap-4">
+        <section className="alert-section max-w-main hidden w-full flex-col items-center gap-4 md:flex">
           <CriticalAlert
             variant="information"
             link="/studies/list"
@@ -52,7 +38,7 @@ export default async function Page() {
           />
         </section>
 
-        <section className="mx-auto w-full max-w-[1400px] px-4 py-6 md:my-10 md:flex md:flex-col md:items-center md:gap-4 md:px-0 md:py-0">
+        <section className="mx-auto w-full max-w-[1400px] px-4 py-4 md:my-6 md:flex md:flex-col md:items-center md:gap-4 md:px-0 md:py-0">
           <Carousel carouselItems={carouselItems} />
         </section>
 
