@@ -11,7 +11,7 @@ export default async function Page() {
   }
 
   return (
-    <div className="min-h-viewport mx-auto mb-16 mt-8 max-w-[800px] px-5 sm:px-6 lg:px-0">
+    <main className="mx-auto w-full max-w-[800px] px-5 py-12 sm:px-6 lg:px-0 lg:py-16">
       <Heading size="l" className="text-text-basic text-left">
         회원가입
       </Heading>
@@ -24,6 +24,6 @@ export default async function Page() {
         <SignUpStart />
       </section>
       <AuthHelpInfo action="회원가입" />
-    </div>
+    </main>
   );
 }

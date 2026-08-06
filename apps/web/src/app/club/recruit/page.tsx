@@ -13,7 +13,7 @@ export default function StaffRecruitPage() {
       <p className="text-primary-50 text-[15px] font-bold leading-[1.5]">
         운영진 모집
       </p>
-      <h1 className="text-text-basic text-[28px] font-bold leading-[1.4] md:text-[32px]">
+      <h1 className="text-text-basic text-[24px] font-bold leading-[1.4] md:text-[28px]">
         지금은 운영진 모집 기간이 아니에요
       </h1>
       <p className="text-text-subtle max-w-[460px] text-[16px] leading-[1.6]">
