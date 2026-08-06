@@ -1,7 +1,7 @@
 "use client";
 import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState, type TouchEvent } from "react";
 import { cn } from "../../utils/cn";
 import { Body } from "../server/Body";
 import { Display } from "../server/Display";
@@ -20,6 +20,7 @@ export interface CarouselItem {
 
 export function Carousel({ carouselItems }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   if (carouselItems.length === 0) {
     return <div className="text-center">No items to display</div>;
@@ -31,6 +32,27 @@ export function Carousel({ carouselItems }: CarouselProps) {
 
   const handleNext = () => {
     setCurrentIndex((prev) => Math.min(carouselItems.length - 1, prev + 1));
+  };
+
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const startX = touchStartX.current;
+    const endX = event.changedTouches[0]?.clientX;
+    touchStartX.current = null;
+
+    if (startX === null || endX === undefined) return;
+
+    const swipeDistance = endX - startX;
+    if (Math.abs(swipeDistance) < 50) return;
+
+    if (swipeDistance > 0) {
+      handlePrev();
+    } else {
+      handleNext();
+    }
   };
 
   const currentItem = carouselItems[currentIndex];
@@ -46,7 +68,14 @@ export function Carousel({ carouselItems }: CarouselProps) {
           isHidden={currentIndex === 0}
           className="hidden md:flex"
         />
-        <div className="bg-surface-white/85 border-border-gray-light flex w-full max-w-[1200px] flex-col-reverse gap-8 overflow-hidden rounded-[28px] border p-6 shadow-[0_18px_50px_rgba(11,80,208,0.12)] backdrop-blur md:flex-row md:items-center md:justify-between md:gap-0 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
+        <div
+          className="bg-surface-white/85 border-border-gray-light flex w-full max-w-[1200px] touch-pan-y flex-col-reverse gap-8 overflow-hidden rounded-[28px] border p-6 shadow-[0_18px_50px_rgba(11,80,208,0.12)] backdrop-blur md:flex-row md:items-center md:justify-between md:gap-0 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={() => {
+            touchStartX.current = null;
+          }}
+        >
           <div className="max-w-[800px]">
             <Display size="s" className="text-text-basic mb-6">
               {currentItem.title}

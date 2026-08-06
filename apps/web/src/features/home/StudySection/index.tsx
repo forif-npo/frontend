@@ -5,6 +5,7 @@ import { CarouselArrow, CarouselIndicators } from "@ui/components/client";
 import { Label } from "@ui/components/server";
 import Link from "next/link";
 import { useStudyData } from "@/hooks/study/useStudyData";
+import { useHorizontalSwipe } from "@/hooks/useHorizontalSwipe";
 import { StudyCard } from "@/components/study/ui/StudyCard";
 
 export function StudySection() {
@@ -39,6 +40,11 @@ export function StudySection() {
     setCurrentPage((page) => Math.min(Math.max(page, 0) + 1, totalPages - 1));
   };
 
+  const mobileSwipeHandlers = useHorizontalSwipe({
+    onSwipeLeft: () => handleNext(mobileTotalPages),
+    onSwipeRight: () => handlePrev(mobileTotalPages),
+  });
+
   return (
     <section className="mx-auto w-full max-w-[1320px] px-4 lg:px-0">
       <div className="max-w-main mx-auto mb-6 flex items-end justify-between gap-4">
@@ -52,37 +58,22 @@ export function StudySection() {
         </Link>
       </div>
       <div className="md:hidden">
-        {loading ? (
-          <div className="rounded-3 border-border-gray-light bg-gray-5 h-[176px] animate-pulse border" />
-        ) : studies.length > 0 ? (
-          <StudyCard variant="home" study={studies[mobileCurrentPage]!} />
-        ) : (
-          <EmptyStudyMessage />
-        )}
+        <div className="touch-pan-y" {...mobileSwipeHandlers}>
+          {loading ? (
+            <div className="rounded-3 border-border-gray-light bg-gray-5 h-[176px] animate-pulse border" />
+          ) : studies.length > 0 ? (
+            <StudyCard variant="home" study={studies[mobileCurrentPage]!} />
+          ) : (
+            <EmptyStudyMessage />
+          )}
+        </div>
 
         {mobileTotalPages > 1 && (
-          <div className="mt-4 flex items-center justify-between">
-            <CarouselArrow
-              onClick={() => handlePrev(mobileTotalPages)}
-              title="이전 스터디"
-              size={18}
-              disabled={mobileCurrentPage === 0}
-              isHidden={mobileCurrentPage === 0}
-              className="h-9 w-9 p-0"
-            />
+          <div className="mt-4 flex justify-center">
             <CarouselIndicators
               total={mobileTotalPages}
               current={mobileCurrentPage}
               onSelect={setCurrentPage}
-            />
-            <CarouselArrow
-              onClick={() => handleNext(mobileTotalPages)}
-              title="다음 스터디"
-              size={18}
-              disabled={mobileCurrentPage === mobileTotalPages - 1}
-              isHidden={mobileCurrentPage === mobileTotalPages - 1}
-              align="right"
-              className="h-9 w-9 p-0"
             />
           </div>
         )}

@@ -19,6 +19,7 @@ import {
 import { CarouselArrow, CarouselIndicators } from "@ui/components/client";
 import { Label } from "@ui/components/server";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
+import { useHorizontalSwipe } from "@/hooks/useHorizontalSwipe";
 import Link from "next/link";
 import type { ComponentType, SVGProps } from "react";
 import { useEffect, useState } from "react";
@@ -112,6 +113,11 @@ export function QuickMenu() {
     setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
   };
 
+  const swipeHandlers = useHorizontalSwipe({
+    onSwipeLeft: handleNext,
+    onSwipeRight: handlePrev,
+  });
+
   const visibleItems = quickMenuItems.slice(
     currentPage * ITEMS_PER_PAGE,
     (currentPage + 1) * ITEMS_PER_PAGE,
@@ -135,7 +141,10 @@ export function QuickMenu() {
             className="hidden md:flex"
           />
 
-          <div className="flex min-w-0 flex-1 flex-wrap justify-center gap-3">
+          <div
+            className="flex min-w-0 flex-1 touch-pan-y flex-wrap justify-center gap-3"
+            {...swipeHandlers}
+          >
             {visibleItems.map((item) => (
               <Link
                 key={item.label}

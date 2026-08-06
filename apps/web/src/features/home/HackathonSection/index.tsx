@@ -5,6 +5,7 @@ import type { Hackathon, Submission } from "@core/types/hackathon";
 import { apiClient } from "@core/utils/api-client";
 import { CarouselArrow } from "@ui/components/client";
 import { useEffect, useState } from "react";
+import { useHorizontalSwipe } from "@/hooks/useHorizontalSwipe";
 import { HackathonBanner } from "./HackathonBanner";
 import { HackathonCard } from "./HackathonCard";
 
@@ -112,6 +113,10 @@ export function HackathonSection() {
   const mobileCurrentPage = getCurrentPage(mobileTotal);
   const desktopCurrentPage = getCurrentPage(desktopTotal);
   const mobileItem = submissions[mobileCurrentPage] ?? null;
+  const mobileSwipeHandlers = useHorizontalSwipe({
+    onSwipeLeft: () => handleNext(mobileTotal),
+    onSwipeRight: () => handlePrev(mobileTotal),
+  });
   const desktopItems = submissions.slice(
     desktopCurrentPage * 3,
     desktopCurrentPage * 3 + 3,
@@ -130,46 +135,25 @@ export function HackathonSection() {
             <h2 className="text-heading-l-mobile tracking-1 text-text-basic font-bold">
               해커톤
             </h2>
-            <div className="flex items-center gap-2">
-              <CarouselArrow
-                onClick={() => handlePrev(mobileTotal)}
-                title="이전"
-                size={18}
-                disabled={mobileTotal <= 1 || mobileCurrentPage === 0}
-                isHidden={mobileTotal <= 1 || mobileCurrentPage === 0}
-                className="h-9 w-9 p-0"
-              />
-              <CarouselArrow
-                onClick={() => handleNext(mobileTotal)}
-                title="다음"
-                size={18}
-                disabled={
-                  mobileTotal <= 1 || mobileCurrentPage === mobileTotal - 1
-                }
-                isHidden={
-                  mobileTotal <= 1 || mobileCurrentPage === mobileTotal - 1
-                }
-                align="right"
-                className="h-9 w-9 p-0"
-              />
-            </div>
           </div>
         </div>
 
-        {loading ? (
-          skeletonCard
-        ) : submissions.length === 0 ? (
-          <div className="rounded-3 border-border-gray-light bg-surface-white flex h-[240px] items-center justify-center border px-6 text-center">
-            <p className="text-text-subtle text-body-m">
-              아직 공개된 해커톤 제출물이 없습니다.
-            </p>
-          </div>
-        ) : mobileItem ? (
-          <HackathonCard
-            submission={mobileItem}
-            bgColor={CARD_COLORS[mobileCurrentPage % CARD_COLORS.length]}
-          />
-        ) : null}
+        <div className="touch-pan-y" {...mobileSwipeHandlers}>
+          {loading ? (
+            skeletonCard
+          ) : submissions.length === 0 ? (
+            <div className="rounded-3 border-border-gray-light bg-surface-white flex h-[240px] items-center justify-center border px-6 text-center">
+              <p className="text-text-subtle text-body-m">
+                아직 공개된 해커톤 제출물이 없습니다.
+              </p>
+            </div>
+          ) : mobileItem ? (
+            <HackathonCard
+              submission={mobileItem}
+              bgColor={CARD_COLORS[mobileCurrentPage % CARD_COLORS.length]}
+            />
+          ) : null}
+        </div>
 
         {mobileTotal > 1 && (
           <div className="mt-4 flex items-center justify-center gap-1">
