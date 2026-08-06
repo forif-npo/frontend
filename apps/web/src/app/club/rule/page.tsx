@@ -93,14 +93,14 @@ export default function RulePage() {
               return (
                 <p
                   key={i}
-                  className="my-1 pl-4 text-sm leading-7 text-gray-700"
+                  className="my-1 pl-4 text-base leading-7 text-gray-700"
                 >
                   {trimmed}
                 </p>
               );
             }
             return (
-              <p key={i} className="my-1 text-sm leading-7 text-gray-700">
+              <p key={i} className="my-1 text-base leading-7 text-gray-700">
                 {trimmed}
               </p>
             );
