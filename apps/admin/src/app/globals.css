@@ -1,9 +1,9 @@
 @import "tailwindcss";
-@import "@repo/ui/styles.css";
 @import "tw-animate-css";
 @import "@repo/ui/theme.css";
 
 @source "../**/*.{ts,tsx}";
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
 @source "../../../../packages/big-calendar/src/**/*.{ts,tsx}";
 
 @custom-variant dark (&:is(.dark *));
