@@ -39,6 +39,13 @@ interface StudyDetailContentProps {
   study: Study;
 }
 
+function splitPlanContent(content: string) {
+  return content
+    .split(";")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
 function LocationIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -253,7 +260,9 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
                   </div>
                   {visiblePlans.some((p) => p.content) && (
                     <div className="text-text-subtle flex-1 border-b border-[#cdd1d5] bg-white px-3 py-2 text-[15px] leading-[1.5] md:px-4 md:py-3 md:text-[17px]">
-                      {plan.content}
+                      {splitPlanContent(plan.content).map((content, index) => (
+                        <div key={index}>{content}</div>
+                      ))}
                     </div>
                   )}
                 </div>
