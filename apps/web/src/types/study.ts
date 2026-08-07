@@ -14,7 +14,7 @@ export interface StudyPlan {
   week_num: number;
   date: string | null;
   section: string;
-  content: string;
+  content: string | null;
 }
 
 export interface StudyReference {
