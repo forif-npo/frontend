@@ -7,6 +7,7 @@ import {
   NUMERIC_DIFFICULTY_LABELS,
   APPLICATION_STATUS_LABELS,
 } from "@/constants/study";
+import { getStudyTagLabel } from "@/constants/study-tags";
 
 interface ApplicationDetailViewProps {
   application: ApplicationDetail & {
@@ -83,7 +84,12 @@ export function ApplicationDetailView({
         <Badge label={statusLabel} bg="#e7f4fe" color="#096ab3" />
         {/* tags */}
         {study.tags.map((tag) => (
-          <Badge key={tag} label={tag} bg="#e7f4fe" color="#096ab3" />
+          <Badge
+            key={tag}
+            label={getStudyTagLabel(tag)}
+            bg="#e7f4fe"
+            color="#096ab3"
+          />
         ))}
         {/* difficulty */}
         <Badge label={difficultyLabel} bg="#ecf2fe" color="#0b50d0" />

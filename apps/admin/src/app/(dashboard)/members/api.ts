@@ -135,3 +135,12 @@ export async function fetchMembers({
     pageSize: size,
   };
 }
+
+/** 현재 활동 학기 부원 삭제 (DELETE /api/v1/admin/users/{userId}) */
+export async function deleteCurrentSemesterMember(
+  userId: number,
+): Promise<void> {
+  await apiClient
+    .delete(`api/v1/admin/users/${userId}`)
+    .json<ApiResponse<null>>();
+}

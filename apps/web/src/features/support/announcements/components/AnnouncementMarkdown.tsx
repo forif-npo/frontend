@@ -124,8 +124,8 @@ const components: Components = {
       <code
         className={clsx(
           isBlockCode
-            ? "text-sm text-gray-100"
-            : "rounded bg-gray-100 px-1.5 py-0.5 text-[0.9em] text-gray-900",
+            ? "text-gray-5 text-sm"
+            : "bg-gray-5 rounded px-1.5 py-0.5 text-[0.9em] text-gray-900",
           className,
         )}
         {...rest}

@@ -153,7 +153,7 @@ export default function TeamPage() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-3 border-border-gray-light h-[360px] animate-pulse border bg-gray-100"
+              className="rounded-3 border-border-gray-light bg-gray-5 h-[360px] animate-pulse border"
             />
           ))}
         </div>

@@ -38,3 +38,11 @@ export interface Receiver {
   department: string;
   currentStudyName: string | null;
 }
+
+export type ReceiverTarget =
+  | "CURRENT_SEMESTER_MEMBERS"
+  | "CURRENT_SEMESTER_APPLICANTS"
+  | "PREVIOUS_SEMESTER_MEMBERS"
+  | "ALL_MEMBERS"
+  | "ACCEPTED_DUES_UNPAID"
+  | "ACCEPTED_GOOGLE_FORM_NOT_SUBMITTED";

@@ -10,6 +10,7 @@ import { Button } from "@ui/components/client";
 import { useArchiveSubmissionDetail } from "@/hooks/hackathon";
 import { HackathonSubmissionDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { safeImageSrc } from "@/utils/image";
+import { sortTeamMembersLeaderFirst } from "./utils";
 import {
   ARCHIVE_ELEVATED_PANEL_CLASS_NAME,
   ARCHIVE_PANEL_CLASS_NAME,
@@ -44,6 +45,9 @@ export function SubmissionDetailMain({
     () => formatDate(submission?.created_at),
     [submission?.created_at],
   );
+  const orderedTeamMembers = submission
+    ? sortTeamMembersLeaderFirst(submission.team_members)
+    : [];
 
   if (loading) {
     return <HackathonSubmissionDetailSkeleton />;
@@ -168,7 +172,7 @@ export function SubmissionDetailMain({
             </Label>
             {submission.team_members.length > 0 ? (
               <ul className="flex flex-col gap-2">
-                {submission.team_members.map((member) => (
+                {orderedTeamMembers.map((member) => (
                   <li
                     key={member.user_id}
                     className="flex items-center justify-between"

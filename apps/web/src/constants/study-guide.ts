@@ -368,11 +368,14 @@ export const RECOMMENDATION_QUESTIONS: RecommendationQuestion[] = [
 ];
 
 export const GUIDE_TABS = [
-  { label: "스터디 소개", id: "introduction" },
-  { label: "스터디 운영 방식", id: "ongoing" },
-  { label: "스터디 진행 과정", id: "procedure" },
-  { label: "스터디 이수", id: "completion" },
-  { label: "스터디 추천", id: "recommendation" },
+  { label: STUDY_GUIDE_SECTIONS.introduction.eyebrow, id: "introduction" },
+  { label: STUDY_OPERATION_GUIDE.eyebrow, id: "ongoing" },
+  { label: STUDY_GUIDE_SECTIONS.procedure.eyebrow, id: "procedure" },
+  { label: STUDY_GUIDE_SECTIONS.completion.eyebrow, id: "completion" },
+  {
+    label: STUDY_GUIDE_SECTIONS.recommendation.eyebrow,
+    id: "recommendation",
+  },
 ] as const;
 
 export const GUIDE_TAB_SCROLL_OFFSET = 96;

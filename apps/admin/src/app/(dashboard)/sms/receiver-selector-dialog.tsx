@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Users } from "lucide-react";
 import { handleApiError } from "@core/utils/api-client";
 import { Badge } from "@/components/ui/badge";
@@ -14,12 +14,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { getReceiverPage } from "./api";
 import {
-  getCurrentSemester,
-  getReceiverPage,
-  type CurrentSemester,
-} from "./api";
-import type { Receiver } from "./types";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Receiver, ReceiverTarget } from "./types";
+
+const RECEIVER_TARGET_OPTIONS: { value: ReceiverTarget; label: string }[] = [
+  { value: "CURRENT_SEMESTER_MEMBERS", label: "현재 학기 부원" },
+  { value: "CURRENT_SEMESTER_APPLICANTS", label: "현재 학기 신청자" },
+  { value: "ACCEPTED_DUES_UNPAID", label: "회비 미납 합격자" },
+  {
+    value: "ACCEPTED_GOOGLE_FORM_NOT_SUBMITTED",
+    label: "구글폼 미제출 합격자",
+  },
+  { value: "PREVIOUS_SEMESTER_MEMBERS", label: "직전 학기 부원" },
+  { value: "ALL_MEMBERS", label: "전체 부원" },
+];
 
 interface ReceiverSelectorDialogProps {
   open: boolean;
@@ -35,10 +50,9 @@ export function ReceiverSelectorDialog({
   const [receivers, setReceivers] = useState<Receiver[]>([]);
   const [receiverSearch, setReceiverSearch] = useState("");
   const [activeReceiverSearch, setActiveReceiverSearch] = useState("");
-  const [searchAllMembers, setSearchAllMembers] = useState(false);
-  const [activeSearchAllMembers, setActiveSearchAllMembers] = useState(false);
-  const [currentSemester, setCurrentSemester] =
-    useState<CurrentSemester | null>(null);
+  const [receiverTarget, setReceiverTarget] = useState<ReceiverTarget>(
+    "CURRENT_SEMESTER_MEMBERS",
+  );
   const [nextReceiverCursor, setNextReceiverCursor] = useState<number | null>(
     null,
   );
@@ -46,6 +60,7 @@ export function ReceiverSelectorDialog({
   const [totalReceiverCount, setTotalReceiverCount] = useState(0);
   const [isReceiversLoading, setIsReceiversLoading] = useState(false);
   const [receiverError, setReceiverError] = useState<string | null>(null);
+  const receiverRequestId = useRef(0);
   const [selectedReceivers, setSelectedReceivers] = useState<Set<string>>(
     new Set(),
   );
@@ -55,15 +70,14 @@ export function ReceiverSelectorDialog({
       cursor,
       search,
       replace,
-      searchAll,
-      semester,
+      target,
     }: {
       cursor?: number;
       search: string;
       replace: boolean;
-      searchAll: boolean;
-      semester: CurrentSemester;
+      target: ReceiverTarget;
     }) => {
+      const requestId = ++receiverRequestId.current;
       setIsReceiversLoading(true);
       setReceiverError(null);
 
@@ -71,8 +85,9 @@ export function ReceiverSelectorDialog({
         const page = await getReceiverPage({
           cursor,
           search,
-          semester: searchAll ? undefined : semester,
+          target,
         });
+        if (requestId !== receiverRequestId.current) return;
         setReceivers((previous) => {
           if (replace) return page.receivers;
 
@@ -88,11 +103,13 @@ export function ReceiverSelectorDialog({
         setHasNextReceiverPage(page.hasNext);
         setTotalReceiverCount(page.totalElements);
         setActiveReceiverSearch(search);
-        setActiveSearchAllMembers(searchAll);
       } catch (err) {
+        if (requestId !== receiverRequestId.current) return;
         setReceiverError(await handleApiError(err));
       } finally {
-        setIsReceiversLoading(false);
+        if (requestId === receiverRequestId.current) {
+          setIsReceiversLoading(false);
+        }
       }
     },
     [],
@@ -103,19 +120,16 @@ export function ReceiverSelectorDialog({
 
     const initialize = async () => {
       setReceiverSearch("");
-      setSearchAllMembers(false);
+      setReceiverTarget("CURRENT_SEMESTER_MEMBERS");
       setSelectedReceivers(new Set());
       setIsReceiversLoading(true);
       setReceiverError(null);
 
       try {
-        const semester = await getCurrentSemester();
-        setCurrentSemester(semester);
         await loadReceivers({
           search: "",
           replace: true,
-          searchAll: false,
-          semester,
+          target: "CURRENT_SEMESTER_MEMBERS",
         });
       } catch (err) {
         setReceiverError(await handleApiError(err));
@@ -128,14 +142,17 @@ export function ReceiverSelectorDialog({
   }, [loadReceivers, open]);
 
   const searchReceivers = () => {
-    if (!currentSemester) return;
-
     void loadReceivers({
       search: receiverSearch.trim(),
       replace: true,
-      searchAll: searchAllMembers,
-      semester: currentSemester,
+      target: receiverTarget,
     });
+  };
+
+  const changeReceiverTarget = (target: ReceiverTarget) => {
+    setReceiverTarget(target);
+    setReceiverSearch("");
+    void loadReceivers({ search: "", replace: true, target });
   };
 
   const toggleReceiver = (phoneNumber: string) => {
@@ -171,52 +188,55 @@ export function ReceiverSelectorDialog({
             수신자 목록
           </DialogTitle>
           <DialogDescription>
-            알림톡을 발송할 부원을 검색하고 선택하세요.
+            발송 대상 유형을 선택한 뒤 해당 목록에서 수신자를 검색하고
+            선택하세요.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-2">
+          <Select
+            value={receiverTarget}
+            onValueChange={(value) =>
+              changeReceiverTarget(value as ReceiverTarget)
+            }
+            disabled={isReceiversLoading}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="발송 대상을 선택하세요" />
+            </SelectTrigger>
+            <SelectContent>
+              {RECEIVER_TARGET_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <div className="flex gap-2">
             <Input
               value={receiverSearch}
-              onChange={(event) => {
-                setReceiverSearch(event.target.value);
-                if (!event.target.value.trim()) setSearchAllMembers(false);
-              }}
+              onChange={(event) => setReceiverSearch(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key !== "Enter") return;
 
                 event.preventDefault();
                 searchReceivers();
               }}
-              placeholder="이름 또는 학과로 검색"
+              placeholder="이름 또는 학번으로 검색"
             />
             <Button
               type="button"
               variant="outline"
-              disabled={isReceiversLoading || !currentSemester}
+              disabled={isReceiversLoading}
               onClick={searchReceivers}
             >
               검색
             </Button>
           </div>
 
-          <label className="text-muted-foreground flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              className="h-4 w-4 rounded border-gray-300"
-              checked={searchAllMembers}
-              disabled={isReceiversLoading || !receiverSearch.trim()}
-              onChange={(event) => setSearchAllMembers(event.target.checked)}
-            />
-            전체 부원에서 검색
-          </label>
-          {currentSemester && (
-            <p className="text-muted-foreground text-xs">
-              기본 목록은 현재 학기({currentSemester.label}) 부원입니다. 전체
-              검색은 검색어 입력 후 사용할 수 있습니다.
-            </p>
-          )}
+          <p className="text-muted-foreground text-xs">
+            검색은 현재 선택한 발송 대상 목록 안에서만 수행됩니다.
+          </p>
 
           <div className="flex items-center justify-between border-b pb-2">
             <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
@@ -284,20 +304,14 @@ export function ReceiverSelectorDialog({
               type="button"
               variant="outline"
               className="w-full"
-              disabled={
-                isReceiversLoading ||
-                nextReceiverCursor === null ||
-                currentSemester === null
-              }
+              disabled={isReceiversLoading || nextReceiverCursor === null}
               onClick={() => {
-                if (nextReceiverCursor === null || currentSemester === null)
-                  return;
+                if (nextReceiverCursor === null) return;
                 void loadReceivers({
                   cursor: nextReceiverCursor,
                   search: activeReceiverSearch,
                   replace: false,
-                  searchAll: activeSearchAllMembers,
-                  semester: currentSemester,
+                  target: receiverTarget,
                 });
               }}
             >

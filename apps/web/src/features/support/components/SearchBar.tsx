@@ -31,7 +31,7 @@ export function SearchBar({
         type="button"
         onClick={onSearch}
         aria-label="검색"
-        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 hover:bg-gray-100"
+        className="hover:bg-gray-5 active:bg-gray-10 absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2"
       >
         <SearchIcon width={18} height={18} className="fill-text-subtle" />
       </button>

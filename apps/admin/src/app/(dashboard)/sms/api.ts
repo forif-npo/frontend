@@ -5,6 +5,7 @@ import type {
   SendAlimTalkRequest,
   SendAlimTalkResult,
   Receiver,
+  ReceiverTarget,
 } from "./types";
 
 interface AlimTalkTemplateResponse {
@@ -41,51 +42,20 @@ export interface ReceiverPage {
   totalElements: number;
 }
 
-export interface CurrentSemester {
-  year: number;
-  semester: number;
-  label: string;
-}
-
-interface CurrentSemesterResponse {
-  act_year: number;
-  act_semester: number;
-  label: string;
-}
-
-export async function getCurrentSemester(): Promise<CurrentSemester> {
-  const response = await apiClient
-    .get("api/v1/semesters/current")
-    .json<ApiResponse<CurrentSemesterResponse>>();
-
-  if (!response.data) {
-    throw new Error("현재 학기 정보를 불러오지 못했습니다.");
-  }
-
-  return {
-    year: response.data.act_year,
-    semester: response.data.act_semester,
-    label: response.data.label,
-  };
-}
-
 export async function getReceiverPage({
   cursor,
   search,
-  semester,
+  target,
 }: {
   cursor?: number;
   search?: string;
-  semester?: CurrentSemester;
+  target: ReceiverTarget;
 }): Promise<ReceiverPage> {
-  const endpoint = semester
-    ? `api/v1/admin/users/${semester.year}/${semester.semester}`
-    : "api/v1/admin/users";
-
   const response = await apiClient
-    .get(endpoint, {
+    .get("api/v1/notifications/receivers", {
       searchParams: {
         size: 100,
+        target_type: target,
         ...(cursor !== undefined ? { cursor } : {}),
         ...(search ? { search } : {}),
       },

@@ -11,9 +11,14 @@ import { SemesterTabs } from "@/components/list/semester-tabs";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
+import { handleApiError } from "@core/utils/api-client";
 import { Download } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
+import { deleteCurrentSemesterMember } from "./api";
 import { columns } from "./columns";
 import { Member, MemberSemesterLabel } from "./types";
 
@@ -25,6 +30,7 @@ interface MembersViewProps {
   totalPages?: number;
   pageSize?: number;
   initialSearch?: string;
+  activeSemesterLabel: string;
 }
 
 export function MembersView({
@@ -35,7 +41,10 @@ export function MembersView({
   totalPages = 1,
   pageSize = 20,
   initialSearch = "",
+  activeSemesterLabel,
 }: MembersViewProps) {
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
   const {
     searchQuery,
     setSearchQuery,
@@ -76,8 +85,30 @@ export function MembersView({
     console.log("부원 정보 수정", member);
   };
 
-  const handleDeleteMember = (member: Member) => {
-    console.log("부원 삭제", member);
+  const canDeleteCurrentSemesterMember =
+    currentSemester === activeSemesterLabel;
+
+  const handleDeleteMember = async (member: Member) => {
+    if (isDeleting || !canDeleteCurrentSemesterMember) return;
+
+    if (
+      !confirm(
+        `${member.userName}(${member.userId})님을 현재 학기 부원 명단에서 삭제할까요?\n사용자 계정과 이전 학기 이력은 유지됩니다.`,
+      )
+    ) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await deleteCurrentSemesterMember(member.userId);
+      toast.success("현재 학기 부원 명단에서 삭제되었습니다.");
+      router.refresh();
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const handleGrantMentorRole = (member: Member) => {
@@ -131,12 +162,15 @@ export function MembersView({
               <DropdownMenuItem onClick={() => handleEditMember(member)}>
                 부원 정보 수정
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onClick={() => handleDeleteMember(member)}
-              >
-                부원 삭제
-              </DropdownMenuItem>
+              {canDeleteCurrentSemesterMember && (
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  disabled={isDeleting}
+                  onClick={() => handleDeleteMember(member)}
+                >
+                  현재 학기 부원 삭제
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleGrantMentorRole(member)}>
                 멘토 권한 부여

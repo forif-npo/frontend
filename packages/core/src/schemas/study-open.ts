@@ -134,6 +134,21 @@ export const studyOpenSchema = createSchema()(
           });
         }
       });
+
+      values.curriculum.forEach((week, index) => {
+        const combinedContent = week.contents
+          .map((content) => content.trim())
+          .filter(Boolean)
+          .join("; ");
+
+        if (combinedContent.length > 500) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["curriculum", index, "contents"],
+            message: "주차별 학습 내용은 전체 500자 이내로 작성해주세요.",
+          });
+        }
+      });
     }),
 );
 

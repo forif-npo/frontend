@@ -1,95 +1,114 @@
 "use client";
 import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
-import Image from "next/image";
-import { useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+  type TouchEvent,
+} from "react";
 import { cn } from "../../utils/cn";
-import { Body } from "../server/Body";
-import { Display } from "../server/Display";
-import { Button } from "./Button";
 
 interface CarouselProps {
   carouselItems: CarouselItem[];
 }
 export interface CarouselItem {
-  imageSrc: string;
-  title: React.ReactNode;
-  description: string;
-  footer?: React.ReactNode;
-  onClick?: () => void;
+  id: string;
+  content: ReactNode;
 }
 
 export function Carousel({ carouselItems }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"forward" | "backward">(
+    "forward",
+  );
+  const touchStartX = useRef<number | null>(null);
+  const totalItems = carouselItems.length;
 
-  if (carouselItems.length === 0) {
+  useEffect(() => {
+    setCurrentIndex((previousIndex) =>
+      totalItems === 0 ? 0 : Math.min(previousIndex, totalItems - 1),
+    );
+
+    if (totalItems <= 1) return;
+
+    const timer = window.setInterval(() => {
+      setSlideDirection("forward");
+      setCurrentIndex((previousIndex) => (previousIndex + 1) % totalItems);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, [totalItems]);
+
+  if (totalItems === 0) {
     return <div className="text-center">No items to display</div>;
   }
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => Math.max(0, prev - 1));
+    setSlideDirection("backward");
+    setCurrentIndex((prev) => (prev - 1 + totalItems) % totalItems);
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => Math.min(carouselItems.length - 1, prev + 1));
+    setSlideDirection("forward");
+    setCurrentIndex((prev) => (prev + 1) % totalItems);
+  };
+
+  const handleSelect = (index: number) => {
+    setSlideDirection(index < currentIndex ? "backward" : "forward");
+    setCurrentIndex(index);
+  };
+
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const startX = touchStartX.current;
+    const endX = event.changedTouches[0]?.clientX;
+    touchStartX.current = null;
+
+    if (startX === null || endX === undefined) return;
+
+    const swipeDistance = endX - startX;
+    if (Math.abs(swipeDistance) < 50) return;
+
+    if (swipeDistance > 0) {
+      handlePrev();
+    } else {
+      handleNext();
+    }
   };
 
   const currentItem = carouselItems[currentIndex];
 
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      <div className="flex w-full items-center justify-between">
-        <CarouselArrow
-          align="left"
-          title="이전"
-          onClick={handlePrev}
-          disabled={currentIndex === 0}
-          isHidden={currentIndex === 0}
-          className="hidden md:flex"
-        />
-        <div className="bg-surface-white/85 border-border-gray-light flex w-full max-w-[1200px] flex-col-reverse gap-8 overflow-hidden rounded-[28px] border p-6 shadow-[0_18px_50px_rgba(11,80,208,0.12)] backdrop-blur md:flex-row md:items-center md:justify-between md:gap-0 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
-          <div className="max-w-[800px]">
-            <Display size="s" className="text-text-basic mb-6">
-              {currentItem.title}
-            </Display>
-            <Body size="l" className="text-text-basic mb-6">
-              {currentItem.description}
-            </Body>
-            {currentItem.footer ? (
-              <CarouselFooter>{currentItem.footer}</CarouselFooter>
-            ) : (
-              <div className="flex flex-row gap-4">
-                <Button>자세히 보러가기</Button>
-              </div>
-            )}
+      <div className="w-full">
+        <div
+          className="mx-auto aspect-square w-full max-w-[1200px] touch-pan-y overflow-hidden rounded-[28px] md:aspect-[4/1]"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={() => {
+            touchStartX.current = null;
+          }}
+        >
+          <div
+            key={currentItem.id}
+            className={
+              slideDirection === "forward"
+                ? "animate-banner-slide-forward h-full"
+                : "animate-banner-slide-backward h-full"
+            }
+          >
+            {currentItem.content}
           </div>
-          <Image
-            src={currentItem.imageSrc}
-            alt="Carousel Image"
-            width={344}
-            height={300}
-            className="rounded-2 mx-auto h-auto w-full max-w-[260px] md:hidden"
-          />
-          <Image
-            src={currentItem.imageSrc}
-            alt="Carousel Image"
-            width={344}
-            height={300}
-            className="rounded-2 hidden md:block"
-          />
         </div>
-        <CarouselArrow
-          align="right"
-          title="다음"
-          onClick={handleNext}
-          disabled={currentIndex === carouselItems.length - 1}
-          isHidden={currentIndex === carouselItems.length - 1}
-          className="hidden md:flex"
-        />
       </div>
       <CarouselIndicators
         total={carouselItems.length}
         current={currentIndex}
-        onSelect={setCurrentIndex}
+        onSelect={handleSelect}
       />
     </div>
   );
@@ -135,7 +154,7 @@ export function CarouselArrow({
   );
 }
 
-export function CarouselFooter({ children }: { children?: React.ReactNode }) {
+export function CarouselFooter({ children }: { children?: ReactNode }) {
   return <div>{children}</div>;
 }
 
@@ -149,7 +168,7 @@ export function CarouselIndicators({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex max-w-full flex-wrap items-center justify-center gap-2">
       {Array.from({ length: total }).map((_, index) => (
         <button
           key={index}

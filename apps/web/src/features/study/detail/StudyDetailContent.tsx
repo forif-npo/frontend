@@ -12,6 +12,7 @@ import {
   getRecruitStatusBadgeVariant,
   getWeekDayLabel,
 } from "@/constants/study";
+import { getStudyTagLabel } from "@/constants/study-tags";
 import Link from "next/link";
 
 function ChevronDownIcon({ className }: { className?: string }) {
@@ -120,7 +121,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
                   {study.tags.map((tag, index) => (
                     <Badge
                       key={index}
-                      label={tag}
+                      label={getStudyTagLabel(tag)}
                       variant="primary"
                       appearance="solid-pastel"
                       size="medium"
