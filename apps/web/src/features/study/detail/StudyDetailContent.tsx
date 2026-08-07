@@ -6,7 +6,6 @@ import { Study } from "@/types/study";
 import { KakaoMap } from "@/components/KakaoMap";
 import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
-import { normalizeShortDateInput } from "@/utils/dateInput";
 import {
   formatStudyTimeRange,
   getDifficultyLabel,
@@ -41,13 +40,17 @@ interface StudyDetailContentProps {
   study: Study;
 }
 
-function splitPlanContent(content: string) {
-  const contents = content
+function splitPlanContent(content: string | null | undefined) {
+  const contents = (content ?? "")
     .split(";")
     .map((line) => line.trim())
     .filter(Boolean);
 
   return contents.length > 0 ? contents : [""];
+}
+
+function formatPlanDate(date: string | null) {
+  return date?.match(/^\d{4}-\d{2}-\d{2}/)?.[0] ?? "";
 }
 
 function LocationIcon({ className }: { className?: string }) {
@@ -249,7 +252,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
                 }))}
                 renderDateInput={(weekIndex, inputClassName) => (
                   <span className={inputClassName}>
-                    {normalizeShortDateInput(visiblePlans[weekIndex]?.date)}
+                    {formatPlanDate(visiblePlans[weekIndex]?.date ?? null)}
                   </span>
                 )}
                 renderTopicInput={(weekIndex, inputClassName) => (
