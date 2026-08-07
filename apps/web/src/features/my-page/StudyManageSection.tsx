@@ -71,16 +71,22 @@ export function StudyManageSection({
           {
             label: "신청자 관리",
             content: selectedStudyId != null && (
-              <div className="pt-6 md:pt-8">
-                <ApplicantsPanel studyId={selectedStudyId} readOnly={isPastSemester} />
+              <div>
+                <ApplicantsPanel
+                  studyId={selectedStudyId}
+                  readOnly={isPastSemester}
+                />
               </div>
             ),
           },
           {
             label: "출석 관리",
             content: selectedStudyId != null && (
-              <div className="pt-6 md:pt-8">
-                <AttendancePanel studyId={selectedStudyId} readOnly={isPastSemester} />
+              <div>
+                <AttendancePanel
+                  studyId={selectedStudyId}
+                  readOnly={isPastSemester}
+                />
               </div>
             ),
           },

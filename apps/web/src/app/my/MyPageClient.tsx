@@ -49,7 +49,7 @@ export function MyPageClient({
     {
       label: "수강한 스터디",
       content: (
-        <div className="pt-6 md:pt-8">
+        <div>
           <StudySection studiesData={studiesData} />
         </div>
       ),
@@ -57,7 +57,7 @@ export function MyPageClient({
     {
       label: "지원서 보기",
       content: (
-        <div className="pt-6 md:pt-8">
+        <div>
           <ApplicationSection applicationsData={applicationsData} />
         </div>
       ),

@@ -65,7 +65,7 @@ const TabPanel: React.FC<{
       role="tabpanel"
       id={id}
       aria-labelledby={tabId}
-      className={`${isSelected ? "" : "hidden"}`}
+      className={`pt-6 md:pt-8 ${isSelected ? "" : "hidden"}`}
     >
       {children}
     </div>

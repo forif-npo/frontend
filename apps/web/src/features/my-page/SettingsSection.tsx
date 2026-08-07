@@ -103,7 +103,7 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
           {
             label: "계정 설정",
             content: (
-              <div className="pt-6 md:pt-8">
+              <div>
                 <section className="rounded-3 border-border-gray-light bg-surface-white border p-6 md:p-8">
                   <div className="flex max-w-[760px] flex-col gap-6">
                     <div className="grid gap-3 md:grid-cols-[112px_minmax(0,1fr)] md:items-start">
