@@ -80,7 +80,7 @@ export function MyPageClient({
       />
 
       {/* Main Content */}
-      <div className="min-w-0 flex-1 px-4 py-10 lg:pl-10 lg:pr-0">
+      <div className="min-w-0 flex-1 px-4 py-10 lg:px-10">
         <div className="mb-8 flex flex-col gap-3 md:mb-12">
           <Heading size="l" className="text-text-bolder">
             {pageHeader.title}
