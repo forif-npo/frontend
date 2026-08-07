@@ -6,7 +6,11 @@ import type {
 } from "@core/types/hackathon";
 import { Body, Heading, Label } from "@ui/components/server";
 import { Button } from "@ui/components/client";
-import { formatDateTime, getRemainingLabel } from "../utils";
+import {
+  formatDateTime,
+  getRemainingLabel,
+  sortTeamMembersLeaderFirst,
+} from "../utils";
 import { InfoRow, Panel, PanelHeader } from "../shared";
 import { JoinRequestPanel } from "./JoinRequestPanel";
 import { phaseLabel, type ActiveStage } from "./types";
@@ -44,6 +48,7 @@ export function TeamWorkspacePanel({
     (stage === "TEAM_BUILDING" || stage === "IN_PROGRESS") && isLeader;
   const canDisbandTeam = stage === "TEAM_BUILDING" && isLeader;
   const canSubmit = stage === "IN_PROGRESS" && isLeader;
+  const orderedMembers = sortTeamMembersLeaderFirst(team.members);
 
   return (
     <Panel>
@@ -57,7 +62,7 @@ export function TeamWorkspacePanel({
       </Body>
 
       <div className="my-4 flex flex-wrap gap-2">
-        {team.members.map((member) => (
+        {orderedMembers.map((member) => (
           <span
             key={member.user_id}
             className="bg-surface-primary-subtler text-text-primary text-label-xs inline-flex h-7 items-center rounded-full px-3 font-semibold"

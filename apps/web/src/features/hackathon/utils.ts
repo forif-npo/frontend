@@ -1,4 +1,14 @@
-import type { Hackathon, HackathonStatus } from "@core/types/hackathon";
+import type {
+  Hackathon,
+  HackathonStatus,
+  TeamMember,
+} from "@core/types/hackathon";
+
+export function sortTeamMembersLeaderFirst(members: TeamMember[]) {
+  return [...members].sort(
+    (a, b) => Number(a.role !== "LEADER") - Number(b.role !== "LEADER"),
+  );
+}
 
 export type MainStage =
   | "BEFORE_CREATED"
