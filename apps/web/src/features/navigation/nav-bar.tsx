@@ -7,8 +7,6 @@ import { cn } from "@ui/utils/cn";
 import Image from "next/image";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
-import { useLogout } from "@/features/auth/logout/use-logout";
-
 const NAV_LOGO_SRC = "/black_title.svg";
 
 export type NavMenu = {
@@ -32,8 +30,6 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
-  const { isPending: isLoggingOut, logout } = useLogout();
-
   const handleMenuClick = (label: string, hasSubMenus?: boolean) => {
     if (!hasSubMenus) return;
     setOpenMenu((prev) => (prev === label ? null : label));
@@ -154,19 +150,6 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                   회원가입
                 </Link>
               )}
-              {isLoggedIn && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    logout();
-                  }}
-                  disabled={isLoggingOut}
-                  className="text-text-subtle border-border-gray-light rounded-2 flex h-12 items-center justify-center border text-[16px] font-semibold leading-[1.5] disabled:opacity-60"
-                >
-                  {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
-                </button>
-              )}
             </div>
 
             <div className="grid grid-cols-1 gap-3">
@@ -286,15 +269,6 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                   마이페이지
                 </Button>
               </Link>
-              <Button
-                variant="text"
-                size="medium"
-                onClick={logout}
-                disabled={isLoggingOut}
-                className="text-text-subtle"
-              >
-                {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
-              </Button>
             </>
           ) : (
             <>
