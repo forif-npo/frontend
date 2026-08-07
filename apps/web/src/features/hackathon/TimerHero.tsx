@@ -21,7 +21,7 @@ export function TimerHero({ hackathon, stage }: TimerHeroProps) {
   const isEnded = stage === "ENDED";
 
   return (
-    <section className="relative flex min-h-[calc(var(--vh)-80px)] items-center justify-center overflow-hidden px-6 py-20">
+    <section className="relative flex min-h-[calc(100dvh-80px)] items-center justify-center overflow-hidden px-6 py-20">
       {/* Background */}
       <div className="from-primary-5 via-surface-gray-subtler to-primary-10 absolute inset-0 bg-gradient-to-br" />
       {/* Decorative blobs */}
