@@ -20,7 +20,7 @@ const fadeUp = {
 
 function HeroSection() {
   return (
-    <section className="relative flex h-[calc(var(--vh)-64px)] min-h-[560px] items-center justify-center overflow-hidden md:h-[calc(var(--vh)-80px)]">
+    <section className="relative flex h-[calc(100dvh-64px)] min-h-[560px] items-center justify-center overflow-hidden md:h-[calc(100dvh-80px)]">
       {/* Background */}
       <Image
         src="/images/about-bg.png"

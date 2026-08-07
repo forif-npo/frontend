@@ -7,7 +7,7 @@ export function HackathonPageSkeleton() {
   return (
     <div>
       {/* Timer hero skeleton - TimerHero 레이아웃과 동일하게 정렬 */}
-      <div className="bg-surface-gray-subtler flex min-h-[calc(var(--vh)-80px)] items-center justify-center px-6 py-20">
+      <div className="bg-surface-gray-subtler flex min-h-[calc(100dvh-80px)] items-center justify-center px-6 py-20">
         <div className="flex w-full max-w-5xl flex-col items-center gap-8">
           {/* Badge */}
           <Bone className="h-7 w-20 rounded-full" />
