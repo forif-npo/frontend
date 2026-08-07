@@ -106,7 +106,10 @@ export function StudyCard(props: StudyCardProps) {
 
   const studyName = study.study_name;
   const oneLiner = study.one_liner;
-  const imgUrl = study.img_url;
+  const imgUrl =
+    variant === "mypage"
+      ? study.img_url
+      : study.thumbnail_image || study.img_url;
   const primaryMentor = study.primary_mentor_name;
   const secondaryMentor = study.secondary_mentor_name;
 
