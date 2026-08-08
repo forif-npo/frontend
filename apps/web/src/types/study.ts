@@ -35,7 +35,6 @@ export interface Study {
   act_year: number;
   act_semester: number;
   study_name: string;
-  sub_title: string | null;
   primary_mentor_name: string;
   secondary_mentor_name: string | null;
   tags: string[];

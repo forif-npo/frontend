@@ -189,7 +189,6 @@ export interface AdminStudyResponse {
  */
 export interface StudyUpdateRequest {
   study_name?: string;
-  sub_title?: string;
   one_liner?: string;
   explanation?: string;
   goal?: string;
@@ -483,7 +482,6 @@ export interface SemesterStudiesResponse {
  */
 export interface StudyCreationRequest {
   study_name: string;
-  sub_title: string;
   one_liner: string;
   explanation: string;
   goal: string;

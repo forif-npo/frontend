@@ -35,6 +35,7 @@ export function Step2StudyOverview({
   onPreview,
 }: Step2StudyOverviewProps) {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [isOneLinerEditing, setIsOneLinerEditing] = useState(false);
   const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
     string | null
   >(null);
@@ -47,9 +48,11 @@ export function Step2StudyOverview({
     formState: { errors },
   } = form;
   const { registerTimeInput } = useTimeInput({ register, setValue });
+  const oneLinerField = register("oneLiner");
 
   const selectedTags = watch("tags") || [];
   const thumbnail = watch("thumbnail");
+  const oneLiner = watch("oneLiner");
   const isOnline = watch("isOnline");
   const selectedLocation = watch("location");
   const selectedRoom = watch("room");
@@ -123,7 +126,7 @@ export function Step2StudyOverview({
 
   return (
     <div className="flex w-full flex-col gap-12">
-      {/* 스터디명 + 한 줄 설명 + 태그 (헤딩 영역) */}
+      {/* 스터디명 + 한 줄 소개 + 태그 (헤딩 영역) */}
       <div className="flex flex-col gap-6">
         {/* 스터디명 - 큰 입력 */}
         <input
@@ -139,13 +142,18 @@ export function Step2StudyOverview({
           </p>
         )}
 
-        {/* 한 줄 설명 */}
+        {/* 한 줄 소개 */}
         <input
           id="oneLiner"
           type="text"
-          placeholder="한 줄 설명을 입력해주세요"
-          className="text-text-bolder placeholder:text-text-subtle-inverse w-full bg-transparent text-[20px] font-bold leading-[1.5] outline-none sm:text-[24px]"
-          {...register("oneLiner")}
+          placeholder="한 줄 소개를 입력해주세요"
+          className={`placeholder:text-text-subtle-inverse w-full rounded-lg border-0 px-4 py-3 text-[15px] font-medium leading-[1.6] text-sky-900 outline-none focus:border-0 focus:ring-0 focus-visible:border-0 focus-visible:ring-0 md:text-[19px] ${oneLiner?.trim() && !isOneLinerEditing ? "bg-sky-100" : "bg-transparent"}`}
+          {...oneLinerField}
+          onFocus={() => setIsOneLinerEditing(true)}
+          onBlur={(event) => {
+            oneLinerField.onBlur(event);
+            setIsOneLinerEditing(false);
+          }}
         />
         {errors.oneLiner && (
           <p className="text-text-danger text-[14px]">

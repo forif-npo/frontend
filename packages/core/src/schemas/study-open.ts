@@ -38,8 +38,8 @@ export const studyOpenSchema = createSchema()(
         .max(50, "스터디명은 최대 50자까지 입력 가능합니다."),
       oneLiner: z
         .string()
-        .min(1, "한 줄 설명을 입력해주세요.")
-        .max(100, "한 줄 설명은 최대 100자까지 입력 가능합니다."),
+        .min(1, "한 줄 소개를 입력해주세요.")
+        .max(100, "한 줄 소개는 최대 100자까지 입력 가능합니다."),
       tags: z
         .array(z.string())
         .min(1, "태그를 최소 1개 이상 선택해주세요.")

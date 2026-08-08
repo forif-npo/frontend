@@ -48,7 +48,7 @@ function buildStudyRequest(values: StudyOpenValues) {
 
   return {
     title: values.studyName,
-    sub_title: values.oneLiner,
+    one_liner: values.oneLiner,
     study_tag_id: studyTagIds,
     goal: values.introduction, // Figma removed goal; reuse introduction
     explanation: values.introduction,

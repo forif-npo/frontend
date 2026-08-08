@@ -208,7 +208,6 @@ export function StudiesView({
 
     const body: StudyUpdateRequest = {
       study_name: studyName,
-      sub_title: editForm.sub_title.trim(),
       one_liner: oneLiner,
       explanation: editForm.explanation.trim(),
       goal: editForm.goal.trim(),

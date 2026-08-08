@@ -2,7 +2,6 @@ import type { StudyEditForm } from "./types";
 
 export const EMPTY_STUDY_EDIT_FORM: StudyEditForm = {
   study_name: "",
-  sub_title: "",
   one_liner: "",
   explanation: "",
   goal: "",

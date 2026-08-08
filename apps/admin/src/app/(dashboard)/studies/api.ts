@@ -11,7 +11,6 @@ import { getCurrentSemester as fetchActiveSemester } from "@core/semester/api";
 export interface AdminStudyDetail {
   id: number;
   study_name: string;
-  sub_title?: string | null;
   one_liner: string;
   tags?: string[] | null;
   explanation?: string | null;
