@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@ui/components/client";
+
+import { useScrollSpy } from "@/hooks/useScrollSpy";
 
 interface NavItem {
   id: string;
@@ -20,52 +21,20 @@ const NAV_ITEMS: NavItem[] = [
   { id: "curriculum", label: "커리큘럼" },
   { id: "process", label: "신청 방법" },
   { id: "location", label: "부가 정보" },
-  { id: "resources", label: "관련 자료" },
 ];
+
+const SECTION_IDS = NAV_ITEMS.map((item) => item.id);
 
 export function StudyDetailNavigation({
   studyName,
   onApply,
   isApplyDisabled = false,
 }: StudyDetailNavigationProps) {
-  const [activeSection, setActiveSection] = useState<string>("overview");
+  const activeSection = useScrollSpy(SECTION_IDS, { offset: 150 });
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = NAV_ITEMS.map((item) => ({
-        id: item.id,
-        element: document.getElementById(item.id),
-      }));
-
-      const scrollPosition = window.scrollY + 150;
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        if (section.element) {
-          const offsetTop = section.element.offsetTop;
-          if (scrollPosition >= offsetTop) {
-            setActiveSection(section.id);
-            break;
-          }
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
+  // 각 섹션에 scroll-mt가 지정되어 있어 scrollIntoView가 여백까지 처리한다.
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const offsetTop = element.offsetTop - 100;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: "smooth",
-      });
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
