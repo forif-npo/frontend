@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">FORIF 커뮤니티 배너</title>
+  <desc id="description">데스크톱 화면을 위한 FORIF 커뮤니티 배너입니다.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1200" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#03163A"/>
+      <stop offset="0.52" stop-color="#0B50D0"/>
+      <stop offset="1" stop-color="#86AFF9"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="674" y1="36" x2="1113" y2="264" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="white" stop-opacity="0.08"/>
+    </linearGradient>
+    <filter id="shadow" x="602" y="8" width="550" height="284" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#03163A" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="300" fill="url(#background)"/>
+  <circle cx="111" cy="-8" r="140" fill="#D8E5FD" fill-opacity="0.18"/>
+  <circle cx="1175" cy="280" r="180" fill="#052561" fill-opacity="0.26"/>
+  <text x="70" y="76" fill="white" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3.5">FORIF COMMUNITY</text>
+  <text x="70" y="134" fill="white" font-family="Arial, sans-serif" font-size="44" font-weight="700">MAKE IT</text>
+  <text x="70" y="184" fill="#D8E5FD" font-family="Arial, sans-serif" font-size="44" font-weight="700">TOGETHER</text>
+  <text x="70" y="226" fill="white" fill-opacity="0.82" font-family="Arial, sans-serif" font-size="18">Study, build, and grow with FORIF.</text>
+  <g filter="url(#shadow)">
+    <rect x="636" y="30" width="480" height="240" rx="36" fill="url(#glass)" stroke="white" stroke-opacity="0.38"/>
+    <circle cx="774" cy="150" r="54" stroke="white" stroke-opacity="0.72" stroke-width="2"/>
+    <circle cx="982" cy="106" r="34" stroke="white" stroke-opacity="0.7" stroke-width="2"/>
+    <circle cx="991" cy="200" r="46" stroke="white" stroke-opacity="0.72" stroke-width="2"/>
+    <path d="M828 136L948 112M826 172L945 198M982 140L989 160" stroke="white" stroke-opacity="0.76" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="774" cy="150" r="14" fill="white"/>
+    <circle cx="982" cy="106" r="9" fill="#D8E5FD"/>
+    <circle cx="991" cy="200" r="12" fill="#D8E5FD"/>
+  </g>
+  <text x="1078" y="252" fill="white" font-family="Arial, sans-serif" font-size="22" font-style="italic" font-weight="700">forif</text>
+</svg>

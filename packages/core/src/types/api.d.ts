@@ -501,7 +501,7 @@ export interface StudyCreationRequest {
   selection_criteria: string;
   requires_interview: boolean;
   interview_date: string | null; // ISO 8601
-  study_tag_ids: number[];
+  study_tag_id: number[];
   study_plan_list: StudyPlanInput[]; // Use Input type for requests
   references: ReferenceInput[]; // Use Input type for requests
   secondary_mentor_id?: number;

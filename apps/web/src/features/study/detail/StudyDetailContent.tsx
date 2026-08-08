@@ -5,6 +5,7 @@ import { Badge } from "@ui/components/server";
 import { Study } from "@/types/study";
 import { KakaoMap } from "@/components/KakaoMap";
 import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
+import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
 import {
   formatStudyTimeRange,
   getDifficultyLabel,
@@ -12,6 +13,7 @@ import {
   getRecruitStatusBadgeVariant,
   getWeekDayLabel,
 } from "@/constants/study";
+import { getStudyTagLabel } from "@/constants/study-tags";
 import Link from "next/link";
 
 function ChevronDownIcon({ className }: { className?: string }) {
@@ -36,6 +38,19 @@ function ChevronDownIcon({ className }: { className?: string }) {
 
 interface StudyDetailContentProps {
   study: Study;
+}
+
+function splitPlanContent(content: string | null | undefined) {
+  const contents = (content ?? "")
+    .split(";")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  return contents.length > 0 ? contents : [""];
+}
+
+function formatPlanDate(date: string | null) {
+  return date?.match(/^\d{4}-\d{2}-\d{2}/)?.[0] ?? "";
 }
 
 function LocationIcon({ className }: { className?: string }) {
@@ -120,7 +135,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
                   {study.tags.map((tag, index) => (
                     <Badge
                       key={index}
-                      label={tag}
+                      label={getStudyTagLabel(tag)}
                       variant="primary"
                       appearance="solid-pastel"
                       size="medium"
@@ -228,35 +243,43 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
           </h2>
 
           <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
-            <div className="min-w-[400px]">
-              <div className="flex">
-                <div className="text-text-bolder w-[64px] shrink-0 border-b border-[#d6e0eb] bg-[#eef2f7] px-3 py-2 text-[14px] font-bold leading-[1.5] md:w-[80px] md:px-4 md:text-[15px]">
-                  주차
-                </div>
-                <div className="text-text-bolder flex-1 border-b border-[#d6e0eb] bg-[#eef2f7] px-3 py-2 text-[14px] font-bold leading-[1.5] md:px-4 md:text-[15px]">
-                  주제
-                </div>
-                {visiblePlans.some((p) => p.content) && (
-                  <div className="text-text-bolder flex-1 border-b border-[#d6e0eb] bg-[#eef2f7] px-3 py-2 text-[14px] font-bold leading-[1.5] md:px-4 md:text-[15px]">
-                    내용
-                  </div>
+            <div className="min-w-[520px]">
+              <StudyCurriculumTable
+                rows={visiblePlans.map((plan) => ({
+                  id: plan.id,
+                  week: plan.week_num,
+                  contents: splitPlanContent(plan.content),
+                }))}
+                renderDateInput={(weekIndex, inputClassName) => (
+                  <span className={inputClassName}>
+                    {formatPlanDate(visiblePlans[weekIndex]?.date ?? null)}
+                  </span>
                 )}
-              </div>
-              {visiblePlans.map((plan) => (
-                <div key={plan.id} className="flex">
-                  <div className="text-text-subtle w-[64px] shrink-0 border-b border-[#cdd1d5] bg-white px-3 py-2 text-[15px] leading-[1.5] md:w-[80px] md:px-4 md:py-3 md:text-[17px]">
-                    {plan.week_num}
-                  </div>
-                  <div className="text-text-subtle flex-1 border-b border-[#cdd1d5] bg-white px-3 py-2 text-[15px] leading-[1.5] md:px-4 md:py-3 md:text-[17px]">
-                    {plan.section === "." ? "" : plan.section}
-                  </div>
-                  {visiblePlans.some((p) => p.content) && (
-                    <div className="text-text-subtle flex-1 border-b border-[#cdd1d5] bg-white px-3 py-2 text-[15px] leading-[1.5] md:px-4 md:py-3 md:text-[17px]">
-                      {plan.content}
-                    </div>
-                  )}
-                </div>
-              ))}
+                renderTopicInput={(weekIndex, inputClassName) => (
+                  <span
+                    className={`${inputClassName} whitespace-pre-wrap break-words`}
+                  >
+                    {visiblePlans[weekIndex]?.section === "."
+                      ? ""
+                      : visiblePlans[weekIndex]?.section}
+                  </span>
+                )}
+                renderContentInput={(
+                  weekIndex,
+                  contentIndex,
+                  inputClassName,
+                ) => (
+                  <span
+                    className={`${inputClassName} whitespace-pre-wrap break-words`}
+                  >
+                    {
+                      splitPlanContent(visiblePlans[weekIndex]?.content ?? "")[
+                        contentIndex
+                      ]
+                    }
+                  </span>
+                )}
+              />
             </div>
           </div>
         </section>

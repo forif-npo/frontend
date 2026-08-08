@@ -9,6 +9,7 @@ import {
   getWeekDayLabel,
   NUMERIC_DIFFICULTY_LABELS,
 } from "@/constants/study";
+import { getStudyTagLabel } from "@/constants/study-tags";
 import type { Study, RecruitStatus, StudyDifficulty } from "@/types/study";
 import { Button } from "@ui/components/client";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
@@ -71,7 +72,8 @@ function getVisibleTagLabels(tags: unknown) {
 
   return tags
     .map((tag) => (typeof tag === "string" ? tag.trim() : ""))
-    .filter(Boolean);
+    .filter(Boolean)
+    .map(getStudyTagLabel);
 }
 
 function getVisibleDifficultyLabel(difficulty: unknown) {
@@ -104,7 +106,10 @@ export function StudyCard(props: StudyCardProps) {
 
   const studyName = study.study_name;
   const oneLiner = study.one_liner;
-  const imgUrl = study.img_url;
+  const imgUrl =
+    variant === "mypage"
+      ? study.img_url
+      : study.thumbnail_image || study.img_url;
   const primaryMentor = study.primary_mentor_name;
   const secondaryMentor = study.secondary_mentor_name;
 
@@ -152,7 +157,7 @@ export function StudyCard(props: StudyCardProps) {
               size="small"
             />
             <SemesterBadge label={`${s.act_year}-${s.act_semester}`} />
-            {tagLabels.slice(0, 1).map((tag) => (
+            {tagLabels.map((tag) => (
               <Badge
                 key={tag}
                 label={tag}
@@ -217,22 +222,15 @@ export function StudyCard(props: StudyCardProps) {
               size="small"
             />
             <SemesterBadge label={`${s.act_year}-${s.act_semester}`} />
-            {tagLabels[0] && (
+            {tagLabels.map((tag, index) => (
               <Badge
-                label={tagLabels[0]}
-                variant="danger"
+                key={tag}
+                label={tag}
+                variant={index === 0 ? "danger" : "primary"}
                 appearance="solid-pastel"
                 size="small"
               />
-            )}
-            {tagLabels[1] && (
-              <Badge
-                label={tagLabels[1]}
-                variant="primary"
-                appearance="solid-pastel"
-                size="small"
-              />
-            )}
+            ))}
             {difficultyLabel && (
               <Badge
                 label={difficultyLabel}
@@ -306,7 +304,7 @@ export function StudyCard(props: StudyCardProps) {
               size="small"
             />
             <SemesterBadge label={props.semesterLabel} />
-            {tagLabels.slice(0, 2).map((tag) => (
+            {tagLabels.map((tag) => (
               <Badge
                 key={tag}
                 label={tag}

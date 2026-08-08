@@ -11,7 +11,7 @@ export default async function Page() {
   }
 
   return (
-    <div className="min-h-viewport mx-auto mt-8 max-w-[800px] px-5 sm:px-6 lg:px-0">
+    <main className="mx-auto w-full max-w-[800px] px-5 py-12 sm:px-6 lg:px-0 lg:py-16">
       <Heading size="l" className="text-text-basic text-left">
         로그인 방식을 선택해주세요
       </Heading>
@@ -26,6 +26,6 @@ export default async function Page() {
       <section className="mt-10 w-full">
         <AuthHelpInfo action="로그인" />
       </section>
-    </div>
+    </main>
   );
 }

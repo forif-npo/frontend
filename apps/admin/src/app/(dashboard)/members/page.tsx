@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { getCurrentSemester } from "@core/semester/api";
 import { fetchMembers } from "./api";
 import { MembersView } from "./members-view";
 import { MemberSemesterLabel } from "./types";
@@ -20,7 +21,10 @@ export default async function Page({ searchParams }: PageProps) {
   const parsedPage = params.page ? parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
 
-  const session = await auth();
+  const [session, currentSemester] = await Promise.all([
+    auth(),
+    getCurrentSemester(),
+  ]);
   const accessToken = session?.access_token;
 
   if (!accessToken) {
@@ -50,6 +54,7 @@ export default async function Page({ searchParams }: PageProps) {
         totalPages={membersData.totalPages}
         pageSize={membersData.pageSize}
         initialSearch={search ?? ""}
+        activeSemesterLabel={currentSemester.label}
       />
     );
   } catch (error) {

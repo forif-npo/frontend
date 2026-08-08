@@ -185,7 +185,7 @@ export function AdminAccountsView({
     if (isSubmitting) return;
     if (
       !confirm(
-        `${account.name}(${account.user_id}) 운영진 계정을 삭제할까요?\n삭제 후에는 admin 페이지에 로그인할 수 없습니다.`,
+        `${account.name}(${account.user_id}) 운영진 계정을 삭제할까요?\n삭제 후에는 admin 페이지에 로그인할 수 없습니다. 부원 계정과 운영진 이력은 유지됩니다.`,
       )
     ) {
       return;

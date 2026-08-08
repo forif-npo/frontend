@@ -16,6 +16,9 @@ interface SettingsSectionProps {
   profile: UserProfile;
 }
 
+const MAX_PROFILE_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const PROFILE_IMAGE_TYPES = new Set(["image/jpeg", "image/jpg", "image/png"]);
+
 export function SettingsSection({ profile }: SettingsSectionProps) {
   const router = useRouter();
   const { isPending: isLoggingOut, logout } = useLogout();
@@ -31,6 +34,19 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    if (!PROFILE_IMAGE_TYPES.has(file.type)) {
+      setErrorMessage("JPG, JPEG, PNG 파일만 업로드할 수 있습니다.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_PROFILE_IMAGE_SIZE_BYTES) {
+      setErrorMessage("프로필 이미지는 최대 5MB까지 업로드할 수 있습니다.");
+      event.target.value = "";
+      return;
+    }
+
+    setErrorMessage(null);
     setImageFile(file);
     const reader = new FileReader();
     reader.onload = () => setImagePreview(reader.result as string);
@@ -87,7 +103,7 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
           {
             label: "계정 설정",
             content: (
-              <div className="pt-6 md:pt-8">
+              <div>
                 <section className="rounded-3 border-border-gray-light bg-surface-white border p-6 md:p-8">
                   <div className="flex max-w-[760px] flex-col gap-6">
                     <div className="grid gap-3 md:grid-cols-[112px_minmax(0,1fr)] md:items-start">
@@ -116,7 +132,8 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
                               변경
                             </label>
                             <HintText>
-                              JPG, JPEG, PNG 파일만 선택할 수 있습니다.
+                              JPG, JPEG, PNG 파일만 선택할 수 있으며, 최대
+                              5MB입니다.
                             </HintText>
                           </div>
                         )}

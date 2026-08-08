@@ -38,7 +38,7 @@ function MentorAddCard({
         <button
           type="button"
           onClick={onRemove}
-          className="flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-gray-100"
+          className="hover:bg-gray-5 active:bg-gray-10 flex h-9 w-9 items-center justify-center rounded-md transition-colors"
           aria-label="멘토 카드 제거"
         >
           <svg
