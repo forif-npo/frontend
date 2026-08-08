@@ -83,7 +83,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       )}
 
       {/* Mobile NavBar */}
-      <nav className="bg-surface-white/95 border-divider-gray-light fixed left-0 right-0 top-0 z-50 flex h-[64px] items-center justify-between gap-4 border-b px-4 backdrop-blur md:hidden">
+      <nav className="bg-surface-white/95 border-divider-gray-light fixed left-0 right-0 top-0 z-50 flex h-[64px] shrink-0 items-center justify-between gap-4 border-b px-4 backdrop-blur md:hidden">
         <Link href="/" className="flex items-center">
           <Image src={NAV_LOGO_SRC} width={62} height={40} alt="FORIF Logo" />
         </Link>
@@ -101,7 +101,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-[#f6f8fb] md:hidden">
           {/* Mobile Menu Header */}
-          <div className="bg-surface-white/95 border-divider-gray-light sticky top-0 z-10 flex h-[64px] items-center justify-between border-b px-4 backdrop-blur">
+          <div className="bg-surface-white/95 border-divider-gray-light sticky top-0 z-10 flex h-[64px] shrink-0 items-center justify-between gap-4 border-b px-4 backdrop-blur">
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
@@ -116,7 +116,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
             </Link>
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="border-border-gray-light bg-surface-white flex h-10 w-10 items-center justify-center rounded-full border"
+              className="flex h-10 w-10 items-center justify-center"
               aria-label="전체 메뉴 닫기"
             >
               <CloseIcon width={20} height={20} className="fill-text-basic" />
