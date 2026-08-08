@@ -79,30 +79,16 @@ export function StudyEditDialog({
             </div>
           )}
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="study-name">스터디명</Label>
-              <Input
-                id="study-name"
-                value={form.study_name}
-                disabled={isFormDisabled}
-                onChange={(event) =>
-                  onFieldChange("study_name", event.target.value)
-                }
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="study-sub-title">부제목</Label>
-              <Input
-                id="study-sub-title"
-                value={form.sub_title}
-                disabled={isFormDisabled}
-                onChange={(event) =>
-                  onFieldChange("sub_title", event.target.value)
-                }
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="study-name">스터디명</Label>
+            <Input
+              id="study-name"
+              value={form.study_name}
+              disabled={isFormDisabled}
+              onChange={(event) =>
+                onFieldChange("study_name", event.target.value)
+              }
+            />
           </div>
 
           <div className="space-y-2">

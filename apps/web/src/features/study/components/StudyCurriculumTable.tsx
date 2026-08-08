@@ -11,6 +11,7 @@ interface StudyCurriculumTableRow<TContent> {
 
 interface StudyCurriculumTableProps<TContent> {
   rows: readonly StudyCurriculumTableRow<TContent>[];
+  showDateColumn?: boolean;
   renderDateInput: (weekIndex: number, inputClassName: string) => ReactNode;
   renderTopicInput: (weekIndex: number, inputClassName: string) => ReactNode;
   renderContentInput: (
@@ -38,10 +39,9 @@ const CONTENT_ROW_CLASS = "flex items-start";
 const TABLE_INPUT_CLASS =
   "block w-full rounded border border-transparent px-2 py-0 text-[15px] leading-[1.5] text-text-basic outline-none placeholder:text-text-disabled focus:border-primary-50";
 
-const TABLE_COLUMN_COUNT = 5;
-
 export function StudyCurriculumTable<TContent>({
   rows,
+  showDateColumn = true,
   renderDateInput,
   renderTopicInput,
   renderContentInput,
@@ -52,13 +52,15 @@ export function StudyCurriculumTable<TContent>({
   addContentLabel = "+ 내용 추가",
   addWeekLabel = "+ 주차 추가",
 }: StudyCurriculumTableProps<TContent>) {
+  const tableColumnCount = showDateColumn ? 5 : 4;
+
   return (
     <div className="w-full">
       <table className="w-full table-fixed border-collapse">
         <colgroup>
           <col className="w-[24px]" />
           <col className="w-[36px]" />
-          <col className="w-[100px]" />
+          {showDateColumn && <col className="w-[120px]" />}
           <col className="w-[240px]" />
           <col />
         </colgroup>
@@ -67,9 +69,11 @@ export function StudyCurriculumTable<TContent>({
             <th scope="col" colSpan={2} className={HEADER_CELL_CLASS}>
               주차
             </th>
-            <th scope="col" className={HEADER_CELL_CLASS}>
-              진행 날짜
-            </th>
+            {showDateColumn && (
+              <th scope="col" className={HEADER_CELL_CLASS}>
+                진행 날짜
+              </th>
+            )}
             <th scope="col" className={HEADER_CELL_CLASS}>
               주제
             </th>
@@ -118,9 +122,11 @@ export function StudyCurriculumTable<TContent>({
                           >
                             {row.week}
                           </td>
-                          <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
-                            {renderDateInput(weekIndex, TABLE_INPUT_CLASS)}
-                          </td>
+                          {showDateColumn && (
+                            <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
+                              {renderDateInput(weekIndex, TABLE_INPUT_CLASS)}
+                            </td>
+                          )}
                           <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
                             {renderTopicInput(weekIndex, TABLE_INPUT_CLASS)}
                           </td>
@@ -169,7 +175,7 @@ export function StudyCurriculumTable<TContent>({
           {onAddWeek && (
             <tr>
               <td
-                colSpan={TABLE_COLUMN_COUNT}
+                colSpan={tableColumnCount}
                 className="border-gray-10 bg-surface-white border-b px-4 py-0"
               >
                 <div className="flex min-h-[40px] items-center justify-start">

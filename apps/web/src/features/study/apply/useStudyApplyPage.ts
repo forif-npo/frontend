@@ -32,7 +32,8 @@ export function useStudyApplyPage(studyId: string) {
   const goToNext = () => setStep(2);
   const goToPrevious = () => setStep(1);
   const goToStudyList = () => router.push("/studies/list");
-  const goToApplications = () => router.push("/my/applications");
+  const goToApplications = () =>
+    router.push(`/my?tab=applications&study_id=${studyId}`);
 
   const handleSubmit = async (
     _: ActionState,

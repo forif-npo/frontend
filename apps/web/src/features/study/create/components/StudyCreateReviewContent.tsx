@@ -116,7 +116,7 @@ export function StudyCreateReviewContent({
               value={<ReviewText value={values.studyName} />}
             />
             <InfoRow
-              label="한 줄 설명"
+              label="한 줄 소개"
               value={<ReviewText value={values.oneLiner} />}
             />
             <tr>

@@ -14,6 +14,7 @@ import type {
 
 interface ApplicationSectionProps {
   applicationsData: StudyApplicationsResponse;
+  targetStudyId?: number;
 }
 
 type FlatApplication = ApplicationDetail & {
@@ -25,10 +26,9 @@ type FlatApplication = ApplicationDetail & {
 
 export function ApplicationSection({
   applicationsData,
+  targetStudyId,
 }: ApplicationSectionProps) {
   const [sortOrder, setSortOrder] = useState<StudySortOrder>("latest");
-  const [selectedApplication, setSelectedApplication] =
-    useState<FlatApplication | null>(null);
 
   const allApplications = applicationsData.applications.flatMap((app) => {
     const items: FlatApplication[] = [
@@ -52,6 +52,17 @@ export function ApplicationSection({
     return items;
   });
 
+  const [selectedApplication, setSelectedApplication] =
+    useState<FlatApplication | null>(() =>
+      targetStudyId
+        ? (allApplications.find(
+            (application) =>
+              application.priority === "PRIMARY" &&
+              application.study.study_id === targetStudyId,
+          ) ?? null)
+        : null,
+    );
+
   const sortedApplications = [...allApplications].sort((a, b) => {
     const dateA = new Date(a.apply_date).getTime();
     const dateB = new Date(b.apply_date).getTime();
@@ -72,7 +83,8 @@ export function ApplicationSection({
       <div className="mb-4 flex items-center justify-between">
         <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
           지원서{" "}
-          <span className="text-[#0b50d0]">{sortedApplications.length}</span>개
+          <span className="text-text-primary">{sortedApplications.length}</span>
+          개
         </p>
         <StudySortControl value={sortOrder} onChange={setSortOrder} />
       </div>

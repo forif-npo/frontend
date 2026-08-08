@@ -19,8 +19,8 @@ export function StudyApplySkeleton() {
         </div>
 
         <div className="flex flex-col gap-6 sm:gap-10">
-          <div className="flex flex-col gap-6 rounded-[12px] border border-[#d6e0eb] bg-[#eef2f7] p-5 sm:p-10">
-            <div className="flex flex-col gap-6 border-b border-dashed border-[#b1b8be] pb-6">
+          <div className="border-border-secondary-light bg-surface-gray-subtle flex flex-col gap-6 rounded-[12px] border p-5 sm:p-10">
+            <div className="border-border-gray flex flex-col gap-6 border-b border-dashed pb-6">
               <Bone className="h-8 w-40" />
               <div className="space-y-2">
                 <Bone className="h-5 w-full" />
@@ -33,7 +33,7 @@ export function StudyApplySkeleton() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
+          <div className="border-border-gray bg-surface-white flex flex-col gap-6 rounded-[12px] border p-5 sm:p-10">
             <Bone className="h-8 w-72" />
             <div className="flex flex-col gap-6">
               {[1, 2, 3, 4].map((i) => (

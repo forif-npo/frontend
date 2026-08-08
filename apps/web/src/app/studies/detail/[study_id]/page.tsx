@@ -45,17 +45,12 @@ export default function StudyDetailPage({ params }: Props) {
 
   return (
     <div className="px-4 md:px-6">
-      <div className="mb-8 flex flex-col gap-2 md:mb-12 md:gap-4">
+      <div className="mb-12 flex flex-col gap-2 md:mb-16 md:gap-4">
         <h1 className="text-[24px] font-bold leading-[1.3] tracking-[-0.5px] md:text-[40px]">
           <span className="text-secondary">{study.study_name}</span>
         </h1>
-        {study.sub_title && (
-          <p className="text-text-basic text-[22px] font-semibold leading-[1.6] md:text-[28px]">
-            {study.sub_title}
-          </p>
-        )}
         {study.one_liner && (
-          <p className="text-text-subtle text-[14px] leading-[1.6] md:text-[17px]">
+          <p className="rounded-lg bg-sky-100 px-4 py-3 text-[15px] font-medium leading-[1.6] text-sky-900 md:text-[19px]">
             {study.one_liner}
           </p>
         )}

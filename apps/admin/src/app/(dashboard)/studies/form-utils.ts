@@ -42,7 +42,6 @@ export const toStudyEditForm = (
   detail?: AdminStudyDetail,
 ): StudyEditForm => ({
   study_name: detail?.study_name ?? study.study_name ?? "",
-  sub_title: detail?.sub_title ?? "",
   one_liner: detail?.one_liner ?? study.one_liner ?? "",
   explanation: detail?.explanation ?? "",
   goal: detail?.goal ?? "",
