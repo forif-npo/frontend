@@ -90,8 +90,8 @@ export const NAV_MENUS: NavMenu[] = [
     ],
   },
   {
-    label: "지원",
-    title: "FORIF 지원 관련 정보를 확인할 수 있습니다.",
+    label: "공지",
+    title: "FORIF 공지 관련 정보를 확인할 수 있습니다.",
     href: "/support",
     subMenus: [
       { label: "자주 묻는 질문", href: "/support/faqs" },
