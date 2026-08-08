@@ -4,7 +4,10 @@ import { motion } from "motion/react";
 import { Body, Title } from "@ui/components/server";
 
 const history: { year: number; content: string[] }[] = [
-  { year: 2026, content: ["FORIF 웹 리뉴얼", "제 1회 초청 강연"] },
+  {
+    year: 2026,
+    content: ["SKYSH 해커톤 개최", "FORIF 웹 리뉴얼", "제 1회 초청 강연"],
+  },
   { year: 2025, content: ["포리프 10주년 기념 행사", "제 15·16회 해커톤"] },
   {
     year: 2024,
