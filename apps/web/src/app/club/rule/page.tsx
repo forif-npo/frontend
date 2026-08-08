@@ -18,7 +18,7 @@ export default function RulePage() {
 
     if (section) {
       window.scrollTo({
-        top: section.offsetTop - 112,
+        top: section.getBoundingClientRect().top + window.scrollY - 112,
         behavior: "smooth",
       });
     }
