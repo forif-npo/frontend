@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Tabs } from "@ui/components/client";
 import { Body, Heading } from "@ui/components/server";
 import { ProfileSidebar } from "@/features/my-page/ProfileSidebar";
@@ -28,7 +29,10 @@ export function MyPageClient({
   applicationsData,
   createdStudies,
 }: MyPageClientProps) {
+  const searchParams = useSearchParams();
   const [activeNav, setActiveNav] = useState("my-studies");
+  const isApplicationsTab = searchParams.get("tab") === "applications";
+  const targetStudyId = Number(searchParams.get("study_id")) || undefined;
   const pageHeader =
     activeNav === "study-manage"
       ? {
@@ -58,7 +62,10 @@ export function MyPageClient({
       label: "지원서 보기",
       content: (
         <div>
-          <ApplicationSection applicationsData={applicationsData} />
+          <ApplicationSection
+            applicationsData={applicationsData}
+            targetStudyId={targetStudyId}
+          />
         </div>
       ),
     },
@@ -96,7 +103,10 @@ export function MyPageClient({
           <SettingsSection profile={profile} />
         ) : (
           <>
-            <Tabs tabs={tabs} />
+            <Tabs
+              tabs={tabs}
+              initialSelectedIndex={isApplicationsTab ? 1 : 0}
+            />
           </>
         )}
       </div>

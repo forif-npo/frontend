@@ -29,7 +29,7 @@ export function ApplicationCard({
   return (
     <div className="rounded-3 border-border-gray-light bg-surface-white flex h-full min-w-[240px] flex-col overflow-hidden border">
       {/* Study Image */}
-      <div className="relative h-[196px] w-full bg-[#dfe8f4]">
+      <div className="bg-surface-gray-subtle relative h-[196px] w-full">
         <StudyImage
           src={study.img_url}
           alt={study.study_name}
@@ -48,12 +48,18 @@ export function ApplicationCard({
             appearance="solid-pastel"
             size="small"
           />
-          <span className="inline-flex h-[24px] items-center justify-center rounded-[4px] bg-[#e7f4fe] px-2 text-[15px] leading-[1.5] text-[#096ab3]">
-            {priorityLabel}
-          </span>
-          <span className="inline-flex h-[24px] items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2 text-[15px] leading-[1.5] text-[#0b50d0]">
-            {difficultyLabel}
-          </span>
+          <Badge
+            label={priorityLabel}
+            variant="info"
+            appearance="solid-pastel"
+            size="small"
+          />
+          <Badge
+            label={difficultyLabel}
+            variant="primary"
+            appearance="solid-pastel"
+            size="small"
+          />
         </div>
 
         {/* Study Title */}

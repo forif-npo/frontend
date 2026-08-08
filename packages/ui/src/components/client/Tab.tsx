@@ -10,6 +10,7 @@ export interface TabProps {
 
 interface TabsProps {
   tabs: TabProps[];
+  initialSelectedIndex?: number;
 }
 
 const Tab: React.FC<{
@@ -72,8 +73,11 @@ const TabPanel: React.FC<{
   );
 };
 
-export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
-  const [selectedTab, setSelectedTab] = useState(0);
+export const Tabs: React.FC<TabsProps> = ({
+  tabs,
+  initialSelectedIndex = 0,
+}) => {
+  const [selectedTab, setSelectedTab] = useState(initialSelectedIndex);
 
   return (
     <div className="w-full">

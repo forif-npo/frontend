@@ -32,13 +32,13 @@ export function StudyApplyComplete({
     <div className="mx-auto flex w-full max-w-[792px] flex-col items-center gap-12 pb-16 pt-10">
       {/* Title */}
       <h1 className="text-center text-[40px] font-bold leading-[1.5]">
-        <span className="text-[#0b50d0]">{studyName}</span>
+        <span className="text-text-primary">{studyName}</span>
         <br />
         <span className="text-text-bolder">스터디 지원이 완료되었습니다.</span>
       </h1>
 
       {/* Detail Card */}
-      <div className="w-full rounded-xl bg-[#eef2f7] p-10">
+      <div className="bg-surface-gray-subtle w-full rounded-xl p-10">
         <div className="flex flex-col gap-6">
           {/* 신청 부원 정보 */}
           <div className="flex gap-3">
