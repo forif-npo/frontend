@@ -347,65 +347,62 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
 
           <KakaoMap placeName={study.location} />
         </div>
-      </section>
 
-      {references.length > 0 && (
-        <section
-          id="resources"
-          className="flex scroll-mt-[120px] flex-col gap-6"
-        >
-          <h2 className="text-text-bolder text-[20px] font-bold leading-[1.5] md:text-[24px]">
-            관련 자료
-          </h2>
+        {references.length > 0 && (
+          <div className="flex flex-col gap-3 md:gap-4">
+            <h3 className="text-text-basic text-[15px] font-bold leading-[1.5] md:text-[17px]">
+              관련 자료
+            </h3>
 
-          <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
-            <div className="min-w-[360px] overflow-hidden rounded-[8px] border border-[#e5e8eb]">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-[#f4f5f6]">
-                    <th className="text-text-subtle px-3 py-3 text-left text-[14px] font-bold leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
-                      제목
-                    </th>
-                    {references.some((r) => r.category) && (
-                      <th className="text-text-subtle w-[80px] px-3 py-3 text-right text-[14px] font-bold leading-[1.5] md:w-[120px] md:px-6 md:py-4 md:text-[15px]">
-                        분류
+            <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+              <div className="min-w-[360px] overflow-hidden rounded-[8px] border border-[#e5e8eb]">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-[#f4f5f6]">
+                      <th className="text-text-subtle px-3 py-3 text-left text-[14px] font-bold leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
+                        제목
                       </th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#e5e8eb]">
-                  {references.map((resource, index) => (
-                    <tr
-                      key={index}
-                      className="cursor-pointer hover:bg-[#f8f9fa]"
-                    >
-                      <td className="text-text-basic px-3 py-3 text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
-                        {resource.url ? (
-                          <Link
-                            href={resource.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="cursor-pointer hover:underline"
-                          >
-                            {resource.title}
-                          </Link>
-                        ) : (
-                          resource.title
-                        )}
-                      </td>
                       {references.some((r) => r.category) && (
-                        <td className="text-text-subtle px-3 py-3 text-right text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
-                          {resource.category}
-                        </td>
+                        <th className="text-text-subtle w-[80px] px-3 py-3 text-right text-[14px] font-bold leading-[1.5] md:w-[120px] md:px-6 md:py-4 md:text-[15px]">
+                          분류
+                        </th>
                       )}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-[#e5e8eb]">
+                    {references.map((resource, index) => (
+                      <tr
+                        key={index}
+                        className="cursor-pointer hover:bg-[#f8f9fa]"
+                      >
+                        <td className="text-text-basic px-3 py-3 text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
+                          {resource.url ? (
+                            <Link
+                              href={resource.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="cursor-pointer hover:underline"
+                            >
+                              {resource.title}
+                            </Link>
+                          ) : (
+                            resource.title
+                          )}
+                        </td>
+                        {references.some((r) => r.category) && (
+                          <td className="text-text-subtle px-3 py-3 text-right text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
+                            {resource.category}
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </section>
-      )}
+        )}
+      </section>
     </div>
   );
 }

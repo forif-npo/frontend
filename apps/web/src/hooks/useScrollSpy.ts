@@ -23,7 +23,13 @@ export function useScrollSpy(
       for (const id of sectionIds) {
         const section = document.getElementById(id);
 
-        if (section && scrollPosition >= section.offsetTop) {
+        if (!section) continue;
+
+        // offsetTop은 루트에 걸린 zoom이 반영되지 않아 scrollY와 좌표계가 어긋난다.
+        // 문서 기준 좌표로 변환해 비교한다.
+        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+
+        if (scrollPosition >= sectionTop) {
           nextActiveId = id;
         }
       }
