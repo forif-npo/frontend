@@ -46,6 +46,7 @@ interface MyPageVariantProps {
     certificate_issued: boolean;
     tags: string[];
     difficulty: number;
+    thumbnail_image: string | null;
   };
   semesterLabel: string;
   isCurrent?: boolean;
@@ -108,7 +109,7 @@ export function StudyCard(props: StudyCardProps) {
   const oneLiner = study.one_liner;
   const imgUrl =
     variant === "mypage"
-      ? study.img_url
+      ? study.thumbnail_image || study.img_url
       : study.thumbnail_image || study.img_url;
   const primaryMentor = study.primary_mentor_name;
   const secondaryMentor = study.secondary_mentor_name;
