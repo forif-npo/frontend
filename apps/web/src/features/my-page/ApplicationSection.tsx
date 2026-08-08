@@ -29,28 +29,33 @@ export function ApplicationSection({
   targetStudyId,
 }: ApplicationSectionProps) {
   const [sortOrder, setSortOrder] = useState<StudySortOrder>("latest");
+  const [cancelledApplicationIds, setCancelledApplicationIds] = useState<
+    Set<number>
+  >(new Set());
 
-  const allApplications = applicationsData.applications.flatMap((app) => {
-    const items: FlatApplication[] = [
-      {
-        ...app.primary_application,
-        apply_date: app.apply_date,
-        apply_year: app.apply_year,
-        apply_semester: app.apply_semester,
-        user_apply_id: app.user_apply_id,
-      },
-    ];
-    if (app.secondary_application) {
-      items.push({
-        ...app.secondary_application,
-        apply_date: app.apply_date,
-        apply_year: app.apply_year,
-        apply_semester: app.apply_semester,
-        user_apply_id: app.user_apply_id,
-      });
-    }
-    return items;
-  });
+  const allApplications = applicationsData.applications
+    .filter((app) => !cancelledApplicationIds.has(app.user_apply_id))
+    .flatMap((app) => {
+      const items: FlatApplication[] = [
+        {
+          ...app.primary_application,
+          apply_date: app.apply_date,
+          apply_year: app.apply_year,
+          apply_semester: app.apply_semester,
+          user_apply_id: app.user_apply_id,
+        },
+      ];
+      if (app.secondary_application) {
+        items.push({
+          ...app.secondary_application,
+          apply_date: app.apply_date,
+          apply_year: app.apply_year,
+          apply_semester: app.apply_semester,
+          user_apply_id: app.user_apply_id,
+        });
+      }
+      return items;
+    });
 
   const [selectedApplication, setSelectedApplication] =
     useState<FlatApplication | null>(() =>
@@ -69,11 +74,30 @@ export function ApplicationSection({
     return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
   });
 
+  const canCancelSelectedApplication = selectedApplication
+    ? (() => {
+        const application = applicationsData.applications.find(
+          (item) => item.user_apply_id === selectedApplication.user_apply_id,
+        );
+        return (
+          application?.primary_application.status === 0 &&
+          (application.secondary_application === null ||
+            application.secondary_application.status === 0)
+        );
+      })()
+    : false;
+
   if (selectedApplication) {
     return (
       <ApplicationDetailView
         application={selectedApplication}
-        onBack={() => setSelectedApplication(null)}
+        canCancel={canCancelSelectedApplication}
+        onCancelled={() => {
+          setCancelledApplicationIds((applicationIds) =>
+            new Set(applicationIds).add(selectedApplication.user_apply_id),
+          );
+          setSelectedApplication(null);
+        }}
       />
     );
   }

@@ -233,6 +233,13 @@ export async function updateStudyApplication(
 }
 
 /**
+ * Cancel and delete the logged-in user's pending study application.
+ */
+export async function cancelStudyApplication(applyId: number): Promise<void> {
+  await apiClient.delete(`api/v1/users/apply/${applyId}`);
+}
+
+/**
  * Get user's study applications
  */
 export async function getStudyApplications(
