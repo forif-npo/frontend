@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { studyOpenSchema, StudyOpenValues } from "@core/schemas";
+import { handleApiError } from "@core/utils/api-client";
 import { useStudyCreateData } from "./useStudyCreateData";
 import { submitStudyCreate } from "./actions";
 import {
@@ -161,8 +162,9 @@ export function useStudyCreatePage() {
         });
         return;
       }
+      const errorMessage = await handleApiError(err);
       setStudyCreateAlert({
-        description: "제출에 실패했습니다. 작성 내용은 임시저장되었습니다.",
+        description: `${errorMessage} 작성 내용은 임시저장되었습니다.`,
       });
     }
   }, [form]);

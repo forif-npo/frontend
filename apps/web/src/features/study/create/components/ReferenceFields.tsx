@@ -12,7 +12,7 @@ import { Controller, type UseFormReturn } from "react-hook-form";
 import { useState } from "react";
 import { REFERENCE_TYPE_OPTIONS } from "../constants";
 
-const REFERENCE_FILE_MAX_SIZE_MB = 50;
+const REFERENCE_FILE_MAX_SIZE_MB = 5;
 const REFERENCE_FILE_MAX_SIZE_BYTES = REFERENCE_FILE_MAX_SIZE_MB * 1024 * 1024;
 
 interface ReferenceFieldsProps {
