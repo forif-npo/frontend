@@ -38,7 +38,7 @@ type UseStudyApplyDataReturn = {
   error: Error | null;
 };
 
-export function useStudyApplyData(studyId: string): UseStudyApplyDataReturn {
+export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
   const router = useRouter();
   const [currentStudy, setCurrentStudy] = useState<Study | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -51,25 +51,26 @@ export function useStudyApplyData(studyId: string): UseStudyApplyDataReturn {
       try {
         setIsLoading(true);
         setError(null);
+        setCurrentStudy(null);
 
-        const [userResponse, studyResponse, studiesResponse] =
-          await Promise.all([
-            apiClient.get("api/v1/users/me").json<ApiResponse<ApiUserInfo>>(),
+        const [userResponse, studiesResponse] = await Promise.all([
+          apiClient.get("api/v1/users/me").json<ApiResponse<ApiUserInfo>>(),
+          apiClient
+            .get("api/v1/studies", {
+              searchParams: {
+                page: "0",
+                size: "100",
+                recruit_status: "APPLICABLE",
+              },
+            })
+            .json<ApiResponse<PaginatedStudies>>(),
+        ]);
 
-            apiClient
+        const studyResponse = studyId
+          ? await apiClient
               .get(`api/v1/studies/${studyId}`)
-              .json<ApiResponse<Study>>(),
-
-            apiClient
-              .get("api/v1/studies", {
-                searchParams: {
-                  page: "0",
-                  size: "100",
-                  recruit_status: "APPLICABLE",
-                },
-              })
-              .json<ApiResponse<PaginatedStudies>>(),
-          ]);
+              .json<ApiResponse<Study>>()
+          : null;
 
         if (userResponse.data) {
           setUserInfo({
@@ -80,24 +81,22 @@ export function useStudyApplyData(studyId: string): UseStudyApplyDataReturn {
           });
         }
 
-        if (studyResponse.data) {
+        if (studyResponse?.data) {
           setCurrentStudy(studyResponse.data);
         }
 
         if (studiesResponse.data) {
           const studies = studiesResponse.data.content ?? [];
-          const options = studies
-            .filter((study) => study.id !== parseInt(studyId))
-            .map((study) => ({
-              value: String(study.id),
-              label: study.study_name,
-            }));
+          const options = studies.map((study) => ({
+            value: String(study.id),
+            label: study.study_name,
+          }));
           setStudyOptions(options);
         }
       } catch (err) {
         if (err instanceof HTTPError && err.response.status === 401) {
           router.replace(
-            `/signin?callbackUrl=/studies/detail/${studyId}/apply`,
+            `/signin?callbackUrl=${studyId ? `/studies/detail/${studyId}/apply` : "/studies/apply"}`,
           );
           return;
         }

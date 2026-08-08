@@ -21,10 +21,10 @@ export default function StudyDetailPage({ params }: Props) {
 
   const handleApply = () => {
     if (!session?.accessToken) {
-      router.push(`/signin?callbackUrl=/studies/detail/${study_id}/apply`);
+      router.push(`/signin?callbackUrl=/studies/apply?study_id=${study_id}`);
       return;
     }
-    router.push(`/studies/detail/${study_id}/apply`);
+    router.push(`/studies/apply?study_id=${study_id}`);
   };
 
   if (isLoading) {
