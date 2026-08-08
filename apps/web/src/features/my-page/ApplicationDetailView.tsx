@@ -1,8 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@ui/components/client";
 import { Badge, CharacterCount } from "@ui/components/server";
-import type { ApplicationDetail } from "@core/my-page/api";
+import {
+  type ApplicationDetail,
+  updateStudyApplication,
+} from "@core/my-page/api";
+import { handleApiError } from "@core/utils/api-client";
 import {
   NUMERIC_DIFFICULTY_LABELS,
   APPLICATION_STATUS_LABELS,
@@ -27,8 +32,39 @@ export function ApplicationDetailView({
   const priorityLabel = priority === "PRIMARY" ? "1순위" : "2순위";
   const difficultyLabel = NUMERIC_DIFFICULTY_LABELS[study.difficulty] ?? "보통";
   const statusLabel = APPLICATION_STATUS_LABELS[status] ?? "지원중";
-  const applicationIntro = intro ?? "";
-  const charCount = applicationIntro.length;
+  const initialIntro = intro ?? "";
+  const [savedIntro, setSavedIntro] = useState(initialIntro);
+  const [draftIntro, setDraftIntro] = useState(initialIntro);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const isPending = status === 0;
+  const hasChanged = draftIntro !== savedIntro;
+
+  const handleSubmit = async () => {
+    if (draftIntro.length < 50 || draftIntro.length > 500) {
+      setSubmitError("지원 사유는 50자 이상 500자 이내로 작성해주세요.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+
+    try {
+      await updateStudyApplication(application.user_apply_id, {
+        study_id: study.study_id,
+        apply_reason: draftIntro,
+        priority: priority === "PRIMARY" ? 1 : 2,
+      });
+      setSavedIntro(draftIntro);
+      setSubmitSuccess("지원서가 수정되었습니다.");
+    } catch (error) {
+      setSubmitError(await handleApiError(error));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -103,12 +139,40 @@ export function ApplicationDetailView({
                 해당 스터디를 수강하고 싶은 사유를 작성해주세요. 최소 50자 이상,
                 최대 500자 이내로 작성해주세요.
               </p>
-              <div className="border-border-gray-dark bg-surface-white h-[300px] overflow-y-auto rounded-md border px-4 py-2">
-                <p className="text-text-basic text-[17px] leading-[1.5]">
-                  {applicationIntro}
+              <textarea
+                id={`application-intro-${application.user_apply_id}-${priority}`}
+                value={draftIntro}
+                onChange={(event) => {
+                  setDraftIntro(event.target.value);
+                  setSubmitError(null);
+                  setSubmitSuccess(null);
+                }}
+                readOnly={!isPending || isSubmitting}
+                maxLength={500}
+                aria-describedby={
+                  submitError ? "application-intro-error" : undefined
+                }
+                className="border-border-gray-dark bg-surface-white text-text-basic focus:border-border-primary focus:ring-border-primary h-[300px] resize-none rounded-md border px-4 py-2 text-[17px] leading-[1.5] read-only:cursor-default focus:outline-none focus:ring-1"
+              />
+              <CharacterCount count={draftIntro.length} max={500} />
+              {!isPending && (
+                <p className="text-text-subtle text-[13px] leading-[1.5]">
+                  대기 중인 신청서만 수정할 수 있습니다.
                 </p>
-              </div>
-              <CharacterCount count={charCount} max={500} />
+              )}
+              {submitError && (
+                <p
+                  id="application-intro-error"
+                  className="text-text-danger text-[13px] leading-[1.5]"
+                >
+                  {submitError}
+                </p>
+              )}
+              {submitSuccess && (
+                <p className="text-text-success text-[13px] leading-[1.5]">
+                  {submitSuccess}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -118,8 +182,13 @@ export function ApplicationDetailView({
           <Button variant="tertiary" onClick={onBack} size="large">
             취소
           </Button>
-          <Button variant="primary" size="large">
-            수정
+          <Button
+            variant="primary"
+            size="large"
+            disabled={!isPending || !hasChanged || isSubmitting}
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? "수정 중..." : "수정"}
           </Button>
         </div>
       </div>

@@ -216,6 +216,22 @@ export interface StudyApplicationsResponse {
   applications: StudyApplication[];
 }
 
+export interface UpdateStudyApplicationRequest {
+  study_id: number;
+  apply_reason: string;
+  priority: 1 | 2;
+}
+
+/**
+ * Update one of the logged-in user's pending study applications.
+ */
+export async function updateStudyApplication(
+  applyId: number,
+  request: UpdateStudyApplicationRequest,
+): Promise<void> {
+  await apiClient.patch(`api/v1/users/apply/${applyId}`, { json: request });
+}
+
 /**
  * Get user's study applications
  */
