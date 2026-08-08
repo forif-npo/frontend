@@ -103,6 +103,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
   const references = study.references ?? [];
 
   const visiblePlans = plans;
+  const hasPlanDates = visiblePlans.some((plan) => Boolean(plan.date));
 
   const mentorNames =
     study.mentors && study.mentors.length > 0
@@ -243,8 +244,9 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
           </h2>
 
           <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
-            <div className="min-w-[520px]">
+            <div className={hasPlanDates ? "min-w-[520px]" : "min-w-[420px]"}>
               <StudyCurriculumTable
+                showDateColumn={hasPlanDates}
                 rows={visiblePlans.map((plan) => ({
                   id: plan.id,
                   week: plan.week_num,
