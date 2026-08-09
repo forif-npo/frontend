@@ -80,14 +80,24 @@ const ITEMS_PER_PAGE = 8;
 
 export function QuickMenu() {
   const [currentPage, setCurrentPage] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"forward" | "backward">(
+    "forward",
+  );
   const totalPages = Math.ceil(QUICK_MENU_ITEMS.length / ITEMS_PER_PAGE);
 
   const handlePrev = () => {
+    setSlideDirection("backward");
     setCurrentPage((prev) => Math.max(0, prev - 1));
   };
 
   const handleNext = () => {
+    setSlideDirection("forward");
     setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
+  };
+
+  const handleSelectPage = (page: number) => {
+    setSlideDirection(page < currentPage ? "backward" : "forward");
+    setCurrentPage(page);
   };
 
   const swipeHandlers = useHorizontalSwipe({
@@ -119,7 +129,8 @@ export function QuickMenu() {
           />
 
           <div
-            className="flex min-w-0 flex-1 touch-pan-y flex-wrap justify-center gap-3"
+            key={currentPage}
+            className={`animate-banner-slide-${slideDirection} flex min-w-0 flex-1 touch-pan-y flex-wrap justify-center gap-3`}
             {...swipeHandlers}
           >
             {visibleItems.map((item) => (
@@ -159,7 +170,7 @@ export function QuickMenu() {
         <CarouselIndicators
           total={totalPages}
           current={currentPage}
-          onSelect={setCurrentPage}
+          onSelect={handleSelectPage}
         />
       </div>
     </div>

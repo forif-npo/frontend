@@ -11,6 +11,9 @@ import { StudyCard } from "@/components/study/ui/StudyCard";
 export function StudySection() {
   const { studies, loading, refetch } = useStudyData();
   const [currentPage, setCurrentPage] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"forward" | "backward">(
+    "forward",
+  );
 
   useEffect(() => {
     setCurrentPage(0);
@@ -33,11 +36,18 @@ export function StudySection() {
   );
 
   const handlePrev = (totalPages: number) => {
+    setSlideDirection("backward");
     setCurrentPage((page) => Math.max(0, Math.min(page, totalPages - 1) - 1));
   };
 
   const handleNext = (totalPages: number) => {
+    setSlideDirection("forward");
     setCurrentPage((page) => Math.min(Math.max(page, 0) + 1, totalPages - 1));
+  };
+
+  const handleSelectPage = (page: number, currentPage: number) => {
+    setSlideDirection(page < currentPage ? "backward" : "forward");
+    setCurrentPage(page);
   };
 
   const mobileSwipeHandlers = useHorizontalSwipe({
@@ -59,13 +69,18 @@ export function StudySection() {
       </div>
       <div className="md:hidden">
         <div className="touch-pan-y" {...mobileSwipeHandlers}>
-          {loading ? (
-            <div className="rounded-3 border-border-gray-light bg-gray-5 h-[176px] animate-pulse border" />
-          ) : studies.length > 0 ? (
-            <StudyCard variant="home" study={studies[mobileCurrentPage]!} />
-          ) : (
-            <EmptyStudyMessage />
-          )}
+          <div
+            key={mobileCurrentPage}
+            className={`animate-banner-slide-${slideDirection}`}
+          >
+            {loading ? (
+              <div className="rounded-3 border-border-gray-light bg-gray-5 h-[176px] animate-pulse border" />
+            ) : studies.length > 0 ? (
+              <StudyCard variant="home" study={studies[mobileCurrentPage]!} />
+            ) : (
+              <EmptyStudyMessage />
+            )}
+          </div>
         </div>
 
         {mobileTotalPages > 1 && (
@@ -73,7 +88,7 @@ export function StudySection() {
             <CarouselIndicators
               total={mobileTotalPages}
               current={mobileCurrentPage}
-              onSelect={setCurrentPage}
+              onSelect={(page) => handleSelectPage(page, mobileCurrentPage)}
             />
           </div>
         )}
@@ -91,31 +106,36 @@ export function StudySection() {
         )}
 
         <div className="min-w-0 flex-1">
-          {loading ? (
-            <div className="grid grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="rounded-3 border-border-gray-light bg-gray-5 h-[400px] animate-pulse border"
-                />
-              ))}
-            </div>
-          ) : desktopStudies.length > 0 ? (
-            <div className="grid grid-cols-3 gap-6">
-              {desktopStudies.map((study) => (
-                <StudyCard key={study.id} variant="home" study={study} />
-              ))}
-            </div>
-          ) : (
-            <EmptyStudyMessage />
-          )}
+          <div
+            key={desktopCurrentPage}
+            className={`animate-banner-slide-${slideDirection}`}
+          >
+            {loading ? (
+              <div className="grid grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="rounded-3 border-border-gray-light bg-gray-5 h-[400px] animate-pulse border"
+                  />
+                ))}
+              </div>
+            ) : desktopStudies.length > 0 ? (
+              <div className="grid grid-cols-3 gap-6">
+                {desktopStudies.map((study) => (
+                  <StudyCard key={study.id} variant="home" study={study} />
+                ))}
+              </div>
+            ) : (
+              <EmptyStudyMessage />
+            )}
+          </div>
 
           {desktopTotalPages > 1 && (
             <div className="mt-4 flex justify-center">
               <CarouselIndicators
                 total={desktopTotalPages}
                 current={desktopCurrentPage}
-                onSelect={setCurrentPage}
+                onSelect={(page) => handleSelectPage(page, desktopCurrentPage)}
               />
             </div>
           )}
