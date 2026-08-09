@@ -31,9 +31,7 @@ export function StudyManageSection({
     selectedStudy != null &&
     (selectedStudy.act_year !== activeSemester.act_year ||
       selectedStudy.act_semester !== activeSemester.act_semester);
-  const isMentorRecruitOpen = studyApplications.some(
-    (application) => application.can_modify,
-  );
+  const hasStudyApplications = studyApplications.length > 0;
 
   const operatingStudyContent = (content: ReactNode) => {
     if (createdStudies.length === 0 || selectedStudyId === null) {
@@ -57,8 +55,8 @@ export function StudyManageSection({
     <Tabs
       tabs={[
         {
-          label: isMentorRecruitOpen ? "개설 신청서" : "운영 중인 스터디",
-          content: isMentorRecruitOpen ? (
+          label: hasStudyApplications ? "개설 신청서" : "운영 중인 스터디",
+          content: hasStudyApplications ? (
             <StudyApplicationSection applications={studyApplications} />
           ) : (
             <OperatingStudyOverview

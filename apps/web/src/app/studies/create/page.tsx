@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { AlertModal } from "@ui/components/client";
 import { StudyCreateSkeleton } from "@/components/skeleton/StudyCreateSkeleton";
 import {
@@ -17,12 +16,6 @@ import {
 
 export default function StudyCreatePage() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const searchParams = useSearchParams();
-  const parsedApplicationId = Number(searchParams.get("application_id"));
-  const applicationId =
-    Number.isInteger(parsedApplicationId) && parsedApplicationId > 0
-      ? parsedApplicationId
-      : undefined;
   const {
     step,
     form,
@@ -37,7 +30,7 @@ export default function StudyCreatePage() {
     closeStudyCreateAlert,
     goToStudyList,
     goToApplication,
-  } = useStudyCreatePage(applicationId);
+  } = useStudyCreatePage();
 
   if (isLoading || !userInfo) {
     return <StudyCreateSkeleton />;
@@ -90,7 +83,6 @@ export default function StudyCreatePage() {
             onNext={goToNext}
             onSaveDraft={handleSaveDraft}
             onPreview={() => setIsPreviewOpen(true)}
-            isEditing={Boolean(applicationId)}
           />
         )}
         {step === 5 && (
@@ -100,7 +92,6 @@ export default function StudyCreatePage() {
             onPrevious={goToPrevious}
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
-            isEditing={Boolean(applicationId)}
           />
         )}
       </div>
