@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Badge } from "@ui/components/server";
-import { Button } from "@ui/components/client";
+import { Button, Select } from "@ui/components/client";
 import type { StudyApplicationSummary } from "@core/study-application/api";
 
 const STATUS_LABELS: Record<StudyApplicationSummary["study_status"], string> = {
@@ -18,6 +19,13 @@ interface StudyApplicationSectionProps {
 export function StudyApplicationSection({
   applications,
 }: StudyApplicationSectionProps) {
+  const [selectedApplicationId, setSelectedApplicationId] = useState<
+    number | null
+  >(applications[0]?.id ?? null);
+  const selectedApplication = applications.find(
+    (application) => application.id === selectedApplicationId,
+  );
+
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
@@ -32,52 +40,52 @@ export function StudyApplicationSection({
           <p className="text-lg">진행 중인 스터디 개설 신청이 없습니다.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {applications.map((application) => (
-            <article
-              key={application.id}
-              className="border-border-gray-light flex min-h-64 flex-col rounded-xl border p-6"
-            >
-              <div className="mb-4 flex flex-wrap gap-2">
+        <div>
+          <div className="mb-4">
+            <Select
+              id="study-application"
+              size="sm"
+              value={String(selectedApplicationId)}
+              onChange={(value) => setSelectedApplicationId(Number(value))}
+              placeholder="스터디 선택"
+              options={applications.map((application) => ({
+                value: String(application.id),
+                label: application.study_name,
+              }))}
+            />
+          </div>
+
+          {selectedApplication && (
+            <article className="rounded-3 border-border-gray-light bg-surface-white flex flex-col gap-2 border p-5">
+              <div className="flex flex-wrap items-center gap-2">
                 <Badge
-                  label={STATUS_LABELS[application.study_status]}
+                  label={STATUS_LABELS[selectedApplication.study_status]}
                   variant="primary"
                   appearance="solid-pastel"
-                  size="medium"
+                  size="small"
                 />
-                {application.tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    label={tag}
-                    variant="info"
-                    appearance="solid-pastel"
-                    size="medium"
-                  />
-                ))}
+                <span className="text-text-bolder text-[17px] font-bold">
+                  {selectedApplication.study_name}
+                </span>
               </div>
-
-              <h3 className="text-text-basic text-[18px] font-bold leading-[1.5]">
-                {application.study_name}
-              </h3>
-              <p className="text-text-subtle mt-2 line-clamp-2 text-[15px] leading-[1.5]">
-                {application.one_liner || "한 줄 소개가 없습니다."}
+              <p className="text-text-basic text-[15px]">
+                {selectedApplication.one_liner || "한 줄 소개가 없습니다."}
               </p>
-
-              {application.reject_reason && (
-                <p className="bg-surface-danger-subtler text-text-danger mt-4 rounded-lg p-3 text-[14px] leading-[1.5]">
-                  반려 사유: {application.reject_reason}
-                </p>
+              {selectedApplication.reject_reason && (
+                <div className="bg-surface-danger-subtler text-text-danger rounded-2 mt-1 p-3 text-[14px] leading-[1.6]">
+                  <span className="font-bold">반려 사유</span> ·{" "}
+                  {selectedApplication.reject_reason}
+                </div>
               )}
-
-              <div className="mt-auto flex justify-end pt-6">
-                <Link href={`/my/study-applications/${application.id}`}>
+              <div className="mt-2 flex justify-end">
+                <Link href={`/my/study-applications/${selectedApplication.id}`}>
                   <Button variant="tertiary" size="medium">
                     신청서 확인
                   </Button>
                 </Link>
               </div>
             </article>
-          ))}
+          )}
         </div>
       )}
     </div>
