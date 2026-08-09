@@ -15,8 +15,8 @@ interface ProfileSidebarProps {
   };
   activeNav: string;
   onNavChange: (nav: string) => void;
-  /** 개설한 스터디가 있는 멘토에게만 스터디 관리 메뉴 활성화 */
-  canManageStudies?: boolean;
+  /** 승인된 스터디를 운영하거나 개설 신청 이력이 있는 경우 활성화 */
+  canManageStudyWorkspace?: boolean;
 }
 
 function TaskSquareIcon({ className }: { className?: string }) {
@@ -144,7 +144,7 @@ export function ProfileSidebar({
   profile,
   activeNav,
   onNavChange,
-  canManageStudies = false,
+  canManageStudyWorkspace = false,
 }: ProfileSidebarProps) {
   const navItems = [
     {
@@ -153,7 +153,7 @@ export function ProfileSidebar({
       Icon: TaskSquareIcon,
       disabled: false,
     },
-    ...(canManageStudies
+    ...(canManageStudyWorkspace
       ? [
           {
             id: "study-manage",

@@ -14,6 +14,7 @@ interface Step5ReviewAndSubmitProps {
   onPrevious: () => void;
   onSubmit: () => void;
   isSubmitting?: boolean;
+  isEditing?: boolean;
 }
 
 export function Step5ReviewAndSubmit({
@@ -22,9 +23,11 @@ export function Step5ReviewAndSubmit({
   onPrevious,
   onSubmit,
   isSubmitting = false,
+  isEditing = false,
 }: Step5ReviewAndSubmitProps) {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const values = form.getValues();
+  const isChanged = form.formState.isDirty;
 
   const handleSubmitClick = () => {
     setIsConfirmModalOpen(true);
@@ -60,11 +63,11 @@ export function Step5ReviewAndSubmit({
           variant="primary"
           size="large"
           onClick={handleSubmitClick}
-          disabled={isSubmitting}
+          disabled={isSubmitting || (isEditing && !isChanged)}
           className="h-14 w-full shrink-0 sm:w-auto sm:min-w-[90px]"
           type="button"
         >
-          제출
+          {isEditing ? "수정" : "제출"}
         </Button>
       </div>
 
@@ -72,6 +75,7 @@ export function Step5ReviewAndSubmit({
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleConfirmSubmit}
+        isEditing={isEditing}
       />
     </div>
   );

@@ -15,6 +15,7 @@ interface Step4TargetAndOperationProps {
   onNext: () => void;
   onSaveDraft: () => void;
   onPreview: () => void;
+  isEditing?: boolean;
 }
 
 export function Step4TargetAndOperation({
@@ -23,6 +24,7 @@ export function Step4TargetAndOperation({
   onNext,
   onSaveDraft,
   onPreview,
+  isEditing = false,
 }: Step4TargetAndOperationProps) {
   const {
     register,
@@ -97,7 +99,14 @@ export function Step4TargetAndOperation({
           )}
         </div>
 
-        <ReferenceFields form={form} />
+        {isEditing ? (
+          <p className="bg-surface-gray-subtler text-text-subtle rounded-xl p-4 text-[15px] leading-[1.5]">
+            기존 참고자료는 신청서 확인 화면에서 볼 수 있으며, 이번 수정
+            제출에도 그대로 유지됩니다.
+          </p>
+        ) : (
+          <ReferenceFields form={form} />
+        )}
       </div>
 
       <StepNavigation

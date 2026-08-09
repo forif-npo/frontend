@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { studyOpenSchema, StudyOpenValues } from "@core/schemas";
-import { handleApiError } from "@core/utils/api-client";
+import { apiClient, handleApiError } from "@core/utils/api-client";
+import type { ApiResponse } from "@core/types/api";
+import type { StudyApplicationDetail } from "@core/study-application/api";
 import { useStudyCreateData } from "./useStudyCreateData";
 import { submitStudyCreate } from "./actions";
 import {
@@ -15,6 +17,7 @@ import {
 } from "./draft-storage";
 import { DEFAULT_CURRICULUM } from "./constants";
 import type { StudyCreateStep } from "./types";
+import { getStudyTagLabel } from "@/constants/study-tags";
 
 export interface StudyCreateAlert {
   description: string;
@@ -61,13 +64,18 @@ const STEP_FIELDS: Record<number, (keyof StudyOpenValues)[]> = {
   5: [],
 };
 
-export function useStudyCreatePage() {
+export function useStudyCreatePage(applicationId?: number) {
   const router = useRouter();
   const hasCheckedDraftRef = useRef(false);
   const isSubmittedRef = useRef(false);
   const [step, setStep] = useState<StudyCreateStep>(1);
   const [studyCreateAlert, setStudyCreateAlert] =
     useState<StudyCreateAlert | null>(null);
+  const [createdStudyId, setCreatedStudyId] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isApplicationLoading, setIsApplicationLoading] = useState(
+    Boolean(applicationId),
+  );
   const { userInfo, isLoading } = useStudyCreateData();
 
   const form: UseFormReturn<StudyOpenValues> = useForm<StudyOpenValues>({
@@ -78,7 +86,7 @@ export function useStudyCreatePage() {
   });
 
   useEffect(() => {
-    if (hasCheckedDraftRef.current) return;
+    if (applicationId || hasCheckedDraftRef.current) return;
     hasCheckedDraftRef.current = true;
 
     const draft = loadStudyCreateDraft();
@@ -95,7 +103,41 @@ export function useStudyCreatePage() {
       },
       onCancel: clearStudyCreateDraft,
     });
-  }, [form]);
+  }, [applicationId, form]);
+
+  useEffect(() => {
+    if (!applicationId) return;
+
+    let isCancelled = false;
+    setIsApplicationLoading(true);
+
+    apiClient
+      .get(`api/v1/study-apply/${applicationId}`)
+      .json<ApiResponse<StudyApplicationDetail>>()
+      .then((response) => {
+        if (isCancelled || !response.data) return;
+
+        const application = response.data;
+        if (!application.can_modify) {
+          router.replace(`/my/study-applications/${applicationId}`);
+          return;
+        }
+        form.reset(toStudyOpenValues(application));
+        setCreatedStudyId(application.study.id);
+      })
+      .catch(async (error) => {
+        if (!isCancelled) {
+          setStudyCreateAlert({ description: await handleApiError(error) });
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) setIsApplicationLoading(false);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [applicationId, form, router]);
 
   // 작성 중 세션 만료 등으로 페이지를 벗어나도 내용이 남도록 자동 임시저장 (디바운스)
   useEffect(() => {
@@ -140,12 +182,16 @@ export function useStudyCreatePage() {
   }, []);
 
   const handleSubmit = useCallback(async () => {
+    if (isSubmitting) return;
+
     const isValid = await form.trigger();
     if (!isValid) return;
 
+    setIsSubmitting(true);
     try {
       const values = form.getValues();
-      await submitStudyCreate(values);
+      const response = await submitStudyCreate(values, applicationId);
+      setCreatedStudyId(response.data?.study_id ?? null);
       isSubmittedRef.current = true;
       clearStudyCreateDraft();
       setStep(6);
@@ -166,8 +212,10 @@ export function useStudyCreatePage() {
       setStudyCreateAlert({
         description: `${errorMessage} 작성 내용은 임시저장되었습니다.`,
       });
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [form]);
+  }, [applicationId, form, isSubmitting]);
 
   const handleSaveDraft = useCallback(() => {
     const values = form.getValues();
@@ -190,22 +238,67 @@ export function useStudyCreatePage() {
   }, [router]);
 
   const goToApplication = useCallback(() => {
-    router.push("/my-page");
-  }, [router]);
+    if (createdStudyId) {
+      router.push(`/my/study-applications/${createdStudyId}`);
+      return;
+    }
+    router.push("/my?section=study-applications");
+  }, [createdStudyId, router]);
 
   return {
     step,
     form,
     userInfo,
-    isLoading,
+    isLoading: isLoading || isApplicationLoading,
     studyCreateAlert,
     goToNext,
     goToPrevious,
     goToStep,
     handleSubmit,
+    isSubmitting,
     handleSaveDraft,
     closeStudyCreateAlert: () => setStudyCreateAlert(null),
     goToStudyList,
     goToApplication,
+  };
+}
+
+function toStudyOpenValues(
+  application: StudyApplicationDetail,
+): StudyOpenValues {
+  const { study } = application;
+
+  return {
+    mentorIds:
+      study.mentors
+        ?.filter((mentor) => mentor.mentor_num !== 1)
+        .map((mentor) => mentor.mentor_id) ?? [],
+    studyName: study.study_name,
+    oneLiner: study.one_liner ?? "",
+    tags: study.tags.map(getStudyTagLabel),
+    thumbnail: null,
+    introduction: study.explanation ?? study.goal ?? "",
+    isOnline: Boolean(study.is_online),
+    location: study.is_online ? "온라인" : (study.location ?? ""),
+    room: study.location_detail ?? "",
+    weekDay:
+      study.week_day === null || study.week_day === undefined
+        ? ""
+        : String(study.week_day),
+    startTime: study.start_time ?? "",
+    endTime: study.end_time ?? "",
+    curriculum:
+      study.plans.length > 0
+        ? study.plans.map((plan) => ({
+            week: plan.week_num,
+            date: plan.date?.slice(0, 10) ?? "",
+            topic: plan.section ?? "",
+            contents: plan.content ? plan.content.split("; ") : [""],
+          }))
+        : DEFAULT_CURRICULUM,
+    difficulty: study.difficulty ?? "",
+    hasInterview: Boolean(study.requires_interview),
+    interviewDate: study.interview_date?.slice(0, 10) ?? null,
+    references: [],
   };
 }

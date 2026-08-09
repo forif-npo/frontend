@@ -6,6 +6,7 @@ import {
   getStudyApplications,
 } from "@core/my-page/api";
 import { getMyCreatedStudies } from "@core/study-manage/api";
+import { getMyStudyApplications } from "@core/study-application/api";
 import { MyPageClient } from "./MyPageClient";
 
 export default async function MyPage() {
@@ -19,13 +20,19 @@ export default async function MyPage() {
   // 멘토 여부를 세션 role로 판정하지 않는다. 멘토는 계정 종류가 아니라
   // "이 스터디의 멘토인가"라는 관계라, 부원 로그인으로도 본인이 개설한
   // 스터디가 있으면 관리 기능이 열려야 한다.
-  const [profile, studiesData, applicationsData, createdStudies] =
-    await Promise.all([
-      getUserProfile(token),
-      getUserStudies(token).catch(() => []),
-      getStudyApplications(token).catch(() => ({ applications: [] })),
-      getMyCreatedStudies(token).catch(() => []),
-    ]);
+  const [
+    profile,
+    studiesData,
+    applicationsData,
+    createdStudies,
+    studyApplications,
+  ] = await Promise.all([
+    getUserProfile(token),
+    getUserStudies(token).catch(() => []),
+    getStudyApplications(token).catch(() => ({ applications: [] })),
+    getMyCreatedStudies(token).catch(() => []),
+    getMyStudyApplications(token).catch(() => []),
+  ]);
 
   return (
     <MyPageClient
@@ -33,6 +40,7 @@ export default async function MyPage() {
       studiesData={studiesData}
       applicationsData={applicationsData}
       createdStudies={createdStudies}
+      studyApplications={studyApplications}
     />
   );
 }

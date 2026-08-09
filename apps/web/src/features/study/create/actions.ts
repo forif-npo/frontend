@@ -91,26 +91,36 @@ function buildStudyRequest(values: StudyOpenValues) {
   };
 }
 
-export async function submitStudyCreate(values: StudyOpenValues) {
+export async function submitStudyCreate(
+  values: StudyOpenValues,
+  applicationId?: number,
+) {
   const studyRequest = buildStudyRequest(values);
+  const { references, ...studyRequestWithoutReferences } = studyRequest;
+  const requestPayload = applicationId
+    ? studyRequestWithoutReferences
+    : studyRequest;
 
   const formData = new FormData();
   formData.append(
     "studyRequest",
-    new Blob([JSON.stringify(studyRequest)], { type: "application/json" }),
+    new Blob([JSON.stringify(requestPayload)], { type: "application/json" }),
   );
   if (values.thumbnail) {
     formData.append("thumbnail", values.thumbnail);
   }
-  values.references.forEach((reference) => {
-    if (isFileValue(reference.value)) {
-      formData.append(REFERENCE_FILE_FIELD_NAME, reference.value);
-    }
-  });
+  if (!applicationId) {
+    values.references.forEach((reference) => {
+      if (isFileValue(reference.value)) {
+        formData.append(REFERENCE_FILE_FIELD_NAME, reference.value);
+      }
+    });
+  }
 
-  const response = await apiClient
-    .post("api/v1/study-apply", { body: formData })
-    .json<ApiResponse<{ study_apply_id: number }>>();
+  const request = applicationId
+    ? apiClient.patch(`api/v1/study-apply/${applicationId}`, { body: formData })
+    : apiClient.post("api/v1/study-apply", { body: formData });
+  const response = await request.json<ApiResponse<{ study_id: number }>>();
 
   return response;
 }
