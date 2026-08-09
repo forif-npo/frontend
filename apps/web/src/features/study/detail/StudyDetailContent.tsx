@@ -234,58 +234,52 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
         </div>
       </section>
 
-      {visiblePlans.length > 0 && (
-        <section
-          id="curriculum"
-          className="flex scroll-mt-[120px] flex-col gap-6"
-        >
-          <h2 className="text-text-bolder text-[20px] font-bold leading-[1.5] md:text-[24px]">
-            커리큘럼
-          </h2>
+      <section
+        id="curriculum"
+        className="flex scroll-mt-[120px] flex-col gap-6"
+      >
+        <h2 className="text-text-bolder text-[20px] font-bold leading-[1.5] md:text-[24px]">
+          커리큘럼
+        </h2>
 
-          <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
-            <div className={hasPlanDates ? "min-w-[520px]" : "min-w-[420px]"}>
-              <StudyCurriculumTable
-                showDateColumn={hasPlanDates}
-                rows={visiblePlans.map((plan) => ({
-                  id: plan.id,
-                  week: plan.week_num,
-                  contents: splitPlanContent(plan.content),
-                }))}
-                renderDateInput={(weekIndex, inputClassName) => (
-                  <span className={inputClassName}>
-                    {formatPlanDate(visiblePlans[weekIndex]?.date ?? null)}
-                  </span>
-                )}
-                renderTopicInput={(weekIndex, inputClassName) => (
-                  <span
-                    className={`${inputClassName} whitespace-pre-wrap break-words`}
-                  >
-                    {visiblePlans[weekIndex]?.section === "."
-                      ? ""
-                      : visiblePlans[weekIndex]?.section}
-                  </span>
-                )}
-                renderContentInput={(
-                  weekIndex,
-                  contentIndex,
-                  inputClassName,
-                ) => (
-                  <span
-                    className={`${inputClassName} whitespace-pre-wrap break-words`}
-                  >
-                    {
-                      splitPlanContent(visiblePlans[weekIndex]?.content ?? "")[
-                        contentIndex
-                      ]
-                    }
-                  </span>
-                )}
-              />
-            </div>
+        <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+          <div className={hasPlanDates ? "min-w-[520px]" : "min-w-[420px]"}>
+            <StudyCurriculumTable
+              showDateColumn={hasPlanDates}
+              rows={visiblePlans.map((plan) => ({
+                id: plan.id,
+                week: plan.week_num,
+                contents: splitPlanContent(plan.content),
+              }))}
+              renderDateInput={(weekIndex, inputClassName) => (
+                <span className={inputClassName}>
+                  {formatPlanDate(visiblePlans[weekIndex]?.date ?? null)}
+                </span>
+              )}
+              renderTopicInput={(weekIndex, inputClassName) => (
+                <span
+                  className={`${inputClassName} whitespace-pre-wrap break-words`}
+                >
+                  {visiblePlans[weekIndex]?.section === "."
+                    ? ""
+                    : visiblePlans[weekIndex]?.section}
+                </span>
+              )}
+              renderContentInput={(weekIndex, contentIndex, inputClassName) => (
+                <span
+                  className={`${inputClassName} whitespace-pre-wrap break-words`}
+                >
+                  {
+                    splitPlanContent(visiblePlans[weekIndex]?.content ?? "")[
+                      contentIndex
+                    ]
+                  }
+                </span>
+              )}
+            />
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       <section id="process" className="flex scroll-mt-[120px] flex-col gap-6">
         <h2 className="text-text-bolder text-[20px] font-bold leading-[1.5] md:text-[24px]">
