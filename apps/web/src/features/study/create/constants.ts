@@ -1,4 +1,4 @@
-export { TAG_OPTIONS, getStudyTagId } from "@/constants/study-tags";
+export { TAG_OPTIONS, getStudyTagName } from "@/constants/study-tags";
 
 export const LOCATION_OPTIONS = [
   { value: "장소 미정", label: "장소 미정" },

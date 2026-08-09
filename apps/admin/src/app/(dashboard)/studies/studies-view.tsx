@@ -22,7 +22,7 @@ import { deleteStudy, fetchStudyDetail, updateStudy } from "./api";
 import { columns } from "./columns";
 import { StudyDeleteDialog } from "./components/StudyDeleteDialog";
 import { StudyEditDialog } from "./components/StudyEditDialog";
-import { EMPTY_STUDY_EDIT_FORM } from "./constants";
+import { EMPTY_STUDY_EDIT_FORM, STUDY_TAG_OPTIONS } from "./constants";
 import { parseOptionalNumber, toStudyEditForm } from "./form-utils";
 import { SemesterLabel, Study, StudyEditForm } from "./types";
 
@@ -206,6 +206,16 @@ export function StudiesView({
       return;
     }
 
+    const studyTagNames = editForm.tags.flatMap((tagId) => {
+      const tag = STUDY_TAG_OPTIONS.find((option) => option.id === tagId);
+      return tag ? [tag.name] : [];
+    });
+
+    if (studyTagNames.length !== editForm.tags.length) {
+      toast.error("선택한 태그 정보를 확인해주세요.");
+      return;
+    }
+
     const body: StudyUpdateRequest = {
       study_name: studyName,
       one_liner: oneLiner,
@@ -218,7 +228,7 @@ export function StudiesView({
       location_detail: editForm.location_detail.trim(),
       difficulty: difficulty as StudyUpdateRequest["difficulty"],
       capacity,
-      study_tag_ids: editForm.tags,
+      study_tag_names: studyTagNames,
     };
 
     try {

@@ -204,6 +204,7 @@ export interface StudyUpdateRequest {
   requires_interview?: boolean;
   interview_date?: string; // ISO 8601 형식
   study_tag_ids?: number[];
+  study_tag_names?: string[];
   study_plan_list?: StudyPlanInput[]; // Use Input type for requests
   references?: ReferenceInput[]; // Use Input type for requests
 }

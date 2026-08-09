@@ -2,7 +2,7 @@ import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { StudyOpenValues } from "@core/schemas";
 import { toLocalDateTimeFromDateInput } from "@/utils/dateInput";
-import { getStudyTagId } from "./constants";
+import { getStudyTagName } from "./constants";
 
 const DIFFICULTY_MAP: Record<string, number> = {
   EASY: 1,
@@ -38,18 +38,18 @@ function toLocalDateTime(value: string | null | undefined) {
 
 function buildStudyRequest(values: StudyOpenValues) {
   const secondaryMentorId = values.mentorIds[0] ?? null;
-  const studyTagIds = values.tags.map((tag) => {
-    const id = getStudyTagId(tag);
-    if (id === null) {
+  const studyTagNames = values.tags.map((tag) => {
+    const name = getStudyTagName(tag);
+    if (name === null) {
       throw new Error("선택한 태그 정보를 확인해주세요.");
     }
-    return id;
+    return name;
   });
 
   return {
     title: values.studyName,
     one_liner: values.oneLiner,
-    study_tag_id: studyTagIds,
+    study_tag_names: studyTagNames,
     goal: values.introduction, // Figma removed goal; reuse introduction
     explanation: values.introduction,
     is_online: values.isOnline,
