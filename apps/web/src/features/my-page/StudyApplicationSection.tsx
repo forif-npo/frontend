@@ -1,10 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Badge } from "@ui/components/server";
-import { Button, Select } from "@ui/components/client";
-import type { StudyApplicationSummary } from "@core/study-application/api";
+import { Select } from "@ui/components/client";
+import {
+  getMyStudyApplication,
+  type StudyApplicationDetail,
+  type StudyApplicationSummary,
+} from "@core/study-application/api";
+import { handleApiError } from "@core/utils/api-client";
+import { StudyApplicationEditor } from "./StudyApplicationEditor";
 
 const STATUS_LABELS: Record<StudyApplicationSummary["study_status"], string> = {
   PENDING: "승인 대기",
@@ -22,9 +27,37 @@ export function StudyApplicationSection({
   const [selectedApplicationId, setSelectedApplicationId] = useState<
     number | null
   >(applications[0]?.id ?? null);
+  const [selectedApplicationDetail, setSelectedApplicationDetail] =
+    useState<StudyApplicationDetail | null>(null);
+  const [isDetailLoading, setIsDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState<string | null>(null);
   const selectedApplication = applications.find(
     (application) => application.id === selectedApplicationId,
   );
+
+  useEffect(() => {
+    if (selectedApplicationId === null) return;
+
+    let isCancelled = false;
+    setIsDetailLoading(true);
+    setDetailError(null);
+    setSelectedApplicationDetail(null);
+
+    getMyStudyApplication(selectedApplicationId)
+      .then((application) => {
+        if (!isCancelled) setSelectedApplicationDetail(application);
+      })
+      .catch(async (error) => {
+        if (!isCancelled) setDetailError(await handleApiError(error));
+      })
+      .finally(() => {
+        if (!isCancelled) setIsDetailLoading(false);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedApplicationId]);
 
   return (
     <div>
@@ -77,15 +110,28 @@ export function StudyApplicationSection({
                   {selectedApplication.reject_reason}
                 </div>
               )}
-              <div className="mt-2 flex justify-end">
-                <Link href={`/my/study-applications/${selectedApplication.id}`}>
-                  <Button variant="tertiary" size="medium">
-                    신청서 확인
-                  </Button>
-                </Link>
-              </div>
             </article>
           )}
+
+          {isDetailLoading && (
+            <p className="text-text-subtle py-10 text-center text-[15px]">
+              신청서를 불러오는 중입니다.
+            </p>
+          )}
+          {detailError && (
+            <p className="text-text-danger py-10 text-center text-[15px]">
+              {detailError}
+            </p>
+          )}
+          {selectedApplicationDetail &&
+            (selectedApplicationDetail.can_modify ? (
+              <StudyApplicationEditor application={selectedApplicationDetail} />
+            ) : (
+              <p className="text-text-subtle border-border-gray-light mt-8 rounded-xl border p-6 text-[15px]">
+                스터디 개설 신청 기간이 종료되어 신청서를 수정하거나 취소할 수
+                없습니다.
+              </p>
+            ))}
         </div>
       )}
     </div>

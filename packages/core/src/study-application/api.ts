@@ -84,3 +84,9 @@ export async function getMyStudyApplication(
 
   return response.data;
 }
+
+export async function cancelStudyCreationApplication(
+  studyId: number,
+): Promise<void> {
+  await apiClient.delete(`api/v1/study-apply/${studyId}`);
+}
