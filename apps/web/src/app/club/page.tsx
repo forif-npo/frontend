@@ -207,7 +207,8 @@ function HistorySection() {
             HISTORY
           </Label>
           <Heading size="m" className="mt-2">
-            강렬한 <span className="text-text-primary">FORIF</span>의 역사
+            <span className="text-text-primary">FORIF</span>가 걸어온 성장의
+            기록
           </Heading>
         </Reveal>
         <HistoryTimeline />

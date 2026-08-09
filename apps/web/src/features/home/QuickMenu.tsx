@@ -22,7 +22,7 @@ import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
 import { useHorizontalSwipe } from "@/hooks/useHorizontalSwipe";
 import Link from "next/link";
 import type { ComponentType, SVGProps } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const FaqIconAdapter = ({
   size = 24,
@@ -50,13 +50,7 @@ interface QuickMenuItem {
 }
 
 const QUICK_MENU_ITEMS: QuickMenuItem[] = [
-  { icon: CalendarDays, label: "스터디 신청", href: "/studies/list" },
-  { icon: List, label: "스터디 목록", href: "/studies/list" },
-  { icon: BookOpen, label: "스터디 개설", href: "/studies/create" },
-  { icon: BookMarked, label: "스터디 가이드", href: "/studies/guide" },
-  { icon: Code2, label: "해커톤", href: "/hackathon" },
-  { icon: Package, label: "서비스", href: "/products" },
-  { icon: UserRound, label: "마이페이지", href: "/my" },
+  { icon: NotebookText, label: "공지사항", href: "/support/announcements" },
   {
     icon: PenLine,
     label: "기술 블로그",
@@ -69,41 +63,24 @@ const QUICK_MENU_ITEMS: QuickMenuItem[] = [
     href: FORIF_EXTERNAL_LINKS.channelTalk,
     external: true,
   },
+  { icon: UserRound, label: "마이페이지", href: "/my" },
+  { icon: Package, label: "서비스", href: "/products" },
+  { icon: BookMarked, label: "스터디 가이드", href: "/studies/guide" },
+  { icon: BookOpen, label: "스터디 개설", href: "/studies/create" },
+  { icon: List, label: "스터디 목록", href: "/studies/list" },
+  { icon: CalendarDays, label: "스터디 신청", href: "/studies/list" },
+  { icon: FolderPlus, label: "운영진 지원", href: "/club/recruit" },
   { icon: FaqIconAdapter, label: "자주 묻는 질문", href: "/support/faqs" },
   { icon: FileCheck, label: "증명서 발급", href: "/my" },
-  {
-    icon: FolderPlus,
-    label: "운영진 지원",
-    href: "/club/recruit",
-  },
   { icon: MapPin, label: "지도 보기", href: "/directions" },
-  { icon: NotebookText, label: "공지사항", href: "/support/announcements" },
+  { icon: Code2, label: "해커톤", href: "/hackathon" },
 ];
 
 const ITEMS_PER_PAGE = 8;
 
-function shuffleItems<T>(items: T[]): T[] {
-  const shuffledItems = [...items];
-
-  for (let index = shuffledItems.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [shuffledItems[index], shuffledItems[randomIndex]] = [
-      shuffledItems[randomIndex],
-      shuffledItems[index],
-    ];
-  }
-
-  return shuffledItems;
-}
-
 export function QuickMenu() {
-  const [quickMenuItems, setQuickMenuItems] = useState(QUICK_MENU_ITEMS);
   const [currentPage, setCurrentPage] = useState(0);
-  const totalPages = Math.ceil(quickMenuItems.length / ITEMS_PER_PAGE);
-
-  useEffect(() => {
-    setQuickMenuItems(shuffleItems(QUICK_MENU_ITEMS));
-  }, []);
+  const totalPages = Math.ceil(QUICK_MENU_ITEMS.length / ITEMS_PER_PAGE);
 
   const handlePrev = () => {
     setCurrentPage((prev) => Math.max(0, prev - 1));
@@ -118,7 +95,7 @@ export function QuickMenu() {
     onSwipeRight: handlePrev,
   });
 
-  const visibleItems = quickMenuItems.slice(
+  const visibleItems = QUICK_MENU_ITEMS.slice(
     currentPage * ITEMS_PER_PAGE,
     (currentPage + 1) * ITEMS_PER_PAGE,
   );
