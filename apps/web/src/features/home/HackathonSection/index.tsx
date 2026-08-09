@@ -27,6 +27,9 @@ export function HackathonSection() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"forward" | "backward">(
+    "forward",
+  );
 
   useEffect(() => {
     let ignore = false;
@@ -102,12 +105,19 @@ export function HackathonSection() {
 
   const handlePrev = (total: number) => {
     if (total <= 1) return;
+    setSlideDirection("backward");
     setCurrentPage((page) => Math.max(0, Math.min(page, total - 1) - 1));
   };
 
   const handleNext = (total: number) => {
     if (total <= 1) return;
+    setSlideDirection("forward");
     setCurrentPage((page) => Math.min(Math.max(page, 0) + 1, total - 1));
+  };
+
+  const handleSelectPage = (page: number, currentPage: number) => {
+    setSlideDirection(page < currentPage ? "backward" : "forward");
+    setCurrentPage(page);
   };
 
   const mobileCurrentPage = getCurrentPage(mobileTotal);
@@ -139,20 +149,25 @@ export function HackathonSection() {
         </div>
 
         <div className="touch-pan-y" {...mobileSwipeHandlers}>
-          {loading ? (
-            skeletonCard
-          ) : submissions.length === 0 ? (
-            <div className="rounded-3 border-border-gray-light bg-surface-white flex h-[240px] items-center justify-center border px-6 text-center">
-              <p className="text-text-subtle text-body-m">
-                아직 공개된 해커톤 제출물이 없습니다.
-              </p>
-            </div>
-          ) : mobileItem ? (
-            <HackathonCard
-              submission={mobileItem}
-              bgColor={CARD_COLORS[mobileCurrentPage % CARD_COLORS.length]}
-            />
-          ) : null}
+          <div
+            key={mobileCurrentPage}
+            className={`animate-banner-slide-${slideDirection}`}
+          >
+            {loading ? (
+              skeletonCard
+            ) : submissions.length === 0 ? (
+              <div className="rounded-3 border-border-gray-light bg-surface-white flex h-[240px] items-center justify-center border px-6 text-center">
+                <p className="text-text-subtle text-body-m">
+                  아직 공개된 해커톤 제출물이 없습니다.
+                </p>
+              </div>
+            ) : mobileItem ? (
+              <HackathonCard
+                submission={mobileItem}
+                bgColor={CARD_COLORS[mobileCurrentPage % CARD_COLORS.length]}
+              />
+            ) : null}
+          </div>
         </div>
 
         {mobileTotal > 1 && (
@@ -160,7 +175,7 @@ export function HackathonSection() {
             {Array.from({ length: mobileTotal }).map((_, i) => (
               <button
                 key={i}
-                onClick={() => setCurrentPage(i)}
+                onClick={() => handleSelectPage(i, mobileCurrentPage)}
                 className={`h-2 rounded-full transition-all ${
                   i === mobileCurrentPage
                     ? "bg-primary-50 w-5"
@@ -194,7 +209,10 @@ export function HackathonSection() {
           />
 
           <div className="flex flex-1 flex-col gap-6">
-            <div className="grid grid-cols-3 gap-6">
+            <div
+              key={desktopCurrentPage}
+              className={`animate-banner-slide-${slideDirection} grid grid-cols-3 gap-6`}
+            >
               {loading
                 ? [1, 2, 3].map((i) => (
                     <div
@@ -222,7 +240,7 @@ export function HackathonSection() {
               {Array.from({ length: desktopTotal }).map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => setCurrentPage(i)}
+                  onClick={() => handleSelectPage(i, desktopCurrentPage)}
                   className={`h-2 rounded-full transition-all ${
                     i === desktopCurrentPage
                       ? "bg-primary-50 w-5"

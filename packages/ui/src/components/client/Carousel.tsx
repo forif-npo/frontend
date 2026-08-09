@@ -84,7 +84,13 @@ export function Carousel({ carouselItems }: CarouselProps) {
 
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      <div className="w-full">
+      <div className="flex w-full items-center justify-between gap-4">
+        <CarouselArrow
+          align="left"
+          title="이전 배너"
+          onClick={handlePrev}
+          className="hidden md:flex"
+        />
         <div
           className="mx-auto aspect-square w-full max-w-[1200px] touch-pan-y overflow-hidden rounded-[28px] md:aspect-[4/1]"
           onTouchStart={handleTouchStart}
@@ -104,6 +110,12 @@ export function Carousel({ carouselItems }: CarouselProps) {
             {currentItem.content}
           </div>
         </div>
+        <CarouselArrow
+          align="right"
+          title="다음 배너"
+          onClick={handleNext}
+          className="hidden md:flex"
+        />
       </div>
       <CarouselIndicators
         total={carouselItems.length}
