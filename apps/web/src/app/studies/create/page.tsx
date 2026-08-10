@@ -40,6 +40,8 @@ export default function StudyCreatePage() {
     return (
       <div className="min-h-viewport max-w-main mx-auto px-4 pb-24 sm:px-6 md:pb-32">
         <StudyCreateComplete
+          values={form.getValues()}
+          userInfo={userInfo}
           onGoToStudyList={goToStudyList}
           onGoToApplication={goToApplication}
         />
