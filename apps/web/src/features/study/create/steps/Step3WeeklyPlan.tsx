@@ -18,6 +18,7 @@ interface Step3WeeklyPlanProps {
 
 const CURRICULUM_ERROR_MESSAGES = {
   date: "진행 날짜를 모두 작성해주세요.",
+  dateFormat: "날짜 형식을 확인해주세요.",
   topic: "주제를 모두 작성해주세요.",
   contents: "내용을 모두 작성해주세요.",
 } as const;
@@ -45,7 +46,11 @@ function getCurriculumErrorMessages(curriculumError: unknown) {
       const fieldErrors = weekError as Record<string, unknown>;
 
       if (fieldErrors.date) {
-        messages.add(CURRICULUM_ERROR_MESSAGES.date);
+        messages.add(
+          getErrorMessage(fieldErrors.date) === "진행 날짜를 입력해주세요."
+            ? CURRICULUM_ERROR_MESSAGES.date
+            : CURRICULUM_ERROR_MESSAGES.dateFormat,
+        );
       }
 
       if (fieldErrors.topic) {
