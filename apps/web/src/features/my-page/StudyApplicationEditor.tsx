@@ -95,11 +95,13 @@ export function StudyApplicationEditor({
 }: StudyApplicationEditorProps) {
   const router = useRouter();
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [isOneLinerEditing, setIsOneLinerEditing] = useState(false);
   const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
     string | null
   >(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
   const [message, setMessage] = useState<{
     text: string;
     type: "success" | "error";
@@ -119,7 +121,9 @@ export function StudyApplicationEditor({
   } = form;
   const { registerShortDateInput } = useDateInput({ register, setValue });
   const { registerTimeInput } = useTimeInput({ register, setValue });
+  const oneLinerField = register("oneLiner");
   const selectedTags = watch("tags");
+  const oneLiner = watch("oneLiner");
   const thumbnail = watch("thumbnail");
   const curriculum = watch("curriculum");
   const isOnline = watch("isOnline");
@@ -222,13 +226,6 @@ export function StudyApplicationEditor({
 
   const handleCancel = async () => {
     if (isSubmitting || isCancelling) return;
-    if (
-      !window.confirm(
-        "스터디 개설 신청을 취소하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
-      )
-    ) {
-      return;
-    }
 
     setIsCancelling(true);
     setMessage(null);
@@ -264,9 +261,14 @@ export function StudyApplicationEditor({
           />
           <input
             id="oneLiner"
-            className="bg-surface-info-subtle text-text-primary placeholder:text-text-subtle w-full rounded-lg border-0 px-4 py-3 text-[15px] font-medium leading-[1.6] outline-none md:text-[19px]"
+            className={`placeholder:text-text-subtle-inverse w-full rounded-lg border-0 px-4 py-3 text-[15px] font-medium leading-[1.6] text-sky-900 outline-none focus:border-0 focus:ring-0 focus-visible:border-0 focus-visible:ring-0 md:text-[19px] ${oneLiner?.trim() && !isOneLinerEditing ? "bg-sky-100" : "bg-transparent"}`}
             placeholder="한 줄 소개를 입력해주세요"
-            {...register("oneLiner")}
+            {...oneLinerField}
+            onFocus={() => setIsOneLinerEditing(true)}
+            onBlur={(event) => {
+              oneLinerField.onBlur(event);
+              setIsOneLinerEditing(false);
+            }}
           />
           {(errors.studyName || errors.oneLiner) && (
             <p className="text-text-danger text-[14px]">
@@ -288,15 +290,17 @@ export function StudyApplicationEditor({
                       { shouldDirty: true, shouldValidate: true },
                     )
                   }
-                  className="bg-surface-info-subtle text-text-primary rounded px-2 py-1 text-[15px]"
+                  className="flex h-8 items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2"
                 >
-                  {tag}
+                  <span className="text-text-primary text-[17px] leading-[1.5]">
+                    {tag}
+                  </span>
                 </button>
               ))}
               <button
                 type="button"
                 onClick={() => setIsTagModalOpen(true)}
-                className="text-text-subtle hover:text-text-basic"
+                className="text-text-subtle hover:text-text-basic transition-colors"
                 aria-label="태그 편집"
               >
                 <CirclePlus className="h-6 w-6" />
@@ -550,7 +554,7 @@ export function StudyApplicationEditor({
             variant="tertiary"
             size="large"
             type="button"
-            onClick={() => void handleCancel()}
+            onClick={() => setIsCancelConfirmOpen(true)}
             disabled={isSubmitting || isCancelling}
           >
             {isCancelling ? "취소 중..." : "신청 취소"}
@@ -571,6 +575,12 @@ export function StudyApplicationEditor({
         onClose={() => setIsTagModalOpen(false)}
         onConfirm={handleTagsConfirm}
         selectedTags={selectedTags}
+      />
+      <AlertModal
+        isOpen={isCancelConfirmOpen}
+        description="스터디 개설 신청을 취소하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        onClose={() => setIsCancelConfirmOpen(false)}
+        onConfirm={() => void handleCancel()}
       />
       <AlertModal
         isOpen={thumbnailAlertMessage !== null}

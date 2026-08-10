@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { SuccessFillIcon } from "@repo/assets/icons/krds";
 import { Button } from "@ui/components/client";
 import type { StudyOpenValues } from "@core/schemas";
-import { LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "../constants";
+import { WEEKDAY_OPTIONS } from "../constants";
 import type { UserInfo } from "../types";
 
 interface StudyCreateCompleteProps {
@@ -23,15 +23,7 @@ export function StudyCreateComplete({
   const weekDayLabel =
     WEEKDAY_OPTIONS.find((option) => option.value === values.weekDay)?.label ??
     values.weekDay;
-  const locationLabel =
-    LOCATION_OPTIONS.find((option) => option.value === values.location)
-      ?.label ?? values.location;
   const studyTime = `매주 ${weekDayLabel} ${values.startTime} ~ ${values.endTime}`;
-  const studyLocation = values.isOnline
-    ? "온라인"
-    : [locationLabel, values.room.trim() ? `${values.room.trim()}호` : ""]
-        .filter(Boolean)
-        .join(" ");
 
   return (
     <div className="mx-auto flex w-full max-w-[792px] flex-col items-center gap-12 pb-16 pt-10">
@@ -61,11 +53,11 @@ export function StudyCreateComplete({
             <p>{userInfo.name}</p>
             <p>{userInfo.phone}</p>
           </CompleteInfoRow>
-          <CompleteInfoRow label="진행 일정">
-            <p>{studyTime}</p>
+          <CompleteInfoRow label="스터디명">
+            <p>{values.studyName}</p>
           </CompleteInfoRow>
-          <CompleteInfoRow label="진행 장소">
-            <p>{studyLocation}</p>
+          <CompleteInfoRow label="진행 시간">
+            <p>{studyTime}</p>
           </CompleteInfoRow>
         </div>
       </section>
