@@ -36,21 +36,4 @@ export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
     type: "tsx",
     component: ForifIntroBanner,
   },
-  {
-    id: "community",
-    type: "svg",
-    component: SvgBanner,
-    href: "/club/",
-    image: {
-      alt: "연결된 구성원을 표현한 FORIF 커뮤니티 그래픽",
-      desktop: {
-        src: "/banner/example/desktop.svg",
-        ...HOME_CAROUSEL_BANNER_SPEC.desktop,
-      },
-      mobile: {
-        src: "/banner/example/mobile.svg",
-        ...HOME_CAROUSEL_BANNER_SPEC.mobile,
-      },
-    },
-  },
 ];
