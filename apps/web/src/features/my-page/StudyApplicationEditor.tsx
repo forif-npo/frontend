@@ -117,7 +117,7 @@ export function StudyApplicationEditor({
     register,
     setValue,
     watch,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, dirtyFields },
   } = form;
   const { registerShortDateInput } = useDateInput({ register, setValue });
   const { registerTimeInput } = useTimeInput({ register, setValue });
@@ -210,7 +210,11 @@ export function StudyApplicationEditor({
     setIsSubmitting(true);
     setMessage(null);
     try {
-      await submitStudyCreate(form.getValues(), application.study.id);
+      await submitStudyCreate(
+        form.getValues(),
+        application.study.id,
+        dirtyFields,
+      );
       form.reset(form.getValues());
       setMessage({
         text: "스터디 개설 신청서가 수정되었습니다.",

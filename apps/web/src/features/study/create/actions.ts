@@ -91,14 +91,48 @@ function buildStudyRequest(values: StudyOpenValues) {
   };
 }
 
+function buildStudyApplicationUpdateRequest(
+  values: StudyOpenValues,
+  dirtyFields: Partial<Record<keyof StudyOpenValues, unknown>>,
+) {
+  const fullRequest = buildStudyRequest(values);
+  const request: Record<string, unknown> = {};
+
+  if (dirtyFields.studyName) request.study_name = values.studyName;
+  if (dirtyFields.oneLiner) request.one_liner = values.oneLiner;
+  if (dirtyFields.tags) request.study_tag_names = fullRequest.study_tag_names;
+  if (dirtyFields.introduction) {
+    request.goal = values.introduction;
+    request.explanation = values.introduction;
+  }
+  if (dirtyFields.isOnline) request.is_online = values.isOnline;
+  if (dirtyFields.location) request.location = values.location;
+  if (dirtyFields.room) request.location_detail = values.room;
+  if (dirtyFields.weekDay) request.week_day = Number(values.weekDay);
+  if (dirtyFields.startTime) request.start_time = values.startTime;
+  if (dirtyFields.endTime) request.end_time = values.endTime;
+  if (dirtyFields.curriculum) {
+    request.study_plan_list = fullRequest.study_plan_list;
+  }
+  if (dirtyFields.difficulty) request.difficulty = fullRequest.difficulty;
+  if (dirtyFields.hasInterview) {
+    request.requires_interview = values.hasInterview;
+    request.interview_date = fullRequest.interview_date;
+  } else if (dirtyFields.interviewDate) {
+    request.interview_date = fullRequest.interview_date;
+  }
+
+  return request;
+}
+
 export async function submitStudyCreate(
   values: StudyOpenValues,
   applicationId?: number,
+  dirtyFields: Partial<Record<keyof StudyOpenValues, unknown>> = {},
 ) {
   const studyRequest = buildStudyRequest(values);
-  const { references, ...studyRequestWithoutReferences } = studyRequest;
   const requestPayload = applicationId
-    ? studyRequestWithoutReferences
+    ? buildStudyApplicationUpdateRequest(values, dirtyFields)
     : studyRequest;
 
   const formData = new FormData();
