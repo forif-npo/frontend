@@ -93,6 +93,7 @@ export const studyOpenSchema = createSchema()(
       references: z
         .array(
           z.object({
+            id: z.string().optional(),
             type: z.string().min(1, "유형을 선택해주세요."),
             value: z.union([z.string(), z.custom<File | null>(isFileValue)]),
           }),
@@ -126,7 +127,16 @@ export const studyOpenSchema = createSchema()(
           });
         }
 
-        if (reference.type === "DOWNLOAD" && !isFile(reference.value)) {
+        const isExistingFile =
+          reference.type === "DOWNLOAD" &&
+          Boolean(reference.id) &&
+          typeof reference.value === "string" &&
+          reference.value.length > 0;
+        if (
+          reference.type === "DOWNLOAD" &&
+          !isFile(reference.value) &&
+          !isExistingFile
+        ) {
           ctx.addIssue({
             code: "custom",
             path: ["references", index, "value"],

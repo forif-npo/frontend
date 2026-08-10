@@ -26,7 +26,10 @@ import { useDateInput } from "@/hooks/useDateInput";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
 import { StudySectionTitle } from "@/features/study/components/StudySectionTitle";
-import { submitStudyCreate } from "@/features/study/create/actions";
+import {
+  submitStudyCreate,
+  type StudyApplicationReferenceUpdate,
+} from "@/features/study/create/actions";
 import {
   DEFAULT_CURRICULUM,
   DIFFICULTY_OPTIONS,
@@ -34,6 +37,7 @@ import {
   WEEKDAY_OPTIONS,
 } from "@/features/study/create/constants";
 import { TagSelectModal } from "@/features/study/create/components/TagSelectModal";
+import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
 
 interface StudyApplicationEditorProps {
   application: StudyApplicationDetail;
@@ -85,8 +89,53 @@ function toFormValues(application: StudyApplicationDetail): StudyOpenValues {
     difficulty: study.difficulty ?? "",
     hasInterview: Boolean(study.requires_interview),
     interviewDate: toShortDate(study.interview_date) || null,
-    // 수정 API는 기존 참고자료를 유지하므로 재전송하지 않는다.
-    references: [],
+    references: study.references.map((reference) => ({
+      id: reference.id,
+      type: reference.reference_type === "FILE" ? "DOWNLOAD" : "LINK",
+      value: reference.content ?? "",
+    })),
+  };
+}
+
+function buildReferenceUpdate(
+  references: StudyOpenValues["references"],
+  originalReferences: StudyApplicationDetail["study"]["references"],
+): StudyApplicationReferenceUpdate {
+  const originalById = new Map(
+    originalReferences
+      .filter((reference): reference is typeof reference & { id: string } =>
+        Boolean(reference.id),
+      )
+      .map((reference) => [reference.id, reference]),
+  );
+  const retainedReferenceIds: string[] = [];
+  const updatedReferences: StudyOpenValues["references"] = [];
+
+  references.forEach((reference) => {
+    const original = reference.id ? originalById.get(reference.id) : undefined;
+    const isUnchangedUrl =
+      original?.reference_type === "URL" &&
+      reference.type === "LINK" &&
+      reference.value === original.content;
+    const isUnchangedFile =
+      original?.reference_type === "FILE" &&
+      reference.type === "DOWNLOAD" &&
+      typeof reference.value === "string" &&
+      reference.value === original.content;
+
+    if (original && (isUnchangedUrl || isUnchangedFile)) {
+      retainedReferenceIds.push(original.id);
+    } else {
+      updatedReferences.push(reference);
+    }
+  });
+
+  return {
+    retainedReferenceIds,
+    references: updatedReferences,
+    hasChanges:
+      updatedReferences.length > 0 ||
+      retainedReferenceIds.length !== originalById.size,
   };
 }
 
@@ -126,9 +175,16 @@ export function StudyApplicationEditor({
   const oneLiner = watch("oneLiner");
   const thumbnail = watch("thumbnail");
   const curriculum = watch("curriculum");
+  const newReferences = watch("references");
   const isOnline = watch("isOnline");
   const selectedLocation = watch("location");
   const hasInterview = watch("hasInterview");
+  const referenceUpdate = buildReferenceUpdate(
+    newReferences,
+    application.study.references,
+  );
+  const hasReferenceUpdates =
+    Boolean(dirtyFields.references) && referenceUpdate.hasChanges;
   const isRoomDisabled = isOnline || selectedLocation === "장소 미정";
 
   useEffect(() => {
@@ -201,12 +257,13 @@ export function StudyApplicationEditor({
   };
 
   const handleSubmit = async () => {
-    if (!isDirty || isSubmitting || isCancelling) return;
+    if ((!isDirty && !hasReferenceUpdates) || isSubmitting || isCancelling) {
+      return;
+    }
     if (!(await form.trigger())) {
       setMessage({ text: "필수 입력 항목을 확인해주세요.", type: "error" });
       return;
     }
-
     setIsSubmitting(true);
     setMessage(null);
     try {
@@ -214,6 +271,7 @@ export function StudyApplicationEditor({
         form.getValues(),
         application.study.id,
         dirtyFields,
+        hasReferenceUpdates ? referenceUpdate : undefined,
       );
       form.reset(form.getValues());
       setMessage({
@@ -466,14 +524,14 @@ export function StudyApplicationEditor({
             renderTopicInput={(weekIndex, inputClassName) => (
               <textarea
                 rows={1}
-                className={`${inputClassName} resize-none`}
+                className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
                 {...register(`curriculum.${weekIndex}.topic`)}
               />
             )}
             renderContentInput={(weekIndex, contentIndex, inputClassName) => (
               <textarea
                 rows={1}
-                className={`${inputClassName} resize-none`}
+                className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
                 {...register(
                   `curriculum.${weekIndex}.contents.${contentIndex}`,
                 )}
@@ -534,7 +592,7 @@ export function StudyApplicationEditor({
           )}
         </section>
 
-        <ExistingReferences references={application.study.references} />
+        <ReferenceFields form={form} />
 
         {message && (
           <p
@@ -563,7 +621,9 @@ export function StudyApplicationEditor({
             variant="primary"
             size="large"
             type="submit"
-            disabled={!isDirty || isSubmitting || isCancelling}
+            disabled={
+              (!isDirty && !hasReferenceUpdates) || isSubmitting || isCancelling
+            }
           >
             {isSubmitting ? "수정 중..." : "수정"}
           </Button>
@@ -587,41 +647,6 @@ export function StudyApplicationEditor({
         description={thumbnailAlertMessage ?? ""}
         onClose={() => setThumbnailAlertMessage(null)}
       />
-    </section>
-  );
-}
-
-function ExistingReferences({
-  references,
-}: {
-  references: StudyApplicationDetail["study"]["references"];
-}) {
-  return (
-    <section className="flex flex-col gap-4">
-      <StudySectionTitle>참고자료</StudySectionTitle>
-      {references.length > 0 && (
-        <ul className="border-border-gray-light divide-divider-gray-light overflow-hidden rounded-xl border">
-          {references.map((reference) => (
-            <li
-              key={reference.id}
-              className="text-text-basic px-4 py-3 text-[15px]"
-            >
-              {reference.reference_type === "URL" && reference.content ? (
-                <a
-                  href={reference.content}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-text-primary break-all underline underline-offset-2"
-                >
-                  {reference.content}
-                </a>
-              ) : (
-                reference.content || "파일 참고자료"
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
     </section>
   );
 }
