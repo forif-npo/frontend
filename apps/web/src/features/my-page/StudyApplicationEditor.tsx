@@ -241,10 +241,6 @@ export function StudyApplicationEditor({
 
   return (
     <section className="border-border-gray-light mt-8 rounded-xl border p-6 sm:p-10">
-      <h2 className="text-text-bolder mb-10 text-[24px] font-bold leading-[1.5]">
-        스터디 개설 신청서
-      </h2>
-
       <form
         className="flex flex-col gap-12"
         onSubmit={(event) => {
@@ -599,9 +595,6 @@ function ExistingReferences({
   return (
     <section className="flex flex-col gap-4">
       <StudySectionTitle>참고자료</StudySectionTitle>
-      <p className="bg-surface-gray-subtler text-text-subtle rounded-xl p-4 text-[15px] leading-[1.5]">
-        기존 참고자료는 수정 제출에도 그대로 유지됩니다.
-      </p>
       {references.length > 0 && (
         <ul className="border-border-gray-light divide-divider-gray-light overflow-hidden rounded-xl border">
           {references.map((reference) => (

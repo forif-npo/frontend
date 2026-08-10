@@ -101,9 +101,6 @@ export function StudyApplicationSection({
                   {selectedApplication.study_name}
                 </span>
               </div>
-              <p className="text-text-basic text-[15px]">
-                {selectedApplication.one_liner || "한 줄 소개가 없습니다."}
-              </p>
               {selectedApplication.reject_reason && (
                 <div className="bg-surface-danger-subtler text-text-danger rounded-2 mt-1 p-3 text-[14px] leading-[1.6]">
                   <span className="font-bold">반려 사유</span> ·{" "}
