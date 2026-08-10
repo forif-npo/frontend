@@ -25,6 +25,7 @@ export default function StudyCreatePage() {
     goToNext,
     goToPrevious,
     handleSubmit,
+    isSubmitting,
     handleSaveDraft,
     closeStudyCreateAlert,
     goToStudyList,
@@ -90,6 +91,7 @@ export default function StudyCreatePage() {
             userInfo={userInfo}
             onPrevious={goToPrevious}
             onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
           />
         )}
       </div>

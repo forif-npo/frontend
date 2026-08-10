@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@ui/components/client";
 import { Badge, CharacterCount } from "@ui/components/server";
 import {
+  cancelStudyApplication,
   type ApplicationDetail,
   updateStudyApplication,
 } from "@core/my-page/api";
@@ -21,12 +22,16 @@ interface ApplicationDetailViewProps {
     apply_semester: number;
     user_apply_id: number;
   };
-  onBack: () => void;
+  canCancel: boolean;
+  cancelDisabledMessage: string;
+  onCancelled: () => void;
 }
 
 export function ApplicationDetailView({
   application,
-  onBack,
+  canCancel,
+  cancelDisabledMessage,
+  onCancelled,
 }: ApplicationDetailViewProps) {
   const { study, priority, intro, status } = application;
   const priorityLabel = priority === "PRIMARY" ? "1순위" : "2순위";
@@ -36,6 +41,7 @@ export function ApplicationDetailView({
   const [savedIntro, setSavedIntro] = useState(initialIntro);
   const [draftIntro, setDraftIntro] = useState(initialIntro);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const isPending = status === 0;
@@ -63,6 +69,21 @@ export function ApplicationDetailView({
       setSubmitError(await handleApiError(error));
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = async () => {
+    setIsCancelling(true);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+
+    try {
+      await cancelStudyApplication(application.user_apply_id);
+      onCancelled();
+    } catch (error) {
+      setSubmitError(await handleApiError(error));
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -147,7 +168,7 @@ export function ApplicationDetailView({
                   setSubmitError(null);
                   setSubmitSuccess(null);
                 }}
-                readOnly={!isPending || isSubmitting}
+                readOnly={!isPending || isSubmitting || isCancelling}
                 maxLength={500}
                 aria-describedby={
                   submitError ? "application-intro-error" : undefined
@@ -158,6 +179,11 @@ export function ApplicationDetailView({
               {!isPending && (
                 <p className="text-text-subtle text-[13px] leading-[1.5]">
                   대기 중인 신청서만 수정할 수 있습니다.
+                </p>
+              )}
+              {isPending && !canCancel && (
+                <p className="text-text-subtle text-[13px] leading-[1.5]">
+                  {cancelDisabledMessage}
                 </p>
               )}
               {submitError && (
@@ -179,13 +205,18 @@ export function ApplicationDetailView({
 
         {/* Buttons */}
         <div className="flex items-center justify-between">
-          <Button variant="tertiary" onClick={onBack} size="large">
-            취소
+          <Button
+            variant="tertiary"
+            onClick={handleCancel}
+            size="large"
+            disabled={!canCancel || isSubmitting || isCancelling}
+          >
+            {isCancelling ? "취소 중..." : "신청 취소"}
           </Button>
           <Button
             variant="primary"
             size="large"
-            disabled={!isPending || !hasChanged || isSubmitting}
+            disabled={!isPending || !hasChanged || isSubmitting || isCancelling}
             onClick={handleSubmit}
           >
             {isSubmitting ? "수정 중..." : "수정"}

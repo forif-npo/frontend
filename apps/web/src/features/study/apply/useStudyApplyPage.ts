@@ -19,7 +19,7 @@ const EMPTY_VALUES: StudyApplyValues = {
   primaryStudyApplyReason: "",
 };
 
-export function useStudyApplyPage(studyId: string) {
+export function useStudyApplyPage(studyId?: string) {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
   const [submittedIntro, setSubmittedIntro] = useState<string>("");
@@ -33,7 +33,7 @@ export function useStudyApplyPage(studyId: string) {
   const goToPrevious = () => setStep(1);
   const goToStudyList = () => router.push("/studies/list");
   const goToApplications = () =>
-    router.push(`/my?tab=applications&study_id=${studyId}`);
+    router.push(`/my?tab=applications&study_id=${studyId ?? ""}`);
 
   const handleSubmit = async (
     _: ActionState,

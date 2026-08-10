@@ -99,7 +99,7 @@ export default function StudyListPage() {
   };
 
   const handleApplyClick = (study: Study) => {
-    router.push(`/studies/detail/${study.id}/apply`);
+    router.push(`/studies/apply?study_id=${study.id}`);
   };
 
   if (error) {

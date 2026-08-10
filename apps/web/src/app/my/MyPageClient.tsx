@@ -15,12 +15,16 @@ import type {
   StudyApplicationsResponse,
 } from "@core/my-page/api";
 import type { CreatedStudy } from "@core/study-manage/api";
+import type { StudyApplicationSummary } from "@core/study-application/api";
+import type { Semester } from "@core/semester/api";
 
 interface MyPageClientProps {
   profile: UserProfile;
   studiesData: UserStudiesResponse;
   applicationsData: StudyApplicationsResponse;
   createdStudies: CreatedStudy[];
+  studyApplications: StudyApplicationSummary[];
+  activeSemester: Semester;
 }
 
 export function MyPageClient({
@@ -28,16 +32,26 @@ export function MyPageClient({
   studiesData,
   applicationsData,
   createdStudies,
+  studyApplications,
+  activeSemester,
 }: MyPageClientProps) {
   const searchParams = useSearchParams();
-  const [activeNav, setActiveNav] = useState("my-studies");
+  const requestedSection = searchParams.get("section");
+  const shouldOpenStudyManage =
+    requestedSection === "study-manage" ||
+    requestedSection === "study-applications" ||
+    (createdStudies.length === 0 && studyApplications.length > 0);
+  const [activeNav, setActiveNav] = useState(
+    shouldOpenStudyManage ? "study-manage" : "my-studies",
+  );
   const isApplicationsTab = searchParams.get("tab") === "applications";
   const targetStudyId = Number(searchParams.get("study_id")) || undefined;
   const pageHeader =
     activeNav === "study-manage"
       ? {
           title: "스터디 관리",
-          description: "개설한 스터디의 운영 현황을 관리할 수 있습니다.",
+          description:
+            "개설 신청서와 운영 중인 스터디를 확인하고 관리할 수 있습니다.",
         }
       : activeNav === "settings"
         ? {
@@ -65,6 +79,7 @@ export function MyPageClient({
           <ApplicationSection
             applicationsData={applicationsData}
             targetStudyId={targetStudyId}
+            activeSemester={activeSemester}
           />
         </div>
       ),
@@ -83,7 +98,9 @@ export function MyPageClient({
         }}
         activeNav={activeNav}
         onNavChange={setActiveNav}
-        canManageStudies={createdStudies.length > 0}
+        canManageStudyWorkspace={
+          createdStudies.length > 0 || studyApplications.length > 0
+        }
       />
 
       {/* Main Content */}
@@ -98,7 +115,10 @@ export function MyPageClient({
         </div>
 
         {activeNav === "study-manage" ? (
-          <StudyManageSection createdStudies={createdStudies} />
+          <StudyManageSection
+            createdStudies={createdStudies}
+            studyApplications={studyApplications}
+          />
         ) : activeNav === "settings" ? (
           <SettingsSection profile={profile} />
         ) : (

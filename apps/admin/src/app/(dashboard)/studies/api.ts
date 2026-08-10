@@ -12,6 +12,8 @@ export interface AdminStudyDetail {
   id: number;
   study_name: string;
   one_liner: string;
+  primary_mentor_name?: string | null;
+  secondary_mentor_name?: string | null;
   tags?: string[] | null;
   explanation?: string | null;
   goal?: string | null;
@@ -23,6 +25,23 @@ export interface AdminStudyDetail {
   recruit_status?: "APPLICABLE" | "CLOSED" | null;
   difficulty?: string | null;
   capacity?: number | null;
+  thumbnail_image?: string | null;
+  img_url?: string | null;
+  is_online?: boolean | null;
+  requires_interview?: boolean | null;
+  interview_date?: string | null;
+  plans?: Array<{
+    id: number;
+    week_num: number;
+    date: string | null;
+    section: string | null;
+    content: string | null;
+  }>;
+  references?: Array<{
+    id: string;
+    reference_type: "FILE" | "URL";
+    content: string | null;
+  }>;
 }
 
 /**

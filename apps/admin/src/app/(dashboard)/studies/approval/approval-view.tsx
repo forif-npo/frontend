@@ -18,12 +18,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
-import { Check, XCircle } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { approveStudy, rejectStudy } from "../api";
+import { approveStudy, fetchStudyDetail, rejectStudy } from "../api";
+import type { AdminStudyDetail } from "../api";
 import { SemesterLabel, Study } from "../types";
 import { approvalColumns } from "./approval-columns";
+import { StudyApprovalDetailDialog } from "./study-approval-detail-dialog";
 
 interface ApprovalViewProps {
   initialData: Study[];
@@ -56,6 +58,11 @@ export function ApprovalView({
     initialSearch,
   });
   const router = useRouter();
+  const [reviewingStudy, setReviewingStudy] = useState<Study | null>(null);
+  const [reviewDetail, setReviewDetail] = useState<AdminStudyDetail | null>(
+    null,
+  );
+  const [isReviewLoading, setIsReviewLoading] = useState(false);
   const [rejectingStudy, setRejectingStudy] = useState<Study | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
@@ -65,10 +72,32 @@ export function ApprovalView({
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
 
+  const closeReviewDialog = () => {
+    setReviewingStudy(null);
+    setReviewDetail(null);
+    setIsReviewLoading(false);
+  };
+
+  const handleOpenReview = async (study: Study) => {
+    setReviewingStudy(study);
+    setReviewDetail(null);
+    setIsReviewLoading(true);
+
+    try {
+      const detail = await fetchStudyDetail(study.id);
+      setReviewDetail(detail);
+    } catch (error) {
+      alert(await handleApiError(error));
+    } finally {
+      setIsReviewLoading(false);
+    }
+  };
+
   const handleApproveStudy = async (study: Study) => {
     try {
       setSubmittingStudyId(study.id);
       await approveStudy(study.id);
+      closeReviewDialog();
       router.refresh();
     } catch (error) {
       alert(await handleApiError(error));
@@ -80,6 +109,11 @@ export function ApprovalView({
   const closeRejectDialog = () => {
     setRejectingStudy(null);
     setRejectReason("");
+  };
+
+  const handleOpenRejectDialog = (study: Study) => {
+    closeReviewDialog();
+    setRejectingStudy(study);
   };
 
   const handleRejectStudy = async () => {
@@ -94,6 +128,7 @@ export function ApprovalView({
       setSubmittingStudyId(rejectingStudy.id);
       await rejectStudy(rejectingStudy.id, reason);
       closeRejectDialog();
+      closeReviewDialog();
       router.refresh();
     } catch (error) {
       alert(await handleApiError(error));
@@ -128,23 +163,13 @@ export function ApprovalView({
           data={initialData}
           showPagination={false}
           renderRowActions={(study) => (
-            <>
-              <DropdownMenuItem
-                disabled={submittingStudyId === study.id}
-                onClick={() => handleApproveStudy(study)}
-              >
-                <Check className="mr-2 h-4 w-4" />
-                승인
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                disabled={submittingStudyId === study.id}
-                onClick={() => setRejectingStudy(study)}
-              >
-                <XCircle className="mr-2 h-4 w-4" />
-                반려
-              </DropdownMenuItem>
-            </>
+            <DropdownMenuItem
+              disabled={submittingStudyId === study.id}
+              onClick={() => handleOpenReview(study)}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              상세 검토
+            </DropdownMenuItem>
           )}
         />
 
@@ -156,6 +181,16 @@ export function ApprovalView({
           onPageChange={handlePageChange}
         />
       </div>
+
+      <StudyApprovalDetailDialog
+        study={reviewingStudy}
+        detail={reviewDetail}
+        isLoading={isReviewLoading}
+        isSubmitting={submittingStudyId === reviewingStudy?.id}
+        onClose={closeReviewDialog}
+        onApprove={handleApproveStudy}
+        onReject={handleOpenRejectDialog}
+      />
 
       <Dialog
         open={Boolean(rejectingStudy)}

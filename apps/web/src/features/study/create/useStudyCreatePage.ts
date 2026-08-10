@@ -68,6 +68,7 @@ export function useStudyCreatePage() {
   const [step, setStep] = useState<StudyCreateStep>(1);
   const [studyCreateAlert, setStudyCreateAlert] =
     useState<StudyCreateAlert | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { userInfo, isLoading } = useStudyCreateData();
 
   const form: UseFormReturn<StudyOpenValues> = useForm<StudyOpenValues>({
@@ -140,9 +141,12 @@ export function useStudyCreatePage() {
   }, []);
 
   const handleSubmit = useCallback(async () => {
+    if (isSubmitting) return;
+
     const isValid = await form.trigger();
     if (!isValid) return;
 
+    setIsSubmitting(true);
     try {
       const values = form.getValues();
       await submitStudyCreate(values);
@@ -166,8 +170,10 @@ export function useStudyCreatePage() {
       setStudyCreateAlert({
         description: `${errorMessage} 작성 내용은 임시저장되었습니다.`,
       });
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [form]);
+  }, [form, isSubmitting]);
 
   const handleSaveDraft = useCallback(() => {
     const values = form.getValues();
@@ -190,7 +196,7 @@ export function useStudyCreatePage() {
   }, [router]);
 
   const goToApplication = useCallback(() => {
-    router.push("/my-page");
+    router.push("/my?section=study-manage");
   }, [router]);
 
   return {
@@ -203,6 +209,7 @@ export function useStudyCreatePage() {
     goToPrevious,
     goToStep,
     handleSubmit,
+    isSubmitting,
     handleSaveDraft,
     closeStudyCreateAlert: () => setStudyCreateAlert(null),
     goToStudyList,

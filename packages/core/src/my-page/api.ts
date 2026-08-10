@@ -31,6 +31,7 @@ export interface StudyDetail {
   location: string;
   difficulty: number;
   img_url: string;
+  thumbnail_image: string | null;
   /** 수료증 발급 여부 (다운로드 버튼 활성화 판단) */
   certificate_issued: boolean;
 }
@@ -183,6 +184,7 @@ export interface StudyInfo {
   location: string;
   difficulty: number;
   img_url: string;
+  thumbnail_image: string | null;
 }
 
 /**
@@ -230,6 +232,13 @@ export async function updateStudyApplication(
   request: UpdateStudyApplicationRequest,
 ): Promise<void> {
   await apiClient.patch(`api/v1/users/apply/${applyId}`, { json: request });
+}
+
+/**
+ * Cancel and delete the logged-in user's pending study application.
+ */
+export async function cancelStudyApplication(applyId: number): Promise<void> {
+  await apiClient.delete(`api/v1/users/apply/${applyId}`);
 }
 
 /**
