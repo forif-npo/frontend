@@ -20,7 +20,7 @@ import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { approveStudy, fetchStudyDetail, rejectStudy } from "../api";
 import type { AdminStudyDetail } from "../api";
 import { SemesterLabel, Study } from "../types";
@@ -68,6 +68,10 @@ export function ApprovalView({
   const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
     null,
   );
+  const [selectedStudies, setSelectedStudies] = useState<Study[]>([]);
+  const [isBatchSubmitting, setIsBatchSubmitting] = useState(false);
+
+  const getStudyRowId = useCallback((study: Study) => String(study.id), []);
 
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
@@ -137,6 +141,31 @@ export function ApprovalView({
     }
   };
 
+  const handleBatchApprove = async () => {
+    if (selectedStudies.length === 0 || isBatchSubmitting) return;
+
+    setIsBatchSubmitting(true);
+    const results = await Promise.allSettled(
+      selectedStudies.map((study) => approveStudy(study.id)),
+    );
+    const failed = results.find(
+      (result): result is PromiseRejectedResult => result.status === "rejected",
+    );
+
+    setIsBatchSubmitting(false);
+    setSelectedStudies([]);
+    router.refresh();
+
+    if (failed) {
+      alert(
+        `일부 요청을 처리하지 못했습니다. ${await handleApiError(failed.reason)}`,
+      );
+      return;
+    }
+
+    alert(`${selectedStudies.length}개 스터디를 승인했습니다.`);
+  };
+
   return (
     <div className="space-y-6 p-8">
       <PageHeader
@@ -162,6 +191,8 @@ export function ApprovalView({
           columns={approvalColumns}
           data={initialData}
           showPagination={false}
+          getRowId={getStudyRowId}
+          onSelectedRowsChange={setSelectedStudies}
           renderRowActions={(study) => (
             <DropdownMenuItem
               disabled={submittingStudyId === study.id}
@@ -180,6 +211,21 @@ export function ApprovalView({
           pageSize={pageSize}
           onPageChange={handlePageChange}
         />
+
+        <div className="bg-muted/30 flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-sm font-medium">
+            {selectedStudies.length}개 스터디 선택됨
+          </span>
+          <div className="self-end sm:self-auto">
+            <Button
+              type="button"
+              disabled={selectedStudies.length === 0 || isBatchSubmitting}
+              onClick={() => void handleBatchApprove()}
+            >
+              {isBatchSubmitting ? "처리 중..." : "선택 승낙"}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <StudyApprovalDetailDialog
