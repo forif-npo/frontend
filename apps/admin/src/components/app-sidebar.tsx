@@ -51,7 +51,13 @@ const menuItems = {
       { title: "스터디 목록", url: "/studies", icon: BookOpen },
       { title: "스터디 승인", url: "/studies/approval", icon: CheckCircle },
       { title: "인증서 발급", url: "/certificates", icon: Award },
+    ],
+  },
+  businessManagement: {
+    label: "사업 관리",
+    items: [
       { title: "서비스", url: "/products", icon: Rocket },
+      { title: "해커톤", url: "/hackathon", icon: Code2 },
     ],
   },
   memberManagement: {
@@ -85,11 +91,10 @@ const menuItems = {
     ],
   },
   others: {
-    label: "그 외",
+    label: "기타",
     items: [
       { title: "문자 발송 서비스", url: "/sms", icon: MessageSquare },
       { title: "회비 관리", url: "/dues", icon: CircleDollarSign },
-      { title: "해커톤", url: "/hackathon", icon: Code2 },
     ],
   },
 };
@@ -157,6 +162,32 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.studyManagement.items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith(item.url)}
+                  >
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        {/* 사업 관리 */}
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            {menuItems.businessManagement.label}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.businessManagement.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
@@ -262,7 +293,7 @@ export function AppSidebar() {
 
         <SidebarSeparator />
 
-        {/* 그 외 */}
+        {/* 기타 */}
         <SidebarGroup>
           <SidebarGroupLabel>{menuItems.others.label}</SidebarGroupLabel>
           <SidebarGroupContent>
