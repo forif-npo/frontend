@@ -375,7 +375,7 @@ export function StudyApplicationEditor({
         <section className="flex flex-col gap-6">
           <StudySectionTitle>썸네일</StudySectionTitle>
           <div className="flex flex-col gap-2">
-            <HintText>새 이미지를 선택하면 기존 썸네일을 교체합니다.</HintText>
+            <HintText>새 이미지를 선택하면 기존 썸네일은 교체됩니다.</HintText>
             <FileUpload
               title="이미지 파일 업로드 (jpg, jpeg, png)"
               description="권장 크기 1080px * 720px, 최대 5MB"
@@ -394,9 +394,6 @@ export function StudyApplicationEditor({
         <section className="flex flex-col gap-6">
           <StudySectionTitle required>스터디 소개</StudySectionTitle>
           <div className="flex flex-col gap-1">
-            <HintText>
-              스터디 목표와 방식, 지원 요건 등을 50자 이상 작성해주세요.
-            </HintText>
             <TextArea
               id="introduction"
               size="large"
@@ -507,7 +504,6 @@ export function StudyApplicationEditor({
 
         <section className="flex flex-col gap-6">
           <StudySectionTitle required>커리큘럼</StudySectionTitle>
-          <HintText>스터디는 최소 8주차 이상 진행되어야 합니다.</HintText>
           <StudyCurriculumTable
             rows={curriculum.map((week) => ({
               id: week.week,
@@ -592,7 +588,10 @@ export function StudyApplicationEditor({
           )}
         </section>
 
-        <ReferenceFields form={form} />
+        <section className="flex flex-col gap-2">
+          <ReferenceFields form={form} />
+          <HintText>새 파일을 선택하면 기존 파일은 교체됩니다.</HintText>
+        </section>
 
         {message && (
           <p
