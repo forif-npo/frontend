@@ -7,6 +7,7 @@ import {
 } from "@core/my-page/api";
 import { getMyCreatedStudies } from "@core/study-manage/api";
 import { getMyStudyApplications } from "@core/study-application/api";
+import { getCurrentSemester } from "@core/semester/api";
 import { MyPageClient } from "./MyPageClient";
 
 export default async function MyPage() {
@@ -26,12 +27,14 @@ export default async function MyPage() {
     applicationsData,
     createdStudies,
     studyApplications,
+    activeSemester,
   ] = await Promise.all([
     getUserProfile(token),
     getUserStudies(token).catch(() => []),
     getStudyApplications(token).catch(() => ({ applications: [] })),
     getMyCreatedStudies(token).catch(() => []),
     getMyStudyApplications(token).catch(() => []),
+    getCurrentSemester(),
   ]);
 
   return (
@@ -41,6 +44,7 @@ export default async function MyPage() {
       applicationsData={applicationsData}
       createdStudies={createdStudies}
       studyApplications={studyApplications}
+      activeSemester={activeSemester}
     />
   );
 }

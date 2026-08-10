@@ -16,6 +16,7 @@ import type {
 } from "@core/my-page/api";
 import type { CreatedStudy } from "@core/study-manage/api";
 import type { StudyApplicationSummary } from "@core/study-application/api";
+import type { Semester } from "@core/semester/api";
 
 interface MyPageClientProps {
   profile: UserProfile;
@@ -23,6 +24,7 @@ interface MyPageClientProps {
   applicationsData: StudyApplicationsResponse;
   createdStudies: CreatedStudy[];
   studyApplications: StudyApplicationSummary[];
+  activeSemester: Semester;
 }
 
 export function MyPageClient({
@@ -31,6 +33,7 @@ export function MyPageClient({
   applicationsData,
   createdStudies,
   studyApplications,
+  activeSemester,
 }: MyPageClientProps) {
   const searchParams = useSearchParams();
   const requestedSection = searchParams.get("section");
@@ -76,6 +79,7 @@ export function MyPageClient({
           <ApplicationSection
             applicationsData={applicationsData}
             targetStudyId={targetStudyId}
+            activeSemester={activeSemester}
           />
         </div>
       ),

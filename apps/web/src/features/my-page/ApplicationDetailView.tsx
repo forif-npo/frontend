@@ -23,12 +23,14 @@ interface ApplicationDetailViewProps {
     user_apply_id: number;
   };
   canCancel: boolean;
+  cancelDisabledMessage: string;
   onCancelled: () => void;
 }
 
 export function ApplicationDetailView({
   application,
   canCancel,
+  cancelDisabledMessage,
   onCancelled,
 }: ApplicationDetailViewProps) {
   const { study, priority, intro, status } = application;
@@ -181,7 +183,7 @@ export function ApplicationDetailView({
               )}
               {isPending && !canCancel && (
                 <p className="text-text-subtle text-[13px] leading-[1.5]">
-                  1·2순위 중 검토가 완료된 신청서가 있어 취소할 수 없습니다.
+                  {cancelDisabledMessage}
                 </p>
               )}
               {submitError && (
