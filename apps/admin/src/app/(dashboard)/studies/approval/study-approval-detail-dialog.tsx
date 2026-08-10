@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -76,7 +75,7 @@ export function StudyApprovalDetailDialog({
             신청 정보를 불러오는 중입니다.
           </div>
         ) : detail ? (
-          <div className="space-y-8">
+          <div className="flex flex-col gap-10">
             {thumbnailUrl && (
               <img
                 src={thumbnailUrl}
@@ -86,102 +85,82 @@ export function StudyApprovalDetailDialog({
             )}
 
             <ReviewSection title="스터디 개요">
-              <ReviewGrid>
-                <ReviewItem
-                  label="멘토"
-                  value={
-                    [
-                      detail.primary_mentor_name ?? study?.primary_mentor_name,
-                      detail.secondary_mentor_name ??
-                        study?.secondary_mentor_name,
-                    ]
-                      .filter(Boolean)
-                      .join(", ") || "-"
-                  }
-                />
-                <ReviewItem label="스터디명" value={studyName || "-"} />
-                <ReviewItem
-                  label="한 줄 소개"
-                  value={detail.one_liner || "-"}
-                />
-                <div className="grid gap-1 sm:grid-cols-[140px_1fr] sm:gap-4">
-                  <dt className="text-muted-foreground text-sm font-medium">
-                    태그
-                  </dt>
-                  <dd className="flex flex-wrap gap-1.5">
-                    {tags.length > 0 ? (
-                      tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">
-                          {tag}
-                        </Badge>
-                      ))
-                    ) : (
-                      <span>-</span>
-                    )}
-                  </dd>
-                </div>
-                <ReviewItem
-                  label="난이도"
-                  value={
-                    detail.difficulty
-                      ? (DIFFICULTY_LABELS[detail.difficulty] ??
-                        detail.difficulty)
-                      : "-"
-                  }
-                />
-                <ReviewItem label="진행 시간" value={formatStudyTime(detail)} />
-                <ReviewItem label="진행 장소" value={formatLocation(detail)} />
-                <ReviewItem
-                  label="모집 인원"
-                  value={
-                    detail.capacity === null || detail.capacity === undefined
-                      ? "-"
-                      : `${detail.capacity}명`
-                  }
-                />
-                <ReviewItem
-                  label="면접 일정"
-                  value={
-                    detail.requires_interview
-                      ? formatDateTime(detail.interview_date)
-                      : "면접 없음"
-                  }
-                />
-              </ReviewGrid>
+              <table className="w-full">
+                <tbody className="divide-y divide-[#e5e8eb]">
+                  <PreviewInfoRow
+                    label="멘토"
+                    value={
+                      [
+                        detail.primary_mentor_name ??
+                          study?.primary_mentor_name,
+                        detail.secondary_mentor_name ??
+                          study?.secondary_mentor_name,
+                      ]
+                        .filter(Boolean)
+                        .join(", ") || "-"
+                    }
+                  />
+                  <PreviewInfoRow label="스터디명" value={studyName || "-"} />
+                  <PreviewInfoRow
+                    label="한 줄 소개"
+                    value={detail.one_liner || "-"}
+                  />
+                  <tr>
+                    <td className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
+                      태그
+                    </td>
+                    <td className="py-3">
+                      {tags.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-[4px] bg-[#ecf2fe] px-2 py-1 text-[15px] leading-[1.5] text-sky-900"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <EmptyValue />
+                      )}
+                    </td>
+                  </tr>
+                  <PreviewInfoRow
+                    label="난이도"
+                    value={
+                      detail.difficulty
+                        ? (DIFFICULTY_LABELS[detail.difficulty] ??
+                          detail.difficulty)
+                        : "-"
+                    }
+                  />
+                  <PreviewInfoRow
+                    label="강의시간"
+                    value={formatStudyTime(detail)}
+                  />
+                  <PreviewInfoRow label="장소" value={formatLocation(detail)} />
+                  <PreviewInfoRow
+                    label="면접 여부"
+                    value={
+                      detail.requires_interview
+                        ? `있음 (${formatDateTime(detail.interview_date)})`
+                        : "없음"
+                    }
+                  />
+                </tbody>
+              </table>
             </ReviewSection>
 
             <ReviewSection title="스터디 소개">
-              <p className="bg-muted whitespace-pre-wrap rounded-lg p-4 text-sm leading-6">
+              <p className="text-text-basic whitespace-pre-wrap rounded-[12px] bg-[#f4f5f6] p-4 text-[15px] leading-[1.5] md:p-6 md:text-[17px]">
                 {detail.explanation || detail.goal || "-"}
               </p>
             </ReviewSection>
 
             <ReviewSection title="커리큘럼">
               {detail.plans && detail.plans.length > 0 ? (
-                <div className="overflow-x-auto rounded-lg border">
-                  <table className="w-full min-w-[640px] text-sm">
-                    <thead className="bg-muted text-muted-foreground text-left">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">주차</th>
-                        <th className="px-4 py-3 font-medium">진행 날짜</th>
-                        <th className="px-4 py-3 font-medium">주제</th>
-                        <th className="px-4 py-3 font-medium">내용</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {detail.plans.map((plan) => (
-                        <tr key={plan.id}>
-                          <td className="px-4 py-3">{plan.week_num}주차</td>
-                          <td className="px-4 py-3">{formatDate(plan.date)}</td>
-                          <td className="px-4 py-3">{plan.section || "-"}</td>
-                          <td className="whitespace-pre-wrap px-4 py-3">
-                            {plan.content || "-"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <CurriculumReviewTable plans={detail.plans} />
               ) : (
                 <p className="text-muted-foreground text-sm">
                   등록된 커리큘럼이 없습니다.
@@ -195,14 +174,12 @@ export function StudyApprovalDetailDialog({
                   {detail.references.map((reference) => (
                     <li
                       key={reference.id}
-                      className="bg-muted rounded-lg px-4 py-3 text-sm"
+                      className="bg-muted flex items-start gap-3 rounded-lg px-4 py-3 text-sm"
                     >
                       <span className="text-muted-foreground mr-2 font-medium">
                         {reference.reference_type === "FILE" ? "파일" : "링크"}
                       </span>
-                      <span className="break-all">
-                        {reference.content || "-"}
-                      </span>
+                      <ReferenceContent reference={reference} />
                     </li>
                   ))}
                 </ul>
@@ -248,6 +225,119 @@ export function StudyApprovalDetailDialog({
   );
 }
 
+function CurriculumReviewTable({
+  plans,
+}: {
+  plans: NonNullable<AdminStudyDetail["plans"]>;
+}) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[640px] table-fixed border-collapse">
+        <colgroup>
+          <col className="w-[60px]" />
+          <col className="w-[120px]" />
+          <col className="w-[240px]" />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th className={CURRICULUM_HEADER_CELL_CLASS}>주차</th>
+            <th className={CURRICULUM_HEADER_CELL_CLASS}>진행 날짜</th>
+            <th className={CURRICULUM_HEADER_CELL_CLASS}>주제</th>
+            <th className={CURRICULUM_HEADER_CELL_CLASS}>내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          {plans
+            .slice()
+            .sort((first, second) => first.week_num - second.week_num)
+            .map((plan) => {
+              const contents = splitPlanContent(plan.content);
+
+              return contents.map((content, contentIndex) => (
+                <tr key={`${plan.id}-${contentIndex}`}>
+                  {contentIndex === 0 && (
+                    <>
+                      <td
+                        rowSpan={contents.length}
+                        className={`${CURRICULUM_BODY_CELL_CLASS} text-center`}
+                      >
+                        {plan.week_num}주차
+                      </td>
+                      <td
+                        rowSpan={contents.length}
+                        className={`${CURRICULUM_BODY_CELL_CLASS} whitespace-nowrap`}
+                      >
+                        {formatDate(plan.date)}
+                      </td>
+                      <td
+                        rowSpan={contents.length}
+                        className={`${CURRICULUM_BODY_CELL_CLASS} break-words`}
+                      >
+                        {plan.section || "-"}
+                      </td>
+                    </>
+                  )}
+                  <td
+                    className={`${CURRICULUM_BODY_CELL_CLASS} whitespace-pre-wrap break-words`}
+                  >
+                    {content}
+                  </td>
+                </tr>
+              ));
+            })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function splitPlanContent(content: string | null) {
+  const contents = content
+    ?.split("; ")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return contents && contents.length > 0 ? contents : ["-"];
+}
+
+function ReferenceContent({
+  reference,
+}: {
+  reference: NonNullable<AdminStudyDetail["references"]>[number];
+}) {
+  const href =
+    reference.reference_type === "URL"
+      ? getSafeExternalUrl(reference.content)
+      : null;
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        className="text-primary break-all underline underline-offset-2"
+      >
+        {reference.content}
+      </a>
+    );
+  }
+
+  return <span className="break-all">{reference.content || "-"}</span>;
+}
+
+function getSafeExternalUrl(value: string | null) {
+  if (!value) return null;
+
+  try {
+    const url = new URL(value);
+    return ["http:", "https:"].includes(url.protocol) ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 function ReviewSection({
   title,
   children,
@@ -256,25 +346,36 @@ function ReviewSection({
   children: ReactNode;
 }) {
   return (
-    <section className="space-y-3">
-      <h3 className="text-base font-semibold">{title}</h3>
+    <section className="flex flex-col gap-4">
+      <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
+        {title}
+      </h3>
       {children}
     </section>
   );
 }
 
-function ReviewGrid({ children }: { children: ReactNode }) {
-  return <dl className="space-y-3 rounded-lg border p-4">{children}</dl>;
-}
-
-function ReviewItem({ label, value }: { label: string; value: string }) {
+function PreviewInfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid gap-1 sm:grid-cols-[140px_1fr] sm:gap-4">
-      <dt className="text-muted-foreground text-sm font-medium">{label}</dt>
-      <dd className="whitespace-pre-wrap text-sm">{value}</dd>
-    </div>
+    <tr>
+      <td className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
+        {label}
+      </td>
+      <td className="text-text-basic py-3 text-[15px] leading-[1.5] md:text-[17px]">
+        {value}
+      </td>
+    </tr>
   );
 }
+
+function EmptyValue() {
+  return <span className="text-text-subtle">-</span>;
+}
+
+const CURRICULUM_HEADER_CELL_CLASS =
+  "border-b border-secondary-10 bg-secondary-5 px-2 py-2 text-left text-[15px] font-bold leading-[1.5] text-text-bolder";
+const CURRICULUM_BODY_CELL_CLASS =
+  "border-b border-gray-20 bg-surface-white px-2 py-2 align-top text-[15px] leading-[1.5] text-text-basic";
 
 function formatStudyTime(detail: AdminStudyDetail) {
   const weekDay =
