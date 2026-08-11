@@ -82,7 +82,7 @@ export const approvalColumns: ColumnDef<Study>[] = [
       if (!tags || tags.length === 0) return null;
 
       return (
-        <div className="flex flex-wrap justify-center gap-1">
+        <div className="flex flex-wrap justify-center gap-2">
           {tags.map((tag) => (
             <Badge key={tag} variant="secondary">
               {tag}

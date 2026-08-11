@@ -176,7 +176,7 @@ export function ParticipantsTab({
                   </td>
                   <td className="px-4 py-3">
                     {(participant.studies?.length ?? 0) > 0 ? (
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-2">
                         {participant.studies?.map((study) => (
                           <Badge
                             key={`${study.role}-${study.study_id}`}

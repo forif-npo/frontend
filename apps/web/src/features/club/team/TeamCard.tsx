@@ -68,7 +68,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
         <p className="text-text-subtle mb-3 text-sm">
           {member.club_department}
         </p>
-        <div className="mb-3 flex flex-wrap justify-center gap-1.5">
+        <div className="mb-3 flex flex-wrap justify-center gap-2">
           {member.user_title && (
             <Badge
               label={member.user_title}

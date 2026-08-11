@@ -10,11 +10,13 @@ import {
 import type {
   StudyApplicationsResponse,
   ApplicationDetail,
+  UserStudiesResponse,
 } from "@core/my-page/api";
 import type { Semester } from "@core/semester/api";
 
 interface ApplicationSectionProps {
   applicationsData: StudyApplicationsResponse;
+  studiesData: UserStudiesResponse;
   targetStudyId?: number;
   activeSemester: Semester;
 }
@@ -28,6 +30,7 @@ type FlatApplication = ApplicationDetail & {
 
 export function ApplicationSection({
   applicationsData,
+  studiesData,
   targetStudyId,
   activeSemester,
 }: ApplicationSectionProps) {
@@ -36,12 +39,29 @@ export function ApplicationSection({
     Set<number>
   >(new Set());
 
+  const enrolledStudyMetadata = new Map(
+    studiesData.flatMap((semester) =>
+      semester.studies.map((study) => [
+        study.study_id,
+        { difficulty: study.difficulty, tags: study.tags },
+      ]),
+    ),
+  );
+
+  const normalizeStudyMetadata = (application: ApplicationDetail) => ({
+    ...application,
+    study: {
+      ...application.study,
+      ...enrolledStudyMetadata.get(application.study.study_id),
+    },
+  });
+
   const allApplications = applicationsData.applications
     .filter((app) => !cancelledApplicationIds.has(app.user_apply_id))
     .flatMap((app) => {
       const items: FlatApplication[] = [
         {
-          ...app.primary_application,
+          ...normalizeStudyMetadata(app.primary_application),
           apply_date: app.apply_date,
           apply_year: app.apply_year,
           apply_semester: app.apply_semester,
@@ -50,7 +70,7 @@ export function ApplicationSection({
       ];
       if (app.secondary_application) {
         items.push({
-          ...app.secondary_application,
+          ...normalizeStudyMetadata(app.secondary_application),
           apply_date: app.apply_date,
           apply_year: app.apply_year,
           apply_semester: app.apply_semester,

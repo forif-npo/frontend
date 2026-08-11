@@ -56,6 +56,17 @@ export function getDifficultyBadgeVariant(
 }
 
 /**
+ * 마이페이지 API의 숫자 난이도(1-5)에 맞는 Badge variant를 반환한다.
+ */
+export function getNumericDifficultyBadgeVariant(
+  difficulty: number,
+): BadgeProps["variant"] {
+  if (difficulty <= 2) return "success";
+  if (difficulty === 3) return "warning";
+  return "danger";
+}
+
+/**
  * 모집 상태 라벨 가져오기
  */
 export function getRecruitStatusLabel(status: RecruitStatus): string {

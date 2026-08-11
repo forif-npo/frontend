@@ -1,3 +1,4 @@
+import { getDifficultyBadgeVariant } from "@/constants/study";
 import { Study, StudyDifficulty } from "@/types/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
 
@@ -28,14 +29,14 @@ export function getStudyBadgeTags(study: Study): BadgeTag[] {
     variant: study.recruit_status === "APPLICABLE" ? "info" : "disabled",
   };
 
-  const tagBadges: BadgeTag[] = study.tags.map((tag, idx) => ({
+  const tagBadges: BadgeTag[] = study.tags.map((tag) => ({
     label: getStudyTagLabel(tag),
-    variant: (idx === 0 ? "danger" : "primary") as BadgeVariant,
+    variant: "info",
   }));
 
   const difficultyBadge: BadgeTag = {
     label: DIFFICULTY_LABEL[study.difficulty] || study.difficulty,
-    variant: "primary",
+    variant: getDifficultyBadgeVariant(study.difficulty) as BadgeVariant,
   };
 
   return [statusBadge, ...tagBadges, difficultyBadge];
