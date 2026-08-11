@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { Select, Tabs } from "@ui/components/client";
+import { Badge } from "@ui/components/server";
 import { ApplicantsPanel } from "./ApplicantsPanel";
 import { AttendancePanel } from "./AttendancePanel";
 import { StudyApplicationSection } from "./StudyApplicationSection";
@@ -20,11 +21,17 @@ export function StudyManageSection({
   createdStudies,
   studyApplications,
 }: StudyManageSectionProps) {
+  const sortedCreatedStudies = [...createdStudies].sort(
+    (first, second) =>
+      second.act_year - first.act_year ||
+      second.act_semester - first.act_semester ||
+      second.id - first.id,
+  );
   const [selectedStudyId, setSelectedStudyId] = useState<number | null>(
-    createdStudies[0]?.id ?? null,
+    sortedCreatedStudies[0]?.id ?? null,
   );
   const activeSemester = useActiveSemester();
-  const selectedStudy = createdStudies.find(
+  const selectedStudy = sortedCreatedStudies.find(
     (study) => study.id === selectedStudyId,
   );
   const isPastSemester =
@@ -34,18 +41,18 @@ export function StudyManageSection({
   const hasStudyApplications = studyApplications.length > 0;
 
   const operatingStudyContent = (content: ReactNode) => {
-    if (createdStudies.length === 0 || selectedStudyId === null) {
+    if (sortedCreatedStudies.length === 0 || selectedStudyId === null) {
       return <EmptyOperatingStudies />;
     }
 
     return (
       <div className="pt-6">
         <StudySelector
-          createdStudies={createdStudies}
+          createdStudies={sortedCreatedStudies}
           selectedStudyId={selectedStudyId}
           onChange={setSelectedStudyId}
+          isPastSemester={isPastSemester}
         />
-        {isPastSemester && <PastSemesterNotice />}
         {content}
       </div>
     );
@@ -60,9 +67,10 @@ export function StudyManageSection({
             <StudyApplicationSection applications={studyApplications} />
           ) : (
             <OperatingStudyOverview
-              createdStudies={createdStudies}
+              createdStudies={sortedCreatedStudies}
               selectedStudyId={selectedStudyId}
               onChange={setSelectedStudyId}
+              isPastSemester={isPastSemester}
             />
           ),
         },
@@ -93,10 +101,12 @@ function OperatingStudyOverview({
   createdStudies,
   selectedStudyId,
   onChange,
+  isPastSemester,
 }: {
   createdStudies: CreatedStudy[];
   selectedStudyId: number | null;
   onChange: (studyId: number) => void;
+  isPastSemester: boolean;
 }) {
   const { study, isLoading, error } = useStudyDetail(
     selectedStudyId ? String(selectedStudyId) : "",
@@ -112,6 +122,7 @@ function OperatingStudyOverview({
         createdStudies={createdStudies}
         selectedStudyId={selectedStudyId}
         onChange={onChange}
+        isPastSemester={isPastSemester}
       />
       {isLoading ? (
         <p className="text-text-subtle py-12 text-center">
@@ -132,10 +143,12 @@ function StudySelector({
   createdStudies,
   selectedStudyId,
   onChange,
+  isPastSemester,
 }: {
   createdStudies: CreatedStudy[];
   selectedStudyId: number;
   onChange: (studyId: number) => void;
+  isPastSemester: boolean;
 }) {
   return (
     <div className="mb-4">
@@ -149,6 +162,16 @@ function StudySelector({
           value: String(study.id),
           label: `[${study.act_year}-${study.act_semester}] ${study.study_name}`,
         }))}
+        selectedSuffix={
+          isPastSemester ? (
+            <Badge
+              label="종료"
+              variant="disabled"
+              appearance="solid-pastel"
+              size="small"
+            />
+          ) : undefined
+        }
       />
     </div>
   );
@@ -158,20 +181,6 @@ function EmptyOperatingStudies() {
   return (
     <div className="text-text-subtle flex flex-col items-center justify-center py-20">
       <p className="text-lg">승인된 운영 스터디가 없습니다.</p>
-    </div>
-  );
-}
-
-function PastSemesterNotice() {
-  return (
-    <div className="rounded-3 mb-4 border border-amber-200 bg-amber-50 px-4 py-3">
-      <p className="text-sm font-semibold text-amber-900">
-        지난 학기 스터디입니다
-      </p>
-      <p className="mt-0.5 text-xs text-amber-800">
-        신청자 명단과 출석 기록은 볼 수 있지만, 합격·불합격 처리와 출석 변경은
-        할 수 없습니다.
-      </p>
     </div>
   );
 }
