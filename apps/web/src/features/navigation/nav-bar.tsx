@@ -187,15 +187,19 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                         ))}
                       </div>
                     ) : (
-                      <Link
-                        href={menu.href}
-                        target={menu.external ? "_blank" : undefined}
-                        rel={menu.external ? "noopener noreferrer" : undefined}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-text-basic block px-3 py-3 text-[16px] leading-[1.5] hover:bg-[#eef4ff] hover:font-semibold"
-                      >
-                        {menu.label} 바로가기
-                      </Link>
+                      <div className="p-3">
+                        <Link
+                          href={menu.href}
+                          target={menu.external ? "_blank" : undefined}
+                          rel={
+                            menu.external ? "noopener noreferrer" : undefined
+                          }
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="text-text-basic rounded-2 block px-3 py-3 text-[16px] leading-[1.5] hover:bg-[#eef4ff] hover:font-semibold"
+                        >
+                          {menu.label} 바로가기
+                        </Link>
+                      </div>
                     )}
                   </div>
                 </section>
