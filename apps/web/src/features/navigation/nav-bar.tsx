@@ -263,9 +263,21 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                     if (closingMenu === label) setClosingMenu(null);
                   }}
                 >
-                  <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 md:grid-cols-4">
+                  <ul
+                    className={cn(
+                      "mx-auto grid gap-2",
+                      subMenus.length === 1 && "w-1/4 grid-cols-1",
+                      subMenus.length === 2 && "w-1/2 grid-cols-2",
+                      subMenus.length === 3 && "w-3/4 grid-cols-3",
+                      subMenus.length >= 4 && "w-full grid-cols-4",
+                    )}
+                  >
                     {subMenus.map(({ label: subLabel, href: subHref }) => (
-                      <li key={subLabel} className="py-2.5" role="menuitem">
+                      <li
+                        key={subLabel}
+                        className="py-2.5 text-center"
+                        role="menuitem"
+                      >
                         <Link
                           size="m"
                           href={subHref}
