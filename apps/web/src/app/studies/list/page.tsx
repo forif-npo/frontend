@@ -12,7 +12,6 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Study, StudyListParams } from "@/types/study";
 import { getStudyTagName } from "@/constants/study-tags";
 import { Pagination } from "@ui/components/client";
-import { Heading } from "@ui/components/server";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -155,9 +154,12 @@ export default function StudyListPage() {
   return (
     <div className="bg-bg-base min-h-viewport pb-20">
       <div className="w-full pb-8">
-        <Heading size="l" className="mb-6 md:mb-12">
-          스터디 목록
-        </Heading>
+        <header className="mb-8">
+          <h1 className="text-3xl font-semibold text-gray-900">스터디 목록</h1>
+          <p className="text-text-basic mt-2 text-sm">
+            관심 분야와 난이도에 맞는 FORIF 스터디를 찾아보세요.
+          </p>
+        </header>
 
         <StudyListMobileHeader
           searchInput={searchInput}

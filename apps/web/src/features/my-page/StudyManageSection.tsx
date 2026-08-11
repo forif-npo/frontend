@@ -46,7 +46,7 @@ export function StudyManageSection({
     }
 
     return (
-      <div className="pt-6">
+      <div>
         <StudySelector
           createdStudies={sortedCreatedStudies}
           selectedStudyId={selectedStudyId}
@@ -117,7 +117,7 @@ function OperatingStudyOverview({
   }
 
   return (
-    <div className="pt-6">
+    <div>
       <StudySelector
         createdStudies={createdStudies}
         selectedStudyId={selectedStudyId}
