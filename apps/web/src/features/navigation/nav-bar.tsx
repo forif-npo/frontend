@@ -5,7 +5,8 @@ import { Button } from "@ui/components/client";
 import { Link } from "@ui/components/server";
 import { cn } from "@ui/utils/cn";
 import Image from "next/image";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import styles from "./nav-bar.module.css";
 
 const NAV_LOGO_SRC = "/black_title.svg";
 
@@ -28,23 +29,36 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
   const navMenus: NavMenu[] = items;
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [closingMenu, setClosingMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+
+  const closeDesktopMenu = useCallback(() => {
+    if (!openMenu) return;
+    setClosingMenu(openMenu);
+    setOpenMenu(null);
+  }, [openMenu]);
+
   const handleMenuClick = (label: string, hasSubMenus?: boolean) => {
     if (!hasSubMenus) return;
-    setOpenMenu((prev) => (prev === label ? null : label));
+    if (openMenu === label) {
+      closeDesktopMenu();
+      return;
+    }
+    setClosingMenu(null);
+    setOpenMenu(label);
   };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
-        setOpenMenu(null);
+        closeDesktopMenu();
       }
     };
 
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setOpenMenu(null);
+        closeDesktopMenu();
         setMobileMenuOpen(false);
       }
     };
@@ -56,7 +70,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEsc);
     };
-  }, []);
+  }, [closeDesktopMenu]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -75,7 +89,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
   return (
     <div className="relative z-50">
       {/* Desktop overlay */}
-      {openMenu && (
+      {(openMenu || closingMenu) && (
         <div
           className="fixed inset-0 z-40 hidden bg-black/50 md:block"
           aria-hidden="true"
@@ -208,7 +222,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
         )}
       >
         <Link
-          onClick={() => setOpenMenu(null)}
+          onClick={closeDesktopMenu}
           href="/"
           className="flex items-center gap-8"
         >
@@ -237,10 +251,13 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                 </Link>
               )}
 
-              {subMenus && openMenu === label && (
+              {subMenus && (openMenu === label || closingMenu === label) && (
                 <div
-                  className="bg-surface-white border-divider-gray-light shadow-divider-primary-light absolute left-0 top-full z-50 w-full border-t px-16 py-4 shadow"
+                  className={`bg-surface-white border-divider-gray-light shadow-divider-primary-light absolute left-0 top-full z-50 w-full border-t px-16 py-4 shadow ${openMenu === label ? styles.menuOpen : styles.menuClose}`}
                   role="menubar"
+                  onAnimationEnd={() => {
+                    if (closingMenu === label) setClosingMenu(null);
+                  }}
                 >
                   <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 md:grid-cols-4">
                     {subMenus.map(({ label: subLabel, href: subHref }) => (
@@ -248,7 +265,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                         <Link
                           size="m"
                           href={subHref}
-                          onClick={() => setOpenMenu(null)}
+                          onClick={closeDesktopMenu}
                           className="text-text-basic"
                         >
                           {subLabel}

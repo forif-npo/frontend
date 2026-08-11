@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useStudyData } from "@/hooks/study/useStudyData";
 import { useHorizontalSwipe } from "@/hooks/useHorizontalSwipe";
 import { StudyCard } from "@/components/study/ui/StudyCard";
+import styles from "../home-animations.module.css";
 
 export function StudySection() {
   const { studies, loading, refetch } = useStudyData();
@@ -34,6 +35,10 @@ export function StudySection() {
     desktopCurrentPage * 3,
     desktopCurrentPage * 3 + 3,
   );
+  const slideAnimation =
+    slideDirection === "forward"
+      ? styles.bannerSlideForward
+      : styles.bannerSlideBackward;
 
   const handlePrev = (totalPages: number) => {
     setSlideDirection("backward");
@@ -69,10 +74,7 @@ export function StudySection() {
       </div>
       <div className="md:hidden">
         <div className="touch-pan-y" {...mobileSwipeHandlers}>
-          <div
-            key={mobileCurrentPage}
-            className={`animate-banner-slide-${slideDirection}`}
-          >
+          <div key={mobileCurrentPage} className={slideAnimation}>
             {loading ? (
               <div className="rounded-3 border-border-gray-light bg-gray-5 h-[176px] animate-pulse border" />
             ) : studies.length > 0 ? (
@@ -106,10 +108,7 @@ export function StudySection() {
         )}
 
         <div className="min-w-0 flex-1">
-          <div
-            key={desktopCurrentPage}
-            className={`animate-banner-slide-${slideDirection}`}
-          >
+          <div key={desktopCurrentPage} className={slideAnimation}>
             {loading ? (
               <div className="grid grid-cols-3 gap-6">
                 {[1, 2, 3].map((i) => (

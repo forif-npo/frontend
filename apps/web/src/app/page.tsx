@@ -25,8 +25,8 @@ export default async function Page() {
   });
   return (
     <div className="min-h-viewport overflow-x-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f7faff_42%,#ffffff_100%)] md:bg-none">
-      <main className="main-gap flex flex-col items-center">
-        <section className="alert-section max-w-main hidden w-full flex-col items-center gap-4 md:flex">
+      <main className="flex flex-col items-center gap-5 md:gap-8">
+        <section className="max-w-main mb-2 mt-4 hidden w-full flex-col items-center gap-4 px-4 md:mb-0 md:mt-12 md:flex md:px-0">
           <CriticalAlert
             variant="information"
             link="/studies/list"

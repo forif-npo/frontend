@@ -23,6 +23,7 @@ import { useHorizontalSwipe } from "@/hooks/useHorizontalSwipe";
 import Link from "next/link";
 import type { ComponentType, SVGProps } from "react";
 import { useState } from "react";
+import styles from "./home-animations.module.css";
 
 const FaqIconAdapter = ({
   size = 24,
@@ -109,6 +110,10 @@ export function QuickMenu() {
     currentPage * ITEMS_PER_PAGE,
     (currentPage + 1) * ITEMS_PER_PAGE,
   );
+  const slideAnimation =
+    slideDirection === "forward"
+      ? styles.bannerSlideForward
+      : styles.bannerSlideBackward;
 
   return (
     <div className="flex w-full flex-col gap-4 md:gap-6">
@@ -130,7 +135,7 @@ export function QuickMenu() {
 
           <div
             key={currentPage}
-            className={`animate-banner-slide-${slideDirection} flex min-w-0 flex-1 touch-pan-y flex-wrap justify-center gap-3`}
+            className={`${slideAnimation} flex min-w-0 flex-1 touch-pan-y flex-wrap justify-center gap-3`}
             {...swipeHandlers}
           >
             {visibleItems.map((item) => (
