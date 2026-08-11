@@ -47,14 +47,39 @@ const SEMESTER_OPTIONS = [
   { value: "2", label: "2학기" },
 ];
 
-const TITLE_PRIORITY: Record<string, number> = {
-  회장: 1,
-  부회장: 2,
-  팀장: 3,
+const EXECUTIVE_PRIORITY: Record<string, number> = {
+  회장: 0,
+  부회장: 1,
 };
 
-const getTitlePriority = (title: string | null) =>
-  title ? (TITLE_PRIORITY[title] ?? 4) : 4;
+const getExecutivePriority = (title: string | null) =>
+  title ? (EXECUTIVE_PRIORITY[title] ?? 2) : 2;
+
+const compareKorean = (first: string, second: string) =>
+  first.localeCompare(second, "ko");
+
+const compareTeamMembers = (first: TeamMember, second: TeamMember) => {
+  const executivePriority =
+    getExecutivePriority(first.user_title) -
+    getExecutivePriority(second.user_title);
+  if (executivePriority !== 0) return executivePriority;
+
+  if (getExecutivePriority(first.user_title) < 2) {
+    return compareKorean(first.user_name, second.user_name);
+  }
+
+  const departmentOrder = compareKorean(
+    first.club_department ?? "\uffff",
+    second.club_department ?? "\uffff",
+  );
+  if (departmentOrder !== 0) return departmentOrder;
+
+  const teamLeaderOrder =
+    Number(second.user_title === "팀장") - Number(first.user_title === "팀장");
+  if (teamLeaderOrder !== 0) return teamLeaderOrder;
+
+  return compareKorean(first.user_name, second.user_name);
+};
 
 const getIntroTags = (introTag: string | null) =>
   (introTag ?? "")
@@ -86,10 +111,7 @@ export default function TeamPage() {
         .get(`api/v1/forif-team/${year}/${semester}`)
         .json<ApiResponse<TeamMember[]>>();
       const data = res.data ?? [];
-      const sorted = [...data].sort(
-        (a, b) =>
-          getTitlePriority(a.user_title) - getTitlePriority(b.user_title),
-      );
+      const sorted = [...data].sort(compareTeamMembers);
       setTeam(sorted);
     } catch {
       setTeam([]);
