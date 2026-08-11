@@ -6,6 +6,7 @@ import { Link } from "@ui/components/server";
 import { cn } from "@ui/utils/cn";
 import Image from "next/image";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import styles from "./nav-bar.module.css";
 
 const NAV_LOGO_SRC = "/black_title.svg";
 
@@ -252,7 +253,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
 
               {subMenus && (openMenu === label || closingMenu === label) && (
                 <div
-                  className={`bg-surface-white border-divider-gray-light shadow-divider-primary-light absolute left-0 top-full z-50 w-full border-t px-16 py-4 shadow ${openMenu === label ? "animate-nav-menu-open" : "animate-nav-menu-close"}`}
+                  className={`bg-surface-white border-divider-gray-light shadow-divider-primary-light absolute left-0 top-full z-50 w-full border-t px-16 py-4 shadow ${openMenu === label ? styles.menuOpen : styles.menuClose}`}
                   role="menubar"
                   onAnimationEnd={() => {
                     if (closingMenu === label) setClosingMenu(null);

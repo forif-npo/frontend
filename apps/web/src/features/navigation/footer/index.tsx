@@ -24,7 +24,7 @@ export function Footer() {
   return (
     <footer className="bg-surface-white border-border-gray-light border-t">
       {/* Main Content */}
-      <div className="footer-main max-w-main mx-auto flex flex-col">
+      <div className="max-w-main mx-auto flex flex-col gap-6 px-4 pb-6 pt-8 md:gap-10 md:px-6 md:pt-10">
         {/* Brand + Social Links */}
         <div className="flex items-center gap-[10px]">
           <Image src={NAV_LOGO_SRC} width={81} height={52} alt="FORIF 로고" />
@@ -69,7 +69,7 @@ export function Footer() {
         </div>
 
         {/* Info + Links */}
-        <div className="footer-info-grid flex items-start">
+        <div className="flex flex-col items-start gap-5 md:flex-row md:gap-6">
           {/* Address + Contact */}
           <div className="flex flex-1 flex-col gap-4">
             <Body size="m">{FORIF_CONTACT_INFO.address}</Body>
@@ -94,7 +94,7 @@ export function Footer() {
           </div>
 
           {/* Utility Links */}
-          <div className="footer-links-col flex flex-col items-start gap-1">
+          <div className="flex w-full flex-col items-start gap-1 md:w-[282px] md:shrink-0">
             {UTILITY_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -112,7 +112,7 @@ export function Footer() {
 
       {/* Copyright Bar */}
       <div className="border-divider-gray-light border-t">
-        <div className="footer-copyright max-w-main mx-auto flex">
+        <div className="max-w-main mx-auto flex flex-col items-center gap-3 p-4 md:flex-row md:flex-wrap md:justify-between md:gap-4 md:px-6 md:pb-6 md:pt-4">
           <div className="mb-4 flex items-center gap-2">
             {POLICY_LINKS.map((link) => (
               <Link

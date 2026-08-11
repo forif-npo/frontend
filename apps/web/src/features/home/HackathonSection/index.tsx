@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useHorizontalSwipe } from "@/hooks/useHorizontalSwipe";
 import { HackathonBanner } from "./HackathonBanner";
 import { HackathonCard } from "./HackathonCard";
+import styles from "../home-animations.module.css";
 
 const CARD_COLORS = ["#e5e2ef", "#cee4ee", "#f5f5f5"];
 
@@ -131,6 +132,10 @@ export function HackathonSection() {
     desktopCurrentPage * 3,
     desktopCurrentPage * 3 + 3,
   );
+  const slideAnimation =
+    slideDirection === "forward"
+      ? styles.bannerSlideForward
+      : styles.bannerSlideBackward;
 
   const skeletonCard = (
     <div className="rounded-3 border-border-gray-light bg-gray-5 h-[292px] animate-pulse border" />
@@ -149,10 +154,7 @@ export function HackathonSection() {
         </div>
 
         <div className="touch-pan-y" {...mobileSwipeHandlers}>
-          <div
-            key={mobileCurrentPage}
-            className={`animate-banner-slide-${slideDirection}`}
-          >
+          <div key={mobileCurrentPage} className={slideAnimation}>
             {loading ? (
               skeletonCard
             ) : submissions.length === 0 ? (
@@ -211,7 +213,7 @@ export function HackathonSection() {
           <div className="flex flex-1 flex-col gap-6">
             <div
               key={desktopCurrentPage}
-              className={`animate-banner-slide-${slideDirection} grid grid-cols-3 gap-6`}
+              className={`${slideAnimation} grid grid-cols-3 gap-6`}
             >
               {loading
                 ? [1, 2, 3].map((i) => (
