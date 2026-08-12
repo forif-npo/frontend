@@ -110,6 +110,9 @@ function buildStudyApplicationUpdateRequest(
   const request: Record<string, unknown> = {};
 
   if (dirtyFields.studyName) request.study_name = values.studyName;
+  if (dirtyFields.mentorIds) {
+    request.secondary_mentor_id = values.mentorIds[0] ?? null;
+  }
   if (dirtyFields.oneLiner) request.one_liner = values.oneLiner;
   if (dirtyFields.tags) request.study_tag_names = fullRequest.study_tag_names;
   if (dirtyFields.introduction) {

@@ -13,7 +13,7 @@ import {
   TextArea,
   TextInput,
 } from "@ui/components/client";
-import { HintText } from "@ui/components/server";
+import { HintText, SearchIcon } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { studyOpenSchema, type StudyOpenValues } from "@core/schemas";
 import {
@@ -38,6 +38,8 @@ import {
 } from "@/features/study/create/constants";
 import { TagSelectModal } from "@/features/study/create/components/TagSelectModal";
 import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
+import { fetchUserInfo } from "@/features/study/create/user-info";
+import type { UserInfo } from "@/features/study/create/types";
 
 interface StudyApplicationEditorProps {
   application: StudyApplicationDetail;
@@ -151,6 +153,9 @@ export function StudyApplicationEditor({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
+  const [mentorSearchValue, setMentorSearchValue] = useState("");
+  const [secondaryMentor, setSecondaryMentor] = useState<UserInfo | null>(null);
+  const [mentorError, setMentorError] = useState<string | null>(null);
   const [message, setMessage] = useState<{
     text: string;
     type: "success" | "error";
@@ -179,6 +184,10 @@ export function StudyApplicationEditor({
   const isOnline = watch("isOnline");
   const selectedLocation = watch("location");
   const hasInterview = watch("hasInterview");
+  const secondaryMentorId = watch("mentorIds")?.[0] ?? null;
+  const primaryMentorId = application.study.mentors?.find(
+    (mentor) => mentor.mentor_num === 1,
+  )?.mentor_id;
   const referenceUpdate = buildReferenceUpdate(
     newReferences,
     application.study.references,
@@ -192,9 +201,65 @@ export function StudyApplicationEditor({
     setMessage(null);
   }, [application, form]);
 
+  useEffect(() => {
+    if (secondaryMentorId === null) {
+      setSecondaryMentor(null);
+      return;
+    }
+
+    let isCanceled = false;
+    const loadSecondaryMentor = async () => {
+      try {
+        const mentor = await fetchUserInfo(String(secondaryMentorId));
+        if (isCanceled) return;
+
+        setSecondaryMentor(mentor);
+        setMentorSearchValue(mentor?.studentId ?? String(secondaryMentorId));
+      } catch {
+        if (isCanceled) return;
+        setSecondaryMentor(null);
+      }
+    };
+
+    void loadSecondaryMentor();
+    return () => {
+      isCanceled = true;
+    };
+  }, [secondaryMentorId]);
+
   const handleTagsConfirm = (tags: string[]) => {
     setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
     setIsTagModalOpen(false);
+  };
+
+  const handleSecondaryMentorSearch = async () => {
+    const mentorId = mentorSearchValue.trim();
+    if (!mentorId) return;
+
+    try {
+      const mentor = await fetchUserInfo(mentorId);
+      if (!mentor) {
+        throw new Error("Mentor not found");
+      }
+      if (mentor.studentId === String(primaryMentorId)) {
+        setMentorError("대표 멘토는 부멘토로 등록할 수 없습니다.");
+        return;
+      }
+
+      setSecondaryMentor(mentor);
+      setMentorSearchValue(mentor.studentId);
+      setMentorError(null);
+      setValue("mentorIds", [Number(mentor.studentId)], { shouldDirty: true });
+    } catch {
+      setMentorError("해당 아이디의 부원을 찾을 수 없습니다.");
+    }
+  };
+
+  const handleSecondaryMentorRemove = () => {
+    setSecondaryMentor(null);
+    setMentorSearchValue("");
+    setMentorError(null);
+    setValue("mentorIds", [], { shouldDirty: true });
   };
 
   const handleThumbnailUpload = async (file: File) => {
@@ -311,6 +376,54 @@ export function StudyApplicationEditor({
         }}
       >
         <section className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3 rounded-xl border border-[#b1b8be] p-5">
+            <div className="flex items-center justify-between gap-3">
+              <StudySectionTitle>부멘토</StudySectionTitle>
+              {secondaryMentorId !== null && (
+                <button
+                  type="button"
+                  className="text-text-subtle hover:text-text-danger text-sm"
+                  onClick={handleSecondaryMentorRemove}
+                >
+                  부멘토 제거
+                </button>
+              )}
+            </div>
+            <div className="relative">
+              <TextInput
+                id="secondaryMentorId"
+                length="full"
+                placeholder="부멘토 아이디를 입력하세요"
+                value={mentorSearchValue}
+                onChange={(event) => {
+                  setMentorSearchValue(event.target.value);
+                  setMentorError(null);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    void handleSecondaryMentorSearch();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => void handleSecondaryMentorSearch()}
+                className="absolute right-4 top-1/2 -translate-y-1/2"
+                aria-label="부멘토 검색"
+              >
+                <SearchIcon />
+              </button>
+            </div>
+            {secondaryMentor && (
+              <p className="text-text-basic text-sm">
+                {secondaryMentor.name} · {secondaryMentor.department}
+              </p>
+            )}
+            {mentorError && (
+              <p className="text-text-danger text-sm">{mentorError}</p>
+            )}
+          </div>
           <input
             id="studyName"
             className="text-text-bolder placeholder:text-text-subtle w-full bg-transparent text-[28px] font-bold leading-[1.5] tracking-[1px] outline-none sm:text-[40px]"
