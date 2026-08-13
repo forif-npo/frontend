@@ -1,6 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface SearchBarProps {
@@ -16,28 +17,31 @@ export function SearchBar({
   placeholder = "목록 검색",
   onSearch,
 }: SearchBarProps) {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onSearch?.();
+  };
+
   return (
-    <div className="relative w-full max-w-sm">
-      <Search className="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4" />
+    <form className="relative w-full max-w-sm" onSubmit={handleSubmit}>
       <Input
         type="search"
         placeholder={placeholder}
-        className="h-10 pl-10 pr-10"
+        className="h-10 pr-10"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            onSearch?.();
-          }
-        }}
       />
-      <button
-        type="button"
-        onClick={onSearch}
-        className="text-muted-foreground absolute right-2.5 top-1/2 -translate-y-1/2"
-      >
-        <Search className="h-4 w-4" />
-      </button>
-    </div>
+      {onSearch && (
+        <Button
+          type="submit"
+          variant="ghost"
+          size="icon"
+          className="text-muted-foreground absolute right-0.5 top-1/2 size-9 -translate-y-1/2"
+          aria-label="검색"
+        >
+          <Search />
+        </Button>
+      )}
+    </form>
   );
 }
