@@ -21,6 +21,7 @@ export {
   getWeekDayLabel,
   getDifficultyLabel,
   getDifficultyBadgeVariant,
+  getNumericDifficultyBadgeVariant,
   getRecruitStatusLabel,
   getRecruitStatusBadgeVariant,
   getCurrentSemester,

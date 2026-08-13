@@ -14,7 +14,7 @@ export function StudyApplyTitle({ studyName, tags }: StudyApplyTitleProps) {
         <span className="text-text-basic">스터디 지원</span>
       </h1>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {tags.map((tag, index) => (
           <Badge
             key={index}

@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Breadcrumb } from "@ui/components/server";
 import { RULE, RULE_CHAPTERS } from "@/constants/club-rule";
+import { PageHeader } from "@/components/PageHeader";
 import { useScrollFollower, useScrollSpy } from "@/hooks/useScrollSpy";
 
 const RULE_CHAPTER_IDS = RULE_CHAPTERS.map(String);
@@ -26,22 +26,15 @@ export default function RulePage() {
 
   return (
     <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
-      <div className="mb-6">
-        <Breadcrumb
-          items={[
-            { label: "홈", href: "/" },
-            { label: "동아리", href: "/club" },
-            { label: "회칙" },
-          ]}
-        />
-      </div>
-
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-gray-900">회칙</h1>
-        <p className="mt-2 text-sm text-gray-500">
-          모든 포리프 행사 및 활동은 회칙에 근거합니다.
-        </p>
-      </div>
+      <PageHeader
+        breadcrumbs={[
+          { label: "홈", href: "/" },
+          { label: "동아리", href: "/club" },
+          { label: "회칙" },
+        ]}
+        title="회칙"
+        description="모든 포리프 행사 및 활동은 회칙에 근거합니다."
+      />
 
       <div
         ref={chapterNavigator.containerRef}

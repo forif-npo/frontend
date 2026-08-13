@@ -20,7 +20,7 @@ import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { approveStudy, fetchStudyDetail, rejectStudy } from "../api";
 import type { AdminStudyDetail } from "../api";
 import { SemesterLabel, Study } from "../types";
@@ -68,6 +68,10 @@ export function ApprovalView({
   const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
     null,
   );
+  const [selectedStudies, setSelectedStudies] = useState<Study[]>([]);
+  const [isBatchSubmitting, setIsBatchSubmitting] = useState(false);
+
+  const getStudyRowId = useCallback((study: Study) => String(study.id), []);
 
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
@@ -137,6 +141,31 @@ export function ApprovalView({
     }
   };
 
+  const handleBatchApprove = async () => {
+    if (selectedStudies.length === 0 || isBatchSubmitting) return;
+
+    setIsBatchSubmitting(true);
+    const results = await Promise.allSettled(
+      selectedStudies.map((study) => approveStudy(study.id)),
+    );
+    const failed = results.find(
+      (result): result is PromiseRejectedResult => result.status === "rejected",
+    );
+
+    setIsBatchSubmitting(false);
+    setSelectedStudies([]);
+    router.refresh();
+
+    if (failed) {
+      alert(
+        `일부 요청을 처리하지 못했습니다. ${await handleApiError(failed.reason)}`,
+      );
+      return;
+    }
+
+    alert(`${selectedStudies.length}개 스터디를 승인했습니다.`);
+  };
+
   return (
     <div className="space-y-6 p-8">
       <PageHeader
@@ -151,17 +180,30 @@ export function ApprovalView({
       />
 
       <div className="space-y-4">
-        <SearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onSearch={handleSearch}
-          placeholder="승인 대기 스터디 검색"
-        />
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSearch={handleSearch}
+              placeholder="승인 대기 스터디 검색"
+            />
+          </div>
+          <Button
+            type="button"
+            disabled={selectedStudies.length === 0 || isBatchSubmitting}
+            onClick={() => void handleBatchApprove()}
+          >
+            {isBatchSubmitting ? "처리 중..." : "선택 승낙"}
+          </Button>
+        </div>
 
         <DataTable
           columns={approvalColumns}
           data={initialData}
           showPagination={false}
+          getRowId={getStudyRowId}
+          onSelectedRowsChange={setSelectedStudies}
           renderRowActions={(study) => (
             <DropdownMenuItem
               disabled={submittingStudyId === study.id}

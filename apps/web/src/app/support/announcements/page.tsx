@@ -3,14 +3,13 @@
 import { useState } from "react";
 
 import { Pagination } from "@ui/components/client";
-import { Breadcrumb } from "@ui/components/server";
-
 import { SearchBar } from "@/features/support/components/SearchBar";
 import { SearchResultCount } from "@/features/support/components/SearchResultCount";
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
 import { useAnnouncementList } from "@/features/support/announcements/hooks/useAnnouncementList";
 import { AnnouncementList } from "@/features/support/announcements/components/AnnouncementList";
 import { AnnouncementListSkeleton } from "@/components/skeleton/SupportListSkeleton";
+import { PageHeader } from "@/components/PageHeader";
 
 const PAGE_SIZE = 10;
 
@@ -32,20 +31,16 @@ export default function AnnouncementPage() {
     });
 
   return (
-    <main className="max-w-main mx-auto w-full px-6 py-10">
-      <div className="mb-6">
-        <Breadcrumb
-          items={[
-            { label: "홈", href: "/" },
-            { label: "지원", href: "/support" },
-            { label: "공지사항" },
-          ]}
-        />
-      </div>
-
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-gray-900">공지사항</h1>
-      </div>
+    <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
+      <PageHeader
+        breadcrumbs={[
+          { label: "홈", href: "/" },
+          { label: "지원", href: "/support" },
+          { label: "공지사항" },
+        ]}
+        title="공지사항"
+        description="FORIF의 주요 소식과 안내를 확인하세요."
+      />
 
       <SearchBar
         value={inputValue}

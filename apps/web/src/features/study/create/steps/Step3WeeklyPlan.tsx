@@ -190,7 +190,7 @@ export function Step3WeeklyPlan({
               renderTopicInput={(weekIndex, inputClassName) => (
                 <textarea
                   rows={1}
-                  className={`${inputClassName} resize-none overflow-y-auto whitespace-pre-wrap break-words [field-sizing:content]`}
+                  className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
                   placeholder={`${curriculum[weekIndex].week}주차 주제를 입력해주세요.`}
                   {...register(`curriculum.${weekIndex}.topic`)}
                 />
@@ -198,7 +198,7 @@ export function Step3WeeklyPlan({
               renderContentInput={(weekIndex, contentIndex, inputClassName) => (
                 <textarea
                   rows={1}
-                  className={`${inputClassName} resize-none overflow-y-auto whitespace-pre-wrap break-words [field-sizing:content]`}
+                  className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
                   placeholder={`${curriculum[weekIndex].week}주차 내용을 입력해주세요.`}
                   {...register(
                     `curriculum.${weekIndex}.contents.${contentIndex}`,

@@ -99,7 +99,7 @@ export function MentorsView({
           value={searchQuery}
           onChange={setSearchQuery}
           onSearch={handleSearch}
-          placeholder="멘토 이름을 검색해보세요"
+          placeholder="멘토 이름 또는 스터디 이름을 검색해보세요"
         />
 
         <DataTable
@@ -108,10 +108,11 @@ export function MentorsView({
           showPagination={false}
           renderRowActions={(mentor) => (
             <DropdownMenuItem
+              disabled={!mentor.manageable}
               className="text-destructive focus:text-destructive"
               onClick={() => handleDeleteMentor(mentor)}
             >
-              멘토 삭제
+              {mentor.manageable ? "멘토 삭제" : "멘토 삭제 (관리 불가)"}
             </DropdownMenuItem>
           )}
         />

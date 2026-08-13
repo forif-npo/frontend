@@ -78,6 +78,7 @@ export function MyPageClient({
         <div>
           <ApplicationSection
             applicationsData={applicationsData}
+            studiesData={studiesData}
             targetStudyId={targetStudyId}
             activeSemester={activeSemester}
           />

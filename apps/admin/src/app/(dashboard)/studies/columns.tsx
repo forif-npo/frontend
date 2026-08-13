@@ -50,7 +50,7 @@ export const columns: ColumnDef<Study>[] = [
       ];
 
       return (
-        <div className="flex flex-wrap justify-center gap-1">
+        <div className="flex flex-wrap justify-center gap-2">
           {tags.map((tag, idx) => {
             const index =
               tag.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %

@@ -6,6 +6,7 @@ import {
   buildSemesterEndpoint,
   getMainSemesterLabels,
   isMainSemester,
+  pickBoolean,
   pickNumber,
   pickString,
 } from "@/utils/roster";
@@ -40,6 +41,7 @@ function mapToMentor(item: MentorItem): MentorWithSemester {
       item.study_name,
       item.currentStudyName,
     ),
+    manageable: pickBoolean(item.manageable, item.is_manageable),
     actYear: pickNumber(item.actYear, item.act_year, item.year),
     actSemester: pickNumber(item.actSemester, item.act_semester, item.semester),
   };
@@ -51,6 +53,7 @@ function stripSemester({
   department,
   phoneNum,
   studyName,
+  manageable,
 }: MentorWithSemester): Mentor {
   return {
     userId,
@@ -58,6 +61,7 @@ function stripSemester({
     department,
     phoneNum,
     studyName,
+    manageable,
   };
 }
 

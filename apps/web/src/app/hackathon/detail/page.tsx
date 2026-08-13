@@ -12,8 +12,9 @@ import {
 import { statusBadgeVariant, statusLabel } from "@/features/hackathon/utils";
 import { HackathonDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { handleApiError } from "@core/utils/api-client";
-import { Badge, Body, Breadcrumb, Heading, Link } from "@ui/components/server";
+import { Badge, Body, Heading, Link } from "@ui/components/server";
 import { Button } from "@ui/components/client";
+import { PageHeader } from "@/components/PageHeader";
 import type {
   CreateTeamRequest,
   EvaluationScore,
@@ -188,27 +189,23 @@ export default function HackathonDetailPage() {
 
   return (
     <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
-      {/* 헤더 */}
-      <div className="mb-6 flex flex-col gap-3">
-        <Breadcrumb
-          items={[
-            { label: "홈", href: "/" },
-            { label: "해커톤", href: "/hackathon" },
-            { label: "해커톤 상세" },
-          ]}
-        />
-        <div className="flex flex-wrap items-center gap-3">
-          <Heading size="l" className="text-text-basic">
-            {hackathon.title}
-          </Heading>
+      <PageHeader
+        breadcrumbs={[
+          { label: "홈", href: "/" },
+          { label: "해커톤", href: "/hackathon" },
+          { label: "해커톤 상세" },
+        ]}
+        title={hackathon.title}
+        description="참가 신청부터 팀 구성, 프로젝트 제출과 심사까지 해커톤의 모든 과정을 확인하세요."
+        titleAddon={
           <Badge
             label={statusLabel[hackathon.status]}
             variant={statusBadgeVariant[hackathon.status]}
             appearance="solid-pastel"
             size="small"
           />
-        </div>
-      </div>
+        }
+      />
 
       <EventFacts hackathon={hackathon} />
 

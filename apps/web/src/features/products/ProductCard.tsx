@@ -26,7 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
       />
 
       <div className="flex flex-1 flex-col gap-2 p-4 md:gap-3 md:p-6">
-        <div className="flex flex-wrap items-center gap-1 md:gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Badge
             label={PRODUCT_STATUS_LABELS[product.status]}
             variant={PRODUCT_STATUS_BADGE_VARIANTS[product.status]}

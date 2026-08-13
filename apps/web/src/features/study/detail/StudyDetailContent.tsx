@@ -126,7 +126,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
                 태그
               </td>
               <td className="py-3 md:py-4">
-                <div className="flex flex-wrap items-center gap-1">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge
                     label={recruitBadge.label}
                     variant={recruitBadge.variant}
@@ -137,7 +137,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
                     <Badge
                       key={index}
                       label={getStudyTagLabel(tag)}
-                      variant="primary"
+                      variant="info"
                       appearance="solid-pastel"
                       size="medium"
                     />

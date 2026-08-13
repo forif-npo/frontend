@@ -4,6 +4,7 @@ export type Mentor = {
   department: string;
   phoneNum: string;
   studyName: string;
+  manageable: boolean;
 };
 
 export type MentorListResult = {

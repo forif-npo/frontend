@@ -25,6 +25,7 @@ export interface SelectProps {
   ariaRequired?: boolean;
   dropdownAlign?: "left" | "right";
   noPadding?: boolean;
+  selectedSuffix?: React.ReactNode;
 }
 
 const sizeClasses = {
@@ -48,6 +49,7 @@ export const Select = ({
   ariaRequired,
   dropdownAlign = "left",
   noPadding = false,
+  selectedSuffix,
 }: SelectProps) => {
   const isControlled = value !== undefined && onChange !== undefined;
   const [internalValue, setInternalValue] = useState<string | null>(null);
@@ -157,18 +159,21 @@ export const Select = ({
           isInvalid && "border-input-border-error",
         )}
       >
-        <Label
-          size={labelSize[size]}
-          className={cn(
-            "text-gray-90 flex items-center",
-            sizeClasses[size].button,
-            selectedValue === null && "text-gray-30",
-          )}
-        >
-          {selectedValue
-            ? options.find((o) => o.value === selectedValue)?.label
-            : placeholder}
-        </Label>
+        <div className="flex min-w-0 items-center gap-2">
+          <Label
+            size={labelSize[size]}
+            className={cn(
+              "text-gray-90 flex min-w-0 items-center truncate",
+              sizeClasses[size].button,
+              selectedValue === null && "text-gray-30",
+            )}
+          >
+            {selectedValue
+              ? options.find((o) => o.value === selectedValue)?.label
+              : placeholder}
+          </Label>
+          {selectedSuffix && <span className="shrink-0">{selectedSuffix}</span>}
+        </div>
         <span
           className={cn(
             "ml-2 inline-block transform transition-transform",

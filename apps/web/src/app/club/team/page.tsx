@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import { Select } from "@ui/components/client";
-import { Breadcrumb } from "@ui/components/server";
 import { FORIF_CONTACT_INFO } from "@/constants/organization";
+import { PageHeader } from "@/components/PageHeader";
 import { getCurrentSemester, type Semester } from "@core/semester/api";
 import { TeamCard } from "@/features/club/team/TeamCard";
 import { sortTeamMembers } from "@/features/club/team/sort-team-members";
@@ -70,22 +70,15 @@ export default function TeamPage() {
 
   return (
     <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
-      <div className="mb-6">
-        <Breadcrumb
-          items={[
-            { label: "홈", href: "/" },
-            { label: "동아리", href: "/club" },
-            { label: "운영진 소개" },
-          ]}
-        />
-      </div>
-
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-gray-900">운영진 소개</h1>
-        <p className="mt-2 text-sm text-gray-500">
-          지식의 선순환을 실천합니다.
-        </p>
-      </div>
+      <PageHeader
+        breadcrumbs={[
+          { label: "홈", href: "/" },
+          { label: "동아리", href: "/club" },
+          { label: "운영진 소개" },
+        ]}
+        title="운영진 소개"
+        description="지식의 선순환을 실천합니다."
+      />
 
       <div className="mb-8 flex flex-col items-start justify-between gap-3 md:flex-row md:items-end">
         <div className="flex gap-3">

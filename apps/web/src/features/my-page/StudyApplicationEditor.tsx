@@ -13,7 +13,7 @@ import {
   TextArea,
   TextInput,
 } from "@ui/components/client";
-import { HintText } from "@ui/components/server";
+import { HintText, SearchIcon } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { studyOpenSchema, type StudyOpenValues } from "@core/schemas";
 import {
@@ -26,7 +26,10 @@ import { useDateInput } from "@/hooks/useDateInput";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
 import { StudySectionTitle } from "@/features/study/components/StudySectionTitle";
-import { submitStudyCreate } from "@/features/study/create/actions";
+import {
+  submitStudyCreate,
+  type StudyApplicationReferenceUpdate,
+} from "@/features/study/create/actions";
 import {
   DEFAULT_CURRICULUM,
   DIFFICULTY_OPTIONS,
@@ -34,6 +37,9 @@ import {
   WEEKDAY_OPTIONS,
 } from "@/features/study/create/constants";
 import { TagSelectModal } from "@/features/study/create/components/TagSelectModal";
+import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
+import { fetchUserInfo } from "@/features/study/create/user-info";
+import type { UserInfo } from "@/features/study/create/types";
 
 interface StudyApplicationEditorProps {
   application: StudyApplicationDetail;
@@ -85,8 +91,53 @@ function toFormValues(application: StudyApplicationDetail): StudyOpenValues {
     difficulty: study.difficulty ?? "",
     hasInterview: Boolean(study.requires_interview),
     interviewDate: toShortDate(study.interview_date) || null,
-    // 수정 API는 기존 참고자료를 유지하므로 재전송하지 않는다.
-    references: [],
+    references: study.references.map((reference) => ({
+      id: reference.id,
+      type: reference.reference_type === "FILE" ? "DOWNLOAD" : "LINK",
+      value: reference.content ?? "",
+    })),
+  };
+}
+
+function buildReferenceUpdate(
+  references: StudyOpenValues["references"],
+  originalReferences: StudyApplicationDetail["study"]["references"],
+): StudyApplicationReferenceUpdate {
+  const originalById = new Map(
+    originalReferences
+      .filter((reference): reference is typeof reference & { id: string } =>
+        Boolean(reference.id),
+      )
+      .map((reference) => [reference.id, reference]),
+  );
+  const retainedReferenceIds: string[] = [];
+  const updatedReferences: StudyOpenValues["references"] = [];
+
+  references.forEach((reference) => {
+    const original = reference.id ? originalById.get(reference.id) : undefined;
+    const isUnchangedUrl =
+      original?.reference_type === "URL" &&
+      reference.type === "LINK" &&
+      reference.value === original.content;
+    const isUnchangedFile =
+      original?.reference_type === "FILE" &&
+      reference.type === "DOWNLOAD" &&
+      typeof reference.value === "string" &&
+      reference.value === original.content;
+
+    if (original && (isUnchangedUrl || isUnchangedFile)) {
+      retainedReferenceIds.push(original.id);
+    } else {
+      updatedReferences.push(reference);
+    }
+  });
+
+  return {
+    retainedReferenceIds,
+    references: updatedReferences,
+    hasChanges:
+      updatedReferences.length > 0 ||
+      retainedReferenceIds.length !== originalById.size,
   };
 }
 
@@ -102,6 +153,9 @@ export function StudyApplicationEditor({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
+  const [mentorSearchValue, setMentorSearchValue] = useState("");
+  const [secondaryMentor, setSecondaryMentor] = useState<UserInfo | null>(null);
+  const [mentorError, setMentorError] = useState<string | null>(null);
   const [message, setMessage] = useState<{
     text: string;
     type: "success" | "error";
@@ -117,7 +171,7 @@ export function StudyApplicationEditor({
     register,
     setValue,
     watch,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, dirtyFields },
   } = form;
   const { registerShortDateInput } = useDateInput({ register, setValue });
   const { registerTimeInput } = useTimeInput({ register, setValue });
@@ -126,9 +180,20 @@ export function StudyApplicationEditor({
   const oneLiner = watch("oneLiner");
   const thumbnail = watch("thumbnail");
   const curriculum = watch("curriculum");
+  const newReferences = watch("references");
   const isOnline = watch("isOnline");
   const selectedLocation = watch("location");
   const hasInterview = watch("hasInterview");
+  const secondaryMentorId = watch("mentorIds")?.[0] ?? null;
+  const primaryMentorId = application.study.mentors?.find(
+    (mentor) => mentor.mentor_num === 1,
+  )?.mentor_id;
+  const referenceUpdate = buildReferenceUpdate(
+    newReferences,
+    application.study.references,
+  );
+  const hasReferenceUpdates =
+    Boolean(dirtyFields.references) && referenceUpdate.hasChanges;
   const isRoomDisabled = isOnline || selectedLocation === "장소 미정";
 
   useEffect(() => {
@@ -136,9 +201,65 @@ export function StudyApplicationEditor({
     setMessage(null);
   }, [application, form]);
 
+  useEffect(() => {
+    if (secondaryMentorId === null) {
+      setSecondaryMentor(null);
+      return;
+    }
+
+    let isCanceled = false;
+    const loadSecondaryMentor = async () => {
+      try {
+        const mentor = await fetchUserInfo(String(secondaryMentorId));
+        if (isCanceled) return;
+
+        setSecondaryMentor(mentor);
+        setMentorSearchValue(mentor?.studentId ?? String(secondaryMentorId));
+      } catch {
+        if (isCanceled) return;
+        setSecondaryMentor(null);
+      }
+    };
+
+    void loadSecondaryMentor();
+    return () => {
+      isCanceled = true;
+    };
+  }, [secondaryMentorId]);
+
   const handleTagsConfirm = (tags: string[]) => {
     setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
     setIsTagModalOpen(false);
+  };
+
+  const handleSecondaryMentorSearch = async () => {
+    const mentorId = mentorSearchValue.trim();
+    if (!mentorId) return;
+
+    try {
+      const mentor = await fetchUserInfo(mentorId);
+      if (!mentor) {
+        throw new Error("Mentor not found");
+      }
+      if (mentor.studentId === String(primaryMentorId)) {
+        setMentorError("대표 멘토는 부멘토로 등록할 수 없습니다.");
+        return;
+      }
+
+      setSecondaryMentor(mentor);
+      setMentorSearchValue(mentor.studentId);
+      setMentorError(null);
+      setValue("mentorIds", [Number(mentor.studentId)], { shouldDirty: true });
+    } catch {
+      setMentorError("해당 아이디의 부원을 찾을 수 없습니다.");
+    }
+  };
+
+  const handleSecondaryMentorRemove = () => {
+    setSecondaryMentor(null);
+    setMentorSearchValue("");
+    setMentorError(null);
+    setValue("mentorIds", [], { shouldDirty: true });
   };
 
   const handleThumbnailUpload = async (file: File) => {
@@ -201,16 +322,22 @@ export function StudyApplicationEditor({
   };
 
   const handleSubmit = async () => {
-    if (!isDirty || isSubmitting || isCancelling) return;
+    if ((!isDirty && !hasReferenceUpdates) || isSubmitting || isCancelling) {
+      return;
+    }
     if (!(await form.trigger())) {
       setMessage({ text: "필수 입력 항목을 확인해주세요.", type: "error" });
       return;
     }
-
     setIsSubmitting(true);
     setMessage(null);
     try {
-      await submitStudyCreate(form.getValues(), application.study.id);
+      await submitStudyCreate(
+        form.getValues(),
+        application.study.id,
+        dirtyFields,
+        hasReferenceUpdates ? referenceUpdate : undefined,
+      );
       form.reset(form.getValues());
       setMessage({
         text: "스터디 개설 신청서가 수정되었습니다.",
@@ -249,6 +376,54 @@ export function StudyApplicationEditor({
         }}
       >
         <section className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3 rounded-xl border border-[#b1b8be] p-5">
+            <div className="flex items-center justify-between gap-3">
+              <StudySectionTitle>부멘토</StudySectionTitle>
+              {secondaryMentorId !== null && (
+                <button
+                  type="button"
+                  className="text-text-subtle hover:text-text-danger text-sm"
+                  onClick={handleSecondaryMentorRemove}
+                >
+                  부멘토 제거
+                </button>
+              )}
+            </div>
+            <div className="relative">
+              <TextInput
+                id="secondaryMentorId"
+                length="full"
+                placeholder="부멘토 아이디를 입력하세요"
+                value={mentorSearchValue}
+                onChange={(event) => {
+                  setMentorSearchValue(event.target.value);
+                  setMentorError(null);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    void handleSecondaryMentorSearch();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => void handleSecondaryMentorSearch()}
+                className="absolute right-4 top-1/2 -translate-y-1/2"
+                aria-label="부멘토 검색"
+              >
+                <SearchIcon />
+              </button>
+            </div>
+            {secondaryMentor && (
+              <p className="text-text-basic text-sm">
+                {secondaryMentor.name} · {secondaryMentor.department}
+              </p>
+            )}
+            {mentorError && (
+              <p className="text-text-danger text-sm">{mentorError}</p>
+            )}
+          </div>
           <input
             id="studyName"
             className="text-text-bolder placeholder:text-text-subtle w-full bg-transparent text-[28px] font-bold leading-[1.5] tracking-[1px] outline-none sm:text-[40px]"
@@ -313,7 +488,7 @@ export function StudyApplicationEditor({
         <section className="flex flex-col gap-6">
           <StudySectionTitle>썸네일</StudySectionTitle>
           <div className="flex flex-col gap-2">
-            <HintText>새 이미지를 선택하면 기존 썸네일을 교체합니다.</HintText>
+            <HintText>새 이미지를 선택하면 기존 썸네일은 교체됩니다.</HintText>
             <FileUpload
               title="이미지 파일 업로드 (jpg, jpeg, png)"
               description="권장 크기 1080px * 720px, 최대 5MB"
@@ -332,9 +507,6 @@ export function StudyApplicationEditor({
         <section className="flex flex-col gap-6">
           <StudySectionTitle required>스터디 소개</StudySectionTitle>
           <div className="flex flex-col gap-1">
-            <HintText>
-              스터디 목표와 방식, 지원 요건 등을 50자 이상 작성해주세요.
-            </HintText>
             <TextArea
               id="introduction"
               size="large"
@@ -445,7 +617,6 @@ export function StudyApplicationEditor({
 
         <section className="flex flex-col gap-6">
           <StudySectionTitle required>커리큘럼</StudySectionTitle>
-          <HintText>스터디는 최소 8주차 이상 진행되어야 합니다.</HintText>
           <StudyCurriculumTable
             rows={curriculum.map((week) => ({
               id: week.week,
@@ -462,14 +633,14 @@ export function StudyApplicationEditor({
             renderTopicInput={(weekIndex, inputClassName) => (
               <textarea
                 rows={1}
-                className={`${inputClassName} resize-none`}
+                className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
                 {...register(`curriculum.${weekIndex}.topic`)}
               />
             )}
             renderContentInput={(weekIndex, contentIndex, inputClassName) => (
               <textarea
                 rows={1}
-                className={`${inputClassName} resize-none`}
+                className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
                 {...register(
                   `curriculum.${weekIndex}.contents.${contentIndex}`,
                 )}
@@ -530,7 +701,10 @@ export function StudyApplicationEditor({
           )}
         </section>
 
-        <ExistingReferences references={application.study.references} />
+        <section className="flex flex-col gap-2">
+          <ReferenceFields form={form} />
+          <HintText>새 파일을 선택하면 기존 파일은 교체됩니다.</HintText>
+        </section>
 
         {message && (
           <p
@@ -559,7 +733,9 @@ export function StudyApplicationEditor({
             variant="primary"
             size="large"
             type="submit"
-            disabled={!isDirty || isSubmitting || isCancelling}
+            disabled={
+              (!isDirty && !hasReferenceUpdates) || isSubmitting || isCancelling
+            }
           >
             {isSubmitting ? "수정 중..." : "수정"}
           </Button>
@@ -583,41 +759,6 @@ export function StudyApplicationEditor({
         description={thumbnailAlertMessage ?? ""}
         onClose={() => setThumbnailAlertMessage(null)}
       />
-    </section>
-  );
-}
-
-function ExistingReferences({
-  references,
-}: {
-  references: StudyApplicationDetail["study"]["references"];
-}) {
-  return (
-    <section className="flex flex-col gap-4">
-      <StudySectionTitle>참고자료</StudySectionTitle>
-      {references.length > 0 && (
-        <ul className="border-border-gray-light divide-divider-gray-light overflow-hidden rounded-xl border">
-          {references.map((reference) => (
-            <li
-              key={reference.id}
-              className="text-text-basic px-4 py-3 text-[15px]"
-            >
-              {reference.reference_type === "URL" && reference.content ? (
-                <a
-                  href={reference.content}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-text-primary break-all underline underline-offset-2"
-                >
-                  {reference.content}
-                </a>
-              ) : (
-                reference.content || "파일 참고자료"
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
     </section>
   );
 }

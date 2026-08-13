@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 
 import { Pagination } from "@ui/components/client";
-import { Breadcrumb } from "@ui/components/server";
-
 import { SearchBar } from "@/features/support/components/SearchBar";
 import { SearchResultCount } from "@/features/support/components/SearchResultCount";
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
@@ -12,6 +10,7 @@ import { useSearchPagination } from "@/features/support/hooks/useSearchPaginatio
 import { useFaqList } from "@/features/support/faqs/hooks/useFaqList";
 import { FaqAccordionList } from "@/features/support/faqs/components/FaqAccordionList";
 import { FaqListSkeleton } from "@/components/skeleton/SupportListSkeleton";
+import { PageHeader } from "@/components/PageHeader";
 
 const PAGE_SIZE = 10;
 
@@ -39,20 +38,16 @@ export default function FaqPage() {
   };
 
   return (
-    <main className="max-w-main mx-auto w-full px-6 py-10">
-      <div className="mb-6">
-        <Breadcrumb
-          items={[
-            { label: "홈", href: "/" },
-            { label: "지원" },
-            { label: "자주 묻는 질문" },
-          ]}
-        />
-      </div>
-
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-gray-900">자주 묻는 질문</h1>
-      </div>
+    <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
+      <PageHeader
+        breadcrumbs={[
+          { label: "홈", href: "/" },
+          { label: "지원" },
+          { label: "자주 묻는 질문" },
+        ]}
+        title="자주 묻는 질문"
+        description="FORIF 이용 중 자주 묻는 질문의 답변을 확인하세요."
+      />
 
       <SearchBar
         value={draftQuery}

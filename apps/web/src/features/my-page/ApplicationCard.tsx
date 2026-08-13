@@ -2,20 +2,17 @@ import { Button } from "@ui/components/client";
 import { Badge } from "@ui/components/server";
 import type { ApplicationDetail } from "@core/my-page/api";
 import { StudyImage } from "@/components/study/ui/StudyImage";
+import {
+  getNumericDifficultyBadgeVariant,
+  NUMERIC_DIFFICULTY_LABELS,
+} from "@/constants/study";
+import { getStudyTagLabel } from "@/constants/study-tags";
 
 interface ApplicationCardProps {
   application: ApplicationDetail;
   semesterLabel: string;
   onViewDetail: () => void;
 }
-
-const DIFFICULTY_LABELS: Record<number, string> = {
-  1: "매우 쉬움",
-  2: "쉬움",
-  3: "보통",
-  4: "어려움",
-  5: "매우 어려움",
-};
 
 export function ApplicationCard({
   application,
@@ -24,7 +21,7 @@ export function ApplicationCard({
 }: ApplicationCardProps) {
   const { study, priority, intro } = application;
   const priorityLabel = priority === "PRIMARY" ? "1순위" : "2순위";
-  const difficultyLabel = DIFFICULTY_LABELS[study.difficulty] ?? "보통";
+  const difficultyLabel = NUMERIC_DIFFICULTY_LABELS[study.difficulty] ?? "보통";
 
   return (
     <div className="rounded-3 border-border-gray-light bg-surface-white flex h-full min-w-[240px] flex-col overflow-hidden border">
@@ -41,7 +38,7 @@ export function ApplicationCard({
       {/* Card Content */}
       <div className="flex flex-1 flex-col gap-4 px-8 py-8">
         {/* Badges */}
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-2">
           <Badge
             label={semesterLabel}
             variant="info"
@@ -54,9 +51,18 @@ export function ApplicationCard({
             appearance="solid-pastel"
             size="small"
           />
+          {study.tags.map((tag) => (
+            <Badge
+              key={tag}
+              label={getStudyTagLabel(tag)}
+              variant="info"
+              appearance="solid-pastel"
+              size="small"
+            />
+          ))}
           <Badge
             label={difficultyLabel}
-            variant="primary"
+            variant={getNumericDifficultyBadgeVariant(study.difficulty)}
             appearance="solid-pastel"
             size="small"
           />

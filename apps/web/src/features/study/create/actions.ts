@@ -15,6 +15,12 @@ const DIFFICULTY_MAP: Record<string, number> = {
 const REFERENCE_FILE_FIELD_NAME = "references";
 const STUDY_PLAN_CONTENT_SEPARATOR = "; ";
 
+export interface StudyApplicationReferenceUpdate {
+  retainedReferenceIds: string[];
+  references: StudyOpenValues["references"];
+  hasChanges: boolean;
+}
+
 function isFileValue(
   value: StudyOpenValues["references"][number]["value"],
 ): value is File {
@@ -34,6 +40,24 @@ function toLocalDateTime(value: string | null | undefined) {
   }
 
   return value;
+}
+
+function buildReferenceRequest(references: StudyOpenValues["references"]) {
+  return references.map((ref) => {
+    if (ref.type === "DOWNLOAD" && isFileValue(ref.value)) {
+      return {
+        type: "FILE",
+        url: "",
+        file_name: ref.value.name,
+      };
+    }
+
+    return {
+      type: "URL",
+      url: typeof ref.value === "string" ? ref.value : "",
+      file_name: null,
+    };
+  });
 }
 
 function buildStudyRequest(values: StudyOpenValues) {
@@ -72,33 +96,62 @@ function buildStudyRequest(values: StudyOpenValues) {
     capacity: 30,
     requires_interview: values.hasInterview,
     interview_date: toLocalDateTime(values.interviewDate),
-    references: values.references.map((ref) => {
-      if (ref.type === "DOWNLOAD" && isFileValue(ref.value)) {
-        return {
-          type: "FILE",
-          url: "",
-          file_name: ref.value.name,
-        };
-      }
-
-      return {
-        type: "URL",
-        url: typeof ref.value === "string" ? ref.value : "",
-        file_name: null,
-      };
-    }),
+    references: buildReferenceRequest(values.references),
     secondary_mentor_id: secondaryMentorId,
   };
+}
+
+function buildStudyApplicationUpdateRequest(
+  values: StudyOpenValues,
+  dirtyFields: Partial<Record<keyof StudyOpenValues, unknown>>,
+  referenceUpdate?: StudyApplicationReferenceUpdate,
+) {
+  const fullRequest = buildStudyRequest(values);
+  const request: Record<string, unknown> = {};
+
+  if (dirtyFields.studyName) request.study_name = values.studyName;
+  if (dirtyFields.mentorIds) {
+    request.secondary_mentor_id = values.mentorIds[0] ?? null;
+  }
+  if (dirtyFields.oneLiner) request.one_liner = values.oneLiner;
+  if (dirtyFields.tags) request.study_tag_names = fullRequest.study_tag_names;
+  if (dirtyFields.introduction) {
+    request.goal = values.introduction;
+    request.explanation = values.introduction;
+  }
+  if (dirtyFields.isOnline) request.is_online = values.isOnline;
+  if (dirtyFields.location) request.location = values.location;
+  if (dirtyFields.room) request.location_detail = values.room;
+  if (dirtyFields.weekDay) request.week_day = Number(values.weekDay);
+  if (dirtyFields.startTime) request.start_time = values.startTime;
+  if (dirtyFields.endTime) request.end_time = values.endTime;
+  if (dirtyFields.curriculum) {
+    request.study_plan_list = fullRequest.study_plan_list;
+  }
+  if (dirtyFields.difficulty) request.difficulty = fullRequest.difficulty;
+  if (dirtyFields.hasInterview) {
+    request.requires_interview = values.hasInterview;
+    request.interview_date = fullRequest.interview_date;
+  } else if (dirtyFields.interviewDate) {
+    request.interview_date = fullRequest.interview_date;
+  }
+  if (referenceUpdate?.hasChanges) {
+    request.references = buildReferenceRequest(referenceUpdate.references);
+    request.retained_reference_ids = referenceUpdate.retainedReferenceIds;
+  }
+
+  return request;
 }
 
 export async function submitStudyCreate(
   values: StudyOpenValues,
   applicationId?: number,
+  dirtyFields: Partial<Record<keyof StudyOpenValues, unknown>> = {},
+  referenceUpdate?: StudyApplicationReferenceUpdate,
 ) {
   const studyRequest = buildStudyRequest(values);
-  const { references, ...studyRequestWithoutReferences } = studyRequest;
   const requestPayload = applicationId
-    ? studyRequestWithoutReferences
+    ? buildStudyApplicationUpdateRequest(values, dirtyFields, referenceUpdate)
     : studyRequest;
 
   const formData = new FormData();
@@ -109,8 +162,11 @@ export async function submitStudyCreate(
   if (values.thumbnail) {
     formData.append("thumbnail", values.thumbnail);
   }
-  if (!applicationId) {
-    values.references.forEach((reference) => {
+  if (!applicationId || referenceUpdate?.hasChanges) {
+    const references = applicationId
+      ? (referenceUpdate?.references ?? [])
+      : values.references;
+    references.forEach((reference) => {
       if (isFileValue(reference.value)) {
         formData.append(REFERENCE_FILE_FIELD_NAME, reference.value);
       }

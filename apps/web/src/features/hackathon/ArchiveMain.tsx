@@ -1,7 +1,7 @@
 "use client";
 
 import type { Hackathon, Submission, Award } from "@core/types/hackathon";
-import { Badge, Body, Breadcrumb, Heading, Label } from "@ui/components/server";
+import { Badge, Body, Heading, Label } from "@ui/components/server";
 import { Pagination, SelectBox } from "@ui/components/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -10,6 +10,7 @@ import { HACKATHON_TECH_STACK_OPTIONS } from "@core/hackathon/tags";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
+import { PageHeader } from "@/components/PageHeader";
 import { SearchBar } from "@/components/SearchBar";
 import type { ArchiveHackathonDetail } from "@core/types/hackathon";
 import {
@@ -110,27 +111,15 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
 
   return (
     <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
-      <div className="mb-6">
-        <Breadcrumb
-          items={[
-            { label: "홈", href: "/" },
-            { label: "해커톤", href: "/hackathon" },
-            { label: "아카이브" },
-          ]}
-        />
-      </div>
-
-      {/* Header */}
-      <section className="mb-8">
-        <div>
-          <Heading size="l" className="text-text-basic mb-4">
-            역대 해커톤 결과물
-          </Heading>
-          <Body size="m" className="text-text-subtle">
-            종료된 해커톤의 제출작을 확인해보세요.
-          </Body>
-        </div>
-      </section>
+      <PageHeader
+        breadcrumbs={[
+          { label: "홈", href: "/" },
+          { label: "해커톤", href: "/hackathon" },
+          { label: "아카이브" },
+        ]}
+        title="역대 해커톤 결과물"
+        description="종료된 해커톤의 제출작을 확인해보세요."
+      />
 
       {/* Search + Filters */}
       <section className="mb-7">

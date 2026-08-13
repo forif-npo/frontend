@@ -4,6 +4,7 @@ import {
   formatStudyTimeRange,
   getDifficultyBadgeVariant,
   getDifficultyLabel,
+  getNumericDifficultyBadgeVariant,
   getRecruitStatusBadgeVariant,
   getRecruitStatusLabel,
   getWeekDayLabel,
@@ -94,12 +95,6 @@ function SemesterBadge({ label }: { label: string }) {
   );
 }
 
-function getNumericDifficultyBadgeVariant(difficulty: number) {
-  if (difficulty <= 2) return "success" as const;
-  if (difficulty === 3) return "warning" as const;
-  return "danger" as const;
-}
-
 // ── Component ───────────────────────────────────────────────────────
 
 export function StudyCard(props: StudyCardProps) {
@@ -150,7 +145,7 @@ export function StudyCard(props: StudyCardProps) {
         <div className="hidden md:block">{imageSection}</div>
 
         <div className="flex flex-1 flex-col p-4 md:p-8">
-          <div className="mb-2 flex flex-wrap gap-1 md:mb-4 md:gap-2">
+          <div className="mb-2 flex flex-wrap gap-2 md:mb-4">
             <Badge
               label={getRecruitStatusLabel(s.recruit_status)}
               variant={getRecruitStatusBadgeVariant(s.recruit_status)}
@@ -215,7 +210,7 @@ export function StudyCard(props: StudyCardProps) {
       <div className="rounded-3 border-border-gray-light bg-surface-white flex w-full flex-col overflow-hidden border">
         {imageSection}
         <div className="flex flex-col gap-4 p-8">
-          <div className="flex gap-1 overflow-x-auto text-nowrap">
+          <div className="flex gap-2 overflow-x-auto text-nowrap">
             <Badge
               label={getRecruitStatusLabel(s.recruit_status)}
               variant={getRecruitStatusBadgeVariant(s.recruit_status)}
@@ -223,11 +218,11 @@ export function StudyCard(props: StudyCardProps) {
               size="small"
             />
             <SemesterBadge label={`${s.act_year}-${s.act_semester}`} />
-            {tagLabels.map((tag, index) => (
+            {tagLabels.map((tag) => (
               <Badge
                 key={tag}
                 label={tag}
-                variant={index === 0 ? "danger" : "primary"}
+                variant="info"
                 appearance="solid-pastel"
                 size="small"
               />

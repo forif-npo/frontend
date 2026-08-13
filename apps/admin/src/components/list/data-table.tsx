@@ -33,6 +33,8 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   renderRowActions?: (row: TData) => React.ReactNode;
   showPagination?: boolean;
+  getRowId?: (row: TData, index: number) => string;
+  onSelectedRowsChange?: (rows: TData[]) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -40,6 +42,8 @@ export function DataTable<TData, TValue>({
   data,
   renderRowActions,
   showPagination = true,
+  getRowId,
+  onSelectedRowsChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
@@ -128,12 +132,29 @@ export function DataTable<TData, TValue>({
     enableRowSelection: true,
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
+    getRowId,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     ...(showPagination
       ? { getPaginationRowModel: getPaginationRowModel() }
       : {}),
   });
+
+  const selectedRows = React.useMemo(
+    () =>
+      data.filter((row, index) =>
+        Boolean(rowSelection[getRowId?.(row, index) ?? String(index)]),
+      ),
+    [data, getRowId, rowSelection],
+  );
+
+  React.useEffect(() => {
+    onSelectedRowsChange?.(selectedRows);
+  }, [onSelectedRowsChange, selectedRows]);
+
+  React.useEffect(() => {
+    setRowSelection({});
+  }, [data]);
 
   return (
     <div>

@@ -10,6 +10,7 @@ import {
 } from "@core/my-page/api";
 import { handleApiError } from "@core/utils/api-client";
 import {
+  getNumericDifficultyBadgeVariant,
   NUMERIC_DIFFICULTY_LABELS,
   APPLICATION_STATUS_LABELS,
 } from "@/constants/study";
@@ -95,7 +96,7 @@ export function ApplicationDetailView({
       </p>
 
       {/* Badges: status | tags | difficulty | priority */}
-      <div className="flex flex-wrap items-center gap-1">
+      <div className="flex flex-wrap items-center gap-2">
         {/* status */}
         <Badge
           label={statusLabel}
@@ -116,14 +117,14 @@ export function ApplicationDetailView({
         {/* difficulty */}
         <Badge
           label={difficultyLabel}
-          variant="primary"
+          variant={getNumericDifficultyBadgeVariant(study.difficulty)}
           appearance="solid-pastel"
           size="large"
         />
         {/* priority */}
         <Badge
           label={priorityLabel}
-          variant="primary"
+          variant="info"
           appearance="solid-pastel"
           size="large"
         />

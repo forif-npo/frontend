@@ -125,12 +125,12 @@ export function StudyCreateReviewContent({
               </td>
               <td className="py-3">
                 {values.tags.length > 0 ? (
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-2">
                     {values.tags.map((tag) => (
                       <Badge
                         key={tag}
                         label={tag}
-                        variant="primary"
+                        variant="info"
                         appearance="solid-pastel"
                         size="medium"
                       />
