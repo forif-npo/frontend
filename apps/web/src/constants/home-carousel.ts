@@ -1,4 +1,3 @@
-import { ForifIntroBanner } from "@/features/home/banners/ForifIntroBanner";
 import { MentorRecruitBanner } from "@/features/home/banners/MentorRecruitBanner";
 import { SvgBanner } from "@/features/home/banners/SvgBanner";
 
@@ -25,7 +24,8 @@ export type HomeCarouselBanner =
   | {
       id: string;
       type: "tsx";
-      component: typeof ForifIntroBanner | typeof MentorRecruitBanner;
+      component: typeof MentorRecruitBanner;
+      mobileAspect?: "square" | "desktop";
     }
   | {
       id: string;
@@ -40,10 +40,6 @@ export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
     id: "mentor-recruit-2026-2",
     type: "tsx",
     component: MentorRecruitBanner,
-  },
-  {
-    id: "forif-intro",
-    type: "tsx",
-    component: ForifIntroBanner,
+    mobileAspect: "desktop",
   },
 ];

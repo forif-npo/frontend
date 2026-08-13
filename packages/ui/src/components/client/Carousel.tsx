@@ -11,13 +11,15 @@ import { cn } from "../../utils/cn";
 
 interface CarouselProps {
   carouselItems: CarouselItem[];
+  bannerClassName?: string;
 }
 export interface CarouselItem {
   id: string;
   content: ReactNode;
+  mobileAspect?: "square" | "desktop";
 }
 
-export function Carousel({ carouselItems }: CarouselProps) {
+export function Carousel({ carouselItems, bannerClassName }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"forward" | "backward">(
     "forward",
@@ -45,19 +47,24 @@ export function Carousel({ carouselItems }: CarouselProps) {
   }
 
   const handlePrev = () => {
+    if (currentIndex === 0) return;
     setSlideDirection("backward");
-    setCurrentIndex((prev) => (prev - 1 + totalItems) % totalItems);
+    setCurrentIndex((prev) => prev - 1);
   };
 
   const handleNext = () => {
+    if (currentIndex === totalItems - 1) return;
     setSlideDirection("forward");
-    setCurrentIndex((prev) => (prev + 1) % totalItems);
+    setCurrentIndex((prev) => prev + 1);
   };
 
   const handleSelect = (index: number) => {
     setSlideDirection(index < currentIndex ? "backward" : "forward");
     setCurrentIndex(index);
   };
+
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex < totalItems - 1;
 
   const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
     touchStartX.current = event.touches[0]?.clientX ?? null;
@@ -85,14 +92,22 @@ export function Carousel({ carouselItems }: CarouselProps) {
   return (
     <div className="flex w-full flex-col items-center gap-6">
       <div className="flex w-full items-center justify-between gap-4">
-        <CarouselArrow
-          align="left"
-          title="이전 배너"
-          onClick={handlePrev}
-          className="hidden md:flex"
-        />
+        {hasPrevious && (
+          <CarouselArrow
+            align="left"
+            title="이전 배너"
+            onClick={handlePrev}
+            className="hidden md:flex"
+          />
+        )}
         <div
-          className="mx-auto aspect-square w-full max-w-[1200px] touch-pan-y overflow-hidden rounded-[28px] md:aspect-[4/1]"
+          className={cn(
+            "mx-auto w-full max-w-[960px] touch-pan-y overflow-hidden rounded-[28px] md:aspect-[4/1]",
+            currentItem.mobileAspect === "desktop"
+              ? "aspect-[4/1]"
+              : "aspect-square",
+            bannerClassName,
+          )}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           onTouchCancel={() => {
@@ -110,15 +125,17 @@ export function Carousel({ carouselItems }: CarouselProps) {
             {currentItem.content}
           </div>
         </div>
-        <CarouselArrow
-          align="right"
-          title="다음 배너"
-          onClick={handleNext}
-          className="hidden md:flex"
-        />
+        {hasNext && (
+          <CarouselArrow
+            align="right"
+            title="다음 배너"
+            onClick={handleNext}
+            className="hidden md:flex"
+          />
+        )}
       </div>
       <CarouselIndicators
-        total={carouselItems.length}
+        total={totalItems}
         current={currentIndex}
         onSelect={handleSelect}
       />

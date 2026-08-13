@@ -4,34 +4,46 @@ import Link from "next/link";
 
 export function MentorRecruitBanner() {
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-[28px] bg-[linear-gradient(118deg,#063bb4_0%,#0b50d0_53%,#2b72e7_100%)] px-5 py-6 text-white shadow-[0_18px_50px_rgba(11,80,208,0.22)] md:px-12 md:py-9">
+    <div className="relative h-full w-full overflow-hidden bg-[linear-gradient(118deg,#063bb4_0%,#0b50d0_53%,#2b72e7_100%)] px-5 py-4 text-white shadow-[0_18px_50px_rgba(11,80,208,0.22)] md:px-12 md:py-9">
       <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_1px_1px,#fff_1px,transparent_0)] [background-size:22px_22px]" />
       <div className="absolute -left-20 -top-24 h-64 w-64 rounded-full bg-[#7eb1ff]/20 blur-3xl" />
-      <div className="relative z-10 grid h-full grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_460px] xl:items-center">
-        <div className="flex flex-col items-start">
-          <Body
-            size="l"
-            className="mb-3 font-semibold text-white/85 max-md:text-[12px]"
-          >
-            8.10 ~ 8.17 · 2026-2학기 멘토 모집
-          </Body>
-          <Display
-            size="s"
-            className="mb-5 text-white max-md:text-[24px] max-md:leading-tight xl:whitespace-nowrap xl:text-[46px] xl:leading-tight"
-          >
-            당신의 열정을 업그레이드하세요
-          </Display>
+      <div className="absolute inset-x-5 top-1/2 z-10 flex -translate-y-1/2 items-center md:relative md:inset-auto md:grid md:h-[calc(100%-4.5rem)] md:translate-y-0 md:grid-cols-1 md:gap-4 md:px-0 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="flex w-full items-start max-md:flex-row max-md:items-center max-md:justify-between max-md:gap-2 md:flex-col">
+          <div className="flex flex-col">
+            <Body
+              size="l"
+              className="mb-1 font-semibold leading-none text-white/85 max-md:text-[12px] md:mb-3"
+            >
+              <span className="md:hidden">2026-2학기 · 8.10 ~ 8.17</span>
+              <span className="hidden md:inline">
+                8.10 ~ 8.17 · 2026-2학기 멘토 모집
+              </span>
+            </Body>
+            <Display
+              size="s"
+              className="mb-5 text-white max-md:mb-0 max-md:whitespace-nowrap max-md:text-[22px] max-md:leading-tight xl:whitespace-nowrap xl:text-[40px] xl:leading-tight"
+            >
+              <span className="md:hidden">스터디 멘토 모집</span>
+              <span className="hidden md:inline">
+                당신의 열정을 업그레이드하세요
+              </span>
+            </Display>
+            <p className="mt-1 text-[12px] font-medium text-white/80 md:hidden">
+              당신의 열정을 업그레이드하세요
+            </p>
+          </div>
           <Link href="/studies/create">
             <Button
               variant="secondary"
-              className="max-md:[&>label]:text-label-m-mobile !min-h-[44px] px-5 md:!min-h-[52px]"
+              className="!min-h-[40px] px-4 md:!min-h-[52px] md:px-5 max-md:[&>label]:text-[16px]"
             >
-              스터디 개설하기 →
+              <span className="md:hidden">개설하기</span>
+              <span className="hidden md:inline">스터디 개설하기</span>
             </Button>
           </Link>
         </div>
 
-        <div className="relative hidden h-full min-h-[220px] xl:block">
+        <div className="relative hidden h-full min-h-0 xl:block">
           <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-[105px] font-black tracking-[-0.1em] text-white/10">
             MENTOR
           </span>
