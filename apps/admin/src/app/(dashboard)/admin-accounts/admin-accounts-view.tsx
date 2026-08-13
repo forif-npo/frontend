@@ -26,6 +26,7 @@ import {
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { handleApiError } from "@core/utils/api-client";
+import { passwordSchema } from "@core/schemas";
 import {
   createAdminAccount,
   deleteAdminAccount,
@@ -115,6 +116,14 @@ export function AdminAccountsView({
       toast.error("비밀번호와 소속(팀명)을 입력해주세요.");
       return;
     }
+    const passwordValidation = passwordSchema.safeParse(createForm.password);
+    if (!passwordValidation.success) {
+      toast.error(
+        passwordValidation.error.issues[0]?.message ??
+          "비밀번호 형식이 올바르지 않습니다.",
+      );
+      return;
+    }
     if (PRESIDENT_TEAM.includes(createForm.affiliation.trim())) {
       toast.error("회장/부회장은 위임 기능으로만 지정할 수 있습니다.");
       return;
@@ -155,6 +164,14 @@ export function AdminAccountsView({
       body.name = editForm.name.trim();
     }
     if (editForm.password) {
+      const passwordValidation = passwordSchema.safeParse(editForm.password);
+      if (!passwordValidation.success) {
+        toast.error(
+          passwordValidation.error.issues[0]?.message ??
+            "비밀번호 형식이 올바르지 않습니다.",
+        );
+        return;
+      }
       body.password = editForm.password;
     }
     if (
