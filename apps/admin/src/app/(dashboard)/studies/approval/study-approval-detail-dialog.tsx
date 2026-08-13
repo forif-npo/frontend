@@ -111,16 +111,9 @@ export function StudyApprovalDetailDialog({
                     </td>
                     <td className="py-3">
                       {tags.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded-[4px] bg-[#ecf2fe] px-2 py-1 text-[15px] leading-[1.5] text-sky-900"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
+                        <span className="text-[15px] leading-[1.5]">
+                          {tags.join(", ")}
+                        </span>
                       ) : (
                         <EmptyValue />
                       )}

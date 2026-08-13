@@ -180,12 +180,23 @@ export function ApprovalView({
       />
 
       <div className="space-y-4">
-        <SearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onSearch={handleSearch}
-          placeholder="승인 대기 스터디 검색"
-        />
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSearch={handleSearch}
+              placeholder="승인 대기 스터디 검색"
+            />
+          </div>
+          <Button
+            type="button"
+            disabled={selectedStudies.length === 0 || isBatchSubmitting}
+            onClick={() => void handleBatchApprove()}
+          >
+            {isBatchSubmitting ? "처리 중..." : "선택 승낙"}
+          </Button>
+        </div>
 
         <DataTable
           columns={approvalColumns}
@@ -211,21 +222,6 @@ export function ApprovalView({
           pageSize={pageSize}
           onPageChange={handlePageChange}
         />
-
-        <div className="bg-muted/30 flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
-          <span className="text-sm font-medium">
-            {selectedStudies.length}개 스터디 선택됨
-          </span>
-          <div className="self-end sm:self-auto">
-            <Button
-              type="button"
-              disabled={selectedStudies.length === 0 || isBatchSubmitting}
-              onClick={() => void handleBatchApprove()}
-            >
-              {isBatchSubmitting ? "처리 중..." : "선택 승낙"}
-            </Button>
-          </div>
-        </div>
       </div>
 
       <StudyApprovalDetailDialog
