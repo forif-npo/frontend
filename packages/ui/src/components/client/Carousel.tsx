@@ -91,15 +91,7 @@ export function Carousel({ carouselItems, bannerClassName }: CarouselProps) {
 
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      <div className="flex w-full items-center justify-between gap-4">
-        {hasPrevious && (
-          <CarouselArrow
-            align="left"
-            title="이전 배너"
-            onClick={handlePrev}
-            className="hidden md:flex"
-          />
-        )}
+      <div className="relative w-full">
         <div
           className={cn(
             "mx-auto w-full max-w-[960px] touch-pan-y overflow-hidden rounded-[28px] md:aspect-[4/1]",
@@ -125,12 +117,20 @@ export function Carousel({ carouselItems, bannerClassName }: CarouselProps) {
             {currentItem.content}
           </div>
         </div>
+        {hasPrevious && (
+          <CarouselArrow
+            align="left"
+            title="이전 배너"
+            onClick={handlePrev}
+            className="absolute left-4 top-1/2 z-10 hidden -translate-y-1/2 bg-white/85 md:flex"
+          />
+        )}
         {hasNext && (
           <CarouselArrow
             align="right"
             title="다음 배너"
             onClick={handleNext}
-            className="hidden md:flex"
+            className="absolute right-4 top-1/2 z-10 hidden -translate-y-1/2 bg-white/85 md:flex"
           />
         )}
       </div>

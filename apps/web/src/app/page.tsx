@@ -1,9 +1,7 @@
-import { CTASection } from "@/features/home/CTASection";
 import { HackathonSection } from "@/features/home/HackathonSection";
 import { NewsSection } from "@/features/home/NewsSection";
 import { QuickMenu } from "@/features/home/QuickMenu";
 import { StudySection } from "@/features/home/StudySection";
-import { ForifIntroBanner } from "@/features/home/banners/ForifIntroBanner";
 import { HOME_CAROUSEL_BANNERS } from "@/constants/home-carousel";
 import { Carousel } from "@ui/components/client";
 import { CarouselItem } from "@ui/components/client/Carousel";
@@ -30,19 +28,12 @@ export default async function Page() {
   return (
     <div className="min-h-viewport overflow-x-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f7faff_42%,#ffffff_100%)] md:bg-none">
       <main className="flex flex-col items-center gap-5 md:gap-8">
-        <section className="mb-2 w-full py-4 md:mb-0 md:mt-4 md:flex md:flex-col md:items-center md:gap-4 md:py-0">
+        <section className="mb-2 w-full md:mb-0 md:flex md:flex-col md:items-center md:gap-4">
           <Carousel
             carouselItems={carouselItems}
             bannerClassName="max-w-none rounded-none"
           />
         </section>
-
-        <section className="relative -mb-5 w-full overflow-hidden bg-[radial-gradient(circle_at_18%_50%,rgba(219,234,254,0.72),transparent_36%),radial-gradient(circle_at_82%_50%,rgba(191,219,254,0.68),transparent_30%),linear-gradient(90deg,#f8fbff_0%,#ffffff_52%,#f7faff_100%)] py-8 md:-mb-8 md:py-14">
-          <div className="max-w-main mx-auto flex w-full flex-col items-center gap-4 px-4 md:px-0">
-            <ForifIntroBanner />
-          </div>
-        </section>
-
         {/* Supported By */}
         <div className="mb-6 w-full bg-gradient-to-br from-[#0b50d0] via-[#4f86ea] to-white py-10 md:mb-16 md:h-[240px] md:bg-gradient-to-r md:py-0">
           <div className="max-w-main mx-auto flex h-full flex-col justify-center gap-6 px-4 md:gap-0 md:px-8 lg:px-0">
@@ -88,11 +79,6 @@ export default async function Page() {
           <section className="w-full">
             <NewsSection />
           </section>
-        </div>
-
-        {/* CTASection */}
-        <div className="w-full">
-          <CTASection />
         </div>
       </main>
     </div>
