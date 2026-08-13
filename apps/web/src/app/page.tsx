@@ -1,3 +1,4 @@
+import { CTASection } from "@/features/home/CTASection";
 import { HackathonSection } from "@/features/home/HackathonSection";
 import { NewsSection } from "@/features/home/NewsSection";
 import { QuickMenu } from "@/features/home/QuickMenu";
@@ -79,6 +80,11 @@ export default async function Page() {
           <section className="w-full">
             <NewsSection />
           </section>
+        </div>
+
+        {/* CTASection */}
+        <div className="w-full">
+          <CTASection />
         </div>
       </main>
     </div>
