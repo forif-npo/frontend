@@ -9,6 +9,7 @@ import { StudySection } from "@/features/my-page/StudySection";
 import { ApplicationSection } from "@/features/my-page/ApplicationSection";
 import { SettingsSection } from "@/features/my-page/SettingsSection";
 import { StudyManageSection } from "@/features/my-page/StudyManageSection";
+import { ServiceManageSection } from "@/features/my-page/ServiceManageSection";
 import type {
   UserProfile,
   UserStudiesResponse,
@@ -17,6 +18,7 @@ import type {
 import type { CreatedStudy } from "@core/study-manage/api";
 import type { StudyApplicationSummary } from "@core/study-application/api";
 import type { Semester } from "@core/semester/api";
+import type { ProductApplication, ProductSummary } from "@core/products/api";
 
 interface MyPageClientProps {
   profile: UserProfile;
@@ -25,6 +27,8 @@ interface MyPageClientProps {
   createdStudies: CreatedStudy[];
   studyApplications: StudyApplicationSummary[];
   activeSemester: Semester;
+  productApplications: ProductApplication[];
+  products: ProductSummary[];
 }
 
 export function MyPageClient({
@@ -34,6 +38,8 @@ export function MyPageClient({
   createdStudies,
   studyApplications,
   activeSemester,
+  productApplications,
+  products,
 }: MyPageClientProps) {
   const searchParams = useSearchParams();
   const requestedSection = searchParams.get("section");
@@ -41,9 +47,10 @@ export function MyPageClient({
     requestedSection === "study-manage" ||
     requestedSection === "study-applications" ||
     (createdStudies.length === 0 && studyApplications.length > 0);
-  const [activeNav, setActiveNav] = useState(
-    shouldOpenStudyManage ? "study-manage" : "my-studies",
-  );
+  const [activeNav, setActiveNav] = useState(() => {
+    if (requestedSection === "service-manage") return "service-manage";
+    return shouldOpenStudyManage ? "study-manage" : "my-studies";
+  });
   const isApplicationsTab = searchParams.get("tab") === "applications";
   const targetStudyId = Number(searchParams.get("study_id")) || undefined;
   const pageHeader =
@@ -53,15 +60,21 @@ export function MyPageClient({
           description:
             "개설 신청서와 운영 중인 스터디를 확인하고 관리할 수 있습니다.",
         }
-      : activeNav === "settings"
+      : activeNav === "service-manage"
         ? {
-            title: "설정",
-            description: "계정 정보를 확인하고 수정할 수 있습니다.",
+            title: "서비스 관리",
+            description:
+              "서비스 등록 신청 내역과 운영 중인 서비스를 확인할 수 있습니다.",
           }
-        : {
-            title: "내 스터디",
-            description: "수강한 스터디와 지원 현황을 확인할 수 있습니다.",
-          };
+        : activeNav === "settings"
+          ? {
+              title: "설정",
+              description: "계정 정보를 확인하고 수정할 수 있습니다.",
+            }
+          : {
+              title: "내 스터디",
+              description: "수강한 스터디와 지원 현황을 확인할 수 있습니다.",
+            };
 
   const tabs = [
     {
@@ -119,6 +132,11 @@ export function MyPageClient({
           <StudyManageSection
             createdStudies={createdStudies}
             studyApplications={studyApplications}
+          />
+        ) : activeNav === "service-manage" ? (
+          <ServiceManageSection
+            applications={productApplications}
+            products={products}
           />
         ) : activeNav === "settings" ? (
           <SettingsSection profile={profile} />
