@@ -3,6 +3,7 @@ import { HackathonSection } from "@/features/home/HackathonSection";
 import { NewsSection } from "@/features/home/NewsSection";
 import { QuickMenu } from "@/features/home/QuickMenu";
 import { StudySection } from "@/features/home/StudySection";
+import { ForifIntroBanner } from "@/features/home/banners/ForifIntroBanner";
 import { HOME_CAROUSEL_BANNERS } from "@/constants/home-carousel";
 import { Carousel } from "@ui/components/client";
 import { CarouselItem } from "@ui/components/client/Carousel";
@@ -26,14 +27,27 @@ export default async function Page() {
       content: <BannerComponent href={banner.href} image={banner.image} />,
     };
   });
+  const mobileCarouselItems = carouselItems.filter(
+    (banner) => banner.id !== "forif-intro",
+  );
+
   return (
     <div className="min-h-viewport overflow-x-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f7faff_42%,#ffffff_100%)] md:bg-none">
       <main className="flex flex-col items-center gap-5 md:gap-8">
-        <section className="mb-2 w-full md:mb-0 md:flex md:flex-col md:items-center md:gap-4">
+        <section className="hidden w-full md:flex md:flex-col md:items-center md:gap-4">
           <Carousel
             carouselItems={carouselItems}
             bannerClassName="max-w-none rounded-none"
           />
+        </section>
+        <section className="mb-2 w-full md:hidden">
+          <Carousel
+            carouselItems={mobileCarouselItems}
+            bannerClassName="max-w-none rounded-none"
+          />
+        </section>
+        <section className="-mb-5 w-full md:hidden">
+          <ForifIntroBanner variant="mobile-section" />
         </section>
         {/* Supported By */}
         <div className="mb-6 w-full bg-gradient-to-br from-[#0b50d0] via-[#4f86ea] to-white py-10 md:mb-16 md:h-[240px] md:bg-gradient-to-r md:py-0">
