@@ -26,7 +26,7 @@ export function StudyCreateComplete({
   const studyTime = `매주 ${weekDayLabel} ${values.startTime} ~ ${values.endTime}`;
 
   return (
-    <div className="mx-auto flex w-full max-w-[792px] flex-col items-center gap-12 pb-16 pt-10">
+    <div className="mx-auto flex w-full max-w-[792px] flex-col items-center gap-8 pb-16 pt-10">
       <SuccessFillIcon
         width={116}
         height={116}

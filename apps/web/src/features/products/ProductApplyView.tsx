@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Body, HintText, InfoBox, Label } from "@ui/components/server";
+import { HintText, Label } from "@ui/components/server";
 import {
   AlertModal,
   Button,
@@ -12,6 +12,7 @@ import {
   TextInput,
 } from "@ui/components/client";
 import { handleApiError } from "@core/utils/api-client";
+import { useRouter } from "next/navigation";
 import { applyProduct, type ProductSourceType } from "./api";
 
 const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,18})[a-z0-9]$/;
@@ -58,11 +59,11 @@ const SOURCE_TYPE_OPTIONS = [
 ];
 
 export function ProductApplyView() {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
     string | null
@@ -175,10 +176,7 @@ export function ProductApplyView() {
         thumbnail,
       );
 
-      setForm(EMPTY_FORM);
-      setThumbnail(null);
-      setIsSubmitted(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      router.push("/products/apply/complete");
     } catch (error) {
       const message = await handleApiError(error);
       // 서브도메인 관련 오류는 해당 입력창 아래에 표시한다
@@ -194,21 +192,6 @@ export function ProductApplyView() {
 
   return (
     <div className="mx-auto max-w-[792px]">
-      {isSubmitted && (
-        <div className="mb-8">
-          <InfoBox
-            variant="success"
-            title="신청이 접수되었습니다"
-            content={
-              <Body size="s" className="text-text-basic">
-                운영진 검토 후 결과를 알려드릴게요. 진행 상황은 마이페이지의
-                &lsquo;서비스 관리&rsquo;에서 확인할 수 있습니다.
-              </Body>
-            }
-          />
-        </div>
-      )}
-
       <section>
         <div className="flex flex-col gap-10">
           <TextInput
