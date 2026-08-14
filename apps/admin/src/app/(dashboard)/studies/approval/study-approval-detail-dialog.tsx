@@ -300,16 +300,17 @@ function ReferenceContent({
   reference: NonNullable<AdminStudyDetail["references"]>[number];
 }) {
   const href =
-    reference.reference_type === "URL"
-      ? getSafeExternalUrl(reference.content)
-      : null;
+    reference.reference_type === "FILE"
+      ? getFileDownloadUrl(reference.content)
+      : getSafeExternalUrl(reference.content);
 
   if (href) {
     return (
       <a
         href={href}
-        target="_blank"
-        rel="noreferrer"
+        download={reference.reference_type === "FILE" || undefined}
+        target={reference.reference_type === "URL" ? "_blank" : undefined}
+        rel={reference.reference_type === "URL" ? "noreferrer" : undefined}
         className="text-primary break-all underline underline-offset-2"
       >
         {reference.content}
@@ -318,6 +319,23 @@ function ReferenceContent({
   }
 
   return <span className="break-all">{reference.content || "-"}</span>;
+}
+
+function getFileDownloadUrl(value: string | null) {
+  const href = getSafeExternalUrl(value);
+  if (!href) return null;
+
+  try {
+    const url = new URL(href);
+
+    if (url.pathname.includes("/api/v1/files/")) {
+      url.searchParams.set("download", "true");
+    }
+
+    return url.toString();
+  } catch {
+    return href;
+  }
 }
 
 function getSafeExternalUrl(value: string | null) {
