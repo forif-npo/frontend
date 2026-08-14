@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Body, HintText, InfoBox, Label } from "@ui/components/server";
 import {
+  AlertModal,
   Button,
   CriticalAlert,
+  FileUpload,
   SelectBox,
   TextArea,
   TextInput,
@@ -61,6 +63,10 @@ export function ProductApplyView() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
+    string | null
+  >(null);
 
   const update = (patch: Partial<FormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
@@ -115,6 +121,27 @@ export function ProductApplyView() {
     return errors;
   };
 
+  const handleThumbnailUpload = async (file: File) => {
+    const allowedTypes = ["image/jpeg", "image/png"];
+
+    if (!allowedTypes.includes(file.type)) {
+      setThumbnailAlertMessage(
+        "jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.",
+      );
+      return false;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setThumbnailAlertMessage(
+        "이미지 파일은 최대 5MB까지 업로드할 수 있습니다.",
+      );
+      return false;
+    }
+
+    setThumbnail(file);
+    return true;
+  };
+
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
@@ -131,21 +158,25 @@ export function ProductApplyView() {
     setFieldErrors({});
     setIsSubmitting(true);
     try {
-      await applyProduct({
-        name: form.name.trim(),
-        slug,
-        one_liner: form.oneLiner.trim(),
-        description: form.description.trim(),
-        source_type: form.sourceType,
-        service_url: form.serviceUrl.trim() || null,
-        github_url: form.githubUrl.trim() || null,
-        tech_stack: form.techStack
-          .split(",")
-          .map((tech) => tech.trim())
-          .filter(Boolean),
-      });
+      await applyProduct(
+        {
+          name: form.name.trim(),
+          slug,
+          one_liner: form.oneLiner.trim(),
+          description: form.description.trim(),
+          source_type: form.sourceType,
+          service_url: form.serviceUrl.trim() || null,
+          github_url: form.githubUrl.trim() || null,
+          tech_stack: form.techStack
+            .split(",")
+            .map((tech) => tech.trim())
+            .filter(Boolean),
+        },
+        thumbnail,
+      );
 
       setForm(EMPTY_FORM);
+      setThumbnail(null);
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
@@ -242,6 +273,23 @@ export function ProductApplyView() {
             placeholder="서비스를 한 문장으로 소개해주세요"
           />
 
+          <div className="flex flex-col gap-2">
+            <Label>썸네일</Label>
+            <HintText>
+              서비스 목록에서 보여줄 대표 이미지를 선택해주세요.
+            </HintText>
+            <FileUpload
+              title="이미지 파일 업로드 (jpg, jpeg, png)"
+              description="권장 크기 1080px * 720px, 최대 5MB"
+              accept="image/jpeg,image/png"
+              multiple={false}
+              maxFiles={1}
+              files={thumbnail ? [thumbnail] : []}
+              onUpload={handleThumbnailUpload}
+              onRemove={() => setThumbnail(null)}
+            />
+          </div>
+
           <TextArea
             id="description"
             title="상세 소개"
@@ -314,6 +362,12 @@ export function ProductApplyView() {
           </div>
         </div>
       </section>
+
+      <AlertModal
+        isOpen={thumbnailAlertMessage !== null}
+        description={thumbnailAlertMessage ?? ""}
+        onClose={() => setThumbnailAlertMessage(null)}
+      />
     </div>
   );
 }

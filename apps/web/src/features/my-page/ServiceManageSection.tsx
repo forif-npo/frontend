@@ -42,7 +42,7 @@ function ApplicationCard({ application }: { application: ProductApplication }) {
       <ProductThumbnail
         slug={application.slug}
         name={application.name}
-        thumbnailUrl={null}
+        thumbnailUrl={application.thumbnail_url}
         className="h-[196px] w-full"
       />
       <div className="flex flex-1 flex-col gap-4 px-8 py-8">

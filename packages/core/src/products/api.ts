@@ -44,6 +44,7 @@ export interface ProductApplication {
   source_type: ProductSourceType;
   service_url: string | null;
   github_url: string | null;
+  thumbnail_url: string | null;
   tech_stack: string[];
   status: ProductApplicationStatus;
   reject_reason: string | null;
@@ -86,9 +87,19 @@ export async function getProduct(slug: string): Promise<ProductDetail | null> {
 
 export async function applyProduct(
   body: CreateProductApplicationBody,
+  thumbnail?: File | null,
 ): Promise<ProductApplication> {
+  const formData = new FormData();
+  formData.append(
+    "request",
+    new Blob([JSON.stringify(body)], { type: "application/json" }),
+  );
+  if (thumbnail) {
+    formData.append("thumbnail", thumbnail);
+  }
+
   const response = await apiClient
-    .post("api/v1/products/applications", { json: body })
+    .post("api/v1/products/applications", { body: formData })
     .json<ApiResponse<ProductApplication>>();
   return response.data!;
 }
