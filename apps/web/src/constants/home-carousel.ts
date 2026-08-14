@@ -38,15 +38,15 @@ export type HomeCarouselBanner =
 
 export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
   {
-    id: "mentor-recruit-2026-2",
-    type: "tsx",
-    component: MentorRecruitBanner,
-    mobileAspect: "desktop",
-  },
-  {
     id: "forif-intro",
     type: "tsx",
     component: ForifIntroBanner,
+    mobileAspect: "desktop",
+  },
+  {
+    id: "mentor-recruit-2026-2",
+    type: "tsx",
+    component: MentorRecruitBanner,
     mobileAspect: "desktop",
   },
 ];

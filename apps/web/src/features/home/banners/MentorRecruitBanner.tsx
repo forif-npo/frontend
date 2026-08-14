@@ -4,11 +4,11 @@ import Link from "next/link";
 
 export function MentorRecruitBanner() {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[linear-gradient(118deg,#063bb4_0%,#0b50d0_53%,#2b72e7_100%)] px-5 py-4 text-white shadow-[0_18px_50px_rgba(11,80,208,0.22)] md:px-12 md:py-9">
+    <div className="relative h-full w-full overflow-hidden bg-[linear-gradient(118deg,#063bb4_0%,#0b50d0_53%,#2b72e7_100%)] text-white shadow-[0_18px_50px_rgba(11,80,208,0.22)]">
       <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_1px_1px,#fff_1px,transparent_0)] [background-size:22px_22px]" />
       <div className="absolute -left-20 -top-24 h-64 w-64 rounded-full bg-[#7eb1ff]/20 blur-3xl" />
-      <div className="absolute inset-x-5 top-1/2 z-10 flex -translate-y-1/2 items-center md:relative md:inset-auto md:grid md:h-[calc(100%-4.5rem)] md:translate-y-0 md:grid-cols-1 md:gap-4 md:px-0 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="flex w-full items-start max-md:flex-row max-md:items-center max-md:justify-between max-md:gap-2 md:flex-col">
+      <div className="absolute inset-0 z-10 flex items-center px-5 py-4 md:grid md:grid-cols-1 md:items-center md:gap-4 md:px-12 md:py-9 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="flex w-full items-start max-md:flex-row max-md:items-center max-md:justify-between max-md:gap-2 md:flex-col xl:translate-x-20">
           <div className="flex flex-col">
             <Body
               size="l"
@@ -43,7 +43,7 @@ export function MentorRecruitBanner() {
           </Link>
         </div>
 
-        <div className="relative hidden h-full min-h-0 xl:block">
+        <div className="relative hidden h-full min-h-0 xl:block xl:-translate-x-[140px]">
           <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-[105px] font-black tracking-[-0.1em] text-white/10">
             MENTOR
           </span>
