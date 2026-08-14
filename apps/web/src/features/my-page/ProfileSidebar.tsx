@@ -23,6 +23,8 @@ interface ProfileSidebarProps {
   onNavChange: (nav: string) => void;
   /** 승인된 스터디를 운영하거나 개설 신청 이력이 있는 경우 활성화 */
   canManageStudyWorkspace?: boolean;
+  /** 서비스 등록 신청 이력 또는 보유 서비스가 있는 경우 활성화 */
+  canManageServiceWorkspace?: boolean;
 }
 
 export function ProfileSidebar({
@@ -30,6 +32,7 @@ export function ProfileSidebar({
   activeNav,
   onNavChange,
   canManageStudyWorkspace = false,
+  canManageServiceWorkspace = false,
 }: ProfileSidebarProps) {
   const navItems = [
     {
@@ -48,12 +51,16 @@ export function ProfileSidebar({
           },
         ]
       : []),
-    {
-      id: "service-manage",
-      label: "서비스 관리",
-      Icon: Package,
-      disabled: false,
-    },
+    ...(canManageServiceWorkspace
+      ? [
+          {
+            id: "service-manage",
+            label: "서비스 관리",
+            Icon: Package,
+            disabled: false,
+          },
+        ]
+      : []),
     { id: "settings", label: "설정", Icon: Settings, disabled: false },
   ];
 

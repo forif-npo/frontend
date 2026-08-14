@@ -47,8 +47,11 @@ export function MyPageClient({
     requestedSection === "study-manage" ||
     requestedSection === "study-applications" ||
     (createdStudies.length === 0 && studyApplications.length > 0);
+  const canManageServiceWorkspace = productApplications.length > 0;
   const [activeNav, setActiveNav] = useState(() => {
-    if (requestedSection === "service-manage") return "service-manage";
+    if (requestedSection === "service-manage" && canManageServiceWorkspace) {
+      return "service-manage";
+    }
     return shouldOpenStudyManage ? "study-manage" : "my-studies";
   });
   const isApplicationsTab = searchParams.get("tab") === "applications";
@@ -115,6 +118,7 @@ export function MyPageClient({
         canManageStudyWorkspace={
           createdStudies.length > 0 || studyApplications.length > 0
         }
+        canManageServiceWorkspace={canManageServiceWorkspace}
       />
 
       {/* Main Content */}
