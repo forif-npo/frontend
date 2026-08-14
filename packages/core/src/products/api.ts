@@ -93,11 +93,14 @@ export async function applyProduct(
   return response.data!;
 }
 
-export async function getMyProductApplications(): Promise<
-  ProductApplication[]
-> {
+export async function getMyProductApplications(
+  token?: string,
+): Promise<ProductApplication[]> {
+  const options = token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
   const response = await apiClient
-    .get("api/v1/products/applications/me")
+    .get("api/v1/products/applications/me", options)
     .json<ApiResponse<ProductApplication[]>>();
   return response.data ?? [];
 }

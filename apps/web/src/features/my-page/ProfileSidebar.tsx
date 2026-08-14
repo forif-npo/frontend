@@ -4,6 +4,7 @@ import { Body, Label } from "@ui/components/server";
 import {
   CircleUser,
   ClipboardCheck,
+  Package,
   Settings,
   UsersRound,
 } from "@repo/assets/icons/lucide";
@@ -47,6 +48,12 @@ export function ProfileSidebar({
           },
         ]
       : []),
+    {
+      id: "service-manage",
+      label: "서비스 관리",
+      Icon: Package,
+      disabled: false,
+    },
     { id: "settings", label: "설정", Icon: Settings, disabled: false },
   ];
 

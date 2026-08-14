@@ -1,14 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import {
-  Badge,
-  Body,
-  Heading,
-  HintText,
-  InfoBox,
-  Label,
-} from "@ui/components/server";
+import { useState } from "react";
+import { Body, HintText, InfoBox, Label } from "@ui/components/server";
 import {
   Button,
   CriticalAlert,
@@ -17,13 +10,7 @@ import {
   TextInput,
 } from "@ui/components/client";
 import { handleApiError } from "@core/utils/api-client";
-import {
-  applyProduct,
-  getMyProductApplications,
-  type ProductApplication,
-  type ProductApplicationStatus,
-  type ProductSourceType,
-} from "./api";
+import { applyProduct, type ProductSourceType } from "./api";
 
 const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,18})[a-z0-9]$/;
 const RESERVED_SLUGS = new Set([
@@ -37,21 +24,6 @@ const RESERVED_SLUGS = new Set([
   "products",
   "forif",
 ]);
-
-const STATUS_LABELS: Record<ProductApplicationStatus, string> = {
-  PENDING: "검토 대기중",
-  APPROVED: "승인",
-  REJECTED: "반려",
-};
-
-const STATUS_BADGE_VARIANTS: Record<
-  ProductApplicationStatus,
-  "warning" | "success" | "danger"
-> = {
-  PENDING: "warning",
-  APPROVED: "success",
-  REJECTED: "danger",
-};
 
 type FieldErrors = Partial<Record<keyof FormState, string>>;
 
@@ -84,27 +56,11 @@ const SOURCE_TYPE_OPTIONS = [
 ];
 
 export function ProductApplyView() {
-  const [applications, setApplications] = useState<ProductApplication[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const fetchApplications = useCallback(async () => {
-    try {
-      setApplications(await getMyProductApplications());
-    } catch {
-      // 세션 만료 등 — apiClient 공통 처리(onUnauthorized)에 위임
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchApplications();
-  }, [fetchApplications]);
 
   const update = (patch: Partial<FormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
@@ -191,7 +147,6 @@ export function ProductApplyView() {
 
       setForm(EMPTY_FORM);
       setIsSubmitted(true);
-      await fetchApplications();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       const message = await handleApiError(error);
@@ -215,74 +170,15 @@ export function ProductApplyView() {
             title="신청이 접수되었습니다"
             content={
               <Body size="s" className="text-text-basic">
-                운영진 검토 후 결과를 알려드릴게요. 진행 상황은 아래 &lsquo;내
-                신청 현황&rsquo;에서 확인할 수 있습니다.
+                운영진 검토 후 결과를 알려드릴게요. 진행 상황은 마이페이지의
+                &lsquo;서비스 관리&rsquo;에서 확인할 수 있습니다.
               </Body>
             }
           />
         </div>
       )}
 
-      {/* 내 신청 현황 */}
-      <section className="mb-12">
-        <Heading size="m" className="text-text-bolder mb-6">
-          내 신청 현황
-        </Heading>
-        {isLoading ? (
-          <p className="text-text-subtle py-6 text-center text-[15px]">
-            불러오는 중...
-          </p>
-        ) : applications.length === 0 ? (
-          <p className="text-text-subtle py-6 text-center text-[15px]">
-            아직 신청한 서비스가 없습니다.
-          </p>
-        ) : (
-          <ul className="flex flex-col gap-3">
-            {applications.map((application) => (
-              <li
-                key={application.application_id}
-                className="rounded-3 border-border-gray-light bg-surface-white flex flex-col gap-2 border p-5"
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge
-                    label={STATUS_LABELS[application.status]}
-                    variant={STATUS_BADGE_VARIANTS[application.status]}
-                    appearance="solid-pastel"
-                    size="small"
-                  />
-                  <span className="text-text-bolder text-[17px] font-bold">
-                    {application.name}
-                  </span>
-                  <span className="text-text-subtle text-[14px]">
-                    {application.slug}.forif.org · {application.applied_at} 신청
-                  </span>
-                </div>
-                <p className="text-text-basic text-[15px]">
-                  {application.one_liner}
-                </p>
-                {application.status === "REJECTED" &&
-                  application.reject_reason && (
-                    <div className="bg-surface-danger-subtler text-text-danger rounded-2 mt-1 p-3 text-[14px] leading-[1.6]">
-                      <span className="font-bold">반려 사유</span> ·{" "}
-                      {application.reject_reason}
-                    </div>
-                  )}
-                {application.status === "APPROVED" && (
-                  <p className="text-text-success text-[14px]">
-                    서비스 목록에 게시되었습니다.
-                  </p>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
       <section>
-        <Heading size="m" className="text-text-bolder mb-6">
-          새 서비스 신청
-        </Heading>
-
         <div className="flex flex-col gap-10">
           <TextInput
             id="name"
