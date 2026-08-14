@@ -163,10 +163,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.studyManagement.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname.startsWith(item.url)}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -189,10 +186,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.businessManagement.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname.startsWith(item.url)}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -221,10 +215,7 @@ export function AppSidebar() {
                 )
                 .map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={pathname.startsWith(item.url)}
-                    >
+                    <SidebarMenuButton asChild isActive={pathname === item.url}>
                       <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
@@ -250,7 +241,7 @@ export function AppSidebar() {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        isActive={pathname.startsWith(item.url)}
+                        isActive={pathname === item.url}
                       >
                         <Link href={item.url}>
                           <item.icon />
@@ -276,10 +267,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.postManagement.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname.startsWith(item.url)}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -300,10 +288,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.others.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname.startsWith(item.url)}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -319,10 +304,7 @@ export function AppSidebar() {
       <SidebarFooter className="p-2">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname.startsWith("/settings")}
-            >
+            <SidebarMenuButton asChild isActive={pathname === "/settings"}>
               <Link href="/settings">
                 <Settings />
                 <span>설정</span>
