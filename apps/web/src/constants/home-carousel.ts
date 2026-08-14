@@ -25,7 +25,8 @@ export type HomeCarouselBanner =
   | {
       id: string;
       type: "tsx";
-      component: typeof ForifIntroBanner | typeof MentorRecruitBanner;
+      component: typeof MentorRecruitBanner | typeof ForifIntroBanner;
+      mobileAspect?: "square" | "desktop";
     }
   | {
       id: string;
@@ -37,13 +38,15 @@ export type HomeCarouselBanner =
 
 export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
   {
-    id: "mentor-recruit-2026-2",
-    type: "tsx",
-    component: MentorRecruitBanner,
-  },
-  {
     id: "forif-intro",
     type: "tsx",
     component: ForifIntroBanner,
+    mobileAspect: "desktop",
+  },
+  {
+    id: "mentor-recruit-2026-2",
+    type: "tsx",
+    component: MentorRecruitBanner,
+    mobileAspect: "desktop",
   },
 ];

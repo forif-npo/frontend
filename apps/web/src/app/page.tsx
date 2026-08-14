@@ -3,8 +3,8 @@ import { HackathonSection } from "@/features/home/HackathonSection";
 import { NewsSection } from "@/features/home/NewsSection";
 import { QuickMenu } from "@/features/home/QuickMenu";
 import { StudySection } from "@/features/home/StudySection";
+import { ForifIntroBanner } from "@/features/home/banners/ForifIntroBanner";
 import { HOME_CAROUSEL_BANNERS } from "@/constants/home-carousel";
-import { CriticalAlert } from "@repo/ui/components/client";
 import { Carousel } from "@ui/components/client";
 import { CarouselItem } from "@ui/components/client/Carousel";
 import { Heading } from "@ui/components/server";
@@ -14,7 +14,11 @@ export default async function Page() {
   const carouselItems: CarouselItem[] = HOME_CAROUSEL_BANNERS.map((banner) => {
     if (banner.type === "tsx") {
       const BannerComponent = banner.component;
-      return { id: banner.id, content: <BannerComponent /> };
+      return {
+        id: banner.id,
+        content: <BannerComponent />,
+        mobileAspect: banner.mobileAspect,
+      };
     }
 
     const BannerComponent = banner.component;
@@ -23,25 +27,28 @@ export default async function Page() {
       content: <BannerComponent href={banner.href} image={banner.image} />,
     };
   });
+  const mobileCarouselItems = carouselItems.filter(
+    (banner) => banner.id !== "forif-intro",
+  );
+
   return (
     <div className="min-h-viewport overflow-x-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f7faff_42%,#ffffff_100%)] md:bg-none">
       <main className="flex flex-col items-center gap-5 md:gap-8">
-        <section className="max-w-main mb-2 mt-4 hidden w-full flex-col items-center gap-4 px-4 md:mb-0 md:mt-12 md:flex md:px-0">
-          <CriticalAlert
-            variant="information"
-            link="/studies/list"
-            text="매 학기 어떤 스터디가 열리는지 궁금하신가요?"
-            title="스터디 목록으로 이동"
-            detailText="자세히 보기"
-            showArrow={false}
-            className="shadow-sm"
+        <section className="hidden w-full md:flex md:flex-col md:items-center md:gap-4">
+          <Carousel
+            carouselItems={carouselItems}
+            bannerClassName="max-w-none rounded-none"
           />
         </section>
-
-        <section className="mx-auto w-full max-w-[1400px] px-4 py-4 md:my-6 md:flex md:flex-col md:items-center md:gap-4 md:px-0 md:py-0">
-          <Carousel carouselItems={carouselItems} />
+        <section className="mb-2 w-full md:hidden">
+          <Carousel
+            carouselItems={mobileCarouselItems}
+            bannerClassName="max-w-none rounded-none"
+          />
         </section>
-
+        <section className="-mb-5 w-full md:hidden">
+          <ForifIntroBanner variant="mobile-section" />
+        </section>
         {/* Supported By */}
         <div className="mb-6 w-full bg-gradient-to-br from-[#0b50d0] via-[#4f86ea] to-white py-10 md:mb-16 md:h-[240px] md:bg-gradient-to-r md:py-0">
           <div className="max-w-main mx-auto flex h-full flex-col justify-center gap-6 px-4 md:gap-0 md:px-8 lg:px-0">

@@ -1,5 +1,4 @@
 import { Heading } from "@ui/components/server";
-import { ArrowRight } from "@repo/assets/icons/lucide";
 import Link from "next/link";
 import { ctaData } from "@/constants/home";
 
@@ -16,10 +15,9 @@ export function CTASection() {
         <div className="pt-2">
           <Link
             href={ctaData.ctaLink}
-            className="text-label-m inline-flex items-center gap-1 text-white transition-colors duration-200 hover:opacity-80"
+            className="text-label-m inline-flex text-white transition-colors duration-200 hover:font-bold hover:underline hover:underline-offset-4"
           >
             {ctaData.ctaText}
-            <ArrowRight className="size-5" />
           </Link>
         </div>
       </div>
