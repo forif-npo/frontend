@@ -12,8 +12,10 @@ import {
 } from "@ui/components/server";
 import {
   getAttendance,
+  getMentorConfirmation,
   updateAttendance,
   type AttendanceStatus,
+  type MentorConfirmationStatus,
   type StudyAttendanceData,
 } from "@core/study-manage/api";
 
@@ -37,6 +39,10 @@ export function AttendancePanel({
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [weekCount, setWeekCount] = useState(DEFAULT_WEEK_COUNT);
+  const [mentorConfirmation, setMentorConfirmation] =
+    useState<MentorConfirmationStatus | null>(null);
+  const [isDownloadingConfirmation, setIsDownloadingConfirmation] =
+    useState(false);
   // 저장 전 로컬 변경분: "userId:weekNum" → present/absent
   const [pending, setPending] = useState<Map<CellKey, AttendanceStatus>>(
     new Map(),
@@ -64,6 +70,28 @@ export function AttendancePanel({
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    if (!readOnly) {
+      setMentorConfirmation(null);
+      return;
+    }
+
+    let cancelled = false;
+    getMentorConfirmation(studyId)
+      .then((confirmation) => {
+        if (!cancelled) setMentorConfirmation(confirmation);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setMentorConfirmation({ issued: false, confirmation_url: null });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [readOnly, studyId]);
 
   // 서버 기준 상태 맵: "userId:weekNum" → status
   const savedStatus = useMemo(() => {
@@ -122,6 +150,19 @@ export function AttendancePanel({
     }
   };
 
+  const handleDownloadMentorConfirmation = async () => {
+    if (isDownloadingConfirmation || !mentorConfirmation?.issued) return;
+    setIsDownloadingConfirmation(true);
+    try {
+      const confirmation = await getMentorConfirmation(studyId);
+      if (confirmation.confirmation_url) {
+        window.open(confirmation.confirmation_url, "_blank");
+      }
+    } finally {
+      setIsDownloadingConfirmation(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20 text-gray-500">
@@ -142,7 +183,7 @@ export function AttendancePanel({
 
   return (
     <div>
-      <div className="mb-4 flex items-center">
+      <div className="mb-4 flex items-center gap-4">
         <p className="text-text-basic text-body-l font-bold leading-normal">
           멘티 <span className="text-text-primary">{data.mentees.length}</span>
           명
@@ -150,6 +191,21 @@ export function AttendancePanel({
             칸을 눌러 출석/결석을 표시한 뒤 저장하세요
           </span>
         </p>
+        <Button
+          variant="tertiary"
+          size="medium"
+          className="ml-auto"
+          disabled={
+            !readOnly ||
+            !mentorConfirmation?.issued ||
+            isDownloadingConfirmation
+          }
+          onClick={handleDownloadMentorConfirmation}
+        >
+          {isDownloadingConfirmation
+            ? "다운로드 중..."
+            : "멘토 확인서 다운로드"}
+        </Button>
       </div>
 
       {errorMessage && (

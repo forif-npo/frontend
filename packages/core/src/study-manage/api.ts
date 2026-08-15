@@ -161,6 +161,22 @@ export async function updateAttendance(
   });
 }
 
+export interface MentorConfirmationStatus {
+  issued: boolean;
+  confirmation_url: string | null;
+}
+
+/** 선택한 스터디의 내 멘토 확인서 발급 상태와 다운로드 URL을 조회한다. */
+export async function getMentorConfirmation(
+  studyId: number,
+): Promise<MentorConfirmationStatus> {
+  const response = await apiClient
+    .get(`api/v1/studies/${studyId}/mentor-confirmation`)
+    .json<ApiResponse<MentorConfirmationStatus>>();
+
+  return response.data ?? { issued: false, confirmation_url: null };
+}
+
 /**
  * Bulk-accept applications (mentor only).
  */
