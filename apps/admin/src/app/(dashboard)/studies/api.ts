@@ -131,6 +131,12 @@ export async function approveStudy(studyId: number): Promise<void> {
     .json<ApiResponse<null>>();
 }
 
+export async function createAutonomousStudy(): Promise<void> {
+  await apiClient
+    .post("api/v1/admin/studies/autonomous")
+    .json<ApiResponse<null>>();
+}
+
 export async function fetchStudyDetail(
   studyId: number,
 ): Promise<AdminStudyDetail> {

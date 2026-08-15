@@ -13,13 +13,19 @@ import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import type { StudyUpdateRequest } from "@core/types/api";
 import { handleApiError } from "@core/utils/api-client";
-import { Download } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-import { deleteStudy, fetchStudyDetail, updateStudy } from "./api";
+import {
+  createAutonomousStudy,
+  deleteStudy,
+  fetchStudyDetail,
+  updateStudy,
+} from "./api";
 import { columns } from "./columns";
+import { AutonomousStudyCreateDialog } from "./components/AutonomousStudyCreateDialog";
 import { StudyDeleteDialog } from "./components/StudyDeleteDialog";
 import { StudyEditDialog } from "./components/StudyEditDialog";
 import { EMPTY_STUDY_EDIT_FORM, STUDY_TAG_OPTIONS } from "./constants";
@@ -65,6 +71,10 @@ export function StudiesView({
   const [deleteTarget, setDeleteTarget] = useState<Study | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isEditDetailLoaded, setIsEditDetailLoaded] = useState(false);
+  const [isAutonomousStudyDialogOpen, setIsAutonomousStudyDialogOpen] =
+    useState(false);
+  const [isCreatingAutonomousStudy, setIsCreatingAutonomousStudy] =
+    useState(false);
   const [loadingStudyId, setLoadingStudyId] = useState<number | null>(null);
   const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
     null,
@@ -262,6 +272,22 @@ export function StudiesView({
     }
   };
 
+  const handleCreateAutonomousStudy = async () => {
+    if (isCreatingAutonomousStudy) return;
+
+    try {
+      setIsCreatingAutonomousStudy(true);
+      await createAutonomousStudy();
+      toast.success("현재 학기에 자율스터디가 개설되었습니다.");
+      setIsAutonomousStudyDialogOpen(false);
+      router.refresh();
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsCreatingAutonomousStudy(false);
+    }
+  };
+
   const handleAddMentee = (study: Study) => {
     console.log("멘티 추가", study);
   };
@@ -292,14 +318,24 @@ export function StudiesView({
           onSemesterChange={handleSemesterChange}
           includeEtc={false}
         />
-        <Button
-          variant="outline"
-          className="gap-2"
-          onClick={handleDownloadExcel}
-        >
-          <Download className="h-4 w-4" />
-          엑셀로 다운로드
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={() => setIsAutonomousStudyDialogOpen(true)}
+          >
+            <Plus className="h-4 w-4" />
+            자율스터디 개설
+          </Button>
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={handleDownloadExcel}
+          >
+            <Download className="h-4 w-4" />
+            엑셀로 다운로드
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -371,6 +407,13 @@ export function StudiesView({
         }}
         onConfirm={() => void handleConfirmDeleteStudy()}
         isDeleting={isDeletingStudy}
+      />
+
+      <AutonomousStudyCreateDialog
+        open={isAutonomousStudyDialogOpen}
+        onOpenChange={setIsAutonomousStudyDialogOpen}
+        onConfirm={() => void handleCreateAutonomousStudy()}
+        isCreating={isCreatingAutonomousStudy}
       />
     </div>
   );
