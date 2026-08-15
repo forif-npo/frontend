@@ -152,12 +152,25 @@ export function AttendancePanel({
 
   const handleDownloadMentorConfirmation = async () => {
     if (isDownloadingConfirmation || !mentorConfirmation?.issued) return;
+
+    const downloadWindow = window.open("", "_blank");
+    if (downloadWindow == null) {
+      setErrorMessage("팝업이 차단되어 멘토 확인서를 열 수 없습니다.");
+      return;
+    }
+
     setIsDownloadingConfirmation(true);
     try {
       const confirmation = await getMentorConfirmation(studyId);
       if (confirmation.confirmation_url) {
-        window.open(confirmation.confirmation_url, "_blank");
+        downloadWindow.location.href = confirmation.confirmation_url;
+      } else {
+        downloadWindow.close();
+        setErrorMessage("발급된 멘토 확인서를 찾을 수 없습니다.");
       }
+    } catch {
+      downloadWindow.close();
+      setErrorMessage("멘토 확인서를 불러오지 못했습니다. 다시 시도해주세요.");
     } finally {
       setIsDownloadingConfirmation(false);
     }

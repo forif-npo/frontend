@@ -125,18 +125,27 @@ export function MentorConfirmationsView({
   };
 
   const handleDownload = async (userId: number) => {
-    if (downloadingUserId != null) return;
+    if (selectedStudyId == null || downloadingUserId != null) return;
+
+    const downloadWindow = window.open("", "_blank");
+    if (downloadWindow == null) {
+      toast.error("팝업이 차단되어 확인서를 열 수 없습니다.");
+      return;
+    }
 
     setDownloadingUserId(userId);
     try {
       const confirmation = await getMentorConfirmationViewUrl(
-        selectedStudyId!,
+        selectedStudyId,
         userId,
       );
       if (confirmation.confirmation_url) {
-        window.open(confirmation.confirmation_url, "_blank");
+        downloadWindow.location.href = confirmation.confirmation_url;
+      } else {
+        downloadWindow.close();
       }
     } catch (error) {
+      downloadWindow.close();
       toast.error(
         error instanceof Error
           ? error.message
@@ -145,6 +154,14 @@ export function MentorConfirmationsView({
     } finally {
       setDownloadingUserId(null);
     }
+  };
+
+  const handleSemesterChange = (semester: string) => {
+    setSelectedStudyId(null);
+    setTargetsData(null);
+    setSelectedIds(new Set());
+    setIsLoading(false);
+    router.push(`/mentor-confirmations?semester=${semester}`);
   };
 
   const targets = targetsData?.targets ?? [];
@@ -157,9 +174,7 @@ export function MentorConfirmationsView({
       />
       <SemesterTabs
         currentSemester={currentSemester}
-        onSemesterChange={(semester) =>
-          router.push(`/mentor-confirmations?semester=${semester}`)
-        }
+        onSemesterChange={handleSemesterChange}
       />
 
       <div className="flex flex-wrap items-end gap-4">
