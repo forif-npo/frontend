@@ -37,10 +37,12 @@ export default function Page() {
   return (
     <div className="min-h-viewport mx-auto mt-8 max-w-[800px]">
       <div className="flex flex-col items-center gap-6">
-        <CheckCircle size={128} className="text-icon-primary" />
-        <Heading size="xl" className="text-text-basic text-left">
-          회원가입이 완료되었습니다
-        </Heading>
+        <div className="flex flex-col items-center gap-4">
+          <CheckCircle size={128} className="text-icon-primary" />
+          <Heading size="xl" className="text-text-basic text-left">
+            회원가입이 완료되었습니다
+          </Heading>
+        </div>
         <section className="rounded-3 bg-surface-secondary-subtler flex w-full flex-row items-center justify-around gap-3 p-10">
           <Body size="l" weight="bold">
             가입 정보

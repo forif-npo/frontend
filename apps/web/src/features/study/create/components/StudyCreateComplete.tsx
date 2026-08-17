@@ -27,19 +27,21 @@ export function StudyCreateComplete({
 
   return (
     <div className="mx-auto flex w-full max-w-[792px] flex-col items-center gap-8 pb-16 pt-10">
-      <SuccessFillIcon
-        width={116}
-        height={116}
-        backgroundColor="var(--color-primary-50)"
-      />
+      <div className="flex flex-col items-center gap-[21px]">
+        <SuccessFillIcon
+          width={116}
+          height={116}
+          backgroundColor="var(--color-primary-50)"
+        />
 
-      <h1 className="text-center text-[28px] font-bold leading-[1.5] sm:text-[40px]">
-        <span className="text-text-primary">{values.studyName}</span>
-        <br />
-        <span className="text-text-bolder">
-          스터디 개설 신청이 완료되었습니다.
-        </span>
-      </h1>
+        <h1 className="text-center text-[28px] font-bold leading-[1.5] sm:text-[40px]">
+          <span className="text-text-primary">{values.studyName}</span>
+          <br />
+          <span className="text-text-bolder">
+            스터디 개설 신청이 완료되었습니다.
+          </span>
+        </h1>
+      </div>
 
       <p className="text-text-subtle -mt-6 text-center text-[17px] leading-[1.5]">
         신청서 검토 후 결과를 알려드리겠습니다.

@@ -5,16 +5,18 @@ import Link from "next/link";
 export function ProductApplyComplete() {
   return (
     <div className="mx-auto flex w-full max-w-[792px] flex-col items-center gap-8 pb-16">
-      <SuccessFillIcon
-        width={116}
-        height={116}
-        backgroundColor="var(--color-primary-50)"
-      />
+      <div className="flex flex-col items-center gap-[21px]">
+        <SuccessFillIcon
+          width={116}
+          height={116}
+          backgroundColor="var(--color-primary-50)"
+        />
 
-      <h1 className="text-center text-[26px] font-bold leading-[1.5] sm:text-[32px]">
-        <span className="text-text-primary">서비스 등록 신청</span>
-        <span className="text-text-bolder">이 완료되었습니다.</span>
-      </h1>
+        <h1 className="text-center text-[26px] font-bold leading-[1.5] sm:text-[32px]">
+          <span className="text-text-primary">서비스 등록 신청</span>
+          <span className="text-text-bolder">이 완료되었습니다.</span>
+        </h1>
+      </div>
 
       <p className="text-text-subtle -mt-6 text-center text-[17px] leading-[1.5]">
         운영진 검토 후 결과를 알려드릴게요. 진행 상황은 마이페이지의
