@@ -7,6 +7,7 @@ import { ChevronRight, Github } from "@repo/assets/icons/lucide";
 import { Body, Link } from "@ui/components/server";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
 import { FORIF_CONTACT_INFO } from "@/constants/organization";
+import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import Image from "next/image";
 
 const NAV_LOGO_SRC = "/black_title.svg";
@@ -87,7 +88,7 @@ export function Footer() {
                 </Body>
                 <Body size="m">
                   {FORIF_CONTACT_INFO.presidentName}(
-                  {FORIF_CONTACT_INFO.presidentPhone})
+                  {formatPhoneNumber(FORIF_CONTACT_INFO.presidentPhone)})
                 </Body>
               </div>
             </div>

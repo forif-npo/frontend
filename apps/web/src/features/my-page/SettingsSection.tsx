@@ -4,6 +4,7 @@ import { updateMyProfile } from "@/app/my/actions";
 import { useLogout } from "@/features/auth/logout/use-logout";
 import { departmentsOptions } from "@/constants/options.constant";
 import { safeImageSrc } from "@/utils/image";
+import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import type { UserProfile } from "@core/my-page/api";
 import { CircleUser } from "@repo/assets/icons/lucide";
 import { Button, SelectBox, Tabs, TextInput } from "@ui/components/client";
@@ -24,7 +25,9 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
   const { isPending: isLoggingOut, logout } = useLogout();
   const [isEditing, setIsEditing] = useState(false);
   const [department, setDepartment] = useState(profile.department ?? "");
-  const [phoneNumber, setPhoneNumber] = useState(profile.phone_num ?? "");
+  const [phoneNumber, setPhoneNumber] = useState(
+    formatPhoneNumber(profile.phone_num),
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -55,7 +58,7 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
 
   const handleCancel = () => {
     setDepartment(profile.department ?? "");
-    setPhoneNumber(profile.phone_num ?? "");
+    setPhoneNumber(formatPhoneNumber(profile.phone_num));
     setImageFile(null);
     setImagePreview(null);
     setErrorMessage(null);
@@ -65,7 +68,8 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
   const handleSave = () => {
     const isProfileChanged =
       department !== (profile.department ?? "") || imageFile !== null;
-    const isPhoneNumberChanged = phoneNumber !== (profile.phone_num ?? "");
+    const isPhoneNumberChanged =
+      phoneNumber !== formatPhoneNumber(profile.phone_num);
 
     if (!isProfileChanged && !isPhoneNumberChanged) {
       setIsEditing(false);
@@ -82,7 +86,9 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
                 profile_image: imageFile,
               }
             : undefined,
-          phone_num: isPhoneNumberChanged ? phoneNumber : undefined,
+          phone_num: isPhoneNumberChanged
+            ? phoneNumber.replace(/\D/g, "")
+            : undefined,
         });
         setIsEditing(false);
         router.refresh();
@@ -200,14 +206,18 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
                           id="profile-phone-number"
                           value={phoneNumber}
                           onChange={(event) =>
-                            setPhoneNumber(event.target.value)
+                            setPhoneNumber(
+                              formatPhoneNumber(event.target.value),
+                            )
                           }
                           placeholder="010-0000-0000"
                           length="full"
                           disabled={isPending}
                         />
                       ) : (
-                        <Body size="m">{profile.phone_num || "-"}</Body>
+                        <Body size="m">
+                          {formatPhoneNumber(profile.phone_num) || "-"}
+                        </Body>
                       )}
                     </SettingsRow>
                   </div>

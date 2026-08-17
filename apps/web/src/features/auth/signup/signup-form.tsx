@@ -2,7 +2,7 @@
 import { TermsButton } from "@/components/terms-modal";
 import { departmentsOptions } from "@/constants/options.constant";
 import { MemberEligibilityInfo } from "@/features/auth/member-eligibility-info";
-import { autoHyphenPhoneNumber } from "@/utils/form";
+import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { signUpSchema, SignUpValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Button, Checkbox, SelectBox, TextInput } from "@ui/components/client";
@@ -206,7 +206,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
           disabled={isLoading}
           {...register("phoneNumber", {
             onChange: (e) => {
-              autoHyphenPhoneNumber(e, setValue);
+              setValue("phoneNumber", formatPhoneNumber(e.target.value));
             },
           })}
         />

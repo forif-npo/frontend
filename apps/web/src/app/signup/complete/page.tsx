@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthSkeleton } from "@/components/skeleton/AuthSkeleton";
+import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 
 export default function Page() {
   const router = useRouter();
@@ -37,10 +38,12 @@ export default function Page() {
   return (
     <div className="min-h-viewport mx-auto mt-8 max-w-[800px]">
       <div className="flex flex-col items-center gap-6">
-        <CheckCircle size={128} className="text-icon-primary" />
-        <Heading size="xl" className="text-text-basic text-left">
-          회원가입이 완료되었습니다
-        </Heading>
+        <div className="flex flex-col items-center gap-4">
+          <CheckCircle size={128} className="text-icon-primary" />
+          <Heading size="xl" className="text-text-basic text-left">
+            회원가입이 완료되었습니다
+          </Heading>
+        </div>
         <section className="rounded-3 bg-surface-secondary-subtler flex w-full flex-row items-center justify-around gap-3 p-10">
           <Body size="l" weight="bold">
             가입 정보
@@ -59,7 +62,7 @@ export default function Page() {
               조민성
             </Body>
             <Body size="l" className="text-text-basic">
-              010-3981-2273
+              {formatPhoneNumber("01039812273")}
             </Body>
           </div>
         </section>

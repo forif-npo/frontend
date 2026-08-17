@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@ui/components/client";
+import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 
 type UserInfo = {
   studentId: string;
@@ -49,7 +50,7 @@ export function StudyApplyComplete({
               <p>{userInfo.studentId}</p>
               <p>{userInfo.department}</p>
               <p>{userInfo.name}</p>
-              <p>{userInfo.phone}</p>
+              <p>{formatPhoneNumber(userInfo.phone)}</p>
             </div>
           </div>
 
