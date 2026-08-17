@@ -6,6 +6,7 @@ import { Button } from "@ui/components/client";
 import type { StudyOpenValues } from "@core/schemas";
 import { WEEKDAY_OPTIONS } from "../constants";
 import type { UserInfo } from "../types";
+import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 
 interface StudyCreateCompleteProps {
   values: StudyOpenValues;
@@ -53,7 +54,7 @@ export function StudyCreateComplete({
             <p>{userInfo.studentId}</p>
             <p>{userInfo.department}</p>
             <p>{userInfo.name}</p>
-            <p>{userInfo.phone}</p>
+            <p>{formatPhoneNumber(userInfo.phone)}</p>
           </CompleteInfoRow>
           <CompleteInfoRow label="스터디명">
             <p>{values.studyName}</p>

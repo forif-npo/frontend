@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthSkeleton } from "@/components/skeleton/AuthSkeleton";
+import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 
 export default function Page() {
   const router = useRouter();
@@ -61,7 +62,7 @@ export default function Page() {
               조민성
             </Body>
             <Body size="l" className="text-text-basic">
-              010-3981-2273
+              {formatPhoneNumber("01039812273")}
             </Body>
           </div>
         </section>

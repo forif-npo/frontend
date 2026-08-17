@@ -1,5 +1,6 @@
 import { KakaoMap } from "@/components/KakaoMap";
 import { FORIF_CONTACT_INFO, FORIF_LOCATION } from "@/constants/organization";
+import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { Body, Heading } from "@ui/components/server";
 import type { Metadata } from "next";
 
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
 const INFO_ITEMS = [
   { label: "주소", value: FORIF_CONTACT_INFO.address },
   { label: "이메일", value: FORIF_CONTACT_INFO.email },
-  { label: "회장 연락처", value: FORIF_CONTACT_INFO.presidentPhone },
+  {
+    label: "회장 연락처",
+    value: formatPhoneNumber(FORIF_CONTACT_INFO.presidentPhone),
+  },
 ];
 
 export default function DirectionsPage() {

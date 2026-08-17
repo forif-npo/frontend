@@ -1,6 +1,7 @@
 "use client";
 
 import { departmentsOptions } from "@/constants/options.constant";
+import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { SignUpValues } from "@core/schemas";
 import { Modal } from "@ui/components/client";
 import { Body, Heading } from "@ui/components/server";
@@ -86,7 +87,7 @@ export function SignUpConfirmationModal({
               <tr className="bg-surface-secondary border-divider-gray-light border-b">
                 <td className="text-text-subtle px-4 py-3 text-sm">전화번호</td>
                 <td className="text-text-subtle px-4 py-3 text-sm">
-                  {formValues.phoneNumber}
+                  {formatPhoneNumber(formValues.phoneNumber)}
                 </td>
               </tr>
             </tbody>
