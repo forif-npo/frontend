@@ -5,7 +5,10 @@ import {
   getUserStudies,
   getStudyApplications,
 } from "@core/my-page/api";
-import { getMyCreatedStudies } from "@core/study-manage/api";
+import {
+  getMyCreatedStudies,
+  getMyIssuedMentorConfirmations,
+} from "@core/study-manage/api";
 import { getMyStudyApplications } from "@core/study-application/api";
 import { getCurrentSemester } from "@core/semester/api";
 import { getMyProductApplications, getProducts } from "@core/products/api";
@@ -27,6 +30,7 @@ export default async function MyPage() {
     studiesData,
     applicationsData,
     createdStudies,
+    mentorConfirmations,
     studyApplications,
     activeSemester,
     productApplications,
@@ -36,6 +40,7 @@ export default async function MyPage() {
     getUserStudies(token).catch(() => []),
     getStudyApplications(token).catch(() => ({ applications: [] })),
     getMyCreatedStudies(token).catch(() => []),
+    getMyIssuedMentorConfirmations(token).catch(() => []),
     getMyStudyApplications(token).catch(() => []),
     getCurrentSemester(),
     getMyProductApplications(token).catch(() => []),
@@ -48,6 +53,7 @@ export default async function MyPage() {
       studiesData={studiesData}
       applicationsData={applicationsData}
       createdStudies={createdStudies}
+      mentorConfirmations={mentorConfirmations}
       studyApplications={studyApplications}
       activeSemester={activeSemester}
       productApplications={productApplications}

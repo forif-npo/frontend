@@ -166,6 +166,26 @@ export interface MentorConfirmationStatus {
   confirmation_url: string | null;
 }
 
+/** 멘토 교체 여부와 무관하게 본인에게 발급된 확인서의 스터디 목록. */
+export interface IssuedMentorConfirmation {
+  study_id: number;
+  study_name: string;
+  act_year: number;
+  act_semester: number;
+}
+
+export async function getMyIssuedMentorConfirmations(
+  token?: string,
+): Promise<IssuedMentorConfirmation[]> {
+  const options = token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+  const response = await apiClient
+    .get("api/v1/studies/me/mentor-confirmations", options)
+    .json<ApiResponse<IssuedMentorConfirmation[]>>();
+  return response.data ?? [];
+}
+
 /** 선택한 스터디의 내 멘토 확인서 발급 상태와 다운로드 URL을 조회한다. */
 export async function getMentorConfirmation(
   studyId: number,

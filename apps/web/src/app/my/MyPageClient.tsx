@@ -15,7 +15,10 @@ import type {
   UserStudiesResponse,
   StudyApplicationsResponse,
 } from "@core/my-page/api";
-import type { CreatedStudy } from "@core/study-manage/api";
+import type {
+  CreatedStudy,
+  IssuedMentorConfirmation,
+} from "@core/study-manage/api";
 import type { StudyApplicationSummary } from "@core/study-application/api";
 import type { Semester } from "@core/semester/api";
 import type { ProductApplication, ProductSummary } from "@core/products/api";
@@ -25,6 +28,7 @@ interface MyPageClientProps {
   studiesData: UserStudiesResponse;
   applicationsData: StudyApplicationsResponse;
   createdStudies: CreatedStudy[];
+  mentorConfirmations: IssuedMentorConfirmation[];
   studyApplications: StudyApplicationSummary[];
   activeSemester: Semester;
   productApplications: ProductApplication[];
@@ -36,6 +40,7 @@ export function MyPageClient({
   studiesData,
   applicationsData,
   createdStudies,
+  mentorConfirmations,
   studyApplications,
   activeSemester,
   productApplications,
@@ -46,7 +51,8 @@ export function MyPageClient({
   const shouldOpenStudyManage =
     requestedSection === "study-manage" ||
     requestedSection === "study-applications" ||
-    (createdStudies.length === 0 && studyApplications.length > 0);
+    (createdStudies.length === 0 &&
+      (studyApplications.length > 0 || mentorConfirmations.length > 0));
   const canManageServiceWorkspace = productApplications.length > 0;
   const [activeNav, setActiveNav] = useState(() => {
     if (requestedSection === "service-manage" && canManageServiceWorkspace) {
@@ -116,7 +122,9 @@ export function MyPageClient({
         activeNav={activeNav}
         onNavChange={setActiveNav}
         canManageStudyWorkspace={
-          createdStudies.length > 0 || studyApplications.length > 0
+          createdStudies.length > 0 ||
+          studyApplications.length > 0 ||
+          mentorConfirmations.length > 0
         }
         canManageServiceWorkspace={canManageServiceWorkspace}
       />
@@ -135,6 +143,7 @@ export function MyPageClient({
         {activeNav === "study-manage" ? (
           <StudyManageSection
             createdStudies={createdStudies}
+            mentorConfirmations={mentorConfirmations}
             studyApplications={studyApplications}
           />
         ) : activeNav === "service-manage" ? (
