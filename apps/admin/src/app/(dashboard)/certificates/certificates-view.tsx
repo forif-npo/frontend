@@ -50,6 +50,8 @@ import {
   type MemberSearchItem,
 } from "./api";
 
+const AUTONOMOUS_STUDY_NAME = "자율스터디";
+
 interface ManualForm {
   userName: string;
   studentNumber: string;
@@ -101,6 +103,9 @@ export function CertificatesView({
   studies,
   currentSemester,
 }: CertificatesViewProps) {
+  const certificateStudies = studies.filter(
+    (study) => study.study_name !== AUTONOMOUS_STUDY_NAME,
+  );
   const router = useRouter();
   const [selectedStudyId, setSelectedStudyId] = useState<number | null>(null);
   const [targetsData, setTargetsData] = useState<CertificateTargetsData | null>(
@@ -560,7 +565,7 @@ export function CertificatesView({
               <SelectValue placeholder="스터디를 선택하세요" />
             </SelectTrigger>
             <SelectContent>
-              {studies.map((study) => (
+              {certificateStudies.map((study) => (
                 <SelectItem key={study.id} value={String(study.id)}>
                   {study.study_name} ({study.primary_mentor_name})
                 </SelectItem>
