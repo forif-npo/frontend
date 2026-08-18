@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Modal, Checkbox } from "@ui/components/client";
-import { TAG_OPTIONS } from "../constants";
+import { STUDY_TAG_OPTIONS_BY_CATEGORY } from "@/constants/study-tags";
 
 interface TagSelectModalProps {
   isOpen: boolean;
@@ -56,25 +56,36 @@ export function TagSelectModal({
       title="태그 추가"
       confirmLabel="선택"
       cancelLabel="취소"
-      width="m"
+      width="l"
     >
-      <div className="flex flex-col gap-2 pb-4">
+      <div className="flex flex-col gap-5 pb-4">
         <p className="text-text-subtle mb-1 text-[15px] leading-[1.5]">
           추가하고 싶은 태그를 선택해주세요.
         </p>
-        <p className="text-text-subtle mb-3 text-[13px] leading-[1.5]">
+        <p className="text-text-subtle text-[13px] leading-[1.5]">
           태그는 1개에서 4개까지 선택할 수 있습니다. ({localTags.length}/4)
         </p>
-        <div className="grid grid-cols-2 gap-3">
-          {TAG_OPTIONS.map((tag) => (
-            <Checkbox
-              key={tag}
-              id={`tag-${tag}`}
-              label={tag}
-              checked={localTags.includes(tag)}
-              onChange={(checked) => handleToggle(tag, checked)}
-              disabled={!localTags.includes(tag) && localTags.length >= 4}
-            />
+        <div className="grid gap-6 md:grid-cols-2">
+          {STUDY_TAG_OPTIONS_BY_CATEGORY.map(({ category, options }) => (
+            <section key={category}>
+              <h3 className="text-text-basic text-[17px] font-bold leading-[1.5]">
+                {category}
+              </h3>
+              <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
+                {options.map((tag) => (
+                  <Checkbox
+                    key={tag.name}
+                    id={`tag-${tag.name}`}
+                    label={tag.label}
+                    checked={localTags.includes(tag.label)}
+                    onChange={(checked) => handleToggle(tag.label, checked)}
+                    disabled={
+                      !localTags.includes(tag.label) && localTags.length >= 4
+                    }
+                  />
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       </div>
