@@ -30,7 +30,7 @@ function MentorAddCard({
   const formattedMentorPhone = useFormattedPhoneNumber(mentorInfo?.phone);
 
   return (
-    <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
+    <div className="border-border-gray bg-surface-white flex flex-col gap-6 rounded-[12px] border p-5 sm:p-10">
       <div className="flex items-center justify-between">
         <h2 className="text-text-bolder text-[24px] font-bold leading-[1.5]">
           멘토 정보를 입력해주세요
@@ -38,7 +38,7 @@ function MentorAddCard({
         <button
           type="button"
           onClick={onRemove}
-          className="hover:bg-gray-5 active:bg-gray-10 flex h-9 w-9 items-center justify-center rounded-md transition-colors"
+          className="hover:bg-surface-gray-subtler active:bg-surface-gray-subtle flex h-9 w-9 items-center justify-center rounded-md transition-colors"
           aria-label="멘토 카드 제거"
         >
           <svg
@@ -46,7 +46,8 @@ function MentorAddCard({
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#58616a"
+            className="text-gray-60"
+            stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -74,7 +75,7 @@ function MentorAddCard({
               }
             }}
             placeholder="학번을 입력하세요"
-            className="rounded-2 border-input-border bg-input-surface text-gray-70 h-14 w-full border px-4 pr-12 transition duration-150 ease-in-out focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="border-input-border bg-input-surface text-gray-70 focus:border-input-border-active focus:ring-border-input-border-active rounded-2 h-14 w-full border px-4 pr-12 transition duration-150 ease-in-out focus:outline-none focus:ring-1"
           />
           <button
             type="button"
@@ -248,8 +249,8 @@ export function Step1InfoVerification({
       {/* Form Content - gap 24px between cards */}
       <div className="flex flex-col gap-6">
         {/* 시작하기 전에 */}
-        <div className="flex flex-col gap-6 rounded-[12px] border border-[#d6e0eb] bg-[#eef2f7] p-5 sm:p-10">
-          <div className="flex flex-col gap-6 border-b border-dashed border-[#b1b8be] pb-6">
+        <div className="border-border-secondary-light bg-surface-secondary-subtler flex flex-col gap-6 rounded-[12px] border p-5 sm:p-10">
+          <div className="border-border-gray flex flex-col gap-6 border-b border-dashed pb-6">
             <div className="flex items-center gap-1">
               <GuideCheckIcon width={32} height={32} />
               <h2 className="text-text-bolder text-[24px] font-bold leading-[1.5]">
@@ -267,7 +268,7 @@ export function Step1InfoVerification({
         </div>
 
         {/* 기본 신청 정보 */}
-        <div className="flex flex-col gap-6 rounded-[12px] border border-[#b1b8be] bg-white p-5 sm:p-10">
+        <div className="border-border-gray bg-surface-white flex flex-col gap-6 rounded-[12px] border p-5 sm:p-10">
           <h2 className="text-text-bolder text-[24px] font-bold leading-[1.5]">
             기본 신청 정보를 확인해주세요
           </h2>

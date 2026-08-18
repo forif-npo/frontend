@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Badge } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";
 import { formatKoreanDateFromDateInput } from "@/utils/dateInput";
-import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
+import { MarkdownContent } from "@/components/MarkdownContent";
 import { StudyCurriculumTable } from "../../components/StudyCurriculumTable";
 import { fetchUserInfo } from "../user-info";
 import {
@@ -23,6 +23,14 @@ interface StudyCreateReviewContentProps {
 }
 
 const EMPTY_VALUE = "-";
+const REVIEW_SECTION_TITLE_CLASS =
+  "text-text-basic text-[19px] font-bold leading-[1.5]";
+const REVIEW_TABLE_LABEL_CLASS =
+  "text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]";
+const REVIEW_TABLE_VALUE_CLASS =
+  "text-text-basic py-3 text-[15px] leading-[1.5] md:text-[17px]";
+const REVIEW_LINK_CLASS =
+  "text-text-primary min-w-0 break-all text-[15px] leading-[1.5] underline underline-offset-2";
 
 export function StudyCreateReviewContent({
   values,
@@ -105,12 +113,10 @@ export function StudyCreateReviewContent({
   return (
     <div className="flex flex-col gap-10">
       <section className="flex flex-col gap-4">
-        <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-          스터디 개요
-        </h3>
+        <h3 className={REVIEW_SECTION_TITLE_CLASS}>스터디 개요</h3>
 
         <table className="w-full">
-          <tbody className="divide-y divide-[#e5e8eb]">
+          <tbody className="divide-border-gray-light divide-y">
             <InfoRow label="멘토" value={<MentorList mentors={mentors} />} />
             <InfoRow
               label="스터디명"
@@ -121,9 +127,7 @@ export function StudyCreateReviewContent({
               value={<ReviewText value={values.oneLiner} />}
             />
             <tr>
-              <td className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
-                태그
-              </td>
+              <td className={REVIEW_TABLE_LABEL_CLASS}>태그</td>
               <td className="py-3">
                 {values.tags.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
@@ -165,18 +169,18 @@ export function StudyCreateReviewContent({
       </section>
 
       <section className="flex flex-col gap-4">
-        <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-          스터디 소개
-        </h3>
-        <div className="rounded-[12px] bg-[#f4f5f6] p-4 md:p-6">
-          <AnnouncementMarkdown content={values.introduction} />
+        <h3 className={REVIEW_SECTION_TITLE_CLASS}>스터디 소개</h3>
+        <div className="bg-surface-gray-subtler rounded-[12px] p-4 md:p-6">
+          {values.introduction.trim() ? (
+            <MarkdownContent content={values.introduction} />
+          ) : (
+            <EmptyValue />
+          )}
         </div>
       </section>
 
       <section className="flex flex-col gap-4">
-        <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-          커리큘럼
-        </h3>
+        <h3 className={REVIEW_SECTION_TITLE_CLASS}>커리큘럼</h3>
         <StudyCurriculumTable
           rows={values.curriculum.map((week) => ({
             id: week.week,
@@ -208,9 +212,7 @@ export function StudyCreateReviewContent({
       </section>
 
       <section className="flex flex-col gap-4">
-        <h3 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-          참고자료
-        </h3>
+        <h3 className={REVIEW_SECTION_TITLE_CLASS}>참고자료</h3>
         {values.references.length > 0 ? (
           <ReferenceReviewList references={values.references} />
         ) : (
@@ -257,7 +259,7 @@ function ReferenceReviewList({ references }: { references: ReferenceItem[] }) {
       {references.map((reference, index) => (
         <div
           key={index}
-          className="flex items-center gap-3 rounded-[8px] bg-[#f4f5f6] px-4 py-3"
+          className="bg-surface-gray-subtler flex items-center gap-3 rounded-[8px] px-4 py-3"
         >
           <span className="text-text-subtle shrink-0 text-[14px] font-bold">
             {getReferenceTypeLabel(reference.type)}
@@ -288,7 +290,7 @@ function ReferenceReviewLink({
       <a
         href={fileUrl}
         download={reference.value.name}
-        className="text-text-primary min-w-0 break-all text-[15px] leading-[1.5] underline underline-offset-2"
+        className={REVIEW_LINK_CLASS}
       >
         {reference.value.name}
       </a>
@@ -307,7 +309,7 @@ function ReferenceReviewLink({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-text-primary min-w-0 break-all text-[15px] leading-[1.5] underline underline-offset-2"
+      className={REVIEW_LINK_CLASS}
     >
       {linkValue}
     </a>
@@ -356,12 +358,8 @@ function getReferenceTypeLabel(type: string) {
 function InfoRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <tr>
-      <td className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
-        {label}
-      </td>
-      <td className="text-text-basic py-3 text-[15px] leading-[1.5] md:text-[17px]">
-        {value}
-      </td>
+      <td className={REVIEW_TABLE_LABEL_CLASS}>{label}</td>
+      <td className={REVIEW_TABLE_VALUE_CLASS}>{value}</td>
     </tr>
   );
 }
