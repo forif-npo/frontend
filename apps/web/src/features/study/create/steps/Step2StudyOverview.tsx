@@ -229,7 +229,7 @@ export function Step2StudyOverview({
               id="introduction"
               placeholder="내용을 입력하세요"
               size="large"
-              maxLength={500}
+              maxLength={3000}
               {...register("introduction")}
             />
             {errors.introduction && (

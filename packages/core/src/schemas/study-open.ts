@@ -48,7 +48,7 @@ export const studyOpenSchema = createSchema()(
       introduction: z
         .string()
         .min(50, "스터디 소개는 최소 50자 이상 작성해주세요.")
-        .max(500, "스터디 소개는 최대 500자까지 입력 가능합니다."),
+        .max(3000, "스터디 소개는 최대 3000자까지 입력 가능합니다."),
       isOnline: z.boolean().default(false),
       location: z.string().min(1, "진행 장소를 선택해주세요."),
       room: z

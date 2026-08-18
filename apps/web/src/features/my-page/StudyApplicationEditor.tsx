@@ -510,7 +510,7 @@ export function StudyApplicationEditor({
             <TextArea
               id="introduction"
               size="large"
-              maxLength={500}
+              maxLength={3000}
               {...register("introduction")}
             />
             {errors.introduction && (
