@@ -12,6 +12,7 @@ export interface StudyApplicationSummary {
   reject_reason: string | null;
   created_at: string;
   can_modify: boolean;
+  can_cancel: boolean;
 }
 
 export interface StudyApplicationDetail {
@@ -54,6 +55,7 @@ export interface StudyApplicationDetail {
   study_status: StudyApplicationStatus;
   reject_reason: string | null;
   can_modify: boolean;
+  can_cancel: boolean;
 }
 
 export async function getMyStudyApplications(

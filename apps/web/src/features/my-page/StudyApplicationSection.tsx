@@ -125,8 +125,7 @@ export function StudyApplicationSection({
               <StudyApplicationEditor application={selectedApplicationDetail} />
             ) : (
               <p className="text-text-subtle border-border-gray-light mt-8 rounded-xl border p-6 text-[15px]">
-                스터디 개설 신청 기간이 종료되어 신청서를 수정하거나 취소할 수
-                없습니다.
+                멘티 모집이 시작되어 신청서를 수정할 수 없습니다.
               </p>
             ))}
         </div>
