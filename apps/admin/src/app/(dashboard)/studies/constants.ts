@@ -58,6 +58,7 @@ export const STUDY_TAG_OPTIONS = [
   { id: 14, name: "machine-learning", label: "머신러닝" },
   { id: 15, name: "ai-agent", label: "AI 에이전트" },
   { id: 16, name: "llm", label: "LLM" },
+  { id: 36, name: "quant", label: "퀀트" },
   { id: 17, name: "python", label: "Python" },
   { id: 18, name: "java", label: "Java" },
   { id: 19, name: "typescript", label: "TypeScript" },

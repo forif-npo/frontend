@@ -25,6 +25,7 @@ export const STUDY_TAG_OPTIONS = [
   { id: 14, name: "machine-learning", label: "머신러닝", category: "분야" },
   { id: 15, name: "ai-agent", label: "AI 에이전트", category: "분야" },
   { id: 16, name: "llm", label: "LLM", category: "분야" },
+  { id: 36, name: "quant", label: "퀀트", category: "분야" },
 
   // 언어
   { id: 17, name: "python", label: "Python", category: "언어" },
