@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Badge } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";
 import { formatKoreanDateFromDateInput } from "@/utils/dateInput";
+import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
 import { StudyCurriculumTable } from "../../components/StudyCurriculumTable";
 import { fetchUserInfo } from "../user-info";
 import {
@@ -168,9 +169,7 @@ export function StudyCreateReviewContent({
           스터디 소개
         </h3>
         <div className="rounded-[12px] bg-[#f4f5f6] p-4 md:p-6">
-          <p className="text-text-basic whitespace-pre-wrap text-[15px] leading-[1.5] md:text-[17px]">
-            <ReviewText value={values.introduction} />
-          </p>
+          <AnnouncementMarkdown content={values.introduction} />
         </div>
       </section>
 
