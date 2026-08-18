@@ -11,6 +11,8 @@ export interface Study {
   one_liner: string;
   mentee_count: number;
   recruit_status: "APPLICABLE" | "CLOSED";
+  week_day: number | null;
+  difficulty: "EASY" | "SEMI_EASY" | "NORMAL" | "SEMI_HARD" | "HARD" | null;
   study_status: "PENDING" | "APPROVED" | "REJECTED" | "RE_APPLIED";
   reject_reason: string | null;
   created_at: string;
