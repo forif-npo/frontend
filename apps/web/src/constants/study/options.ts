@@ -32,11 +32,11 @@ export const RECRUIT_STATUS_OPTIONS: Array<{
  * 난이도 숫자 라벨 (my-page API 기준, 1-5)
  */
 export const NUMERIC_DIFFICULTY_LABELS: Record<number, string> = {
-  1: "매우 쉬움",
-  2: "쉬움",
+  1: "쉬움",
+  2: "조금 쉬움",
   3: "보통",
-  4: "어려움",
-  5: "매우 어려움",
+  4: "조금 어려움",
+  5: "어려움",
 };
 
 /**

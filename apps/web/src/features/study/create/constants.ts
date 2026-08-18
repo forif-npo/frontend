@@ -21,11 +21,11 @@ export const WEEKDAY_OPTIONS = [
 ] as const;
 
 export const DIFFICULTY_OPTIONS = [
-  { value: "EASY", label: "초급" },
-  { value: "SEMI_EASY", label: "초중급" },
-  { value: "NORMAL", label: "중급" },
-  { value: "SEMI_HARD", label: "중상급" },
-  { value: "HARD", label: "고급" },
+  { value: "EASY", label: "쉬움" },
+  { value: "SEMI_EASY", label: "조금 쉬움" },
+  { value: "NORMAL", label: "보통" },
+  { value: "SEMI_HARD", label: "조금 어려움" },
+  { value: "HARD", label: "어려움" },
 ] as const;
 
 export const REFERENCE_TYPE_OPTIONS = [

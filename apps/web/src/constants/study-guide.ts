@@ -342,6 +342,7 @@ export const RECOMMENDATION_QUESTIONS: RecommendationQuestion[] = [
     options: [
       "완전 처음 해본다! 기초 스터디를 수강하고 싶어요.",
       "어느정도 기초 지식이 있어요.(창컴/공창컴 이수) 기초적인 지식을 응용하는 스터디를 수강하고 싶어요.",
+      "기초를 넘어 다양한 주제를 다루는 스터디를 수강하고 싶어요.",
       "저는 2학년 이상의 전공자입니다. 조금은 난이도가 있는 스터디를 원해요.",
       "심도깊은 주제를 다루는 스터디에 참여하고 싶어요.",
     ],
@@ -429,6 +430,7 @@ const FIELD_BY_INTEREST: Array<{ label: string; tag?: string }> = [
 // Q4(난이도) 답변 인덱스 → DIFFICULTY 값/라벨 매핑
 const DIFFICULTY_BY_LEVEL: Array<{ label: string; value: string }> = [
   { label: "쉬움", value: "EASY" },
+  { label: "조금 쉬움", value: "SEMI_EASY" },
   { label: "보통", value: "NORMAL" },
   { label: "조금 어려움", value: "SEMI_HARD" },
   { label: "어려움", value: "HARD" },

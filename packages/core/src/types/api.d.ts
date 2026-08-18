@@ -279,7 +279,7 @@ export interface StudyListParams {
   page_size?: number;
   year?: number;
   semester?: number;
-  difficulties?: number[]; // 1-5
+  difficulties?: StudyDifficulty[];
   tags?: string[];
   recruit_status?: "APPLICABLE" | "CLOSED";
   search?: string;
@@ -290,10 +290,10 @@ export interface StudyListParams {
  */
 export type StudyDifficulty =
   | "EASY"
+  | "SEMI_EASY"
   | "NORMAL"
-  | "HARD"
-  | "BEGINNER"
-  | "ADVANCED";
+  | "SEMI_HARD"
+  | "HARD";
 
 /**
  * 스터디 목록 아이템 (간단한 정보)
