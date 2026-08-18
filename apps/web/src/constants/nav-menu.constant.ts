@@ -27,7 +27,7 @@ export const NAV_MENUS: NavMenu[] = [
     ],
   },
   {
-    label: "스터디 신청",
+    label: "스터디",
     title:
       "매 학기 다양한 주제, 다양한 언어로 진행되는 FORIF의 스터디를 소개합니다.",
     href: "/studies/apply",
