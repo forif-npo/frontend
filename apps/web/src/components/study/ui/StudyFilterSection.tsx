@@ -6,6 +6,7 @@ import { SelectBox } from "@ui/components/client";
 import clsx from "clsx";
 import React from "react";
 import { TAG_OPTIONS } from "@/constants/study-tags";
+import { DifficultyGuideTooltip } from "./DifficultyGuideTooltip";
 interface FilterTag {
   id: string;
   label: string;
@@ -191,6 +192,7 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
             <span className="flex gap-4 whitespace-nowrap text-[17px] font-bold text-gray-900 max-md:w-20">
               난이도
             </span>
+            <DifficultyGuideTooltip />
           </div>
           <div className={isCompact ? "min-w-0 flex-1" : "w-[208px]"}>
             <SelectBox

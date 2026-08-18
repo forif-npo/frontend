@@ -8,6 +8,7 @@ import { DIFFICULTY_OPTIONS } from "../constants";
 import { ReferenceFields } from "../components/ReferenceFields";
 import { StepNavigation } from "../components/StepNavigation";
 import { StudySectionTitle } from "../../components/StudySectionTitle";
+import { DifficultyGuideTooltip } from "@/components/study/ui/DifficultyGuideTooltip";
 
 interface Step4TargetAndOperationProps {
   form: UseFormReturn<StudyOpenValues>;
@@ -47,7 +48,9 @@ export function Step4TargetAndOperation({
       <div className="flex flex-col gap-10">
         {/* 난이도 */}
         <div className="flex flex-col gap-3">
-          <StudySectionTitle required>난이도</StudySectionTitle>
+          <StudySectionTitle required icon={<DifficultyGuideTooltip />}>
+            난이도
+          </StudySectionTitle>
           <Controller
             control={control}
             name="difficulty"
