@@ -50,8 +50,12 @@ const menuItems = {
     items: [
       { title: "스터디 목록", url: "/studies", icon: BookOpen },
       { title: "스터디 승인", url: "/studies/approval", icon: CheckCircle },
-      { title: "인증서 발급", url: "/certificates", icon: Award },
-      { title: "멘토 확인서", url: "/mentor-confirmations", icon: FileText },
+      { title: "멘티 인증서 발급", url: "/certificates", icon: Award },
+      {
+        title: "멘토 확인서 발급",
+        url: "/mentor-confirmations",
+        icon: FileText,
+      },
     ],
   },
   businessManagement: {
