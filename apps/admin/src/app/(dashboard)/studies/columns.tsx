@@ -14,13 +14,21 @@ const DIFFICULTY_LABELS = {
   HARD: "어려움",
 } as const;
 
+const DIFFICULTY_ORDER: Record<NonNullable<Study["difficulty"]>, number> = {
+  EASY: 1,
+  SEMI_EASY: 2,
+  NORMAL: 3,
+  SEMI_HARD: 4,
+  HARD: 5,
+};
+
 export const columns: ColumnDef<Study>[] = [
   {
     accessorKey: "recruit_status",
     size: 112,
     minSize: 112,
-    header: () => (
-      <div className="whitespace-nowrap text-center text-sm">모집 상태</div>
+    header: ({ column }) => (
+      <SortableHeader column={column}>모집 상태</SortableHeader>
     ),
     cell: ({ row }) => {
       const status = row.getValue("recruit_status") as string;
@@ -44,6 +52,8 @@ export const columns: ColumnDef<Study>[] = [
   },
   {
     accessorKey: "study_name",
+    size: 360,
+    minSize: 300,
     header: ({ column }) => (
       <SortableHeader column={column}>스터디명</SortableHeader>
     ),
@@ -69,7 +79,9 @@ export const columns: ColumnDef<Study>[] = [
   },
   {
     accessorKey: "tags",
-    header: () => <div className="text-center text-sm">태그</div>,
+    header: ({ column }) => (
+      <SortableHeader column={column}>태그</SortableHeader>
+    ),
     cell: ({ row }) => {
       const tags = row.getValue("tags") as string[];
       if (!tags || tags.length === 0) return null;
@@ -81,8 +93,16 @@ export const columns: ColumnDef<Study>[] = [
     accessorKey: "difficulty",
     size: 96,
     minSize: 96,
-    header: () => (
-      <div className="whitespace-nowrap text-center text-sm">난이도</div>
+    sortingFn: (rowA, rowB, columnId) => {
+      const difficultyA = rowA.getValue<Study["difficulty"]>(columnId);
+      const difficultyB = rowB.getValue<Study["difficulty"]>(columnId);
+      const orderA = difficultyA ? DIFFICULTY_ORDER[difficultyA] : 0;
+      const orderB = difficultyB ? DIFFICULTY_ORDER[difficultyB] : 0;
+
+      return orderA - orderB;
+    },
+    header: ({ column }) => (
+      <SortableHeader column={column}>난이도</SortableHeader>
     ),
     cell: ({ row }) => {
       const difficulty = row.getValue("difficulty") as Study["difficulty"];
@@ -96,7 +116,9 @@ export const columns: ColumnDef<Study>[] = [
   },
   {
     accessorKey: "week_day",
-    header: () => <div className="text-center text-sm">요일</div>,
+    header: ({ column }) => (
+      <SortableHeader column={column}>요일</SortableHeader>
+    ),
     cell: ({ row }) => {
       const weekDay = row.getValue("week_day") as Study["week_day"];
       const label = WEEK_DAY_OPTIONS.find(
