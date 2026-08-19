@@ -1,11 +1,13 @@
 "use client";
 
-import { signInAction } from "@/features/auth/signin/action";
 import { Button, TextInput } from "@ui/components/client";
-import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
 
 export function SignInForm() {
+  const router = useRouter();
+  const { update } = useSession();
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -17,18 +19,23 @@ export function SignInForm() {
     setIsLoading(true);
 
     try {
-      const result = await signInAction(userId, password);
+      const result = await signIn("credentials", {
+        id: userId,
+        password,
+        redirect: false,
+        redirectTo: "/",
+      });
 
-      if (result?.error) {
-        setError(result.error);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      if (isRedirectError(error)) {
-        throw error;
+      if (!result?.ok || result.error) {
+        setError("학번 또는 비밀번호가 올바르지 않습니다.");
+        return;
       }
 
+      await update();
+      router.replace(result.url ?? "/");
+    } catch {
       setError("로그인에 실패했습니다.");
+    } finally {
       setIsLoading(false);
     }
   };

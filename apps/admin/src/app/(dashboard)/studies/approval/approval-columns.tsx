@@ -28,6 +28,14 @@ const DIFFICULTY_LABELS = {
   HARD: "어려움",
 } as const;
 
+const DIFFICULTY_ORDER: Record<NonNullable<Study["difficulty"]>, number> = {
+  EASY: 1,
+  SEMI_EASY: 2,
+  NORMAL: 3,
+  SEMI_HARD: 4,
+  HARD: 5,
+};
+
 function formatDateTime(value: string) {
   if (!value) return "-";
 
@@ -41,7 +49,9 @@ function formatDateTime(value: string) {
 export const approvalColumns: ColumnDef<Study>[] = [
   {
     accessorKey: "study_status",
-    header: () => <div className="text-center text-sm">상태</div>,
+    header: ({ column }) => (
+      <SortableHeader column={column}>개설 상태</SortableHeader>
+    ),
     cell: ({ row }) => {
       const status = row.getValue("study_status") as Study["study_status"];
 
@@ -84,7 +94,9 @@ export const approvalColumns: ColumnDef<Study>[] = [
   },
   {
     accessorKey: "tags",
-    header: () => <div className="text-center text-sm">태그</div>,
+    header: ({ column }) => (
+      <SortableHeader column={column}>태그</SortableHeader>
+    ),
     cell: ({ row }) => {
       const tags = row.getValue("tags") as string[];
 
@@ -95,7 +107,17 @@ export const approvalColumns: ColumnDef<Study>[] = [
   },
   {
     accessorKey: "difficulty",
-    header: () => <div className="text-center text-sm">난이도</div>,
+    sortingFn: (rowA, rowB, columnId) => {
+      const difficultyA = rowA.getValue<Study["difficulty"]>(columnId);
+      const difficultyB = rowB.getValue<Study["difficulty"]>(columnId);
+      const orderA = difficultyA ? DIFFICULTY_ORDER[difficultyA] : 0;
+      const orderB = difficultyB ? DIFFICULTY_ORDER[difficultyB] : 0;
+
+      return orderA - orderB;
+    },
+    header: ({ column }) => (
+      <SortableHeader column={column}>난이도</SortableHeader>
+    ),
     cell: ({ row }) => {
       const difficulty = row.getValue("difficulty") as Study["difficulty"];
 
@@ -108,7 +130,9 @@ export const approvalColumns: ColumnDef<Study>[] = [
   },
   {
     accessorKey: "week_day",
-    header: () => <div className="text-center text-sm">요일</div>,
+    header: ({ column }) => (
+      <SortableHeader column={column}>요일</SortableHeader>
+    ),
     cell: ({ row }) => {
       const weekDay = row.getValue("week_day") as Study["week_day"];
       const label = WEEK_DAY_OPTIONS.find(
