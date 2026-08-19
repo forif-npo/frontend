@@ -12,6 +12,7 @@ interface PageProps {
     year?: string;
     search?: string;
     page?: string;
+    include_processed?: string;
   }>;
 }
 
@@ -40,6 +41,7 @@ export default async function Page({ searchParams }: PageProps) {
   const activeSemester = (params.semester as SemesterLabel) || defaultSemester;
   const semesterFilter = parseSemesterFilter(activeSemester);
   const search = params.search;
+  const includeProcessed = params.include_processed === "true";
   const parsedPage = params.page ? parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
   const accessToken = session?.access_token;
@@ -60,7 +62,9 @@ export default async function Page({ searchParams }: PageProps) {
         page,
         ...semesterFilter,
         search,
-        studyStatuses: ["PENDING", "RE_APPLIED"],
+        studyStatuses: includeProcessed
+          ? ["PENDING", "RE_APPLIED", "APPROVED", "REJECTED"]
+          : ["PENDING", "RE_APPLIED"],
       },
       accessToken,
     );
@@ -77,6 +81,7 @@ export default async function Page({ searchParams }: PageProps) {
         }
         pageSize={PAGE_SIZE}
         initialSearch={search ?? ""}
+        includeProcessed={includeProcessed}
       />
     );
   } catch (error) {

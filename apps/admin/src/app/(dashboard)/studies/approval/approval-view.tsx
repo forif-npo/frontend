@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
 import { Eye } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
 import { approveStudy, fetchStudyDetail, rejectStudy } from "../api";
 import type { AdminStudyDetail } from "../api";
@@ -35,6 +35,7 @@ interface ApprovalViewProps {
   totalPages?: number;
   pageSize?: number;
   initialSearch?: string;
+  includeProcessed: boolean;
 }
 
 export function ApprovalView({
@@ -45,6 +46,7 @@ export function ApprovalView({
   totalPages = 1,
   pageSize = 20,
   initialSearch = "",
+  includeProcessed,
 }: ApprovalViewProps) {
   const {
     searchQuery,
@@ -58,6 +60,7 @@ export function ApprovalView({
     initialSearch,
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [reviewingStudy, setReviewingStudy] = useState<Study | null>(null);
   const [reviewDetail, setReviewDetail] = useState<AdminStudyDetail | null>(
     null,
@@ -75,6 +78,22 @@ export function ApprovalView({
 
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
+  const canReviewStudy =
+    !includeProcessed &&
+    reviewingStudy != null &&
+    (reviewingStudy.study_status === "PENDING" ||
+      reviewingStudy.study_status === "RE_APPLIED");
+
+  const handleIncludeProcessedChange = (checked: boolean) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (checked) {
+      params.set("include_processed", "true");
+    } else {
+      params.delete("include_processed");
+    }
+    params.set("page", "0");
+    router.push(`/studies/approval?${params.toString()}`);
+  };
 
   const closeReviewDialog = () => {
     setReviewingStudy(null);
@@ -189,9 +208,24 @@ export function ApprovalView({
               placeholder="승인 대기 스터디 검색"
             />
           </div>
+          <label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={includeProcessed}
+              onChange={(event) =>
+                handleIncludeProcessedChange(event.target.checked)
+              }
+              className="h-4 w-4 cursor-pointer"
+            />
+            승인/반려 건 포함
+          </label>
           <Button
             type="button"
-            disabled={selectedStudies.length === 0 || isBatchSubmitting}
+            disabled={
+              includeProcessed ||
+              selectedStudies.length === 0 ||
+              isBatchSubmitting
+            }
             onClick={() => void handleBatchApprove()}
           >
             {isBatchSubmitting ? "처리 중..." : "선택 승낙"}
@@ -229,6 +263,7 @@ export function ApprovalView({
         detail={reviewDetail}
         isLoading={isReviewLoading}
         isSubmitting={submittingStudyId === reviewingStudy?.id}
+        showReviewActions={canReviewStudy}
         onClose={closeReviewDialog}
         onApprove={handleApproveStudy}
         onReject={handleOpenRejectDialog}
