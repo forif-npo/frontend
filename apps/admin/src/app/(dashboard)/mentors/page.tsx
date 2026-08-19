@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { getCurrentSemester } from "@core/semester/api";
 import { fetchMentors } from "./api";
 import { MentorsView } from "./mentors-view";
 import { MentorSemesterLabel } from "./types";
@@ -13,14 +14,17 @@ interface PageProps {
 
 export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
-
-  const activeSemester = (params.semester as MentorSemesterLabel) || "전체";
-
   const search = params.search;
   const parsedPage = params.page ? parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
 
-  const session = await auth();
+  const [session, currentSemester] = await Promise.all([
+    auth(),
+    getCurrentSemester(),
+  ]);
+  const activeSemester =
+    (params.semester as MentorSemesterLabel) ||
+    (currentSemester.label as MentorSemesterLabel);
   const accessToken = session?.access_token;
 
   if (!accessToken) {
