@@ -7,6 +7,29 @@ import { Study } from "./types";
 
 export const columns: ColumnDef<Study>[] = [
   {
+    accessorKey: "recruit_status",
+    header: () => <div className="text-center text-sm">모집 상태</div>,
+    cell: ({ row }) => {
+      const status = row.getValue("recruit_status") as string;
+      const isOpen = status === "APPLICABLE";
+
+      return (
+        <div className="text-center">
+          <Badge
+            variant="outline"
+            className={
+              isOpen
+                ? "border-green-500 bg-green-50 text-green-700"
+                : "border-gray-500 bg-gray-50 text-gray-700"
+            }
+          >
+            {isOpen ? "모집중" : "마감"}
+          </Badge>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "study_name",
     header: ({ column }) => (
       <SortableHeader column={column}>스터디명</SortableHeader>
@@ -79,29 +102,6 @@ export const columns: ColumnDef<Study>[] = [
     cell: ({ row }) => {
       const count = row.getValue("mentee_count") as number;
       return <div className="text-center">{count}명</div>;
-    },
-  },
-  {
-    accessorKey: "recruit_status",
-    header: () => <div className="text-center text-sm">모집상태</div>,
-    cell: ({ row }) => {
-      const status = row.getValue("recruit_status") as string;
-      const isOpen = status === "APPLICABLE";
-
-      return (
-        <div className="text-center">
-          <Badge
-            variant="outline"
-            className={
-              isOpen
-                ? "border-green-500 bg-green-50 text-green-700"
-                : "border-gray-500 bg-gray-50 text-gray-700"
-            }
-          >
-            {isOpen ? "모집중" : "마감"}
-          </Badge>
-        </div>
-      );
     },
   },
   {

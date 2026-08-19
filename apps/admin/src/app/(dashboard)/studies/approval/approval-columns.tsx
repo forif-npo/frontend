@@ -41,7 +41,7 @@ function formatDateTime(value: string) {
 export const approvalColumns: ColumnDef<Study>[] = [
   {
     accessorKey: "study_status",
-    header: () => <div className="text-center text-sm">상태</div>,
+    header: () => <div className="text-center text-sm">개설 상태</div>,
     cell: ({ row }) => {
       const status = row.getValue("study_status") as Study["study_status"];
 
