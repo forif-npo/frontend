@@ -156,8 +156,26 @@ export function DataTable<TData, TValue>({
     setRowSelection({});
   }, [data]);
 
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || sorting.length === 0) return;
+
+      const target = event.target;
+      if (!(target instanceof Element) || !target.closest("table")) return;
+
+      event.preventDefault();
+      setSorting([]);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [sorting.length]);
+
   return (
     <div>
+      <div className="text-muted-foreground mb-1 flex justify-end px-1 text-[10px]">
+        Esc 키를 누르면 모든 정렬이 해제됩니다.
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
