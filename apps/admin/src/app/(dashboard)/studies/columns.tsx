@@ -3,12 +3,25 @@
 import { Badge } from "@/components/ui/badge";
 import { SortableHeader } from "@/components/list/sortable-header";
 import { ColumnDef } from "@tanstack/react-table";
+import { WEEK_DAY_OPTIONS } from "./constants";
 import { Study } from "./types";
+
+const DIFFICULTY_LABELS = {
+  EASY: "쉬움",
+  SEMI_EASY: "조금 쉬움",
+  NORMAL: "보통",
+  SEMI_HARD: "조금 어려움",
+  HARD: "어려움",
+} as const;
 
 export const columns: ColumnDef<Study>[] = [
   {
     accessorKey: "recruit_status",
-    header: () => <div className="text-center text-sm">모집 상태</div>,
+    size: 112,
+    minSize: 112,
+    header: () => (
+      <div className="whitespace-nowrap text-center text-sm">모집 상태</div>
+    ),
     cell: ({ row }) => {
       const status = row.getValue("recruit_status") as string;
       const isOpen = status === "APPLICABLE";
@@ -61,37 +74,36 @@ export const columns: ColumnDef<Study>[] = [
       const tags = row.getValue("tags") as string[];
       if (!tags || tags.length === 0) return null;
 
-      const colors = [
-        "bg-blue-100 text-blue-800 hover:bg-blue-200",
-        "bg-green-100 text-green-800 hover:bg-green-200",
-        "bg-purple-100 text-purple-800 hover:bg-purple-200",
-        "bg-pink-100 text-pink-800 hover:bg-pink-200",
-        "bg-indigo-100 text-indigo-800 hover:bg-indigo-200",
-        "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
-        "bg-red-100 text-red-800 hover:bg-red-200",
-        "bg-orange-100 text-orange-800 hover:bg-orange-200",
-      ];
+      return <div className="text-center text-sm">{tags.join(", ")}</div>;
+    },
+  },
+  {
+    accessorKey: "difficulty",
+    size: 96,
+    minSize: 96,
+    header: () => (
+      <div className="whitespace-nowrap text-center text-sm">난이도</div>
+    ),
+    cell: ({ row }) => {
+      const difficulty = row.getValue("difficulty") as Study["difficulty"];
 
       return (
-        <div className="flex flex-wrap justify-center gap-2">
-          {tags.map((tag, idx) => {
-            const index =
-              tag.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
-              colors.length;
-            const colorClass = colors[index];
-
-            return (
-              <Badge
-                key={idx}
-                variant="outline"
-                className={`border-0 ${colorClass}`}
-              >
-                {tag}
-              </Badge>
-            );
-          })}
+        <div className="text-center text-sm">
+          {difficulty ? DIFFICULTY_LABELS[difficulty] : "-"}
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "week_day",
+    header: () => <div className="text-center text-sm">요일</div>,
+    cell: ({ row }) => {
+      const weekDay = row.getValue("week_day") as Study["week_day"];
+      const label = WEEK_DAY_OPTIONS.find(
+        (option) => option.value === String(weekDay),
+      )?.label;
+
+      return <div className="text-center text-sm">{label ?? "-"}</div>;
     },
   },
   {
@@ -103,14 +115,5 @@ export const columns: ColumnDef<Study>[] = [
       const count = row.getValue("mentee_count") as number;
       return <div className="text-center">{count}명</div>;
     },
-  },
-  {
-    accessorKey: "one_liner",
-    header: () => <div className="text-center text-sm">한 줄 소개</div>,
-    cell: ({ row }) => (
-      <div className="max-w-[300px] truncate" title={row.getValue("one_liner")}>
-        {row.getValue("one_liner")}
-      </div>
-    ),
   },
 ];
