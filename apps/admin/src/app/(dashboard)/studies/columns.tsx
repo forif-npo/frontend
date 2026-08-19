@@ -84,7 +84,9 @@ export const columns: ColumnDef<Study>[] = [
     ),
     cell: ({ row }) => {
       const tags = row.getValue("tags") as string[];
-      if (!tags || tags.length === 0) return null;
+      if (!tags || tags.length === 0) {
+        return <div className="text-center text-sm">-</div>;
+      }
 
       return <div className="text-center text-sm">{tags.join(", ")}</div>;
     },
@@ -135,7 +137,9 @@ export const columns: ColumnDef<Study>[] = [
     ),
     cell: ({ row }) => {
       const count = row.getValue("mentee_count") as number;
-      return <div className="text-center">{count}명</div>;
+      return (
+        <div className="text-center">{count > 0 ? `${count}명` : "-"}</div>
+      );
     },
   },
 ];
