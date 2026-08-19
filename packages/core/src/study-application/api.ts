@@ -1,7 +1,11 @@
 import type { ApiResponse } from "../types/api";
 import { apiClient } from "../utils/api-client";
 
-export type StudyApplicationStatus = "PENDING" | "RE_APPLIED" | "REJECTED";
+export type StudyApplicationStatus =
+  | "PENDING"
+  | "RE_APPLIED"
+  | "REJECTED"
+  | "APPROVED";
 
 export interface StudyApplicationSummary {
   id: number;
