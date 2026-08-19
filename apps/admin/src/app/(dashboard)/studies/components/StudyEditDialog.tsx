@@ -138,6 +138,7 @@ export function StudyEditDialog({
             <Textarea
               id="study-explanation"
               className="min-h-28"
+              maxLength={3000}
               value={form.explanation}
               disabled={isFormDisabled}
               onChange={(event) =>

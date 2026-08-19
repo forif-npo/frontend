@@ -3,6 +3,7 @@
 import { SortableHeader } from "@/components/list/sortable-header";
 import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
+import { WEEK_DAY_OPTIONS } from "../constants";
 import { Study } from "../types";
 
 const STATUS_LABELS: Record<Study["study_status"], string> = {
@@ -18,6 +19,14 @@ const STATUS_BADGE_CLASS_NAMES: Record<Study["study_status"], string> = {
   REJECTED: "border-red-500 bg-red-50 text-red-700",
   RE_APPLIED: "border-blue-500 bg-blue-50 text-blue-700",
 };
+
+const DIFFICULTY_LABELS = {
+  EASY: "쉬움",
+  SEMI_EASY: "조금 쉬움",
+  NORMAL: "보통",
+  SEMI_HARD: "조금 어려움",
+  HARD: "어려움",
+} as const;
 
 function formatDateTime(value: string) {
   if (!value) return "-";
@@ -82,6 +91,31 @@ export const approvalColumns: ColumnDef<Study>[] = [
       if (!tags || tags.length === 0) return null;
 
       return <div className="text-center text-sm">{tags.join(", ")}</div>;
+    },
+  },
+  {
+    accessorKey: "difficulty",
+    header: () => <div className="text-center text-sm">난이도</div>,
+    cell: ({ row }) => {
+      const difficulty = row.getValue("difficulty") as Study["difficulty"];
+
+      return (
+        <div className="text-center text-sm">
+          {difficulty ? DIFFICULTY_LABELS[difficulty] : "-"}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "week_day",
+    header: () => <div className="text-center text-sm">요일</div>,
+    cell: ({ row }) => {
+      const weekDay = row.getValue("week_day") as Study["week_day"];
+      const label = WEEK_DAY_OPTIONS.find(
+        (option) => option.value === String(weekDay),
+      )?.label;
+
+      return <div className="text-center text-sm">{label ?? "-"}</div>;
     },
   },
   {

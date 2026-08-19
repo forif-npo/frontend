@@ -16,6 +16,39 @@ export const DIFFICULTY_OPTIONS: Array<{
   { value: "HARD", label: "어려움", variant: "danger" },
 ];
 
+export const STUDY_DIFFICULTY_GUIDE = [
+  {
+    label: "쉬움",
+    stars: "★",
+    description:
+      "프로그래밍이 처음이거나 기초부터 차근차근 배우고 싶은 분에게 추천합니다.",
+  },
+  {
+    label: "조금 쉬움",
+    stars: "★★",
+    description:
+      "기초 문법을 학습했거나, 첫 프로젝트를 경험해 보고 싶은 분에게 추천합니다.",
+  },
+  {
+    label: "보통",
+    stars: "★★★",
+    description:
+      "프로그래밍 경험이 있으며, 간단한 프로젝트를 진행해 본 분에게 추천합니다.",
+  },
+  {
+    label: "조금 어려움",
+    stars: "★★★★",
+    description:
+      "관련 전공 수준의 기초 지식이나 프로젝트 경험을 바탕으로 심화 내용을 학습하고 싶은 분에게 추천합니다.",
+  },
+  {
+    label: "어려움",
+    stars: "★★★★★",
+    description:
+      "실무 수준의 기술이나 고난도 프로젝트를 다루며, 충분한 개발 경험이 있는 분에게 추천합니다.",
+  },
+] as const;
+
 /**
  * 모집 상태 옵션 (API 스펙 기준)
  */
@@ -32,11 +65,11 @@ export const RECRUIT_STATUS_OPTIONS: Array<{
  * 난이도 숫자 라벨 (my-page API 기준, 1-5)
  */
 export const NUMERIC_DIFFICULTY_LABELS: Record<number, string> = {
-  1: "매우 쉬움",
-  2: "쉬움",
+  1: "쉬움",
+  2: "조금 쉬움",
   3: "보통",
-  4: "어려움",
-  5: "매우 어려움",
+  4: "조금 어려움",
+  5: "어려움",
 };
 
 /**

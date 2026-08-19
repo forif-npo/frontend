@@ -179,6 +179,8 @@ export interface AdminStudyResponse {
   one_liner: string;
   mentee_count: number;
   recruit_status: "APPLICABLE" | "CLOSED";
+  week_day: number | null;
+  difficulty: "EASY" | "SEMI_EASY" | "NORMAL" | "SEMI_HARD" | "HARD" | null;
   study_status: "PENDING" | "APPROVED" | "REJECTED" | "RE_APPLIED";
   reject_reason: string | null;
   created_at: string;
@@ -279,7 +281,7 @@ export interface StudyListParams {
   page_size?: number;
   year?: number;
   semester?: number;
-  difficulties?: number[]; // 1-5
+  difficulties?: StudyDifficulty[];
   tags?: string[];
   recruit_status?: "APPLICABLE" | "CLOSED";
   search?: string;
@@ -290,10 +292,10 @@ export interface StudyListParams {
  */
 export type StudyDifficulty =
   | "EASY"
+  | "SEMI_EASY"
   | "NORMAL"
-  | "HARD"
-  | "BEGINNER"
-  | "ADVANCED";
+  | "SEMI_HARD"
+  | "HARD";
 
 /**
  * 스터디 목록 아이템 (간단한 정보)

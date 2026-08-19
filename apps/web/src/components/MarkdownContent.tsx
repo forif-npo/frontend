@@ -3,7 +3,7 @@ import ReactMarkdown, { type Components } from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 
-type AnnouncementMarkdownProps = {
+type MarkdownContentProps = {
   content: string;
 };
 
@@ -19,7 +19,7 @@ const components: Components = {
     return (
       <h2
         className={clsx(
-          "mb-4 mt-8 text-2xl font-bold leading-tight text-gray-900 first:mt-0",
+          "text-text-basic mb-4 mt-8 text-2xl font-bold leading-tight first:mt-0",
           className,
         )}
         {...rest}
@@ -31,7 +31,7 @@ const components: Components = {
     return (
       <h2
         className={clsx(
-          "mb-3 mt-8 text-xl font-semibold leading-tight text-gray-900 first:mt-0",
+          "text-text-basic mb-3 mt-8 text-xl font-semibold leading-tight first:mt-0",
           className,
         )}
         {...rest}
@@ -43,7 +43,7 @@ const components: Components = {
     return (
       <h3
         className={clsx(
-          "mb-2 mt-6 text-lg font-semibold leading-tight text-gray-900 first:mt-0",
+          "text-text-basic mb-2 mt-6 text-lg font-semibold leading-tight first:mt-0",
           className,
         )}
         {...rest}
@@ -54,7 +54,10 @@ const components: Components = {
     const { className, ...rest } = omitNode(props);
     return (
       <p
-        className={clsx("my-3 text-[18px] leading-8 text-gray-900", className)}
+        className={clsx(
+          "text-text-basic my-3 text-[18px] leading-8",
+          className,
+        )}
         {...rest}
       />
     );
@@ -66,7 +69,7 @@ const components: Components = {
     return (
       <a
         className={clsx(
-          "font-medium text-[#1D40BA] underline underline-offset-4",
+          "text-text-primary font-medium underline underline-offset-4",
           className,
         )}
         href={href}
@@ -81,7 +84,7 @@ const components: Components = {
     return (
       <ul
         className={clsx(
-          "my-4 list-disc space-y-2 pl-6 text-[18px] leading-8 text-gray-900",
+          "text-text-basic my-4 list-disc space-y-2 pl-6 text-[18px] leading-8",
           className,
         )}
         {...rest}
@@ -93,7 +96,7 @@ const components: Components = {
     return (
       <ol
         className={clsx(
-          "my-4 list-decimal space-y-2 pl-6 text-[18px] leading-8 text-gray-900",
+          "text-text-basic my-4 list-decimal space-y-2 pl-6 text-[18px] leading-8",
           className,
         )}
         {...rest}
@@ -109,7 +112,7 @@ const components: Components = {
     return (
       <blockquote
         className={clsx(
-          "border-l-4 border-[#1D40BA] bg-gray-50 px-5 py-3 text-gray-700",
+          "border-border-primary bg-surface-primary-subtler text-text-basic border-l-4 px-5 py-3",
           className,
         )}
         {...rest}
@@ -124,8 +127,8 @@ const components: Components = {
       <code
         className={clsx(
           isBlockCode
-            ? "text-gray-5 text-sm"
-            : "bg-gray-5 rounded px-1.5 py-0.5 text-[0.9em] text-gray-900",
+            ? "text-text-basic-inverse text-sm"
+            : "bg-surface-gray-subtler text-text-basic rounded px-1.5 py-0.5 text-[0.9em]",
           className,
         )}
         {...rest}
@@ -137,7 +140,7 @@ const components: Components = {
     return (
       <pre
         className={clsx(
-          "my-5 overflow-x-auto rounded-lg bg-gray-900 p-4 leading-7",
+          "bg-surface-inverse my-5 overflow-x-auto rounded-lg p-4 leading-7",
           className,
         )}
         {...rest}
@@ -150,7 +153,7 @@ const components: Components = {
       <div className="my-6 overflow-x-auto">
         <table
           className={clsx(
-            "w-full min-w-[560px] border-collapse text-left text-sm text-gray-900",
+            "text-text-basic w-full min-w-[560px] border-collapse text-left text-sm",
             className,
           )}
           {...rest}
@@ -163,7 +166,7 @@ const components: Components = {
     return (
       <th
         className={clsx(
-          "border border-gray-200 bg-gray-50 px-3 py-2 font-semibold",
+          "border-border-gray-light bg-surface-gray-subtler border px-3 py-2 font-semibold",
           className,
         )}
         {...rest}
@@ -174,18 +177,23 @@ const components: Components = {
     const { className, ...rest } = omitNode(props);
     return (
       <td
-        className={clsx("border border-gray-200 px-3 py-2", className)}
+        className={clsx("border-border-gray-light border px-3 py-2", className)}
         {...rest}
       />
     );
   },
   hr: (props) => {
     const { className, ...rest } = omitNode(props);
-    return <hr className={clsx("my-8 border-gray-200", className)} {...rest} />;
+    return (
+      <hr
+        className={clsx("border-border-gray-light my-8", className)}
+        {...rest}
+      />
+    );
   },
 };
 
-export function AnnouncementMarkdown({ content }: AnnouncementMarkdownProps) {
+export function MarkdownContent({ content }: MarkdownContentProps) {
   return (
     <ReactMarkdown
       components={components}

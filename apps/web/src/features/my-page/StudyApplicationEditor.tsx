@@ -510,7 +510,7 @@ export function StudyApplicationEditor({
             <TextArea
               id="introduction"
               size="large"
-              maxLength={500}
+              maxLength={3000}
               {...register("introduction")}
             />
             {errors.introduction && (
@@ -720,15 +720,17 @@ export function StudyApplicationEditor({
         )}
 
         <div className="mt-4 flex items-center justify-between gap-4">
-          <Button
-            variant="tertiary"
-            size="large"
-            type="button"
-            onClick={() => setIsCancelConfirmOpen(true)}
-            disabled={isSubmitting || isCancelling}
-          >
-            {isCancelling ? "취소 중..." : "신청 취소"}
-          </Button>
+          {application.can_cancel && (
+            <Button
+              variant="tertiary"
+              size="large"
+              type="button"
+              onClick={() => setIsCancelConfirmOpen(true)}
+              disabled={isSubmitting || isCancelling}
+            >
+              {isCancelling ? "취소 중..." : "신청 취소"}
+            </Button>
+          )}
           <Button
             variant="primary"
             size="large"

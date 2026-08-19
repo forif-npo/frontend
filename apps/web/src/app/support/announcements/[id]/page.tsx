@@ -10,7 +10,7 @@ import { Breadcrumb } from "@ui/components/server";
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 import { Button } from "@ui/components/client";
 import { AnnouncementDetailSkeleton } from "@/components/skeleton/AnnouncementDetailSkeleton";
-import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
+import { MarkdownContent } from "@/components/MarkdownContent";
 import { safeImageSrc } from "@/utils/image";
 
 export default function AnnouncementDetailPage() {
@@ -84,7 +84,7 @@ export default function AnnouncementDetailPage() {
 
           {/* Content */}
           <div className="mt-10">
-            <AnnouncementMarkdown content={item.content} />
+            <MarkdownContent content={item.content} />
           </div>
 
           {/* Images */}

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Badge } from "@ui/components/server";
 import { Study } from "@/types/study";
 import { KakaoMap } from "@/components/KakaoMap";
-import { AnnouncementMarkdown } from "@/features/support/announcements/components/AnnouncementMarkdown";
+import { MarkdownContent } from "@/components/MarkdownContent";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
 import {
   formatStudyTimeRange,
@@ -209,7 +209,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
               ref={introRef}
               className={`${!isIntroExpanded && isClamped ? "line-clamp-6" : ""}`}
             >
-              <AnnouncementMarkdown content={study.explanation} />
+              <MarkdownContent content={study.explanation} />
             </div>
             {!isIntroExpanded && isClamped && (
               <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[72px] bg-gradient-to-t from-[#f4f5f6] to-transparent" />

@@ -147,7 +147,7 @@ export function Step2StudyOverview({
           id="oneLiner"
           type="text"
           placeholder="한 줄 소개를 입력해주세요"
-          className={`placeholder:text-text-subtle-inverse w-full rounded-lg border-0 px-4 py-3 text-[15px] font-medium leading-[1.6] text-sky-900 outline-none focus:border-0 focus:ring-0 focus-visible:border-0 focus-visible:ring-0 md:text-[19px] ${oneLiner?.trim() && !isOneLinerEditing ? "bg-sky-100" : "bg-transparent"}`}
+          className={`placeholder:text-text-subtle-inverse text-text-primary w-full rounded-lg border-0 px-4 py-3 text-[15px] font-medium leading-[1.6] outline-none focus:border-0 focus:ring-0 focus-visible:border-0 focus-visible:ring-0 md:text-[19px] ${oneLiner?.trim() && !isOneLinerEditing ? "bg-surface-primary-subtler" : "bg-transparent"}`}
           {...oneLinerField}
           onFocus={() => setIsOneLinerEditing(true)}
           onBlur={(event) => {
@@ -170,7 +170,7 @@ export function Step2StudyOverview({
                 key={tag}
                 type="button"
                 onClick={() => handleRemoveTag(tag)}
-                className="flex h-8 items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2"
+                className="bg-surface-primary-subtler flex h-8 items-center justify-center rounded-[4px] px-2"
               >
                 <span className="text-text-primary text-[17px] leading-[1.5]">
                   {tag}
@@ -229,7 +229,7 @@ export function Step2StudyOverview({
               id="introduction"
               placeholder="내용을 입력하세요"
               size="large"
-              maxLength={500}
+              maxLength={3000}
               {...register("introduction")}
             />
             {errors.introduction && (
@@ -370,7 +370,7 @@ export function Step2StudyOverview({
                   {...registerTimeInput("startTime")}
                 />
               </div>
-              <Minus className="h-6 w-6 shrink-0 text-[#58616a]" />
+              <Minus className="text-gray-60 h-6 w-6 shrink-0" />
               <div className="flex-1">
                 <TextInput
                   id="endTime"
