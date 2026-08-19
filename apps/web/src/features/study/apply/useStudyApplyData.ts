@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { HTTPError } from "ky";
+import { getCurrentSemesterSchedules } from "@core/semester/schedule-api";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import { Study } from "@/types/study";
@@ -52,6 +53,16 @@ export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
         setIsLoading(true);
         setError(null);
         setCurrentStudy(null);
+
+        const schedules = await getCurrentSemesterSchedules();
+        const isMenteeRecruitmentOpen = schedules.some(
+          (schedule) => schedule.phase === "MENTEE_RECRUIT" && schedule.open,
+        );
+
+        if (!isMenteeRecruitmentOpen) {
+          router.replace("/studies/list");
+          return;
+        }
 
         const [userResponse, studiesResponse] = await Promise.all([
           apiClient.get("api/v1/users/me").json<ApiResponse<ApiUserInfo>>(),
