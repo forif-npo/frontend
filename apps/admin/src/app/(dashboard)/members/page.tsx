@@ -14,9 +14,6 @@ interface PageProps {
 
 export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
-
-  const activeSemester = (params.semester as MemberSemesterLabel) || "전체";
-
   const search = params.search;
   const parsedPage = params.page ? parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
@@ -25,6 +22,9 @@ export default async function Page({ searchParams }: PageProps) {
     auth(),
     getCurrentSemester(),
   ]);
+  const activeSemester =
+    (params.semester as MemberSemesterLabel) ||
+    (currentSemester.label as MemberSemesterLabel);
   const accessToken = session?.access_token;
 
   if (!accessToken) {

@@ -5,18 +5,6 @@ import { MentorConfirmationsView } from "./mentor-confirmations-view";
 
 const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;
 
-function previousSemester({
-  year,
-  semester,
-}: {
-  year: number;
-  semester: number;
-}): SemesterLabel {
-  const previousYear = semester === 1 ? year - 1 : year;
-  const previous = semester === 1 ? 2 : 1;
-  return `${previousYear.toString().slice(2)}-${previous}` as SemesterLabel;
-}
-
 function parseSemesterFilter(semester: SemesterLabel) {
   const match = semester.match(SEMESTER_LABEL_PATTERN);
   return match
@@ -34,8 +22,9 @@ export default async function MentorConfirmationsPage({
     getCurrentSemester(),
     auth(),
   ]);
-  const activeSemester =
-    (params.semester as SemesterLabel) || previousSemester(currentSemester);
+  const defaultSemester =
+    `${currentSemester.year.toString().slice(2)}-${currentSemester.semester}` as SemesterLabel;
+  const activeSemester = (params.semester as SemesterLabel) || defaultSemester;
   const token = session?.access_token;
   if (!token) return null;
 
