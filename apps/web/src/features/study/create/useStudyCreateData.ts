@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getCurrentSemesterSchedules } from "@core/semester/schedule-api";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { UserInfo } from "./types";
@@ -16,18 +17,33 @@ type UseStudyCreateDataReturn = {
   userInfo: UserInfo | null;
   isLoading: boolean;
   error: Error | null;
+  isMentorRecruitmentClosed: boolean;
 };
 
 export function useStudyCreateData(): UseStudyCreateDataReturn {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [isMentorRecruitmentClosed, setIsMentorRecruitmentClosed] =
+    useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         setError(null);
+        setIsMentorRecruitmentClosed(false);
+
+        const schedules = await getCurrentSemesterSchedules();
+        const isMentorRecruitmentOpen = schedules.some(
+          (schedule) => schedule.phase === "MENTOR_RECRUIT" && schedule.open,
+        );
+
+        if (!isMentorRecruitmentOpen) {
+          setIsMentorRecruitmentClosed(true);
+          return;
+        }
+
         const response = await apiClient
           .get("api/v1/users/me")
           .json<ApiResponse<ApiUserInfo>>();
@@ -56,5 +72,6 @@ export function useStudyCreateData(): UseStudyCreateDataReturn {
     userInfo,
     isLoading,
     error,
+    isMentorRecruitmentClosed,
   };
 }

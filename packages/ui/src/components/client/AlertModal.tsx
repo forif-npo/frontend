@@ -11,6 +11,7 @@ export interface AlertModalProps {
   onCancel?: () => void;
   confirmLabel?: string;
   cancelLabel?: string;
+  showCancelButton?: boolean;
 }
 
 export function AlertModal({
@@ -21,8 +22,10 @@ export function AlertModal({
   onCancel,
   confirmLabel = "확인",
   cancelLabel = "취소",
+  showCancelButton,
 }: AlertModalProps) {
   const isConfirmation = Boolean(onConfirm);
+  const shouldShowCancelButton = showCancelButton ?? isConfirmation;
 
   const handleClose = () => {
     onCancel?.();
@@ -40,7 +43,7 @@ export function AlertModal({
       onClose={handleClose}
       onConfirm={handleConfirm}
       title=""
-      showCancelButton={isConfirmation}
+      showCancelButton={shouldShowCancelButton}
       confirmLabel={confirmLabel}
       cancelLabel={cancelLabel}
       showHeaderBorder={false}

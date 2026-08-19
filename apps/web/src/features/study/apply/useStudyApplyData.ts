@@ -37,6 +37,7 @@ type UseStudyApplyDataReturn = {
   studyOptions: StudyOption[];
   isLoading: boolean;
   error: Error | null;
+  isMenteeRecruitmentClosed: boolean;
 };
 
 export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
@@ -46,6 +47,8 @@ export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
   const [studyOptions, setStudyOptions] = useState<StudyOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [isMenteeRecruitmentClosed, setIsMenteeRecruitmentClosed] =
+    useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +56,7 @@ export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
         setIsLoading(true);
         setError(null);
         setCurrentStudy(null);
+        setIsMenteeRecruitmentClosed(false);
 
         const schedules = await getCurrentSemesterSchedules();
         const isMenteeRecruitmentOpen = schedules.some(
@@ -60,7 +64,7 @@ export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
         );
 
         if (!isMenteeRecruitmentOpen) {
-          router.replace("/studies/list");
+          setIsMenteeRecruitmentClosed(true);
           return;
         }
 
@@ -130,5 +134,6 @@ export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
     studyOptions,
     isLoading,
     error,
+    isMenteeRecruitmentClosed,
   };
 }

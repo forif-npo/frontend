@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AlertModal } from "@ui/components/client";
 import { StudyCreateSkeleton } from "@/components/skeleton/StudyCreateSkeleton";
 import {
@@ -15,12 +16,14 @@ import {
 } from "@/features/study/create";
 
 export default function StudyCreatePage() {
+  const router = useRouter();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const {
     step,
     form,
     userInfo,
     isLoading,
+    isMentorRecruitmentClosed,
     studyCreateAlert,
     goToNext,
     goToPrevious,
@@ -31,6 +34,20 @@ export default function StudyCreatePage() {
     goToStudyList,
     goToApplication,
   } = useStudyCreatePage();
+
+  if (isMentorRecruitmentClosed) {
+    const goBack = () => router.back();
+
+    return (
+      <AlertModal
+        isOpen
+        description="현재 학기 스터디 개설 신청 기간이 지났습니다. 인스타그램과 공지사항을 통해 소식을 확인해주세요."
+        onClose={goBack}
+        onConfirm={goBack}
+        showCancelButton={false}
+      />
+    );
+  }
 
   if (isLoading || !userInfo) {
     return <StudyCreateSkeleton />;
