@@ -40,6 +40,7 @@ import {
 import { TagSelectModal } from "@/features/study/create/components/TagSelectModal";
 import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
 import { fetchUserInfo } from "@/features/study/create/user-info";
+import { useStudyCreateData } from "@/features/study/create/useStudyCreateData";
 import type { UserInfo } from "@/features/study/create/types";
 
 interface StudyApplicationEditorProps {
@@ -150,6 +151,7 @@ export function StudyApplicationEditor({
   application,
 }: StudyApplicationEditorProps) {
   const router = useRouter();
+  const { userInfo: currentUserInfo } = useStudyCreateData();
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [isOneLinerEditing, setIsOneLinerEditing] = useState(false);
   const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
@@ -190,9 +192,6 @@ export function StudyApplicationEditor({
   const selectedLocation = watch("location");
   const hasInterview = watch("hasInterview");
   const secondaryMentorId = watch("mentorIds")?.[0] ?? null;
-  const primaryMentorId = application.study.mentors?.find(
-    (mentor) => mentor.mentor_num === 1,
-  )?.mentor_id;
   const referenceUpdate = buildReferenceUpdate(
     newReferences,
     application.study.references,
@@ -246,8 +245,14 @@ export function StudyApplicationEditor({
       if (!mentor) {
         throw new Error("Mentor not found");
       }
-      if (mentor.studentId === String(primaryMentorId)) {
-        setMentorError("대표 멘토는 부멘토로 등록할 수 없습니다.");
+      if (!currentUserInfo) {
+        setMentorError("사용자 정보를 불러온 뒤 다시 시도해주세요.");
+        return;
+      }
+      if (mentor.studentId === currentUserInfo.studentId) {
+        setSecondaryMentor(null);
+        setMentorError("본인은 추가 멘토로 등록할 수 없습니다.");
+        setValue("mentorIds", [], { shouldDirty: true });
         return;
       }
 
@@ -383,14 +388,14 @@ export function StudyApplicationEditor({
         <section className="flex flex-col gap-6">
           <div className="flex flex-col gap-3 rounded-xl border border-[#b1b8be] p-5">
             <div className="flex items-center justify-between gap-3">
-              <StudySectionTitle>부멘토</StudySectionTitle>
+              <StudySectionTitle>멘토 추가</StudySectionTitle>
               {secondaryMentorId !== null && (
                 <button
                   type="button"
                   className="text-text-subtle hover:text-text-danger text-sm"
                   onClick={handleSecondaryMentorRemove}
                 >
-                  부멘토 제거
+                  멘토 제거
                 </button>
               )}
             </div>
@@ -398,7 +403,7 @@ export function StudyApplicationEditor({
               <TextInput
                 id="secondaryMentorId"
                 length="full"
-                placeholder="부멘토 아이디를 입력하세요"
+                placeholder="추가할 멘토의 학번을 입력해주세요"
                 value={mentorSearchValue}
                 onChange={(event) => {
                   setMentorSearchValue(event.target.value);
@@ -415,7 +420,7 @@ export function StudyApplicationEditor({
                 type="button"
                 onClick={() => void handleSecondaryMentorSearch()}
                 className="absolute right-4 top-1/2 -translate-y-1/2"
-                aria-label="부멘토 검색"
+                aria-label="멘토 검색"
               >
                 <SearchIcon />
               </button>
