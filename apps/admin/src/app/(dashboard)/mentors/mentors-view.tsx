@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { Download } from "lucide-react";
+import type { SortingState } from "@tanstack/react-table";
 import * as XLSX from "xlsx";
 
 import { columns } from "./columns";
@@ -22,6 +23,7 @@ interface MentorsViewProps {
   totalPages?: number;
   pageSize?: number;
   initialSearch?: string;
+  initialSorting?: SortingState;
 }
 
 export function MentorsView({
@@ -32,6 +34,7 @@ export function MentorsView({
   totalPages = 1,
   pageSize = 20,
   initialSearch = "",
+  initialSorting = [],
 }: MentorsViewProps) {
   const {
     searchQuery,
@@ -39,10 +42,12 @@ export function MentorsView({
     handleSemesterChange,
     handleSearch,
     handlePageChange,
+    handleSortingChange,
   } = useListViewFilters({
     route: "/mentors",
     currentSemester,
     initialSearch,
+    initialSorting,
   });
 
   const handleDownloadExcel = () => {
@@ -106,6 +111,8 @@ export function MentorsView({
           columns={columns}
           data={initialData}
           showPagination={false}
+          sorting={initialSorting}
+          onSortingChange={handleSortingChange}
           renderRowActions={(mentor) => (
             <DropdownMenuItem
               disabled={!mentor.manageable}

@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import type { StudyUpdateRequest } from "@core/types/api";
+import type { SortingState } from "@tanstack/react-table";
 import { handleApiError } from "@core/utils/api-client";
 import { Download, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -40,6 +41,7 @@ interface StudiesViewProps {
   totalPages?: number;
   pageSize?: number;
   initialSearch?: string;
+  initialSorting?: SortingState;
 }
 
 export function StudiesView({
@@ -50,6 +52,7 @@ export function StudiesView({
   totalPages = 1,
   pageSize = 20,
   initialSearch = "",
+  initialSorting = [],
 }: StudiesViewProps) {
   const {
     searchQuery,
@@ -57,10 +60,12 @@ export function StudiesView({
     handleSemesterChange,
     handleSearch,
     handlePageChange,
+    handleSortingChange,
   } = useListViewFilters({
     route: "/studies",
     currentSemester,
     initialSearch,
+    initialSorting,
   });
   const router = useRouter();
   const editRequestSeq = useRef(0);
@@ -350,6 +355,8 @@ export function StudiesView({
           columns={columns}
           data={initialData}
           showPagination={false}
+          sorting={initialSorting}
+          onSortingChange={handleSortingChange}
           renderRowActions={(study) => (
             <>
               <DropdownMenuItem

@@ -7,6 +7,8 @@ import type {
 } from "@core/types/api";
 import type { SemesterInfo } from "./types";
 import { getCurrentSemester as fetchActiveSemester } from "@core/semester/api";
+import type { SortingState } from "@tanstack/react-table";
+import { appendSortingParams } from "@/lib/list-sorting";
 
 export interface AdminStudyDetail {
   id: number;
@@ -69,6 +71,7 @@ interface FetchStudiesParams {
   semester?: number;
   search?: string;
   studyStatuses?: StudyApprovalStatus[];
+  sorting?: SortingState;
 }
 
 /**
@@ -100,6 +103,7 @@ export async function fetchStudiesWithFallback(
   params.studyStatuses?.forEach((status) => {
     searchParams.append("study_status", status);
   });
+  appendSortingParams(searchParams, params.sorting ?? []);
 
   const response = await apiClient
     .get("api/v1/admin/studies", {

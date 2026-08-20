@@ -2,6 +2,8 @@ import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { PaginationInterface } from "@/types/pagination";
 import { paginateLocally } from "@/lib/paginate";
+import { appendSortingParams, sortRecords } from "@/lib/list-sorting";
+import type { SortingState } from "@tanstack/react-table";
 import {
   buildSemesterEndpoint,
   getMainSemesterLabels,
@@ -18,6 +20,7 @@ interface FetchMembersParams {
   search?: string;
   semester?: MemberSemesterLabel;
   accessToken: string;
+  sorting?: SortingState;
 }
 
 interface MemberItem {
@@ -74,26 +77,27 @@ export async function fetchMembers({
   search,
   semester,
   accessToken,
+  sorting = [],
 }: FetchMembersParams): Promise<MemberListResult> {
   const endpoint = buildSemesterEndpoint("api/v1/admin/users", semester);
 
-  const searchParams: Record<string, string> = {
+  const searchParams = new URLSearchParams({
     page: page.toString(),
     size: size.toString(),
-  };
+  });
 
   if (search) {
-    searchParams.search = search;
+    searchParams.set("search", search);
   }
+  appendSortingParams(searchParams, sorting);
 
   if (semester === "그 외") {
+    const allSearchParams = new URLSearchParams(searchParams);
+    allSearchParams.set("page", "0");
+    allSearchParams.set("size", "10000");
     const response = await apiClient
       .get(endpoint, {
-        searchParams: {
-          ...searchParams,
-          page: "0",
-          size: "10000",
-        },
+        searchParams: allSearchParams,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -108,7 +112,15 @@ export async function fetchMembers({
       response.data.content.map(mapToMember),
     );
 
-    return paginateLocally(otherSemester.map(stripSemester), page, size);
+    return paginateLocally(
+      sortRecords(
+        otherSemester.map(stripSemester),
+        sorting,
+        (member, id) => member[id as keyof Member],
+      ),
+      page,
+      size,
+    );
   }
 
   const response = await apiClient
