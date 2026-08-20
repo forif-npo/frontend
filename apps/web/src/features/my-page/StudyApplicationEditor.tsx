@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -13,7 +15,7 @@ import {
   TextArea,
   TextInput,
 } from "@ui/components/client";
-import { HintText, SearchIcon } from "@ui/components/server";
+import { SearchIcon } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { studyOpenSchema, type StudyOpenValues } from "@core/schemas";
 import {
@@ -22,7 +24,6 @@ import {
 } from "@core/study-application/api";
 import { handleApiError } from "@core/utils/api-client";
 import { getStudyTagLabel } from "@/constants/study-tags";
-import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { useDateInput } from "@/hooks/useDateInput";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
@@ -38,6 +39,7 @@ import {
   WEEKDAY_OPTIONS,
 } from "@/features/study/create/constants";
 import { TagSelectModal } from "@/features/study/create/components/TagSelectModal";
+import { StudyCreatePreviewModal } from "@/features/study/create/components/StudyCreatePreviewModal";
 import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
 import { fetchUserInfo } from "@/features/study/create/user-info";
 import { useStudyCreateData } from "@/features/study/create/useStudyCreateData";
@@ -153,6 +155,7 @@ export function StudyApplicationEditor({
   const router = useRouter();
   const { userInfo: currentUserInfo } = useStudyCreateData();
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isOneLinerEditing, setIsOneLinerEditing] = useState(false);
   const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
     string | null
@@ -498,30 +501,12 @@ export function StudyApplicationEditor({
         <section className="flex flex-col gap-6">
           <StudySectionTitle>썸네일</StudySectionTitle>
           <div className="flex flex-col gap-2">
-            <HintText>새 이미지를 선택하면 기존 썸네일은 교체됩니다.</HintText>
             {application.study.thumbnail_image && !thumbnail && (
-              <a
-                href={application.study.thumbnail_image}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border-border-gray-light bg-surface-gray-subtler flex w-fit items-center gap-3 rounded-lg border p-3"
-              >
-                <ImageWithFallback
-                  src={application.study.thumbnail_image}
-                  alt="현재 스터디 썸네일"
-                  width={128}
-                  height={80}
-                  className="h-20 w-32 rounded-md object-cover"
-                />
-                <span className="flex flex-col gap-1">
-                  <span className="text-text-basic text-sm font-medium">
-                    현재 썸네일
-                  </span>
-                  <span className="text-text-subtle text-xs">
-                    새 창에서 보기
-                  </span>
-                </span>
-              </a>
+              <img
+                src={application.study.thumbnail_image}
+                alt={`${application.study.study_name} 썸네일`}
+                className="max-h-72 w-full rounded-lg border object-contain"
+              />
             )}
             <FileUpload
               title="새 이미지 파일 선택 (jpg, jpeg, png)"
@@ -735,9 +720,8 @@ export function StudyApplicationEditor({
           )}
         </section>
 
-        <section className="flex flex-col gap-2">
+        <section>
           <ReferenceFields form={form} />
-          <HintText>새 파일을 선택하면 기존 파일은 교체됩니다.</HintText>
         </section>
 
         {message && (
@@ -754,27 +738,38 @@ export function StudyApplicationEditor({
         )}
 
         <div className="mt-4 flex items-center justify-between gap-4">
-          {application.can_cancel && (
+          <Button
+            variant="tertiary"
+            size="large"
+            type="button"
+            onClick={() => setIsCancelConfirmOpen(true)}
+            disabled={!application.can_cancel || isSubmitting || isCancelling}
+          >
+            {isCancelling ? "취소 중..." : "신청 취소"}
+          </Button>
+          <div className="flex items-center gap-4">
             <Button
-              variant="tertiary"
+              variant="primary"
+              size="large"
+              type="submit"
+              disabled={
+                (!isDirty && !hasReferenceUpdates) ||
+                isSubmitting ||
+                isCancelling
+              }
+            >
+              {isSubmitting ? "수정 중..." : "수정"}
+            </Button>
+            <Button
+              variant="secondary"
               size="large"
               type="button"
-              onClick={() => setIsCancelConfirmOpen(true)}
-              disabled={isSubmitting || isCancelling}
+              onClick={() => setIsPreviewOpen(true)}
+              disabled={!currentUserInfo || isSubmitting || isCancelling}
             >
-              {isCancelling ? "취소 중..." : "신청 취소"}
+              미리보기
             </Button>
-          )}
-          <Button
-            variant="primary"
-            size="large"
-            type="submit"
-            disabled={
-              (!isDirty && !hasReferenceUpdates) || isSubmitting || isCancelling
-            }
-          >
-            {isSubmitting ? "수정 중..." : "수정"}
-          </Button>
+          </div>
         </div>
       </form>
 
@@ -784,6 +779,15 @@ export function StudyApplicationEditor({
         onConfirm={handleTagsConfirm}
         selectedTags={selectedTags}
       />
+      {currentUserInfo && (
+        <StudyCreatePreviewModal
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          form={form}
+          userInfo={currentUserInfo}
+          title="스터디 수정 미리보기"
+        />
+      )}
       <AlertModal
         isOpen={isCancelConfirmOpen}
         description="스터디 개설 신청을 취소하시겠습니까? 이 작업은 되돌릴 수 없습니다."

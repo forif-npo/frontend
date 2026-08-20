@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Badge } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";
+import { toFileDownloadUrl } from "@core/utils/file-download";
 import { formatKoreanDateFromDateInput } from "@/utils/dateInput";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { StudyCurriculumTable } from "../../components/StudyCurriculumTable";
@@ -282,17 +283,31 @@ function ReferenceReviewLink({
   fileUrl?: string;
 }) {
   if (reference.type === "DOWNLOAD") {
-    if (!isFileValue(reference.value)) {
+    if (isFileValue(reference.value)) {
+      return (
+        <a
+          href={fileUrl}
+          download={reference.value.name}
+          className={REVIEW_LINK_CLASS}
+        >
+          {reference.value.name}
+        </a>
+      );
+    }
+
+    if (typeof reference.value !== "string" || !reference.value.trim()) {
       return <EmptyValue />;
     }
 
+    const fileName = reference.fileName ?? getFileName(reference.value);
+
     return (
       <a
-        href={fileUrl}
-        download={reference.value.name}
+        href={toFileDownloadUrl(reference.value)}
+        download={fileName}
         className={REVIEW_LINK_CLASS}
       >
-        {reference.value.name}
+        {fileName}
       </a>
     );
   }
@@ -330,6 +345,15 @@ function EmptyValue() {
 
 function isFileValue(value: ReferenceItem["value"]): value is File {
   return typeof File !== "undefined" && value instanceof File;
+}
+
+function getFileName(url: string) {
+  try {
+    const pathname = new URL(url).pathname;
+    return decodeURIComponent(pathname.split("/").at(-1) || "첨부파일");
+  } catch {
+    return "첨부파일";
+  }
 }
 
 function getSafeExternalUrl(value: string) {

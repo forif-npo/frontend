@@ -164,10 +164,7 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
                   {reference.type === "DOWNLOAD" ? (
                     <>
                       {existingFileUrl ? (
-                        <div className="border-border-gray-light bg-surface-gray-subtler flex min-h-12 items-center justify-between gap-3 rounded-lg border px-3 py-2">
-                          <span className="text-text-basic min-w-0 truncate text-sm">
-                            {getFileName(existingFileUrl, reference.fileName)}
-                          </span>
+                        <div className="border-border-gray-light flex min-h-12 items-center rounded-lg border px-3 py-2">
                           <a
                             href={toFileDownloadUrl(existingFileUrl)}
                             target="_blank"
@@ -176,9 +173,9 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
                               existingFileUrl,
                               reference.fileName,
                             )}
-                            className="text-text-primary shrink-0 text-sm font-medium underline underline-offset-2"
+                            className="text-text-primary min-w-0 truncate text-sm underline underline-offset-2"
                           >
-                            다운로드
+                            {getFileName(existingFileUrl, reference.fileName)}
                           </a>
                         </div>
                       ) : (

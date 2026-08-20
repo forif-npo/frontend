@@ -11,6 +11,7 @@ interface StudyCreatePreviewModalProps {
   onClose: () => void;
   form: UseFormReturn<StudyOpenValues>;
   userInfo: UserInfo;
+  title?: string;
 }
 
 export function StudyCreatePreviewModal({
@@ -18,12 +19,13 @@ export function StudyCreatePreviewModal({
   onClose,
   form,
   userInfo,
+  title = "스터디 개설 미리보기",
 }: StudyCreatePreviewModalProps) {
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="스터디 개설 미리보기"
+      title={title}
       width="xl"
       showCancelButton={false}
       showFooterBorder={false}

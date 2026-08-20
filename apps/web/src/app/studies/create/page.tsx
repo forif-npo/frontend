@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertModal } from "@ui/components/client";
 import { StudyCreateSkeleton } from "@/components/skeleton/StudyCreateSkeleton";
+import { useActiveSemester } from "@/hooks/useActiveSemester";
 import {
   useStudyCreatePage,
   Step1InfoVerification,
@@ -17,6 +18,7 @@ import {
 
 export default function StudyCreatePage() {
   const router = useRouter();
+  const activeSemester = useActiveSemester();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const {
     step,
@@ -41,7 +43,14 @@ export default function StudyCreatePage() {
     return (
       <AlertModal
         isOpen
-        description="현재 학기 스터디 개설 신청 기간이 지났습니다. 인스타그램과 공지사항을 통해 소식을 확인해주세요."
+        description={
+          <span className="block w-full text-center">
+            {activeSemester.act_year}년 {activeSemester.act_semester}학기 스터디
+            개설 신청 기간이 지났습니다.
+            <br />
+            인스타그램과 공지사항을 통해 소식을 확인해주세요.
+          </span>
+        }
         onClose={goBack}
         onConfirm={goBack}
         showCancelButton={false}

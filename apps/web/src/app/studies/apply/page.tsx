@@ -8,9 +8,11 @@ import { StudyApplyReasonStep } from "@/features/study/apply/study-apply-reason-
 import { StudyApplyComplete } from "@/features/study/apply/StudyApplyComplete";
 import { StudyApplySkeleton } from "@/features/study/apply/StudyApplySkeleton";
 import { useStudyApplyPage } from "@/features/study/apply/useStudyApplyPage";
+import { useActiveSemester } from "@/hooks/useActiveSemester";
 
 export default function StudyApplyPage() {
   const router = useRouter();
+  const activeSemester = useActiveSemester();
   const searchParams = useSearchParams();
   const [selectedStudyId, setSelectedStudyId] = useState<string | null>(() =>
     searchParams.get("study_id"),
@@ -37,7 +39,14 @@ export default function StudyApplyPage() {
     return (
       <AlertModal
         isOpen
-        description="현재 학기 스터디 신청 기간이 지났습니다. 인스타그램과 공지사항을 통해 소식을 확인해주세요."
+        description={
+          <span className="block w-full text-center">
+            {activeSemester.act_year}년 {activeSemester.act_semester}학기 스터디
+            신청 기간이 지났습니다.
+            <br />
+            인스타그램과 공지사항을 통해 소식을 확인해주세요.
+          </span>
+        }
         onClose={goBack}
         onConfirm={goBack}
         showCancelButton={false}
