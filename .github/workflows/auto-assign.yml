@@ -1,9 +1,7 @@
-name: Auto Assign Issues and PRs
+name: Auto Assign Issues
 
 on:
   issues:
-    types: [opened]
-  pull_request:
     types: [opened]
 
 jobs:
@@ -19,10 +17,3 @@ jobs:
           assignees: |
             forif-npo/frontend-team
           numOfAssignee: 1
-
-      - name: Auto assign PRs
-        if: github.event_name == 'pull_request'
-        uses: kentaro-m/auto-assign-action@v1.2.5
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          configuration-path: ".github/auto-assign.yml"
