@@ -367,7 +367,7 @@ export function StudyApplicationEditor({
   };
 
   return (
-    <section className="border-border-gray-light mt-8 rounded-xl border p-6 sm:p-10">
+    <section className="border-border-gray-light mt-4 rounded-xl border p-6 sm:p-10">
       <form
         className="flex flex-col gap-12"
         onSubmit={(event) => {
