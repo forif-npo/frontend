@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { AdminStudyDetail } from "../api";
+import { getStudyTagLabel } from "../constants";
 import type { Study } from "../types";
 
 const WEEKDAY_LABELS = [
@@ -113,7 +114,7 @@ export function StudyApprovalDetailDialog({
                     <td className="py-3">
                       {tags.length > 0 ? (
                         <span className="text-[15px] leading-[1.5]">
-                          {tags.join(", ")}
+                          {tags.map(getStudyTagLabel).join(", ")}
                         </span>
                       ) : (
                         <EmptyValue />

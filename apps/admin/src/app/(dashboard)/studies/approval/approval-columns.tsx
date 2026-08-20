@@ -3,7 +3,7 @@
 import { SortableHeader } from "@/components/list/sortable-header";
 import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
-import { WEEK_DAY_OPTIONS } from "../constants";
+import { getStudyTagLabel, WEEK_DAY_OPTIONS } from "../constants";
 import { Study } from "../types";
 
 const STATUS_LABELS: Record<Study["study_status"], string> = {
@@ -102,7 +102,11 @@ export const approvalColumns: ColumnDef<Study>[] = [
 
       if (!tags || tags.length === 0) return null;
 
-      return <div className="text-center text-sm">{tags.join(", ")}</div>;
+      return (
+        <div className="text-center text-sm">
+          {tags.map(getStudyTagLabel).join(", ")}
+        </div>
+      );
     },
   },
   {

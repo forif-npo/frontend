@@ -80,8 +80,25 @@ export const STUDY_TAG_OPTIONS = [
   { id: 35, name: "project", label: "프로젝트형" },
 ] as const;
 
-export const LEGACY_STUDY_TAG_IDS: Record<string, number> = {
-  개인개발: 5,
-  모바일: 6,
-  "프로그래밍 언어 기초": 2,
+const LEGACY_STUDY_TAGS: Record<string, (typeof STUDY_TAG_OPTIONS)[number]> = {
+  개인개발: STUDY_TAG_OPTIONS[4],
+  모바일: STUDY_TAG_OPTIONS[5],
+  "프로그래밍 언어 기초": STUDY_TAG_OPTIONS[1],
 };
+
+export const LEGACY_STUDY_TAG_IDS: Record<string, number> = Object.fromEntries(
+  Object.entries(LEGACY_STUDY_TAGS).map(([label, tag]) => [label, tag.id]),
+);
+
+function findStudyTag(value: string) {
+  return (
+    STUDY_TAG_OPTIONS.find(
+      (option) => option.name === value || option.label === value,
+    ) ?? LEGACY_STUDY_TAGS[value]
+  );
+}
+
+/** 웹 스터디 화면과 같은 한글 태그 명칭을 반환한다. */
+export function getStudyTagLabel(value: string): string {
+  return findStudyTag(value)?.label ?? value;
+}

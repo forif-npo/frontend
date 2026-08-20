@@ -29,7 +29,11 @@ import { columns } from "./columns";
 import { AutonomousStudyCreateDialog } from "./components/AutonomousStudyCreateDialog";
 import { StudyDeleteDialog } from "./components/StudyDeleteDialog";
 import { StudyEditDialog } from "./components/StudyEditDialog";
-import { EMPTY_STUDY_EDIT_FORM, STUDY_TAG_OPTIONS } from "./constants";
+import {
+  EMPTY_STUDY_EDIT_FORM,
+  getStudyTagLabel,
+  STUDY_TAG_OPTIONS,
+} from "./constants";
 import { parseOptionalNumber, toStudyEditForm } from "./form-utils";
 import { SemesterLabel, Study, StudyEditForm } from "./types";
 
@@ -103,7 +107,7 @@ export function StudiesView({
           (study.secondary_mentor_name
             ? ` (${study.secondary_mentor_name})`
             : ""),
-        태그: study.tags.join(", "),
+        태그: study.tags.map(getStudyTagLabel).join(", "),
         "한 줄 소개": study.one_liner,
         멘티수: study.mentee_count,
         모집상태: study.recruit_status === "APPLICABLE" ? "모집중" : "마감",
