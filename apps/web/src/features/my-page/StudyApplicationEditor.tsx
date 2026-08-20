@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -37,6 +39,7 @@ import {
   WEEKDAY_OPTIONS,
 } from "@/features/study/create/constants";
 import { TagSelectModal } from "@/features/study/create/components/TagSelectModal";
+import { StudyCreatePreviewModal } from "@/features/study/create/components/StudyCreatePreviewModal";
 import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
 import { fetchUserInfo } from "@/features/study/create/user-info";
 import { useStudyCreateData } from "@/features/study/create/useStudyCreateData";
@@ -152,6 +155,7 @@ export function StudyApplicationEditor({
   const router = useRouter();
   const { userInfo: currentUserInfo } = useStudyCreateData();
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isOneLinerEditing, setIsOneLinerEditing] = useState(false);
   const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
     string | null
@@ -734,27 +738,38 @@ export function StudyApplicationEditor({
         )}
 
         <div className="mt-4 flex items-center justify-between gap-4">
-          {application.can_cancel && (
+          <Button
+            variant="tertiary"
+            size="large"
+            type="button"
+            onClick={() => setIsCancelConfirmOpen(true)}
+            disabled={!application.can_cancel || isSubmitting || isCancelling}
+          >
+            {isCancelling ? "취소 중..." : "신청 취소"}
+          </Button>
+          <div className="flex items-center gap-4">
             <Button
-              variant="tertiary"
+              variant="primary"
+              size="large"
+              type="submit"
+              disabled={
+                (!isDirty && !hasReferenceUpdates) ||
+                isSubmitting ||
+                isCancelling
+              }
+            >
+              {isSubmitting ? "수정 중..." : "수정"}
+            </Button>
+            <Button
+              variant="secondary"
               size="large"
               type="button"
-              onClick={() => setIsCancelConfirmOpen(true)}
-              disabled={isSubmitting || isCancelling}
+              onClick={() => setIsPreviewOpen(true)}
+              disabled={!currentUserInfo || isSubmitting || isCancelling}
             >
-              {isCancelling ? "취소 중..." : "신청 취소"}
+              미리보기
             </Button>
-          )}
-          <Button
-            variant="primary"
-            size="large"
-            type="submit"
-            disabled={
-              (!isDirty && !hasReferenceUpdates) || isSubmitting || isCancelling
-            }
-          >
-            {isSubmitting ? "수정 중..." : "수정"}
-          </Button>
+          </div>
         </div>
       </form>
 
@@ -764,6 +779,15 @@ export function StudyApplicationEditor({
         onConfirm={handleTagsConfirm}
         selectedTags={selectedTags}
       />
+      {currentUserInfo && (
+        <StudyCreatePreviewModal
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          form={form}
+          userInfo={currentUserInfo}
+          title="스터디 수정 미리보기"
+        />
+      )}
       <AlertModal
         isOpen={isCancelConfirmOpen}
         description="스터디 개설 신청을 취소하시겠습니까? 이 작업은 되돌릴 수 없습니다."
