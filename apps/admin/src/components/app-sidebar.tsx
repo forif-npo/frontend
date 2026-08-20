@@ -1,5 +1,7 @@
 "use client";
 
+import { type MouseEvent } from "react";
+
 import { signOutAction } from "@/app/actions";
 import {
   Sidebar,
@@ -14,6 +16,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { LogoutIcon } from "@repo/assets/icons/krds";
 import {
@@ -107,9 +110,22 @@ const menuItems = {
 export function AppSidebar() {
   const pathname = usePathname();
   const { data, status } = useSession();
+  const { isMobile, setOpenMobile } = useSidebar();
   const isPresidentTeam = ["회장", "부회장"].includes(
     data?.user?.affiliation ?? "",
   );
+
+  const closeMobileSidebarOnNavigation = (
+    event: MouseEvent<HTMLDivElement>,
+  ) => {
+    if (
+      isMobile &&
+      event.target instanceof Element &&
+      event.target.closest("a")
+    ) {
+      setOpenMobile(false);
+    }
+  };
 
   return (
     <Sidebar collapsible="icon" className="scrollbar-hidden">
@@ -139,7 +155,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent onClickCapture={closeMobileSidebarOnNavigation}>
         {/* 대시보드 */}
         <SidebarGroup>
           <SidebarMenu>
