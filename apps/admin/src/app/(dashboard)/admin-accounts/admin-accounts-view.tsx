@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Crown, Pencil, ShieldCheck, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import {
   Dialog,
   DialogContent,
@@ -343,7 +344,9 @@ export function AdminAccountsView({
                     </TableCell>
                     <TableCell>{account.user_id}</TableCell>
                     <TableCell>{account.department ?? "-"}</TableCell>
-                    <TableCell>{account.phone_num ?? "-"}</TableCell>
+                    <TableCell>
+                      {formatPhoneNumber(account.phone_num) || "-"}
+                    </TableCell>
                     <TableCell>
                       {affiliationBadge(account.affiliation)}
                     </TableCell>

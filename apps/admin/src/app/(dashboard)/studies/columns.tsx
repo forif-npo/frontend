@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { SortableHeader } from "@/components/list/sortable-header";
 import { ColumnDef } from "@tanstack/react-table";
-import { WEEK_DAY_OPTIONS } from "./constants";
+import { getStudyTagLabel, WEEK_DAY_OPTIONS } from "./constants";
 import { Study } from "./types";
 
 const DIFFICULTY_LABELS = {
@@ -88,7 +88,11 @@ export const columns: ColumnDef<Study>[] = [
         return <div className="text-center text-sm">-</div>;
       }
 
-      return <div className="text-center text-sm">{tags.join(", ")}</div>;
+      return (
+        <div className="text-center text-sm">
+          {tags.map(getStudyTagLabel).join(", ")}
+        </div>
+      );
     },
   },
   {

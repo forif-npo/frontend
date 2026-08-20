@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Badge } from "@ui/components/server";
+import { toFileDownloadUrl } from "@core/utils/file-download";
 import { Study } from "@/types/study";
 import { KakaoMap } from "@/components/KakaoMap";
 import { MarkdownContent } from "@/components/MarkdownContent";
@@ -120,7 +121,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
         </h2>
 
         <table className="w-full">
-          <tbody className="divide-y divide-[#e5e8eb]">
+          <tbody className="divide-divider-gray-light divide-y">
             <tr>
               <td className="text-text-subtle w-[80px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[120px] md:py-4 md:pr-4 md:text-[17px]">
                 태그
@@ -203,7 +204,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
           스터디 상세 소개
         </h2>
 
-        <div className="flex flex-col items-center gap-4 rounded-[12px] bg-[#f4f5f6] p-4 md:gap-6 md:p-8">
+        <div className="bg-surface-gray-subtler flex flex-col items-center gap-4 rounded-[12px] p-4 md:gap-6 md:p-8">
           <div className="relative w-full overflow-hidden">
             <div
               ref={introRef}
@@ -212,13 +213,13 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
               <MarkdownContent content={study.explanation} />
             </div>
             {!isIntroExpanded && isClamped && (
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[72px] bg-gradient-to-t from-[#f4f5f6] to-transparent" />
+              <div className="from-surface-gray-subtler pointer-events-none absolute bottom-0 left-0 right-0 h-[72px] bg-gradient-to-t to-transparent" />
             )}
           </div>
 
           {isClamped && (
             <>
-              <div className="h-px w-full bg-[#cdd1d5]" />
+              <div className="bg-divider-gray-light h-px w-full" />
 
               <button
                 onClick={() => setIsIntroExpanded(!isIntroExpanded)}
@@ -288,7 +289,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
 
         <div className="flex items-start gap-2">
           <div className="flex h-[24px] w-5 items-center pl-1 md:h-[26px] md:w-6 md:pl-2">
-            <div className="h-1.5 w-1.5 rounded-[4px] bg-[#464c53]" />
+            <div className="bg-text-subtle h-1.5 w-1.5 rounded-[4px]" />
           </div>
           <p className="text-text-subtle flex-1 text-[15px] leading-[1.5] md:text-[17px]">
             웹사이트를 통한 온라인 신청
@@ -298,7 +299,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
         {study.requires_interview && (
           <div className="flex items-start gap-2">
             <div className="flex h-[24px] w-5 items-center pl-1 md:h-[26px] md:w-6 md:pl-2">
-              <div className="h-1.5 w-1.5 rounded-[4px] bg-[#464c53]" />
+              <div className="bg-text-subtle h-1.5 w-1.5 rounded-[4px]" />
             </div>
             <p className="text-text-subtle flex-1 text-[15px] leading-[1.5] md:text-[17px]">
               개별 면접 진행
@@ -349,10 +350,10 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
             </h3>
 
             <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
-              <div className="min-w-[360px] overflow-hidden rounded-[8px] border border-[#e5e8eb]">
+              <div className="border-divider-gray-light min-w-[360px] overflow-hidden rounded-[8px] border">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-[#f4f5f6]">
+                    <tr className="bg-surface-gray-subtler">
                       <th className="text-text-subtle px-3 py-3 text-left text-[14px] font-bold leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
                         제목
                       </th>
@@ -363,33 +364,49 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
                       )}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#e5e8eb]">
-                    {references.map((resource, index) => (
-                      <tr
-                        key={index}
-                        className="cursor-pointer hover:bg-[#f8f9fa]"
-                      >
-                        <td className="text-text-basic px-3 py-3 text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
-                          {resource.url ? (
-                            <Link
-                              href={resource.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="cursor-pointer hover:underline"
-                            >
-                              {resource.title}
-                            </Link>
-                          ) : (
-                            resource.title
-                          )}
-                        </td>
-                        {references.some((r) => r.category) && (
-                          <td className="text-text-subtle px-3 py-3 text-right text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
-                            {resource.category}
+                  <tbody className="divide-divider-gray-light divide-y">
+                    {references.map((resource, index) => {
+                      const resourceUrl = resource.content ?? resource.url;
+                      const isFile = resource.reference_type === "FILE";
+                      const href = resourceUrl
+                        ? isFile
+                          ? toFileDownloadUrl(resourceUrl)
+                          : resourceUrl
+                        : null;
+                      const title =
+                        resource.file_name ??
+                        resource.title ??
+                        resourceUrl ??
+                        "-";
+
+                      return (
+                        <tr
+                          key={resource.id ?? index}
+                          className="hover:bg-surface-gray-subtler cursor-pointer"
+                        >
+                          <td className="text-text-basic px-3 py-3 text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
+                            {href ? (
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download={isFile || undefined}
+                                className="cursor-pointer hover:underline"
+                              >
+                                {title}
+                              </a>
+                            ) : (
+                              title
+                            )}
                           </td>
-                        )}
-                      </tr>
-                    ))}
+                          {references.some((r) => r.category) && (
+                            <td className="text-text-subtle px-3 py-3 text-right text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
+                              {resource.category}
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

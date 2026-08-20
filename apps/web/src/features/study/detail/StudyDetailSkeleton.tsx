@@ -1,5 +1,9 @@
 function Bone({ className }: { className?: string }) {
-  return <div className={`animate-pulse rounded bg-gray-200 ${className}`} />;
+  return (
+    <div
+      className={`bg-surface-gray-subtle animate-pulse rounded ${className}`}
+    />
+  );
 }
 
 function OverviewTableSkeleton() {
@@ -17,7 +21,7 @@ function OverviewTableSkeleton() {
   return (
     <div className="flex flex-col">
       <Bone className="mb-4 h-7 w-28 md:mb-6" />
-      <div className="divide-y divide-[#e5e8eb]">
+      <div className="divide-divider-gray-light divide-y">
         {rows.map((row, i) => (
           <div key={i} className="flex items-center py-3 md:py-4">
             <Bone className={`mr-3 h-5 shrink-0 md:mr-4 ${row.labelWidth}`} />
@@ -33,7 +37,7 @@ function IntroSkeleton() {
   return (
     <div className="flex flex-col gap-6">
       <Bone className="h-7 w-36" />
-      <div className="flex flex-col gap-4 rounded-[12px] bg-[#f4f5f6] p-4 md:gap-6 md:p-8">
+      <div className="bg-surface-gray-subtler flex flex-col gap-4 rounded-[12px] p-4 md:gap-6 md:p-8">
         <div className="space-y-2">
           <Bone className="h-4 w-full" />
           <Bone className="h-4 w-full" />
@@ -42,7 +46,7 @@ function IntroSkeleton() {
           <Bone className="h-4 w-full" />
           <Bone className="h-4 w-2/3" />
         </div>
-        <div className="h-px w-full bg-[#cdd1d5]" />
+        <div className="bg-divider-gray-light h-px w-full" />
         <Bone className="mx-auto h-5 w-40" />
       </div>
     </div>
@@ -53,8 +57,8 @@ function CurriculumSkeleton() {
   return (
     <div className="flex flex-col gap-6">
       <Bone className="h-7 w-24" />
-      <div className="overflow-hidden rounded-[8px] border border-[#e5e8eb]">
-        <div className="flex bg-[#eef2f7]">
+      <div className="border-divider-gray-light overflow-hidden rounded-[8px] border">
+        <div className="bg-surface-secondary-subtler flex">
           <div className="w-[80px] shrink-0 px-3 py-2 md:w-[120px] md:px-4">
             <Bone className="h-4 w-8" />
           </div>
@@ -66,7 +70,7 @@ function CurriculumSkeleton() {
           </div>
         </div>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex border-t border-[#e5e8eb]">
+          <div key={i} className="border-divider-gray-light flex border-t">
             <div className="w-[80px] shrink-0 px-3 py-2 md:w-[120px] md:px-4 md:py-3">
               {i % 2 === 0 && <Bone className="h-4 w-6" />}
             </div>
@@ -94,7 +98,7 @@ function ProcessSkeleton() {
         </div>
         <div className="flex flex-col gap-4">
           <Bone className="h-6 w-32" />
-          <div className="rounded-[12px] border border-[#b1b8be] bg-white p-4 md:p-8">
+          <div className="bg-surface-white border-border-gray rounded-[12px] border p-4 md:p-8">
             {[1, 2, 3].map((step) => (
               <div key={step} className="flex gap-4 py-3">
                 <Bone className="h-6 w-6 shrink-0 rounded-[4px]" />

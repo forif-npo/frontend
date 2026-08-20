@@ -8,6 +8,7 @@ import {
 } from "@ui/components/client";
 import { CircleMinus, CirclePlus } from "@repo/assets/icons/lucide";
 import type { StudyOpenValues } from "@core/schemas";
+import { toFileDownloadUrl } from "@core/utils/file-download";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import { useState } from "react";
 import { REFERENCE_TYPE_OPTIONS } from "../constants";
@@ -27,6 +28,17 @@ type ReferenceFieldError = {
 
 function isFileValue(value: ReferenceValue): value is File {
   return typeof File !== "undefined" && value instanceof File;
+}
+
+function getFileName(url: string, fileName?: string | null) {
+  if (fileName) return fileName;
+
+  try {
+    const pathname = new URL(url).pathname;
+    return decodeURIComponent(pathname.split("/").at(-1) || "첨부파일");
+  } catch {
+    return "첨부파일";
+  }
 }
 
 function getReferenceErrors(
@@ -71,6 +83,9 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
     setValue(`references.${index}.value`, type === "DOWNLOAD" ? null : "", {
       shouldDirty: true,
     });
+    setValue(`references.${index}.fileName`, null, {
+      shouldDirty: true,
+    });
   };
 
   const uploadReferenceFile = async (index: number, file: File) => {
@@ -90,6 +105,9 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
 
   const removeReferenceFile = (index: number) => {
     setValue(`references.${index}.value`, null, {
+      shouldDirty: true,
+    });
+    setValue(`references.${index}.fileName`, null, {
       shouldDirty: true,
     });
   };
@@ -115,6 +133,12 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
         <div className="flex flex-col gap-4">
           {references.map((reference, index) => {
             const valueError = referenceErrors[index]?.value?.message;
+            const existingFileUrl =
+              reference.type === "DOWNLOAD" &&
+              typeof reference.value === "string" &&
+              reference.value.length > 0
+                ? reference.value
+                : null;
 
             return (
               <div key={index} className="flex items-start gap-3">
@@ -139,18 +163,40 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
                 <div className="min-w-0 flex-1">
                   {reference.type === "DOWNLOAD" ? (
                     <>
-                      <FileUpload
-                        title="자료 파일 업로드"
-                        description={`업로드할 자료 파일을 선택해주세요. (최대 ${REFERENCE_FILE_MAX_SIZE_MB}MB)`}
-                        multiple={false}
-                        maxFiles={1}
-                        files={
-                          isFileValue(reference.value) ? [reference.value] : []
-                        }
-                        onUpload={(file) => uploadReferenceFile(index, file)}
-                        onRemove={() => removeReferenceFile(index)}
-                        className="p-3"
-                      />
+                      {existingFileUrl ? (
+                        <div className="border-border-gray-light bg-surface-gray-subtler flex min-h-12 items-center justify-between gap-3 rounded-lg border px-3 py-2">
+                          <span className="text-text-basic min-w-0 truncate text-sm">
+                            {getFileName(existingFileUrl, reference.fileName)}
+                          </span>
+                          <a
+                            href={toFileDownloadUrl(existingFileUrl)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download={getFileName(
+                              existingFileUrl,
+                              reference.fileName,
+                            )}
+                            className="text-text-primary shrink-0 text-sm font-medium underline underline-offset-2"
+                          >
+                            다운로드
+                          </a>
+                        </div>
+                      ) : (
+                        <FileUpload
+                          title="자료 파일 업로드"
+                          description={`업로드할 자료 파일을 선택해주세요. (최대 ${REFERENCE_FILE_MAX_SIZE_MB}MB)`}
+                          multiple={false}
+                          maxFiles={1}
+                          files={
+                            isFileValue(reference.value)
+                              ? [reference.value]
+                              : []
+                          }
+                          onUpload={(file) => uploadReferenceFile(index, file)}
+                          onRemove={() => removeReferenceFile(index)}
+                          className="p-3"
+                        />
+                      )}
                       {valueError && (
                         <p className="text-text-danger mt-1 text-[14px]">
                           {valueError}

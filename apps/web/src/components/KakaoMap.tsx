@@ -97,7 +97,10 @@ export function KakaoMap({
   return (
     <div
       ref={mapRef}
-      className={className ?? "h-[260px] w-full rounded-[8px] md:h-[360px]"}
+      className={
+        className ??
+        "relative z-0 h-[260px] w-full overflow-hidden rounded-[8px] md:h-[360px]"
+      }
     />
   );
 }

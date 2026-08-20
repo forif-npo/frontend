@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import type { StudyUpdateRequest } from "@core/types/api";
+import type { SortingState } from "@tanstack/react-table";
 import { handleApiError } from "@core/utils/api-client";
 import { Download, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,7 +29,11 @@ import { columns } from "./columns";
 import { AutonomousStudyCreateDialog } from "./components/AutonomousStudyCreateDialog";
 import { StudyDeleteDialog } from "./components/StudyDeleteDialog";
 import { StudyEditDialog } from "./components/StudyEditDialog";
-import { EMPTY_STUDY_EDIT_FORM, STUDY_TAG_OPTIONS } from "./constants";
+import {
+  EMPTY_STUDY_EDIT_FORM,
+  getStudyTagLabel,
+  STUDY_TAG_OPTIONS,
+} from "./constants";
 import { parseOptionalNumber, toStudyEditForm } from "./form-utils";
 import { SemesterLabel, Study, StudyEditForm } from "./types";
 
@@ -40,6 +45,7 @@ interface StudiesViewProps {
   totalPages?: number;
   pageSize?: number;
   initialSearch?: string;
+  initialSorting?: SortingState;
 }
 
 export function StudiesView({
@@ -50,6 +56,7 @@ export function StudiesView({
   totalPages = 1,
   pageSize = 20,
   initialSearch = "",
+  initialSorting = [],
 }: StudiesViewProps) {
   const {
     searchQuery,
@@ -57,10 +64,12 @@ export function StudiesView({
     handleSemesterChange,
     handleSearch,
     handlePageChange,
+    handleSortingChange,
   } = useListViewFilters({
     route: "/studies",
     currentSemester,
     initialSearch,
+    initialSorting,
   });
   const router = useRouter();
   const editRequestSeq = useRef(0);
@@ -98,7 +107,7 @@ export function StudiesView({
           (study.secondary_mentor_name
             ? ` (${study.secondary_mentor_name})`
             : ""),
-        태그: study.tags.join(", "),
+        태그: study.tags.map(getStudyTagLabel).join(", "),
         "한 줄 소개": study.one_liner,
         멘티수: study.mentee_count,
         모집상태: study.recruit_status === "APPLICABLE" ? "모집중" : "마감",
@@ -230,7 +239,6 @@ export function StudiesView({
       study_name: studyName,
       one_liner: oneLiner,
       explanation: editForm.explanation.trim(),
-      goal: editForm.goal.trim(),
       start_time: editForm.start_time,
       end_time: editForm.end_time,
       week_day: weekDay,
@@ -350,6 +358,8 @@ export function StudiesView({
           columns={columns}
           data={initialData}
           showPagination={false}
+          sorting={initialSorting}
+          onSortingChange={handleSortingChange}
           renderRowActions={(study) => (
             <>
               <DropdownMenuItem

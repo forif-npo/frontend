@@ -3,12 +3,14 @@ import { getCurrentSemester } from "@core/semester/api";
 import { fetchMentors } from "./api";
 import { MentorsView } from "./mentors-view";
 import { MentorSemesterLabel } from "./types";
+import { parseSortingParams } from "@/lib/list-sorting";
 
 interface PageProps {
   searchParams: Promise<{
     semester?: string;
     search?: string;
     page?: string;
+    sort?: string | string[];
   }>;
 }
 
@@ -26,6 +28,7 @@ export default async function Page({ searchParams }: PageProps) {
     (params.semester as MentorSemesterLabel) ||
     (currentSemester.label as MentorSemesterLabel);
   const accessToken = session?.access_token;
+  const sorting = parseSortingParams(params.sort);
 
   if (!accessToken) {
     return (
@@ -43,6 +46,7 @@ export default async function Page({ searchParams }: PageProps) {
       search,
       semester: activeSemester,
       accessToken,
+      sorting,
     });
 
     return (
@@ -54,6 +58,7 @@ export default async function Page({ searchParams }: PageProps) {
         totalPages={mentorsData.totalPages}
         pageSize={mentorsData.pageSize}
         initialSearch={search ?? ""}
+        initialSorting={sorting}
       />
     );
   } catch (error) {

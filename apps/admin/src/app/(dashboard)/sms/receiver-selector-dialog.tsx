@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Users } from "lucide-react";
 import { handleApiError } from "@core/utils/api-client";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -290,7 +291,8 @@ export function ReceiverSelectorDialog({
                 <div className="flex-1">
                   <div className="text-sm font-medium">{receiver.name}</div>
                   <div className="text-muted-foreground text-xs">
-                    {receiver.phoneNumber} | {receiver.department}
+                    {formatPhoneNumber(receiver.phoneNumber)} |{" "}
+                    {receiver.department}
                     {receiver.currentStudyName &&
                       ` | ${receiver.currentStudyName}`}
                   </div>

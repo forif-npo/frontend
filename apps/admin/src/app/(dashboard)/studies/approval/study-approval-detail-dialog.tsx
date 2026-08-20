@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { toFileDownloadUrl } from "@core/utils/file-download";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { AdminStudyDetail } from "../api";
+import { getStudyTagLabel } from "../constants";
 import type { Study } from "../types";
 
 const WEEKDAY_LABELS = [
@@ -112,7 +114,7 @@ export function StudyApprovalDetailDialog({
                     <td className="py-3">
                       {tags.length > 0 ? (
                         <span className="text-[15px] leading-[1.5]">
-                          {tags.join(", ")}
+                          {tags.map(getStudyTagLabel).join(", ")}
                         </span>
                       ) : (
                         <EmptyValue />
@@ -299,10 +301,11 @@ function ReferenceContent({
 }: {
   reference: NonNullable<AdminStudyDetail["references"]>[number];
 }) {
+  const safeContentUrl = getSafeExternalUrl(reference.content);
   const href =
-    reference.reference_type === "FILE"
-      ? getFileDownloadUrl(reference.content)
-      : getSafeExternalUrl(reference.content);
+    reference.reference_type === "FILE" && safeContentUrl
+      ? toFileDownloadUrl(safeContentUrl)
+      : safeContentUrl;
 
   if (href) {
     return (
@@ -313,29 +316,12 @@ function ReferenceContent({
         rel={reference.reference_type === "URL" ? "noreferrer" : undefined}
         className="text-primary break-all underline underline-offset-2"
       >
-        {reference.content}
+        {reference.file_name ?? reference.content}
       </a>
     );
   }
 
   return <span className="break-all">{reference.content || "-"}</span>;
-}
-
-function getFileDownloadUrl(value: string | null) {
-  const href = getSafeExternalUrl(value);
-  if (!href) return null;
-
-  try {
-    const url = new URL(href);
-
-    if (url.pathname.includes("/api/v1/files/")) {
-      url.searchParams.set("download", "true");
-    }
-
-    return url.toString();
-  } catch {
-    return href;
-  }
 }
 
 function getSafeExternalUrl(value: string | null) {

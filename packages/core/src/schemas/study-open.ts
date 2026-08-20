@@ -96,6 +96,7 @@ export const studyOpenSchema = createSchema()(
             id: z.string().optional(),
             type: z.string().min(1, "유형을 선택해주세요."),
             value: z.union([z.string(), z.custom<File | null>(isFileValue)]),
+            fileName: z.string().nullable().optional(),
           }),
         )
         .default([]),

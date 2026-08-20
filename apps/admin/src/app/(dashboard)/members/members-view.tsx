@@ -12,6 +12,8 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
+import { formatPhoneNumber } from "@core/utils/phone-number";
+import type { SortingState } from "@tanstack/react-table";
 import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,6 +33,7 @@ interface MembersViewProps {
   pageSize?: number;
   initialSearch?: string;
   activeSemesterLabel: string;
+  initialSorting?: SortingState;
 }
 
 export function MembersView({
@@ -42,6 +45,7 @@ export function MembersView({
   pageSize = 20,
   initialSearch = "",
   activeSemesterLabel,
+  initialSorting = [],
 }: MembersViewProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -51,10 +55,12 @@ export function MembersView({
     handleSemesterChange,
     handleSearch,
     handlePageChange,
+    handleSortingChange,
   } = useListViewFilters({
     route: "/members",
     currentSemester,
     initialSearch,
+    initialSorting,
   });
 
   const handleDownloadExcel = () => {
@@ -68,7 +74,7 @@ export function MembersView({
         학번: member.userId,
         학과: member.department,
         이름: member.userName,
-        전화번호: member.phoneNum,
+        전화번호: formatPhoneNumber(member.phoneNum),
         "멘토 여부": member.isMentor ? "Y" : "N",
         "운영진 여부": member.isAdmin ? "Y" : "N",
       })),
@@ -157,6 +163,8 @@ export function MembersView({
           columns={columns}
           data={initialData}
           showPagination={false}
+          sorting={initialSorting}
+          onSortingChange={handleSortingChange}
           renderRowActions={(member) => (
             <>
               <DropdownMenuItem onClick={() => handleEditMember(member)}>

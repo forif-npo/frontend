@@ -15,6 +15,7 @@ const STATUS_LABELS: Record<StudyApplicationSummary["study_status"], string> = {
   PENDING: "승인 대기",
   RE_APPLIED: "재신청",
   REJECTED: "반려",
+  APPROVED: "승인",
 };
 
 interface StudyApplicationSectionProps {
@@ -93,7 +94,13 @@ export function StudyApplicationSection({
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   label={STATUS_LABELS[selectedApplication.study_status]}
-                  variant="primary"
+                  variant={
+                    selectedApplication.study_status === "REJECTED"
+                      ? "danger"
+                      : selectedApplication.study_status === "RE_APPLIED"
+                        ? "warning"
+                        : "primary"
+                  }
                   appearance="solid-pastel"
                   size="small"
                 />
@@ -102,8 +109,8 @@ export function StudyApplicationSection({
                 </span>
               </div>
               {selectedApplication.reject_reason && (
-                <div className="bg-surface-danger-subtler text-text-danger rounded-2 mt-1 p-3 text-[14px] leading-[1.6]">
-                  <span className="font-bold">반려 사유</span> ·{" "}
+                <div className="bg-surface-danger-subtler text-text-basic rounded-2 mt-1 p-3 text-[14px] leading-[1.6]">
+                  <span className="font-bold">반려 사유</span>:{" "}
                   {selectedApplication.reject_reason}
                 </div>
               )}
