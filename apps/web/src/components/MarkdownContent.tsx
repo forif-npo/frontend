@@ -128,7 +128,7 @@ const components: Components = {
         className={clsx(
           isBlockCode
             ? "text-text-basic-inverse text-sm"
-            : "bg-surface-gray-subtler text-text-basic rounded px-1.5 py-0.5 text-[0.9em]",
+            : "bg-surface-secondary-subtler border-border-secondary-light text-text-secondary rounded border px-1.5 py-0.5 text-[0.9em] font-medium",
           className,
         )}
         {...rest}
@@ -140,7 +140,7 @@ const components: Components = {
     return (
       <pre
         className={clsx(
-          "bg-surface-inverse my-5 overflow-x-auto rounded-lg p-4 leading-7",
+          "bg-gray-70 [&>code]:text-gray-5 my-5 overflow-x-auto rounded-lg p-4 leading-7 [&>code]:border-0 [&>code]:bg-transparent [&>code]:p-0",
           className,
         )}
         {...rest}
@@ -166,7 +166,7 @@ const components: Components = {
     return (
       <th
         className={clsx(
-          "border-border-gray-light bg-surface-gray-subtler border px-3 py-2 font-semibold",
+          "border-border-gray-light bg-surface-secondary-subtler border px-3 py-2 text-center font-semibold",
           className,
         )}
         {...rest}
