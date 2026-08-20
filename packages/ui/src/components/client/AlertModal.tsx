@@ -12,6 +12,7 @@ export interface AlertModalProps {
   confirmLabel?: string;
   cancelLabel?: string;
   showCancelButton?: boolean;
+  descriptionClassName?: string;
 }
 
 export function AlertModal({
@@ -23,6 +24,7 @@ export function AlertModal({
   confirmLabel = "확인",
   cancelLabel = "취소",
   showCancelButton,
+  descriptionClassName,
 }: AlertModalProps) {
   const isConfirmation = Boolean(onConfirm);
   const shouldShowCancelButton = showCancelButton ?? isConfirmation;
@@ -55,7 +57,11 @@ export function AlertModal({
       layout="compact"
     >
       <div className="flex min-h-[96px] items-center">
-        <p className="text-text-basic text-body-m">{description}</p>
+        <p
+          className={`text-text-basic text-body-m ${descriptionClassName ?? ""}`}
+        >
+          {description}
+        </p>
       </div>
     </Modal>
   );

@@ -335,7 +335,12 @@ export function StudyApplicationEditor({
   };
 
   const handleSubmit = async () => {
-    if ((!isDirty && !hasReferenceUpdates) || isSubmitting || isCancelling) {
+    if (
+      !application.can_modify ||
+      (!isDirty && !hasReferenceUpdates) ||
+      isSubmitting ||
+      isCancelling
+    ) {
       return;
     }
     if (!(await form.trigger())) {
@@ -365,7 +370,7 @@ export function StudyApplicationEditor({
   };
 
   const handleCancel = async () => {
-    if (isSubmitting || isCancelling) return;
+    if (!application.can_cancel || isSubmitting || isCancelling) return;
 
     setIsCancelling(true);
     setMessage(null);
@@ -388,341 +393,345 @@ export function StudyApplicationEditor({
           void handleSubmit();
         }}
       >
-        <section className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3 rounded-xl border border-[#b1b8be] p-5">
-            <div className="flex items-center justify-between gap-3">
-              <StudySectionTitle>멘토 추가</StudySectionTitle>
-              {secondaryMentorId !== null && (
+        <fieldset disabled={!application.can_modify} className="contents">
+          <section className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3 rounded-xl border border-[#b1b8be] p-5">
+              <div className="flex items-center justify-between gap-3">
+                <StudySectionTitle>멘토 추가</StudySectionTitle>
+                {secondaryMentorId !== null && (
+                  <button
+                    type="button"
+                    className="text-text-subtle hover:text-text-danger text-sm"
+                    onClick={handleSecondaryMentorRemove}
+                  >
+                    멘토 제거
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <TextInput
+                  id="secondaryMentorId"
+                  length="full"
+                  placeholder="추가할 멘토의 학번을 입력해주세요"
+                  value={mentorSearchValue}
+                  onChange={(event) => {
+                    setMentorSearchValue(event.target.value);
+                    setMentorError(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      void handleSecondaryMentorSearch();
+                    }
+                  }}
+                />
                 <button
                   type="button"
-                  className="text-text-subtle hover:text-text-danger text-sm"
-                  onClick={handleSecondaryMentorRemove}
+                  onClick={() => void handleSecondaryMentorSearch()}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                  aria-label="멘토 검색"
                 >
-                  멘토 제거
+                  <SearchIcon />
                 </button>
+              </div>
+              {secondaryMentor && (
+                <p className="text-text-basic text-sm">
+                  {secondaryMentor.name} · {secondaryMentor.department}
+                </p>
+              )}
+              {mentorError && (
+                <p className="text-text-danger text-sm">{mentorError}</p>
               )}
             </div>
-            <div className="relative">
-              <TextInput
-                id="secondaryMentorId"
-                length="full"
-                placeholder="추가할 멘토의 학번을 입력해주세요"
-                value={mentorSearchValue}
-                onChange={(event) => {
-                  setMentorSearchValue(event.target.value);
-                  setMentorError(null);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    void handleSecondaryMentorSearch();
-                  }
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => void handleSecondaryMentorSearch()}
-                className="absolute right-4 top-1/2 -translate-y-1/2"
-                aria-label="멘토 검색"
-              >
-                <SearchIcon />
-              </button>
-            </div>
-            {secondaryMentor && (
-              <p className="text-text-basic text-sm">
-                {secondaryMentor.name} · {secondaryMentor.department}
+            <input
+              id="studyName"
+              className="text-text-bolder placeholder:text-text-subtle w-full bg-transparent text-[28px] font-bold leading-[1.5] tracking-[1px] outline-none sm:text-[40px]"
+              placeholder="스터디 이름을 입력해주세요"
+              {...register("studyName")}
+            />
+            <input
+              id="oneLiner"
+              className={`placeholder:text-text-subtle-inverse w-full rounded-lg border-0 px-4 py-3 text-[15px] font-medium leading-[1.6] text-sky-900 outline-none focus:border-0 focus:ring-0 focus-visible:border-0 focus-visible:ring-0 md:text-[19px] ${oneLiner?.trim() && !isOneLinerEditing ? "bg-sky-100" : "bg-transparent"}`}
+              placeholder="한 줄 소개를 입력해주세요"
+              {...oneLinerField}
+              onFocus={() => setIsOneLinerEditing(true)}
+              onBlur={(event) => {
+                oneLinerField.onBlur(event);
+                setIsOneLinerEditing(false);
+              }}
+            />
+            {(errors.studyName || errors.oneLiner) && (
+              <p className="text-text-danger text-[14px]">
+                {errors.studyName?.message ?? errors.oneLiner?.message}
               </p>
             )}
-            {mentorError && (
-              <p className="text-text-danger text-sm">{mentorError}</p>
-            )}
-          </div>
-          <input
-            id="studyName"
-            className="text-text-bolder placeholder:text-text-subtle w-full bg-transparent text-[28px] font-bold leading-[1.5] tracking-[1px] outline-none sm:text-[40px]"
-            placeholder="스터디 이름을 입력해주세요"
-            {...register("studyName")}
-          />
-          <input
-            id="oneLiner"
-            className={`placeholder:text-text-subtle-inverse w-full rounded-lg border-0 px-4 py-3 text-[15px] font-medium leading-[1.6] text-sky-900 outline-none focus:border-0 focus:ring-0 focus-visible:border-0 focus-visible:ring-0 md:text-[19px] ${oneLiner?.trim() && !isOneLinerEditing ? "bg-sky-100" : "bg-transparent"}`}
-            placeholder="한 줄 소개를 입력해주세요"
-            {...oneLinerField}
-            onFocus={() => setIsOneLinerEditing(true)}
-            onBlur={(event) => {
-              oneLinerField.onBlur(event);
-              setIsOneLinerEditing(false);
-            }}
-          />
-          {(errors.studyName || errors.oneLiner) && (
-            <p className="text-text-danger text-[14px]">
-              {errors.studyName?.message ?? errors.oneLiner?.message}
-            </p>
-          )}
 
-          <div className="flex flex-col gap-2">
-            <StudySectionTitle required>태그</StudySectionTitle>
-            <div className="flex flex-wrap items-center gap-2">
-              {selectedTags.map((tag) => (
+            <div className="flex flex-col gap-2">
+              <StudySectionTitle required>태그</StudySectionTitle>
+              <div className="flex flex-wrap items-center gap-2">
+                {selectedTags.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() =>
+                      setValue(
+                        "tags",
+                        selectedTags.filter(
+                          (selectedTag) => selectedTag !== tag,
+                        ),
+                        { shouldDirty: true, shouldValidate: true },
+                      )
+                    }
+                    className="flex h-8 items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2"
+                  >
+                    <span className="text-text-primary text-[17px] leading-[1.5]">
+                      {tag}
+                    </span>
+                  </button>
+                ))}
                 <button
-                  key={tag}
                   type="button"
-                  onClick={() =>
-                    setValue(
-                      "tags",
-                      selectedTags.filter((selectedTag) => selectedTag !== tag),
-                      { shouldDirty: true, shouldValidate: true },
-                    )
-                  }
-                  className="flex h-8 items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2"
+                  onClick={() => setIsTagModalOpen(true)}
+                  className="text-text-subtle hover:text-text-basic transition-colors"
+                  aria-label="태그 편집"
                 >
-                  <span className="text-text-primary text-[17px] leading-[1.5]">
-                    {tag}
-                  </span>
+                  <CirclePlus className="h-6 w-6" />
                 </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setIsTagModalOpen(true)}
-                className="text-text-subtle hover:text-text-basic transition-colors"
-                aria-label="태그 편집"
-              >
-                <CirclePlus className="h-6 w-6" />
-              </button>
+              </div>
+              {errors.tags && (
+                <p className="text-text-danger text-[14px]">
+                  {errors.tags.message}
+                </p>
+              )}
             </div>
-            {errors.tags && (
-              <p className="text-text-danger text-[14px]">
-                {errors.tags.message}
-              </p>
-            )}
-          </div>
-        </section>
+          </section>
 
-        <section className="flex flex-col gap-6">
-          <StudySectionTitle>썸네일</StudySectionTitle>
-          <div className="flex flex-col gap-2">
-            {application.study.thumbnail_image && !thumbnail && (
-              <img
-                src={application.study.thumbnail_image}
-                alt={`${application.study.study_name} 썸네일`}
-                className="max-h-72 w-full rounded-lg border object-contain"
+          <section className="flex flex-col gap-6">
+            <StudySectionTitle>썸네일</StudySectionTitle>
+            <div className="flex flex-col gap-2">
+              {application.study.thumbnail_image && !thumbnail && (
+                <img
+                  src={application.study.thumbnail_image}
+                  alt={`${application.study.study_name} 썸네일`}
+                  className="max-h-72 w-full rounded-lg border object-contain"
+                />
+              )}
+              <FileUpload
+                title="새 이미지 파일 선택 (jpg, jpeg, png)"
+                description="권장 크기 1080px * 720px, 최대 5MB"
+                accept="image/jpeg,image/png"
+                multiple={false}
+                maxFiles={1}
+                files={thumbnail ? [thumbnail] : []}
+                onUpload={handleThumbnailUpload}
+                onRemove={() =>
+                  setValue("thumbnail", null, { shouldDirty: true })
+                }
               />
-            )}
-            <FileUpload
-              title="새 이미지 파일 선택 (jpg, jpeg, png)"
-              description="권장 크기 1080px * 720px, 최대 5MB"
-              accept="image/jpeg,image/png"
-              multiple={false}
-              maxFiles={1}
-              files={thumbnail ? [thumbnail] : []}
-              onUpload={handleThumbnailUpload}
-              onRemove={() =>
-                setValue("thumbnail", null, { shouldDirty: true })
-              }
-            />
-          </div>
-        </section>
+            </div>
+          </section>
 
-        <section className="flex flex-col gap-6">
-          <StudySectionTitle required>스터디 소개</StudySectionTitle>
-          <div className="flex flex-col gap-1">
-            <TextArea
-              id="introduction"
-              size="large"
-              maxLength={3000}
-              {...register("introduction")}
-            />
-            {errors.introduction && (
-              <p className="text-text-danger text-[14px]">
-                {errors.introduction.message}
-              </p>
-            )}
-          </div>
-          <Controller
-            control={control}
-            name="isOnline"
-            render={({ field: { value, onChange } }) => (
-              <Checkbox
-                id="isOnline"
-                label="온라인으로 진행합니다."
-                checked={value}
-                onChange={(checked) => {
-                  onChange(checked);
-                  if (checked) {
-                    setValue("location", "온라인", { shouldDirty: true });
-                    setValue("room", "", { shouldDirty: true });
-                  } else if (selectedLocation === "온라인") {
-                    setValue("location", "", { shouldDirty: true });
-                  }
-                }}
+          <section className="flex flex-col gap-6">
+            <StudySectionTitle required>스터디 소개</StudySectionTitle>
+            <div className="flex flex-col gap-1">
+              <TextArea
+                id="introduction"
+                size="large"
+                maxLength={3000}
+                {...register("introduction")}
               />
-            )}
-          />
-        </section>
-
-        <section className="flex flex-col gap-6">
-          <StudySectionTitle required>진행 장소 / 요일</StudySectionTitle>
-          <div className="flex flex-wrap gap-2">
+              {errors.introduction && (
+                <p className="text-text-danger text-[14px]">
+                  {errors.introduction.message}
+                </p>
+              )}
+            </div>
             <Controller
               control={control}
-              name="location"
+              name="isOnline"
               render={({ field: { value, onChange } }) => (
-                <SelectBox
-                  id="location"
-                  value={value || null}
-                  options={[...LOCATION_OPTIONS]}
-                  placeholder="장소를 선택해주세요"
-                  onChange={onChange}
-                  invalid={Boolean(errors.location)}
+                <Checkbox
+                  id="isOnline"
+                  label="온라인으로 진행합니다."
+                  checked={value}
+                  onChange={(checked) => {
+                    onChange(checked);
+                    if (checked) {
+                      setValue("location", "온라인", { shouldDirty: true });
+                      setValue("room", "", { shouldDirty: true });
+                    } else if (selectedLocation === "온라인") {
+                      setValue("location", "", { shouldDirty: true });
+                    }
+                  }}
                 />
               )}
             />
-            <TextInput
-              id="room"
-              placeholder="강의실(호)"
-              disabled={isRoomDisabled}
-              invalid={Boolean(errors.room)}
-              {...register("room")}
-            />
-            <Controller
-              control={control}
-              name="weekDay"
-              render={({ field: { value, onChange } }) => (
-                <SelectBox
-                  id="weekDay"
-                  value={value || null}
-                  options={[...WEEKDAY_OPTIONS]}
-                  placeholder="요일"
-                  onChange={onChange}
-                  invalid={Boolean(errors.weekDay)}
-                />
-              )}
-            />
-          </div>
-          {(errors.location || errors.room || errors.weekDay) && (
-            <p className="text-text-danger text-[14px]">
-              {errors.location?.message ??
-                errors.room?.message ??
-                errors.weekDay?.message}
-            </p>
-          )}
-        </section>
+          </section>
 
-        <section className="flex flex-col gap-6">
-          <StudySectionTitle required>진행 시간</StudySectionTitle>
-          <div className="flex max-w-[480px] items-center gap-2">
-            <TextInput
-              id="startTime"
-              length="full"
-              placeholder="HH:MM"
-              invalid={Boolean(errors.startTime)}
-              {...registerTimeInput("startTime")}
-            />
-            <Minus className="text-text-subtle h-6 w-6 shrink-0" />
-            <TextInput
-              id="endTime"
-              length="full"
-              placeholder="HH:MM"
-              invalid={Boolean(errors.endTime)}
-              {...registerTimeInput("endTime")}
-            />
-          </div>
-          {(errors.startTime || errors.endTime) && (
-            <p className="text-text-danger text-[14px]">
-              {errors.startTime?.message ?? errors.endTime?.message}
-            </p>
-          )}
-        </section>
-
-        <section className="flex flex-col gap-6">
-          <StudySectionTitle required>커리큘럼</StudySectionTitle>
-          <StudyCurriculumTable
-            rows={curriculum.map((week) => ({
-              id: week.week,
-              week: week.week,
-              contents: week.contents,
-            }))}
-            renderDateInput={(weekIndex, inputClassName) => (
-              <input
-                className={inputClassName}
-                placeholder="YYMMDD"
-                {...registerShortDateInput(`curriculum.${weekIndex}.date`)}
-              />
-            )}
-            renderTopicInput={(weekIndex, inputClassName) => (
-              <textarea
-                rows={1}
-                className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
-                {...register(`curriculum.${weekIndex}.topic`)}
-              />
-            )}
-            renderContentInput={(weekIndex, contentIndex, inputClassName) => (
-              <textarea
-                rows={1}
-                className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
-                {...register(
-                  `curriculum.${weekIndex}.contents.${contentIndex}`,
+          <section className="flex flex-col gap-6">
+            <StudySectionTitle required>진행 장소 / 요일</StudySectionTitle>
+            <div className="flex flex-wrap gap-2">
+              <Controller
+                control={control}
+                name="location"
+                render={({ field: { value, onChange } }) => (
+                  <SelectBox
+                    id="location"
+                    value={value || null}
+                    options={[...LOCATION_OPTIONS]}
+                    placeholder="장소를 선택해주세요"
+                    onChange={onChange}
+                    invalid={Boolean(errors.location)}
+                  />
                 )}
               />
+              <TextInput
+                id="room"
+                placeholder="강의실(호)"
+                disabled={isRoomDisabled}
+                invalid={Boolean(errors.room)}
+                {...register("room")}
+              />
+              <Controller
+                control={control}
+                name="weekDay"
+                render={({ field: { value, onChange } }) => (
+                  <SelectBox
+                    id="weekDay"
+                    value={value || null}
+                    options={[...WEEKDAY_OPTIONS]}
+                    placeholder="요일"
+                    onChange={onChange}
+                    invalid={Boolean(errors.weekDay)}
+                  />
+                )}
+              />
+            </div>
+            {(errors.location || errors.room || errors.weekDay) && (
+              <p className="text-text-danger text-[14px]">
+                {errors.location?.message ??
+                  errors.room?.message ??
+                  errors.weekDay?.message}
+              </p>
             )}
-            onAddContent={addContent}
-            onRemoveContent={removeContent}
-            onAddWeek={addWeek}
-            onRemoveWeek={removeWeek}
-          />
-          {errors.curriculum && (
-            <p className="text-text-danger text-[14px]">
-              커리큘럼의 필수 항목을 확인해주세요.
-            </p>
-          )}
-        </section>
+          </section>
 
-        <section className="flex flex-col gap-6">
-          <StudySectionTitle required>난이도</StudySectionTitle>
-          <Controller
-            control={control}
-            name="difficulty"
-            render={({ field: { value, onChange } }) => (
-              <SelectBox
-                id="difficulty"
-                value={value || null}
-                options={[...DIFFICULTY_OPTIONS]}
-                placeholder="난이도를 선택해주세요"
-                onChange={onChange}
-                invalid={Boolean(errors.difficulty)}
+          <section className="flex flex-col gap-6">
+            <StudySectionTitle required>진행 시간</StudySectionTitle>
+            <div className="flex max-w-[480px] items-center gap-2">
+              <TextInput
+                id="startTime"
+                length="full"
+                placeholder="HH:MM"
+                invalid={Boolean(errors.startTime)}
+                {...registerTimeInput("startTime")}
               />
-            )}
-          />
-          {errors.difficulty && (
-            <p className="text-text-danger text-[14px]">
-              {errors.difficulty.message}
-            </p>
-          )}
-          <Controller
-            control={control}
-            name="hasInterview"
-            render={({ field: { value, onChange } }) => (
-              <Checkbox
-                id="hasInterview"
-                label="면접을 진행합니다"
-                checked={value}
-                onChange={onChange}
+              <Minus className="text-text-subtle h-6 w-6 shrink-0" />
+              <TextInput
+                id="endTime"
+                length="full"
+                placeholder="HH:MM"
+                invalid={Boolean(errors.endTime)}
+                {...registerTimeInput("endTime")}
               />
+            </div>
+            {(errors.startTime || errors.endTime) && (
+              <p className="text-text-danger text-[14px]">
+                {errors.startTime?.message ?? errors.endTime?.message}
+              </p>
             )}
-          />
-          {hasInterview && (
-            <TextInput
-              id="interviewDate"
-              length="middle"
-              placeholder="면접 날짜 (YYMMDD)"
-              {...registerShortDateInput("interviewDate")}
+          </section>
+
+          <section className="flex flex-col gap-6">
+            <StudySectionTitle required>커리큘럼</StudySectionTitle>
+            <StudyCurriculumTable
+              rows={curriculum.map((week) => ({
+                id: week.week,
+                week: week.week,
+                contents: week.contents,
+              }))}
+              renderDateInput={(weekIndex, inputClassName) => (
+                <input
+                  className={inputClassName}
+                  placeholder="YYMMDD"
+                  {...registerShortDateInput(`curriculum.${weekIndex}.date`)}
+                />
+              )}
+              renderTopicInput={(weekIndex, inputClassName) => (
+                <textarea
+                  rows={1}
+                  className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
+                  {...register(`curriculum.${weekIndex}.topic`)}
+                />
+              )}
+              renderContentInput={(weekIndex, contentIndex, inputClassName) => (
+                <textarea
+                  rows={1}
+                  className={`${inputClassName} min-h-[24px] resize-none overflow-hidden whitespace-pre-wrap break-words [field-sizing:content]`}
+                  {...register(
+                    `curriculum.${weekIndex}.contents.${contentIndex}`,
+                  )}
+                />
+              )}
+              onAddContent={addContent}
+              onRemoveContent={removeContent}
+              onAddWeek={addWeek}
+              onRemoveWeek={removeWeek}
             />
-          )}
-        </section>
+            {errors.curriculum && (
+              <p className="text-text-danger text-[14px]">
+                커리큘럼의 필수 항목을 확인해주세요.
+              </p>
+            )}
+          </section>
 
-        <section>
-          <ReferenceFields form={form} />
-        </section>
+          <section className="flex flex-col gap-6">
+            <StudySectionTitle required>난이도</StudySectionTitle>
+            <Controller
+              control={control}
+              name="difficulty"
+              render={({ field: { value, onChange } }) => (
+                <SelectBox
+                  id="difficulty"
+                  value={value || null}
+                  options={[...DIFFICULTY_OPTIONS]}
+                  placeholder="난이도를 선택해주세요"
+                  onChange={onChange}
+                  invalid={Boolean(errors.difficulty)}
+                />
+              )}
+            />
+            {errors.difficulty && (
+              <p className="text-text-danger text-[14px]">
+                {errors.difficulty.message}
+              </p>
+            )}
+            <Controller
+              control={control}
+              name="hasInterview"
+              render={({ field: { value, onChange } }) => (
+                <Checkbox
+                  id="hasInterview"
+                  label="면접을 진행합니다"
+                  checked={value}
+                  onChange={onChange}
+                />
+              )}
+            />
+            {hasInterview && (
+              <TextInput
+                id="interviewDate"
+                length="middle"
+                placeholder="면접 날짜 (YYMMDD)"
+                {...registerShortDateInput("interviewDate")}
+              />
+            )}
+          </section>
+
+          <section>
+            <ReferenceFields form={form} />
+          </section>
+        </fieldset>
 
         {message && (
           <p
@@ -753,6 +762,7 @@ export function StudyApplicationEditor({
               size="large"
               type="submit"
               disabled={
+                !application.can_modify ||
                 (!isDirty && !hasReferenceUpdates) ||
                 isSubmitting ||
                 isCancelling
