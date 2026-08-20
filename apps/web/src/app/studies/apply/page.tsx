@@ -40,13 +40,14 @@ export default function StudyApplyPage() {
       <AlertModal
         isOpen
         description={
-          <span className="block w-full text-center">
+          <>
             {activeSemester.act_year}년 {activeSemester.act_semester}학기 스터디
             신청 기간이 지났습니다.
             <br />
             인스타그램과 공지사항을 통해 소식을 확인해주세요.
-          </span>
+          </>
         }
+        descriptionClassName="w-full text-center"
         onClose={goBack}
         onConfirm={goBack}
         showCancelButton={false}
