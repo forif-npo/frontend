@@ -38,6 +38,7 @@ interface StudyApprovalDetailDialogProps {
   detail: AdminStudyDetail | null;
   isLoading: boolean;
   isSubmitting: boolean;
+  showReviewActions: boolean;
   onClose: () => void;
   onApprove: (study: Study) => void;
   onReject: (study: Study) => void;
@@ -48,6 +49,7 @@ export function StudyApprovalDetailDialog({
   detail,
   isLoading,
   isSubmitting,
+  showReviewActions,
   onClose,
   onApprove,
   onReject,
@@ -195,7 +197,7 @@ export function StudyApprovalDetailDialog({
           <Button type="button" variant="outline" onClick={onClose}>
             닫기
           </Button>
-          {study && detail && (
+          {study && detail && showReviewActions && (
             <>
               <Button
                 type="button"

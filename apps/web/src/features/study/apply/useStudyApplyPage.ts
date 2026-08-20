@@ -24,8 +24,13 @@ export function useStudyApplyPage(studyId?: string) {
   const [step, setStep] = useState<Step>(1);
   const [submittedIntro, setSubmittedIntro] = useState<string>("");
 
-  const { currentStudy, userInfo, studyOptions, isLoading } =
-    useStudyApplyData(studyId);
+  const {
+    currentStudy,
+    userInfo,
+    studyOptions,
+    isLoading,
+    isMenteeRecruitmentClosed,
+  } = useStudyApplyData(studyId);
 
   const badgeTags = currentStudy ? getStudyBadgeTags(currentStudy) : [];
 
@@ -106,6 +111,7 @@ export function useStudyApplyPage(studyId?: string) {
     studyOptions,
     badgeTags,
     isLoading,
+    isMenteeRecruitmentClosed,
     goToNext,
     goToPrevious,
     goToStudyList,

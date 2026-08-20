@@ -132,7 +132,11 @@ export function StudyApplicationSection({
               <StudyApplicationEditor application={selectedApplicationDetail} />
             ) : (
               <p className="text-text-subtle border-border-gray-light mt-8 rounded-xl border p-6 text-[15px]">
-                멘티 모집이 시작되어 신청서를 수정할 수 없습니다.
+                {selectedApplicationDetail.study_status === "APPROVED"
+                  ? "멘티 모집이 시작되어 신청 내용을 수정할 수 없습니다. 승인된 스터디는 취소할 수 없습니다."
+                  : selectedApplicationDetail.study_status === "REJECTED"
+                    ? "심사 기간이 종료되어 반려된 신청서를 수정하거나 재신청할 수 없습니다."
+                    : "멘티 모집이 시작되어 신청서를 수정할 수 없습니다."}
               </p>
             ))}
         </div>

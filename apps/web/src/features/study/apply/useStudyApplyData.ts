@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { HTTPError } from "ky";
+import { getCurrentSemesterSchedules } from "@core/semester/schedule-api";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import { Study } from "@/types/study";
@@ -36,6 +37,7 @@ type UseStudyApplyDataReturn = {
   studyOptions: StudyOption[];
   isLoading: boolean;
   error: Error | null;
+  isMenteeRecruitmentClosed: boolean;
 };
 
 export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
@@ -45,6 +47,8 @@ export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
   const [studyOptions, setStudyOptions] = useState<StudyOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [isMenteeRecruitmentClosed, setIsMenteeRecruitmentClosed] =
+    useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +56,17 @@ export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
         setIsLoading(true);
         setError(null);
         setCurrentStudy(null);
+        setIsMenteeRecruitmentClosed(false);
+
+        const schedules = await getCurrentSemesterSchedules();
+        const isMenteeRecruitmentOpen = schedules.some(
+          (schedule) => schedule.phase === "MENTEE_RECRUIT" && schedule.open,
+        );
+
+        if (!isMenteeRecruitmentOpen) {
+          setIsMenteeRecruitmentClosed(true);
+          return;
+        }
 
         const [userResponse, studiesResponse] = await Promise.all([
           apiClient.get("api/v1/users/me").json<ApiResponse<ApiUserInfo>>(),
@@ -119,5 +134,6 @@ export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
     studyOptions,
     isLoading,
     error,
+    isMenteeRecruitmentClosed,
   };
 }

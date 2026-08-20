@@ -69,7 +69,8 @@ export function useStudyCreatePage() {
   const [studyCreateAlert, setStudyCreateAlert] =
     useState<StudyCreateAlert | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { userInfo, isLoading } = useStudyCreateData();
+  const { userInfo, isLoading, isMentorRecruitmentClosed } =
+    useStudyCreateData();
 
   const form: UseFormReturn<StudyOpenValues> = useForm<StudyOpenValues>({
     resolver: standardSchemaResolver(studyOpenSchema),
@@ -204,6 +205,7 @@ export function useStudyCreatePage() {
     form,
     userInfo,
     isLoading,
+    isMentorRecruitmentClosed,
     studyCreateAlert,
     goToNext,
     goToPrevious,

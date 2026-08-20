@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { SelectBox } from "@ui/components/client";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AlertModal, SelectBox } from "@ui/components/client";
 import { StudyApplyInfoStep } from "@/features/study/apply/study-apply-info-step";
 import { StudyApplyReasonStep } from "@/features/study/apply/study-apply-reason-step";
 import { StudyApplyComplete } from "@/features/study/apply/StudyApplyComplete";
@@ -10,6 +10,7 @@ import { StudyApplySkeleton } from "@/features/study/apply/StudyApplySkeleton";
 import { useStudyApplyPage } from "@/features/study/apply/useStudyApplyPage";
 
 export default function StudyApplyPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedStudyId, setSelectedStudyId] = useState<string | null>(() =>
     searchParams.get("study_id"),
@@ -22,12 +23,27 @@ export default function StudyApplyPage() {
     studyOptions,
     badgeTags,
     isLoading,
+    isMenteeRecruitmentClosed,
     goToNext,
     goToPrevious,
     goToStudyList,
     goToApplications,
     handleSubmit,
   } = useStudyApplyPage(selectedStudyId ?? undefined);
+
+  if (isMenteeRecruitmentClosed) {
+    const goBack = () => router.back();
+
+    return (
+      <AlertModal
+        isOpen
+        description="현재 학기 스터디 신청 기간이 지났습니다. 인스타그램과 공지사항을 통해 소식을 확인해주세요."
+        onClose={goBack}
+        onConfirm={goBack}
+        showCancelButton={false}
+      />
+    );
+  }
 
   if (isLoading || !userInfo) {
     return <StudyApplySkeleton />;
