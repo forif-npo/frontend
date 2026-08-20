@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import type { SortingState } from "@tanstack/react-table";
 import { Download, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -99,7 +100,7 @@ export function OperatorsView({
         부서: operator.department,
         직급: operator.title,
         이름: operator.name,
-        전화번호: operator.phoneNum,
+        전화번호: formatPhoneNumber(operator.phoneNum),
       })),
     );
 

@@ -8,6 +8,7 @@ import { SemesterTabs } from "@/components/list/semester-tabs";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Download } from "lucide-react";
 import type { SortingState } from "@tanstack/react-table";
 import * as XLSX from "xlsx";
@@ -61,7 +62,7 @@ export function MentorsView({
         학번: mentor.userId,
         학과: mentor.department,
         이름: mentor.name,
-        전화번호: mentor.phoneNum,
+        전화번호: formatPhoneNumber(mentor.phoneNum),
         스터디명: mentor.studyName,
       })),
     );

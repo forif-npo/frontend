@@ -22,9 +22,11 @@ export const sendAlimTalkSchema = z.object({
           .split("\n")
           .map((n) => n.trim())
           .filter(Boolean);
-        return numbers.every((n) => phoneNumberRegex.test(n));
+        return numbers.every((n) =>
+          phoneNumberRegex.test(n.replace(/\D/g, "")),
+        );
       },
-      { message: "올바른 전화번호 형식이 아닙니다. (예: 01012345678)" },
+      { message: "올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)" },
     ),
   templateCode: z.string().min(1, "템플릿을 선택해주세요."),
   variables: z.record(z.string()),
