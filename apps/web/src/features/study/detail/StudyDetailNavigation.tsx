@@ -53,8 +53,8 @@ export function StudyDetailNavigation({
             onClick={() => scrollToSection(item.id)}
             className={`cursor-pointer rounded-[4px] px-2 py-1 text-left text-[15px] leading-[1.5] transition-colors ${
               activeSection === item.id
-                ? "bg-[#eef2f7] font-bold text-[#052b57]"
-                : "text-text-subtle hover:bg-[#f4f5f6]"
+                ? "bg-surface-secondary-subtler text-text-secondary font-bold"
+                : "text-text-subtle hover:bg-surface-gray-subtler"
             }`}
           >
             {item.label}
