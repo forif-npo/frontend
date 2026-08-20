@@ -67,7 +67,7 @@ export default function StudyDetailPage({ params }: Props) {
         />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-[#e5e8eb] bg-white p-4 md:hidden">
+      <div className="bg-surface-white border-divider-gray-light fixed inset-x-0 bottom-0 z-50 border-t p-4 md:hidden">
         <Button
           variant="primary"
           size="large"

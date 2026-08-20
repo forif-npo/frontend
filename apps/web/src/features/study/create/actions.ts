@@ -74,7 +74,6 @@ function buildStudyRequest(values: StudyOpenValues) {
     title: values.studyName,
     one_liner: values.oneLiner,
     study_tag_names: studyTagNames,
-    goal: values.introduction, // Figma removed goal; reuse introduction
     explanation: values.introduction,
     is_online: values.isOnline,
     study_location: values.location,
@@ -116,7 +115,6 @@ function buildStudyApplicationUpdateRequest(
   if (dirtyFields.oneLiner) request.one_liner = values.oneLiner;
   if (dirtyFields.tags) request.study_tag_names = fullRequest.study_tag_names;
   if (dirtyFields.introduction) {
-    request.goal = values.introduction;
     request.explanation = values.introduction;
   }
   if (dirtyFields.isOnline) request.is_online = values.isOnline;

@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { fetchStudiesWithFallback, getCurrentSemester } from "../api";
 import { SemesterLabel } from "../types";
 import { ApprovalView } from "./approval-view";
+import { parseSortingParams } from "@/lib/list-sorting";
 
 const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;
 const PAGE_SIZE = 20;
@@ -13,6 +14,7 @@ interface PageProps {
     search?: string;
     page?: string;
     include_processed?: string;
+    sort?: string | string[];
   }>;
 }
 
@@ -45,6 +47,7 @@ export default async function Page({ searchParams }: PageProps) {
   const parsedPage = params.page ? parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
   const accessToken = session?.access_token;
+  const sorting = parseSortingParams(params.sort);
 
   if (!accessToken) {
     return (
@@ -65,6 +68,7 @@ export default async function Page({ searchParams }: PageProps) {
         studyStatuses: includeProcessed
           ? ["PENDING", "RE_APPLIED", "APPROVED", "REJECTED"]
           : ["PENDING", "RE_APPLIED"],
+        sorting,
       },
       accessToken,
     );
@@ -82,6 +86,7 @@ export default async function Page({ searchParams }: PageProps) {
         pageSize={PAGE_SIZE}
         initialSearch={search ?? ""}
         includeProcessed={includeProcessed}
+        initialSorting={sorting}
       />
     );
   } catch (error) {

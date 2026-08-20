@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { SortableHeader } from "@/components/list/sortable-header";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Operator } from "./types";
 
 export const columns: ColumnDef<Operator>[] = [
@@ -48,7 +49,9 @@ export const columns: ColumnDef<Operator>[] = [
       <div className="text-center text-sm hover:bg-transparent">전화번호</div>
     ),
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue("phoneNum")}</div>
+      <div className="text-center">
+        {formatPhoneNumber(row.getValue("phoneNum"))}
+      </div>
     ),
   },
 ];

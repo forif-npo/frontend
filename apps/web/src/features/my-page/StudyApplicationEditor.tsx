@@ -22,6 +22,7 @@ import {
 } from "@core/study-application/api";
 import { handleApiError } from "@core/utils/api-client";
 import { getStudyTagLabel } from "@/constants/study-tags";
+import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { useDateInput } from "@/hooks/useDateInput";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
@@ -39,6 +40,7 @@ import {
 import { TagSelectModal } from "@/features/study/create/components/TagSelectModal";
 import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
 import { fetchUserInfo } from "@/features/study/create/user-info";
+import { useStudyCreateData } from "@/features/study/create/useStudyCreateData";
 import type { UserInfo } from "@/features/study/create/types";
 
 interface StudyApplicationEditorProps {
@@ -94,7 +96,11 @@ function toFormValues(application: StudyApplicationDetail): StudyOpenValues {
     references: study.references.map((reference) => ({
       id: reference.id,
       type: reference.reference_type === "FILE" ? "DOWNLOAD" : "LINK",
-      value: reference.content ?? "",
+      value:
+        reference.reference_type === "FILE"
+          ? (reference.content ?? "")
+          : (reference.content ?? ""),
+      fileName: reference.file_name ?? null,
     })),
   };
 }
@@ -145,6 +151,7 @@ export function StudyApplicationEditor({
   application,
 }: StudyApplicationEditorProps) {
   const router = useRouter();
+  const { userInfo: currentUserInfo } = useStudyCreateData();
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [isOneLinerEditing, setIsOneLinerEditing] = useState(false);
   const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
@@ -185,9 +192,6 @@ export function StudyApplicationEditor({
   const selectedLocation = watch("location");
   const hasInterview = watch("hasInterview");
   const secondaryMentorId = watch("mentorIds")?.[0] ?? null;
-  const primaryMentorId = application.study.mentors?.find(
-    (mentor) => mentor.mentor_num === 1,
-  )?.mentor_id;
   const referenceUpdate = buildReferenceUpdate(
     newReferences,
     application.study.references,
@@ -241,8 +245,14 @@ export function StudyApplicationEditor({
       if (!mentor) {
         throw new Error("Mentor not found");
       }
-      if (mentor.studentId === String(primaryMentorId)) {
-        setMentorError("대표 멘토는 부멘토로 등록할 수 없습니다.");
+      if (!currentUserInfo) {
+        setMentorError("사용자 정보를 불러온 뒤 다시 시도해주세요.");
+        return;
+      }
+      if (mentor.studentId === currentUserInfo.studentId) {
+        setSecondaryMentor(null);
+        setMentorError("본인은 추가 멘토로 등록할 수 없습니다.");
+        setValue("mentorIds", [], { shouldDirty: true });
         return;
       }
 
@@ -367,7 +377,7 @@ export function StudyApplicationEditor({
   };
 
   return (
-    <section className="border-border-gray-light mt-8 rounded-xl border p-6 sm:p-10">
+    <section className="border-border-gray-light mt-4 rounded-xl border p-6 sm:p-10">
       <form
         className="flex flex-col gap-12"
         onSubmit={(event) => {
@@ -378,14 +388,14 @@ export function StudyApplicationEditor({
         <section className="flex flex-col gap-6">
           <div className="flex flex-col gap-3 rounded-xl border border-[#b1b8be] p-5">
             <div className="flex items-center justify-between gap-3">
-              <StudySectionTitle>부멘토</StudySectionTitle>
+              <StudySectionTitle>멘토 추가</StudySectionTitle>
               {secondaryMentorId !== null && (
                 <button
                   type="button"
                   className="text-text-subtle hover:text-text-danger text-sm"
                   onClick={handleSecondaryMentorRemove}
                 >
-                  부멘토 제거
+                  멘토 제거
                 </button>
               )}
             </div>
@@ -393,7 +403,7 @@ export function StudyApplicationEditor({
               <TextInput
                 id="secondaryMentorId"
                 length="full"
-                placeholder="부멘토 아이디를 입력하세요"
+                placeholder="추가할 멘토의 학번을 입력해주세요"
                 value={mentorSearchValue}
                 onChange={(event) => {
                   setMentorSearchValue(event.target.value);
@@ -410,7 +420,7 @@ export function StudyApplicationEditor({
                 type="button"
                 onClick={() => void handleSecondaryMentorSearch()}
                 className="absolute right-4 top-1/2 -translate-y-1/2"
-                aria-label="부멘토 검색"
+                aria-label="멘토 검색"
               >
                 <SearchIcon />
               </button>
@@ -489,8 +499,32 @@ export function StudyApplicationEditor({
           <StudySectionTitle>썸네일</StudySectionTitle>
           <div className="flex flex-col gap-2">
             <HintText>새 이미지를 선택하면 기존 썸네일은 교체됩니다.</HintText>
+            {application.study.thumbnail_image && !thumbnail && (
+              <a
+                href={application.study.thumbnail_image}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-border-gray-light bg-surface-gray-subtler flex w-fit items-center gap-3 rounded-lg border p-3"
+              >
+                <ImageWithFallback
+                  src={application.study.thumbnail_image}
+                  alt="현재 스터디 썸네일"
+                  width={128}
+                  height={80}
+                  className="h-20 w-32 rounded-md object-cover"
+                />
+                <span className="flex flex-col gap-1">
+                  <span className="text-text-basic text-sm font-medium">
+                    현재 썸네일
+                  </span>
+                  <span className="text-text-subtle text-xs">
+                    새 창에서 보기
+                  </span>
+                </span>
+              </a>
+            )}
             <FileUpload
-              title="이미지 파일 업로드 (jpg, jpeg, png)"
+              title="새 이미지 파일 선택 (jpg, jpeg, png)"
               description="권장 크기 1080px * 720px, 최대 5MB"
               accept="image/jpeg,image/png"
               multiple={false}

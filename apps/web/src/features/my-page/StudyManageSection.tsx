@@ -44,69 +44,7 @@ export function StudyManageSection({
     selectedStudy != null &&
     (selectedStudy.act_year !== activeSemester.act_year ||
       selectedStudy.act_semester !== activeSemester.act_semester);
-  const hasStudyApplications = studyApplications.length > 0;
-  const managementTabs = [
-    ...(sortedCreatedStudies.length > 0
-      ? [
-          {
-            label: "운영 중인 스터디",
-            content: (
-              <OperatingStudyOverview
-                createdStudies={sortedCreatedStudies}
-                selectedStudyId={selectedStudyId}
-                onChange={setSelectedStudyId}
-                isPastSemester={isPastSemester}
-              />
-            ),
-          },
-        ]
-      : []),
-    ...(hasStudyApplications
-      ? [
-          {
-            label: "개설 신청서",
-            content: (
-              <StudyApplicationSection applications={studyApplications} />
-            ),
-          },
-        ]
-      : []),
-    ...(sortedCreatedStudies.length === 0 && !hasStudyApplications
-      ? [
-          {
-            label: "운영 중인 스터디",
-            content: (
-              <OperatingStudyOverview
-                createdStudies={sortedCreatedStudies}
-                selectedStudyId={selectedStudyId}
-                onChange={setSelectedStudyId}
-                isPastSemester={isPastSemester}
-              />
-            ),
-          },
-        ]
-      : []),
-    {
-      label: "신청자 관리",
-      content: operatingStudyContent(
-        <ApplicantsPanel
-          studyId={selectedStudyId ?? 0}
-          readOnly={isPastSemester}
-        />,
-      ),
-    },
-    {
-      label: "출석 관리",
-      content: operatingStudyContent(
-        <AttendancePanel
-          studyId={selectedStudyId ?? 0}
-          readOnly={isPastSemester}
-        />,
-      ),
-    },
-  ];
-
-  function operatingStudyContent(content: ReactNode) {
+  const operatingStudyContent = (content: ReactNode) => {
     if (sortedCreatedStudies.length === 0 || selectedStudyId === null) {
       return <EmptyOperatingStudies />;
     }
@@ -126,7 +64,45 @@ export function StudyManageSection({
 
   return (
     <>
-      <Tabs tabs={managementTabs} />
+      <Tabs
+        tabs={[
+          {
+            label: "개설 신청서",
+            content: (
+              <StudyApplicationSection applications={studyApplications} />
+            ),
+          },
+          {
+            label: "운영 중인 스터디",
+            content: (
+              <OperatingStudyOverview
+                createdStudies={sortedCreatedStudies}
+                selectedStudyId={selectedStudyId}
+                onChange={setSelectedStudyId}
+                isPastSemester={isPastSemester}
+              />
+            ),
+          },
+          {
+            label: "신청자 관리",
+            content: operatingStudyContent(
+              <ApplicantsPanel
+                studyId={selectedStudyId ?? 0}
+                readOnly={isPastSemester}
+              />,
+            ),
+          },
+          {
+            label: "출석 관리",
+            content: operatingStudyContent(
+              <AttendancePanel
+                studyId={selectedStudyId ?? 0}
+                readOnly={isPastSemester}
+              />,
+            ),
+          },
+        ]}
+      />
       <IssuedMentorConfirmations confirmations={mentorConfirmations} />
     </>
   );

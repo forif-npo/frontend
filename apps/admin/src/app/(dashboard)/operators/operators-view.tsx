@@ -20,6 +20,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
+import { formatPhoneNumber } from "@core/utils/phone-number";
+import type { SortingState } from "@tanstack/react-table";
 import { Download, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -47,6 +49,7 @@ interface OperatorsViewProps {
   totalPages?: number;
   pageSize?: number;
   initialSearch?: string;
+  initialSorting?: SortingState;
 }
 
 export function OperatorsView({
@@ -57,6 +60,7 @@ export function OperatorsView({
   totalPages = 1,
   pageSize = 20,
   initialSearch = "",
+  initialSorting = [],
 }: OperatorsViewProps) {
   const router = useRouter();
   const {
@@ -65,10 +69,12 @@ export function OperatorsView({
     handleSemesterChange,
     handleSearch,
     handlePageChange,
+    handleSortingChange,
   } = useListViewFilters({
     route: "/operators",
     currentSemester,
     initialSearch,
+    initialSorting,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -94,7 +100,7 @@ export function OperatorsView({
         부서: operator.department,
         직급: operator.title,
         이름: operator.name,
-        전화번호: operator.phoneNum,
+        전화번호: formatPhoneNumber(operator.phoneNum),
       })),
     );
 
@@ -234,6 +240,8 @@ export function OperatorsView({
           columns={columns}
           data={initialData}
           showPagination={false}
+          sorting={initialSorting}
+          onSortingChange={handleSortingChange}
           renderRowActions={(operator) => (
             <>
               {/* 회장 위임/부회장 임명은 회장단 > 운영진 계정 관리 페이지로 이동 */}

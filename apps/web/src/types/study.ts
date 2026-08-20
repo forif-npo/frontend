@@ -18,9 +18,12 @@ export interface StudyPlan {
 }
 
 export interface StudyReference {
-  id?: number;
-  title: string;
-  url: string;
+  id?: string | number;
+  title?: string;
+  url?: string;
+  reference_type?: "FILE" | "URL";
+  content?: string | null;
+  file_name?: string | null;
   category?: string;
 }
 

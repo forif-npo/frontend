@@ -245,6 +245,7 @@ export interface Reference {
   id?: string; // UUID in detail response
   reference_type: "URL" | "FILE"; // API uses 'reference_type', not 'type'
   content: string; // API uses 'content', not 'url'
+  file_name?: string | null;
 }
 
 /**

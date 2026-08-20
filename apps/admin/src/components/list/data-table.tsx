@@ -8,6 +8,7 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  OnChangeFn,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
@@ -35,6 +36,8 @@ interface DataTableProps<TData, TValue> {
   showPagination?: boolean;
   getRowId?: (row: TData, index: number) => string;
   onSelectedRowsChange?: (rows: TData[]) => void;
+  sorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
 }
 
 export function DataTable<TData, TValue>({
@@ -44,9 +47,14 @@ export function DataTable<TData, TValue>({
   showPagination = true,
   getRowId,
   onSelectedRowsChange,
+  sorting: controlledSorting,
+  onSortingChange: controlledOnSortingChange,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [localSorting, setLocalSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  const sorting = controlledSorting ?? localSorting;
+  const onSortingChange = controlledOnSortingChange ?? setLocalSorting;
+  const isServerSorted = controlledSorting !== undefined;
 
   const displayColumns = React.useMemo<ColumnDef<TData, TValue>[]>(() => {
     const selectionColumn: ColumnDef<TData, TValue> = {
@@ -130,11 +138,12 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
     enableRowSelection: true,
-    onSortingChange: setSorting,
+    onSortingChange,
     onRowSelectionChange: setRowSelection,
     getRowId,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    manualSorting: isServerSorted,
+    ...(!isServerSorted ? { getSortedRowModel: getSortedRowModel() } : {}),
     ...(showPagination
       ? { getPaginationRowModel: getPaginationRowModel() }
       : {}),
@@ -164,12 +173,12 @@ export function DataTable<TData, TValue>({
       if (!(target instanceof Element) || !target.closest("table")) return;
 
       event.preventDefault();
-      setSorting([]);
+      onSortingChange([]);
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [sorting.length]);
+  }, [onSortingChange, sorting.length]);
 
   return (
     <div>

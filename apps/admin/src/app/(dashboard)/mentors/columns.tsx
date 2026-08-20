@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { SortableHeader } from "@/components/list/sortable-header";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Mentor } from "./types";
 
 export const columns: ColumnDef<Mentor>[] = [
@@ -37,7 +38,9 @@ export const columns: ColumnDef<Mentor>[] = [
     accessorKey: "phoneNum",
     header: () => <div className="w-full text-center text-sm">전화번호</div>,
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue("phoneNum")}</div>
+      <div className="text-center">
+        {formatPhoneNumber(row.getValue("phoneNum"))}
+      </div>
     ),
   },
   {

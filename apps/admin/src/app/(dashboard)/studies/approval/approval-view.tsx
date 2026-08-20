@@ -18,6 +18,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
+import type { SortingState } from "@tanstack/react-table";
 import { Eye } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -36,6 +37,7 @@ interface ApprovalViewProps {
   pageSize?: number;
   initialSearch?: string;
   includeProcessed: boolean;
+  initialSorting?: SortingState;
 }
 
 export function ApprovalView({
@@ -47,6 +49,7 @@ export function ApprovalView({
   pageSize = 20,
   initialSearch = "",
   includeProcessed,
+  initialSorting = [],
 }: ApprovalViewProps) {
   const {
     searchQuery,
@@ -54,10 +57,12 @@ export function ApprovalView({
     handleSemesterChange,
     handleSearch,
     handlePageChange,
+    handleSortingChange,
   } = useListViewFilters({
     route: "/studies/approval",
     currentSemester,
     initialSearch,
+    initialSorting,
   });
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -236,6 +241,8 @@ export function ApprovalView({
           columns={approvalColumns}
           data={initialData}
           showPagination={false}
+          sorting={initialSorting}
+          onSortingChange={handleSortingChange}
           getRowId={getStudyRowId}
           onSelectedRowsChange={setSelectedStudies}
           renderRowActions={(study) => (

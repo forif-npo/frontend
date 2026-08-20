@@ -34,6 +34,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Send, Loader2, CheckCircle, XCircle, UserPlus } from "lucide-react";
 import { handleApiError } from "@core/utils/api-client";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import { sendAlimTalkSchema, type SendAlimTalkFormValues } from "./schema";
 import { type AlimTalkTemplate, type SendAlimTalkResult } from "./types";
 import { getAlimTalkTemplates, sendAlimTalk } from "./api";
@@ -49,6 +50,13 @@ const VARIABLE_LABELS: Record<string, string> = {
   "#{장소}": "장소",
   "#{url}": "URL",
 };
+
+function formatPhoneNumberLines(value: string) {
+  return value
+    .split("\n")
+    .map((phoneNumber) => formatPhoneNumber(phoneNumber.trim()))
+    .join("\n");
+}
 
 function getVariableLabel(variable: string) {
   return VARIABLE_LABELS[variable] ?? variable;
@@ -120,11 +128,11 @@ export function SmsView() {
     const currentNumbers = new Set(
       currentText
         .split("\n")
-        .map((n) => n.trim())
+        .map((n) => formatPhoneNumber(n.trim()))
         .filter(Boolean),
     );
 
-    phoneNumbers.forEach((num) => currentNumbers.add(num));
+    phoneNumbers.forEach((num) => currentNumbers.add(formatPhoneNumber(num)));
 
     form.setValue("receivers", Array.from(currentNumbers).join("\n"), {
       shouldValidate: true,
@@ -159,7 +167,7 @@ export function SmsView() {
     try {
       const receivers = values.receivers
         .split("\n")
-        .map((n) => n.trim())
+        .map((n) => n.replace(/\D/g, ""))
         .filter(Boolean);
       const variables = Object.fromEntries(
         requiredVariables.map((variable) => [
@@ -289,15 +297,22 @@ export function SmsView() {
                     </div>
                     <FormControl>
                       <Textarea
-                        placeholder={"01012345678\n01087654321\n01098765432"}
+                        placeholder={
+                          "010-1234-5678\n010-8765-4321\n010-9876-5432"
+                        }
                         className="min-h-[120px] font-mono"
                         disabled={isSubmitting}
                         {...field}
+                        onChange={(event) =>
+                          field.onChange(
+                            formatPhoneNumberLines(event.target.value),
+                          )
+                        }
                       />
                     </FormControl>
                     <FormDescription>
                       전화번호를 한 줄에 하나씩 입력하거나, 목록에서 선택하세요.
-                      (하이픈 없이)
+                      (하이픈은 자동으로 표시됩니다.)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -415,7 +430,9 @@ export function SmsView() {
                         ) : (
                           <XCircle className="mr-2 inline h-3 w-3" />
                         )}
-                        <span className="font-medium">{item.receiver}</span>
+                        <span className="font-medium">
+                          {formatPhoneNumber(item.receiver)}
+                        </span>
                         {!isSuccess && (
                           <span className="ml-2">
                             {item.errorCode && `[${item.errorCode}] `}

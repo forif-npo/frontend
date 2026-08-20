@@ -44,7 +44,6 @@ export const toStudyEditForm = (
   study_name: detail?.study_name ?? study.study_name ?? "",
   one_liner: detail?.one_liner ?? study.one_liner ?? "",
   explanation: detail?.explanation ?? "",
-  goal: detail?.goal ?? "",
   start_time: normalizeTimeValue(detail?.start_time),
   end_time: normalizeTimeValue(detail?.end_time),
   week_day:

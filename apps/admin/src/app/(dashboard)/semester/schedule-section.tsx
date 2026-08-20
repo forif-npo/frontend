@@ -134,7 +134,7 @@ export function ScheduleSection({
       await saveSemesterSchedules(actYear, actSemester, phases);
       toast.success(
         phases.length === 0
-          ? "모집 일정을 모두 비웠습니다. 모든 단계가 상시 개방됩니다."
+          ? "모집 일정을 모두 비웠습니다. 멘티 모집은 닫히고 나머지 단계는 상시 개방됩니다."
           : `${semesterLabel} 모집 일정을 저장했습니다.`,
       );
       await fetchSchedules();
@@ -165,15 +165,16 @@ export function ScheduleSection({
             설정되지 않았습니다
           </p>
           <p className="mt-1 text-xs">
-            일정을 비워두면 개설 신청·수강 신청·합불 처리가 아무 때나
-            가능합니다. 기간을 정해두면 그 기간에만 열립니다.
+            일정을 비워두면 개설 신청과 합불 처리는 상시 가능합니다. 멘티 수강
+            신청은 멘티 모집 일정을 설정해야만 열립니다.
           </p>
         </div>
       )}
 
       <p className="text-muted-foreground text-xs">
         각 단계는 앞 단계가 끝난 뒤에 시작해야 하며 겹칠 수 없습니다. 종료일까지
-        포함해서 신청을 받습니다. 비워둔 단계는 상시 개방됩니다.
+        포함해서 신청을 받습니다. 비워둔 멘티 모집 단계는 닫히고, 그 외 단계는
+        상시 개방됩니다.
       </p>
 
       <div className="flex flex-col gap-3">

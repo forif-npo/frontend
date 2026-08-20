@@ -4,6 +4,7 @@ import { ShieldAlert } from "lucide-react";
 import { fetchOperators } from "./api";
 import { OperatorsView } from "./operators-view";
 import { OperatorSemesterLabel } from "./types";
+import { parseSortingParams } from "@/lib/list-sorting";
 
 const PRESIDENT_TEAM = ["회장", "부회장"];
 
@@ -12,6 +13,7 @@ interface PageProps {
     semester?: string;
     search?: string;
     page?: string;
+    sort?: string | string[];
   }>;
 }
 
@@ -29,6 +31,7 @@ export default async function Page({ searchParams }: PageProps) {
     (params.semester as OperatorSemesterLabel) ||
     (currentSemester.label as OperatorSemesterLabel);
   const accessToken = session?.access_token;
+  const sorting = parseSortingParams(params.sort);
 
   if (!accessToken) {
     return (
@@ -60,6 +63,7 @@ export default async function Page({ searchParams }: PageProps) {
       size: 20,
       search,
       accessToken,
+      sorting,
     });
 
     return (
@@ -71,6 +75,7 @@ export default async function Page({ searchParams }: PageProps) {
         totalPages={operatorsData.totalPages}
         pageSize={operatorsData.pageSize}
         initialSearch={search ?? ""}
+        initialSorting={sorting}
       />
     );
   } catch (error) {

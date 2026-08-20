@@ -2,6 +2,8 @@ import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import { Operator, OperatorListResult, OperatorSemesterLabel } from "./types";
 import { loadSemesterOptions } from "@/lib/semester";
+import { sortRecords } from "@/lib/list-sorting";
+import type { SortingState } from "@tanstack/react-table";
 
 interface ForifTeamItem {
   [key: string]: unknown;
@@ -13,6 +15,7 @@ interface FetchOperatorsParams {
   size: number;
   search?: string;
   accessToken: string;
+  sorting?: SortingState;
 }
 
 type ForifTeamListResponse = ForifTeamItem[];
@@ -165,6 +168,7 @@ export async function fetchOperators({
   size,
   search,
   accessToken,
+  sorting = [],
 }: FetchOperatorsParams): Promise<OperatorListResult> {
   const endpoint = getOperatorsEndpoint(semester);
 
@@ -204,6 +208,17 @@ export async function fetchOperators({
         .some((value) => value.toLowerCase().includes(normalizedSearch)),
     );
   }
+
+  content = sortRecords(content, sorting, (operator, id) => {
+    const values: Record<string, unknown> = {
+      userId: operator.userId,
+      department: operator.department,
+      title: operator.title,
+      name: operator.name,
+    };
+
+    return values[id];
+  });
 
   const currentPage = Math.max(page, 0);
   const pageSize = Math.max(size, 1);

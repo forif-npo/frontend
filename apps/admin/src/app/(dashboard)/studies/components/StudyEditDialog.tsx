@@ -147,17 +147,6 @@ export function StudyEditDialog({
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="study-goal">목표</Label>
-            <Textarea
-              id="study-goal"
-              className="min-h-24"
-              value={form.goal}
-              disabled={isFormDisabled}
-              onChange={(event) => onFieldChange("goal", event.target.value)}
-            />
-          </div>
-
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="study-location">장소</Label>
