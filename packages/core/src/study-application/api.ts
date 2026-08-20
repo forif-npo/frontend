@@ -31,6 +31,7 @@ export interface StudyApplicationDetail {
     location: string | null;
     location_detail: string | null;
     difficulty: string | null;
+    thumbnail_image?: string | null;
     is_online: boolean | null;
     capacity: number | null;
     requires_interview: boolean | null;
@@ -50,6 +51,7 @@ export interface StudyApplicationDetail {
       id: string;
       reference_type: "FILE" | "URL";
       content: string | null;
+      file_name?: string | null;
     }>;
   };
   study_status: StudyApplicationStatus;

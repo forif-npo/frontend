@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Badge } from "@ui/components/server";
+import { toFileDownloadUrl } from "@core/utils/file-download";
 import { Study } from "@/types/study";
 import { KakaoMap } from "@/components/KakaoMap";
 import { MarkdownContent } from "@/components/MarkdownContent";
@@ -364,32 +365,48 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
                     </tr>
                   </thead>
                   <tbody className="divide-divider-gray-light divide-y">
-                    {references.map((resource, index) => (
-                      <tr
-                        key={index}
-                        className="hover:bg-surface-gray-subtler cursor-pointer"
-                      >
-                        <td className="text-text-basic px-3 py-3 text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
-                          {resource.url ? (
-                            <Link
-                              href={resource.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="cursor-pointer hover:underline"
-                            >
-                              {resource.title}
-                            </Link>
-                          ) : (
-                            resource.title
-                          )}
-                        </td>
-                        {references.some((r) => r.category) && (
-                          <td className="text-text-subtle px-3 py-3 text-right text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
-                            {resource.category}
+                    {references.map((resource, index) => {
+                      const resourceUrl = resource.content ?? resource.url;
+                      const isFile = resource.reference_type === "FILE";
+                      const href = resourceUrl
+                        ? isFile
+                          ? toFileDownloadUrl(resourceUrl)
+                          : resourceUrl
+                        : null;
+                      const title =
+                        resource.file_name ??
+                        resource.title ??
+                        resourceUrl ??
+                        "-";
+
+                      return (
+                        <tr
+                          key={resource.id ?? index}
+                          className="hover:bg-surface-gray-subtler cursor-pointer"
+                        >
+                          <td className="text-text-basic px-3 py-3 text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
+                            {href ? (
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download={isFile || undefined}
+                                className="cursor-pointer hover:underline"
+                              >
+                                {title}
+                              </a>
+                            ) : (
+                              title
+                            )}
                           </td>
-                        )}
-                      </tr>
-                    ))}
+                          {references.some((r) => r.category) && (
+                            <td className="text-text-subtle px-3 py-3 text-right text-[14px] leading-[1.5] md:px-6 md:py-4 md:text-[15px]">
+                              {resource.category}
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

@@ -43,6 +43,7 @@ export interface AdminStudyDetail {
     id: string;
     reference_type: "FILE" | "URL";
     content: string | null;
+    file_name?: string | null;
   }>;
 }
 
