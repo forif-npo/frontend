@@ -13,7 +13,7 @@ import {
   TextArea,
   TextInput,
 } from "@ui/components/client";
-import { HintText, SearchIcon } from "@ui/components/server";
+import { SearchIcon } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { studyOpenSchema, type StudyOpenValues } from "@core/schemas";
 import {
@@ -22,7 +22,6 @@ import {
 } from "@core/study-application/api";
 import { handleApiError } from "@core/utils/api-client";
 import { getStudyTagLabel } from "@/constants/study-tags";
-import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { useDateInput } from "@/hooks/useDateInput";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
@@ -498,30 +497,12 @@ export function StudyApplicationEditor({
         <section className="flex flex-col gap-6">
           <StudySectionTitle>썸네일</StudySectionTitle>
           <div className="flex flex-col gap-2">
-            <HintText>새 이미지를 선택하면 기존 썸네일은 교체됩니다.</HintText>
             {application.study.thumbnail_image && !thumbnail && (
-              <a
-                href={application.study.thumbnail_image}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border-border-gray-light bg-surface-gray-subtler flex w-fit items-center gap-3 rounded-lg border p-3"
-              >
-                <ImageWithFallback
-                  src={application.study.thumbnail_image}
-                  alt="현재 스터디 썸네일"
-                  width={128}
-                  height={80}
-                  className="h-20 w-32 rounded-md object-cover"
-                />
-                <span className="flex flex-col gap-1">
-                  <span className="text-text-basic text-sm font-medium">
-                    현재 썸네일
-                  </span>
-                  <span className="text-text-subtle text-xs">
-                    새 창에서 보기
-                  </span>
-                </span>
-              </a>
+              <img
+                src={application.study.thumbnail_image}
+                alt={`${application.study.study_name} 썸네일`}
+                className="max-h-72 w-full rounded-lg border object-contain"
+              />
             )}
             <FileUpload
               title="새 이미지 파일 선택 (jpg, jpeg, png)"
@@ -735,9 +716,8 @@ export function StudyApplicationEditor({
           )}
         </section>
 
-        <section className="flex flex-col gap-2">
+        <section>
           <ReferenceFields form={form} />
-          <HintText>새 파일을 선택하면 기존 파일은 교체됩니다.</HintText>
         </section>
 
         {message && (
