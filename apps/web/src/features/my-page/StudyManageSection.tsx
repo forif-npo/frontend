@@ -44,8 +44,6 @@ export function StudyManageSection({
     selectedStudy != null &&
     (selectedStudy.act_year !== activeSemester.act_year ||
       selectedStudy.act_semester !== activeSemester.act_semester);
-  const hasStudyApplications = studyApplications.length > 0;
-
   const operatingStudyContent = (content: ReactNode) => {
     if (sortedCreatedStudies.length === 0 || selectedStudyId === null) {
       return <EmptyOperatingStudies />;
@@ -69,10 +67,14 @@ export function StudyManageSection({
       <Tabs
         tabs={[
           {
-            label: hasStudyApplications ? "개설 신청서" : "운영 중인 스터디",
-            content: hasStudyApplications ? (
+            label: "개설 신청서",
+            content: (
               <StudyApplicationSection applications={studyApplications} />
-            ) : (
+            ),
+          },
+          {
+            label: "운영 중인 스터디",
+            content: (
               <OperatingStudyOverview
                 createdStudies={sortedCreatedStudies}
                 selectedStudyId={selectedStudyId}

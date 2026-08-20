@@ -15,6 +15,7 @@ const STATUS_LABELS: Record<StudyApplicationSummary["study_status"], string> = {
   PENDING: "승인 대기",
   RE_APPLIED: "재신청",
   REJECTED: "반려",
+  APPROVED: "승인",
 };
 
 interface StudyApplicationSectionProps {
