@@ -38,7 +38,6 @@ export interface StudyEditForm {
   study_name: string;
   one_liner: string;
   explanation: string;
-  goal: string;
   start_time: string;
   end_time: string;
   week_day: string;

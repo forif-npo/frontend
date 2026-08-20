@@ -4,7 +4,6 @@ export const EMPTY_STUDY_EDIT_FORM: StudyEditForm = {
   study_name: "",
   one_liner: "",
   explanation: "",
-  goal: "",
   start_time: "",
   end_time: "",
   week_day: "",

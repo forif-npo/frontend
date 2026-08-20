@@ -239,7 +239,6 @@ export function StudiesView({
       study_name: studyName,
       one_liner: oneLiner,
       explanation: editForm.explanation.trim(),
-      goal: editForm.goal.trim(),
       start_time: editForm.start_time,
       end_time: editForm.end_time,
       week_day: weekDay,
