@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SemesterTabs } from "@/components/list/semester-tabs";
+import { ActivitySemesterToggle } from "@/components/list/activity-semester-toggle";
 import { handleApiError } from "@core/utils/api-client";
 import type { SemesterLabel, Study } from "../studies/types";
 import {
@@ -97,11 +97,15 @@ const SIG_EXPORT_H = 520;
 interface CertificatesViewProps {
   studies: Study[];
   currentSemester: SemesterLabel;
+  previousSemester?: SemesterLabel;
+  selectedSemester: SemesterLabel;
 }
 
 export function CertificatesView({
   studies,
   currentSemester,
+  previousSemester,
+  selectedSemester,
 }: CertificatesViewProps) {
   const certificateStudies = studies.filter(
     (study) => study.study_name !== AUTONOMOUS_STUDY_NAME,
@@ -549,8 +553,10 @@ export function CertificatesView({
         }
       />
 
-      <SemesterTabs
+      <ActivitySemesterToggle
         currentSemester={currentSemester}
+        previousSemester={previousSemester}
+        selectedSemester={selectedSemester}
         onSemesterChange={handleSemesterChange}
       />
 

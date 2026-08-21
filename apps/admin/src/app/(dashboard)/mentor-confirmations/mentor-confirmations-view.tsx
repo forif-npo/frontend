@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
-import { SemesterTabs } from "@/components/list/semester-tabs";
+import { ActivitySemesterToggle } from "@/components/list/activity-semester-toggle";
 import { Button } from "@/components/ui/button";
 import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import {
@@ -35,6 +35,8 @@ import {
 interface MentorConfirmationsViewProps {
   studies: Study[];
   currentSemester: SemesterLabel;
+  previousSemester?: SemesterLabel;
+  selectedSemester: SemesterLabel;
 }
 
 const toDotDate = (iso: string) => `${iso.replaceAll("-", ".")}.`;
@@ -46,6 +48,8 @@ const isoToDate = (iso: string) =>
 export function MentorConfirmationsView({
   studies,
   currentSemester,
+  previousSemester,
+  selectedSemester,
 }: MentorConfirmationsViewProps) {
   const router = useRouter();
   const [selectedStudyId, setSelectedStudyId] = useState<number | null>(null);
@@ -172,8 +176,10 @@ export function MentorConfirmationsView({
         title="멘토 확인서 발급"
         description="종료된 학기에 스터디를 운영한 멘토에게 활동 확인서를 발급합니다."
       />
-      <SemesterTabs
+      <ActivitySemesterToggle
         currentSemester={currentSemester}
+        previousSemester={previousSemester}
+        selectedSemester={selectedSemester}
         onSemesterChange={handleSemesterChange}
       />
 

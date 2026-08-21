@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
-import { fetchStudiesWithFallback, getCurrentSemester } from "../studies/api";
+import { loadSemesterOptions } from "@/lib/semester";
+import { fetchStudiesWithFallback } from "../studies/api";
 import type { SemesterLabel } from "../studies/types";
 import { CertificatesView } from "./certificates-view";
 
@@ -25,15 +26,20 @@ function parseSemesterFilter(semester: SemesterLabel) {
 }
 
 export default async function Page({ searchParams }: PageProps) {
-  const [params, currentSemester, session] = await Promise.all([
+  const [params, semesterOptions, session] = await Promise.all([
     searchParams,
-    getCurrentSemester(),
+    loadSemesterOptions(),
     auth(),
   ]);
 
-  const defaultSemester =
-    `${currentSemester.year.toString().slice(2)}-${currentSemester.semester}` as SemesterLabel;
-  const activeSemester = (params.semester as SemesterLabel) || defaultSemester;
+  const currentSemester = semesterOptions.current.label as SemesterLabel;
+  const previousSemester = semesterOptions.recentLabels.find(
+    (semester) => semester !== currentSemester,
+  ) as SemesterLabel | undefined;
+  const activeSemester =
+    params.semester === currentSemester || params.semester === previousSemester
+      ? (params.semester as SemesterLabel)
+      : currentSemester;
   const semesterFilter = parseSemesterFilter(activeSemester);
   const accessToken = session?.access_token;
 
@@ -60,7 +66,9 @@ export default async function Page({ searchParams }: PageProps) {
     return (
       <CertificatesView
         studies={studiesData.content}
-        currentSemester={activeSemester}
+        currentSemester={currentSemester}
+        previousSemester={previousSemester}
+        selectedSemester={activeSemester}
       />
     );
   } catch (error) {
