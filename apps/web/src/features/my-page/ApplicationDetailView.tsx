@@ -36,6 +36,7 @@ export function ApplicationDetailView({
   onCancelled,
 }: ApplicationDetailViewProps) {
   const { study, priority, intro, status } = application;
+  const isAutonomousStudy = study.autonomous_study;
   const priorityLabel = priority === "PRIMARY" ? "1순위" : "2순위";
   const difficultyLabel = NUMERIC_DIFFICULTY_LABELS[study.difficulty] ?? "보통";
   const statusLabel = APPLICATION_STATUS_LABELS[status] ?? "지원중";
@@ -53,6 +54,8 @@ export function ApplicationDetailView({
   const hasChanged = draftIntro !== savedIntro;
 
   const handleSubmit = async () => {
+    if (isAutonomousStudy) return;
+
     if (draftIntro.length < 50 || draftIntro.length > 500) {
       setSubmitError("지원 사유는 50자 이상 500자 이내로 작성해주세요.");
       return;
@@ -93,6 +96,8 @@ export function ApplicationDetailView({
   };
 
   const requestModify = () => {
+    if (isAutonomousStudy) return;
+
     if (draftIntro.length < 50 || draftIntro.length > 500) {
       setSubmitError("지원 사유는 50자 이상 500자 이내로 작성해주세요.");
       return;
@@ -181,12 +186,13 @@ export function ApplicationDetailView({
                   setSubmitError(null);
                   setSubmitSuccess(null);
                 }}
+                disabled={isAutonomousStudy}
                 readOnly={!isPending || isSubmitting || isCancelling}
                 maxLength={500}
                 aria-describedby={
                   submitError ? "application-intro-error" : undefined
                 }
-                className="border-border-gray-dark bg-surface-white text-text-basic focus:border-border-primary focus:ring-border-primary h-[300px] resize-none rounded-md border px-4 py-2 text-[17px] leading-[1.5] read-only:cursor-default focus:outline-none focus:ring-1"
+                className="border-border-gray-dark bg-surface-white text-text-basic focus:border-border-primary focus:ring-border-primary disabled:bg-surface-disabled disabled:text-text-subtle h-[300px] resize-none rounded-md border px-4 py-2 text-[17px] leading-[1.5] read-only:cursor-default focus:outline-none focus:ring-1"
               />
               <CharacterCount count={draftIntro.length} max={500} />
               {!isPending && (
@@ -229,7 +235,13 @@ export function ApplicationDetailView({
           <Button
             variant="primary"
             size="large"
-            disabled={!isPending || !hasChanged || isSubmitting || isCancelling}
+            disabled={
+              isAutonomousStudy ||
+              !isPending ||
+              !hasChanged ||
+              isSubmitting ||
+              isCancelling
+            }
             onClick={requestModify}
           >
             {isSubmitting ? "수정 중..." : "수정"}

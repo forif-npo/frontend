@@ -80,7 +80,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             aria-required={required || undefined}
             required={required}
             className={cn(
-              "border-input-border text-gray-70 focus:border-input-border-active focus:ring-border-input-border-active disabled:bg-input-surface-disabled disabled:border-input-border-disabled rounded-2 w-full resize-none border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1 disabled:cursor-not-allowed",
+              "border-input-border text-gray-70 focus:border-input-border-active focus:ring-border-input-border-active disabled:bg-input-surface-disabled disabled:border-input-border-disabled rounded-2 w-full resize-none border px-4 py-3 transition duration-150 ease-in-out focus:outline-none focus:ring-1",
               sizeClasses,
               isInvalid && "border-input-border-error",
               className,

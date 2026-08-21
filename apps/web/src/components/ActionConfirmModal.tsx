@@ -21,7 +21,7 @@ export function ActionConfirmModal({
   return (
     <AlertModal
       isOpen={isOpen}
-      description={`[${target}]를 ${action}하시겠습니까?`}
+      description={`${target}를 ${action}하시겠습니까?`}
       onClose={onClose}
       onConfirm={onConfirm}
       confirmLabel={action}
