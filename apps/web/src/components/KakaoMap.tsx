@@ -13,21 +13,17 @@ interface KakaoMapProps {
   /** 마커에 표시할 장소명 */
   placeName: string;
   /** 지도 중심 위도 */
-  lat?: number;
+  lat: number;
   /** 지도 중심 경도 */
-  lng?: number;
+  lng: number;
   level?: number;
   className?: string;
 }
 
-// 한양대학교 서울캠퍼스 기본 좌표
-const DEFAULT_LAT = 37.5551;
-const DEFAULT_LNG = 127.0475;
-
 export function KakaoMap({
   placeName,
-  lat = DEFAULT_LAT,
-  lng = DEFAULT_LNG,
+  lat,
+  lng,
   level = 3,
   className,
 }: KakaoMapProps) {

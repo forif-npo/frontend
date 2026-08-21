@@ -14,6 +14,7 @@ import {
   getRecruitStatusBadgeVariant,
   getWeekDayLabel,
 } from "@/constants/study";
+import { getStudyLocationMap } from "@/constants/locations";
 import { getStudyTagLabel } from "@/constants/study-tags";
 import Link from "next/link";
 
@@ -102,6 +103,7 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
 
   const plans = study.plans ?? [];
   const references = study.references ?? [];
+  const locationMap = getStudyLocationMap(study.location);
 
   const visiblePlans = plans;
   const hasPlanDates = visiblePlans.some((plan) => Boolean(plan.date));
@@ -340,7 +342,13 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
             {study.location_detail && ` ${study.location_detail}`}
           </p>
 
-          <KakaoMap placeName={study.location} />
+          {locationMap && (
+            <KakaoMap
+              placeName={locationMap.placeName}
+              lat={locationMap.latitude}
+              lng={locationMap.longitude}
+            />
+          )}
         </div>
 
         {references.length > 0 && (
