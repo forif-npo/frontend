@@ -2,11 +2,11 @@
 
 import { studyApplySchema, StudyApplyValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { TextArea } from "@ui/components/client";
+import { SelectBox, TextArea } from "@ui/components/client";
 import { HintText } from "@ui/components/server";
 import Form from "next/form";
 import { useActionState, useEffect, useRef, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Study } from "@/types/study";
 import { StepNavigation } from "../create/components/StepNavigation";
 import { StudySectionTitle } from "../components/StudySectionTitle";
@@ -26,6 +26,11 @@ interface StudyApplyFormProps {
   currentStudy: Study;
   studyName: string;
   tags: BadgeTag[];
+  secondaryPriorityAvailability:
+    | "loading"
+    | "available"
+    | "unavailable"
+    | "error";
   onPrevious: () => void;
   onCancel: () => void;
 }
@@ -35,11 +40,13 @@ export function StudyApplyReasonStep({
   currentStudy,
   studyName,
   tags,
+  secondaryPriorityAvailability,
   onPrevious,
   onCancel,
 }: StudyApplyFormProps) {
   const initialValues: StudyApplyValues = {
     primaryStudyId: currentStudy.id,
+    priority: 1,
     primaryStudyApplyReason: "",
   };
 
@@ -110,6 +117,45 @@ export function StudyApplyReasonStep({
 
       <Form ref={formRef} action={formAction} className="flex flex-col gap-10">
         <section className="flex flex-col gap-6">
+          <Controller
+            control={form.control}
+            name="priority"
+            render={({ field: { value, onChange } }) => (
+              <SelectBox
+                id="priority"
+                title="지원순위"
+                required
+                size="lg"
+                value={String(value)}
+                options={[
+                  { value: "1", label: "1순위" },
+                  { value: "2", label: "2순위" },
+                ]}
+                placeholder="지원순위를 선택해주세요"
+                onChange={(selectedValue) => {
+                  if (
+                    selectedValue === "2" &&
+                    secondaryPriorityAvailability !== "available"
+                  ) {
+                    form.setError("priority", {
+                      message:
+                        secondaryPriorityAvailability === "unavailable"
+                          ? "1순위 스터디부터 신청해주세요."
+                          : "지원 순위를 확인할 수 없습니다. 다시 시도해주세요.",
+                    });
+                    return;
+                  }
+
+                  form.clearErrors("priority");
+                  onChange(Number(selectedValue));
+                }}
+                error={errors.priority?.message}
+                disabled={
+                  isLoading || secondaryPriorityAvailability === "loading"
+                }
+              />
+            )}
+          />
           <StudySectionTitle required>지원 사유</StudySectionTitle>
           <div className="flex flex-col gap-1">
             <HintText>
@@ -133,6 +179,7 @@ export function StudyApplyReasonStep({
         )}
 
         <input type="hidden" name="primaryStudyId" value={currentStudy.id} />
+        <input type="hidden" name="priority" value={form.watch("priority")} />
 
         <StepNavigation
           onPrevious={onPrevious}

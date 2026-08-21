@@ -4,6 +4,7 @@ import { createSchema } from "../utils/schema.util";
 export const studyApplySchema = createSchema()(
   z.object({
     primaryStudyId: z.number().int(),
+    priority: z.union([z.literal(1), z.literal(2)]),
     primaryStudyApplyReason: z
       .string()
       .min(50, "지원 사유는 최소 50자 이상이어야 합니다.")

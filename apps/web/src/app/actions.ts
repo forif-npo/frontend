@@ -15,7 +15,7 @@ export const applyStudy = async (data: StudyApplyValues) => {
       json: {
         study_id: data.primaryStudyId,
         apply_reason: data.primaryStudyApplyReason,
-        priority: 1,
+        priority: data.priority,
       },
     })
     .json<{ message: string; data: null }>();
