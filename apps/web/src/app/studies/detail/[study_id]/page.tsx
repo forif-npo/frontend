@@ -9,6 +9,7 @@ import { StudyDetailContent } from "@/features/study/detail/StudyDetailContent";
 import { StudyDetailNavigation } from "@/features/study/detail/StudyDetailNavigation";
 import { useStudyDetail } from "@/hooks/useStudyDetail";
 import { StudyDetailSkeleton } from "@/features/study/detail/StudyDetailSkeleton";
+import { getStudyApplicationBlockMessage } from "@/features/study/apply/application-availability";
 
 type Props = {
   params: Promise<{ study_id: string }>;
@@ -19,8 +20,9 @@ export default function StudyDetailPage({ params }: Props) {
   const { data: session } = useSession();
   const { study_id } = use(params);
   const { study, isLoading, error } = useStudyDetail(study_id);
-  const [isApplicationBlockedModalOpen, setIsApplicationBlockedModalOpen] =
-    useState(false);
+  const [applicationBlockedMessage, setApplicationBlockedMessage] = useState<
+    string | null
+  >(null);
 
   const handleApply = async () => {
     if (!session?.accessToken) {
@@ -31,11 +33,12 @@ export default function StudyDetailPage({ params }: Props) {
     if (study) {
       try {
         const status = await getStudyApplicationStatus();
-        if (
-          status.has_autonomous_study_application ||
-          (study.autonomous_study && !status.can_apply_autonomous_study)
-        ) {
-          setIsApplicationBlockedModalOpen(true);
+        const blockMessage = getStudyApplicationBlockMessage(
+          status,
+          study.autonomous_study,
+        );
+        if (blockMessage) {
+          setApplicationBlockedMessage(blockMessage);
           return;
         }
       } catch {
@@ -100,11 +103,11 @@ export default function StudyDetailPage({ params }: Props) {
         </Button>
       </div>
       <AlertModal
-        isOpen={isApplicationBlockedModalOpen}
-        description="자율스터디는 정규스터디와 중복 신청할 수 없습니다."
+        isOpen={applicationBlockedMessage !== null}
+        description={applicationBlockedMessage ?? ""}
         descriptionClassName="w-full text-center"
-        onClose={() => setIsApplicationBlockedModalOpen(false)}
-        onConfirm={() => setIsApplicationBlockedModalOpen(false)}
+        onClose={() => setApplicationBlockedMessage(null)}
+        onConfirm={() => setApplicationBlockedMessage(null)}
         showCancelButton={false}
       />
     </div>

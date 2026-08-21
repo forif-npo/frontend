@@ -7,6 +7,7 @@ import { getStudyApplicationStatus } from "@core/my-page/api";
 import { apiClient, handleApiError } from "@core/utils/api-client";
 import { useStudyApplyData } from "./useStudyApplyData";
 import { getStudyBadgeTags } from "./utils";
+import { getStudyApplicationBlockMessage } from "./application-availability";
 
 type ActionState = {
   errors: Record<string, { message: string }>;
@@ -26,7 +27,7 @@ const EMPTY_VALUES: StudyApplyValues = {
   isAutonomousStudy: false,
 };
 
-export function useStudyApplyPage(studyId?: string) {
+export function useStudyApplyPage(studyId?: string, isDirectEntry = false) {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
   const [submittedIntro, setSubmittedIntro] = useState<string>("");
@@ -38,6 +39,12 @@ export function useStudyApplyPage(studyId?: string) {
   const [applicationAvailability, setApplicationAvailability] =
     useState<ApplicationAvailability>("loading");
   const [applicationAlert, setApplicationAlert] = useState<string | null>(null);
+  const [applicationBlockMessage, setApplicationBlockMessage] = useState<
+    string | null
+  >(null);
+  const [entryBlockMessage, setEntryBlockMessage] = useState<string | null>(
+    null,
+  );
 
   const {
     currentStudy,
@@ -64,30 +71,33 @@ export function useStudyApplyPage(studyId?: string) {
         setSecondaryPriorityAvailability(
           status.can_apply_secondary ? "available" : "unavailable",
         );
-        setApplicationAvailability(
-          status.has_autonomous_study_application ||
-            (isAutonomousStudy && !status.can_apply_autonomous_study)
-            ? "blocked"
-            : "available",
+        const blockMessage = getStudyApplicationBlockMessage(
+          status,
+          isAutonomousStudy,
         );
+        setApplicationBlockMessage(blockMessage);
+        setApplicationAvailability(blockMessage ? "blocked" : "available");
+        setEntryBlockMessage(isDirectEntry ? blockMessage : null);
       })
       .catch(() => {
         if (!isCancelled) {
           setSecondaryPriorityAvailability("error");
           setApplicationAvailability("error");
+          setApplicationBlockMessage(null);
+          setEntryBlockMessage(null);
         }
       });
 
     return () => {
       isCancelled = true;
     };
-  }, [currentStudy, isAutonomousStudy]);
+  }, [currentStudy, isAutonomousStudy, isDirectEntry]);
 
   const submitAutonomousStudy = async (): Promise<boolean> => {
     if (!currentStudy) return false;
 
     if (applicationAvailability === "blocked") {
-      setApplicationAlert("자율스터디는 정규스터디와 중복 신청할 수 없습니다.");
+      setApplicationAlert(applicationBlockMessage ?? "신청할 수 없습니다.");
       return false;
     }
 
@@ -118,7 +128,7 @@ export function useStudyApplyPage(studyId?: string) {
 
   const goToNext = () => {
     if (applicationAvailability === "blocked") {
-      setApplicationAlert("자율스터디는 정규스터디와 중복 신청할 수 없습니다.");
+      setApplicationAlert(applicationBlockMessage ?? "신청할 수 없습니다.");
       return;
     }
 
@@ -160,7 +170,7 @@ export function useStudyApplyPage(studyId?: string) {
         values,
         errors: {
           root: {
-            message: "자율스터디는 정규스터디와 중복 신청할 수 없습니다.",
+            message: applicationBlockMessage ?? "신청할 수 없습니다.",
           },
         },
       };
@@ -250,6 +260,7 @@ export function useStudyApplyPage(studyId?: string) {
     secondaryPriorityAvailability,
     applicationAvailability,
     applicationAlert,
+    entryBlockMessage,
     isAutonomousStudy,
     currentStudy,
     userInfo,

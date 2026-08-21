@@ -10,6 +10,7 @@ import { StudyApplyComplete } from "@/features/study/apply/StudyApplyComplete";
 import { StudyApplySkeleton } from "@/features/study/apply/StudyApplySkeleton";
 import { useStudyApplyPage } from "@/features/study/apply/useStudyApplyPage";
 import { useActiveSemester } from "@/hooks/useActiveSemester";
+import { getStudyApplicationBlockMessage } from "@/features/study/apply/application-availability";
 
 export default function StudyApplyPage() {
   const router = useRouter();
@@ -18,8 +19,9 @@ export default function StudyApplyPage() {
   const [selectedStudyId, setSelectedStudyId] = useState<string | null>(() =>
     searchParams.get("study_id"),
   );
-  const [isApplicationBlockedModalOpen, setIsApplicationBlockedModalOpen] =
-    useState(false);
+  const [applicationBlockedMessage, setApplicationBlockedMessage] = useState<
+    string | null
+  >(null);
   const {
     step,
     submittedIntro,
@@ -28,6 +30,7 @@ export default function StudyApplyPage() {
     secondaryPriorityAvailability,
     applicationAvailability,
     applicationAlert,
+    entryBlockMessage,
     isAutonomousStudy,
     currentStudy,
     userInfo,
@@ -40,18 +43,22 @@ export default function StudyApplyPage() {
     goToApplications,
     handleSubmit,
     dismissApplicationAlert,
-  } = useStudyApplyPage(selectedStudyId ?? undefined);
+  } = useStudyApplyPage(
+    selectedStudyId ?? undefined,
+    searchParams.has("study_id"),
+  );
 
   const handleStudySelection = async (studyId: string) => {
     const selectedStudy = studyOptions.find(({ value }) => value === studyId);
 
     try {
       const status = await getStudyApplicationStatus();
-      if (
-        status.has_autonomous_study_application ||
-        (selectedStudy?.isAutonomousStudy && !status.can_apply_autonomous_study)
-      ) {
-        setIsApplicationBlockedModalOpen(true);
+      const blockMessage = getStudyApplicationBlockMessage(
+        status,
+        selectedStudy?.isAutonomousStudy === true,
+      );
+      if (blockMessage) {
+        setApplicationBlockedMessage(blockMessage);
         return;
       }
     } catch {
@@ -96,6 +103,21 @@ export default function StudyApplyPage() {
     );
   }
 
+  if (entryBlockMessage) {
+    const goToApplications = () => router.replace("/my?tab=applications");
+
+    return (
+      <AlertModal
+        isOpen
+        description={entryBlockMessage}
+        descriptionClassName="w-full text-center"
+        onClose={goToApplications}
+        onConfirm={goToApplications}
+        showCancelButton={false}
+      />
+    );
+  }
+
   if (isLoading || !userInfo) {
     return <StudyApplySkeleton />;
   }
@@ -133,11 +155,11 @@ export default function StudyApplyPage() {
           </div>
         </div>
         <AlertModal
-          isOpen={isApplicationBlockedModalOpen}
-          description="자율스터디는 정규스터디와 중복 신청할 수 없습니다."
+          isOpen={applicationBlockedMessage !== null}
+          description={applicationBlockedMessage ?? ""}
           descriptionClassName="w-full text-center"
-          onClose={() => setIsApplicationBlockedModalOpen(false)}
-          onConfirm={() => setIsApplicationBlockedModalOpen(false)}
+          onClose={() => setApplicationBlockedMessage(null)}
+          onConfirm={() => setApplicationBlockedMessage(null)}
           showCancelButton={false}
         />
       </>
@@ -190,11 +212,11 @@ export default function StudyApplyPage() {
         )}
       </div>
       <AlertModal
-        isOpen={isApplicationBlockedModalOpen}
-        description="자율스터디는 정규스터디와 중복 신청할 수 없습니다."
+        isOpen={applicationBlockedMessage !== null}
+        description={applicationBlockedMessage ?? ""}
         descriptionClassName="w-full text-center"
-        onClose={() => setIsApplicationBlockedModalOpen(false)}
-        onConfirm={() => setIsApplicationBlockedModalOpen(false)}
+        onClose={() => setApplicationBlockedMessage(null)}
+        onConfirm={() => setApplicationBlockedMessage(null)}
         showCancelButton={false}
       />
     </div>
