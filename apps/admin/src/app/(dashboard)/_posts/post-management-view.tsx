@@ -199,6 +199,7 @@ export function PostManagementView({
           columns={postColumns}
           data={initialData}
           showPagination={false}
+          resetSortingKey={kind}
           renderRowActions={(post) => (
             <>
               <DropdownMenuItem onClick={() => handleOpenEdit(post)}>

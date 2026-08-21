@@ -66,8 +66,7 @@ export function MyPageClient({
     activeNav === "study-manage"
       ? {
           title: "스터디 관리",
-          description:
-            "개설 신청서와 운영 중인 스터디를 확인하고 관리할 수 있습니다.",
+          description: "개설 신청서와 개설된 스터디를 확인할 수 있습니다.",
         }
       : activeNav === "service-manage"
         ? {

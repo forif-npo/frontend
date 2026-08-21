@@ -96,6 +96,7 @@ export function ApprovalView({
     } else {
       params.delete("include_processed");
     }
+    params.delete("sort");
     params.set("page", "0");
     router.push(`/studies/approval?${params.toString()}`);
   };

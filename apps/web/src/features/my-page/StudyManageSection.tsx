@@ -22,6 +22,16 @@ interface StudyManageSectionProps {
   studyApplications: StudyApplicationSummary[];
 }
 
+type StudySelectOption = Pick<
+  CreatedStudy,
+  "id" | "study_name" | "act_year" | "act_semester"
+>;
+
+type ApplicantManagementStudy = StudySelectOption & {
+  /** STARTED 스터디의 신청자 이력은 조회만 가능하다. */
+  readOnly: boolean;
+};
+
 export function StudyManageSection({
   createdStudies,
   mentorConfirmations,
@@ -33,34 +43,61 @@ export function StudyManageSection({
       second.act_semester - first.act_semester ||
       second.id - first.id,
   );
-  const [selectedStudyId, setSelectedStudyId] = useState<number | null>(
-    sortedCreatedStudies[0]?.id ?? null,
-  );
+  const [selectedStartedStudyId, setSelectedStartedStudyId] = useState<
+    number | null
+  >(sortedCreatedStudies[0]?.id ?? null);
   const activeSemester = useActiveSemester();
+  const applicantManagementStudies: ApplicantManagementStudy[] = [
+    ...studyApplications
+      .filter((application) => application.study_status === "APPROVED")
+      .map((application) => ({
+        id: application.id,
+        study_name: application.study_name,
+        act_year: activeSemester.act_year,
+        act_semester: activeSemester.act_semester,
+        readOnly: false,
+      })),
+    ...sortedCreatedStudies.map((study) => ({ ...study, readOnly: true })),
+  ].filter(
+    (study, index, studies) =>
+      studies.findIndex((candidate) => candidate.id === study.id) === index,
+  );
+  const [selectedApplicantStudyId, setSelectedApplicantStudyId] = useState<
+    number | null
+  >(applicantManagementStudies[0]?.id ?? null);
+  const selectedApplicantStudy = applicantManagementStudies.find(
+    (study) => study.id === selectedApplicantStudyId,
+  );
+  const isApplicantStudyPastSemester =
+    selectedApplicantStudy != null &&
+    (selectedApplicantStudy.act_year !== activeSemester.act_year ||
+      selectedApplicantStudy.act_semester !== activeSemester.act_semester);
+  const isApplicantStudyReadOnly =
+    selectedApplicantStudy?.readOnly === true || isApplicantStudyPastSemester;
   const selectedStudy = sortedCreatedStudies.find(
-    (study) => study.id === selectedStudyId,
+    (study) => study.id === selectedStartedStudyId,
   );
   const isPastSemester =
     selectedStudy != null &&
     (selectedStudy.act_year !== activeSemester.act_year ||
       selectedStudy.act_semester !== activeSemester.act_semester);
-  const operatingStudyContent = (content: ReactNode) => {
-    if (sortedCreatedStudies.length === 0 || selectedStudyId === null) {
+  const startedStudyContent = (content: ReactNode) => {
+    if (sortedCreatedStudies.length === 0 || selectedStartedStudyId === null) {
       return <EmptyOperatingStudies />;
     }
 
     return (
       <div>
         <StudySelector
-          createdStudies={sortedCreatedStudies}
-          selectedStudyId={selectedStudyId}
-          onChange={setSelectedStudyId}
+          studies={sortedCreatedStudies}
+          selectedStudyId={selectedStartedStudyId}
+          onChange={setSelectedStartedStudyId}
           isPastSemester={isPastSemester}
         />
         {content}
       </div>
     );
-  }
+  };
 
   return (
     <>
@@ -73,30 +110,42 @@ export function StudyManageSection({
             ),
           },
           {
-            label: "운영 중인 스터디",
+            label: "개설 스터디 보기",
             content: (
               <OperatingStudyOverview
                 createdStudies={sortedCreatedStudies}
-                selectedStudyId={selectedStudyId}
-                onChange={setSelectedStudyId}
+                selectedStudyId={selectedStartedStudyId}
+                onChange={setSelectedStartedStudyId}
                 isPastSemester={isPastSemester}
               />
             ),
           },
           {
             label: "신청자 관리",
-            content: operatingStudyContent(
-              <ApplicantsPanel
-                studyId={selectedStudyId ?? 0}
-                readOnly={isPastSemester}
-              />,
-            ),
+            content:
+              applicantManagementStudies.length === 0 ||
+              selectedApplicantStudyId === null ? (
+                <EmptyApplicantManagementStudies />
+              ) : (
+                <div>
+                  <StudySelector
+                    studies={applicantManagementStudies}
+                    selectedStudyId={selectedApplicantStudyId}
+                    onChange={setSelectedApplicantStudyId}
+                    isPastSemester={isApplicantStudyPastSemester}
+                  />
+                  <ApplicantsPanel
+                    studyId={selectedApplicantStudyId}
+                    readOnly={isApplicantStudyReadOnly}
+                  />
+                </div>
+              ),
           },
           {
             label: "출석 관리",
-            content: operatingStudyContent(
+            content: startedStudyContent(
               <AttendancePanel
-                studyId={selectedStudyId ?? 0}
+                studyId={selectedStartedStudyId ?? 0}
                 readOnly={isPastSemester}
               />,
             ),
@@ -207,7 +256,7 @@ function OperatingStudyOverview({
   return (
     <div>
       <StudySelector
-        createdStudies={createdStudies}
+        studies={createdStudies}
         selectedStudyId={selectedStudyId}
         onChange={onChange}
         isPastSemester={isPastSemester}
@@ -228,25 +277,25 @@ function OperatingStudyOverview({
 }
 
 function StudySelector({
-  createdStudies,
+  studies,
   selectedStudyId,
   onChange,
   isPastSemester,
 }: {
-  createdStudies: CreatedStudy[];
+  studies: StudySelectOption[];
   selectedStudyId: number;
   onChange: (studyId: number) => void;
   isPastSemester: boolean;
 }) {
   return (
-    <div className="mb-4">
+    <div className="mb-6">
       <Select
         id="manage-study"
         size="sm"
         value={String(selectedStudyId)}
         onChange={(value) => onChange(Number(value))}
         placeholder="스터디 선택"
-        options={createdStudies.map((study) => ({
+        options={studies.map((study) => ({
           value: String(study.id),
           label: `[${study.act_year}-${study.act_semester}] ${study.study_name}`,
         }))}
@@ -268,7 +317,15 @@ function StudySelector({
 function EmptyOperatingStudies() {
   return (
     <div className="text-text-subtle flex flex-col items-center justify-center py-20">
-      <p className="text-lg">승인된 운영 스터디가 없습니다.</p>
+      <p className="text-lg">개설된 스터디가 없습니다.</p>
+    </div>
+  );
+}
+
+function EmptyApplicantManagementStudies() {
+  return (
+    <div className="text-text-subtle flex flex-col items-center justify-center py-20">
+      <p className="text-lg">신청자를 관리할 스터디가 없습니다.</p>
     </div>
   );
 }

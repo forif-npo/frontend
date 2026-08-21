@@ -15,6 +15,7 @@ interface StudyApplyCompleteProps {
   userInfo: UserInfo;
   priority: "1순위" | "2순위";
   intro: string;
+  isAutonomousStudy?: boolean;
   onGoToApplicationList: () => void;
   onApplySecondStudy?: () => void;
   showSecondStudyButton?: boolean;
@@ -25,6 +26,7 @@ export function StudyApplyComplete({
   userInfo,
   priority,
   intro,
+  isAutonomousStudy = false,
   onGoToApplicationList,
   onApplySecondStudy,
   showSecondStudyButton = true,
@@ -60,7 +62,7 @@ export function StudyApplyComplete({
               지원 순위
             </p>
             <p className="text-text-basic text-[19px] leading-[1.5]">
-              {priority}
+              {isAutonomousStudy ? "해당 없음" : priority}
             </p>
           </div>
 
@@ -70,7 +72,9 @@ export function StudyApplyComplete({
               지원 사유
             </p>
             <p className="text-text-basic flex-1 break-words text-[19px] leading-[1.5]">
-              {intro}
+              {isAutonomousStudy
+                ? "자율스터디는 지원순위와 지원동기를 받지 않습니다."
+                : intro}
             </p>
           </div>
         </div>

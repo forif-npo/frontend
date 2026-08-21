@@ -69,7 +69,7 @@ export default async function Page({ searchParams }: PageProps) {
         page,
         ...semesterFilter,
         search,
-        studyStatuses: ["APPROVED"],
+        studyStatuses: ["APPROVED", "STARTED"],
         sorting,
       },
       accessToken,

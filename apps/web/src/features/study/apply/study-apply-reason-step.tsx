@@ -2,11 +2,11 @@
 
 import { studyApplySchema, StudyApplyValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { TextArea } from "@ui/components/client";
+import { SelectBox, TextArea } from "@ui/components/client";
 import { HintText } from "@ui/components/server";
 import Form from "next/form";
 import { useActionState, useEffect, useRef, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Study } from "@/types/study";
 import { StepNavigation } from "../create/components/StepNavigation";
 import { StudySectionTitle } from "../components/StudySectionTitle";
@@ -26,6 +26,13 @@ interface StudyApplyFormProps {
   currentStudy: Study;
   studyName: string;
   tags: BadgeTag[];
+  isAutonomousStudy: boolean;
+  secondaryPriorityAvailability:
+    | "loading"
+    | "available"
+    | "unavailable"
+    | "error";
+  applicationAvailability: "loading" | "available" | "blocked" | "error";
   onPrevious: () => void;
   onCancel: () => void;
 }
@@ -35,12 +42,16 @@ export function StudyApplyReasonStep({
   currentStudy,
   studyName,
   tags,
+  isAutonomousStudy,
+  secondaryPriorityAvailability,
+  applicationAvailability,
   onPrevious,
   onCancel,
 }: StudyApplyFormProps) {
   const initialValues: StudyApplyValues = {
     primaryStudyId: currentStudy.id,
-    primaryStudyApplyReason: "",
+    isAutonomousStudy,
+    ...(isAutonomousStudy ? {} : { priority: 1, primaryStudyApplyReason: "" }),
   };
 
   const [state, formAction, isPending] = useActionState(action, {
@@ -65,6 +76,9 @@ export function StudyApplyReasonStep({
   } = form;
 
   const isLoading = isPending || isTransitionPending;
+  const isApplicationBlocked = applicationAvailability === "blocked";
+  const isAutonomousStudyUnavailable =
+    isAutonomousStudy && applicationAvailability !== "available";
 
   useEffect(() => {
     for (const key in state.values) {
@@ -110,6 +124,58 @@ export function StudyApplyReasonStep({
 
       <Form ref={formRef} action={formAction} className="flex flex-col gap-10">
         <section className="flex flex-col gap-6">
+          {isApplicationBlocked && (
+            <p className="text-text-danger text-[15px]" role="alert">
+              자율스터디는 정규스터디와 중복 신청할 수 없습니다.
+            </p>
+          )}
+          {isAutonomousStudy && (
+            <HintText>
+              자율스터디는 지원순위와 지원동기 없이 신청할 수 있습니다.
+            </HintText>
+          )}
+          <Controller
+            control={form.control}
+            name="priority"
+            render={({ field: { value, onChange } }) => (
+              <SelectBox
+                id="priority"
+                title="지원순위"
+                required
+                size="lg"
+                value={value ? String(value) : null}
+                options={[
+                  { value: "1", label: "1순위" },
+                  { value: "2", label: "2순위" },
+                ]}
+                placeholder="지원순위를 선택해주세요"
+                onChange={(selectedValue) => {
+                  if (
+                    selectedValue === "2" &&
+                    secondaryPriorityAvailability !== "available"
+                  ) {
+                    form.setError("priority", {
+                      message:
+                        secondaryPriorityAvailability === "unavailable"
+                          ? "1순위 스터디부터 신청해주세요."
+                          : "지원 순위를 확인할 수 없습니다. 다시 시도해주세요.",
+                    });
+                    return;
+                  }
+
+                  form.clearErrors("priority");
+                  onChange(Number(selectedValue));
+                }}
+                error={errors.priority?.message}
+                disabled={
+                  isLoading ||
+                  isAutonomousStudy ||
+                  isApplicationBlocked ||
+                  secondaryPriorityAvailability === "loading"
+                }
+              />
+            )}
+          />
           <StudySectionTitle required>지원 사유</StudySectionTitle>
           <div className="flex flex-col gap-1">
             <HintText>
@@ -120,7 +186,7 @@ export function StudyApplyReasonStep({
               id="primaryStudyApplyReason"
               placeholder="내용을 입력하세요"
               maxLength={500}
-              disabled={isLoading}
+              disabled={isLoading || isAutonomousStudy || isApplicationBlocked}
               size="large"
               className="h-72"
               error={errors.primaryStudyApplyReason?.message}
@@ -133,12 +199,20 @@ export function StudyApplyReasonStep({
         )}
 
         <input type="hidden" name="primaryStudyId" value={currentStudy.id} />
+        {!isAutonomousStudy && (
+          <input type="hidden" name="priority" value={form.watch("priority")} />
+        )}
 
         <StepNavigation
           onPrevious={onPrevious}
           onNext={handleSubmit}
           nextLabel="제출"
-          isSubmitting={isLoading}
+          isSubmitting={
+            isLoading ||
+            isApplicationBlocked ||
+            isAutonomousStudyUnavailable ||
+            applicationAvailability === "loading"
+          }
           leadingActions={[
             { label: "취소", onClick: onCancel, variant: "tertiary" },
           ]}

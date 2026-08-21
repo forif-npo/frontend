@@ -40,7 +40,7 @@ const RECEIVER_TARGET_OPTIONS: { value: ReceiverTarget; label: string }[] = [
 interface ReceiverSelectorDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onApply: (phoneNumbers: string[]) => void;
+  onApply: (receivers: Receiver[]) => void;
 }
 
 export function ReceiverSelectorDialog({
@@ -62,9 +62,9 @@ export function ReceiverSelectorDialog({
   const [isReceiversLoading, setIsReceiversLoading] = useState(false);
   const [receiverError, setReceiverError] = useState<string | null>(null);
   const receiverRequestId = useRef(0);
-  const [selectedReceivers, setSelectedReceivers] = useState<Set<string>>(
-    new Set(),
-  );
+  const [selectedReceivers, setSelectedReceivers] = useState<
+    Map<string, Receiver>
+  >(new Map());
 
   const loadReceivers = useCallback(
     async ({
@@ -122,7 +122,7 @@ export function ReceiverSelectorDialog({
     const initialize = async () => {
       setReceiverSearch("");
       setReceiverTarget("CURRENT_SEMESTER_MEMBERS");
-      setSelectedReceivers(new Set());
+      setSelectedReceivers(new Map());
       setIsReceiversLoading(true);
       setReceiverError(null);
 
@@ -156,26 +156,27 @@ export function ReceiverSelectorDialog({
     void loadReceivers({ search: "", replace: true, target });
   };
 
-  const toggleReceiver = (phoneNumber: string) => {
+  const toggleReceiver = (receiver: Receiver) => {
     setSelectedReceivers((previous) => {
-      const next = new Set(previous);
-      if (next.has(phoneNumber)) next.delete(phoneNumber);
-      else next.add(phoneNumber);
+      const next = new Map(previous);
+      if (next.has(receiver.phoneNumber)) next.delete(receiver.phoneNumber);
+      else next.set(receiver.phoneNumber, receiver);
       return next;
     });
   };
 
   const toggleAll = () => {
     setSelectedReceivers((previous) => {
-      const next = new Set(previous);
+      const next = new Map(previous);
       const allVisibleReceiversSelected = receivers.every((receiver) =>
         next.has(receiver.phoneNumber),
       );
 
-      receivers.forEach((receiver) => {
-        if (allVisibleReceiversSelected) next.delete(receiver.phoneNumber);
-        else next.add(receiver.phoneNumber);
-      });
+      receivers.forEach((receiver) =>
+        allVisibleReceiversSelected
+          ? next.delete(receiver.phoneNumber)
+          : next.set(receiver.phoneNumber, receiver),
+      );
       return next;
     });
   };
@@ -286,7 +287,7 @@ export function ReceiverSelectorDialog({
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300"
                   checked={selectedReceivers.has(receiver.phoneNumber)}
-                  onChange={() => toggleReceiver(receiver.phoneNumber)}
+                  onChange={() => toggleReceiver(receiver)}
                 />
                 <div className="flex-1">
                   <div className="text-sm font-medium">{receiver.name}</div>
@@ -327,7 +328,7 @@ export function ReceiverSelectorDialog({
             취소
           </Button>
           <Button
-            onClick={() => onApply(Array.from(selectedReceivers))}
+            onClick={() => onApply(Array.from(selectedReceivers.values()))}
             disabled={selectedReceivers.size === 0}
           >
             {selectedReceivers.size}명 추가

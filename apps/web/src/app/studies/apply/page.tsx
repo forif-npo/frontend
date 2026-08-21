@@ -20,6 +20,11 @@ export default function StudyApplyPage() {
   const {
     step,
     submittedIntro,
+    submittedPriority,
+    submittedIsAutonomousStudy,
+    secondaryPriorityAvailability,
+    applicationAvailability,
+    isAutonomousStudy,
     currentStudy,
     userInfo,
     studyOptions,
@@ -102,8 +107,9 @@ export default function StudyApplyPage() {
         <StudyApplyComplete
           studyName={currentStudy.study_name}
           userInfo={userInfo}
-          priority="1순위"
+          priority={`${submittedPriority}순위`}
           intro={submittedIntro}
+          isAutonomousStudy={submittedIsAutonomousStudy}
           onGoToApplicationList={goToApplications}
           showSecondStudyButton={false}
         />
@@ -119,6 +125,7 @@ export default function StudyApplyPage() {
             studyName={currentStudy.study_name}
             tags={badgeTags}
             userInfo={userInfo}
+            isAutonomousStudy={isAutonomousStudy}
             onNext={goToNext}
             onCancel={goToStudyList}
           />
@@ -128,6 +135,9 @@ export default function StudyApplyPage() {
             currentStudy={currentStudy}
             studyName={currentStudy.study_name}
             tags={badgeTags}
+            isAutonomousStudy={isAutonomousStudy}
+            secondaryPriorityAvailability={secondaryPriorityAvailability}
+            applicationAvailability={applicationAvailability}
             onPrevious={goToPrevious}
             onCancel={goToStudyList}
           />

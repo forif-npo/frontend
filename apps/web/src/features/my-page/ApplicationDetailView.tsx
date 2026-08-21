@@ -15,6 +15,7 @@ import {
   APPLICATION_STATUS_LABELS,
 } from "@/constants/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
+import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 
 interface ApplicationDetailViewProps {
   application: ApplicationDetail & {
@@ -45,6 +46,9 @@ export function ApplicationDetailView({
   const [isCancelling, setIsCancelling] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [confirmAction, setConfirmAction] = useState<
+    "modify" | "cancel" | null
+  >(null);
   const isPending = status === 0;
   const hasChanged = draftIntro !== savedIntro;
 
@@ -86,6 +90,14 @@ export function ApplicationDetailView({
     } finally {
       setIsCancelling(false);
     }
+  };
+
+  const requestModify = () => {
+    if (draftIntro.length < 50 || draftIntro.length > 500) {
+      setSubmitError("지원 사유는 50자 이상 500자 이내로 작성해주세요.");
+      return;
+    }
+    setConfirmAction("modify");
   };
 
   return (
@@ -208,7 +220,7 @@ export function ApplicationDetailView({
         <div className="flex items-center justify-between">
           <Button
             variant="tertiary"
-            onClick={handleCancel}
+            onClick={() => setConfirmAction("cancel")}
             size="large"
             disabled={!canCancel || isSubmitting || isCancelling}
           >
@@ -218,12 +230,25 @@ export function ApplicationDetailView({
             variant="primary"
             size="large"
             disabled={!isPending || !hasChanged || isSubmitting || isCancelling}
-            onClick={handleSubmit}
+            onClick={requestModify}
           >
             {isSubmitting ? "수정 중..." : "수정"}
           </Button>
         </div>
       </div>
+      <ActionConfirmModal
+        isOpen={confirmAction !== null}
+        target="스터디 신청서"
+        action={confirmAction === "modify" ? "수정" : "취소"}
+        onClose={() => setConfirmAction(null)}
+        onConfirm={() => {
+          if (confirmAction === "modify") {
+            void handleSubmit();
+          } else {
+            void handleCancel();
+          }
+        }}
+      />
     </div>
   );
 }

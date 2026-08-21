@@ -1,6 +1,7 @@
 "use client";
 
 import { updateMyProfile } from "@/app/my/actions";
+import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { useLogout } from "@/features/auth/logout/use-logout";
 import { departmentsOptions } from "@/constants/options.constant";
 import { safeImageSrc } from "@/utils/image";
@@ -31,6 +32,7 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,6 +102,20 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
         );
       }
     });
+  };
+
+  const requestSave = () => {
+    const isProfileChanged =
+      department !== (profile.department ?? "") || imageFile !== null;
+    const isPhoneNumberChanged =
+      phoneNumber !== formatPhoneNumber(profile.phone_num);
+
+    if (!isProfileChanged && !isPhoneNumberChanged) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsSaveConfirmOpen(true);
   };
 
   return (
@@ -256,7 +272,7 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
                       </Button>
                       <Button
                         size="small"
-                        onClick={handleSave}
+                        onClick={requestSave}
                         disabled={isPending}
                       >
                         저장
@@ -276,6 +292,13 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
             ),
           },
         ]}
+      />
+      <ActionConfirmModal
+        isOpen={isSaveConfirmOpen}
+        target="프로필 정보"
+        action="수정"
+        onClose={() => setIsSaveConfirmOpen(false)}
+        onConfirm={handleSave}
       />
     </section>
   );

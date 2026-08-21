@@ -29,6 +29,10 @@ export function StudyBreadcrumb() {
       items.push({ label: "스터디 개설", href: "/studies/create" });
     }
 
+    if (pathname.startsWith("/studies/apply")) {
+      items.push({ label: "스터디 신청" });
+    }
+
     if (pathname.includes("/detail/")) {
       const detailPath = pathname.split("/apply")[0]; // Get path before /apply
 

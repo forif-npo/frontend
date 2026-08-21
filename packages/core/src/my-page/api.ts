@@ -185,6 +185,7 @@ export interface StudyInfo {
   difficulty: number;
   img_url: string;
   thumbnail_image: string | null;
+  autonomous_study: boolean;
 }
 
 /**
@@ -216,6 +217,16 @@ export interface StudyApplication {
  */
 export interface StudyApplicationsResponse {
   applications: StudyApplication[];
+}
+
+/**
+ * Backend-authoritative availability for this semester's study application.
+ */
+export interface StudyApplicationStatusResponse {
+  can_apply_primary: boolean;
+  can_apply_secondary: boolean;
+  can_apply_autonomous_study: boolean;
+  has_autonomous_study_application: boolean;
 }
 
 export interface UpdateStudyApplicationRequest {
@@ -264,4 +275,15 @@ export async function getStudyApplications(
     console.error("[getStudyApplications] error:", err);
     throw err;
   }
+}
+
+/**
+ * Get backend-authoritative availability for a new study application.
+ */
+export async function getStudyApplicationStatus(): Promise<StudyApplicationStatusResponse> {
+  const response = await apiClient
+    .get("api/v1/users/apply/status")
+    .json<ApiResponse<StudyApplicationStatusResponse>>();
+
+  return response.data!;
 }

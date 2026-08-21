@@ -52,6 +52,7 @@ export interface Study {
   difficulty: StudyDifficulty;
   img_url: string;
   thumbnail_image: string | null;
+  autonomous_study: boolean;
   is_online: boolean | null;
   goal: string | null;
   selection_criteria: string | null;

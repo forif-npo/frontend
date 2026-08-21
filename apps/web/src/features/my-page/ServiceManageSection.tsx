@@ -36,9 +36,8 @@ function EmptyState({
 
 function ApplicationCard({ application }: { application: ProductApplication }) {
   const status = APPLICATION_STATUS[application.status];
-
-  return (
-    <article className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border">
+  const content = (
+    <article className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border transition-shadow hover:shadow-md">
       <ProductThumbnail
         slug={application.slug}
         name={application.name}
@@ -88,6 +87,17 @@ function ApplicationCard({ application }: { application: ProductApplication }) {
         )}
       </div>
     </article>
+  );
+
+  return application.status === "PENDING" ? (
+    <Link
+      href={`/products/applications/${application.application_id}/edit`}
+      className="focus-visible:ring-primary block focus-visible:outline-none focus-visible:ring-2"
+    >
+      {content}
+    </Link>
+  ) : (
+    content
   );
 }
 

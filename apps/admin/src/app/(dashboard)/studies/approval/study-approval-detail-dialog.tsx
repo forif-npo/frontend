@@ -57,7 +57,7 @@ export function StudyApprovalDetailDialog({
   const isOpen = Boolean(study);
   const studyName = detail?.study_name ?? study?.study_name ?? "";
   const tags = detail?.tags ?? study?.tags ?? [];
-  const thumbnailUrl = detail?.thumbnail_image ?? detail?.img_url;
+  const thumbnailUrl = detail?.thumbnail_image;
 
   return (
     <Dialog

@@ -57,7 +57,7 @@ export interface GetApplicantsParams {
 }
 
 /**
- * Get studies the logged-in mentor created (approved only).
+ * Get studies the logged-in mentor created (started only).
  * Non-mentors get an empty list.
  */
 export async function getMyCreatedStudies(

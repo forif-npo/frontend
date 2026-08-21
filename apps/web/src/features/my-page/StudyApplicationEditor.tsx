@@ -24,6 +24,7 @@ import {
 } from "@core/study-application/api";
 import { handleApiError } from "@core/utils/api-client";
 import { getStudyTagLabel } from "@/constants/study-tags";
+import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { useDateInput } from "@/hooks/useDateInput";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
@@ -162,7 +163,9 @@ export function StudyApplicationEditor({
   >(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
-  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<
+    "modify" | "cancel" | null
+  >(null);
   const [mentorSearchValue, setMentorSearchValue] = useState("");
   const [secondaryMentor, setSecondaryMentor] = useState<UserInfo | null>(null);
   const [mentorError, setMentorError] = useState<string | null>(null);
@@ -369,6 +372,22 @@ export function StudyApplicationEditor({
     }
   };
 
+  const requestSubmit = async () => {
+    if (
+      !application.can_modify ||
+      (!isDirty && !hasReferenceUpdates) ||
+      isSubmitting ||
+      isCancelling
+    ) {
+      return;
+    }
+    if (!(await form.trigger())) {
+      setMessage({ text: "필수 입력 항목을 확인해주세요.", type: "error" });
+      return;
+    }
+    setConfirmAction("modify");
+  };
+
   const handleCancel = async () => {
     if (!application.can_cancel || isSubmitting || isCancelling) return;
 
@@ -390,7 +409,7 @@ export function StudyApplicationEditor({
         className="flex flex-col gap-12"
         onSubmit={(event) => {
           event.preventDefault();
-          void handleSubmit();
+          void requestSubmit();
         }}
       >
         <fieldset disabled={!application.can_modify} className="contents">
@@ -751,7 +770,7 @@ export function StudyApplicationEditor({
             variant="tertiary"
             size="large"
             type="button"
-            onClick={() => setIsCancelConfirmOpen(true)}
+            onClick={() => setConfirmAction("cancel")}
             disabled={!application.can_cancel || isSubmitting || isCancelling}
           >
             {isCancelling ? "취소 중..." : "신청 취소"}
@@ -798,11 +817,18 @@ export function StudyApplicationEditor({
           title="스터디 수정 미리보기"
         />
       )}
-      <AlertModal
-        isOpen={isCancelConfirmOpen}
-        description="스터디 개설 신청을 취소하시겠습니까? 이 작업은 되돌릴 수 없습니다."
-        onClose={() => setIsCancelConfirmOpen(false)}
-        onConfirm={() => void handleCancel()}
+      <ActionConfirmModal
+        isOpen={confirmAction !== null}
+        target="스터디 개설 신청서"
+        action={confirmAction === "modify" ? "수정" : "취소"}
+        onClose={() => setConfirmAction(null)}
+        onConfirm={() => {
+          if (confirmAction === "modify") {
+            void handleSubmit();
+          } else {
+            void handleCancel();
+          }
+        }}
       />
       <AlertModal
         isOpen={thumbnailAlertMessage !== null}

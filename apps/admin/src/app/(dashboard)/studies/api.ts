@@ -62,6 +62,7 @@ export async function getCurrentSemester(): Promise<SemesterInfo> {
 export type StudyApprovalStatus =
   | "PENDING"
   | "APPROVED"
+  | "STARTED"
   | "REJECTED"
   | "RE_APPLIED";
 

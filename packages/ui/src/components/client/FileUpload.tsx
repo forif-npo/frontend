@@ -10,6 +10,11 @@ interface FileObject {
   status: "uploading" | "success" | "error";
 }
 
+interface ExistingFile {
+  name: string;
+  url: string;
+}
+
 function FileThumbnail({ file }: { file: File }) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -38,6 +43,16 @@ function FileThumbnail({ file }: { file: File }) {
   );
 }
 
+function ExistingFileThumbnail({ url }: { url: string }) {
+  return (
+    <img
+      src={url}
+      alt=""
+      className="h-10 w-10 shrink-0 rounded border border-[#cdd1d5] object-cover"
+    />
+  );
+}
+
 interface FileUploadComponentProps {
   title?: string;
   description?: string;
@@ -45,6 +60,7 @@ interface FileUploadComponentProps {
   multiple?: boolean;
   maxFiles?: number;
   files?: File[];
+  existingFile?: ExistingFile | null;
   onUpload: (file: File) => Promise<boolean>;
   onRemove: (fileName: string) => void;
   className?: string;
@@ -57,6 +73,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
   multiple = true,
   maxFiles = 3,
   files: controlledFiles,
+  existingFile,
   onUpload,
   onRemove,
   className = "",
@@ -74,10 +91,21 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
         status: "success" as const,
       }))
     : internalFiles;
-  const isFull = files.length >= maxFiles;
+  const displayedFiles = existingFile
+    ? [
+        {
+          name: existingFile.name,
+          size: 0,
+          status: "success" as const,
+          existingUrl: existingFile.url,
+        },
+        ...files,
+      ]
+    : files;
+  const isFull = displayedFiles.length >= maxFiles;
   const shouldShowDropZone = !isFull;
   const shouldShowCount = maxFiles > 1;
-  const shouldShowFileList = shouldShowCount || files.length > 0;
+  const shouldShowFileList = shouldShowCount || displayedFiles.length > 0;
 
   const handleFiles = async (newFiles: FileList) => {
     const remainingSlots = maxFiles - files.length;
@@ -199,7 +227,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
           {shouldShowCount && (
             <p>
               <Label size={"s"} color={"primary"}>
-                {files.length}개
+                {displayedFiles.length}개
               </Label>
               <Label size={"s"} color={"gray-60"}>
                 {" "}
@@ -207,15 +235,22 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
               </Label>
             </p>
           )}
-          {files.map((file, index) => (
+          {displayedFiles.map((file, index) => (
             <div
               key={index}
               className="border-gray-30 rounded-4 flex items-center justify-between gap-2 border border-solid p-4"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <FileThumbnail file={file.file} />
+                {"existingUrl" in file ? (
+                  <ExistingFileThumbnail url={file.existingUrl} />
+                ) : (
+                  <FileThumbnail file={file.file} />
+                )}
                 <Label size="s" className="truncate">
-                  {file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)
+                  {file.name}
+                  {"existingUrl" in file
+                    ? ""
+                    : ` (${(file.size / (1024 * 1024)).toFixed(2)} MB)`}
                 </Label>
               </div>
               {file.status === "uploading" && (

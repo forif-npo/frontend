@@ -7,6 +7,8 @@ export {
   getProduct,
   applyProduct,
   getMyProductApplications,
+  updateProductApplication,
+  deleteProductApplication,
   type ProductSummary,
   type ProductDetail,
   type ProductMember,
@@ -15,4 +17,5 @@ export {
   type ProductApplication,
   type ProductApplicationStatus,
   type CreateProductApplicationBody,
+  type UpdateProductApplicationBody,
 } from "@core/products/api";

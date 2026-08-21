@@ -38,6 +38,8 @@ interface DataTableProps<TData, TValue> {
   onSelectedRowsChange?: (rows: TData[]) => void;
   sorting?: SortingState;
   onSortingChange?: OnChangeFn<SortingState>;
+  /** 목록 맥락이 바뀌면 비제어 정렬을 초기화할 식별자 */
+  resetSortingKey?: string | number;
 }
 
 export function DataTable<TData, TValue>({
@@ -49,6 +51,7 @@ export function DataTable<TData, TValue>({
   onSelectedRowsChange,
   sorting: controlledSorting,
   onSortingChange: controlledOnSortingChange,
+  resetSortingKey,
 }: DataTableProps<TData, TValue>) {
   const [localSorting, setLocalSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
@@ -164,6 +167,12 @@ export function DataTable<TData, TValue>({
   React.useEffect(() => {
     setRowSelection({});
   }, [data]);
+
+  React.useEffect(() => {
+    if (controlledSorting === undefined) {
+      setLocalSorting([]);
+    }
+  }, [controlledSorting, resetSortingKey]);
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

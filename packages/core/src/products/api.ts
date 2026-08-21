@@ -63,6 +63,11 @@ export interface CreateProductApplicationBody {
   tags?: string[];
 }
 
+export interface UpdateProductApplicationBody
+  extends CreateProductApplicationBody {
+  remove_thumbnail?: boolean;
+}
+
 // ── 공개 ────────────────────────────────────────────────────────────
 
 export async function getProducts(): Promise<ProductSummary[]> {
@@ -114,6 +119,36 @@ export async function getMyProductApplications(
     .get("api/v1/products/applications/me", options)
     .json<ApiResponse<ProductApplication[]>>();
   return response.data ?? [];
+}
+
+/** 검토 대기 중인 본인 서비스 신청서를 수정한다. */
+export async function updateProductApplication(
+  applicationId: number,
+  body: UpdateProductApplicationBody,
+  thumbnail?: File | null,
+): Promise<ProductApplication> {
+  const formData = new FormData();
+  formData.append(
+    "request",
+    new Blob([JSON.stringify(body)], { type: "application/json" }),
+  );
+  if (thumbnail) {
+    formData.append("thumbnail", thumbnail);
+  }
+
+  const response = await apiClient
+    .patch(`api/v1/products/applications/${applicationId}`, { body: formData })
+    .json<ApiResponse<ProductApplication>>();
+  return response.data!;
+}
+
+/** 검토 대기 중인 본인 서비스 신청서를 삭제한다. */
+export async function deleteProductApplication(
+  applicationId: number,
+): Promise<void> {
+  await apiClient
+    .delete(`api/v1/products/applications/${applicationId}`)
+    .json();
 }
 
 // ── 운영진 ──────────────────────────────────────────────────────────

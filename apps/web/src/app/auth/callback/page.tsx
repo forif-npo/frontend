@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { AuthSkeleton } from "@/components/skeleton/AuthSkeleton";
+import { AuthLoadingIndicator } from "@/components/AuthLoadingIndicator";
 
 /**
  * Google OAuth 콜백 페이지
@@ -96,5 +96,5 @@ export default function AuthCallbackPage() {
     );
   }
 
-  return <AuthSkeleton />;
+  return <AuthLoadingIndicator message="로그인 중입니다." />;
 }

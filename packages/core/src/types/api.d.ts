@@ -181,7 +181,7 @@ export interface AdminStudyResponse {
   recruit_status: "APPLICABLE" | "CLOSED";
   week_day: number | null;
   difficulty: "EASY" | "SEMI_EASY" | "NORMAL" | "SEMI_HARD" | "HARD" | null;
-  study_status: "PENDING" | "APPROVED" | "REJECTED" | "RE_APPLIED";
+  study_status: "PENDING" | "APPROVED" | "STARTED" | "REJECTED" | "RE_APPLIED";
   reject_reason: string | null;
   created_at: string;
 }
@@ -522,7 +522,7 @@ export interface StudyCreationApplicationResponse {
 }
 
 /**
- * 내가 개설한 스터디 목록
+ * 내가 개설한 스터디 목록 (시작된 스터디만)
  */
 export interface MyCreatedStudyResponse {
   study_id: number;
