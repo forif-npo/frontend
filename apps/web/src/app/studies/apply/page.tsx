@@ -181,6 +181,7 @@ export default function StudyApplyPage() {
             currentStudy={currentStudy}
             studyName={currentStudy.study_name}
             tags={badgeTags}
+            isAutonomousStudy={isAutonomousStudy}
             secondaryPriorityAvailability={secondaryPriorityAvailability}
             applicationAvailability={applicationAvailability}
             onPrevious={goToPrevious}

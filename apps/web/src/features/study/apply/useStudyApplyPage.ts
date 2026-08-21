@@ -83,19 +83,19 @@ export function useStudyApplyPage(studyId?: string) {
     };
   }, [currentStudy, isAutonomousStudy]);
 
-  const submitAutonomousStudy = async () => {
-    if (!currentStudy) return;
+  const submitAutonomousStudy = async (): Promise<boolean> => {
+    if (!currentStudy) return false;
 
     if (applicationAvailability === "blocked") {
       setApplicationAlert("자율스터디는 정규스터디와 중복 신청할 수 없습니다.");
-      return;
+      return false;
     }
 
     if (applicationAvailability !== "available") {
       setApplicationAlert(
         "신청 가능 여부를 확인할 수 없습니다. 다시 시도해주세요.",
       );
-      return;
+      return false;
     }
 
     try {
@@ -106,23 +106,19 @@ export function useStudyApplyPage(studyId?: string) {
         .json();
     } catch (error) {
       setApplicationAlert(await handleApiError(error));
-      return;
+      return false;
     }
 
     setSubmittedIntro("");
     setSubmittedPriority(1);
     setSubmittedIsAutonomousStudy(true);
     setStep(3);
+    return true;
   };
 
   const goToNext = () => {
     if (applicationAvailability === "blocked") {
       setApplicationAlert("자율스터디는 정규스터디와 중복 신청할 수 없습니다.");
-      return;
-    }
-
-    if (isAutonomousStudy) {
-      void submitAutonomousStudy();
       return;
     }
 
@@ -168,6 +164,11 @@ export function useStudyApplyPage(studyId?: string) {
           },
         },
       };
+    }
+
+    if (isAutonomousStudy) {
+      await submitAutonomousStudy();
+      return { values, errors: {} };
     }
 
     if (priority === 2 && secondaryPriorityAvailability !== "available") {

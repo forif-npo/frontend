@@ -26,6 +26,7 @@ interface StudyApplyFormProps {
   currentStudy: Study;
   studyName: string;
   tags: BadgeTag[];
+  isAutonomousStudy: boolean;
   secondaryPriorityAvailability:
     | "loading"
     | "available"
@@ -40,15 +41,15 @@ export function StudyApplyReasonStep({
   currentStudy,
   studyName,
   tags,
+  isAutonomousStudy,
   secondaryPriorityAvailability,
   applicationAvailability,
   onPrevious,
 }: StudyApplyFormProps) {
   const initialValues: StudyApplyValues = {
     primaryStudyId: currentStudy.id,
-    isAutonomousStudy: false,
-    priority: 1,
-    primaryStudyApplyReason: "",
+    isAutonomousStudy,
+    ...(isAutonomousStudy ? {} : { priority: 1, primaryStudyApplyReason: "" }),
   };
 
   const [state, formAction, isPending] = useActionState(action, {
@@ -153,7 +154,9 @@ export function StudyApplyReasonStep({
                 }}
                 error={errors.priority?.message}
                 disabled={
-                  isLoading || secondaryPriorityAvailability === "loading"
+                  isLoading ||
+                  isAutonomousStudy ||
+                  secondaryPriorityAvailability === "loading"
                 }
               />
             )}
@@ -168,7 +171,7 @@ export function StudyApplyReasonStep({
               id="primaryStudyApplyReason"
               placeholder="내용을 입력하세요"
               maxLength={500}
-              disabled={isLoading}
+              disabled={isLoading || isAutonomousStudy}
               size="large"
               className="h-72"
               error={errors.primaryStudyApplyReason?.message}

@@ -68,7 +68,16 @@ export function StudyApplyInfoStep({
           </div>
           <StudyStepIndicator
             steps={
-              isAutonomousStudy ? [STUDY_APPLY_STEPS[0]] : STUDY_APPLY_STEPS
+              isAutonomousStudy
+                ? [
+                    STUDY_APPLY_STEPS[0],
+                    {
+                      number: 2,
+                      title: "신청 내용 확인",
+                      description: "신청 내용을 확인한 뒤 제출합니다.",
+                    },
+                  ]
+                : STUDY_APPLY_STEPS
             }
           />
         </section>
@@ -99,7 +108,7 @@ export function StudyApplyInfoStep({
 
       <StepNavigation
         onNext={onNext}
-        nextLabel={isAutonomousStudy ? "제출" : "다음"}
+        nextLabel="다음"
         isSubmitting={isSubmitting}
       />
     </div>
