@@ -40,7 +40,9 @@ export function useListViewFilters({
   };
 
   const handleSemesterChange = (semester: string) => {
-    router.push(`${route}?${buildParams({ semester, page: 0 }).toString()}`);
+    router.push(
+      `${route}?${buildParams({ semester, sorting: [], page: 0 }).toString()}`,
+    );
   };
 
   const handleSearch = () => {
