@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertModal, SelectBox } from "@ui/components/client";
+import { getStudyApplicationStatus } from "@core/my-page/api";
 import { StudyApplyInfoStep } from "@/features/study/apply/study-apply-info-step";
 import { StudyApplyReasonStep } from "@/features/study/apply/study-apply-reason-step";
 import { StudyApplyComplete } from "@/features/study/apply/StudyApplyComplete";
@@ -17,6 +18,8 @@ export default function StudyApplyPage() {
   const [selectedStudyId, setSelectedStudyId] = useState<string | null>(() =>
     searchParams.get("study_id"),
   );
+  const [isApplicationBlockedModalOpen, setIsApplicationBlockedModalOpen] =
+    useState(false);
   const {
     step,
     submittedIntro,
@@ -24,6 +27,7 @@ export default function StudyApplyPage() {
     submittedIsAutonomousStudy,
     secondaryPriorityAvailability,
     applicationAvailability,
+    applicationAlert,
     isAutonomousStudy,
     currentStudy,
     userInfo,
@@ -35,7 +39,27 @@ export default function StudyApplyPage() {
     goToPrevious,
     goToApplications,
     handleSubmit,
+    dismissApplicationAlert,
   } = useStudyApplyPage(selectedStudyId ?? undefined);
+
+  const handleStudySelection = async (studyId: string) => {
+    const selectedStudy = studyOptions.find(({ value }) => value === studyId);
+
+    try {
+      const status = await getStudyApplicationStatus();
+      if (
+        status.has_autonomous_study_application ||
+        (selectedStudy?.isAutonomousStudy && !status.can_apply_autonomous_study)
+      ) {
+        setIsApplicationBlockedModalOpen(true);
+        return;
+      }
+    } catch {
+      // 신청 페이지에서 상태 확인을 다시 시도한다.
+    }
+
+    setSelectedStudyId(studyId);
+  };
 
   if (isMenteeRecruitmentClosed) {
     const goBack = () => router.back();
@@ -59,40 +83,63 @@ export default function StudyApplyPage() {
     );
   }
 
+  if (applicationAlert) {
+    return (
+      <AlertModal
+        isOpen
+        description={applicationAlert}
+        descriptionClassName="w-full text-center"
+        onClose={dismissApplicationAlert}
+        onConfirm={dismissApplicationAlert}
+        showCancelButton={false}
+      />
+    );
+  }
+
   if (isLoading || !userInfo) {
     return <StudyApplySkeleton />;
   }
 
   if (!selectedStudyId) {
     return (
-      <div className="min-h-viewport max-w-main mx-auto px-4 sm:px-6">
-        <div className="mx-auto flex w-full max-w-[792px] flex-col gap-8 pt-10 sm:pt-16">
-          <div className="flex flex-col gap-3">
-            <h1 className="text-text-bolder text-[28px] font-bold leading-[1.5] tracking-[1px] sm:text-[40px]">
-              스터디 신청
-            </h1>
-            <p className="text-text-subtle text-[17px] leading-[1.5]">
-              지원할 스터디를 선택해주세요.
-            </p>
+      <>
+        <div className="min-h-viewport max-w-main mx-auto px-4 sm:px-6">
+          <div className="mx-auto flex w-full max-w-[792px] flex-col gap-8 pt-10 sm:pt-16">
+            <div className="flex flex-col gap-3">
+              <h1 className="text-text-bolder text-[28px] font-bold leading-[1.5] tracking-[1px] sm:text-[40px]">
+                스터디 신청
+              </h1>
+              <p className="text-text-subtle text-[17px] leading-[1.5]">
+                지원할 스터디를 선택해주세요.
+              </p>
+            </div>
+            <SelectBox
+              id="study-apply-select"
+              title="지원 스터디"
+              required
+              size="lg"
+              placeholder="스터디를 선택해주세요"
+              options={studyOptions}
+              value={null}
+              onChange={handleStudySelection}
+              disabled={studyOptions.length === 0}
+            />
+            {studyOptions.length === 0 && (
+              <p className="text-text-subtle text-[15px] leading-[1.5]">
+                현재 신청 가능한 스터디가 없습니다.
+              </p>
+            )}
           </div>
-          <SelectBox
-            id="study-apply-select"
-            title="지원 스터디"
-            required
-            size="lg"
-            placeholder="스터디를 선택해주세요"
-            options={studyOptions}
-            value={null}
-            onChange={setSelectedStudyId}
-            disabled={studyOptions.length === 0}
-          />
-          {studyOptions.length === 0 && (
-            <p className="text-text-subtle text-[15px] leading-[1.5]">
-              현재 신청 가능한 스터디가 없습니다.
-            </p>
-          )}
         </div>
-      </div>
+        <AlertModal
+          isOpen={isApplicationBlockedModalOpen}
+          description="자율스터디는 정규스터디와 중복 신청할 수 없습니다."
+          descriptionClassName="w-full text-center"
+          onClose={() => setIsApplicationBlockedModalOpen(false)}
+          onConfirm={() => setIsApplicationBlockedModalOpen(false)}
+          showCancelButton={false}
+        />
+      </>
     );
   }
 
@@ -125,6 +172,7 @@ export default function StudyApplyPage() {
             tags={badgeTags}
             userInfo={userInfo}
             isAutonomousStudy={isAutonomousStudy}
+            isSubmitting={applicationAvailability === "loading"}
             onNext={goToNext}
           />
         ) : (
@@ -133,13 +181,20 @@ export default function StudyApplyPage() {
             currentStudy={currentStudy}
             studyName={currentStudy.study_name}
             tags={badgeTags}
-            isAutonomousStudy={isAutonomousStudy}
             secondaryPriorityAvailability={secondaryPriorityAvailability}
             applicationAvailability={applicationAvailability}
             onPrevious={goToPrevious}
           />
         )}
       </div>
+      <AlertModal
+        isOpen={isApplicationBlockedModalOpen}
+        description="자율스터디는 정규스터디와 중복 신청할 수 없습니다."
+        descriptionClassName="w-full text-center"
+        onClose={() => setIsApplicationBlockedModalOpen(false)}
+        onConfirm={() => setIsApplicationBlockedModalOpen(false)}
+        showCancelButton={false}
+      />
     </div>
   );
 }

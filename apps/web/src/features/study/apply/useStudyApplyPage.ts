@@ -37,6 +37,7 @@ export function useStudyApplyPage(studyId?: string) {
     useState<SecondaryPriorityAvailability>("loading");
   const [applicationAvailability, setApplicationAvailability] =
     useState<ApplicationAvailability>("loading");
+  const [applicationAlert, setApplicationAlert] = useState<string | null>(null);
 
   const {
     currentStudy,
@@ -82,7 +83,51 @@ export function useStudyApplyPage(studyId?: string) {
     };
   }, [currentStudy, isAutonomousStudy]);
 
-  const goToNext = () => setStep(2);
+  const submitAutonomousStudy = async () => {
+    if (!currentStudy) return;
+
+    if (applicationAvailability === "blocked") {
+      setApplicationAlert("자율스터디는 정규스터디와 중복 신청할 수 없습니다.");
+      return;
+    }
+
+    if (applicationAvailability !== "available") {
+      setApplicationAlert(
+        "신청 가능 여부를 확인할 수 없습니다. 다시 시도해주세요.",
+      );
+      return;
+    }
+
+    try {
+      await apiClient
+        .post("api/v1/users/apply", {
+          json: { study_id: currentStudy.id },
+        })
+        .json();
+    } catch (error) {
+      setApplicationAlert(await handleApiError(error));
+      return;
+    }
+
+    setSubmittedIntro("");
+    setSubmittedPriority(1);
+    setSubmittedIsAutonomousStudy(true);
+    setStep(3);
+  };
+
+  const goToNext = () => {
+    if (applicationAvailability === "blocked") {
+      setApplicationAlert("자율스터디는 정규스터디와 중복 신청할 수 없습니다.");
+      return;
+    }
+
+    if (isAutonomousStudy) {
+      void submitAutonomousStudy();
+      return;
+    }
+
+    setStep(2);
+  };
   const goToPrevious = () => setStep(1);
   const goToStudyList = () => router.push("/studies/list");
   const goToApplications = () =>
@@ -123,40 +168,6 @@ export function useStudyApplyPage(studyId?: string) {
           },
         },
       };
-    }
-
-    if (isAutonomousStudy) {
-      if (applicationAvailability !== "available") {
-        return {
-          values,
-          errors: {
-            root: {
-              message:
-                "신청 가능 여부를 확인할 수 없습니다. 다시 시도해주세요.",
-            },
-          },
-        };
-      }
-
-      try {
-        await apiClient
-          .post("api/v1/users/apply", {
-            json: { study_id: currentStudy.id },
-          })
-          .json();
-      } catch (error) {
-        return {
-          values,
-          errors: { root: { message: await handleApiError(error) } },
-        };
-      }
-
-      setSubmittedIntro("");
-      setSubmittedPriority(1);
-      setSubmittedIsAutonomousStudy(true);
-      setStep(3);
-
-      return { values, errors: {} };
     }
 
     if (priority === 2 && secondaryPriorityAvailability !== "available") {
@@ -237,6 +248,7 @@ export function useStudyApplyPage(studyId?: string) {
     submittedIsAutonomousStudy,
     secondaryPriorityAvailability,
     applicationAvailability,
+    applicationAlert,
     isAutonomousStudy,
     currentStudy,
     userInfo,
@@ -246,6 +258,7 @@ export function useStudyApplyPage(studyId?: string) {
     isMenteeRecruitmentClosed,
     goToNext,
     goToPrevious,
+    dismissApplicationAlert: () => setApplicationAlert(null),
     goToStudyList,
     goToApplications,
     handleSubmit,

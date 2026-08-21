@@ -1,9 +1,10 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Button } from "@ui/components/client";
+import { getStudyApplicationStatus } from "@core/my-page/api";
+import { AlertModal, Button } from "@ui/components/client";
 import { StudyDetailContent } from "@/features/study/detail/StudyDetailContent";
 import { StudyDetailNavigation } from "@/features/study/detail/StudyDetailNavigation";
 import { useStudyDetail } from "@/hooks/useStudyDetail";
@@ -18,12 +19,30 @@ export default function StudyDetailPage({ params }: Props) {
   const { data: session } = useSession();
   const { study_id } = use(params);
   const { study, isLoading, error } = useStudyDetail(study_id);
+  const [isApplicationBlockedModalOpen, setIsApplicationBlockedModalOpen] =
+    useState(false);
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (!session?.accessToken) {
       router.push(`/signin?callbackUrl=/studies/apply?study_id=${study_id}`);
       return;
     }
+
+    if (study) {
+      try {
+        const status = await getStudyApplicationStatus();
+        if (
+          status.has_autonomous_study_application ||
+          (study.autonomous_study && !status.can_apply_autonomous_study)
+        ) {
+          setIsApplicationBlockedModalOpen(true);
+          return;
+        }
+      } catch {
+        // 신청 페이지에서 상태 확인을 다시 시도한다.
+      }
+    }
+
     router.push(`/studies/apply?study_id=${study_id}`);
   };
 
@@ -80,6 +99,14 @@ export default function StudyDetailPage({ params }: Props) {
             : "모집 마감"}
         </Button>
       </div>
+      <AlertModal
+        isOpen={isApplicationBlockedModalOpen}
+        description="자율스터디는 정규스터디와 중복 신청할 수 없습니다."
+        descriptionClassName="w-full text-center"
+        onClose={() => setIsApplicationBlockedModalOpen(false)}
+        onConfirm={() => setIsApplicationBlockedModalOpen(false)}
+        showCancelButton={false}
+      />
     </div>
   );
 }

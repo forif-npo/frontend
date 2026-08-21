@@ -25,6 +25,7 @@ type UserInfo = {
 type StudyOption = {
   value: string;
   label: string;
+  isAutonomousStudy: boolean;
 };
 
 type PaginatedStudies = {
@@ -105,6 +106,7 @@ export function useStudyApplyData(studyId?: string): UseStudyApplyDataReturn {
           const options = studies.map((study) => ({
             value: String(study.id),
             label: study.study_name,
+            isAutonomousStudy: study.autonomous_study,
           }));
           setStudyOptions(options);
         }

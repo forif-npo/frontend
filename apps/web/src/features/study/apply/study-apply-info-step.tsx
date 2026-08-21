@@ -33,6 +33,7 @@ interface StudyApplyInfoStepProps {
   tags: BadgeTag[];
   userInfo: UserInfo;
   isAutonomousStudy?: boolean;
+  isSubmitting?: boolean;
   onNext: () => void;
 }
 
@@ -41,6 +42,7 @@ export function StudyApplyInfoStep({
   tags,
   userInfo,
   isAutonomousStudy = false,
+  isSubmitting = false,
   onNext,
 }: StudyApplyInfoStepProps) {
   const formattedPhone = useFormattedPhoneNumber(userInfo.phone);
@@ -66,17 +68,7 @@ export function StudyApplyInfoStep({
           </div>
           <StudyStepIndicator
             steps={
-              isAutonomousStudy
-                ? [
-                    STUDY_APPLY_STEPS[0],
-                    {
-                      number: 2,
-                      title: "신청 내용 확인",
-                      description:
-                        "자율스터디 신청 내용을 확인한 뒤 제출합니다.",
-                    },
-                  ]
-                : STUDY_APPLY_STEPS
+              isAutonomousStudy ? [STUDY_APPLY_STEPS[0]] : STUDY_APPLY_STEPS
             }
           />
         </section>
@@ -105,7 +97,11 @@ export function StudyApplyInfoStep({
         </section>
       </div>
 
-      <StepNavigation onNext={onNext} />
+      <StepNavigation
+        onNext={onNext}
+        nextLabel={isAutonomousStudy ? "제출" : "다음"}
+        isSubmitting={isSubmitting}
+      />
     </div>
   );
 }
