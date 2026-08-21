@@ -110,7 +110,7 @@ export function StudyManageSection({
             ),
           },
           {
-            label: "개설 스터디 보기",
+            label: "개설 스터디",
             content: (
               <OperatingStudyOverview
                 createdStudies={sortedCreatedStudies}

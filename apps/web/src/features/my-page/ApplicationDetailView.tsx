@@ -195,11 +195,6 @@ export function ApplicationDetailView({
                 className="border-border-gray-dark bg-surface-white text-text-basic focus:border-border-primary focus:ring-border-primary disabled:bg-surface-disabled disabled:text-text-subtle h-[300px] resize-none rounded-md border px-4 py-2 text-[17px] leading-[1.5] read-only:cursor-default focus:outline-none focus:ring-1"
               />
               <CharacterCount count={draftIntro.length} max={500} />
-              {!isPending && (
-                <p className="text-text-subtle text-[13px] leading-[1.5]">
-                  대기 중인 신청서만 수정할 수 있습니다.
-                </p>
-              )}
               {isPending && !canCancel && (
                 <p className="text-text-subtle text-[13px] leading-[1.5]">
                   {cancelDisabledMessage}
