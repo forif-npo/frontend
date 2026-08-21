@@ -127,11 +127,6 @@ export function StudyApplyReasonStep({
               자율스터디는 정규스터디와 중복 신청할 수 없습니다.
             </p>
           )}
-          {isAutonomousStudy && (
-            <HintText>
-              자율스터디는 지원순위와 지원동기 없이 신청할 수 있습니다.
-            </HintText>
-          )}
           <Controller
             control={form.control}
             name="priority"
@@ -139,6 +134,7 @@ export function StudyApplyReasonStep({
               <SelectBox
                 id="priority"
                 title="지원순위"
+                titleClassName="text-[19px] font-bold leading-[1.5]"
                 required
                 size="lg"
                 value={value ? String(value) : null}

@@ -6,6 +6,7 @@ import { Select, SelectProps } from "./Select";
 type SelectBoxProps = {
   id: string;
   title?: string;
+  titleClassName?: string;
   description?: string;
   helpText?: string;
   error?: string;
@@ -18,6 +19,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
   (
     {
       title,
+      titleClassName,
       description,
       helpText,
       error,
@@ -37,7 +39,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
     return (
       <div className="flex flex-col justify-center gap-1">
         {title && (
-          <Label htmlFor={id} className="text-text-basic">
+          <Label htmlFor={id} className={titleClassName}>
             {title}
             {required && (
               <span className="text-text-danger ml-0.5" aria-hidden="true">
