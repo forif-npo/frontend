@@ -43,7 +43,17 @@ export const LOCATION_OPTIONS = [
 export function getStudyLocationMap(location: string | null | undefined) {
   if (!location) return null;
 
+  const normalizedLocation = location.trim();
+  const exactMatch =
+    STUDY_LOCATION_MAP[normalizedLocation as keyof typeof STUDY_LOCATION_MAP];
+
+  if (exactMatch) return exactMatch;
+
+  // 이전 스터디는 건물명과 강의실을 하나의 location 값으로 저장했다.
+  // 예: "IT/BT관 508호" → "IT/BT관"
   return (
-    STUDY_LOCATION_MAP[location as keyof typeof STUDY_LOCATION_MAP] ?? null
+    Object.entries(STUDY_LOCATION_MAP).find(([locationName]) =>
+      normalizedLocation.startsWith(locationName),
+    )?.[1] ?? null
   );
 }
