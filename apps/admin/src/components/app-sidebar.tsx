@@ -318,33 +318,38 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <SidebarSeparator />
+
+        <SidebarGroup className="p-2">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === "/settings"}>
+                <Link href="/settings">
+                  <Settings />
+                  <span>설정</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={false}
+                onClick={() => {
+                  signOutAction();
+                }}
+              >
+                <div className="cursor-pointer">
+                  <LogoutIcon />
+                  <span>로그아웃</span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="p-2">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/settings"}>
-              <Link href="/settings">
-                <Settings />
-                <span>설정</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={false}
-              onClick={() => {
-                signOutAction();
-              }}
-            >
-              <div className="cursor-pointer">
-                <LogoutIcon />
-                <span>로그아웃</span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <SidebarTrigger className="w-full justify-start" />
