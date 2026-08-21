@@ -58,7 +58,7 @@ export function AlertModal({
     >
       <div className="flex min-h-[96px] items-center">
         <p
-          className={`text-text-basic text-body-m ${descriptionClassName ?? ""}`}
+          className={`text-text-basic text-body-m whitespace-pre-line ${descriptionClassName ?? ""}`}
         >
           {description}
         </p>

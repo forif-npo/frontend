@@ -40,7 +40,7 @@ export default function AnnouncementDetailPage() {
             { label: "홈", href: "/" },
             { label: "공지", href: "/support" },
             { label: "공지사항", href: "/support/announcements" },
-            { label: "공지사항 자세히 보기" },
+            { label: "자세히 보기" },
           ]}
         />
       </div>
@@ -73,7 +73,7 @@ export default function AnnouncementDetailPage() {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center rounded-md p-1 hover:bg-gray-50"
+              className="hover:bg-surface-gray-subtler active:bg-surface-gray-subtle inline-flex items-center rounded-md p-1 transition-colors"
               aria-label="링크 복사"
             >
               <ShareIcon className="h-5 w-5 text-gray-600" aria-hidden />

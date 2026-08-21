@@ -240,7 +240,7 @@ export const StudyFilterSection: React.FC<StudyFilterSectionProps> = ({
           <button
             onClick={onClearAll}
             className={clsx(
-              "border-border-gray-light rounded-full border bg-white transition-colors hover:bg-gray-50",
+              "border-border-gray-light hover:bg-surface-gray-subtler active:bg-surface-gray-subtle rounded-full border bg-white transition-colors",
               isCompact ? "p-2" : "p-3",
             )}
             aria-label="필터 초기화"

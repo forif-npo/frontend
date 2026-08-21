@@ -1,11 +1,21 @@
 "use client";
 import { CloseIcon } from "@repo/assets/icons/krds";
 import { Home, Menu } from "@repo/assets/icons/lucide";
-import { Button } from "@ui/components/client";
+import { getStudyApplicationStatus } from "@core/my-page/api";
+import { AlertModal, Button } from "@ui/components/client";
 import { Link } from "@ui/components/server";
 import { cn } from "@ui/utils/cn";
 import Image from "next/image";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { FULL_STUDY_APPLICATION_MESSAGE } from "@/features/study/apply/application-availability";
 import styles from "./nav-bar.module.css";
 
 const NAV_LOGO_SRC = "/black_title.svg";
@@ -26,11 +36,14 @@ export interface NavigationBarProps {
 }
 
 export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
+  const router = useRouter();
   const navMenus: NavMenu[] = items;
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [closingMenu, setClosingMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [studyApplicationBlockedMessage, setStudyApplicationBlockedMessage] =
+    useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
   const closeDesktopMenu = useCallback(() => {
@@ -47,6 +60,26 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
     }
     setClosingMenu(null);
     setOpenMenu(label);
+  };
+
+  const handleStudyApplicationClick = async (
+    event: ReactMouseEvent<HTMLAnchorElement>,
+  ) => {
+    if (!isLoggedIn) return;
+
+    event.preventDefault();
+
+    try {
+      const status = await getStudyApplicationStatus();
+      if (!status.can_apply_primary && !status.can_apply_secondary) {
+        setStudyApplicationBlockedMessage(FULL_STUDY_APPLICATION_MESSAGE);
+        return;
+      }
+    } catch {
+      // 상태 조회에 실패하면 신청 페이지에서 다시 확인한다.
+    }
+
+    router.push("/studies/apply");
   };
 
   useEffect(() => {
@@ -179,7 +212,12 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                           <Link
                             key={subMenu.label}
                             href={subMenu.href}
-                            onClick={() => setMobileMenuOpen(false)}
+                            onClick={(event) => {
+                              setMobileMenuOpen(false);
+                              if (subMenu.href === "/studies/apply") {
+                                void handleStudyApplicationClick(event);
+                              }
+                            }}
                             className="text-text-basic rounded-2 px-3 py-3 text-[16px] leading-[1.5] hover:bg-[#eef4ff] hover:font-semibold"
                           >
                             {subMenu.label}
@@ -269,7 +307,12 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                         <Link
                           size="m"
                           href={subHref}
-                          onClick={closeDesktopMenu}
+                          onClick={(event) => {
+                            closeDesktopMenu();
+                            if (subHref === "/studies/apply") {
+                              void handleStudyApplicationClick(event);
+                            }
+                          }}
                           className="text-text-basic"
                         >
                           {subLabel}
@@ -316,6 +359,14 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
           {rightSlot}
         </div>
       </nav>
+      <AlertModal
+        isOpen={studyApplicationBlockedMessage !== null}
+        description={studyApplicationBlockedMessage ?? ""}
+        descriptionClassName="w-full text-center"
+        onClose={() => setStudyApplicationBlockedMessage(null)}
+        onConfirm={() => setStudyApplicationBlockedMessage(null)}
+        showCancelButton={false}
+      />
     </div>
   );
 }
