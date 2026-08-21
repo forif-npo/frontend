@@ -2,8 +2,7 @@
 
 import { CircleAlert, X } from "@repo/assets/icons/lucide";
 import { SuccessFillIcon } from "@repo/assets/icons/krds";
-import { Modal } from "@ui/components/client";
-import { ActionConfirmModal } from "@/components/ActionConfirmModal";
+import { AlertModal, Modal } from "@ui/components/client";
 
 export type ApplicantAction = "accept" | "reject";
 
@@ -17,6 +16,7 @@ interface ApplicantActionConfirmModalProps {
   isOpen: boolean;
   action: ApplicantAction;
   target: string;
+  applicantName?: string;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -36,18 +36,31 @@ export function ApplicantActionConfirmModal({
   isOpen,
   action,
   target,
+  applicantName,
   onClose,
   onConfirm,
 }: ApplicantActionConfirmModalProps) {
   const label = applicantActionLabel[action];
 
   return (
-    <ActionConfirmModal
+    <AlertModal
       isOpen={isOpen}
-      target={target}
-      action={label}
+      description={
+        applicantName ? (
+          <>
+            <strong className="font-bold">{applicantName}</strong>
+            {" 님의 스터디 신청을 "}
+            {label}하시겠습니까?
+          </>
+        ) : (
+          `${target}을 ${label}하시겠습니까?`
+        )
+      }
+      descriptionClassName="w-full text-center"
       onClose={onClose}
       onConfirm={onConfirm}
+      confirmLabel={label}
+      cancelLabel="취소"
     />
   );
 }

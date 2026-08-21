@@ -22,6 +22,7 @@ export function ActionConfirmModal({
     <AlertModal
       isOpen={isOpen}
       description={`${target}를 ${action}하시겠습니까?`}
+      descriptionClassName="w-full text-center"
       onClose={onClose}
       onConfirm={onConfirm}
       confirmLabel={action}

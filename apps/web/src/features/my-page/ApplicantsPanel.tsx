@@ -457,6 +457,7 @@ export function ApplicantsPanel({
           onConfirm={handleConfirmAction}
           action={actionRequest.action}
           target={getActionTarget(actionRequest)}
+          applicantName={actionRequest.applicantName}
         />
       )}
 

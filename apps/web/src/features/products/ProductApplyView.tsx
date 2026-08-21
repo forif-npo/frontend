@@ -465,6 +465,7 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
       <AlertModal
         isOpen={thumbnailAlertMessage !== null}
         description={thumbnailAlertMessage ?? ""}
+        descriptionClassName="w-full text-center"
         onClose={() => setThumbnailAlertMessage(null)}
       />
       <ActionConfirmModal

@@ -833,6 +833,7 @@ export function StudyApplicationEditor({
       <AlertModal
         isOpen={thumbnailAlertMessage !== null}
         description={thumbnailAlertMessage ?? ""}
+        descriptionClassName="w-full text-center"
         onClose={() => setThumbnailAlertMessage(null)}
       />
     </section>

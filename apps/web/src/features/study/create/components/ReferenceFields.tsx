@@ -228,6 +228,7 @@ export function ReferenceFields({ form }: ReferenceFieldsProps) {
       <AlertModal
         isOpen={fileAlertMessage !== null}
         description={fileAlertMessage ?? ""}
+        descriptionClassName="w-full text-center"
         onClose={() => setFileAlertMessage(null)}
       />
     </div>
