@@ -36,7 +36,7 @@ export function ApplicationDetailView({
   onCancelled,
 }: ApplicationDetailViewProps) {
   const { study, priority, intro, status } = application;
-  const isAutonomousStudy = study.autonomous_study;
+  const isAutonomousStudy = study.autonomous_study === true || intro === null;
   const priorityLabel = priority === "PRIMARY" ? "1순위" : "2순위";
   const difficultyLabel = NUMERIC_DIFFICULTY_LABELS[study.difficulty] ?? "보통";
   const statusLabel = APPLICATION_STATUS_LABELS[status] ?? "지원중";
