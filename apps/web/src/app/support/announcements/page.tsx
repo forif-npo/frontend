@@ -35,7 +35,7 @@ export default function AnnouncementPage() {
       <PageHeader
         breadcrumbs={[
           { label: "홈", href: "/" },
-          { label: "지원", href: "/support" },
+          { label: "공지", href: "/support" },
           { label: "공지사항" },
         ]}
         title="공지사항"
