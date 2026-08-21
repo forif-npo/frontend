@@ -28,7 +28,6 @@ import {
   Code2,
   FileText,
   HelpCircle,
-  Home,
   LayoutGrid,
   MessageSquare,
   Rocket,
@@ -95,7 +94,6 @@ const menuItems = {
     items: [
       { title: "공지사항", url: "/announcements", icon: FileText },
       { title: "FAQs", url: "/faqs", icon: HelpCircle },
-      { title: "폼", url: "/forms", icon: Home },
     ],
   },
   others: {
