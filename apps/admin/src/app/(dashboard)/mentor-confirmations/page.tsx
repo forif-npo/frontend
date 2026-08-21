@@ -33,7 +33,7 @@ export default async function MentorConfirmationsPage({
       size: 100,
       page: 0,
       ...parseSemesterFilter(activeSemester),
-      studyStatuses: ["APPROVED"],
+      studyStatuses: ["STARTED"],
     },
     token,
   );

@@ -9,6 +9,7 @@ import { Study } from "../types";
 const STATUS_LABELS: Record<Study["study_status"], string> = {
   PENDING: "승인 대기",
   APPROVED: "승인 완료",
+  STARTED: "개설됨",
   REJECTED: "반려",
   RE_APPLIED: "재신청",
 };
@@ -16,6 +17,7 @@ const STATUS_LABELS: Record<Study["study_status"], string> = {
 const STATUS_BADGE_CLASS_NAMES: Record<Study["study_status"], string> = {
   PENDING: "border-yellow-500 bg-yellow-50 text-yellow-700",
   APPROVED: "border-green-500 bg-green-50 text-green-700",
+  STARTED: "border-emerald-600 bg-emerald-50 text-emerald-800",
   REJECTED: "border-red-500 bg-red-50 text-red-700",
   RE_APPLIED: "border-blue-500 bg-blue-50 text-blue-700",
 };

@@ -66,7 +66,7 @@ export default async function Page({ searchParams }: PageProps) {
         ...semesterFilter,
         search,
         studyStatuses: includeProcessed
-          ? ["PENDING", "RE_APPLIED", "APPROVED", "REJECTED"]
+          ? ["PENDING", "RE_APPLIED", "APPROVED", "STARTED", "REJECTED"]
           : ["PENDING", "RE_APPLIED"],
         sorting,
       },

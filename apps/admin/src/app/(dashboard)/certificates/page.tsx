@@ -52,7 +52,7 @@ export default async function Page({ searchParams }: PageProps) {
         size: 100,
         page: 0,
         ...semesterFilter,
-        studyStatuses: ["APPROVED"],
+        studyStatuses: ["STARTED"],
       },
       accessToken,
     );

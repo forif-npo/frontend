@@ -4,7 +4,7 @@ import { apiClient } from "../utils/api-client";
 /**
  * 학기 모집 일정 API (FOR-115)
  *
- * 4단계 기간을 회장단이 설정하고 서버가 강제한다.
+ * 4개 모집 단계와 스터디 시작일을 회장단이 설정하고 서버가 강제한다.
  * 설정되지 않은 멘티 모집 단계는 닫히며, 그 외 단계는 상시 개방이다.
  */
 
@@ -13,6 +13,7 @@ export const SEMESTER_PHASES = [
   "MENTOR_REVIEW",
   "MENTEE_RECRUIT",
   "MENTEE_REVIEW",
+  "STUDY_START",
 ] as const;
 
 export type SemesterPhase = (typeof SEMESTER_PHASES)[number];
@@ -22,6 +23,7 @@ export const SEMESTER_PHASE_LABELS: Record<SemesterPhase, string> = {
   MENTOR_REVIEW: "멘토 수락/거절",
   MENTEE_RECRUIT: "멘티 모집",
   MENTEE_REVIEW: "멘티 수락/거절",
+  STUDY_START: "스터디 시작",
 };
 
 /** 각 단계가 실제로 무엇을 여닫는지 — 화면 안내용 */
@@ -30,6 +32,7 @@ export const SEMESTER_PHASE_DESCRIPTIONS: Record<SemesterPhase, string> = {
   MENTOR_REVIEW: "운영진이 개설 신청을 승인·반려하는 기간",
   MENTEE_RECRUIT: "부원이 수강 신청을 할 수 있는 기간",
   MENTEE_REVIEW: "멘토가 신청자를 합격·불합격 처리하는 기간",
+  STUDY_START: "이 날짜 00:00에 승인된 스터디가 개설 상태로 전환됨",
 };
 
 export interface SemesterScheduleItem {
