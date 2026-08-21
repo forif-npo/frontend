@@ -12,11 +12,13 @@ export const applyStudy = async (data: StudyApplyValues) => {
 
   const response = await apiClient
     .post("api/v1/users/apply", {
-      json: {
-        study_id: data.primaryStudyId,
-        apply_reason: data.primaryStudyApplyReason,
-        priority: data.priority,
-      },
+      json: data.isAutonomousStudy
+        ? { study_id: data.primaryStudyId }
+        : {
+            study_id: data.primaryStudyId,
+            apply_reason: data.primaryStudyApplyReason,
+            priority: data.priority,
+          },
     })
     .json<{ message: string; data: null }>();
 

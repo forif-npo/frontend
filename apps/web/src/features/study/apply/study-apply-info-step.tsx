@@ -32,6 +32,7 @@ interface StudyApplyInfoStepProps {
   studyName: string;
   tags: BadgeTag[];
   userInfo: UserInfo;
+  isAutonomousStudy?: boolean;
   onNext: () => void;
   onCancel: () => void;
 }
@@ -40,6 +41,7 @@ export function StudyApplyInfoStep({
   studyName,
   tags,
   userInfo,
+  isAutonomousStudy = false,
   onNext,
   onCancel,
 }: StudyApplyInfoStepProps) {
@@ -64,7 +66,21 @@ export function StudyApplyInfoStep({
               관심 있는 스터디에 지원하고 함께 성장해보세요.
             </p>
           </div>
-          <StudyStepIndicator steps={STUDY_APPLY_STEPS} />
+          <StudyStepIndicator
+            steps={
+              isAutonomousStudy
+                ? [
+                    STUDY_APPLY_STEPS[0],
+                    {
+                      number: 2,
+                      title: "신청 내용 확인",
+                      description:
+                        "자율스터디 신청 내용을 확인한 뒤 제출합니다.",
+                    },
+                  ]
+                : STUDY_APPLY_STEPS
+            }
+          />
         </section>
 
         <section className="border-border-gray bg-surface-white flex flex-col gap-6 rounded-[12px] border p-5 sm:p-10">
