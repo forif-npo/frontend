@@ -16,7 +16,7 @@ interface SemesterTabsProps {
 export function SemesterTabs({
   currentSemester,
   onSemesterChange,
-  includeEtc = true,
+  includeEtc = false,
   options,
 }: SemesterTabsProps) {
   // 학기 목록과 "현재학기" 표시는 운영진이 지정한 활동 학기를 따른다
