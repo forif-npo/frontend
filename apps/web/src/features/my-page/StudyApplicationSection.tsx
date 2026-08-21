@@ -62,20 +62,13 @@ export function StudyApplicationSection({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
-          개설 신청서{" "}
-          <span className="text-text-primary">{applications.length}</span>개
-        </p>
-      </div>
-
       {applications.length === 0 ? (
         <div className="text-text-subtle flex flex-col items-center justify-center py-20">
           <p className="text-lg">진행 중인 스터디 개설 신청이 없습니다.</p>
         </div>
       ) : (
         <div>
-          <div className="mb-4">
+          <div className="mb-6">
             <Select
               id="study-application"
               size="sm"

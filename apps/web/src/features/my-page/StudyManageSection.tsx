@@ -288,7 +288,7 @@ function StudySelector({
   isPastSemester: boolean;
 }) {
   return (
-    <div className="mb-4">
+    <div className="mb-6">
       <Select
         id="manage-study"
         size="sm"
