@@ -74,6 +74,7 @@ export function useStudyApplyPage(studyId?: string, isDirectEntry = false) {
         const blockMessage = getStudyApplicationBlockMessage(
           status,
           isAutonomousStudy,
+          currentStudy.id,
         );
         setApplicationBlockMessage(blockMessage);
         setApplicationAvailability(blockMessage ? "blocked" : "available");

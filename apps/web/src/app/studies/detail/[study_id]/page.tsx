@@ -36,6 +36,7 @@ export default function StudyDetailPage({ params }: Props) {
         const blockMessage = getStudyApplicationBlockMessage(
           status,
           study.autonomous_study,
+          study.id,
         );
         if (blockMessage) {
           setApplicationBlockedMessage(blockMessage);

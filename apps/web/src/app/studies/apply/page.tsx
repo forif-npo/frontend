@@ -56,6 +56,7 @@ export default function StudyApplyPage() {
       const blockMessage = getStudyApplicationBlockMessage(
         status,
         selectedStudy?.isAutonomousStudy === true,
+        Number(studyId),
       );
       if (blockMessage) {
         setApplicationBlockedMessage(blockMessage);
