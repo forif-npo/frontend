@@ -13,7 +13,14 @@ import {
 } from "@ui/components/client";
 import { handleApiError } from "@core/utils/api-client";
 import { useRouter } from "next/navigation";
-import { applyProduct, type ProductSourceType } from "./api";
+import { ActionConfirmModal } from "@/components/ActionConfirmModal";
+import {
+  applyProduct,
+  deleteProductApplication,
+  updateProductApplication,
+  type ProductApplication,
+  type ProductSourceType,
+} from "./api";
 
 const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,18})[a-z0-9]$/;
 const RESERVED_SLUGS = new Set([
@@ -58,13 +65,39 @@ const SOURCE_TYPE_OPTIONS = [
   { value: "SIDE", label: "자율 프로젝트" },
 ];
 
-export function ProductApplyView() {
+function toFormState(application: ProductApplication): FormState {
+  return {
+    name: application.name,
+    slug: application.slug,
+    oneLiner: application.one_liner,
+    description: application.description,
+    sourceType: application.source_type,
+    serviceUrl: application.service_url ?? "",
+    githubUrl: application.github_url ?? "",
+    techStack: application.tech_stack.join(", "),
+  };
+}
+
+interface ProductApplyViewProps {
+  application?: ProductApplication;
+}
+
+export function ProductApplyView({ application }: ProductApplyViewProps) {
   const router = useRouter();
+  const isEditMode = application !== undefined;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<
+    "modify" | "delete" | null
+  >(null);
+  const [form, setForm] = useState<FormState>(() =>
+    application ? toFormState(application) : EMPTY_FORM,
+  );
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [isExistingThumbnailRemoved, setIsExistingThumbnailRemoved] =
+    useState(false);
   const [thumbnailAlertMessage, setThumbnailAlertMessage] = useState<
     string | null
   >(null);
@@ -140,6 +173,7 @@ export function ProductApplyView() {
     }
 
     setThumbnail(file);
+    setIsExistingThumbnailRemoved(false);
     return true;
   };
 
@@ -159,24 +193,31 @@ export function ProductApplyView() {
     setFieldErrors({});
     setIsSubmitting(true);
     try {
-      await applyProduct(
-        {
-          name: form.name.trim(),
-          slug,
-          one_liner: form.oneLiner.trim(),
-          description: form.description.trim(),
-          source_type: form.sourceType,
-          service_url: form.serviceUrl.trim() || null,
-          github_url: form.githubUrl.trim() || null,
-          tech_stack: form.techStack
-            .split(",")
-            .map((tech) => tech.trim())
-            .filter(Boolean),
-        },
-        thumbnail,
-      );
+      const request = {
+        name: form.name.trim(),
+        slug,
+        one_liner: form.oneLiner.trim(),
+        description: form.description.trim(),
+        source_type: form.sourceType,
+        service_url: form.serviceUrl.trim() || null,
+        github_url: form.githubUrl.trim() || null,
+        tech_stack: form.techStack
+          .split(",")
+          .map((tech) => tech.trim())
+          .filter(Boolean),
+      };
 
-      router.push("/products/apply/complete");
+      if (application) {
+        await updateProductApplication(
+          application.application_id,
+          { ...request, remove_thumbnail: isExistingThumbnailRemoved },
+          thumbnail,
+        );
+        router.push("/my?section=service-manage");
+      } else {
+        await applyProduct(request, thumbnail);
+        router.push("/products/apply/complete");
+      }
     } catch (error) {
       const message = await handleApiError(error);
       // 서브도메인 관련 오류는 해당 입력창 아래에 표시한다
@@ -187,6 +228,22 @@ export function ProductApplyView() {
       }
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!application || isDeleting) return;
+
+    setIsDeleting(true);
+    setErrorMessage(null);
+    try {
+      await deleteProductApplication(application.application_id);
+      router.push("/my?section=service-manage");
+    } catch (error) {
+      setErrorMessage(await handleApiError(error));
+    } finally {
+      setIsDeleting(false);
+      setConfirmAction(null);
     }
   };
 
@@ -268,8 +325,21 @@ export function ProductApplyView() {
               multiple={false}
               maxFiles={1}
               files={thumbnail ? [thumbnail] : []}
+              existingFile={
+                application?.thumbnail_url &&
+                !thumbnail &&
+                !isExistingThumbnailRemoved
+                  ? { name: "기존 대표 이미지", url: application.thumbnail_url }
+                  : null
+              }
               onUpload={handleThumbnailUpload}
-              onRemove={() => setThumbnail(null)}
+              onRemove={() => {
+                if (thumbnail) {
+                  setThumbnail(null);
+                } else {
+                  setIsExistingThumbnailRemoved(true);
+                }
+              }}
             />
           </div>
 
@@ -333,14 +403,43 @@ export function ProductApplyView() {
             <CriticalAlert text={errorMessage} variant="danger" />
           )}
 
-          <div className="flex justify-end">
+          <div
+            className={
+              isEditMode
+                ? "flex items-center justify-between gap-4"
+                : "flex justify-end"
+            }
+          >
+            {isEditMode && (
+              <Button
+                variant="tertiary"
+                size="large"
+                type="button"
+                onClick={() => setConfirmAction("delete")}
+                disabled={isSubmitting || isDeleting}
+              >
+                {isDeleting ? "삭제 중..." : "삭제"}
+              </Button>
+            )}
             <Button
               variant="primary"
               size="large"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
+              onClick={() => {
+                if (isEditMode) {
+                  setConfirmAction("modify");
+                } else {
+                  void handleSubmit();
+                }
+              }}
+              disabled={isSubmitting || isDeleting}
             >
-              {isSubmitting ? "신청 중..." : "신청하기"}
+              {isSubmitting
+                ? isEditMode
+                  ? "수정 중..."
+                  : "신청 중..."
+                : isEditMode
+                  ? "수정"
+                  : "신청하기"}
             </Button>
           </div>
         </div>
@@ -350,6 +449,20 @@ export function ProductApplyView() {
         isOpen={thumbnailAlertMessage !== null}
         description={thumbnailAlertMessage ?? ""}
         onClose={() => setThumbnailAlertMessage(null)}
+      />
+      <ActionConfirmModal
+        isOpen={confirmAction !== null}
+        target="서비스 등록 신청서"
+        action={confirmAction === "modify" ? "수정" : "삭제"}
+        onClose={() => setConfirmAction(null)}
+        onConfirm={() => {
+          if (confirmAction === "modify") {
+            void handleSubmit();
+          } else {
+            void handleDelete();
+          }
+          setConfirmAction(null);
+        }}
       />
     </div>
   );
