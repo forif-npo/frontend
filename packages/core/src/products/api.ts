@@ -45,6 +45,7 @@ export interface ProductApplication {
   service_url: string | null;
   github_url: string | null;
   thumbnail_url: string | null;
+  tags: string[];
   tech_stack: string[];
   status: ProductApplicationStatus;
   reject_reason: string | null;
