@@ -1,21 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
 import { ShareIcon } from "@repo/assets/icons/krds";
 import { Breadcrumb } from "@ui/components/server";
 
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
-import { Button } from "@ui/components/client";
 import { AnnouncementDetailSkeleton } from "@/components/skeleton/AnnouncementDetailSkeleton";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { safeImageSrc } from "@/utils/image";
 
 export default function AnnouncementDetailPage() {
   const params = useParams<{ id: string }>();
-  const router = useRouter();
   const id = Number(params.id);
 
   const { item, isLoading, errorMessage } = useAnnouncementDetail(id);
@@ -40,9 +38,9 @@ export default function AnnouncementDetailPage() {
         <Breadcrumb
           items={[
             { label: "홈", href: "/" },
-            { label: "지원", href: "/support" },
+            { label: "공지", href: "/support" },
             { label: "공지사항", href: "/support/announcements" },
-            { label: item?.title ?? "상세" },
+            { label: "공지사항 자세히 보기" },
           ]}
         />
       </div>
@@ -112,17 +110,6 @@ export default function AnnouncementDetailPage() {
               })}
             </div>
           )}
-
-          {/* Back button */}
-          <div className="mt-14">
-            <Button
-              variant="secondary"
-              className="w-full"
-              onClick={() => router.push("/support/announcements")}
-            >
-              목록으로 돌아가기
-            </Button>
-          </div>
         </div>
       )}
     </main>
