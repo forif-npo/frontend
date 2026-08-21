@@ -8,7 +8,6 @@ interface BreadcrumbItem {
 
 interface BreadcrumbProps {
   items: BreadcrumbItem[];
-  maxLength?: number;
 }
 
 const ChevronIcon = ({ className }: { className?: string }) => (
@@ -31,47 +30,12 @@ const ChevronIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const EllipsisIcon = ({ className }: { className?: string }) => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
-    className={className}
-  >
-    <circle cx="3" cy="8" r="1" fill="currentColor" />
-    <circle cx="8" cy="8" r="1" fill="currentColor" />
-    <circle cx="13" cy="8" r="1" fill="currentColor" />
-  </svg>
-);
-
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({
-  items,
-  maxLength = 3,
-}) => {
-  const maxItems = Math.max(2, maxLength);
-
-  const computeVisible = () => {
-    if (items.length <= maxItems) return items;
-    const visible: BreadcrumbItem[] = [items[0]];
-    if (maxItems > 2) {
-      for (let i = 1; i < maxItems - 1; i++) {
-        visible.push(items[items.length - maxItems + i]);
-      }
-    }
-    visible.push(items[items.length - 1]);
-    return visible;
-  };
-
-  const visibleItems = computeVisible();
-
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
   return (
     <nav aria-label="breadcrumb" className="py-2">
       <ol className="flex items-center" role="list">
-        {visibleItems.map((item, index) => {
-          const isLast = index === visibleItems.length - 1;
+        {items.map((item, index) => {
+          const isLast = index === items.length - 1;
           return (
             <li key={index} className="m-0 flex items-center">
               {index > 0 && <ChevronIcon className="text-text-basic" />}
@@ -87,12 +51,6 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                     className="h-4 w-4"
                   />
                 </span>
-              )}
-              {index === 1 && items.length > maxItems && (
-                <>
-                  <EllipsisIcon className="text-text-basic" />
-                  <ChevronIcon className="text-text-basic" />
-                </>
               )}
               {item.href && !isLast ? (
                 <a
