@@ -35,7 +35,7 @@ const RESERVED_SLUGS = new Set([
   "forif",
 ]);
 
-type FieldErrors = Partial<Record<keyof FormState, string>>;
+type FieldErrors = Partial<Record<keyof FormState | "thumbnail", string>>;
 
 interface FormState {
   name: string;
@@ -142,6 +142,12 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
     if (!form.description.trim()) {
       errors.description = "상세 소개를 입력해주세요.";
     }
+    if (
+      !thumbnail &&
+      (!application?.thumbnail_url || isExistingThumbnailRemoved)
+    ) {
+      errors.thumbnail = "썸네일을 등록해주세요.";
+    }
 
     if (
       form.serviceUrl.trim() &&
@@ -177,6 +183,12 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
 
     setThumbnail(file);
     setIsExistingThumbnailRemoved(false);
+    setFieldErrors((prev) => {
+      if (!prev.thumbnail) return prev;
+      const next = { ...prev };
+      delete next.thumbnail;
+      return next;
+    });
     return true;
   };
 
@@ -320,11 +332,13 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
             placeholder="서비스를 한 문장으로 소개해주세요"
           />
 
-          <div className="flex flex-col gap-2">
-            <Label>썸네일</Label>
-            <HintText>
-              서비스 목록에서 보여줄 대표 이미지를 선택해주세요.
-            </HintText>
+          <div id="thumbnail" tabIndex={-1} className="flex flex-col gap-2">
+            <Label>
+              썸네일
+              <span className="text-text-danger ml-0.5" aria-hidden="true">
+                *
+              </span>
+            </Label>
             <FileUpload
               title="이미지 파일 업로드 (jpg, jpeg, png)"
               description="권장 크기 1080px * 720px, 최대 5MB"
@@ -348,6 +362,11 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
                 }
               }}
             />
+            {fieldErrors.thumbnail && (
+              <Label id="thumbnail-error" size="s" className="text-text-danger">
+                {fieldErrors.thumbnail}
+              </Label>
+            )}
           </div>
 
           <TextArea

@@ -140,7 +140,7 @@ const components: Components = {
     return (
       <pre
         className={clsx(
-          "bg-gray-70 [&>code]:text-gray-5 my-5 overflow-x-auto rounded-lg p-4 leading-7 [&>code]:border-0 [&>code]:bg-transparent [&>code]:p-0",
+          "bg-surface-secondary-subtler border-border-secondary-light text-text-secondary [&>code]:text-text-secondary my-5 overflow-x-auto rounded-lg border p-4 leading-7 [&>code]:border-0 [&>code]:bg-transparent [&>code]:p-0",
           className,
         )}
         {...rest}
