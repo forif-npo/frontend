@@ -45,6 +45,7 @@ interface FormState {
   sourceType: ProductSourceType;
   serviceUrl: string;
   githubUrl: string;
+  tags: string;
   techStack: string;
 }
 
@@ -56,6 +57,7 @@ const EMPTY_FORM: FormState = {
   sourceType: "STUDY",
   serviceUrl: "",
   githubUrl: "",
+  tags: "",
   techStack: "",
 };
 
@@ -74,6 +76,7 @@ function toFormState(application: ProductApplication): FormState {
     sourceType: application.source_type,
     serviceUrl: application.service_url ?? "",
     githubUrl: application.github_url ?? "",
+    tags: application.tags.join(", "),
     techStack: application.tech_stack.join(", "),
   };
 }
@@ -201,6 +204,10 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
         source_type: form.sourceType,
         service_url: form.serviceUrl.trim() || null,
         github_url: form.githubUrl.trim() || null,
+        tags: form.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
         tech_stack: form.techStack
           .split(",")
           .map((tech) => tech.trim())
@@ -387,6 +394,16 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
             error={fieldErrors.githubUrl}
             onChange={(e) => update({ githubUrl: e.target.value })}
             placeholder="https://github.com/..."
+          />
+
+          <TextInput
+            id="tags"
+            title="태그"
+            length="full"
+            value={form.tags}
+            helpText="쉼표로 구분해 입력해주세요."
+            onChange={(e) => update({ tags: e.target.value })}
+            placeholder="웹, 교육, 생산성"
           />
 
           <TextInput
