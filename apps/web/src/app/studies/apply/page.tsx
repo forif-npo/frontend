@@ -116,6 +116,7 @@ export default function StudyApplyPage() {
             <SelectBox
               id="study-apply-select"
               title="지원 스터디"
+              titleClassName="text-[19px] font-bold leading-[1.5]"
               required
               size="lg"
               placeholder="스터디를 선택해주세요"

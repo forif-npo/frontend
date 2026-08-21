@@ -159,7 +159,7 @@ export function ApplicationDetailView({
           {/* 지원 순위 */}
           <div className="flex flex-col gap-6">
             <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
-              지원 순위
+              지원 순위 <span className="text-text-danger font-normal">*</span>
             </p>
             <div className="border-border-gray bg-surface-disabled flex h-14 items-center rounded-lg border px-4">
               <p className="text-text-subtle flex-1 text-[19px] leading-[1.5]">
