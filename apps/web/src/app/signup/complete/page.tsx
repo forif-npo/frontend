@@ -6,7 +6,7 @@ import { Body, Divider, Heading, LinkButton } from "@ui/components/server";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AuthSkeleton } from "@/components/skeleton/AuthSkeleton";
+import { AuthLoadingIndicator } from "@/components/AuthLoadingIndicator";
 import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 
 export default function Page() {
@@ -32,7 +32,7 @@ export default function Page() {
   };
 
   if (status === "loading" || !session?.accessToken) {
-    return <AuthSkeleton />;
+    return <AuthLoadingIndicator message="회원가입 처리 중입니다." />;
   }
 
   return (
