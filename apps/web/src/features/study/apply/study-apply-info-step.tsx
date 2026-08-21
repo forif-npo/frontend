@@ -34,7 +34,6 @@ interface StudyApplyInfoStepProps {
   userInfo: UserInfo;
   isAutonomousStudy?: boolean;
   onNext: () => void;
-  onCancel: () => void;
 }
 
 export function StudyApplyInfoStep({
@@ -43,7 +42,6 @@ export function StudyApplyInfoStep({
   userInfo,
   isAutonomousStudy = false,
   onNext,
-  onCancel,
 }: StudyApplyInfoStepProps) {
   const formattedPhone = useFormattedPhoneNumber(userInfo.phone);
 
@@ -107,12 +105,7 @@ export function StudyApplyInfoStep({
         </section>
       </div>
 
-      <StepNavigation
-        onNext={onNext}
-        leadingActions={[
-          { label: "취소", onClick: onCancel, variant: "tertiary" },
-        ]}
-      />
+      <StepNavigation onNext={onNext} />
     </div>
   );
 }

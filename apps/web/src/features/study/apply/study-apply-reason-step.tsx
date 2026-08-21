@@ -34,7 +34,6 @@ interface StudyApplyFormProps {
     | "error";
   applicationAvailability: "loading" | "available" | "blocked" | "error";
   onPrevious: () => void;
-  onCancel: () => void;
 }
 
 export function StudyApplyReasonStep({
@@ -46,7 +45,6 @@ export function StudyApplyReasonStep({
   secondaryPriorityAvailability,
   applicationAvailability,
   onPrevious,
-  onCancel,
 }: StudyApplyFormProps) {
   const initialValues: StudyApplyValues = {
     primaryStudyId: currentStudy.id,
@@ -213,9 +211,6 @@ export function StudyApplyReasonStep({
             isAutonomousStudyUnavailable ||
             applicationAvailability === "loading"
           }
-          leadingActions={[
-            { label: "취소", onClick: onCancel, variant: "tertiary" },
-          ]}
         />
       </Form>
     </div>

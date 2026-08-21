@@ -33,7 +33,6 @@ export default function StudyApplyPage() {
     isMenteeRecruitmentClosed,
     goToNext,
     goToPrevious,
-    goToStudyList,
     goToApplications,
     handleSubmit,
   } = useStudyApplyPage(selectedStudyId ?? undefined);
@@ -127,7 +126,6 @@ export default function StudyApplyPage() {
             userInfo={userInfo}
             isAutonomousStudy={isAutonomousStudy}
             onNext={goToNext}
-            onCancel={goToStudyList}
           />
         ) : (
           <StudyApplyReasonStep
@@ -139,7 +137,6 @@ export default function StudyApplyPage() {
             secondaryPriorityAvailability={secondaryPriorityAvailability}
             applicationAvailability={applicationAvailability}
             onPrevious={goToPrevious}
-            onCancel={goToStudyList}
           />
         )}
       </div>
