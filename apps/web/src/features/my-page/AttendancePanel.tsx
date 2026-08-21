@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@ui/components/client";
+import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import {
   Table,
   TableBody,
@@ -37,6 +38,7 @@ export function AttendancePanel({
   const [data, setData] = useState<StudyAttendanceData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [weekCount, setWeekCount] = useState(DEFAULT_WEEK_COUNT);
   const [mentorConfirmation, setMentorConfirmation] =
@@ -303,7 +305,7 @@ export function AttendancePanel({
           variant="primary"
           size="medium"
           disabled={pending.size === 0 || isSaving || readOnly}
-          onClick={handleSave}
+          onClick={() => setIsSaveConfirmOpen(true)}
         >
           {isSaving
             ? "저장 중..."
@@ -314,6 +316,13 @@ export function AttendancePanel({
       <p className="text-text-subtle text-body-xs mt-3">
         수료 기준: 출석 5회 이상 (수료증 발급은 운영진이 진행합니다)
       </p>
+      <ActionConfirmModal
+        isOpen={isSaveConfirmOpen}
+        target="출석 정보"
+        action="수정"
+        onClose={() => setIsSaveConfirmOpen(false)}
+        onConfirm={() => void handleSave()}
+      />
     </div>
   );
 }

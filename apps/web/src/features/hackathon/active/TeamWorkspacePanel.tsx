@@ -6,6 +6,8 @@ import type {
 } from "@core/types/hackathon";
 import { Body, Heading, Label } from "@ui/components/server";
 import { Button } from "@ui/components/client";
+import { useState } from "react";
+import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import {
   formatDateTime,
   getRemainingLabel,
@@ -44,6 +46,7 @@ export function TeamWorkspacePanel({
   onSubmit: () => void;
   submitting: boolean;
 }) {
+  const [isDisbandConfirmOpen, setIsDisbandConfirmOpen] = useState(false);
   const canEditTeam =
     (stage === "TEAM_BUILDING" || stage === "IN_PROGRESS") && isLeader;
   const canDisbandTeam = stage === "TEAM_BUILDING" && isLeader;
@@ -87,7 +90,7 @@ export function TeamWorkspacePanel({
               variant="tertiary"
               size="small"
               disabled={submitting}
-              onClick={onDisbandTeam}
+              onClick={() => setIsDisbandConfirmOpen(true)}
             >
               팀 해산
             </Button>
@@ -156,6 +159,13 @@ export function TeamWorkspacePanel({
           />
         )}
       </div>
+      <ActionConfirmModal
+        isOpen={isDisbandConfirmOpen}
+        target="해커톤 팀"
+        action="해산"
+        onClose={() => setIsDisbandConfirmOpen(false)}
+        onConfirm={onDisbandTeam}
+      />
     </Panel>
   );
 }

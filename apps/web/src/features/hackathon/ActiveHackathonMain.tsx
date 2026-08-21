@@ -17,6 +17,7 @@ import { isHackathonTechStack } from "@core/hackathon/tags";
 import { handleApiError } from "@core/utils/api-client";
 import { Heading } from "@ui/components/server";
 import { useEffect, useMemo, useState } from "react";
+import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { InfoRow, Notice, Panel } from "./shared";
 import { EvaluationPanel } from "./active/EvaluationPanel";
 import { TeamRecruitingPanel } from "./active/TeamRecruitingPanel";
@@ -119,6 +120,9 @@ export function ActiveHackathonMain({
   const [evaluatedTeamIds, setEvaluatedTeamIds] = useState<Set<number>>(
     () => new Set(),
   );
+  const [pendingEditConfirmation, setPendingEditConfirmation] = useState<
+    "team" | "submission" | null
+  >(null);
 
   const isRegistered = participant?.status === "REGISTERED";
   const isTeamBuilding = stage === "TEAM_BUILDING";
@@ -531,7 +535,13 @@ export function ActiveHackathonMain({
         form={teamForm}
         setForm={setTeamForm}
         onClose={() => setTeamModalMode(null)}
-        onConfirm={() => void submitTeamForm()}
+        onConfirm={() => {
+          if (teamModalMode === "edit") {
+            setPendingEditConfirmation("team");
+            return;
+          }
+          void submitTeamForm();
+        }}
       />
 
       <JoinRequestModal
@@ -555,7 +565,13 @@ export function ActiveHackathonMain({
           setSubmissionError(null);
           setSubmissionFieldErrors({});
         }}
-        onConfirm={() => void submitSubmission()}
+        onConfirm={() => {
+          if (mySubmission) {
+            setPendingEditConfirmation("submission");
+            return;
+          }
+          void submitSubmission();
+        }}
       />
 
       <EvaluationModal
@@ -566,6 +582,19 @@ export function ActiveHackathonMain({
         isEdit={!!existingEvaluation}
         onClose={() => setEvaluationTarget(null)}
         onConfirm={() => void submitEvaluationForm()}
+      />
+      <ActionConfirmModal
+        isOpen={pendingEditConfirmation !== null}
+        target={pendingEditConfirmation === "team" ? "팀 정보" : "결과물"}
+        action="수정"
+        onClose={() => setPendingEditConfirmation(null)}
+        onConfirm={() => {
+          if (pendingEditConfirmation === "team") {
+            void submitTeamForm();
+          } else {
+            void submitSubmission();
+          }
+        }}
       />
     </section>
   );

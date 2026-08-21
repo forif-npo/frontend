@@ -3,6 +3,7 @@
 import { CircleAlert, X } from "@repo/assets/icons/lucide";
 import { SuccessFillIcon } from "@repo/assets/icons/krds";
 import { Modal } from "@ui/components/client";
+import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 
 export type ApplicantAction = "accept" | "reject";
 
@@ -41,20 +42,13 @@ export function ApplicantActionConfirmModal({
   const label = applicantActionLabel[action];
 
   return (
-    <Modal
+    <ActionConfirmModal
       isOpen={isOpen}
+      target={target}
+      action={label}
       onClose={onClose}
       onConfirm={onConfirm}
-      title={`신청 ${label}`}
-      confirmLabel="확인"
-      cancelLabel="취소"
-      showHeaderBorder={false}
-      showFooterBorder={false}
-    >
-      <p className="text-text-basic text-body-m pb-4">
-        {target}을 {label} 처리할까요?
-      </p>
-    </Modal>
+    />
   );
 }
 
