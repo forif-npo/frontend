@@ -36,12 +36,18 @@ import { Send, Loader2, CheckCircle, XCircle, UserPlus } from "lucide-react";
 import { handleApiError } from "@core/utils/api-client";
 import { formatPhoneNumber } from "@core/utils/phone-number";
 import { sendAlimTalkSchema, type SendAlimTalkFormValues } from "./schema";
-import { type AlimTalkTemplate, type SendAlimTalkResult } from "./types";
+import {
+  type AlimTalkTemplate,
+  type Receiver,
+  type SendAlimTalkResult,
+} from "./types";
 import { getAlimTalkTemplates, sendAlimTalk } from "./api";
 import { AlimTalkPreview } from "./alimtalk-preview";
 import { ReceiverSelectorDialog } from "./receiver-selector-dialog";
 
 const AUTO_FILLED_VARIABLES = new Set(["#{이름}"]);
+const PHONE_NUMBER_IN_RECEIVER_LINE_REGEX =
+  /01[016789][\s-]?\d{3,4}[\s-]?\d{4}/;
 
 const VARIABLE_LABELS: Record<string, string> = {
   "#{스터디명}": "스터디명",
@@ -54,8 +60,22 @@ const VARIABLE_LABELS: Record<string, string> = {
 function formatPhoneNumberLines(value: string) {
   return value
     .split("\n")
-    .map((phoneNumber) => formatPhoneNumber(phoneNumber.trim()))
+    .map((line) => {
+      const phoneNumber = line.match(PHONE_NUMBER_IN_RECEIVER_LINE_REGEX)?.[0];
+      if (!phoneNumber) return formatPhoneNumber(line.trim());
+
+      return line.replace(phoneNumber, formatPhoneNumber(phoneNumber));
+    })
     .join("\n");
+}
+
+function extractPhoneNumber(value: string) {
+  const phoneNumber = value.match(PHONE_NUMBER_IN_RECEIVER_LINE_REGEX)?.[0];
+  return (phoneNumber ?? value).replace(/\D/g, "");
+}
+
+function formatReceiverLine(receiver: Receiver) {
+  return `${receiver.name}, ${formatPhoneNumber(receiver.phoneNumber)}, ${receiver.department}`;
 }
 
 function getVariableLabel(variable: string) {
@@ -84,6 +104,8 @@ export function SmsView() {
   const [error, setError] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showReceiverList, setShowReceiverList] = useState(false);
+  const [selectedReceiverByPhoneNumber, setSelectedReceiverByPhoneNumber] =
+    useState<Map<string, Receiver>>(new Map());
 
   const form = useForm<SendAlimTalkFormValues>({
     resolver: zodResolver(sendAlimTalkSchema),
@@ -123,20 +145,32 @@ export function SmsView() {
     .map((n) => n.trim())
     .filter(Boolean).length;
 
-  const applySelectedReceivers = (phoneNumbers: string[]) => {
+  const applySelectedReceivers = (selectedReceivers: Receiver[]) => {
     const currentText = form.getValues("receivers");
-    const currentNumbers = new Set(
+    const receiverLineByPhoneNumber = new Map(
       currentText
         .split("\n")
-        .map((n) => formatPhoneNumber(n.trim()))
-        .filter(Boolean),
+        .map((line) => [extractPhoneNumber(line), line] as const)
+        .filter(([phoneNumber]) => Boolean(phoneNumber)),
+    );
+    const nextSelectedReceiverByPhoneNumber = new Map(
+      selectedReceiverByPhoneNumber,
     );
 
-    phoneNumbers.forEach((num) => currentNumbers.add(formatPhoneNumber(num)));
-
-    form.setValue("receivers", Array.from(currentNumbers).join("\n"), {
-      shouldValidate: true,
+    selectedReceivers.forEach((receiver) => {
+      const phoneNumber = extractPhoneNumber(receiver.phoneNumber);
+      nextSelectedReceiverByPhoneNumber.set(phoneNumber, receiver);
+      receiverLineByPhoneNumber.set(phoneNumber, formatReceiverLine(receiver));
     });
+
+    form.setValue(
+      "receivers",
+      Array.from(receiverLineByPhoneNumber.values()).join("\n"),
+      {
+        shouldValidate: true,
+      },
+    );
+    setSelectedReceiverByPhoneNumber(nextSelectedReceiverByPhoneNumber);
     setShowReceiverList(false);
   };
 
@@ -167,7 +201,7 @@ export function SmsView() {
     try {
       const receivers = values.receivers
         .split("\n")
-        .map((n) => n.replace(/\D/g, ""))
+        .map(extractPhoneNumber)
         .filter(Boolean);
       const variables = Object.fromEntries(
         requiredVariables.map((variable) => [

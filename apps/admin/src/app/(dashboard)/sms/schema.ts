@@ -1,6 +1,14 @@
 import { z } from "zod";
 
 const phoneNumberRegex = /^01[016789]\d{7,8}$/;
+const phoneNumberInReceiverLineRegex = /01[016789][\s-]?\d{3,4}[\s-]?\d{4}/;
+
+function extractPhoneNumber(value: string) {
+  return (value.match(phoneNumberInReceiverLineRegex)?.[0] ?? value).replace(
+    /\D/g,
+    "",
+  );
+}
 
 export const sendAlimTalkSchema = z.object({
   receivers: z
@@ -23,7 +31,7 @@ export const sendAlimTalkSchema = z.object({
           .map((n) => n.trim())
           .filter(Boolean);
         return numbers.every((n) =>
-          phoneNumberRegex.test(n.replace(/\D/g, "")),
+          phoneNumberRegex.test(extractPhoneNumber(n)),
         );
       },
       { message: "올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)" },
