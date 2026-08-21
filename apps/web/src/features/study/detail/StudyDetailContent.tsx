@@ -16,7 +16,6 @@ import {
 } from "@/constants/study";
 import { getStudyLocationMap } from "@/constants/locations";
 import { getStudyTagLabel } from "@/constants/study-tags";
-import Link from "next/link";
 
 function ChevronDownIcon({ className }: { className?: string }) {
   return (
@@ -179,14 +178,9 @@ export function StudyDetailContent({ study }: StudyDetailContentProps) {
               <td className="text-text-subtle py-3 pr-3 text-[15px] font-bold leading-[1.5] md:py-4 md:pr-4 md:text-[17px]">
                 장소
               </td>
-              <td className="py-3 md:py-4">
-                <Link
-                  href="#location"
-                  className="text-text-primary cursor-pointer text-[15px] leading-[1.5] underline md:text-[17px]"
-                >
-                  {study.location}
-                  {study.location_detail && ` ${study.location_detail}`}
-                </Link>
+              <td className="text-text-basic py-3 text-[15px] leading-[1.5] md:py-4 md:text-[17px]">
+                {study.location}
+                {study.location_detail && ` ${study.location_detail}`}
               </td>
             </tr>
             <tr>
