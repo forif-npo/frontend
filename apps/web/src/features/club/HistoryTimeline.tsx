@@ -6,26 +6,35 @@ import { Body, Title } from "@ui/components/server";
 const history: { year: number; content: string[] }[] = [
   {
     year: 2026,
-    content: ["SKYSH 해커톤 개최", "FORIF 웹 리뉴얼", "제 1회 초청 강연"],
+    content: ["FORIF 웹 리뉴얼", "SKSYSH 해커톤 개최", "제3회 초청 강연"],
   },
-  { year: 2025, content: ["포리프 10주년 기념 행사", "제 15·16회 해커톤"] },
+  {
+    year: 2025,
+    content: [
+      "앨리스 상반기 채용 설명회",
+      "제2회 초청강연",
+      "제1·2회 FORIF 기술 블로그 백일장 개최",
+      "FORIF 10주년 기념 행사",
+      "제3회 홈커밍데이",
+    ],
+  },
   {
     year: 2024,
     content: [
-      "선배와의 만남",
-      "HSPC 한양X세종 알고리즘 대회 개최",
+      "FORIF WEB 배포",
+      "제1회 초청강연",
+      "현대오토에버 사옥투어",
+      "HSPC 한양X세종 알고리즘 대회",
       "제 2회 홈커밍데이",
-      "제 13·14회 해커톤",
     ],
   },
   {
     year: 2023,
     content: [
       "한 학기 부원 수 200명 돌파",
-      "HPEC 한양 알고리즘 대회 개최",
-      "OOPARTS 연합 스터디",
+      "HPEC 한양 알고리즘 대회",
+      "OOPARTS 연합 스터디 진행",
       "제 1회 홈커밍데이",
-      "제 11·12회 해커톤",
     ],
   },
   { year: 2021, content: ["한양대학교 중앙동아리 승격", "프로젝트 뭉공포"] },

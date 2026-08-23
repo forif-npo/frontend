@@ -6,15 +6,23 @@ export const FULL_STUDY_APPLICATION_MESSAGE =
 export const AUTONOMOUS_STUDY_CONFLICT_MESSAGE =
   "자율스터디는 정규스터디와 중복 신청할 수 없습니다.";
 
+export const DUPLICATE_PRIORITY_STUDY_MESSAGE =
+  "이미 1순위로 지원한 스터디입니다.\n2순위는 다른 스터디를 선택해주세요.";
+
 export function getStudyApplicationBlockMessage(
   status: StudyApplicationStatusResponse,
   isAutonomousStudy: boolean,
+  studyId?: number,
 ) {
   if (
     status.has_autonomous_study_application ||
     (isAutonomousStudy && !status.can_apply_autonomous_study)
   ) {
     return AUTONOMOUS_STUDY_CONFLICT_MESSAGE;
+  }
+
+  if (studyId !== undefined && status.primary_study?.id === studyId) {
+    return DUPLICATE_PRIORITY_STUDY_MESSAGE;
   }
 
   if (!status.can_apply_primary && !status.can_apply_secondary) {

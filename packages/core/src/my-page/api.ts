@@ -227,6 +227,8 @@ export interface StudyApplicationStatusResponse {
   can_apply_secondary: boolean;
   can_apply_autonomous_study: boolean;
   has_autonomous_study_application: boolean;
+  primary_study: { id: number } | null;
+  secondary_study: { id: number } | null;
 }
 
 export interface UpdateStudyApplicationRequest {

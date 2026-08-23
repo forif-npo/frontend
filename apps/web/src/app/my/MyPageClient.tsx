@@ -109,7 +109,7 @@ export function MyPageClient({
   ];
 
   return (
-    <div className="min-h-viewport mx-auto flex max-w-[1440px]">
+    <div className="min-h-viewport mx-auto flex max-w-[1440px] flex-col md:flex-row">
       <ProfileSidebar
         profile={{
           user_name: profile.user_name,

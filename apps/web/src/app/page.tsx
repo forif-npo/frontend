@@ -25,6 +25,7 @@ export default async function Page() {
     return {
       id: banner.id,
       content: <BannerComponent href={banner.href} image={banner.image} />,
+      mobileAspect: banner.mobileAspect,
     };
   });
   const mobileCarouselItems = carouselItems.filter(

@@ -33,7 +33,7 @@ export default function AnnouncementDetailPage() {
   };
 
   return (
-    <main className="max-w-main mx-auto w-full px-6 py-10">
+    <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
       <div className="mb-6">
         <Breadcrumb
           items={[

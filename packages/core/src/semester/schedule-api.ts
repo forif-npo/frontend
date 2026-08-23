@@ -4,8 +4,8 @@ import { apiClient } from "../utils/api-client";
 /**
  * 학기 모집 일정 API (FOR-115)
  *
- * 4개 모집 단계와 스터디 시작일을 회장단이 설정하고 서버가 강제한다.
- * 설정되지 않은 멘티 모집 단계는 닫히며, 그 외 단계는 상시 개방이다.
+ * 4개 모집 단계와 스터디 시작 시각을 회장단이 설정하고 서버가 강제한다.
+ * 설정되지 않은 멘티 모집·수락/거절 단계는 닫히며, 그 외 단계는 상시 개방이다.
  */
 
 export const SEMESTER_PHASES = [
@@ -32,7 +32,7 @@ export const SEMESTER_PHASE_DESCRIPTIONS: Record<SemesterPhase, string> = {
   MENTOR_REVIEW: "운영진이 개설 신청을 승인·반려하는 기간",
   MENTEE_RECRUIT: "부원이 수강 신청을 할 수 있는 기간",
   MENTEE_REVIEW: "멘토가 신청자를 합격·불합격 처리하는 기간",
-  STUDY_START: "이 날짜 00:00에 승인된 스터디가 개설 상태로 전환됨",
+  STUDY_START: "설정한 시각에 승인된 스터디가 개설 상태로 전환됨",
 };
 
 export interface SemesterScheduleItem {
@@ -83,7 +83,7 @@ export async function getSemesterSchedules(
 
 /**
  * 한 학기의 모집 일정을 통째로 저장한다.
- * 부분 수정이 아니라 전체 교체다 — 목록에서 빠진 멘티 모집 단계는 닫히고,
+ * 부분 수정이 아니라 전체 교체다 — 목록에서 빠진 멘티 모집·수락/거절 단계는 닫히고,
  * 그 외 단계는 상시 개방으로 돌아간다.
  */
 export async function saveSemesterSchedules(

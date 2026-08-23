@@ -21,6 +21,7 @@ import {
   type ApplicantsPage,
   type ApplyStatusFilter,
 } from "@core/study-manage/api";
+import { getCurrentSemesterSchedules } from "@core/semester/schedule-api";
 import {
   ApplicantActionConfirmModal,
   ApplicantActionResultModal,
@@ -42,6 +43,7 @@ interface ApplicationActionRequest {
 }
 
 const PAGE_SIZE = 10;
+const SCHEDULE_REFRESH_INTERVAL_MS = 60_000;
 
 const statusBadgeVariant: Record<string, NonNullable<BadgeProps["variant"]>> = {
   대기중: "warning",
@@ -76,10 +78,45 @@ export function ApplicantsPanel({
     useState<ApplicationActionRequest | null>(null);
   const [actionResult, setActionResult] =
     useState<ApplicantActionResult | null>(null);
+  const [isMenteeReviewOpen, setIsMenteeReviewOpen] = useState(false);
 
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [detailCache, setDetailCache] = useState<Record<number, string>>({});
+  const isActionDisabled = readOnly || isSubmitting || !isMenteeReviewOpen;
+
+  useEffect(() => {
+    let isCancelled = false;
+    const refreshMenteeReviewOpen = async () => {
+      const schedules = await getCurrentSemesterSchedules();
+      if (!isCancelled) {
+        setIsMenteeReviewOpen(
+          schedules.some(
+            (schedule) => schedule.phase === "MENTEE_REVIEW" && schedule.open,
+          ),
+        );
+      }
+    };
+
+    void refreshMenteeReviewOpen();
+    const intervalId = window.setInterval(
+      refreshMenteeReviewOpen,
+      SCHEDULE_REFRESH_INTERVAL_MS,
+    );
+
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === "visible") {
+        void refreshMenteeReviewOpen();
+      }
+    };
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+
+    return () => {
+      isCancelled = true;
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
+  }, []);
 
   const fetchApplicants = useCallback(async () => {
     setIsLoading(true);
@@ -122,6 +159,8 @@ export function ApplicantsPanel({
   };
 
   const toggleSelect = (applyId: number) => {
+    if (isActionDisabled) return;
+
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(applyId)) {
@@ -134,6 +173,8 @@ export function ApplicantsPanel({
   };
 
   const toggleSelectAll = () => {
+    if (isActionDisabled) return;
+
     setSelectedIds((prev) =>
       prev.size === applicantsPage.content.length
         ? new Set()
@@ -172,7 +213,7 @@ export function ApplicantsPanel({
       : `선택한 ${applyIds.length}명의 스터디 신청`;
 
   const openActionConfirmation = (request: ApplicationActionRequest) => {
-    if (request.applyIds.length === 0 || isSubmitting) {
+    if (request.applyIds.length === 0 || isActionDisabled) {
       return;
     }
     setActionRequest(request);
@@ -303,6 +344,7 @@ export function ApplicantsPanel({
                   type="checkbox"
                   aria-label="전체 선택"
                   checked={allSelected}
+                  disabled={isActionDisabled}
                   onChange={toggleSelectAll}
                 />
               </TableHead>
@@ -334,6 +376,7 @@ export function ApplicantsPanel({
                       type="checkbox"
                       aria-label={`${applicant.applier_name} 선택`}
                       checked={selectedIds.has(applicant.apply_id)}
+                      disabled={isActionDisabled}
                       onClick={(event) => event.stopPropagation()}
                       onKeyDown={(event) => event.stopPropagation()}
                       onChange={() => toggleSelect(applicant.apply_id)}
@@ -378,7 +421,7 @@ export function ApplicantsPanel({
                           <Button
                             variant="tertiary"
                             size="x-small"
-                            disabled={isSubmitting || readOnly}
+                            disabled={isActionDisabled}
                             onClick={() =>
                               openActionConfirmation({
                                 applyIds: [applicant.apply_id],
@@ -392,7 +435,7 @@ export function ApplicantsPanel({
                           <Button
                             variant="primary"
                             size="x-small"
-                            disabled={isSubmitting || readOnly}
+                            disabled={isActionDisabled}
                             onClick={() =>
                               openActionConfirmation({
                                 applyIds: [applicant.apply_id],
@@ -419,7 +462,7 @@ export function ApplicantsPanel({
           <Button
             variant="tertiary"
             size="medium"
-            disabled={selectedIds.size === 0 || isSubmitting || readOnly}
+            disabled={selectedIds.size === 0 || isActionDisabled}
             onClick={() => handleBulkAction("reject")}
           >
             선택 거절
@@ -427,7 +470,7 @@ export function ApplicantsPanel({
           <Button
             variant="primary"
             size="medium"
-            disabled={selectedIds.size === 0 || isSubmitting || readOnly}
+            disabled={selectedIds.size === 0 || isActionDisabled}
             onClick={() => handleBulkAction("accept")}
           >
             선택 승낙
