@@ -65,42 +65,11 @@ export function ProfileSidebar({
   ];
 
   return (
-    <aside className="hidden w-[224px] shrink-0 flex-col items-center border-r border-[#cdd1d5] px-6 py-10 md:flex">
-      {/* Profile Picture */}
-      <div className="relative mb-4">
-        {safeImageSrc(profile.img_url) ? (
-          <Image
-            src={safeImageSrc(profile.img_url)!}
-            alt={profile.user_name}
-            width={120}
-            height={120}
-            className="h-[120px] w-[120px] rounded-full object-cover"
-          />
-        ) : (
-          <CircleUser
-            className="h-[120px] w-[120px] text-[#E6E8EA]"
-            strokeWidth={0.8}
-          />
-        )}
-      </div>
-
-      {/* User Info */}
-      <div className="mb-4 flex flex-col items-center gap-0.5">
-        <Label size="l" weight="bold" className="text-black">
-          {profile.user_name}
-        </Label>
-        <Label size="xs" className="text-black">
-          {profile.department}
-        </Label>
-        <Label size="xs" className="text-black">
-          {profile.user_id}
-        </Label>
-      </div>
-
-      <hr className="mb-4 w-full border-[#cdd1d5]" />
-
-      {/* Navigation */}
-      <nav className="flex w-full flex-col gap-2">
+    <>
+      <nav
+        aria-label="마이페이지 메뉴"
+        className="flex w-full gap-1 overflow-x-auto border-y border-[#cdd1d5] px-4 md:hidden"
+      >
         {navItems.map((item) => {
           const isActive = activeNav === item.id;
           return (
@@ -108,20 +77,82 @@ export function ProfileSidebar({
               key={item.id}
               onClick={() => !item.disabled && onNavChange(item.id)}
               disabled={item.disabled}
-              className={`flex items-center gap-3 rounded-md px-3 py-2 text-left transition-colors ${
+              className={`flex shrink-0 items-center gap-2 border-b-2 px-3 py-4 text-left transition-colors ${
                 isActive
-                  ? "text-text-primary"
+                  ? "border-text-primary text-text-primary"
                   : item.disabled
-                    ? "text-text-disabled cursor-not-allowed"
-                    : "text-text-subtle hover:text-text-basic"
+                    ? "text-text-disabled cursor-not-allowed border-transparent"
+                    : "text-text-subtle hover:text-text-basic border-transparent"
               }`}
             >
-              <item.Icon className="h-6 w-6" strokeWidth={1.5} />
+              <item.Icon className="h-5 w-5" strokeWidth={1.5} />
               <Body size="m">{item.label}</Body>
             </button>
           );
         })}
       </nav>
-    </aside>
+
+      <aside className="hidden w-[224px] shrink-0 flex-col items-center border-r border-[#cdd1d5] px-6 py-10 md:flex">
+        {/* Profile Picture */}
+        <div className="relative mb-4">
+          {safeImageSrc(profile.img_url) ? (
+            <Image
+              src={safeImageSrc(profile.img_url)!}
+              alt={profile.user_name}
+              width={120}
+              height={120}
+              className="h-[120px] w-[120px] rounded-full object-cover"
+            />
+          ) : (
+            <CircleUser
+              className="h-[120px] w-[120px] text-[#E6E8EA]"
+              strokeWidth={0.8}
+            />
+          )}
+        </div>
+
+        {/* User Info */}
+        <div className="mb-4 flex flex-col items-center gap-0.5">
+          <Label size="l" weight="bold" className="text-black">
+            {profile.user_name}
+          </Label>
+          <Label size="xs" className="text-black">
+            {profile.department}
+          </Label>
+          <Label size="xs" className="text-black">
+            {profile.user_id}
+          </Label>
+        </div>
+
+        <hr className="mb-4 w-full border-[#cdd1d5]" />
+
+        {/* Navigation */}
+        <nav
+          className="flex w-full flex-col gap-2"
+          aria-label="마이페이지 메뉴"
+        >
+          {navItems.map((item) => {
+            const isActive = activeNav === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => !item.disabled && onNavChange(item.id)}
+                disabled={item.disabled}
+                className={`flex items-center gap-3 rounded-md px-3 py-2 text-left transition-colors ${
+                  isActive
+                    ? "text-text-primary"
+                    : item.disabled
+                      ? "text-text-disabled cursor-not-allowed"
+                      : "text-text-subtle hover:text-text-basic"
+                }`}
+              >
+                <item.Icon className="h-6 w-6" strokeWidth={1.5} />
+                <Body size="m">{item.label}</Body>
+              </button>
+            );
+          })}
+        </nav>
+      </aside>
+    </>
   );
 }
