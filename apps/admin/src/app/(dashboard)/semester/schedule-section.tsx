@@ -6,6 +6,13 @@ import { AlertTriangle, CalendarClock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { handleApiError } from "@core/utils/api-client";
 import {
   SEMESTER_PHASES,
@@ -23,34 +30,123 @@ interface ScheduleSectionProps {
   semesterLabel: string;
 }
 
-/** 화면에서는 "~까지"로 받고, 서버에는 반열림 구간으로 보낸다 */
 interface PhaseForm {
-  startsAt: string;
-  /** 마지막으로 신청 가능한 날짜. 저장 시 +1일 해서 ends_at으로 변환 */
-  endsOn: string;
+  startDate: string;
+  startHour: string;
+  startMinute: string;
+  endDate: string;
+  endHour: string;
+  endMinute: string;
 }
 
-const EMPTY: PhaseForm = { startsAt: "", endsOn: "" };
+const EMPTY: PhaseForm = {
+  startDate: "",
+  startHour: "",
+  startMinute: "",
+  endDate: "",
+  endHour: "",
+  endMinute: "",
+};
 
-/** "2026-03-09T00:00:00" → "2026-03-08" (표시용, 반열림 종료의 전날) */
-function toEndsOn(endsAt: string): string {
-  const date = new Date(endsAt);
-  date.setDate(date.getDate() - 1);
-  return toDateInput(date);
+const HOURS = Array.from({ length: 24 }, (_, hour) =>
+  String(hour).padStart(2, "0"),
+);
+const MINUTES = Array.from({ length: 60 }, (_, minute) =>
+  String(minute).padStart(2, "0"),
+);
+
+function toLocalDateTime(date: string, hour: string, minute: string): string {
+  return `${date}T${hour}:${minute}:00`;
 }
 
-/** "2026-03-08" → "2026-03-09T00:00:00" (저장용, 다음 날 0시) */
-function toEndsAt(endsOn: string): string {
-  const date = new Date(`${endsOn}T00:00:00`);
-  date.setDate(date.getDate() + 1);
-  return `${toDateInput(date)}T00:00:00`;
+function addOneMinute(date: string, hour: string, minute: string): string {
+  const value = new Date(toLocalDateTime(date, hour, minute));
+  value.setMinutes(value.getMinutes() + 1);
+  return formatLocalDateTime(value);
 }
 
-function toDateInput(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+function formatLocalDateTime(value: Date): string {
+  const y = value.getFullYear();
+  const m = String(value.getMonth() + 1).padStart(2, "0");
+  const d = String(value.getDate()).padStart(2, "0");
+  const h = String(value.getHours()).padStart(2, "0");
+  const min = String(value.getMinutes()).padStart(2, "0");
+  return toLocalDateTime(`${y}-${m}-${d}`, h, min);
+}
+
+/** API의 반열림 종료 시각을 화면용 마지막 가능 시각으로 바꾼다. */
+function toInclusiveEnd(endsAt: string): string {
+  const value = new Date(endsAt);
+  value.setMinutes(value.getMinutes() - 1);
+  return formatLocalDateTime(value);
+}
+
+function DateTimeInput({
+  id,
+  label,
+  date,
+  hour,
+  minute,
+  onDateChange,
+  onHourChange,
+  onMinuteChange,
+  disabled,
+}: {
+  id: string;
+  label: string;
+  date: string;
+  hour: string;
+  minute: string;
+  onDateChange: (value: string) => void;
+  onHourChange: (value: string) => void;
+  onMinuteChange: (value: string) => void;
+  disabled: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={`${id}-date`} className="text-xs">
+        {label}
+      </Label>
+      <div className="flex gap-2">
+        <Input
+          id={`${id}-date`}
+          type="date"
+          className="w-[170px]"
+          value={date}
+          onChange={(event) => onDateChange(event.target.value)}
+          disabled={disabled}
+        />
+        <Select value={hour} onValueChange={onHourChange} disabled={disabled}>
+          <SelectTrigger id={`${id}-hour`} className="w-[88px]">
+            <SelectValue placeholder="시간" />
+          </SelectTrigger>
+          <SelectContent>
+            {HOURS.map((value) => (
+              <SelectItem key={value} value={value}>
+                {value}시
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={minute}
+          onValueChange={onMinuteChange}
+          disabled={disabled}
+        >
+          <SelectTrigger id={`${id}-minute`} className="w-[88px]">
+            <SelectValue placeholder="분" />
+          </SelectTrigger>
+          <SelectContent>
+            {MINUTES.map((value) => (
+              <SelectItem key={value} value={value}>
+                {value}분
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
 }
 
 export function ScheduleSection({
@@ -83,9 +179,14 @@ export function ScheduleSection({
       const open = new Set<SemesterPhase>();
 
       items.forEach((item) => {
+        const inclusiveEnd = toInclusiveEnd(item.ends_at);
         next[item.phase] = {
-          startsAt: item.starts_at.slice(0, 10),
-          endsOn: toEndsOn(item.ends_at),
+          startDate: item.starts_at.slice(0, 10),
+          startHour: item.starts_at.slice(11, 13),
+          startMinute: item.starts_at.slice(14, 16),
+          endDate: inclusiveEnd.slice(0, 10),
+          endHour: inclusiveEnd.slice(11, 13),
+          endMinute: inclusiveEnd.slice(14, 16),
         };
         if (item.open) open.add(item.phase);
       });
@@ -114,30 +215,66 @@ export function ScheduleSection({
     for (const phase of SEMESTER_PHASES) {
       const form = forms[phase];
       if (phase === "STUDY_START") {
-        if (form.startsAt) {
+        const filled =
+          Boolean(form.startDate) &&
+          Boolean(form.startHour) &&
+          Boolean(form.startMinute);
+        if (!filled && (form.startDate || form.startHour || form.startMinute)) {
+          toast.error(
+            `${SEMESTER_PHASE_LABELS[phase]}의 날짜와 시간을 모두 입력해주세요.`,
+          );
+          return;
+        }
+        if (filled) {
           phases.push({
             phase,
-            starts_at: `${form.startsAt}T00:00:00`,
-            // API는 모든 일정을 반열림 구간으로 보관한다. 시작일만 의미하므로 다음 날을 종료 시각으로 둔다.
-            ends_at: toEndsAt(form.startsAt),
+            starts_at: toLocalDateTime(
+              form.startDate,
+              form.startHour,
+              form.startMinute,
+            ),
+            // API는 모든 일정을 반열림 구간으로 보관한다. 시작 시각만 의미하므로 1분 뒤를 종료 시각으로 둔다.
+            ends_at: addOneMinute(
+              form.startDate,
+              form.startHour,
+              form.startMinute,
+            ),
           });
         }
         continue;
       }
-      const filled = Boolean(form.startsAt) && Boolean(form.endsOn);
+      const filled =
+        Boolean(form.startDate) &&
+        Boolean(form.startHour) &&
+        Boolean(form.startMinute) &&
+        Boolean(form.endDate) &&
+        Boolean(form.endHour) &&
+        Boolean(form.endMinute);
 
       // 한쪽만 채운 단계는 저장할 수 없다. 비우려면 둘 다 지운다.
-      if (!filled && (form.startsAt || form.endsOn)) {
+      if (
+        !filled &&
+        (form.startDate ||
+          form.startHour ||
+          form.startMinute ||
+          form.endDate ||
+          form.endHour ||
+          form.endMinute)
+      ) {
         toast.error(
-          `${SEMESTER_PHASE_LABELS[phase]}의 시작일과 종료일을 모두 입력하거나 모두 비워주세요.`,
+          `${SEMESTER_PHASE_LABELS[phase]}의 시작·종료 날짜와 시간을 모두 입력하거나 모두 비워주세요.`,
         );
         return;
       }
       if (filled) {
         phases.push({
           phase,
-          starts_at: `${form.startsAt}T00:00:00`,
-          ends_at: toEndsAt(form.endsOn),
+          starts_at: toLocalDateTime(
+            form.startDate,
+            form.startHour,
+            form.startMinute,
+          ),
+          ends_at: addOneMinute(form.endDate, form.endHour, form.endMinute),
         });
       }
     }
@@ -160,8 +297,15 @@ export function ScheduleSection({
 
   const configuredCount = SEMESTER_PHASES.filter((phase) =>
     phase === "STUDY_START"
-      ? Boolean(forms[phase].startsAt)
-      : Boolean(forms[phase].startsAt) && Boolean(forms[phase].endsOn),
+      ? Boolean(forms[phase].startDate) &&
+        Boolean(forms[phase].startHour) &&
+        Boolean(forms[phase].startMinute)
+      : Boolean(forms[phase].startDate) &&
+        Boolean(forms[phase].startHour) &&
+        Boolean(forms[phase].startMinute) &&
+        Boolean(forms[phase].endDate) &&
+        Boolean(forms[phase].endHour) &&
+        Boolean(forms[phase].endMinute),
   ).length;
 
   return (
@@ -181,16 +325,16 @@ export function ScheduleSection({
           </p>
           <p className="mt-1 text-xs">
             일정을 비워두면 개설 신청은 상시 가능합니다. 멘티 수강 신청과 멘티
-            합불 처리는 각각의 일정을 설정해야만 열리며, 스터디 시작일이 없으면
-            승인된 스터디가 자동 개설되지 않습니다.
+            합불 처리는 각각의 일정을 설정해야만 열리며, 스터디 시작 시각이
+            없으면 승인된 스터디가 자동 개설되지 않습니다.
           </p>
         </div>
       )}
 
       <p className="text-muted-foreground text-xs">
-        모집 단계는 앞 단계가 끝난 뒤에 시작해야 하며 겹칠 수 없습니다.
-        종료일까지 포함해서 신청을 받습니다. 스터디 시작일 0시에 승인된 스터디가
-        개설 상태로 전환됩니다.
+        모집 단계는 앞 단계가 끝난 뒤에 시작해야 하며 겹칠 수 없습니다. 시간은
+        분 단위로 설정할 수 있으며, 종료 시각까지 신청을 받습니다. 스터디 시작
+        시각에 승인된 스터디가 개설 상태로 전환됩니다.
       </p>
 
       <div className="flex flex-col gap-3">
@@ -219,42 +363,47 @@ export function ScheduleSection({
               </div>
 
               <div className="flex flex-wrap items-end gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor={`${phase}-start`} className="text-xs">
-                    시작일
-                  </Label>
-                  <Input
-                    id={`${phase}-start`}
-                    type="date"
-                    className="w-[170px]"
-                    value={form.startsAt}
-                    onChange={(e) =>
-                      update(phase, { startsAt: e.target.value })
-                    }
-                    disabled={isLoading || isSubmitting}
-                  />
-                </div>
+                <DateTimeInput
+                  id={`${phase}-start`}
+                  label="시작 일시"
+                  date={form.startDate}
+                  hour={form.startHour}
+                  minute={form.startMinute}
+                  onDateChange={(value) => update(phase, { startDate: value })}
+                  onHourChange={(value) => update(phase, { startHour: value })}
+                  onMinuteChange={(value) =>
+                    update(phase, { startMinute: value })
+                  }
+                  disabled={isLoading || isSubmitting}
+                />
                 {!isStudyStart && (
                   <>
                     <span className="pb-2 text-sm">~</span>
-                    <div className="flex flex-col gap-1.5">
-                      <Label htmlFor={`${phase}-end`} className="text-xs">
-                        종료일 (이 날까지 가능)
-                      </Label>
-                      <Input
-                        id={`${phase}-end`}
-                        type="date"
-                        className="w-[170px]"
-                        value={form.endsOn}
-                        onChange={(e) =>
-                          update(phase, { endsOn: e.target.value })
-                        }
-                        disabled={isLoading || isSubmitting}
-                      />
-                    </div>
+                    <DateTimeInput
+                      id={`${phase}-end`}
+                      label="종료 일시 (이 시각까지 가능)"
+                      date={form.endDate}
+                      hour={form.endHour}
+                      minute={form.endMinute}
+                      onDateChange={(value) =>
+                        update(phase, { endDate: value })
+                      }
+                      onHourChange={(value) =>
+                        update(phase, { endHour: value })
+                      }
+                      onMinuteChange={(value) =>
+                        update(phase, { endMinute: value })
+                      }
+                      disabled={isLoading || isSubmitting}
+                    />
                   </>
                 )}
-                {(form.startsAt || form.endsOn) && (
+                {(form.startDate ||
+                  form.startHour ||
+                  form.startMinute ||
+                  form.endDate ||
+                  form.endHour ||
+                  form.endMinute) && (
                   <Button
                     variant="ghost"
                     size="sm"

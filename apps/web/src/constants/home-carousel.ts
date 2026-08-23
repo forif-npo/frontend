@@ -5,7 +5,7 @@ import { SvgBanner } from "@/features/home/banners/SvgBanner";
 type ResponsiveBannerImage = {
   alt: string;
   desktop: { src: string; width: number; height: number };
-  mobile: { src: string; width: number; height: number };
+  mobile?: { src: string; width: number; height: number };
 };
 
 export const HOME_CAROUSEL_BANNER_SPEC = {
@@ -16,7 +16,7 @@ export const HOME_CAROUSEL_BANNER_SPEC = {
 /**
  * Banner asset contract:
  * - desktop SVG: 1200 x 300 px
- * - mobile SVG: 360 x 360 px
+ * - mobile SVG: 360 x 360 px (optional; omit to use the desktop SVG on mobile)
  * The carousel applies the rounded corners, so source SVGs must keep their
  * outer canvas rectangular and should not include an outer corner radius.
  */
@@ -34,9 +34,25 @@ export type HomeCarouselBanner =
       component: typeof SvgBanner;
       href: string;
       image: ResponsiveBannerImage;
+      mobileAspect?: "square" | "desktop";
     };
 
 export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
+  {
+    id: "member-recruit-2026-2",
+    type: "svg",
+    component: SvgBanner,
+    href: "/club/recruit",
+    mobileAspect: "desktop",
+    image: {
+      alt: "2026년 2학기 포리프 부원 모집",
+      desktop: {
+        src: "/banner/2026-recruting/2026-2-member-recruitment-desktop.svg",
+        width: 1200,
+        height: 300,
+      },
+    },
+  },
   {
     id: "forif-intro",
     type: "tsx",
