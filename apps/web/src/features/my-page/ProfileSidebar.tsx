@@ -45,7 +45,7 @@ export function ProfileSidebar({
       ? [
           {
             id: "study-manage",
-            label: "스터디 관리",
+            label: "멘토 관리",
             Icon: UsersRound,
             disabled: false,
           },

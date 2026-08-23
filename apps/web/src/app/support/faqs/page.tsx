@@ -42,7 +42,7 @@ export default function FaqPage() {
       <PageHeader
         breadcrumbs={[
           { label: "홈", href: "/" },
-          { label: "지원" },
+          { label: "공지" },
           { label: "자주 묻는 질문" },
         ]}
         title="자주 묻는 질문"

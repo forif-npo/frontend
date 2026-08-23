@@ -245,7 +245,7 @@ export function ApplicationDetailView({
       </div>
       <ActionConfirmModal
         isOpen={confirmAction !== null}
-        target="스터디 신청서"
+        target="스터디 신청"
         action={confirmAction === "modify" ? "수정" : "취소"}
         onClose={() => setConfirmAction(null)}
         onConfirm={() => {
@@ -255,6 +255,8 @@ export function ApplicationDetailView({
             void handleCancel();
           }
         }}
+        cancelLabel={confirmAction === "cancel" ? "닫기" : undefined}
+        confirmLabel={confirmAction === "cancel" ? "확인" : undefined}
       />
     </div>
   );

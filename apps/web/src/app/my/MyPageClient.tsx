@@ -65,7 +65,7 @@ export function MyPageClient({
   const pageHeader =
     activeNav === "study-manage"
       ? {
-          title: "스터디 관리",
+          title: "멘토 관리",
           description: "개설 신청서와 개설된 스터디를 확인할 수 있습니다.",
         }
       : activeNav === "service-manage"
@@ -109,7 +109,7 @@ export function MyPageClient({
   ];
 
   return (
-    <div className="min-h-viewport mx-auto flex max-w-[1440px] flex-col md:flex-row">
+    <div className="min-h-viewport mx-auto flex w-full max-w-[1440px] flex-col md:flex-row">
       <ProfileSidebar
         profile={{
           user_name: profile.user_name,

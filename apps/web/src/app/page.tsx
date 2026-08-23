@@ -11,7 +11,9 @@ import { Heading } from "@ui/components/server";
 import Image from "next/image";
 
 export default async function Page() {
-  const carouselItems: CarouselItem[] = HOME_CAROUSEL_BANNERS.map((banner) => {
+  const carouselItems: CarouselItem[] = HOME_CAROUSEL_BANNERS.filter(
+    (banner) => !banner.disabled,
+  ).map((banner) => {
     if (banner.type === "tsx") {
       const BannerComponent = banner.component;
       return {

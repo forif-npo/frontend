@@ -24,12 +24,14 @@ export const HOME_CAROUSEL_BANNER_SPEC = {
 export type HomeCarouselBanner =
   | {
       id: string;
+      disabled?: boolean;
       type: "tsx";
       component: typeof MentorRecruitBanner | typeof ForifIntroBanner;
       mobileAspect?: "square" | "desktop";
     }
   | {
       id: string;
+      disabled?: boolean;
       type: "svg";
       component: typeof SvgBanner;
       href: string;
@@ -39,15 +41,15 @@ export type HomeCarouselBanner =
 
 export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
   {
-    id: "member-recruit-2026-2",
+    id: "study-apply-2026-2",
     type: "svg",
     component: SvgBanner,
-    href: "/club/recruit",
+    href: "/studies/apply",
     mobileAspect: "desktop",
     image: {
-      alt: "2026년 2학기 포리프 부원 모집",
+      alt: "2026년 2학기 포리프 스터디 신청",
       desktop: {
-        src: "/banner/2026-recruting/2026-2-member-recruitment-desktop.svg",
+        src: "/banner/2026-recruting/2026-2-study-apply-desktop.svg",
         width: 1200,
         height: 300,
       },
@@ -61,6 +63,7 @@ export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
   },
   {
     id: "mentor-recruit-2026-2",
+    disabled: true,
     type: "tsx",
     component: MentorRecruitBanner,
     mobileAspect: "desktop",
