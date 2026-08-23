@@ -141,8 +141,6 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
     enableRowSelection: true,
-    enableMultiSort: false,
-    maxMultiSortColCount: 1,
     onSortingChange,
     onRowSelectionChange: setRowSelection,
     getRowId,
