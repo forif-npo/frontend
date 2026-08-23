@@ -94,6 +94,13 @@ export function StudyApplyReasonStep({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
+  useEffect(() => {
+    if (secondaryPriorityAvailability === "available") {
+      form.setValue("priority", 2);
+      form.clearErrors("priority");
+    }
+  }, [form, secondaryPriorityAvailability]);
+
   const handleSubmit = async () => {
     const isFormValid = await form.trigger();
 
@@ -130,10 +137,14 @@ export function StudyApplyReasonStep({
                 required
                 size="lg"
                 value={value ? String(value) : null}
-                options={[
-                  { value: "1", label: "1순위" },
-                  { value: "2", label: "2순위" },
-                ]}
+                options={
+                  secondaryPriorityAvailability === "available"
+                    ? [{ value: "2", label: "2순위" }]
+                    : [
+                        { value: "1", label: "1순위" },
+                        { value: "2", label: "2순위" },
+                      ]
+                }
                 placeholder="지원순위를 선택해주세요"
                 onChange={(selectedValue) => {
                   if (

@@ -86,7 +86,10 @@ export function ApplicationDetailView({
     setSubmitSuccess(null);
 
     try {
-      await cancelStudyApplication(application.user_apply_id);
+      await cancelStudyApplication(
+        application.user_apply_id,
+        priority === "PRIMARY" ? 1 : 2,
+      );
       onCancelled();
     } catch (error) {
       setSubmitError(await handleApiError(error));

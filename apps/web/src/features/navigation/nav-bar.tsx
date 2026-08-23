@@ -15,7 +15,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { FULL_STUDY_APPLICATION_MESSAGE } from "@/features/study/apply/application-availability";
+import { getStudyApplicationBlockMessage } from "@/features/study/apply/application-availability";
 import styles from "./nav-bar.module.css";
 
 const NAV_LOGO_SRC = "/black_title.svg";
@@ -71,8 +71,9 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
 
     try {
       const status = await getStudyApplicationStatus();
-      if (!status.can_apply_primary && !status.can_apply_secondary) {
-        setStudyApplicationBlockedMessage(FULL_STUDY_APPLICATION_MESSAGE);
+      const blockMessage = getStudyApplicationBlockMessage(status, false);
+      if (blockMessage) {
+        setStudyApplicationBlockedMessage(blockMessage);
         return;
       }
     } catch {

@@ -141,6 +141,8 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
     enableRowSelection: true,
+    enableMultiSort: false,
+    maxMultiSortColCount: 1,
     onSortingChange,
     onRowSelectionChange: setRowSelection,
     getRowId,
@@ -192,7 +194,7 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="text-muted-foreground mb-1 flex justify-end px-1 text-[10px]">
-        Esc 키를 누르면 모든 정렬이 해제됩니다.
+        Esc 키를 누르면 정렬이 해제됩니다.
       </div>
       <div className="rounded-md border">
         <Table>

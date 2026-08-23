@@ -56,6 +56,7 @@ export function MembersView({
     handleSearch,
     handlePageChange,
     handleSortingChange,
+    sorting,
   } = useListViewFilters({
     route: "/members",
     currentSemester,
@@ -163,7 +164,7 @@ export function MembersView({
           columns={columns}
           data={initialData}
           showPagination={false}
-          sorting={initialSorting}
+          sorting={sorting}
           onSortingChange={handleSortingChange}
           renderRowActions={(member) => (
             <>

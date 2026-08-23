@@ -70,6 +70,7 @@ export function OperatorsView({
     handleSearch,
     handlePageChange,
     handleSortingChange,
+    sorting,
   } = useListViewFilters({
     route: "/operators",
     currentSemester,
@@ -240,7 +241,7 @@ export function OperatorsView({
           columns={columns}
           data={initialData}
           showPagination={false}
-          sorting={initialSorting}
+          sorting={sorting}
           onSortingChange={handleSortingChange}
           renderRowActions={(operator) => (
             <>

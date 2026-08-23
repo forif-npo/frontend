@@ -44,6 +44,7 @@ export function MentorsView({
     handleSearch,
     handlePageChange,
     handleSortingChange,
+    sorting,
   } = useListViewFilters({
     route: "/mentors",
     currentSemester,
@@ -112,7 +113,7 @@ export function MentorsView({
           columns={columns}
           data={initialData}
           showPagination={false}
-          sorting={initialSorting}
+          sorting={sorting}
           onSortingChange={handleSortingChange}
           renderRowActions={(mentor) => (
             <DropdownMenuItem

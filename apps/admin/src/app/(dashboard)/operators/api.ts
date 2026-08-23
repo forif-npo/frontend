@@ -2,8 +2,8 @@ import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import { Operator, OperatorListResult, OperatorSemesterLabel } from "./types";
 import { loadSemesterOptions } from "@/lib/semester";
-import { sortRecords } from "@/lib/list-sorting";
 import type { SortingState } from "@tanstack/react-table";
+import { processOperators } from "./operator-list";
 
 interface ForifTeamItem {
   [key: string]: unknown;
@@ -109,16 +109,6 @@ function mapToOperator(item: ForifTeamItem): Operator {
   };
 }
 
-function compareSemesterDesc(a: Operator, b: Operator) {
-  const yearDiff = b.actYear - a.actYear;
-
-  if (yearDiff !== 0) {
-    return yearDiff;
-  }
-
-  return b.actSemester - a.actSemester;
-}
-
 /**
  * 운영진 이력 수정 (PATCH /api/v1/admin/forif-team/{id})
  * null이 아닌 필드만 반영된다.
@@ -184,53 +174,13 @@ export async function fetchOperators({
     throw new Error("Invalid API response structure");
   }
 
-  let content = response.data.map(mapToOperator).sort(compareSemesterDesc);
-
-  if (semester === "그 외") {
-    const mainSemesters = await getMainSemesterLabels();
-    content = content.filter((item) => {
-      const label = `${String(item.actYear).slice(2)}-${item.actSemester}`;
-      return !mainSemesters.has(label);
-    });
-  }
-
-  const normalizedSearch = search?.trim().toLowerCase();
-  if (normalizedSearch) {
-    content = content.filter((operator) =>
-      [
-        operator.userId,
-        operator.department,
-        operator.name,
-        operator.phoneNum,
-        operator.title,
-      ]
-        .map(String)
-        .some((value) => value.toLowerCase().includes(normalizedSearch)),
-    );
-  }
-
-  content = sortRecords(content, sorting, (operator, id) => {
-    const values: Record<string, unknown> = {
-      userId: operator.userId,
-      department: operator.department,
-      title: operator.title,
-      name: operator.name,
-    };
-
-    return values[id];
+  return processOperators(response.data.map(mapToOperator), {
+    semester,
+    page,
+    size,
+    search,
+    sorting,
+    mainSemesterLabels:
+      semester === "그 외" ? await getMainSemesterLabels() : undefined,
   });
-
-  const currentPage = Math.max(page, 0);
-  const pageSize = Math.max(size, 1);
-  const totalElements = content.length;
-  const totalPages = Math.ceil(totalElements / pageSize);
-  const from = currentPage * pageSize;
-
-  return {
-    content: content.slice(from, from + pageSize),
-    totalElements,
-    currentPage,
-    totalPages,
-    pageSize,
-  };
 }
