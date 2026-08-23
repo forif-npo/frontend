@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ApplicationCard } from "./ApplicationCard";
 import { ApplicationDetailView } from "./ApplicationDetailView";
 import {
@@ -34,10 +35,8 @@ export function ApplicationSection({
   targetStudyId,
   activeSemester,
 }: ApplicationSectionProps) {
+  const router = useRouter();
   const [sortOrder, setSortOrder] = useState<StudySortOrder>("latest");
-  const [cancelledApplicationIds, setCancelledApplicationIds] = useState<
-    Set<number>
-  >(new Set());
 
   const enrolledStudyMetadata = new Map(
     studiesData.flatMap((semester) =>
@@ -56,29 +55,27 @@ export function ApplicationSection({
     },
   });
 
-  const allApplications = applicationsData.applications
-    .filter((app) => !cancelledApplicationIds.has(app.user_apply_id))
-    .flatMap((app) => {
-      const items: FlatApplication[] = [
-        {
-          ...normalizeStudyMetadata(app.primary_application),
-          apply_date: app.apply_date,
-          apply_year: app.apply_year,
-          apply_semester: app.apply_semester,
-          user_apply_id: app.user_apply_id,
-        },
-      ];
-      if (app.secondary_application) {
-        items.push({
-          ...normalizeStudyMetadata(app.secondary_application),
-          apply_date: app.apply_date,
-          apply_year: app.apply_year,
-          apply_semester: app.apply_semester,
-          user_apply_id: app.user_apply_id,
-        });
-      }
-      return items;
-    });
+  const allApplications = applicationsData.applications.flatMap((app) => {
+    const items: FlatApplication[] = [
+      {
+        ...normalizeStudyMetadata(app.primary_application),
+        apply_date: app.apply_date,
+        apply_year: app.apply_year,
+        apply_semester: app.apply_semester,
+        user_apply_id: app.user_apply_id,
+      },
+    ];
+    if (app.secondary_application) {
+      items.push({
+        ...normalizeStudyMetadata(app.secondary_application),
+        apply_date: app.apply_date,
+        apply_year: app.apply_year,
+        apply_semester: app.apply_semester,
+        user_apply_id: app.user_apply_id,
+      });
+    }
+    return items;
+  });
 
   const [selectedApplication, setSelectedApplication] =
     useState<FlatApplication | null>(() =>
@@ -105,16 +102,12 @@ export function ApplicationSection({
   const isSelectedApplicationInActiveSemester =
     selectedApplicationRecord?.apply_year === activeSemester.act_year &&
     selectedApplicationRecord.apply_semester === activeSemester.act_semester;
-  const hasOnlyPendingPriorities =
-    selectedApplicationRecord?.primary_application.status === 0 &&
-    (selectedApplicationRecord.secondary_application === null ||
-      selectedApplicationRecord.secondary_application.status === 0);
   const canCancelSelectedApplication = Boolean(
-    isSelectedApplicationInActiveSemester && hasOnlyPendingPriorities,
+    isSelectedApplicationInActiveSemester && selectedApplication?.status === 0,
   );
   const cancelDisabledMessage = !isSelectedApplicationInActiveSemester
     ? "활동 학기 신청서만 취소할 수 있습니다."
-    : "1·2순위 중 검토가 완료된 신청서가 있어 취소할 수 없습니다.";
+    : "검토가 완료된 신청서는 취소할 수 없습니다.";
 
   if (selectedApplication) {
     return (
@@ -123,10 +116,8 @@ export function ApplicationSection({
         canCancel={canCancelSelectedApplication}
         cancelDisabledMessage={cancelDisabledMessage}
         onCancelled={() => {
-          setCancelledApplicationIds((applicationIds) =>
-            new Set(applicationIds).add(selectedApplication.user_apply_id),
-          );
           setSelectedApplication(null);
+          router.refresh();
         }}
       />
     );

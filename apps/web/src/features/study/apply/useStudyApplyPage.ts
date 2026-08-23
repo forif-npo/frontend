@@ -196,6 +196,17 @@ export function useStudyApplyPage(studyId?: string, isDirectEntry = false) {
       };
     }
 
+    if (priority === 1 && secondaryPriorityAvailability === "available") {
+      return {
+        values,
+        errors: {
+          priority: {
+            message: "1순위 스터디가 이미 있어 2순위만 신청할 수 있습니다.",
+          },
+        },
+      };
+    }
+
     if (
       !primaryStudyApplyReason ||
       primaryStudyApplyReason.length < 50 ||

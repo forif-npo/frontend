@@ -248,10 +248,15 @@ export async function updateStudyApplication(
 }
 
 /**
- * Cancel and delete the logged-in user's pending study application.
+ * Cancel one priority of the logged-in user's pending study application.
  */
-export async function cancelStudyApplication(applyId: number): Promise<void> {
-  await apiClient.delete(`api/v1/users/apply/${applyId}`);
+export async function cancelStudyApplication(
+  applyId: number,
+  priority: 1 | 2,
+): Promise<void> {
+  await apiClient.delete(`api/v1/users/apply/${applyId}`, {
+    searchParams: { priority },
+  });
 }
 
 /**
