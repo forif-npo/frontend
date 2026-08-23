@@ -76,7 +76,10 @@ export function useListViewFilters({
       typeof updater === "function" ? updater(sorting) : updater;
     const singleSorting = nextSorting.slice(0, 1);
     setSorting(singleSorting);
-    router.push(
+    // 정렬은 서버 전체 결과(페이지 밖의 행 포함)를 기준으로 수행한다.
+    // App Router의 클라이언트 전환 캐시에 의존하지 않고 새 URL을 직접 요청해
+    // 변경된 sort 값으로 목록 API가 반드시 다시 호출되게 한다.
+    window.location.assign(
       `${route}?${buildParams({ sorting: singleSorting, page: 0 }).toString()}`,
     );
   };
