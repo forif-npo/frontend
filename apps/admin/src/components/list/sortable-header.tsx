@@ -22,7 +22,7 @@ export function SortableHeader<TData>({
       return;
     }
 
-    column.toggleSorting(sortDirection === "asc", true);
+    column.toggleSorting(sortDirection === "asc");
   };
 
   return (

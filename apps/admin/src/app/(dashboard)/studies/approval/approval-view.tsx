@@ -58,6 +58,7 @@ export function ApprovalView({
     handleSearch,
     handlePageChange,
     handleSortingChange,
+    sorting,
   } = useListViewFilters({
     route: "/studies/approval",
     currentSemester,
@@ -242,7 +243,7 @@ export function ApprovalView({
           columns={approvalColumns}
           data={initialData}
           showPagination={false}
-          sorting={initialSorting}
+          sorting={sorting}
           onSortingChange={handleSortingChange}
           getRowId={getStudyRowId}
           onSelectedRowsChange={setSelectedStudies}

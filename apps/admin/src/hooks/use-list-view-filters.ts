@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { OnChangeFn, SortingState } from "@tanstack/react-table";
-import { appendSortingParams } from "@/lib/list-sorting";
+import { appendSortingParams, parseSortingParams } from "@/lib/list-sorting";
 
 interface UseListViewFiltersOptions {
   route: string;
@@ -20,6 +20,23 @@ export function useListViewFilters({
 }: UseListViewFiltersOptions) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [sorting, setSorting] = useState<SortingState>(() =>
+    initialSorting.slice(0, 1),
+  );
+  const initialSortingKey = useMemo(
+    () => initialSorting.map(({ id, desc }) => `${id}:${desc}`).join(","),
+    [initialSorting],
+  );
+
+  // 서버 정렬 결과가 새 URL의 search params를 기준으로 다시 렌더링되면
+  // 그 값을 반영한다. 그 전까지는 로컬 상태를 사용해 연속 클릭도 잃지 않는다.
+  useEffect(() => {
+    setSorting(
+      parseSortingParams(
+        initialSortingKey === "" ? [] : initialSortingKey.split(","),
+      ),
+    );
+  }, [initialSortingKey]);
 
   const buildParams = (overrides: {
     semester?: string;
@@ -33,13 +50,14 @@ export function useListViewFilters({
 
     if (semester) params.set("semester", semester);
     if (search) params.set("search", search);
-    appendSortingParams(params, overrides.sorting ?? initialSorting);
+    appendSortingParams(params, overrides.sorting ?? sorting);
     params.set("page", String(overrides.page ?? 0));
 
     return params;
   };
 
   const handleSemesterChange = (semester: string) => {
+    setSorting([]);
     router.push(
       `${route}?${buildParams({ semester, sorting: [], page: 0 }).toString()}`,
     );
@@ -54,14 +72,19 @@ export function useListViewFilters({
   };
 
   const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
-    const sorting =
-      typeof updater === "function" ? updater(initialSorting) : updater;
-    router.push(`${route}?${buildParams({ sorting, page: 0 }).toString()}`);
+    const nextSorting =
+      typeof updater === "function" ? updater(sorting) : updater;
+    const singleSorting = nextSorting.slice(0, 1);
+    setSorting(singleSorting);
+    router.push(
+      `${route}?${buildParams({ sorting: singleSorting, page: 0 }).toString()}`,
+    );
   };
 
   return {
     searchQuery,
     setSearchQuery,
+    sorting,
     handleSemesterChange,
     handleSearch,
     handlePageChange,

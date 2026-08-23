@@ -4,28 +4,30 @@ export type SortSearchParam = string | string[] | undefined;
 
 export function parseSortingParams(sort: SortSearchParam): SortingState {
   const values = Array.isArray(sort) ? sort : sort ? [sort] : [];
+  const value = values[0];
 
-  return values.flatMap((value) => {
-    const [id, direction] = value.split(":");
+  if (!value) return [];
 
-    if (
-      !/^[A-Za-z][A-Za-z0-9_]*$/.test(id) ||
-      !["asc", "desc"].includes(direction)
-    ) {
-      return [];
-    }
+  const [id, direction] = value.split(":");
 
-    return [{ id, desc: direction === "desc" }];
-  });
+  if (
+    !/^[A-Za-z][A-Za-z0-9_]*$/.test(id) ||
+    !["asc", "desc"].includes(direction)
+  ) {
+    return [];
+  }
+
+  return [{ id, desc: direction === "desc" }];
 }
 
 export function appendSortingParams(
   params: URLSearchParams,
   sorting: SortingState,
 ) {
-  sorting.forEach(({ id, desc }) => {
-    params.append("sort", `${id}:${desc ? "desc" : "asc"}`);
-  });
+  const criterion = sorting[0];
+  if (criterion) {
+    params.set("sort", `${criterion.id}:${criterion.desc ? "desc" : "asc"}`);
+  }
 }
 
 function compareValues(left: unknown, right: unknown) {
@@ -53,18 +55,17 @@ export function sortRecords<T>(
   if (sorting.length === 0) return records;
 
   return [...records].sort((left, right) => {
-    for (const { id, desc } of sorting) {
-      const leftValue = getValue(left, id);
-      const rightValue = getValue(right, id);
+    const criterion = sorting[0];
+    if (!criterion) return 0;
 
-      if (isEmpty(leftValue) && isEmpty(rightValue)) continue;
-      if (isEmpty(leftValue)) return 1;
-      if (isEmpty(rightValue)) return -1;
+    const leftValue = getValue(left, criterion.id);
+    const rightValue = getValue(right, criterion.id);
 
-      const result = compareValues(leftValue, rightValue);
-      if (result !== 0) return desc ? -result : result;
-    }
+    if (isEmpty(leftValue) && isEmpty(rightValue)) return 0;
+    if (isEmpty(leftValue)) return 1;
+    if (isEmpty(rightValue)) return -1;
 
-    return 0;
+    const result = compareValues(leftValue, rightValue);
+    return criterion.desc ? -result : result;
   });
 }

@@ -65,6 +65,7 @@ export function StudiesView({
     handleSearch,
     handlePageChange,
     handleSortingChange,
+    sorting,
   } = useListViewFilters({
     route: "/studies",
     currentSemester,
@@ -358,7 +359,7 @@ export function StudiesView({
           columns={columns}
           data={initialData}
           showPagination={false}
-          sorting={initialSorting}
+          sorting={sorting}
           onSortingChange={handleSortingChange}
           renderRowActions={(study) => (
             <>
