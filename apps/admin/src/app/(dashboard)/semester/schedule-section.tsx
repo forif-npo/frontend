@@ -147,7 +147,7 @@ export function ScheduleSection({
       await saveSemesterSchedules(actYear, actSemester, phases);
       toast.success(
         phases.length === 0
-          ? "학기 일정을 모두 비웠습니다. 멘티 모집은 닫히고, 스터디는 자동 개설되지 않습니다."
+          ? "학기 일정을 모두 비웠습니다. 멘티 모집과 멘티 합불 처리는 닫히고, 스터디는 자동 개설되지 않습니다."
           : `${semesterLabel} 학기 일정을 저장했습니다.`,
       );
       await fetchSchedules();
@@ -180,8 +180,8 @@ export function ScheduleSection({
             설정되지 않았습니다
           </p>
           <p className="mt-1 text-xs">
-            일정을 비워두면 개설 신청과 합불 처리는 상시 가능합니다. 멘티 수강
-            신청은 멘티 모집 일정을 설정해야만 열리며, 스터디 시작일이 없으면
+            일정을 비워두면 개설 신청은 상시 가능합니다. 멘티 수강 신청과 멘티
+            합불 처리는 각각의 일정을 설정해야만 열리며, 스터디 시작일이 없으면
             승인된 스터디가 자동 개설되지 않습니다.
           </p>
         </div>
