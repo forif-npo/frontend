@@ -2,6 +2,10 @@ import type { SortingState } from "@tanstack/react-table";
 
 export type SortSearchParam = string | string[] | undefined;
 
+export function serializeSortingParams(sorting: SortingState): string[] {
+  return sorting.map(({ id, desc }) => `${id}:${desc ? "desc" : "asc"}`);
+}
+
 export function parseSortingParams(sort: SortSearchParam): SortingState {
   const values = Array.isArray(sort) ? sort : sort ? [sort] : [];
 
@@ -23,8 +27,8 @@ export function appendSortingParams(
   params: URLSearchParams,
   sorting: SortingState,
 ) {
-  sorting.forEach(({ id, desc }) => {
-    params.append("sort", `${id}:${desc ? "desc" : "asc"}`);
+  serializeSortingParams(sorting).forEach((value) => {
+    params.append("sort", value);
   });
 }
 

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { OnChangeFn, SortingState } from "@tanstack/react-table";
-import { parseSortingParams } from "@/lib/list-sorting";
+import { parseSortingParams, serializeSortingParams } from "@/lib/list-sorting";
 import {
   buildListViewParams,
   type BuildListViewParamsOptions,
@@ -29,7 +29,7 @@ export function useListViewFilters({
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const initialSortingKey = useMemo(
-    () => initialSorting.map(({ id, desc }) => `${id}:${desc}`).join(","),
+    () => serializeSortingParams(initialSorting).join(","),
     [initialSorting],
   );
 
@@ -71,7 +71,10 @@ export function useListViewFilters({
     const nextSorting =
       typeof updater === "function" ? updater(sorting) : updater;
     setSorting(nextSorting);
-    router.push(
+
+    // 제어형 목록은 서버가 정렬한 결과를 표시한다. 클라이언트 전환 캐시를
+    // 우회해 새 sort 조건으로 목록 API가 반드시 다시 호출되게 한다.
+    window.location.assign(
       `${route}?${buildParams({ sorting: nextSorting, page: 0 }).toString()}`,
     );
   };
