@@ -64,6 +64,9 @@ export function ApprovalView({
     currentSemester,
     initialSearch,
     initialSorting,
+    preservedParams: {
+      include_processed: includeProcessed ? "true" : undefined,
+    },
   });
   const router = useRouter();
   const searchParams = useSearchParams();

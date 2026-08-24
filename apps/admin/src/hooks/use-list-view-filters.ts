@@ -3,13 +3,19 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { OnChangeFn, SortingState } from "@tanstack/react-table";
-import { appendSortingParams, parseSortingParams } from "@/lib/list-sorting";
+import { parseSortingParams } from "@/lib/list-sorting";
+import {
+  buildListViewParams,
+  type BuildListViewParamsOptions,
+} from "@/lib/list-view-params";
 
 interface UseListViewFiltersOptions {
   route: string;
   currentSemester: string;
   initialSearch?: string;
   initialSorting?: SortingState;
+  /** 목록 이동 중에도 유지해야 하는 화면별 쿼리 파라미터 */
+  preservedParams?: Record<string, string | undefined>;
 }
 
 export function useListViewFilters({
@@ -17,12 +23,11 @@ export function useListViewFilters({
   currentSemester,
   initialSearch = "",
   initialSorting = [],
+  preservedParams,
 }: UseListViewFiltersOptions) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState(initialSearch);
-  const [sorting, setSorting] = useState<SortingState>(() =>
-    initialSorting.slice(0, 1),
-  );
+  const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const initialSortingKey = useMemo(
     () => initialSorting.map(({ id, desc }) => `${id}:${desc}`).join(","),
     [initialSorting],
@@ -38,23 +43,14 @@ export function useListViewFilters({
     );
   }, [initialSortingKey]);
 
-  const buildParams = (overrides: {
-    semester?: string;
-    search?: string;
-    page?: number;
-    sorting?: SortingState;
-  }) => {
-    const params = new URLSearchParams();
-    const semester = overrides.semester ?? currentSemester;
-    const search = overrides.search ?? searchQuery.trim();
-
-    if (semester) params.set("semester", semester);
-    if (search) params.set("search", search);
-    appendSortingParams(params, overrides.sorting ?? sorting);
-    params.set("page", String(overrides.page ?? 0));
-
-    return params;
-  };
+  const buildParams = (overrides: BuildListViewParamsOptions["overrides"]) =>
+    buildListViewParams({
+      currentSemester,
+      searchQuery,
+      sorting,
+      preservedParams,
+      overrides,
+    });
 
   const handleSemesterChange = (semester: string) => {
     setSorting([]);
@@ -74,13 +70,9 @@ export function useListViewFilters({
   const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
     const nextSorting =
       typeof updater === "function" ? updater(sorting) : updater;
-    const singleSorting = nextSorting.slice(0, 1);
-    setSorting(singleSorting);
-    // 정렬은 서버 전체 결과(페이지 밖의 행 포함)를 기준으로 수행한다.
-    // App Router의 클라이언트 전환 캐시에 의존하지 않고 새 URL을 직접 요청해
-    // 변경된 sort 값으로 목록 API가 반드시 다시 호출되게 한다.
-    window.location.assign(
-      `${route}?${buildParams({ sorting: singleSorting, page: 0 }).toString()}`,
+    setSorting(nextSorting);
+    router.push(
+      `${route}?${buildParams({ sorting: nextSorting, page: 0 }).toString()}`,
     );
   };
 

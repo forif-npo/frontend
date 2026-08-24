@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const sorting = controlledSorting ?? localSorting;
   const onSortingChange = controlledOnSortingChange ?? setLocalSorting;
-  const isServerSorted = controlledSorting !== undefined;
+  const isExternallySorted = controlledSorting !== undefined;
 
   const displayColumns = React.useMemo<ColumnDef<TData, TValue>[]>(() => {
     const selectionColumn: ColumnDef<TData, TValue> = {
@@ -141,12 +141,15 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
     enableRowSelection: true,
+    enableMultiSort: true,
     onSortingChange,
     onRowSelectionChange: setRowSelection,
     getRowId,
     getCoreRowModel: getCoreRowModel(),
-    manualSorting: isServerSorted,
-    ...(!isServerSorted ? { getSortedRowModel: getSortedRowModel() } : {}),
+    // 제어형 목록은 페이지가 요청한 정렬 결과를 그대로 표시한다.
+    // 비제어형 표에서만 현재 브라우저의 행을 정렬한다.
+    manualSorting: isExternallySorted,
+    ...(!isExternallySorted ? { getSortedRowModel: getSortedRowModel() } : {}),
     ...(showPagination
       ? { getPaginationRowModel: getPaginationRowModel() }
       : {}),
