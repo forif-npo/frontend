@@ -105,7 +105,7 @@ export const approvalColumns: ColumnDef<Study>[] = [
       if (!tags || tags.length === 0) return null;
 
       return (
-        <div className="text-center text-sm">
+        <div className="text-center text-xs">
           {tags.map(getStudyTagLabel).join(", ")}
         </div>
       );
@@ -128,7 +128,7 @@ export const approvalColumns: ColumnDef<Study>[] = [
       const difficulty = row.getValue("difficulty") as Study["difficulty"];
 
       return (
-        <div className="text-center text-sm">
+        <div className="text-center text-xs">
           {difficulty ? DIFFICULTY_LABELS[difficulty] : "-"}
         </div>
       );
@@ -145,7 +145,7 @@ export const approvalColumns: ColumnDef<Study>[] = [
         (option) => option.value === String(weekDay),
       )?.label;
 
-      return <div className="text-center text-sm">{label ?? "-"}</div>;
+      return <div className="text-center text-xs">{label ?? "-"}</div>;
     },
   },
   {
@@ -154,14 +154,14 @@ export const approvalColumns: ColumnDef<Study>[] = [
       <SortableHeader column={column}>신청일</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center text-sm">
+      <div className="text-center text-xs">
         {formatDateTime(row.getValue("created_at"))}
       </div>
     ),
   },
   {
     accessorKey: "one_liner",
-    header: () => <div className="text-center text-sm">한 줄 소개</div>,
+    header: () => <div className="text-center text-xs">한 줄 소개</div>,
     cell: ({ row }) => (
       <div className="max-w-[320px] truncate" title={row.getValue("one_liner")}>
         {row.getValue("one_liner")}

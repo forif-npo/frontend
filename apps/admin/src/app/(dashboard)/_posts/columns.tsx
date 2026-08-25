@@ -32,7 +32,7 @@ export const postColumns: ColumnDef<AdminPost>[] = [
   },
   {
     accessorKey: "tag",
-    header: () => <div className="text-center text-sm">태그</div>,
+    header: () => <div className="text-center text-xs">태그</div>,
     cell: ({ row }) => (
       <div className="text-center">
         {row.original.tag ? (
@@ -45,7 +45,7 @@ export const postColumns: ColumnDef<AdminPost>[] = [
   },
   {
     accessorKey: "authorName",
-    header: () => <div className="text-center text-sm">작성자</div>,
+    header: () => <div className="text-center text-xs">작성자</div>,
     cell: ({ row }) => (
       <div className="text-center">{row.original.authorName || "-"}</div>
     ),
@@ -56,7 +56,7 @@ export const postColumns: ColumnDef<AdminPost>[] = [
       <SortableHeader column={column}>작성일</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center text-sm">
+      <div className="text-center text-xs">
         {formatDate(row.original.createdAt)}
       </div>
     ),

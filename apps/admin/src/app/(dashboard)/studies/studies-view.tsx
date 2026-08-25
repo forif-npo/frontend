@@ -11,9 +11,9 @@ import { SemesterTabs } from "@/components/list/semester-tabs";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
-import type { StudyUpdateRequest } from "@core/types/api";
 import type { SortingState } from "@tanstack/react-table";
-import { handleApiError } from "@core/utils/api-client";
+import { apiClient, handleApiError } from "@core/utils/api-client";
+import type { ApiResponse } from "@core/types/api";
 import { Download, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -29,12 +29,8 @@ import { columns } from "./columns";
 import { AutonomousStudyCreateDialog } from "./components/AutonomousStudyCreateDialog";
 import { StudyDeleteDialog } from "./components/StudyDeleteDialog";
 import { StudyEditDialog } from "./components/StudyEditDialog";
-import {
-  EMPTY_STUDY_EDIT_FORM,
-  getStudyTagLabel,
-  STUDY_TAG_OPTIONS,
-} from "./constants";
-import { parseOptionalNumber, toStudyEditForm } from "./form-utils";
+import { EMPTY_STUDY_EDIT_FORM, getStudyTagLabel } from "./constants";
+import { buildStudyUpdateFormData, toStudyEditForm } from "./form-utils";
 import { SemesterLabel, Study, StudyEditForm } from "./types";
 
 interface StudiesViewProps {
@@ -195,14 +191,13 @@ export function StudiesView({
       return;
     }
 
-    const studyName = editForm.study_name.trim();
-    const oneLiner = editForm.one_liner.trim();
-    const weekDay = parseOptionalNumber(editForm.week_day);
-    const difficulty = parseOptionalNumber(editForm.difficulty);
-    const capacity = parseOptionalNumber(editForm.capacity);
-
-    if (!studyName || !oneLiner) {
+    if (!editForm.study_name.trim() || !editForm.one_liner.trim()) {
       toast.error("스터디명과 한 줄 소개를 입력해주세요.");
+      return;
+    }
+
+    if (editForm.explanation.trim().length < 50) {
+      toast.error("스터디 소개는 최소 50자 이상 작성해주세요.");
       return;
     }
 
@@ -216,43 +211,87 @@ export function StudiesView({
       return;
     }
 
-    if (editForm.capacity.trim() && capacity === undefined) {
-      toast.error("정원은 숫자로 입력해주세요.");
+    if (
+      !editForm.location ||
+      !editForm.week_day ||
+      !editForm.start_time ||
+      !editForm.end_time
+    ) {
+      toast.error("진행 장소, 요일, 시간을 모두 입력해주세요.");
       return;
     }
 
-    if (capacity !== undefined && capacity < 0) {
-      toast.error("정원은 0 이상으로 입력해주세요.");
+    if (
+      !editForm.is_online &&
+      editForm.location !== "장소 미정" &&
+      !editForm.location_detail.trim()
+    ) {
+      toast.error("강의실(호)을 입력해주세요.");
       return;
     }
 
-    const studyTagNames = editForm.tags.flatMap((tagId) => {
-      const tag = STUDY_TAG_OPTIONS.find((option) => option.id === tagId);
-      return tag ? [tag.name] : [];
-    });
-
-    if (studyTagNames.length !== editForm.tags.length) {
-      toast.error("선택한 태그 정보를 확인해주세요.");
+    if (!editForm.difficulty) {
+      toast.error("난이도를 선택해주세요.");
       return;
     }
 
-    const body: StudyUpdateRequest = {
-      study_name: studyName,
-      one_liner: oneLiner,
-      explanation: editForm.explanation.trim(),
-      start_time: editForm.start_time,
-      end_time: editForm.end_time,
-      week_day: weekDay,
-      location: editForm.location.trim(),
-      location_detail: editForm.location_detail.trim(),
-      difficulty: difficulty as StudyUpdateRequest["difficulty"],
-      capacity,
-      study_tag_names: studyTagNames,
-    };
+    const invalidWeek = editForm.curriculum.find(
+      (week) =>
+        !week.date ||
+        !week.topic.trim() ||
+        week.contents.some((content) => !content.trim()) ||
+        week.contents.join("; ").length > 500,
+    );
+    if (editForm.curriculum.length < 8 || invalidWeek) {
+      toast.error(
+        "8주차 이상의 커리큘럼을 날짜·주제·내용까지 모두 작성해주세요.",
+      );
+      return;
+    }
+
+    if (
+      editForm.thumbnail &&
+      (!["image/jpeg", "image/png"].includes(editForm.thumbnail.type) ||
+        editForm.thumbnail.size > 5 * 1024 * 1024)
+    ) {
+      toast.error(
+        "썸네일은 5MB 이하의 JPG 또는 PNG 파일만 업로드할 수 있습니다.",
+      );
+      return;
+    }
+
+    const invalidReference = editForm.references.some(
+      (reference) =>
+        (reference.type === "LINK" &&
+          (typeof reference.value !== "string" || !reference.value.trim())) ||
+        (reference.type === "DOWNLOAD" &&
+          !(reference.value instanceof File) &&
+          !(
+            reference.id &&
+            reference.original_type === "DOWNLOAD" &&
+            typeof reference.value === "string" &&
+            reference.value
+          )),
+    );
+    if (invalidReference) {
+      toast.error("참고자료의 링크 또는 파일을 확인해주세요.");
+      return;
+    }
+
+    if (
+      editForm.references.some(
+        (reference) =>
+          reference.value instanceof File &&
+          reference.value.size > 5 * 1024 * 1024,
+      )
+    ) {
+      toast.error("참고자료 파일은 최대 5MB까지 업로드할 수 있습니다.");
+      return;
+    }
 
     try {
       setSubmittingStudyId(editingStudy.id);
-      await updateStudy(editingStudy.id, body);
+      await updateStudy(editingStudy.id, buildStudyUpdateFormData(editForm));
       toast.success("스터디 정보가 수정되었습니다.");
       handleEditDialogOpenChange(false);
       router.refresh();
@@ -260,6 +299,27 @@ export function StudiesView({
       toast.error(await handleApiError(error));
     } finally {
       setSubmittingStudyId(null);
+    }
+  };
+
+  const handleSecondaryMentorSearch = async (studentId: string) => {
+    try {
+      const response = await apiClient
+        .get(`api/v1/users/${studentId}`)
+        .json<ApiResponse<{ user_id: number; user_name: string }>>();
+      if (!response.data) {
+        toast.error("해당 학번의 부원을 찾을 수 없습니다.");
+        return;
+      }
+      setEditForm((previous) => ({
+        ...previous,
+        secondary_mentor_id: response.data!.user_id,
+      }));
+      toast.success(
+        `${response.data.user_name} 님을 추가 멘토로 선택했습니다.`,
+      );
+    } catch (error) {
+      toast.error(await handleApiError(error));
     }
   };
 
@@ -406,6 +466,7 @@ export function StudiesView({
         onFieldChange={handleEditFormChange}
         onTagChange={handleEditTagChange}
         onSubmit={() => void handleSubmitEditStudy()}
+        onSecondaryMentorSearch={handleSecondaryMentorSearch}
         isLoadingDetail={isLoadingEditDetail}
         isFormDisabled={isEditFormDisabled}
         isSubmitting={isEditingStudy}

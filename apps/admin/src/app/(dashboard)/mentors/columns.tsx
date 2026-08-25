@@ -36,7 +36,7 @@ export const columns: ColumnDef<Mentor>[] = [
   },
   {
     accessorKey: "phoneNum",
-    header: () => <div className="w-full text-center text-sm">전화번호</div>,
+    header: () => <div className="w-full text-center text-xs">전화번호</div>,
     cell: ({ row }) => (
       <div className="text-center">
         {formatPhoneNumber(row.getValue("phoneNum"))}
@@ -45,7 +45,7 @@ export const columns: ColumnDef<Mentor>[] = [
   },
   {
     accessorKey: "studyName",
-    header: () => <div className="w-full text-center text-sm">스터디명</div>,
+    header: () => <div className="w-full text-center text-xs">스터디명</div>,
     cell: ({ row }) => (
       <div className="text-center">{row.getValue("studyName")}</div>
     ),

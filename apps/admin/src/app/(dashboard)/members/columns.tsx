@@ -36,7 +36,7 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "phoneNum",
-    header: () => <div className="w-full text-center text-sm">전화번호</div>,
+    header: () => <div className="w-full text-center text-xs">전화번호</div>,
     cell: ({ row }) => (
       <div className="text-center">
         {formatPhoneNumber(row.getValue("phoneNum"))}
@@ -45,7 +45,7 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "isMentor",
-    header: () => <div className="w-full text-center text-sm">멘토 여부</div>,
+    header: () => <div className="w-full text-center text-xs">멘토 여부</div>,
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <input
@@ -60,7 +60,7 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "isAdmin",
-    header: () => <div className="w-full text-center text-sm">운영진 여부</div>,
+    header: () => <div className="w-full text-center text-xs">운영진 여부</div>,
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <input

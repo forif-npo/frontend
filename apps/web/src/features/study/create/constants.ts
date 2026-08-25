@@ -1,15 +1,8 @@
 export { TAG_OPTIONS, getStudyTagName } from "@/constants/study-tags";
-export { LOCATION_OPTIONS } from "@/constants/locations";
-
-export const WEEKDAY_OPTIONS = [
-  { value: "1", label: "월요일" },
-  { value: "2", label: "화요일" },
-  { value: "3", label: "수요일" },
-  { value: "4", label: "목요일" },
-  { value: "5", label: "금요일" },
-  { value: "6", label: "토요일" },
-  { value: "0", label: "일요일" },
-] as const;
+export {
+  STUDY_LOCATION_OPTIONS as LOCATION_OPTIONS,
+  STUDY_WEEK_DAY_OPTIONS as WEEKDAY_OPTIONS,
+} from "@core/study-form";
 
 export const DIFFICULTY_OPTIONS = [
   { value: "EASY", label: "쉬움" },
