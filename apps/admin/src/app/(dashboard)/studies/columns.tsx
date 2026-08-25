@@ -85,11 +85,11 @@ export const columns: ColumnDef<Study>[] = [
     cell: ({ row }) => {
       const tags = row.getValue("tags") as string[];
       if (!tags || tags.length === 0) {
-        return <div className="text-center text-sm">-</div>;
+        return <div className="text-center text-xs">-</div>;
       }
 
       return (
-        <div className="text-center text-sm">
+        <div className="text-center text-xs">
           {tags.map(getStudyTagLabel).join(", ")}
         </div>
       );
@@ -114,7 +114,7 @@ export const columns: ColumnDef<Study>[] = [
       const difficulty = row.getValue("difficulty") as Study["difficulty"];
 
       return (
-        <div className="text-center text-sm">
+        <div className="text-center text-xs">
           {difficulty ? DIFFICULTY_LABELS[difficulty] : "-"}
         </div>
       );
@@ -131,7 +131,7 @@ export const columns: ColumnDef<Study>[] = [
         (option) => option.value === String(weekDay),
       )?.label;
 
-      return <div className="text-center text-sm">{label ?? "-"}</div>;
+      return <div className="text-center text-xs">{label ?? "-"}</div>;
     },
   },
   {

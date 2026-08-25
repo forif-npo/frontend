@@ -262,19 +262,19 @@ export function ProductsAdminView() {
                       {product.one_liner}
                     </p>
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  <TableCell className="text-muted-foreground text-xs">
                     {product.slug}.forif.org
                   </TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="text-xs">
                     {SOURCE_LABELS[product.source_type] ?? product.source_type}
                   </TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="text-xs">
                     {product.applicant_name}
                     <span className="text-muted-foreground ml-1 text-xs">
                       {product.applicant_id}
                     </span>
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  <TableCell className="text-muted-foreground text-xs">
                     {product.applied_at}
                   </TableCell>
                   <TableCell className="text-right">

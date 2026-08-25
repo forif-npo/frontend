@@ -46,7 +46,7 @@ export const columns: ColumnDef<Operator>[] = [
   {
     accessorKey: "phoneNum",
     header: () => (
-      <div className="text-center text-sm hover:bg-transparent">전화번호</div>
+      <div className="text-center text-xs hover:bg-transparent">전화번호</div>
     ),
     cell: ({ row }) => (
       <div className="text-center">

@@ -34,7 +34,7 @@ export const columns: ColumnDef<Hackathon>[] = [
   },
   {
     accessorKey: "held_year",
-    header: () => <div className="text-center text-sm">기수</div>,
+    header: () => <div className="text-center text-xs">기수</div>,
     cell: ({ row }) => (
       <div className="text-center">
         {row.original.held_year}-{row.original.held_semester} /{" "}
@@ -44,7 +44,7 @@ export const columns: ColumnDef<Hackathon>[] = [
   },
   {
     accessorKey: "status",
-    header: () => <div className="text-center text-sm">상태</div>,
+    header: () => <div className="text-center text-xs">상태</div>,
     cell: ({ row }) => {
       const status = row.original.status;
       return (
@@ -62,7 +62,7 @@ export const columns: ColumnDef<Hackathon>[] = [
       <SortableHeader column={column}>기간</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center text-sm">
+      <div className="text-center text-xs">
         {formatDate(row.original.starts_at)} ~{" "}
         {formatDate(row.original.ends_at)}
       </div>
@@ -70,9 +70,9 @@ export const columns: ColumnDef<Hackathon>[] = [
   },
   {
     accessorKey: "location",
-    header: () => <div className="text-center text-sm">장소</div>,
+    header: () => <div className="text-center text-xs">장소</div>,
     cell: ({ row }) => (
-      <div className="text-center text-sm">{row.original.location ?? "-"}</div>
+      <div className="text-center text-xs">{row.original.location ?? "-"}</div>
     ),
   },
 ];

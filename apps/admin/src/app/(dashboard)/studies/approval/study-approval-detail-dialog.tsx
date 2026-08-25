@@ -115,7 +115,7 @@ export function StudyApprovalDetailDialog({
                     </td>
                     <td className="py-3">
                       {tags.length > 0 ? (
-                        <span className="text-[15px] leading-[1.5]">
+                        <span className={PREVIEW_VALUE_CLASS}>
                           {tags.map(getStudyTagLabel).join(", ")}
                         </span>
                       ) : (
@@ -360,9 +360,7 @@ function PreviewInfoRow({ label, value }: { label: string; value: string }) {
       <td className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
         {label}
       </td>
-      <td className="text-text-basic py-3 text-[15px] leading-[1.5] md:text-[17px]">
-        {value}
-      </td>
+      <td className={`py-3 ${PREVIEW_VALUE_CLASS}`}>{value}</td>
     </tr>
   );
 }
@@ -375,6 +373,7 @@ const CURRICULUM_HEADER_CELL_CLASS =
   "border-b border-secondary-10 bg-secondary-5 px-2 py-2 text-left text-[15px] font-bold leading-[1.5] text-text-bolder";
 const CURRICULUM_BODY_CELL_CLASS =
   "border-b border-gray-20 bg-surface-white px-2 py-2 align-top text-[15px] leading-[1.5] text-text-basic";
+const PREVIEW_VALUE_CLASS = "text-text-basic text-[15px] leading-[1.5]";
 
 function formatStudyTime(detail: AdminStudyDetail) {
   const weekDay =

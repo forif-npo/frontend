@@ -31,7 +31,7 @@ export function SortableHeader<TData>({
       variant="ghost"
       type="button"
       onClick={handleSort}
-      className="h-auto w-full justify-center p-0 text-sm hover:bg-transparent"
+      className="h-auto w-full justify-center p-0 text-xs hover:bg-transparent"
     >
       {children}
       <svg

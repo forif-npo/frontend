@@ -260,7 +260,7 @@ export function DuesView({ initialData, initialSearch }: DuesViewProps) {
                     <TableCell className="font-medium">
                       {member.userName}
                     </TableCell>
-                    <TableCell className="font-mono text-sm">
+                    <TableCell className="font-mono text-xs">
                       {member.userId}
                     </TableCell>
                     <TableCell>{member.department || "-"}</TableCell>
