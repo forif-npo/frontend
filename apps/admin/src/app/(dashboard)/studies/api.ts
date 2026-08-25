@@ -3,7 +3,6 @@ import type {
   AdminStudyListResponse,
   ApiResponse,
   StudyRejectRequest,
-  StudyUpdateRequest,
 } from "@core/types/api";
 import type { SemesterInfo } from "./types";
 import { getCurrentSemester as fetchActiveSemester } from "@core/semester/api";
@@ -44,6 +43,11 @@ export interface AdminStudyDetail {
     reference_type: "FILE" | "URL";
     content: string | null;
     file_name?: string | null;
+  }>;
+  mentors?: Array<{
+    mentor_id: number;
+    mentor_name: string;
+    mentor_num: number;
   }>;
 }
 
@@ -159,11 +163,11 @@ export async function fetchStudyDetail(
 
 export async function updateStudy(
   studyId: number,
-  body: StudyUpdateRequest,
+  body: FormData,
 ): Promise<void> {
   await apiClient
     .patch(`api/v1/admin/studies/${studyId}`, {
-      json: body,
+      body,
     })
     .json<ApiResponse<null>>();
 }
