@@ -11,7 +11,10 @@ import { Pagination, SelectBox } from "@ui/components/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
-import { HACKATHON_TECH_STACK_OPTIONS } from "@core/hackathon/tags";
+import {
+  HACKATHON_TECH_STACK_OPTIONS,
+  normalizeHackathonTechStack,
+} from "@core/hackathon/tags";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
@@ -111,7 +114,12 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
         s.project_name.toLowerCase().includes(q) ||
         s.summary.toLowerCase().includes(q);
       const matchesTech =
-        selectedTech === "전체" || s.tech_stacks.includes(selectedTech);
+        selectedTech === "전체" ||
+        s.tech_stacks.some(
+          (techStack) =>
+            normalizeHackathonTechStack(techStack) ===
+            normalizeHackathonTechStack(selectedTech),
+        );
       const matchesCompetitionType =
         selectedCompetitionType === "전체" ||
         s.competition_type === selectedCompetitionType;

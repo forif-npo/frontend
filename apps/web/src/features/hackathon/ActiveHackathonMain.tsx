@@ -14,7 +14,6 @@ import type {
   Team,
   UpdateTeamRequest,
 } from "@core/types/hackathon";
-import { isHackathonTechStack } from "@core/hackathon/tags";
 import { handleApiError } from "@core/utils/api-client";
 import { Heading } from "@ui/components/server";
 import { useEffect, useMemo, useState } from "react";
@@ -337,7 +336,7 @@ export function ActiveHackathonMain({
             githubUrl: mySubmission.github_url ?? "",
             deployUrl: mySubmission.deploy_url ?? "",
             imageUrl: mySubmission.image_url ?? "",
-            techStacks: mySubmission.tech_stacks.filter(isHackathonTechStack),
+            techStacks: mySubmission.tech_stacks,
           }
         : EMPTY_SUBMISSION_FORM,
     );

@@ -1,11 +1,19 @@
 import type { Criterion, Team } from "@core/types/hackathon";
 import {
+  canonicalizeHackathonTechStack,
   HACKATHON_TECH_STACK_LIMIT,
   HACKATHON_TECH_STACK_OPTIONS,
+  normalizeHackathonTechStack,
 } from "@core/hackathon/tags";
 import { Body, Label } from "@ui/components/server";
-import { Modal, SelectBox, TextArea, TextInput } from "@ui/components/client";
-import type { Dispatch, SetStateAction } from "react";
+import {
+  Button,
+  Modal,
+  SelectBox,
+  TextArea,
+  TextInput,
+} from "@ui/components/client";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import type { SubmissionFormState, TeamFormState } from "./types";
 
 export function TeamFormModal({
@@ -155,12 +163,28 @@ export function SubmissionModal({
   error?: string | null;
   fieldErrors?: SubmissionFieldErrors;
 }) {
+  const [customTechStack, setCustomTechStack] = useState("");
+
+  useEffect(() => {
+    if (!isOpen) {
+      setCustomTechStack("");
+    }
+  }, [isOpen]);
+
   const toggleTechStack = (techStack: string) => {
     setForm((prev) => {
-      if (prev.techStacks.includes(techStack)) {
+      const normalizedTechStack = normalizeHackathonTechStack(techStack);
+      const selectedIndex = prev.techStacks.findIndex(
+        (selectedTechStack) =>
+          normalizeHackathonTechStack(selectedTechStack) ===
+          normalizedTechStack,
+      );
+      if (selectedIndex >= 0) {
         return {
           ...prev,
-          techStacks: prev.techStacks.filter((stack) => stack !== techStack),
+          techStacks: prev.techStacks.filter(
+            (_, index) => index !== selectedIndex,
+          ),
         };
       }
 
@@ -170,10 +194,42 @@ export function SubmissionModal({
 
       return {
         ...prev,
-        techStacks: [...prev.techStacks, techStack],
+        techStacks: [
+          ...prev.techStacks,
+          canonicalizeHackathonTechStack(techStack),
+        ],
       };
     });
   };
+
+  const addCustomTechStack = () => {
+    const techStack = canonicalizeHackathonTechStack(customTechStack);
+    if (!techStack) return;
+
+    setForm((prev) => {
+      if (
+        prev.techStacks.length >= HACKATHON_TECH_STACK_LIMIT ||
+        prev.techStacks.some(
+          (selectedTechStack) =>
+            normalizeHackathonTechStack(selectedTechStack) ===
+            normalizeHackathonTechStack(techStack),
+        )
+      ) {
+        return prev;
+      }
+      return { ...prev, techStacks: [...prev.techStacks, techStack] };
+    });
+    setCustomTechStack("");
+  };
+
+  const customTechStacks = form.techStacks.filter(
+    (techStack) =>
+      !HACKATHON_TECH_STACK_OPTIONS.some(
+        (option) =>
+          normalizeHackathonTechStack(option) ===
+          normalizeHackathonTechStack(techStack),
+      ),
+  );
 
   return (
     <Modal
@@ -254,12 +310,16 @@ export function SubmissionModal({
               기술 스택
             </Label>
             <Body size="s" className="text-text-subtle">
-              대표 스택을 최대 {HACKATHON_TECH_STACK_LIMIT}개까지 선택할 수
-              있습니다.
+              대표 스택을 최대 {HACKATHON_TECH_STACK_LIMIT}개까지 선택하거나
+              직접 추가할 수 있습니다.
             </Body>
             <div className="flex flex-wrap gap-2">
               {HACKATHON_TECH_STACK_OPTIONS.map((techStack) => {
-                const selected = form.techStacks.includes(techStack);
+                const selected = form.techStacks.some(
+                  (selectedTechStack) =>
+                    normalizeHackathonTechStack(selectedTechStack) ===
+                    normalizeHackathonTechStack(techStack),
+                );
                 const disabled =
                   !selected &&
                   form.techStacks.length >= HACKATHON_TECH_STACK_LIMIT;
@@ -283,6 +343,47 @@ export function SubmissionModal({
                   </button>
                 );
               })}
+              {customTechStacks.map((techStack) => (
+                <button
+                  key={techStack}
+                  type="button"
+                  aria-pressed="true"
+                  onClick={() => toggleTechStack(techStack)}
+                  className="border-border-primary bg-action-primary-selected text-text-primary rounded-2 text-body-s border px-4 py-2 transition-colors"
+                >
+                  {techStack}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-end gap-2">
+              <TextInput
+                id="submission-custom-tech-stack"
+                aria-label="직접 입력할 기술 스택"
+                placeholder="직접 입력"
+                length="full"
+                maxLength={50}
+                value={customTechStack}
+                disabled={form.techStacks.length >= HACKATHON_TECH_STACK_LIMIT}
+                onChange={(event) => setCustomTechStack(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    addCustomTechStack();
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                size="small"
+                disabled={
+                  !customTechStack.trim() ||
+                  form.techStacks.length >= HACKATHON_TECH_STACK_LIMIT
+                }
+                onClick={addCustomTechStack}
+              >
+                추가
+              </Button>
             </div>
           </div>
         </div>
