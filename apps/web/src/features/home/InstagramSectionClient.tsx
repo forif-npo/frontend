@@ -1,7 +1,12 @@
 "use client";
 
 import { InstagramIcon } from "@repo/assets/icons/krds";
-import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Heart,
+  MessageCircle,
+} from "@repo/assets/icons/lucide";
 import Link from "next/link";
 import { useState } from "react";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
@@ -14,15 +19,17 @@ export type InstagramPost = {
   imageUrl: string;
   permalink: string;
   mediaType: "CAROUSEL_ALBUM" | "IMAGE" | "VIDEO";
+  likeCount: number;
+  commentsCount: number;
 };
 
 export function InstagramSectionClient({ posts }: { posts: InstagramPost[] }) {
   const [currentPage, setCurrentPage] = useState(0);
-  const totalPages = Math.ceil(posts.length / 3);
+  const totalPages = Math.ceil(posts.length / 4);
   const safeCurrentPage = Math.min(currentPage, Math.max(totalPages - 1, 0));
   const visiblePosts = posts.slice(
-    safeCurrentPage * 3,
-    safeCurrentPage * 3 + 3,
+    safeCurrentPage * 4,
+    safeCurrentPage * 4 + 4,
   );
 
   const selectPage = (page: number) => {
@@ -45,7 +52,7 @@ export function InstagramSectionClient({ posts }: { posts: InstagramPost[] }) {
       </div>
 
       {posts.length === 0 ? (
-        <div className="flex min-h-52 flex-col items-center justify-center rounded-2xl border border-[#e5e8eb] bg-white px-6 text-center">
+        <div className="border-border-gray-light bg-surface-white flex min-h-52 flex-col items-center justify-center rounded-2xl border px-6 text-center">
           <InstagramIcon width={40} height={40} />
           <p className="text-text-basic mt-3 text-[16px] font-semibold">
             FORIF의 새로운 소식을 인스타그램에서 만나보세요.
@@ -54,7 +61,7 @@ export function InstagramSectionClient({ posts }: { posts: InstagramPost[] }) {
             href={FORIF_EXTERNAL_LINKS.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 text-[15px] font-medium text-[#052b57] hover:underline"
+            className="text-text-secondary mt-4 text-[15px] font-medium hover:underline"
           >
             @forif_hyu 방문하기
           </Link>
@@ -64,7 +71,7 @@ export function InstagramSectionClient({ posts }: { posts: InstagramPost[] }) {
           <div className="touch-pan-y" {...swipeHandlers}>
             <div
               key={safeCurrentPage}
-              className={`${styles.bannerSlideForward} grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3`}
+              className={`${styles.bannerSlideForward} bg-border-gray-darker grid grid-cols-2 gap-px overflow-hidden lg:grid-cols-4`}
             >
               {visiblePosts.map((post) => (
                 <InstagramCard key={post.id} post={post} />
@@ -79,7 +86,7 @@ export function InstagramSectionClient({ posts }: { posts: InstagramPost[] }) {
                 onClick={() => selectPage(safeCurrentPage - 1)}
                 disabled={safeCurrentPage === 0}
                 aria-label="이전 인스타그램 게시물"
-                className="text-text-basic flex h-10 w-10 items-center justify-center rounded-full border border-[#e5e8eb] bg-white transition-colors hover:bg-[#f7faff] disabled:cursor-not-allowed disabled:opacity-40"
+                className="text-text-basic border-border-gray-light bg-surface-white hover:bg-action-secondary-hover flex h-10 w-10 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ArrowLeft size={20} />
               </button>
@@ -98,8 +105,8 @@ export function InstagramSectionClient({ posts }: { posts: InstagramPost[] }) {
                     }
                     className={`h-2 rounded-full transition-all ${
                       safeCurrentPage === index
-                        ? "w-8 bg-[#052b57]"
-                        : "w-2 bg-[#d8dee5] hover:bg-[#9aa7b4]"
+                        ? "bg-secondary-80 w-8"
+                        : "bg-gray-20 hover:bg-gray-40 w-2"
                     }`}
                   />
                 ))}
@@ -109,7 +116,7 @@ export function InstagramSectionClient({ posts }: { posts: InstagramPost[] }) {
                 onClick={() => selectPage(safeCurrentPage + 1)}
                 disabled={safeCurrentPage === totalPages - 1}
                 aria-label="다음 인스타그램 게시물"
-                className="text-text-basic flex h-10 w-10 items-center justify-center rounded-full border border-[#e5e8eb] bg-white transition-colors hover:bg-[#f7faff] disabled:cursor-not-allowed disabled:opacity-40"
+                className="text-text-basic border-border-gray-light bg-surface-white hover:bg-action-secondary-hover flex h-10 w-10 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ArrowRight size={20} />
               </button>
@@ -127,25 +134,31 @@ function InstagramCard({ post }: { post: InstagramPost }) {
       href={post.permalink}
       target="_blank"
       rel="noopener noreferrer"
-      className="group overflow-hidden rounded-2xl border border-[#e5e8eb] bg-white transition-shadow hover:shadow-md"
+      aria-label={`FORIF 인스타그램 게시물: ${post.caption}`}
+      className="bg-surface-gray-subtle focus-visible:outline-border-secondary group relative aspect-square overflow-hidden transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-4"
     >
-      <div className="relative aspect-square overflow-hidden bg-[#eef2f6]">
-        {/* Instagram CDN URL은 짧은 수명을 가지므로 최적화 서버를 거치지 않는다. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={post.imageUrl}
-          alt="FORIF 인스타그램 게시물"
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        {post.mediaType === "VIDEO" && (
-          <span className="absolute right-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white">
-            VIDEO
+      {/* Instagram CDN URL은 짧은 수명을 가지므로 최적화 서버를 거치지 않는다. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={post.imageUrl}
+        alt=""
+        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+      <div className="bg-alpha-black75 text-text-inverse-static absolute inset-0 flex flex-col items-center justify-center p-5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+        <p className="line-clamp-2 text-center text-[14px] leading-5 sm:text-[15px] sm:leading-6">
+          {post.caption}
+        </p>
+        <div className="mt-5 flex items-center gap-7 text-[22px] font-bold leading-none">
+          <span className="flex items-center gap-1.5">
+            <Heart size={30} fill="currentColor" aria-hidden="true" />
+            {post.likeCount.toLocaleString()}
           </span>
-        )}
+          <span className="flex items-center gap-1.5">
+            <MessageCircle size={30} fill="currentColor" aria-hidden="true" />
+            {post.commentsCount.toLocaleString()}
+          </span>
+        </div>
       </div>
-      <p className="text-text-subtle line-clamp-3 min-h-[5.25rem] px-5 py-4 text-[15px] leading-7">
-        {post.caption}
-      </p>
     </Link>
   );
 }

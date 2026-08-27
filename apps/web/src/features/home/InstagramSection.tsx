@@ -11,6 +11,8 @@ const INSTAGRAM_MEDIA_FIELDS = [
   "thumbnail_url",
   "permalink",
   "timestamp",
+  "like_count",
+  "comments_count",
 ].join(",");
 
 type InstagramMediaResponse = {
@@ -22,6 +24,8 @@ type InstagramMediaResponse = {
     thumbnail_url?: string;
     permalink?: string;
     timestamp?: string;
+    like_count?: number;
+    comments_count?: number;
   }>;
 };
 
@@ -64,6 +68,8 @@ async function getInstagramPosts(): Promise<InstagramPost[]> {
         imageUrl: post.thumbnail_url ?? post.media_url!,
         permalink: post.permalink!,
         mediaType: post.media_type ?? "IMAGE",
+        likeCount: post.like_count ?? 0,
+        commentsCount: post.comments_count ?? 0,
       }));
   } catch {
     return [];
