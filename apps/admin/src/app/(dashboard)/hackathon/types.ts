@@ -27,7 +27,6 @@ export const HACKATHON_STATUS_LABELS: Record<HackathonStatus, string> = {
 export interface HackathonFormState {
   held_year: string;
   held_semester: string;
-  event_round: string;
   title: string;
   description: string;
   location: string;

@@ -8,6 +8,8 @@ export type HackathonStatus =
   | "JUDGING"
   | "ENDED";
 
+export type CompetitionType = "IDEATHON" | "HACKATHON";
+
 export type ParticipantStatus = "REGISTERED" | "CANCELED";
 export type JoinRequestStatus =
   | "PENDING"
@@ -79,6 +81,7 @@ export interface Team {
   name: string;
   topic?: string;
   description?: string;
+  competition_type: CompetitionType;
   leader_id: number;
   leader_name: string;
   max_members?: number;
@@ -112,6 +115,7 @@ export interface Submission {
   hackathon_id: number;
   team_id: number;
   team_name: string;
+  competition_type: CompetitionType;
   project_name: string;
   summary: string;
   description?: string;
@@ -235,7 +239,6 @@ export interface ArchiveSubmissionsParams {
 export interface CreateHackathonRequest {
   held_year: number;
   held_semester: number;
-  event_round: number;
   title: string;
   description?: string;
   location?: string;
@@ -310,6 +313,7 @@ export interface CreateTeamRequest {
   name: string;
   topic?: string;
   description?: string;
+  competition_type: CompetitionType;
   max_members?: number;
 }
 

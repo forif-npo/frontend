@@ -1,6 +1,7 @@
 import type { Submission, Team } from "@core/types/hackathon";
 import { Badge, Body, Label } from "@ui/components/server";
 import { Panel, PanelHeader } from "../shared";
+import { CompetitionTypeBadge } from "../CompetitionTypeBadge";
 
 export function TeamStatusBoard({
   teams,
@@ -43,9 +44,12 @@ export function TeamStatusBoard({
               key={team.hackathon_team_id}
               className={`border-divider-gray-light text-body-s grid min-h-[44px] grid-cols-1 items-center gap-2 border-t px-4 py-3 sm:grid-cols-[1.1fr_80px_110px_minmax(0,1.6fr)] sm:gap-3 sm:py-0 ${isMine ? "bg-surface-primary-subtler" : ""}`}
             >
-              <Label size="s" className="text-text-basic font-bold">
-                {team.name}
-              </Label>
+              <div className="flex flex-wrap items-center gap-2">
+                <Label size="s" className="text-text-basic font-bold">
+                  {team.name}
+                </Label>
+                <CompetitionTypeBadge competitionType={team.competition_type} />
+              </div>
               <Body size="s" className="text-text-subtle">
                 {team.member_count}/{team.max_members ?? "-"}
               </Body>

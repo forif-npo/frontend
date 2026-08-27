@@ -4,7 +4,7 @@ import {
   HACKATHON_TECH_STACK_OPTIONS,
 } from "@core/hackathon/tags";
 import { Body, Label } from "@ui/components/server";
-import { Modal, TextArea, TextInput } from "@ui/components/client";
+import { Modal, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import type { Dispatch, SetStateAction } from "react";
 import type { SubmissionFormState, TeamFormState } from "./types";
 
@@ -38,6 +38,24 @@ export function TeamFormModal({
           value={form.name}
           onChange={(e) =>
             setForm((prev) => ({ ...prev, name: e.target.value }))
+          }
+        />
+        <SelectBox
+          id="hackathon-team-competition-type"
+          title="대회 유형"
+          value={form.competitionType}
+          options={[
+            { value: "IDEATHON", label: "아이디어톤" },
+            { value: "HACKATHON", label: "해커톤" },
+          ]}
+          placeholder="대회 유형을 선택해주세요"
+          disabled={mode === "edit"}
+          onChange={(competitionType) =>
+            setForm((prev) => ({
+              ...prev,
+              competitionType:
+                competitionType as TeamFormState["competitionType"],
+            }))
           }
         />
         <TextInput

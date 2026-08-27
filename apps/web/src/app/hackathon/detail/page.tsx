@@ -19,6 +19,7 @@ import type {
   CreateTeamRequest,
   EvaluationScore,
   SubmissionRequest,
+  UpdateTeamRequest,
 } from "@core/types/hackathon";
 
 export default function HackathonDetailPage() {
@@ -91,7 +92,7 @@ export default function HackathonDetailPage() {
   );
 
   const handleUpdateTeam = useCallback(
-    async (teamId: number, body: CreateTeamRequest) => {
+    async (teamId: number, body: UpdateTeamRequest) => {
       await runAction(() => updateTeam(teamId, body));
     },
     [runAction, updateTeam],

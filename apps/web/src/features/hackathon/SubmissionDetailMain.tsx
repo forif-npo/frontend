@@ -11,6 +11,7 @@ import { useArchiveSubmissionDetail } from "@/hooks/hackathon";
 import { HackathonSubmissionDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { safeImageSrc } from "@/utils/image";
 import { sortTeamMembersLeaderFirst } from "./utils";
+import { CompetitionTypeBadge } from "./CompetitionTypeBadge";
 import {
   ARCHIVE_ELEVATED_PANEL_CLASS_NAME,
   ARCHIVE_PANEL_CLASS_NAME,
@@ -89,6 +90,7 @@ export function SubmissionDetailMain({
           <Label size="m" className="text-text-basic font-bold">
             {submission.team_name}
           </Label>
+          <CompetitionTypeBadge competitionType={submission.competition_type} />
           {submission.awarded &&
             submission.awards.map((award) => (
               <Badge

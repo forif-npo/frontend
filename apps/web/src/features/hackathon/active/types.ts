@@ -1,3 +1,4 @@
+import type { CompetitionType } from "@core/types/hackathon";
 import type { MainStage } from "../utils";
 
 export type ActiveStage = Extract<
@@ -9,6 +10,7 @@ export type TeamFormState = {
   name: string;
   topic: string;
   description: string;
+  competitionType: CompetitionType;
   maxMembers: string;
 };
 
@@ -26,6 +28,7 @@ export const EMPTY_TEAM_FORM: TeamFormState = {
   name: "",
   topic: "",
   description: "",
+  competitionType: "HACKATHON",
   maxMembers: "4",
 };
 

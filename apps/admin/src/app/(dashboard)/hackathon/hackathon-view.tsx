@@ -57,7 +57,6 @@ import {
   ACTION_VISIBILITY,
   EMPTY_FORM,
   getNextStatus,
-  isActiveHackathon,
   toFormState,
   toPresentationDownloadUrl,
 } from "./utils";
@@ -106,10 +105,6 @@ export function HackathonView({ initialData }: HackathonViewProps) {
       `${hackathon.held_year}-${hackathon.held_semester}`.includes(query)
     );
   });
-  const activeHackathon = initialData.find((hackathon) =>
-    isActiveHackathon(hackathon.status),
-  );
-
   const updateForm = <K extends keyof HackathonFormState>(
     field: K,
     value: HackathonFormState[K],
@@ -118,13 +113,6 @@ export function HackathonView({ initialData }: HackathonViewProps) {
   };
 
   const handleOpenCreate = () => {
-    if (activeHackathon) {
-      alert(
-        `${activeHackathon.title ?? "진행 중인 해커톤"}이 종료된 뒤 새 해커톤을 생성할 수 있습니다.`,
-      );
-      return;
-    }
-
     setEditingHackathon(null);
     setForm({ ...EMPTY_FORM });
     setIsFormOpen(true);
@@ -201,19 +189,12 @@ export function HackathonView({ initialData }: HackathonViewProps) {
         };
         await updateHackathon(editingHackathon.hackathon_id, body);
       } else {
-        if (activeHackathon) {
-          alert("진행 중인 해커톤이 있어 새 해커톤을 생성할 수 없습니다.");
-          setSubmitting(false);
-          return;
-        }
-
         const heldYear = Number(form.held_year);
         const heldSemester = Number(form.held_semester);
-        const eventRound = Number(form.event_round);
         const title = form.title.trim();
 
-        if (!heldYear || !heldSemester || !eventRound) {
-          alert("연도/학기/회차를 올바르게 입력해주세요.");
+        if (!heldYear || !heldSemester) {
+          alert("연도와 학기를 올바르게 입력해주세요.");
           setSubmitting(false);
           return;
         }
@@ -226,7 +207,6 @@ export function HackathonView({ initialData }: HackathonViewProps) {
         const body: CreateHackathonRequest = {
           held_year: heldYear,
           held_semester: heldSemester,
-          event_round: eventRound,
           title,
           description: form.description.trim() || undefined,
           location: form.location.trim() || undefined,
@@ -315,15 +295,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
         title="해커톤 관리"
         description="해커톤을 생성하고 상태와 제출 현황을 관리할 수 있습니다."
         actions={
-          <Button
-            onClick={handleOpenCreate}
-            disabled={activeHackathon !== undefined}
-            title={
-              activeHackathon
-                ? `${activeHackathon.title ?? "진행 중인 해커톤"} 종료 후 추가할 수 있습니다.`
-                : undefined
-            }
-          >
+          <Button onClick={handleOpenCreate}>
             <Plus className="mr-2 h-4 w-4" />
             해커톤 추가
           </Button>
@@ -409,7 +381,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
               void handleSubmitForm();
             }}
           >
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="held-year">연도</Label>
                 <Input
@@ -435,17 +407,6 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                     <SelectItem value="2">2학기</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="event-round">회차</Label>
-                <Input
-                  id="event-round"
-                  type="number"
-                  min={1}
-                  value={form.event_round}
-                  disabled={submitting || editingHackathon !== null}
-                  onChange={(e) => updateForm("event_round", e.target.value)}
-                />
               </div>
             </div>
 
