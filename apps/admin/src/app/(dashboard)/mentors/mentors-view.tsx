@@ -1,6 +1,5 @@
 "use client";
 
-import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
@@ -75,10 +74,6 @@ export function MentorsView({
     XLSX.writeFile(wb, `mentors_${currentSemester}_${date}.xlsx`);
   };
 
-  const handleDeleteMentor = (mentor: Mentor) => {
-    console.log("멘토 삭제", mentor);
-  };
-
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
 
@@ -115,15 +110,6 @@ export function MentorsView({
           showPagination={false}
           sorting={sorting}
           onSortingChange={handleSortingChange}
-          renderRowActions={(mentor) => (
-            <DropdownMenuItem
-              disabled={!mentor.manageable}
-              className="text-destructive focus:text-destructive"
-              onClick={() => handleDeleteMentor(mentor)}
-            >
-              {mentor.manageable ? "멘토 삭제" : "멘토 삭제 (관리 불가)"}
-            </DropdownMenuItem>
-          )}
         />
 
         <OffsetPagination

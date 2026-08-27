@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/list/dropdown-menu";
+import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
@@ -158,10 +155,6 @@ export function MembersView({
     }
   };
 
-  const handleGrantAdminRole = (member: Member) => {
-    console.log("운영진 권한 부여", member);
-  };
-
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
 
@@ -212,10 +205,6 @@ export function MembersView({
                   현재 학기 부원 삭제
                 </DropdownMenuItem>
               )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleGrantAdminRole(member)}>
-                운영진 권한 부여
-              </DropdownMenuItem>
             </>
           )}
         />

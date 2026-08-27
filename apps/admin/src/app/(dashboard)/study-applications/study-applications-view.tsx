@@ -1,7 +1,6 @@
 "use client";
 
 import { DataTable } from "@/components/list/data-table";
-import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
@@ -56,11 +55,6 @@ export function StudyApplicationsView({
         getRowId={(row) => `${row.userId}-${row.priority}`}
         sorting={sorting}
         onSortingChange={handleSortingChange}
-        renderRowActions={() => (
-          <DropdownMenuItem disabled>
-            신청 스터디 수정 (준비 중)
-          </DropdownMenuItem>
-        )}
       />
 
       <OffsetPagination

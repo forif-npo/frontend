@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/list/dropdown-menu";
+import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
@@ -374,14 +371,6 @@ export function StudiesView({
     }
   };
 
-  const handleAddMentee = (study: Study) => {
-    console.log("멘티 추가", study);
-  };
-
-  const handleRemoveMentee = (study: Study) => {
-    console.log("멘티 삭제", study);
-  };
-
   const isEditingStudy =
     editingStudy !== null && submittingStudyId === editingStudy.id;
   const isLoadingEditDetail =
@@ -454,13 +443,6 @@ export function StudiesView({
                 onClick={() => handleDeleteStudy(study)}
               >
                 스터디 정보 삭제
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleAddMentee(study)}>
-                멘티 추가
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleRemoveMentee(study)}>
-                멘티 삭제
               </DropdownMenuItem>
             </>
           )}
