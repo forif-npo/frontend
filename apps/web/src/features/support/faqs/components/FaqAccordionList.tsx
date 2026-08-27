@@ -78,6 +78,7 @@ export function FaqAccordionList({
       <Accordion
         items={accordionItems}
         defaultOpenIndex={hasQuery ? 0 : null}
+        contentClassName="px-6 pb-6 pt-2"
       />
     </div>
   );

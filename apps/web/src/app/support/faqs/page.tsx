@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { Pagination } from "@ui/components/client";
+import { Pagination, RadioButtonGroup } from "@ui/components/client";
 import { SearchBar } from "@/features/support/components/SearchBar";
 import { SearchResultCount } from "@/features/support/components/SearchResultCount";
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
@@ -21,20 +21,36 @@ export default function FaqPage() {
   });
 
   const [draftQuery, setDraftQuery] = useState(query);
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     setDraftQuery(query);
   }, [query]);
 
-  const { items, total, totalPages, isLoading, errorMessage } = useFaqList({
-    query,
-    page,
-    pageSize: PAGE_SIZE,
-  });
+  const { items, total, totalPages, categories, isLoading, errorMessage } =
+    useFaqList({
+      query,
+      category,
+      page,
+      pageSize: PAGE_SIZE,
+    });
 
   const handleSearch = () => {
     setPage(1);
     setQuery(draftQuery);
+  };
+
+  const categoryOptions = [
+    { value: "", label: "전체" },
+    ...categories.map((category) => ({
+      value: category,
+      label: category,
+    })),
+  ];
+
+  const handleCategoryChange = (nextCategory: string) => {
+    setPage(1);
+    setCategory(nextCategory);
   };
 
   return (
@@ -56,7 +72,21 @@ export default function FaqPage() {
         placeholder="자주 묻는 질문을 찾아보세요"
       />
 
-      <SearchResultCount count={total} />
+      {!isLoading && categoryOptions.length > 0 && (
+        <div className="mt-8">
+          <RadioButtonGroup
+            name="faq-category"
+            options={categoryOptions}
+            selectedValue={category}
+            onChange={handleCategoryChange}
+            size="sm"
+            direction="horizontal"
+            className="flex-wrap gap-x-10 gap-y-3"
+          />
+        </div>
+      )}
+
+      <SearchResultCount count={total} className="mt-8" />
 
       {isLoading && <FaqListSkeleton />}
 
@@ -74,7 +104,7 @@ export default function FaqPage() {
 
       {!isLoading && !errorMessage && items.length > 0 && (
         <FaqAccordionList
-          key={`${query}-${page}`}
+          key={`${query}-${category}-${page}`}
           items={items}
           hasQuery={!!query}
         />

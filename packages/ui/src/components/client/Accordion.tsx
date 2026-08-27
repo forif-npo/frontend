@@ -8,6 +8,7 @@ interface AccordionItemProps {
   leadingSlot?: React.ReactNode;
   tagSlot?: React.ReactNode;
   children: React.ReactNode;
+  contentClassName?: string;
   isOpen: boolean;
   onClick: () => void;
 }
@@ -17,6 +18,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   leadingSlot,
   tagSlot,
   children,
+  contentClassName,
   isOpen,
   onClick,
 }) => {
@@ -67,7 +69,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : "0px",
         }}
       >
-        <div className="p-6">{children}</div>
+        <div className={contentClassName ?? "p-6"}>{children}</div>
       </div>
     </div>
   );
@@ -76,11 +78,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 interface AccordionProps {
   items: Omit<AccordionItemProps, "isOpen" | "onClick">[];
   defaultOpenIndex?: number | null;
+  contentClassName?: string;
 }
 
 export const Accordion: React.FC<AccordionProps> = ({
   items,
   defaultOpenIndex = null,
+  contentClassName,
 }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(defaultOpenIndex);
 
@@ -94,6 +98,7 @@ export const Accordion: React.FC<AccordionProps> = ({
         <AccordionItem
           key={index}
           {...item}
+          contentClassName={contentClassName}
           isOpen={openIndex === index}
           onClick={() => handleItemClick(index)}
         />
