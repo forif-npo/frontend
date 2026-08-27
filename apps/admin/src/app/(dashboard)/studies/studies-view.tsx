@@ -70,6 +70,7 @@ export function StudiesView({
   });
   const router = useRouter();
   const editRequestSeq = useRef(0);
+  const initialEditForm = useRef<StudyEditForm | null>(null);
   const [editingStudy, setEditingStudy] = useState<Study | null>(null);
   const [editForm, setEditForm] = useState<StudyEditForm>({
     ...EMPTY_STUDY_EDIT_FORM,
@@ -124,6 +125,7 @@ export function StudiesView({
       editRequestSeq.current += 1;
       setEditingStudy(null);
       setEditForm({ ...EMPTY_STUDY_EDIT_FORM });
+      initialEditForm.current = null;
       setIsEditDetailLoaded(false);
       setLoadingStudyId(null);
     }
@@ -157,6 +159,7 @@ export function StudiesView({
     editRequestSeq.current = requestSeq;
 
     setEditingStudy(study);
+    initialEditForm.current = null;
     setEditForm(toStudyEditForm(study));
     setIsEditDetailLoaded(false);
     setIsEditDialogOpen(true);
@@ -169,7 +172,9 @@ export function StudiesView({
         return;
       }
 
-      setEditForm(toStudyEditForm(study, detail));
+      const form = toStudyEditForm(study, detail);
+      setEditForm(form);
+      initialEditForm.current = form;
       setIsEditDetailLoaded(true);
     } catch (error) {
       if (editRequestSeq.current === requestSeq) {
@@ -187,7 +192,7 @@ export function StudiesView({
   };
 
   const handleSubmitEditStudy = async () => {
-    if (!editingStudy || !isEditDetailLoaded) {
+    if (!editingStudy || !isEditDetailLoaded || !initialEditForm.current) {
       return;
     }
 
@@ -291,7 +296,10 @@ export function StudiesView({
 
     try {
       setSubmittingStudyId(editingStudy.id);
-      await updateStudy(editingStudy.id, buildStudyUpdateFormData(editForm));
+      await updateStudy(
+        editingStudy.id,
+        buildStudyUpdateFormData(editForm, initialEditForm.current),
+      );
       toast.success("스터디 정보가 수정되었습니다.");
       handleEditDialogOpenChange(false);
       router.refresh();
@@ -314,6 +322,7 @@ export function StudiesView({
       setEditForm((previous) => ({
         ...previous,
         secondary_mentor_id: response.data!.user_id,
+        secondary_mentor_name: response.data!.user_name,
       }));
       toast.success(
         `${response.data.user_name} 님을 추가 멘토로 선택했습니다.`,
@@ -321,6 +330,14 @@ export function StudiesView({
     } catch (error) {
       toast.error(await handleApiError(error));
     }
+  };
+
+  const handleSecondaryMentorRemove = () => {
+    setEditForm((previous) => ({
+      ...previous,
+      secondary_mentor_id: null,
+      secondary_mentor_name: null,
+    }));
   };
 
   const handleConfirmDeleteStudy = async () => {
@@ -467,6 +484,7 @@ export function StudiesView({
         onTagChange={handleEditTagChange}
         onSubmit={() => void handleSubmitEditStudy()}
         onSecondaryMentorSearch={handleSecondaryMentorSearch}
+        onSecondaryMentorRemove={handleSecondaryMentorRemove}
         isLoadingDetail={isLoadingEditDetail}
         isFormDisabled={isEditFormDisabled}
         isSubmitting={isEditingStudy}

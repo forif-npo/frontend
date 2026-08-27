@@ -33,6 +33,9 @@ export const toStudyEditForm = (
   study: Study,
   detail?: AdminStudyDetail,
 ): StudyEditForm => {
+  const secondaryMentor = detail?.mentors?.find(
+    (mentor) => mentor.mentor_num === 2,
+  );
   const curriculum = (detail?.plans ?? []).map((plan, index) => ({
     week: plan.week_num || index + 1,
     date: toDateInputValue(plan.date),
@@ -41,9 +44,8 @@ export const toStudyEditForm = (
   }));
 
   return {
-    secondary_mentor_id:
-      detail?.mentors?.find((mentor) => mentor.mentor_num !== 1)?.mentor_id ??
-      null,
+    secondary_mentor_id: secondaryMentor?.mentor_id ?? null,
+    secondary_mentor_name: secondaryMentor?.mentor_name ?? null,
     study_name: detail?.study_name ?? study.study_name ?? "",
     one_liner: detail?.one_liner ?? study.one_liner ?? "",
     explanation: detail?.explanation ?? "",
@@ -87,38 +89,18 @@ export const toStudyEditForm = (
   };
 };
 
-export function buildStudyUpdateFormData(form: StudyEditForm) {
-  const retainedReferenceIds: string[] = [];
-  const references = form.references.flatMap((reference) => {
-    const isUnchanged =
-      Boolean(reference.id) &&
-      reference.type === reference.original_type &&
-      reference.value === reference.original_value;
-    if (isUnchanged) {
-      retainedReferenceIds.push(reference.id!);
-      return [];
-    }
-    if (reference.type === "DOWNLOAD") {
-      return [
-        {
-          type: "FILE",
-          url: "",
-          file_name:
-            reference.value instanceof File
-              ? reference.value.name
-              : reference.file_name,
-        },
-      ];
-    }
-    return [
-      {
-        type: "URL",
-        url: typeof reference.value === "string" ? reference.value : "",
-        file_name: null,
-      },
-    ];
-  });
-  const request = {
+function getStudyTagNames(tagIds: number[]) {
+  return tagIds
+    .map((tagId) => {
+      const tag = STUDY_TAG_OPTIONS.find((option) => option.id === tagId);
+      if (!tag) throw new Error("선택한 태그 정보를 확인해주세요.");
+      return tag.name;
+    })
+    .sort();
+}
+
+function toStudyUpdateFields(form: StudyEditForm) {
+  return {
     study_name: form.study_name.trim(),
     one_liner: form.one_liner.trim(),
     explanation: form.explanation.trim(),
@@ -129,11 +111,7 @@ export function buildStudyUpdateFormData(form: StudyEditForm) {
     start_time: form.start_time,
     end_time: form.end_time,
     difficulty: Number(form.difficulty),
-    study_tag_names: form.tags.map((tagId) => {
-      const tag = STUDY_TAG_OPTIONS.find((option) => option.id === tagId);
-      if (!tag) throw new Error("선택한 태그 정보를 확인해주세요.");
-      return tag.name;
-    }),
+    study_tag_names: getStudyTagNames(form.tags),
     secondary_mentor_id: form.secondary_mentor_id,
     requires_interview: form.requires_interview,
     interview_date: form.interview_date
@@ -145,19 +123,85 @@ export function buildStudyUpdateFormData(form: StudyEditForm) {
       topic: week.topic.trim(),
       content: week.contents.map((content) => content.trim()).join("; "),
     })),
-    references,
-    retained_reference_ids: retainedReferenceIds,
   };
+}
+
+function hasReferencesChanged(form: StudyEditForm, initialForm: StudyEditForm) {
+  return (
+    form.references.length !== initialForm.references.length ||
+    form.references.some((reference, index) => {
+      const initial = initialForm.references[index];
+      return (
+        reference.id !== initial?.id ||
+        reference.type !== initial?.type ||
+        reference.value !== initial?.value ||
+        reference.file_name !== initial?.file_name
+      );
+    })
+  );
+}
+
+export function buildStudyUpdateFormData(
+  form: StudyEditForm,
+  initialForm: StudyEditForm,
+) {
+  const fields = toStudyUpdateFields(form);
+  const initialFields = toStudyUpdateFields(initialForm);
+  const request = Object.fromEntries(
+    Object.entries(fields).filter(
+      ([field, value]) =>
+        JSON.stringify(value) !==
+        JSON.stringify(initialFields[field as keyof typeof initialFields]),
+    ),
+  ) as Record<string, unknown>;
+  const referencesChanged = hasReferencesChanged(form, initialForm);
+
+  if (referencesChanged) {
+    const retainedReferenceIds: string[] = [];
+    const references = form.references.flatMap((reference) => {
+      const isUnchanged =
+        Boolean(reference.id) &&
+        reference.type === reference.original_type &&
+        reference.value === reference.original_value;
+      if (isUnchanged) {
+        retainedReferenceIds.push(reference.id!);
+        return [];
+      }
+      if (reference.type === "DOWNLOAD") {
+        return [
+          {
+            type: "FILE",
+            url: "",
+            file_name:
+              reference.value instanceof File
+                ? reference.value.name
+                : reference.file_name,
+          },
+        ];
+      }
+      return [
+        {
+          type: "URL",
+          url: typeof reference.value === "string" ? reference.value : "",
+          file_name: null,
+        },
+      ];
+    });
+    request.references = references;
+    request.retained_reference_ids = retainedReferenceIds;
+  }
   const formData = new FormData();
   formData.append(
     "studyRequest",
     new Blob([JSON.stringify(request)], { type: "application/json" }),
   );
   if (form.thumbnail) formData.append("thumbnail", form.thumbnail);
-  form.references.forEach((reference) => {
-    if (reference.type === "DOWNLOAD" && reference.value instanceof File) {
-      formData.append("references", reference.value);
-    }
-  });
+  if (referencesChanged) {
+    form.references.forEach((reference) => {
+      if (reference.type === "DOWNLOAD" && reference.value instanceof File) {
+        formData.append("references", reference.value);
+      }
+    });
+  }
   return formData;
 }

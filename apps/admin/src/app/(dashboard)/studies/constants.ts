@@ -7,6 +7,7 @@ import {
 
 export const EMPTY_STUDY_EDIT_FORM: StudyEditForm = {
   secondary_mentor_id: null,
+  secondary_mentor_name: null,
   study_name: "",
   one_liner: "",
   explanation: "",

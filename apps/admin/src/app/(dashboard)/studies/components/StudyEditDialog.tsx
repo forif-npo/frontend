@@ -40,6 +40,7 @@ interface StudyEditDialogProps {
   onTagChange: (tagId: number, checked: boolean) => void;
   onSubmit: () => void;
   onSecondaryMentorSearch: (studentId: string) => Promise<void>;
+  onSecondaryMentorRemove: () => void;
   isLoadingDetail: boolean;
   isFormDisabled: boolean;
   isSubmitting: boolean;
@@ -55,6 +56,7 @@ export function StudyEditDialog(props: StudyEditDialogProps) {
     onTagChange,
     onSubmit,
     onSecondaryMentorSearch,
+    onSecondaryMentorRemove,
     isLoadingDetail,
     isFormDisabled,
     isSubmitting,
@@ -139,7 +141,7 @@ export function StudyEditDialog(props: StudyEditDialogProps) {
                   type="button"
                   variant="outline"
                   disabled={isFormDisabled}
-                  onClick={() => onFieldChange("secondary_mentor_id", null)}
+                  onClick={onSecondaryMentorRemove}
                 >
                   제거
                 </Button>
@@ -147,7 +149,7 @@ export function StudyEditDialog(props: StudyEditDialogProps) {
             </div>
             {form.secondary_mentor_id !== null && (
               <p className="text-muted-foreground text-sm">
-                선택된 추가 멘토 ID: {form.secondary_mentor_id}
+                선택된 추가 멘토: {form.secondary_mentor_name ?? "이름 미확인"}
               </p>
             )}
           </section>
