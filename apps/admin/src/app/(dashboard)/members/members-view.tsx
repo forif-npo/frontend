@@ -118,16 +118,8 @@ export function MembersView({
     }
   };
 
-  const handleGrantMentorRole = (member: Member) => {
-    console.log("멘토 권한 부여", member);
-  };
-
   const handleGrantAdminRole = (member: Member) => {
     console.log("운영진 권한 부여", member);
-  };
-
-  const handleManageAdmin = (member: Member) => {
-    console.log("운영진 관리", member);
   };
 
   const displayTotalCount =
@@ -181,14 +173,8 @@ export function MembersView({
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleGrantMentorRole(member)}>
-                멘토 권한 부여
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleGrantAdminRole(member)}>
                 운영진 권한 부여
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleManageAdmin(member)}>
-                운영진 관리
               </DropdownMenuItem>
             </>
           )}
