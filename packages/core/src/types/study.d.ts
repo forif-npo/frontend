@@ -25,8 +25,8 @@ export interface Study {
   recruit_status: RecruitStatus;
   one_liner: string;
   explanation: string;
-  start_time: string;
-  end_time: string;
+  start_time: string | null;
+  end_time: string | null;
   week_day: number;
   location: string;
   difficulty: StudyDifficulty;

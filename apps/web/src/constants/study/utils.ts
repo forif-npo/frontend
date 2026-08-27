@@ -33,7 +33,7 @@ export function formatStudyTimeRange(
 ): string {
   const s = formatStudyTime(start);
   const e = formatStudyTime(end);
-  if (!s && !e) return "";
+  if (!s || !e) return "";
   return `${s} - ${e}`;
 }
 

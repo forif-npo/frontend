@@ -73,7 +73,7 @@ export function StudySection() {
         </Link>
       </div>
       <div className="md:hidden">
-        <div className="touch-pan-y" {...mobileSwipeHandlers}>
+        <div {...mobileSwipeHandlers}>
           <div key={mobileCurrentPage} className={slideAnimation}>
             {loading ? (
               <div className="rounded-3 border-border-gray-light bg-gray-5 h-[176px] animate-pulse border" />
