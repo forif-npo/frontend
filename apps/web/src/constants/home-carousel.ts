@@ -44,7 +44,7 @@ export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
     id: "study-apply-2026-2",
     type: "svg",
     component: SvgBanner,
-    href: "/studies/apply",
+    href: "/studies/list",
     mobileAspect: "desktop",
     image: {
       alt: "2026년 2학기 포리프 스터디 신청",
