@@ -1,13 +1,13 @@
 import { auth } from "@/auth";
 import { DuesView } from "./dues-view";
 import { fetchDues } from "./api";
-import type { DuesSort } from "./types";
+import { parseSortingParams } from "@/lib/list-sorting";
 
 interface PageProps {
   searchParams: Promise<{
     page?: string;
     search?: string;
-    sort?: DuesSort;
+    sort?: string | string[];
   }>;
 }
 
@@ -15,6 +15,7 @@ export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
   const parsedPage = params.page ? Number.parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
+  const sorting = parseSortingParams(params.sort);
   const session = await auth();
   const accessToken = session?.access_token;
 
@@ -34,12 +35,16 @@ export default async function Page({ searchParams }: PageProps) {
       page,
       size: 20,
       search: params.search,
-      sort: params.sort,
+      sorting,
       accessToken,
     });
 
     return (
-      <DuesView initialData={duesData} initialSearch={params.search ?? ""} />
+      <DuesView
+        initialData={duesData}
+        initialSearch={params.search ?? ""}
+        initialSorting={sorting}
+      />
     );
   } catch (error) {
     return (

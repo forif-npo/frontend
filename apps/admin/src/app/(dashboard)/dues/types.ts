@@ -1,9 +1,3 @@
-export type DuesSort =
-  | "NEEDS_ATTENTION"
-  | "GOOGLE_FORM_SUBMITTED"
-  | "DUES_PAID"
-  | "NAME";
-
 export interface SemesterInfo {
   actYear: number;
   actSemester: number;
@@ -21,7 +15,6 @@ export interface DuesMember {
   userId: number;
   userName: string;
   department: string | null;
-  currentStudyName: string | null;
   duesPaid: boolean;
   googleFormSubmitted: boolean;
 }
