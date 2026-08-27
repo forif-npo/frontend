@@ -156,3 +156,12 @@ export async function deleteCurrentSemesterMember(
     .delete(`api/v1/admin/users/${userId}`)
     .json<ApiResponse<null>>();
 }
+
+export async function updateMemberInfo(
+  userId: number,
+  info: Pick<Member, "department" | "phoneNum">,
+): Promise<void> {
+  await apiClient
+    .patch(`api/v1/admin/users/${userId}`, { json: info })
+    .json<ApiResponse<null>>();
+}
