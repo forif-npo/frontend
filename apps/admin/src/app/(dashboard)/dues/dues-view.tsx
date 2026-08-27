@@ -150,10 +150,13 @@ export function DuesView({
     <div className="space-y-6 p-8">
       <PageHeader
         title="회비 관리"
-        description={`${initialData.semester.label} 부원의 회비 납부와 구글폼 제출 여부를 일괄 관리합니다.`}
+        description={`${initialData.semester.label} 합격 부원의 회비 납부와 구글폼 제출 여부를 일괄 관리합니다.`}
       />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <SummaryCard label="전체 부원" value={initialData.summary.totalCount} />
+        <SummaryCard
+          label="전체 합격 부원"
+          value={initialData.summary.totalCount}
+        />
         <SummaryCard
           label="구글폼 미제출"
           value={formNotSubmitted}
