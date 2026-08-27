@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getCurrentSemesterSchedules } from "@core/semester/schedule-api";
+import { getCurrentSemesterSchedules } from "@/features/semester/schedule-api";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type { UserInfo } from "./types";

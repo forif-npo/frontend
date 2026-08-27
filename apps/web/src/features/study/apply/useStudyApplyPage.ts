@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { StudyApplyValues } from "@core/schemas";
-import { getStudyApplicationStatus } from "@core/my-page/api";
+import { getStudyApplicationStatus } from "./api";
 import { apiClient, handleApiError } from "@core/utils/api-client";
 import { useStudyApplyData } from "./useStudyApplyData";
 import { getStudyBadgeTags } from "./utils";

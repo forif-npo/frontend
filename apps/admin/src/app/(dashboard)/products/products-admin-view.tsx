@@ -41,7 +41,7 @@ import {
   rejectProduct,
   type AdminProduct,
   type ProductStatus,
-} from "@core/products/api";
+} from "./api";
 import { ProductEditDialog } from "./product-edit-dialog";
 
 type StatusFilter = "ALL" | "PENDING" | "PUBLISHED" | "REJECTED";

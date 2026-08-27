@@ -8,12 +8,12 @@ import { AttendancePanel } from "./AttendancePanel";
 import { StudyApplicationSection } from "./StudyApplicationSection";
 import { StudyDetailContent } from "@/features/study/detail/StudyDetailContent";
 import { useStudyDetail } from "@/hooks/useStudyDetail";
-import type { CreatedStudy } from "@core/study-manage/api";
+import type { CreatedStudy } from "@/features/study-manage/api";
 import {
   getMentorConfirmation,
   type IssuedMentorConfirmation,
-} from "@core/study-manage/api";
-import type { StudyApplicationSummary } from "@core/study-application/api";
+} from "@/features/study-manage/api";
+import type { StudyApplicationSummary } from "@/features/study-application/api";
 import { useActiveSemester } from "@/hooks/useActiveSemester";
 
 interface StudyManageSectionProps {

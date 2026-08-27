@@ -6,7 +6,7 @@ import type { ApiResponse } from "@core/types/api";
 import { Select } from "@ui/components/client";
 import { FORIF_CONTACT_INFO } from "@/constants/organization";
 import { PageHeader } from "@/components/PageHeader";
-import { getCurrentSemester, type Semester } from "@core/semester/api";
+import { getCurrentSemester, type Semester } from "@/features/semester/api";
 import { TeamCard } from "@/features/club/team/TeamCard";
 import { sortTeamMembers } from "@/features/club/team/sort-team-members";
 import type { TeamMember } from "@/features/club/team/types";

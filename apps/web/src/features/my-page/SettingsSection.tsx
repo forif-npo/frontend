@@ -6,7 +6,7 @@ import { useLogout } from "@/features/auth/logout/use-logout";
 import { departmentsOptions } from "@/constants/options.constant";
 import { safeImageSrc } from "@/utils/image";
 import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
-import type { UserProfile } from "@core/my-page/api";
+import type { UserProfile } from "@/features/my-page/api";
 import { CircleUser } from "@repo/assets/icons/lucide";
 import { Button, SelectBox, Tabs, TextInput } from "@ui/components/client";
 import { Body, HintText, Label } from "@ui/components/server";

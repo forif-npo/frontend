@@ -52,7 +52,7 @@ async function refreshBackendJwt(token: JWT): Promise<JWT> {
   }
 
   try {
-    const { refreshTokenWithCookie } = await import("@core/auth/api");
+    const { refreshTokenWithCookie } = await import("@/features/auth/api");
     const response = await refreshTokenWithCookie(token.backendRefreshToken);
     const accessToken = response.data?.access_token;
 
@@ -125,7 +125,7 @@ const result = NextAuth({
 
         try {
           // 동적 import로 Edge Runtime 호환성 해결
-          const { staffLogin } = await import("@core/auth/api");
+          const { staffLogin } = await import("@/features/auth/api");
 
           // 웹 앱의 스태프 로그인은 멘토 계정 전용 (운영진은 admin 앱에서 로그인)
           const response = await staffLogin({

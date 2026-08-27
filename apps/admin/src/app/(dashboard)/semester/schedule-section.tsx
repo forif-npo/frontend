@@ -22,7 +22,7 @@ import {
   saveSemesterSchedules,
   type SavePhaseWindow,
   type SemesterPhase,
-} from "@core/semester/schedule-api";
+} from "@/features/semester/schedule-api";
 
 interface ScheduleSectionProps {
   actYear: number;

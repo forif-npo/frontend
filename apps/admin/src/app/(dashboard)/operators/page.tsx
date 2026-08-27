@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { getCurrentSemester } from "@core/semester/api";
+import { getCurrentSemester } from "@/features/semester/api";
 import { ShieldAlert } from "lucide-react";
 import { fetchOperators } from "./api";
 import { OperatorsView } from "./operators-view";

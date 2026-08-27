@@ -1,5 +1,5 @@
-import type { ApiResponse } from "../types/api";
-import { apiClient } from "../utils/api-client";
+import type { ApiResponse } from "@core/types/api";
+import { apiClient } from "@core/utils/api-client";
 
 /**
  * 활동 학기 API (FOR-108)
@@ -35,7 +35,11 @@ export function fallbackSemester(): Semester {
   const now = new Date();
   const year = now.getFullYear();
   const semester = now.getMonth() + 1 <= 7 ? 1 : 2;
-  return { act_year: year, act_semester: semester, label: toSemesterLabel(year, semester) };
+  return {
+    act_year: year,
+    act_semester: semester,
+    label: toSemesterLabel(year, semester),
+  };
 }
 
 export function toSemesterLabel(year: number, semester: number): string {

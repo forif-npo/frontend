@@ -7,7 +7,7 @@ import {
   getMyStudyApplication,
   type StudyApplicationDetail,
   type StudyApplicationSummary,
-} from "@core/study-application/api";
+} from "@/features/study-application/api";
 import { handleApiError } from "@core/utils/api-client";
 import { StudyApplicationEditor } from "./StudyApplicationEditor";
 

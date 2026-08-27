@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { PageHeader } from "@/components/PageHeader";
 import { ProductApplyView } from "@/features/products/ProductApplyView";
-import { getMyProductApplications } from "@core/products/api";
+import { getMyProductApplications } from "@/features/products/api";
 import { HTTPError } from "ky";
 import { notFound, redirect } from "next/navigation";
 

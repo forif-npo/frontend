@@ -18,7 +18,7 @@ import {
   type AttendanceStatus,
   type MentorConfirmationStatus,
   type StudyAttendanceData,
-} from "@core/study-manage/api";
+} from "@/features/study-manage/api";
 
 interface AttendancePanelProps {
   studyId: number;

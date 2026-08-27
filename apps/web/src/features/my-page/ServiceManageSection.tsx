@@ -6,7 +6,10 @@ import { Badge } from "@ui/components/server";
 import { ProductCard } from "@/features/products/ProductCard";
 import { ProductThumbnail } from "@/features/products/ProductThumbnail";
 import { PRODUCT_SOURCE_LABELS } from "@/features/products/constants";
-import type { ProductApplication, ProductSummary } from "@core/products/api";
+import type {
+  ProductApplication,
+  ProductSummary,
+} from "@/features/products/api";
 
 interface ServiceManageSectionProps {
   applications: ProductApplication[];

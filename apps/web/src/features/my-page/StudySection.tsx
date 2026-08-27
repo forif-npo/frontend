@@ -6,7 +6,7 @@ import {
   StudySortControl,
   type StudySortOrder,
 } from "@/components/study/ui/StudySortControl";
-import type { UserStudiesResponse, StudyDetail } from "@core/my-page/api";
+import type { UserStudiesResponse, StudyDetail } from "@/features/my-page/api";
 
 interface StudySectionProps {
   studiesData: UserStudiesResponse;
@@ -40,7 +40,7 @@ export function StudySection({ studiesData }: StudySectionProps) {
   const handleDownloadCertificate = async (studyId: number) => {
     startTransition(async () => {
       try {
-        const { getCertificate } = await import("@core/my-page/api");
+        const { getCertificate } = await import("@/features/my-page/api");
         const certificateUrl = await getCertificate(studyId);
         window.open(certificateUrl, "_blank");
       } catch (error) {

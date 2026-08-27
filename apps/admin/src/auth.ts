@@ -44,7 +44,7 @@ async function refreshBackendJwt(token: JWT): Promise<JWT> {
   }
 
   try {
-    const { refreshTokenWithCookie } = await import("@core/auth/api");
+    const { refreshTokenWithCookie } = await import("@/features/auth/api");
     const response = await refreshTokenWithCookie(token.backendRefreshToken);
     const accessToken = response.data?.access_token;
 
@@ -97,7 +97,7 @@ const result = NextAuth({
         }
 
         try {
-          const { staffLogin, getStaff } = await import("@core/auth/api");
+          const { staffLogin, getStaff } = await import("@/features/auth/api");
 
           // admin 앱은 운영진 계정 전용 (멘토 계정은 웹 앱에서 로그인)
           const response = await staffLogin({
@@ -204,7 +204,7 @@ const result = NextAuth({
         (!token.staffName || token.staffAffiliation === undefined)
       ) {
         try {
-          const { getStaff } = await import("@core/auth/api");
+          const { getStaff } = await import("@/features/auth/api");
           const staffRes = await getStaff(token.backendJwt as string);
           if (staffRes.data) {
             const staff = staffRes.data;

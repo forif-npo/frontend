@@ -5,7 +5,7 @@ import {
   fallbackSemester,
   getCurrentSemester,
   type Semester,
-} from "@core/semester/api";
+} from "@/features/semester/api";
 
 /**
  * 운영진이 지정한 활동 학기.
