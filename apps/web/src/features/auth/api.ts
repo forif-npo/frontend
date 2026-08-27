@@ -3,8 +3,6 @@ import type {
   RefreshTokenResponse,
   SignUpRequest,
   SignUpResponse,
-  StaffLoginRequest,
-  StaffLoginResponse,
   UserLoginData,
   UserLoginRequest,
   UserLoginResponse,
@@ -77,31 +75,6 @@ export const userLogin = async (
   });
 
   return await withRefreshToken<ApiResponse<UserLoginData>>(response);
-};
-
-/**
- * 스태프(멘토/운영진) 로그인
- *
- * 학번(userId)과 비밀번호로 로그인합니다.
- * Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.
- *
- * @param data 스태프 로그인 정보 (학번, 비밀번호)
- * @returns 로그인 응답 (JWT accessToken, role 포함)
- *
- * @example
- * const response = await staffLogin({
- *   userId: 2021234567,
- *   password: "password123"
- * });
- */
-export const staffLogin = async (
-  data: StaffLoginRequest,
-): Promise<StaffLoginResponse> => {
-  const response = await apiClient.post("api/v1/staff/signin", {
-    json: data,
-  });
-
-  return await withRefreshToken<StaffLoginResponse>(response);
 };
 
 /**

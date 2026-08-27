@@ -23,7 +23,7 @@ declare module "next-auth" {
       phoneNum: string;
       department: string;
       imgUrl: string | null;
-      role: "MENTOR" | "ADMIN";
+      role: "ADMIN";
       affiliation: string | null;
     };
   }

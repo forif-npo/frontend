@@ -54,15 +54,3 @@ export const passwordSchema = z
         "비밀번호는 대문자, 소문자, 숫자, 특수문자 중 2가지 이상을 포함해야 합니다.",
     },
   );
-
-// 멘토 로그인 스키마
-export const mentorSignInSchema = z.object({
-  studentId: z
-    .string()
-    .min(1, "학번을 입력해주세요.")
-    .length(10, "학번은 10자리여야 합니다.")
-    .regex(/^\d{10}$/, "학번은 숫자 10자리여야 합니다."),
-  password: passwordSchema,
-});
-
-export type MentorSignInValues = z.infer<typeof mentorSignInSchema>;

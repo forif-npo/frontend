@@ -99,11 +99,10 @@ const result = NextAuth({
         try {
           const { staffLogin, getStaff } = await import("@/features/auth/api");
 
-          // admin 앱은 운영진 계정 전용 (멘토 계정은 웹 앱에서 로그인)
+          // admin 앱은 운영진 계정 전용이다.
           const response = await staffLogin({
             user_id: Number(credentials.id),
             password: credentials.password,
-            role: "ADMIN",
           });
 
           if (!response.data?.access_token) {
@@ -241,7 +240,7 @@ const result = NextAuth({
         phoneNum: (token.staffPhoneNum as string) || "",
         department: (token.staffDepartment as string) || "",
         imgUrl: (token.staffImgUrl as string | null) ?? null,
-        role: (token.role as "MENTOR" | "ADMIN") || "MENTOR",
+        role: "ADMIN",
         affiliation: (token.staffAffiliation as string | null) ?? null,
       };
       return session;
