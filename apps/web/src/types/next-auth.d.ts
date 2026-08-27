@@ -12,18 +12,6 @@ declare module "next-auth" {
   }
 
   /**
-   * Staff Credentials 로그인 시 authorize에서 반환하는 사용자 타입
-   */
-  interface StaffUser {
-    id: string;
-    email: string;
-    name: string;
-    accessToken: string;
-    backendRefreshToken?: string;
-    role: string;
-  }
-
-  /**
    * Google OAuth 로그인 시 signIn 콜백에서 확장한 Account 타입
    */
   interface ExtendedAccount {

@@ -106,76 +106,6 @@ export const signUp = async (data: SignUpValues) => {
   }
 };
 
-// /**
-//  * 스태프(멘토/운영진) 로그인 Server Action
-//  *
-//  */
-// export const staffSignIn = async (
-//   _: {
-//     errors: Record<string, { message: string }>;
-//     values: StaffLoginValues;
-//   },
-//   formData: FormData,
-// ) => {
-//   const values: StaffLoginValues = {
-//     userId: String(formData.get("userId") || ""),
-//     password: String(formData.get("password") || ""),
-//   };
-
-//   const { error: parseError } = staffLoginSchema.safeParse(values);
-//   const errors: Record<string, { message: string }> = {};
-
-//   for (const { path, message } of parseError?.issues || []) {
-//     errors[path.join(".")] = { message };
-//   }
-
-//   if (Object.keys(errors).length > 0) {
-//     return {
-//       values,
-//       errors,
-//     };
-//   }
-
-//   try {
-//     const response = await staffLoginApi({
-//       userId: Number(values.userId),
-//       password: values.password,
-//     });
-
-//     if (response.data?.accessToken) {
-//       // MSW 환경에서는 refreshToken 쿠키를 수동으로 설정
-//       // (서버 액션에서 API 호출 시 MSW의 Set-Cookie가 브라우저에 전달되지 않음)
-//       const cookieStore = await cookies();
-//       cookieStore.set("refreshToken", `mock_refresh_token_${Date.now()}`, {
-//         httpOnly: true,
-//         secure: process.env.NODE_ENV === "production",
-//         sameSite: "lax",
-//         maxAge: 60 * 60 * 24 * 30, // 30일
-//         path: "/",
-//       });
-
-//       // JWT Access Token을 반환하여 클라이언트에서 저장 및 리디렉션
-//       return {
-//         values: { userId: "", password: "" },
-//         errors: {},
-//         accessToken: response.data.accessToken,
-//         role: response.data.role,
-//         success: true,
-//       };
-//     }
-
-//     throw new Error("로그인에 실패했습니다.");
-//   } catch (error) {
-//     const errorMessage = await handleApiError(error);
-//     errors["root"] = { message: errorMessage };
-
-//     return {
-//       values,
-//       errors,
-//     };
-//   }
-// };
-
 /**
  * 로그아웃
  *
@@ -194,7 +124,7 @@ export const logout = async () => {
     console.error("로그아웃 API 호출 실패:", error);
     // API 실패해도 세션은 종료
   } finally {
-    // refreshToken 쿠키 삭제 (멘토 로그인 시 수동으로 설정한 쿠키)
+    // 이전 로그인 흐름에서 남았을 수 있는 refreshToken 쿠키도 함께 삭제한다.
     const cookieStore = await cookies();
     cookieStore.delete("refreshToken");
 
