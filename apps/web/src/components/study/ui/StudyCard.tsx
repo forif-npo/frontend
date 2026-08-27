@@ -146,6 +146,7 @@ interface StandardStudyCardProps {
   onCardClick?: () => void;
   onDetailClick?: () => void;
   onApplyClick?: () => void;
+  showDetailAction?: boolean;
 }
 
 function StandardStudyCard({
@@ -154,6 +155,7 @@ function StandardStudyCard({
   onCardClick,
   onDetailClick,
   onApplyClick,
+  showDetailAction = true,
 }: StandardStudyCardProps) {
   const schedule = formatStudyTimeRange(study.start_time, study.end_time);
   const instructors = getMentorText(
@@ -184,7 +186,9 @@ function StandardStudyCard({
   return (
     <div
       className={`rounded-3 border-border-gray-light bg-surface-white flex w-full flex-col overflow-hidden border ${
-        isClickable ? "cursor-pointer" : ""
+        isClickable
+          ? "cursor-pointer transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-md"
+          : ""
       }`}
       onClick={onCardClick}
       onKeyDown={handleKeyDown}
@@ -241,13 +245,15 @@ function StandardStudyCard({
           </div>
         </div>
         <div className="mt-2 flex items-center justify-end gap-4 self-stretch">
-          <Button
-            variant="tertiary"
-            size="medium"
-            onClick={(event) => handleActionClick(event, onDetailClick)}
-          >
-            자세히 보기
-          </Button>
+          {showDetailAction && (
+            <Button
+              variant="tertiary"
+              size="medium"
+              onClick={(event) => handleActionClick(event, onDetailClick)}
+            >
+              자세히 보기
+            </Button>
+          )}
           <Button
             variant="primary"
             size="medium"
@@ -300,6 +306,7 @@ export function StudyCard(props: StudyCardProps) {
         onCardClick={() => router.push(`/studies/detail/${s.id}`)}
         onDetailClick={() => router.push(`/studies/detail/${s.id}`)}
         onApplyClick={() => router.push(`/studies/apply?study_id=${s.id}`)}
+        showDetailAction={false}
       />
     );
   }

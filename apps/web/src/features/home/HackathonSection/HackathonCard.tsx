@@ -16,10 +16,10 @@ export function HackathonCard({
   return (
     <Link
       href={`/hackathon/archive/submissions/${submission.submission_id}`}
-      className="group flex h-full flex-col gap-6"
+      className="rounded-3 border-border-gray-light bg-surface-white focus-visible:outline-primary-50 group flex h-full flex-col overflow-hidden border transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-4"
     >
       <div
-        className="rounded-3 relative h-[196px] w-full overflow-hidden"
+        className="relative h-[196px] w-full shrink-0 overflow-hidden"
         style={{ backgroundColor: bgColor }}
       >
         {safeImageSrc(submission.image_url) ? (
@@ -38,21 +38,16 @@ export function HackathonCard({
           />
         )}
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-2 p-6">
         <Label size="s" className="text-text-primary font-bold">
           {submission.team_name}
         </Label>
         <Body size="m" className="text-text-basic line-clamp-1 font-bold">
           {submission.project_name}
         </Body>
-        <Body size="m" className="text-text-subtle line-clamp-2">
+        <Body size="m" className="text-text-subtle line-clamp-3">
           {submission.summary}
         </Body>
-      </div>
-      <div className="mt-auto inline-flex self-end">
-        <Label size="m" className="text-text-basic group-hover:underline">
-          자세히 보기
-        </Label>
       </div>
     </Link>
   );

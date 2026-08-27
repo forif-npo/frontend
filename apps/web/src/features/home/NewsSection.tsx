@@ -8,7 +8,6 @@ export type NewsItem = {
   excerpt: string;
   imageUrl?: string;
   href: string;
-  linkLabel: string;
   date?: string; // ISO string
 };
 
@@ -38,7 +37,6 @@ async function getMediumPosts(): Promise<NewsItem[]> {
           : "",
         imageUrl,
         href: item.link,
-        linkLabel: "자세히보기",
         date: item.pubDate ?? undefined,
       };
     });
@@ -60,7 +58,6 @@ export async function NewsSection() {
     excerpt: a.content.replace(/<[^>]+>/g, "").slice(0, 100) + "…",
     imageUrl: a.imageUrls?.[0],
     href: `/support/announcements/${a.postId}`,
-    linkLabel: "자세히보기",
     date: a.createdAt,
   }));
 
