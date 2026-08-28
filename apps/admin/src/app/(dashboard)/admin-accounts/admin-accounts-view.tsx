@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { Crown, Pencil, ShieldCheck, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -16,14 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { DataTable } from "@/components/list/data-table";
+import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { handleApiError } from "@core/utils/api-client";
@@ -249,7 +244,7 @@ export function AdminAccountsView({
     }
   };
 
-  const affiliationBadge = (affiliation: string) => {
+  const affiliationBadge = useCallback((affiliation: string) => {
     if (affiliation === "회장") {
       return (
         <Badge className="bg-amber-500 text-white hover:bg-amber-500">
@@ -267,6 +262,90 @@ export function AdminAccountsView({
       );
     }
     return <Badge variant="secondary">{affiliation}</Badge>;
+  }, []);
+
+  const columns = useMemo<ColumnDef<AdminAccount>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: "이름",
+        cell: ({ row }) => {
+          const account = row.original;
+          return (
+            <div className="font-medium">
+              {account.name}
+              {account.user_id === myUserId && (
+                <span className="text-muted-foreground ml-1 text-xs">(나)</span>
+              )}
+            </div>
+          );
+        },
+      },
+      { accessorKey: "user_id", header: "학번" },
+      {
+        accessorKey: "department",
+        header: "학과",
+        cell: ({ row }) => row.original.department ?? "-",
+      },
+      {
+        accessorKey: "phone_num",
+        header: "연락처",
+        cell: ({ row }) => formatPhoneNumber(row.original.phone_num) || "-",
+      },
+      {
+        accessorKey: "affiliation",
+        header: "소속",
+        cell: ({ row }) => affiliationBadge(row.original.affiliation),
+      },
+    ],
+    [affiliationBadge, myUserId],
+  );
+
+  const renderAccountActions = (account: AdminAccount) => {
+    const isSelf = account.user_id === myUserId;
+    const isPresidentTeamMember = PRESIDENT_TEAM.includes(account.affiliation);
+    const canManage =
+      !isSelf &&
+      account.affiliation !== "회장" &&
+      (isPresident || account.affiliation !== "부회장");
+
+    return (
+      <>
+        {isPresident && !isSelf && !isPresidentTeamMember && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setDelegateTarget(account);
+              setDelegateRole("부회장");
+            }}
+          >
+            <Crown className="mr-1 h-3.5 w-3.5" />
+            위임/임명
+          </Button>
+        )}
+        {canManage && (
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="수정"
+              onClick={() => openEdit(account)}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="삭제"
+              onClick={() => handleDelete(account)}
+            >
+              <Trash2 className="text-destructive h-4 w-4" />
+            </Button>
+          </>
+        )}
+      </>
+    );
   };
 
   return (
@@ -294,131 +373,22 @@ export function AdminAccountsView({
         </span>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>이름</TableHead>
-              <TableHead>학번</TableHead>
-              <TableHead>학과</TableHead>
-              <TableHead>연락처</TableHead>
-              <TableHead>소속</TableHead>
-              <TableHead className="text-right">관리</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  불러오는 중...
-                </TableCell>
-              </TableRow>
-            ) : accounts.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  운영진 계정이 없습니다
-                </TableCell>
-              </TableRow>
-            ) : (
-              accounts.map((account) => {
-                const isSelf = account.user_id === myUserId;
-                const isPresidentTeamMember = PRESIDENT_TEAM.includes(
-                  account.affiliation,
-                );
-                // 백엔드 규칙과 동일하게: 자기 자신 관리 불가,
-                // 부회장은 회장만 관리 가능, 회장 계정은 관리 대상 아님
-                const canManage =
-                  !isSelf &&
-                  account.affiliation !== "회장" &&
-                  (isPresident || account.affiliation !== "부회장");
+      <DataTable
+        columns={columns}
+        data={isLoading ? [] : accounts}
+        getRowId={(account) => String(account.user_id)}
+        renderActionCell={renderAccountActions}
+        showPagination={false}
+        emptyMessage={isLoading ? "불러오는 중..." : "운영진 계정이 없습니다"}
+      />
 
-                return (
-                  <TableRow key={account.user_id}>
-                    <TableCell className="font-medium">
-                      {account.name}
-                      {isSelf && (
-                        <span className="text-muted-foreground ml-1 text-xs">
-                          (나)
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>{account.user_id}</TableCell>
-                    <TableCell>{account.department ?? "-"}</TableCell>
-                    <TableCell>
-                      {formatPhoneNumber(account.phone_num) || "-"}
-                    </TableCell>
-                    <TableCell>
-                      {affiliationBadge(account.affiliation)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        {isPresident && !isSelf && !isPresidentTeamMember && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setDelegateTarget(account);
-                              setDelegateRole("부회장");
-                            }}
-                          >
-                            <Crown className="mr-1 h-3.5 w-3.5" />
-                            위임/임명
-                          </Button>
-                        )}
-                        {canManage && (
-                          <>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="수정"
-                              onClick={() => openEdit(account)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="삭제"
-                              onClick={() => handleDelete(account)}
-                            >
-                              <Trash2 className="text-destructive h-4 w-4" />
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page === 0}
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-          >
-            이전
-          </Button>
-          <span className="text-sm">
-            {page + 1} / {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page + 1 >= totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            다음
-          </Button>
-        </div>
-      )}
+      <OffsetPagination
+        currentPage={page}
+        totalPages={totalPages}
+        totalElements={totalElements}
+        pageSize={PAGE_SIZE}
+        onPageChange={setPage}
+      />
 
       {/* 생성 다이얼로그 */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>

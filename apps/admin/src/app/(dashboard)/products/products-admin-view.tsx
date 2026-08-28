@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { ExternalLink, Github, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -21,14 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { DataTable } from "@/components/list/data-table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/page-header";
@@ -187,6 +181,140 @@ export function ProductsAdminView() {
     }, "삭제되었습니다.");
   };
 
+  const columns = useMemo<ColumnDef<AdminProduct>[]>(
+    () => [
+      {
+        accessorKey: "status",
+        header: "상태",
+        cell: ({ row }) => statusBadge(row.original.status),
+      },
+      {
+        accessorKey: "name",
+        header: "서비스",
+        cell: ({ row }) => {
+          const product = row.original;
+          return (
+            <div>
+              <button
+                className="text-left font-medium hover:underline"
+                onClick={() => setDetailTarget(product)}
+              >
+                {product.name}
+              </button>
+              <p className="text-muted-foreground line-clamp-1 max-w-[260px] text-xs">
+                {product.one_liner}
+              </p>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "slug",
+        header: "서브도메인",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground text-xs">
+            {row.original.slug}.forif.org
+          </span>
+        ),
+      },
+      {
+        accessorKey: "source_type",
+        header: "출처",
+        cell: ({ row }) => (
+          <span className="text-xs">
+            {SOURCE_LABELS[row.original.source_type] ??
+              row.original.source_type}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "applicant_name",
+        header: "신청자",
+        cell: ({ row }) => (
+          <span className="text-xs">
+            {row.original.applicant_name}
+            <span className="text-muted-foreground ml-1 text-xs">
+              {row.original.applicant_id}
+            </span>
+          </span>
+        ),
+      },
+      {
+        accessorKey: "applied_at",
+        header: "신청일",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground text-xs">
+            {row.original.applied_at}
+          </span>
+        ),
+      },
+    ],
+    [],
+  );
+
+  const renderProductActions = (product: AdminProduct) => (
+    <>
+      {product.status === "PENDING" && (
+        <>
+          <Button
+            size="sm"
+            onClick={() => setApproveTarget(product)}
+            disabled={isSubmitting}
+          >
+            승인
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={() => {
+              setRejectTarget(product);
+              setRejectReason("");
+            }}
+            disabled={isSubmitting}
+          >
+            반려
+          </Button>
+        </>
+      )}
+      {PUBLISHED_STATUSES.includes(product.status as ProductStatus) && (
+        <Select
+          value={product.status}
+          onValueChange={(value) =>
+            handleStatusChange(product, value as ProductStatus)
+          }
+        >
+          <SelectTrigger className="h-8 w-[130px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {PUBLISHED_STATUSES.map((status) => (
+              <SelectItem key={status} value={status}>
+                {STATUS_LABELS[status]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => setEditTarget(product)}
+        disabled={isSubmitting}
+      >
+        <Pencil className="mr-1 h-3.5 w-3.5" />
+        수정
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => setDeleteTarget(product)}
+        disabled={isSubmitting}
+      >
+        삭제
+      </Button>
+    </>
+  );
+
   return (
     <div className="space-y-6 p-8">
       <PageHeader
@@ -215,138 +343,16 @@ export function ProductsAdminView() {
         </TabsList>
       </Tabs>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>상태</TableHead>
-              <TableHead>서비스</TableHead>
-              <TableHead>서브도메인</TableHead>
-              <TableHead>출처</TableHead>
-              <TableHead>신청자</TableHead>
-              <TableHead>신청일</TableHead>
-              <TableHead className="text-right">액션</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-muted-foreground h-24 text-center"
-                >
-                  불러오는 중...
-                </TableCell>
-              </TableRow>
-            ) : filtered.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-muted-foreground h-24 text-center"
-                >
-                  해당하는 서비스가 없습니다.
-                </TableCell>
-              </TableRow>
-            ) : (
-              filtered.map((product) => (
-                <TableRow key={product.product_id}>
-                  <TableCell>{statusBadge(product.status)}</TableCell>
-                  <TableCell>
-                    <button
-                      className="text-left font-medium hover:underline"
-                      onClick={() => setDetailTarget(product)}
-                    >
-                      {product.name}
-                    </button>
-                    <p className="text-muted-foreground line-clamp-1 max-w-[260px] text-xs">
-                      {product.one_liner}
-                    </p>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-xs">
-                    {product.slug}.forif.org
-                  </TableCell>
-                  <TableCell className="text-xs">
-                    {SOURCE_LABELS[product.source_type] ?? product.source_type}
-                  </TableCell>
-                  <TableCell className="text-xs">
-                    {product.applicant_name}
-                    <span className="text-muted-foreground ml-1 text-xs">
-                      {product.applicant_id}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-xs">
-                    {product.applied_at}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      {product.status === "PENDING" && (
-                        <>
-                          <Button
-                            size="sm"
-                            onClick={() => setApproveTarget(product)}
-                            disabled={isSubmitting}
-                          >
-                            승인
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => {
-                              setRejectTarget(product);
-                              setRejectReason("");
-                            }}
-                            disabled={isSubmitting}
-                          >
-                            반려
-                          </Button>
-                        </>
-                      )}
-                      {PUBLISHED_STATUSES.includes(
-                        product.status as ProductStatus,
-                      ) && (
-                        <Select
-                          value={product.status}
-                          onValueChange={(value) =>
-                            handleStatusChange(product, value as ProductStatus)
-                          }
-                        >
-                          <SelectTrigger className="h-8 w-[130px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {PUBLISHED_STATUSES.map((status) => (
-                              <SelectItem key={status} value={status}>
-                                {STATUS_LABELS[status]}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setEditTarget(product)}
-                        disabled={isSubmitting}
-                      >
-                        <Pencil className="mr-1 h-3.5 w-3.5" />
-                        수정
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setDeleteTarget(product)}
-                        disabled={isSubmitting}
-                      >
-                        삭제
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <DataTable
+        columns={columns}
+        data={isLoading ? [] : filtered}
+        getRowId={(product) => String(product.product_id)}
+        renderActionCell={renderProductActions}
+        showPagination={false}
+        emptyMessage={
+          isLoading ? "불러오는 중..." : "해당하는 서비스가 없습니다."
+        }
+      />
 
       {/* 상세 다이얼로그 */}
       <Dialog
