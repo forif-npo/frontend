@@ -18,14 +18,23 @@ function number(value: unknown): number {
   return typeof value === "number" ? value : 0;
 }
 
+function status(value: unknown): StudyApplication["status"] {
+  return value === "ACCEPT" || value === "REJECT" ? value : "PENDING";
+}
+
 function mapApplication(value: unknown): StudyApplication {
   const item = asRecord(value);
   return {
+    applicationId: number(item.applicationId ?? item.application_id),
     userId: number(item.userId ?? item.user_id),
     userName: text(item.userName ?? item.user_name) ?? "이름 없음",
     department: text(item.department),
+    studyId: number(item.studyId ?? item.study_id),
     studyName: text(item.studyName ?? item.study_name) ?? "스터디 없음",
     priority: number(item.priority) === 2 ? 2 : 1,
+    status: status(item.status),
+    autonomousStudy:
+      item.autonomousStudy === true || item.autonomous_study === true,
     appliedAt: text(item.appliedAt ?? item.applied_at) ?? "",
   };
 }
@@ -70,4 +79,18 @@ export async function fetchStudyApplications({
     totalPages: number(data.totalPages ?? data.total_pages),
     pageSize: size,
   };
+}
+
+export async function decideAutonomousStudyApplication(
+  application: Pick<StudyApplication, "applicationId" | "studyId">,
+  decision: "accept" | "reject",
+): Promise<void> {
+  await apiClient
+    .post(
+      `api/v1/admin/study-applications/${application.studyId}/${decision}`,
+      {
+        json: { apply_ids: [application.applicationId] },
+      },
+    )
+    .json<ApiResponse<null>>();
 }

@@ -57,7 +57,6 @@ export function TeamFormModal({
             { value: "HACKATHON", label: "해커톤" },
           ]}
           placeholder="대회 유형을 선택해주세요"
-          disabled={mode === "edit"}
           onChange={(competitionType) =>
             setForm((prev) => ({
               ...prev,

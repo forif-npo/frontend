@@ -286,6 +286,7 @@ export function ActiveHackathonMain({
           name: body.name,
           topic: body.topic,
           description: body.description,
+          competition_type: body.competition_type,
           max_members: body.max_members,
         });
       } else {

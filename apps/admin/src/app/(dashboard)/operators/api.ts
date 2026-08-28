@@ -120,7 +120,6 @@ export async function updateOperator(
     club_department?: string;
     intro_tag?: string;
     self_intro?: string;
-    prof_img_url?: string;
     graduate_year?: number;
   },
 ): Promise<void> {

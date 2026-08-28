@@ -324,6 +324,7 @@ export interface UpdateTeamRequest {
   name?: string;
   topic?: string;
   description?: string;
+  competition_type?: CompetitionType;
   max_members?: number;
 }
 

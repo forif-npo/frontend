@@ -377,8 +377,8 @@ export function OperatorsView({
                 }}
               />
               <p className="text-muted-foreground text-xs">
-                운영진 소개 페이지의 프로필 사진으로 표시됩니다. JPG 또는 PNG,
-                최대 5MB까지 업로드할 수 있습니다.
+                부원 마이페이지와 운영진 소개 페이지에 같은 사진으로 표시됩니다.
+                JPG 또는 PNG, 최대 5MB까지 업로드할 수 있습니다.
               </p>
             </div>
           </div>
