@@ -234,6 +234,7 @@ export function DuesView({
         columns={duesColumns}
         data={displayMembers}
         showPagination={false}
+        enableRowSelection
         getRowId={(member) => String(member.userId)}
         onSelectedRowsChange={setSelectedMembers}
         sorting={sorting}

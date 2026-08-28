@@ -40,6 +40,8 @@ interface DataTableProps<TData, TValue> {
   renderActionCell?: (row: TData) => React.ReactNode;
   actionColumnSize?: number;
   showPagination?: boolean;
+  /** 선택 결과를 사용하는 화면에서만 선택 열을 노출한다. */
+  enableRowSelection?: boolean;
   getRowId?: (row: TData, index: number) => string;
   onSelectedRowsChange?: (rows: TData[]) => void;
   rowSelection?: RowSelectionState;
@@ -59,6 +61,7 @@ export function DataTable<TData, TValue>({
   renderActionCell,
   actionColumnSize,
   showPagination = true,
+  enableRowSelection = false,
   getRowId,
   onSelectedRowsChange,
   rowSelection: controlledRowSelection,
@@ -155,12 +158,17 @@ export function DataTable<TData, TValue>({
       size: actionColumnSize ?? (renderActionCell ? 320 : 56),
     };
 
+    const columnsWithSelection = enableRowSelection
+      ? [selectionColumn, ...columns]
+      : columns;
+
     return renderRowActions || renderActionCell
-      ? [selectionColumn, ...columns, actionColumn]
-      : [selectionColumn, ...columns];
+      ? [...columnsWithSelection, actionColumn]
+      : columnsWithSelection;
   }, [
     actionColumnSize,
     columns,
+    enableRowSelection,
     renderActionCell,
     renderRowActions,
     renderSelectionHeader,
@@ -173,7 +181,7 @@ export function DataTable<TData, TValue>({
       sorting,
       rowSelection,
     },
-    enableRowSelection: true,
+    enableRowSelection,
     enableMultiSort: true,
     onSortingChange,
     onRowSelectionChange,

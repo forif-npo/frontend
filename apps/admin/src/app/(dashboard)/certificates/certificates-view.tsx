@@ -728,6 +728,7 @@ export function CertificatesView({
             columns={columns}
             data={targets}
             getRowId={(target) => String(target.user_id)}
+            enableRowSelection
             rowSelection={rowSelection}
             onRowSelectionChange={updateRowSelection}
             renderSelectionHeader={(table) => (

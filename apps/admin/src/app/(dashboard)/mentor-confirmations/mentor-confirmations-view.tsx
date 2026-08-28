@@ -314,6 +314,7 @@ export function MentorConfirmationsView({
           columns={columns}
           data={targets}
           getRowId={(target) => String(target.user_id)}
+          enableRowSelection
           rowSelection={rowSelection}
           onRowSelectionChange={updateRowSelection}
           showPagination={false}
