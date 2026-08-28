@@ -129,6 +129,20 @@ export async function updateOperator(
     .json<ApiResponse<ForifTeamItem>>();
 }
 
+/** 운영진 소개 페이지에 표시할 프로필 사진을 등록하거나 교체한다. */
+export async function updateOperatorProfileImage(
+  forifTeamId: number,
+  file: File,
+): Promise<void> {
+  const formData = new FormData();
+  formData.append("file", file);
+  await apiClient
+    .patch(`api/v1/admin/forif-team/${forifTeamId}/profile-image`, {
+      body: formData,
+    })
+    .json<ApiResponse<ForifTeamItem>>();
+}
+
 /**
  * 운영진 이력 삭제 (DELETE /api/v1/admin/forif-team/{id})
  */

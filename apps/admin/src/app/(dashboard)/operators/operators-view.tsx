@@ -29,7 +29,11 @@ import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
 import { AddOperatorDialog } from "./add-operator-dialog";
-import { deleteOperator, updateOperator } from "./api";
+import {
+  deleteOperator,
+  updateOperator,
+  updateOperatorProfileImage,
+} from "./api";
 import { columns } from "./columns";
 import { Operator, OperatorSemesterLabel } from "./types";
 
@@ -39,6 +43,7 @@ interface OperatorEditForm {
   introTag: string;
   selfIntro: string;
   graduateYear: string;
+  profileImage: File | null;
 }
 
 interface OperatorsViewProps {
@@ -87,6 +92,7 @@ export function OperatorsView({
     introTag: "",
     selfIntro: "",
     graduateYear: "",
+    profileImage: null,
   });
 
   const handleDownloadExcel = () => {
@@ -121,6 +127,7 @@ export function OperatorsView({
       selfIntro: operator.selfIntro,
       graduateYear:
         operator.graduateYear != null ? String(operator.graduateYear) : "",
+      profileImage: null,
     });
   };
 
@@ -153,14 +160,19 @@ export function OperatorsView({
         body.graduate_year = year;
       }
     }
-    if (Object.keys(body).length === 0) {
+    if (Object.keys(body).length === 0 && !editForm.profileImage) {
       toast.error("변경된 내용이 없습니다.");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await updateOperator(editTarget.id, body);
+      if (Object.keys(body).length > 0) {
+        await updateOperator(editTarget.id, body);
+      }
+      if (editForm.profileImage) {
+        await updateOperatorProfileImage(editTarget.id, editForm.profileImage);
+      }
       toast.success("운영진 정보가 수정되었습니다.");
       setEditTarget(null);
       router.refresh();
@@ -339,6 +351,35 @@ export function OperatorsView({
                   setEditForm((f) => ({ ...f, graduateYear: e.target.value }))
                 }
               />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="op-profile-image">프로필 사진 (선택)</Label>
+              <Input
+                id="op-profile-image"
+                type="file"
+                accept="image/jpeg,image/jpg,image/png"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  if (
+                    file &&
+                    (!["image/jpeg", "image/jpg", "image/png"].includes(
+                      file.type,
+                    ) ||
+                      file.size > 5 * 1024 * 1024)
+                  ) {
+                    toast.error(
+                      "프로필 사진은 5MB 이하의 JPG 또는 PNG 파일만 가능합니다.",
+                    );
+                    e.target.value = "";
+                    return;
+                  }
+                  setEditForm((form) => ({ ...form, profileImage: file }));
+                }}
+              />
+              <p className="text-muted-foreground text-xs">
+                운영진 소개 페이지의 프로필 사진으로 표시됩니다. JPG 또는 PNG,
+                최대 5MB까지 업로드할 수 있습니다.
+              </p>
             </div>
           </div>
           <DialogFooter>
