@@ -18,7 +18,7 @@ interface FetchMentorsParams {
   page?: number;
   search?: string;
   semester?: MentorSemesterLabel;
-  accessToken: string;
+  accessToken?: string;
   sorting?: SortingState;
 }
 
@@ -98,9 +98,9 @@ export async function fetchMentors({
     const response = await apiClient
       .get(endpoint, {
         searchParams: allSearchParams,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: accessToken
+          ? { Authorization: `Bearer ${accessToken}` }
+          : undefined,
       })
       .json<ApiResponse<MentorPageData>>();
 
@@ -126,9 +126,9 @@ export async function fetchMentors({
   const response = await apiClient
     .get(endpoint, {
       searchParams,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : undefined,
     })
     .json<ApiResponse<MentorPageData>>();
 

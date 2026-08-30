@@ -4,6 +4,12 @@ import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/list/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
@@ -11,6 +17,7 @@ import type { SortingState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { MoreVertical } from "lucide-react";
 import { decideAutonomousStudyApplication } from "./api";
 import { applicationColumns } from "./columns";
 import type { StudyApplication, StudyApplicationPage } from "./types";
@@ -19,12 +26,14 @@ interface StudyApplicationsViewProps {
   initialData: StudyApplicationPage;
   initialSearch: string;
   initialSorting: SortingState;
+  canDecideAutonomousStudyApplications: boolean;
 }
 
 export function StudyApplicationsView({
   initialData,
   initialSearch,
   initialSorting,
+  canDecideAutonomousStudyApplications,
 }: StudyApplicationsViewProps) {
   const router = useRouter();
   const [isDeciding, setIsDeciding] = useState(false);
@@ -94,32 +103,40 @@ export function StudyApplicationsView({
           if (!application.autonomousStudy) return null;
 
           return (
-            <>
-              {application.status !== "ACCEPT" && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
                   type="button"
-                  size="sm"
-                  onClick={() => handleDecision(application, "accept")}
-                  disabled={isDeciding}
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground h-8 w-8"
+                  disabled={isDeciding || !canDecideAutonomousStudyApplications}
+                  aria-label="자율스터디 신청 처리 메뉴"
                 >
-                  합격
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
-              )}
-              {application.status !== "REJECT" && (
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => handleDecision(application, "reject")}
-                  disabled={isDeciding}
-                >
-                  불합격
-                </Button>
-              )}
-            </>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-32">
+                {application.status !== "ACCEPT" && (
+                  <DropdownMenuItem
+                    onSelect={() => handleDecision(application, "accept")}
+                  >
+                    합격 처리
+                  </DropdownMenuItem>
+                )}
+                {application.status !== "REJECT" && (
+                  <DropdownMenuItem
+                    className="text-destructive focus:text-destructive"
+                    onSelect={() => handleDecision(application, "reject")}
+                  >
+                    불합격 처리
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           );
         }}
-        actionColumnSize={180}
+        actionColumnSize={56}
       />
 
       <OffsetPagination

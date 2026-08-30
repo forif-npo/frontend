@@ -14,7 +14,7 @@ interface FetchOperatorsParams {
   page?: number;
   size: number;
   search?: string;
-  accessToken: string;
+  accessToken?: string;
   sorting?: SortingState;
 }
 
@@ -177,9 +177,9 @@ export async function fetchOperators({
 
   const response = await apiClient
     .get(endpoint, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : undefined,
     })
     .json<ApiResponse<ForifTeamListResponse>>();
 

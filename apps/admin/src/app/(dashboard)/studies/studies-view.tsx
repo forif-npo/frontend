@@ -20,6 +20,7 @@ import {
   createAutonomousStudy,
   deleteStudy,
   fetchStudyDetail,
+  fetchStudiesWithFallback,
   updateStudy,
 } from "./api";
 import { columns } from "./columns";
@@ -29,6 +30,16 @@ import { StudyEditDialog } from "./components/StudyEditDialog";
 import { EMPTY_STUDY_EDIT_FORM, getStudyTagLabel } from "./constants";
 import { buildStudyUpdateFormData, toStudyEditForm } from "./form-utils";
 import { SemesterLabel, Study, StudyEditForm } from "./types";
+
+const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;
+
+function parseSemesterFilter(semester: SemesterLabel) {
+  const match = semester.match(SEMESTER_LABEL_PATTERN);
+
+  return match
+    ? { year: Number(`20${match[1]}`), semester: Number(match[2]) }
+    : {};
+}
 
 interface StudiesViewProps {
   initialData: Study[];
@@ -83,36 +94,64 @@ export function StudiesView({
   const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
     null,
   );
+  const [selectedStudies, setSelectedStudies] = useState<Study[]>([]);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
 
-  const handleDownloadExcel = () => {
-    if (initialData.length === 0) {
-      alert("다운로드할 데이터가 없습니다.");
-      return;
+  const handleDownloadExcel = async () => {
+    if (isDownloading) return;
+
+    setIsDownloading(true);
+    try {
+      const studies =
+        selectedStudies.length > 0
+          ? selectedStudies
+          : (
+              await fetchStudiesWithFallback(
+                {
+                  size: 10000,
+                  page: 0,
+                  ...parseSemesterFilter(currentSemester),
+                  search: initialSearch || undefined,
+                  studyStatuses: ["APPROVED", "STARTED"],
+                  sorting,
+                },
+                undefined,
+              )
+            ).content;
+
+      if (studies.length === 0) {
+        toast.error("다운로드할 데이터가 없습니다.");
+        return;
+      }
+
+      const ws = XLSX.utils.json_to_sheet(
+        studies.map((study) => ({
+          ID: study.id,
+          스터디명: study.study_name,
+          멘토:
+            study.primary_mentor_name +
+            (study.secondary_mentor_name
+              ? ` (${study.secondary_mentor_name})`
+              : ""),
+          태그: study.tags.map(getStudyTagLabel).join(", "),
+          "한 줄 소개": study.one_liner,
+          멘티수: study.mentee_count,
+          모집상태: study.recruit_status === "APPLICABLE" ? "모집중" : "마감",
+        })),
+      );
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Studies");
+      const date = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(wb, `studies_${currentSemester}_${date}.xlsx`);
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsDownloading(false);
     }
-
-    const ws = XLSX.utils.json_to_sheet(
-      initialData.map((study) => ({
-        ID: study.id,
-        스터디명: study.study_name,
-        멘토:
-          study.primary_mentor_name +
-          (study.secondary_mentor_name
-            ? ` (${study.secondary_mentor_name})`
-            : ""),
-        태그: study.tags.map(getStudyTagLabel).join(", "),
-        "한 줄 소개": study.one_liner,
-        멘티수: study.mentee_count,
-        모집상태: study.recruit_status === "APPLICABLE" ? "모집중" : "마감",
-      })),
-    );
-
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Studies");
-    const date = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(wb, `studies_${currentSemester}_${date}.xlsx`);
   };
 
   const handleEditDialogOpenChange = (open: boolean) => {
@@ -405,10 +444,11 @@ export function StudiesView({
           <Button
             variant="outline"
             className="gap-2"
+            disabled={isDownloading}
             onClick={handleDownloadExcel}
           >
             <Download className="h-4 w-4" />
-            엑셀로 다운로드
+            {isDownloading ? "다운로드 중..." : "엑셀로 다운로드"}
           </Button>
         </div>
       </div>
@@ -425,6 +465,9 @@ export function StudiesView({
           columns={columns}
           data={initialData}
           showPagination={false}
+          enableRowSelection
+          getRowId={(study) => String(study.id)}
+          onSelectedRowsChange={setSelectedStudies}
           sorting={sorting}
           onSortingChange={handleSortingChange}
           renderRowActions={(study) => (

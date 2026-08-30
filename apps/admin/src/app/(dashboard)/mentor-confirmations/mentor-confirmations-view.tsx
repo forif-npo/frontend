@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  type SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
@@ -16,13 +10,6 @@ import { PageHeader } from "@/components/page-header";
 import { ActivitySemesterToggle } from "@/components/list/activity-semester-toggle";
 import { Button } from "@/components/ui/button";
 import { SingleDayPicker } from "@/components/ui/single-day-picker";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { DataTable } from "@/components/list/data-table";
 import type { SemesterLabel, Study } from "../studies/types";
 import {
@@ -46,6 +33,13 @@ const isoToDate = (iso: string) =>
   iso ? new Date(`${iso}T00:00:00`) : undefined;
 type MentorConfirmationTarget =
   MentorConfirmationTargetsData["targets"][number];
+type MentorConfirmationTargetWithStudy = MentorConfirmationTarget & {
+  study_id: number;
+  study_name: string;
+};
+
+const getTargetKey = (target: MentorConfirmationTargetWithStudy) =>
+  `${target.study_id}:${target.user_id}`;
 
 export function MentorConfirmationsView({
   studies,
@@ -54,36 +48,46 @@ export function MentorConfirmationsView({
   selectedSemester,
 }: MentorConfirmationsViewProps) {
   const router = useRouter();
-  const [selectedStudyId, setSelectedStudyId] = useState<number | null>(null);
-  const [targetsData, setTargetsData] =
-    useState<MentorConfirmationTargetsData | null>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [isLoading, setIsLoading] = useState(false);
-  const [isIssuing, setIsIssuing] = useState(false);
-  const [downloadingUserId, setDownloadingUserId] = useState<number | null>(
-    null,
+  const [targets, setTargets] = useState<MentorConfirmationTargetWithStudy[]>(
+    [],
   );
+  const [selectedTargetKeys, setSelectedTargetKeys] = useState<Set<string>>(
+    new Set(),
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [isIssuing, setIsIssuing] = useState(false);
+  const [downloadingTargetKey, setDownloadingTargetKey] = useState<
+    string | null
+  >(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
-    if (selectedStudyId == null) {
-      setTargetsData(null);
-      return;
-    }
-
     let cancelled = false;
     setIsLoading(true);
-    getMentorConfirmationTargets(selectedStudyId)
-      .then((data) => {
+    Promise.all(
+      studies.map(async (study) => {
+        const data = await getMentorConfirmationTargets(study.id);
+        return data.targets.map((target) => ({
+          ...target,
+          study_id: study.id,
+          study_name: study.study_name,
+        }));
+      }),
+    )
+      .then((targetGroups) => {
         if (!cancelled) {
-          setTargetsData(data);
-          setSelectedIds(new Set(data.targets.map((target) => target.user_id)));
+          const allTargets = targetGroups.flat();
+          setTargets(allTargets);
+          setSelectedTargetKeys(
+            new Set(allTargets.map((target) => getTargetKey(target))),
+          );
         }
       })
       .catch((error) => {
         if (!cancelled) {
-          setTargetsData(null);
+          setTargets([]);
+          setSelectedTargetKeys(new Set());
           toast.error(
             error instanceof Error
               ? error.message
@@ -98,10 +102,10 @@ export function MentorConfirmationsView({
     return () => {
       cancelled = true;
     };
-  }, [selectedStudyId]);
+  }, [studies]);
 
   const handleIssue = async () => {
-    if (selectedStudyId == null || selectedIds.size === 0 || isIssuing) return;
+    if (selectedTargetKeys.size === 0 || isIssuing) return;
     if (!startDate || !endDate) {
       toast.error("활동 기간을 모두 입력해주세요.");
       return;
@@ -113,14 +117,35 @@ export function MentorConfirmationsView({
 
     setIsIssuing(true);
     try {
-      const result = await issueMentorConfirmations(
-        selectedStudyId,
-        Array.from(selectedIds),
-        `${toDotDate(startDate)}~${toDotDate(endDate)}`,
+      const targetIdsByStudy = new Map<number, number[]>();
+      targets
+        .filter((target) => selectedTargetKeys.has(getTargetKey(target)))
+        .forEach((target) => {
+          const userIds = targetIdsByStudy.get(target.study_id) ?? [];
+          userIds.push(target.user_id);
+          targetIdsByStudy.set(target.study_id, userIds);
+        });
+      const results = await Promise.all(
+        Array.from(targetIdsByStudy, ([studyId, userIds]) =>
+          issueMentorConfirmations(
+            studyId,
+            userIds,
+            `${toDotDate(startDate)}~${toDotDate(endDate)}`,
+          ),
+        ),
       );
-      toast.success(`${result.success_count}명의 멘토 확인서를 발급했습니다.`);
-      const updated = await getMentorConfirmationTargets(selectedStudyId);
-      setTargetsData(updated);
+      const successCount = results.reduce(
+        (count, result) => count + result.success_count,
+        0,
+      );
+      toast.success(`${successCount}명의 멘토 확인서를 발급했습니다.`);
+      setTargets((current) =>
+        current.map((target) =>
+          selectedTargetKeys.has(getTargetKey(target))
+            ? { ...target, confirmation_status: 1 }
+            : target,
+        ),
+      );
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "확인서 발급에 실패했습니다.",
@@ -131,8 +156,8 @@ export function MentorConfirmationsView({
   };
 
   const handleDownload = useCallback(
-    async (userId: number) => {
-      if (selectedStudyId == null || downloadingUserId != null) return;
+    async (target: MentorConfirmationTargetWithStudy) => {
+      if (downloadingTargetKey != null) return;
 
       const downloadWindow = window.open("", "_blank");
       if (downloadWindow == null) {
@@ -140,11 +165,12 @@ export function MentorConfirmationsView({
         return;
       }
 
-      setDownloadingUserId(userId);
+      const targetKey = getTargetKey(target);
+      setDownloadingTargetKey(targetKey);
       try {
         const confirmation = await getMentorConfirmationViewUrl(
-          selectedStudyId,
-          userId,
+          target.study_id,
+          target.user_id,
         );
         if (confirmation.confirmation_url) {
           downloadWindow.location.href = confirmation.confirmation_url;
@@ -159,40 +185,45 @@ export function MentorConfirmationsView({
             : "확인서를 불러오지 못했습니다.",
         );
       } finally {
-        setDownloadingUserId(null);
+        setDownloadingTargetKey(null);
       }
     },
-    [downloadingUserId, selectedStudyId],
+    [downloadingTargetKey],
   );
 
   const handleSemesterChange = (semester: string) => {
-    setSelectedStudyId(null);
-    setTargetsData(null);
-    setSelectedIds(new Set());
-    setIsLoading(false);
+    setTargets([]);
+    setSelectedTargetKeys(new Set());
+    setIsLoading(true);
     router.push(`/mentor-confirmations?semester=${semester}`);
   };
 
   const rowSelection = useMemo<RowSelectionState>(
     () =>
-      Object.fromEntries(Array.from(selectedIds, (id) => [String(id), true])),
-    [selectedIds],
+      Object.fromEntries(
+        Array.from(selectedTargetKeys, (targetKey) => [targetKey, true]),
+      ),
+    [selectedTargetKeys],
   );
-  const updateRowSelection = (updater: SetStateAction<RowSelectionState>) => {
-    setSelectedIds((current) => {
+  const updateRowSelection = (
+    updater:
+      | RowSelectionState
+      | ((current: RowSelectionState) => RowSelectionState),
+  ) => {
+    setSelectedTargetKeys((current) => {
       const currentSelection = Object.fromEntries(
-        Array.from(current, (id) => [String(id), true]),
+        Array.from(current, (targetKey) => [targetKey, true]),
       );
       const nextSelection =
         typeof updater === "function" ? updater(currentSelection) : updater;
       return new Set(
         Object.entries(nextSelection)
           .filter(([, selected]) => selected)
-          .map(([id]) => Number(id)),
+          .map(([targetKey]) => targetKey),
       );
     });
   };
-  const columns = useMemo<ColumnDef<MentorConfirmationTarget>[]>(
+  const columns = useMemo<ColumnDef<MentorConfirmationTargetWithStudy>[]>(
     () => [
       {
         accessorKey: "user_name",
@@ -207,6 +238,7 @@ export function MentorConfirmationsView({
         header: "학과",
         cell: ({ row }) => row.original.department ?? "-",
       },
+      { accessorKey: "study_name", header: "스터디" },
       {
         accessorKey: "confirmation_status",
         header: () => <div className="text-center">발급 상태</div>,
@@ -217,10 +249,10 @@ export function MentorConfirmationsView({
                 type="button"
                 variant="link"
                 className="h-auto p-0 text-blue-600"
-                disabled={downloadingUserId != null}
-                onClick={() => handleDownload(row.original.user_id)}
+                disabled={downloadingTargetKey != null}
+                onClick={() => handleDownload(row.original)}
               >
-                {downloadingUserId === row.original.user_id
+                {downloadingTargetKey === getTargetKey(row.original)
                   ? "불러오는 중..."
                   : "발급됨"}
                 <ExternalLink className="ml-1 h-3 w-3" />
@@ -232,10 +264,8 @@ export function MentorConfirmationsView({
         ),
       },
     ],
-    [downloadingUserId, handleDownload],
+    [downloadingTargetKey, handleDownload],
   );
-
-  const targets = targetsData?.targets ?? [];
 
   return (
     <div className="space-y-6 p-8">
@@ -251,24 +281,6 @@ export function MentorConfirmationsView({
       />
 
       <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium">스터디</label>
-          <Select
-            value={selectedStudyId != null ? String(selectedStudyId) : ""}
-            onValueChange={(value) => setSelectedStudyId(Number(value))}
-          >
-            <SelectTrigger className="w-[320px]">
-              <SelectValue placeholder="스터디를 선택하세요" />
-            </SelectTrigger>
-            <SelectContent>
-              {studies.map((study) => (
-                <SelectItem key={study.id} value={String(study.id)}>
-                  {study.study_name} ({study.primary_mentor_name})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium">활동 기간 (확인서 표기)</label>
           <div className="flex items-center gap-2">
@@ -291,29 +303,27 @@ export function MentorConfirmationsView({
         </div>
         <Button
           onClick={handleIssue}
-          disabled={selectedIds.size === 0 || isIssuing}
+          disabled={selectedTargetKeys.size === 0 || isIssuing}
         >
-          {isIssuing ? "발급 중..." : `선택 ${selectedIds.size}명 확인서 발급`}
+          {isIssuing
+            ? "발급 중..."
+            : `선택 ${selectedTargetKeys.size}명 확인서 발급`}
         </Button>
       </div>
 
-      {selectedStudyId == null ? (
-        <div className="text-muted-foreground flex justify-center py-20">
-          스터디를 선택하면 멘토 발급 대상이 표시됩니다.
-        </div>
-      ) : isLoading ? (
+      {isLoading ? (
         <div className="text-muted-foreground flex justify-center py-20">
           불러오는 중...
         </div>
       ) : targets.length === 0 ? (
         <div className="text-muted-foreground flex justify-center py-20">
-          해당 스터디에 등록된 멘토가 없습니다.
+          해당 학기에 등록된 멘토가 없습니다.
         </div>
       ) : (
         <DataTable
           columns={columns}
           data={targets}
-          getRowId={(target) => String(target.user_id)}
+          getRowId={getTargetKey}
           enableRowSelection
           rowSelection={rowSelection}
           onRowSelectionChange={updateRowSelection}

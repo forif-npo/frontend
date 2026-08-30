@@ -36,7 +36,7 @@ export default async function MentorConfirmationsPage({
 
   const studies = await fetchStudiesWithFallback(
     {
-      size: 100,
+      size: 10000,
       page: 0,
       ...parseSemesterFilter(activeSemester),
       studyStatuses: ["STARTED"],

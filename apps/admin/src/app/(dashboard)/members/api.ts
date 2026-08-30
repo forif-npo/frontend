@@ -19,7 +19,7 @@ interface FetchMembersParams {
   page?: number;
   search?: string;
   semester?: MemberSemesterLabel;
-  accessToken: string;
+  accessToken?: string;
   sorting?: SortingState;
 }
 
@@ -98,9 +98,9 @@ export async function fetchMembers({
     const response = await apiClient
       .get(endpoint, {
         searchParams: allSearchParams,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: accessToken
+          ? { Authorization: `Bearer ${accessToken}` }
+          : undefined,
       })
       .json<ApiResponse<MemberPageData>>();
 
@@ -126,9 +126,9 @@ export async function fetchMembers({
   const response = await apiClient
     .get(endpoint, {
       searchParams,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : undefined,
     })
     .json<ApiResponse<MemberPageData>>();
 
