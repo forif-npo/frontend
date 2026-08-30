@@ -1,5 +1,5 @@
-import type { ApiResponse, User } from "../types/api";
-import { apiClient } from "../utils/api-client";
+import type { ApiResponse, User } from "@core/types/api";
+import { apiClient } from "@core/utils/api-client";
 
 /**
  * User profile type (same as User from api.d.ts)
@@ -10,7 +10,6 @@ export interface UpdateUserProfileRequest {
   department: string;
   profile_image?: File | null;
 }
-
 export interface UpdateUserPhoneNumberRequest {
   phone_num: string;
 }
@@ -219,18 +218,6 @@ export interface StudyApplicationsResponse {
   applications: StudyApplication[];
 }
 
-/**
- * Backend-authoritative availability for this semester's study application.
- */
-export interface StudyApplicationStatusResponse {
-  can_apply_primary: boolean;
-  can_apply_secondary: boolean;
-  can_apply_autonomous_study: boolean;
-  has_autonomous_study_application: boolean;
-  primary_study: { id: number } | null;
-  secondary_study: { id: number } | null;
-}
-
 export interface UpdateStudyApplicationRequest {
   study_id: number;
   apply_reason: string;
@@ -282,15 +269,4 @@ export async function getStudyApplications(
     console.error("[getStudyApplications] error:", err);
     throw err;
   }
-}
-
-/**
- * Get backend-authoritative availability for a new study application.
- */
-export async function getStudyApplicationStatus(): Promise<StudyApplicationStatusResponse> {
-  const response = await apiClient
-    .get("api/v1/users/apply/status")
-    .json<ApiResponse<StudyApplicationStatusResponse>>();
-
-  return response.data!;
 }

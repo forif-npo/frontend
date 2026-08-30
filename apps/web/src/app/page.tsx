@@ -1,5 +1,6 @@
 import { CTASection } from "@/features/home/CTASection";
 import { HackathonSection } from "@/features/home/HackathonSection";
+import { InstagramSection } from "@/features/home/InstagramSection";
 import { NewsSection } from "@/features/home/NewsSection";
 import { QuickMenu } from "@/features/home/QuickMenu";
 import { StudySection } from "@/features/home/StudySection";
@@ -96,6 +97,11 @@ export default async function Page() {
           {/* NewsSection */}
           <section className="w-full">
             <NewsSection />
+          </section>
+
+          {/* InstagramSection */}
+          <section className="w-full">
+            <InstagramSection />
           </section>
         </div>
 

@@ -107,7 +107,7 @@ function NewsCard({ item }: { item: NewsItem }) {
       href={item.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noopener noreferrer" : undefined}
-      className="group flex h-[180px] flex-col overflow-hidden rounded-[12px] border border-[#e5e8eb] bg-white transition-shadow hover:shadow-md"
+      className="group flex h-[180px] flex-col overflow-hidden rounded-[12px] border border-[#e5e8eb] bg-white transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-md"
     >
       {/* content row */}
       <div className="flex flex-1 gap-0">
@@ -121,19 +121,14 @@ function NewsCard({ item }: { item: NewsItem }) {
             unoptimized
           />
         </div>
-        <div className="flex min-w-0 flex-1 flex-col justify-between p-5 md:p-6">
+        <div className="flex min-w-0 flex-1 flex-col p-5 md:p-6">
           <div className="flex flex-col gap-2">
             <p className="text-text-bolder truncate text-[17px] font-bold leading-[1.5]">
               {item.title}
             </p>
-            <p className="text-text-subtle line-clamp-2 text-[15px] leading-[1.6]">
+            <p className="text-text-subtle line-clamp-3 text-[15px] leading-[1.6]">
               {item.excerpt}
             </p>
-          </div>
-          <div>
-            <span className="text-[15px] font-medium leading-[1.5] text-[#052b57] group-hover:underline">
-              {item.linkLabel}
-            </span>
           </div>
         </div>
       </div>

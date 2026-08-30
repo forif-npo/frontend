@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  useRef,
+  type KeyboardEvent,
+  type MouseEvent,
+  type WheelEvent,
+} from "react";
+import {
   formatStudyTimeRange,
   getDifficultyBadgeVariant,
   getDifficultyLabel,
@@ -11,9 +17,10 @@ import {
   NUMERIC_DIFFICULTY_LABELS,
 } from "@/constants/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
-import type { Study, RecruitStatus, StudyDifficulty } from "@/types/study";
+import type { Study } from "@/types/study";
 import { Button } from "@ui/components/client";
-import { Badge, Body, Heading, Label } from "@ui/components/server";
+import { Badge, Body, Heading } from "@ui/components/server";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { StudyImage } from "./StudyImage";
 
@@ -40,8 +47,8 @@ interface MyPageVariantProps {
     img_url: string;
     primary_mentor_name: string;
     secondary_mentor_name: string | null;
-    start_time: string;
-    end_time: string;
+    start_time: string | null;
+    end_time: string | null;
     week_day: number;
     location: string;
     certificate_issued: boolean;
@@ -95,10 +102,177 @@ function SemesterBadge({ label }: { label: string }) {
   );
 }
 
+function StudyTags({ children }: { children: React.ReactNode }) {
+  const tagsRef = useRef<HTMLDivElement>(null);
+
+  const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
+    const tags = tagsRef.current;
+    if (!tags || event.deltaY === 0 || tags.scrollWidth <= tags.clientWidth) {
+      return;
+    }
+
+    const maxScrollLeft = tags.scrollWidth - tags.clientWidth;
+    const nextScrollLeft = tags.scrollLeft + event.deltaY;
+    const canScrollFurther =
+      (event.deltaY < 0 && tags.scrollLeft > 0) ||
+      (event.deltaY > 0 && tags.scrollLeft < maxScrollLeft);
+
+    if (!canScrollFurther) return;
+
+    event.preventDefault();
+    tags.scrollLeft = Math.max(0, Math.min(nextScrollLeft, maxScrollLeft));
+  };
+
+  return (
+    <div
+      ref={tagsRef}
+      className="scrollbar-hidden flex min-w-0 gap-2 overflow-x-auto text-nowrap [&>*]:shrink-0"
+      onWheel={handleWheel}
+      onTouchStart={(event) => event.stopPropagation()}
+      onTouchMove={(event) => event.stopPropagation()}
+      onTouchEnd={(event) => event.stopPropagation()}
+      onTouchCancel={(event) => event.stopPropagation()}
+      tabIndex={0}
+      aria-label="스터디 태그"
+    >
+      {children}
+    </div>
+  );
+}
+
+interface StandardStudyCardProps {
+  study: Study;
+  imageSection: React.ReactNode;
+  onCardClick?: () => void;
+  onDetailClick?: () => void;
+  onApplyClick?: () => void;
+  showDetailAction?: boolean;
+}
+
+function StandardStudyCard({
+  study,
+  imageSection,
+  onCardClick,
+  onDetailClick,
+  onApplyClick,
+  showDetailAction = true,
+}: StandardStudyCardProps) {
+  const schedule = formatStudyTimeRange(study.start_time, study.end_time);
+  const instructors = getMentorText(
+    study.primary_mentor_name,
+    study.secondary_mentor_name,
+    "·",
+  );
+  const tagLabels = getVisibleTagLabels(study.tags);
+  const difficultyLabel = getVisibleDifficultyLabel(study.difficulty);
+  const hasSchedule = schedule !== "";
+  const isClickable = onCardClick !== undefined;
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!isClickable || (event.key !== "Enter" && event.key !== " ")) return;
+
+    event.preventDefault();
+    onCardClick();
+  };
+
+  const handleActionClick = (
+    event: MouseEvent<HTMLButtonElement>,
+    action?: () => void,
+  ) => {
+    event.stopPropagation();
+    action?.();
+  };
+
+  return (
+    <div
+      className={`rounded-3 border-border-gray-light bg-surface-white flex w-full flex-col overflow-hidden border ${
+        isClickable
+          ? "cursor-pointer transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-md"
+          : ""
+      }`}
+      onClick={onCardClick}
+      onKeyDown={handleKeyDown}
+      role={isClickable ? "link" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+    >
+      {imageSection}
+      <div className="flex flex-col gap-4 p-8">
+        <StudyTags>
+          <Badge
+            label={getRecruitStatusLabel(study.recruit_status)}
+            variant={getRecruitStatusBadgeVariant(study.recruit_status)}
+            appearance="solid-pastel"
+            size="small"
+          />
+          <SemesterBadge label={`${study.act_year}-${study.act_semester}`} />
+          {tagLabels.map((tag) => (
+            <Badge
+              key={tag}
+              label={tag}
+              variant="info"
+              appearance="solid-pastel"
+              size="small"
+            />
+          ))}
+          {difficultyLabel && (
+            <Badge
+              label={difficultyLabel}
+              variant={getDifficultyBadgeVariant(study.difficulty)}
+              appearance="solid-pastel"
+              size="small"
+            />
+          )}
+        </StudyTags>
+        <div className="flex flex-1 flex-col gap-4">
+          <Heading size="xs" className="text-text-basic line-clamp-1">
+            {study.study_name}
+          </Heading>
+          <Body size="m" className="text-text-subtle line-clamp-5 h-20">
+            {study.one_liner}
+          </Body>
+          <div className="text-text-basic flex items-center gap-2">
+            {hasSchedule && (
+              <>
+                <Body size="m" className="whitespace-nowrap">
+                  {schedule}
+                </Body>
+                <div className="h-[21px] w-[1px] bg-black" />
+              </>
+            )}
+            <Body size="m" className="whitespace-nowrap">
+              {instructors}
+            </Body>
+          </div>
+        </div>
+        <div className="mt-2 flex items-center justify-end gap-4 self-stretch">
+          {showDetailAction && (
+            <Button
+              variant="tertiary"
+              size="medium"
+              onClick={(event) => handleActionClick(event, onDetailClick)}
+            >
+              자세히 보기
+            </Button>
+          )}
+          <Button
+            variant="primary"
+            size="medium"
+            onClick={(event) => handleActionClick(event, onApplyClick)}
+            disabled={study.recruit_status !== "APPLICABLE"}
+          >
+            신청하기
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Component ───────────────────────────────────────────────────────
 
 export function StudyCard(props: StudyCardProps) {
   const { variant, study } = props;
+  const router = useRouter();
 
   const studyName = study.study_name;
   const oneLiner = study.one_liner;
@@ -124,154 +298,30 @@ export function StudyCard(props: StudyCardProps) {
 
   if (variant === "home") {
     const s = study as Study;
-    const tagLabels = getVisibleTagLabels(s.tags);
-    const difficultyLabel = getVisibleDifficultyLabel(s.difficulty);
 
     return (
-      <Link
-        href={`/studies/detail/${s.id}`}
-        className="rounded-3 border-border-gray-light bg-surface-white group flex flex-row overflow-hidden border transition-shadow hover:shadow-md md:flex-col"
-      >
-        {/* Mobile: small thumbnail / Desktop: full-width image */}
-        <div className="relative h-auto w-[120px] shrink-0 bg-[#DFE8F4] md:hidden">
-          <StudyImage
-            src={imgUrl}
-            alt={studyName}
-            fill
-            className="object-cover"
-            sizes="120px"
-          />
-        </div>
-        <div className="hidden md:block">{imageSection}</div>
-
-        <div className="flex flex-1 flex-col p-4 md:p-8">
-          <div className="mb-2 flex flex-wrap gap-2 md:mb-4">
-            <Badge
-              label={getRecruitStatusLabel(s.recruit_status)}
-              variant={getRecruitStatusBadgeVariant(s.recruit_status)}
-              appearance="solid-pastel"
-              size="small"
-            />
-            <SemesterBadge label={`${s.act_year}-${s.act_semester}`} />
-            {tagLabels.map((tag) => (
-              <Badge
-                key={tag}
-                label={tag}
-                variant="info"
-                appearance="solid-pastel"
-                size="small"
-              />
-            ))}
-            <span className="md:hidden" />
-            {difficultyLabel && (
-              <Badge
-                label={difficultyLabel}
-                variant={getDifficultyBadgeVariant(s.difficulty)}
-                appearance="solid-pastel"
-                size="small"
-                // hide on mobile to save space — shown in desktop below
-              />
-            )}
-          </div>
-          <Body
-            size="l"
-            className="text-text-basic mb-1 line-clamp-1 font-bold md:mb-2"
-          >
-            {studyName}
-          </Body>
-          <Body
-            size="m"
-            className="text-text-subtle mb-2 line-clamp-2 md:mb-4 md:line-clamp-3"
-          >
-            {oneLiner}
-          </Body>
-          <div className="mt-auto flex items-center justify-between">
-            <Body size="s" className="text-text-subtle truncate">
-              멘토: {getMentorText(primaryMentor, secondaryMentor)}
-            </Body>
-            <Label size="m" className="ml-2 shrink-0 group-hover:underline">
-              자세히 보기
-            </Label>
-          </div>
-        </div>
-      </Link>
+      <StandardStudyCard
+        study={s}
+        imageSection={imageSection}
+        onCardClick={() => router.push(`/studies/detail/${s.id}`)}
+        onDetailClick={() => router.push(`/studies/detail/${s.id}`)}
+        onApplyClick={() => router.push(`/studies/apply?study_id=${s.id}`)}
+        showDetailAction={false}
+      />
     );
   }
 
   // ── List variant ──
   if (variant === "list") {
     const s = study as Study;
-    const schedule = formatStudyTimeRange(s.start_time, s.end_time);
-    const instructors = getMentorText(primaryMentor, secondaryMentor, "·");
-    const tagLabels = getVisibleTagLabels(s.tags);
-    const difficultyLabel = getVisibleDifficultyLabel(s.difficulty);
 
     return (
-      <div className="rounded-3 border-border-gray-light bg-surface-white flex w-full flex-col overflow-hidden border">
-        {imageSection}
-        <div className="flex flex-col gap-4 p-8">
-          <div className="flex gap-2 overflow-x-auto text-nowrap">
-            <Badge
-              label={getRecruitStatusLabel(s.recruit_status)}
-              variant={getRecruitStatusBadgeVariant(s.recruit_status)}
-              appearance="solid-pastel"
-              size="small"
-            />
-            <SemesterBadge label={`${s.act_year}-${s.act_semester}`} />
-            {tagLabels.map((tag) => (
-              <Badge
-                key={tag}
-                label={tag}
-                variant="info"
-                appearance="solid-pastel"
-                size="small"
-              />
-            ))}
-            {difficultyLabel && (
-              <Badge
-                label={difficultyLabel}
-                variant={getDifficultyBadgeVariant(s.difficulty)}
-                appearance="solid-pastel"
-                size="small"
-              />
-            )}
-          </div>
-          <div className="flex flex-1 flex-col gap-4">
-            <Heading size="xs" className="text-text-basic line-clamp-1">
-              {studyName}
-            </Heading>
-            <Body size="m" className="text-text-subtle line-clamp-5 h-20">
-              {oneLiner}
-            </Body>
-            <div className="text-text-basic flex items-center gap-2">
-              <Body size="m" className="whitespace-nowrap">
-                {schedule}
-              </Body>
-              <div className="h-[21px] w-[1px] bg-black" />
-              <Body size="m" className="whitespace-nowrap">
-                {instructors}
-              </Body>
-            </div>
-          </div>
-          <div className="mt-2 flex items-center justify-end gap-4 self-stretch">
-            <Button
-              variant="tertiary"
-              size="medium"
-              onClick={props.onDetailClick}
-            >
-              자세히 보기
-            </Button>
-            <Button
-              variant="primary"
-              size="medium"
-              onClick={props.onApplyClick}
-              disabled={s.recruit_status !== "APPLICABLE"}
-            >
-              신청하기
-            </Button>
-          </div>
-        </div>
-      </div>
+      <StandardStudyCard
+        study={s}
+        imageSection={imageSection}
+        onDetailClick={props.onDetailClick}
+        onApplyClick={props.onApplyClick}
+      />
     );
   }
 
@@ -279,6 +329,7 @@ export function StudyCard(props: StudyCardProps) {
   const mentorNames = getMentorText(primaryMentor, secondaryMentor, "·");
   const tagLabels = getVisibleTagLabels(study.tags);
   const difficultyLabel = NUMERIC_DIFFICULTY_LABELS[study.difficulty] ?? "보통";
+  const schedule = formatStudyTimeRange(study.start_time, study.end_time);
 
   return (
     <div className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border">
@@ -292,7 +343,7 @@ export function StudyCard(props: StudyCardProps) {
       </div>
       <div className="flex flex-col gap-4 px-8 py-8">
         <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap gap-2">
+          <StudyTags>
             <Badge
               label={props.isCurrent ? "수강 중" : "수료"}
               variant={props.isCurrent ? "success" : "disabled"}
@@ -315,7 +366,7 @@ export function StudyCard(props: StudyCardProps) {
               appearance="solid-pastel"
               size="small"
             />
-          </div>
+          </StudyTags>
           <p className="text-text-basic whitespace-nowrap text-[17px] font-bold leading-[1.5]">
             {studyName}
           </p>
@@ -324,11 +375,14 @@ export function StudyCard(props: StudyCardProps) {
           </p>
         </div>
         <div className="flex items-center gap-2 text-[17px] leading-[1.5]">
-          <span className="whitespace-nowrap">
-            {getWeekDayLabel(study.week_day)}{" "}
-            {formatStudyTimeRange(study.start_time, study.end_time)}
-          </span>
-          <span className="h-[21px] w-px bg-[#b1b8be]" />
+          {schedule && (
+            <>
+              <span className="whitespace-nowrap">
+                {getWeekDayLabel(study.week_day)} {schedule}
+              </span>
+              <span className="h-[21px] w-px bg-[#b1b8be]" />
+            </>
+          )}
           <span className="whitespace-nowrap">{mentorNames}</span>
         </div>
         <div className="flex items-center justify-end gap-4">

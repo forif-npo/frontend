@@ -12,8 +12,8 @@ import type {
   Submission,
   SubmissionRequest,
   Team,
+  UpdateTeamRequest,
 } from "@core/types/hackathon";
-import { isHackathonTechStack } from "@core/hackathon/tags";
 import { handleApiError } from "@core/utils/api-client";
 import { Heading } from "@ui/components/server";
 import { useEffect, useMemo, useState } from "react";
@@ -47,7 +47,7 @@ interface ActiveHackathonMainProps {
   teams: Team[];
   submissions: Submission[];
   onCreateTeam: (body: CreateTeamRequest) => Promise<void>;
-  onUpdateTeam: (teamId: number, body: CreateTeamRequest) => Promise<void>;
+  onUpdateTeam: (teamId: number, body: UpdateTeamRequest) => Promise<void>;
   onDisbandTeam: (teamId: number) => Promise<void>;
   onJoinRequest: (teamId: number, message?: string) => Promise<void>;
   onFetchJoinRequests: (
@@ -246,6 +246,7 @@ export function ActiveHackathonMain({
       name: myTeam.name,
       topic: myTeam.topic ?? "",
       description: myTeam.description ?? "",
+      competitionType: myTeam.competition_type,
       maxMembers:
         typeof myTeam.max_members === "number"
           ? String(myTeam.max_members)
@@ -275,12 +276,19 @@ export function ActiveHackathonMain({
       name,
       topic: teamForm.topic.trim() || undefined,
       description: teamForm.description.trim() || undefined,
+      competition_type: teamForm.competitionType,
       max_members: maxMembers,
     };
 
     await runModalAction(async () => {
       if (teamModalMode === "edit" && myTeam) {
-        await onUpdateTeam(myTeam.hackathon_team_id, body);
+        await onUpdateTeam(myTeam.hackathon_team_id, {
+          name: body.name,
+          topic: body.topic,
+          description: body.description,
+          competition_type: body.competition_type,
+          max_members: body.max_members,
+        });
       } else {
         await onCreateTeam(body);
       }
@@ -329,7 +337,7 @@ export function ActiveHackathonMain({
             githubUrl: mySubmission.github_url ?? "",
             deployUrl: mySubmission.deploy_url ?? "",
             imageUrl: mySubmission.image_url ?? "",
-            techStacks: mySubmission.tech_stacks.filter(isHackathonTechStack),
+            techStacks: mySubmission.tech_stacks,
           }
         : EMPTY_SUBMISSION_FORM,
     );

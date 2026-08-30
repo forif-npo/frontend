@@ -1,5 +1,5 @@
-import type { ApiResponse } from "../types/api";
-import { apiClient } from "../utils/api-client";
+import type { ApiResponse } from "@core/types/api";
+import { apiClient } from "@core/utils/api-client";
 
 export type StudyApplicationStatus =
   | "PENDING"

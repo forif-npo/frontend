@@ -1,4 +1,4 @@
-import type { StudyApplicationStatusResponse } from "@core/my-page/api";
+import type { StudyApplicationStatusResponse } from "./api";
 
 export const FULL_STUDY_APPLICATION_MESSAGE =
   "이미 1·2순위 스터디 신청을 완료했습니다.\n마이페이지에서 지원서를 확인해주세요.";

@@ -22,7 +22,7 @@ import {
   uploadProductThumbnail,
   type AdminProduct,
   type UpdateProductBody,
-} from "@core/products/api";
+} from "./api";
 
 const MAX_THUMBNAIL_BYTES = 5 * 1024 * 1024;
 

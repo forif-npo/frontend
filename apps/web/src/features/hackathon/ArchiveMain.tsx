@@ -1,18 +1,27 @@
 "use client";
 
-import type { Hackathon, Submission, Award } from "@core/types/hackathon";
+import type {
+  Award,
+  CompetitionType,
+  Hackathon,
+  Submission,
+} from "@core/types/hackathon";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
 import { Pagination, SelectBox } from "@ui/components/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
-import { HACKATHON_TECH_STACK_OPTIONS } from "@core/hackathon/tags";
+import {
+  HACKATHON_TECH_STACK_OPTIONS,
+  normalizeHackathonTechStack,
+} from "@core/hackathon/tags";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { PageHeader } from "@/components/PageHeader";
 import { SearchBar } from "@/components/SearchBar";
 import type { ArchiveHackathonDetail } from "@core/types/hackathon";
+import { CompetitionTypeBadge } from "./CompetitionTypeBadge";
 import {
   ARCHIVE_CARD_LINKS_CLASS_NAME,
   ARCHIVE_CARD_SUMMARY_MIN_HEIGHT_CLASS_NAME,
@@ -35,6 +44,9 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
   const [awards, setAwards] = useState<Award[]>([]);
   const [search, setSearch] = useState("");
   const [selectedTech, setSelectedTech] = useState("전체");
+  const [selectedCompetitionType, setSelectedCompetitionType] = useState<
+    CompetitionType | "전체"
+  >("전체");
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 9;
   const [loading, setLoading] = useState(true);
@@ -84,6 +96,14 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
     ],
     [],
   );
+  const competitionTypeOptions = useMemo(
+    () => [
+      { value: "전체", label: "전체" },
+      { value: "IDEATHON", label: "아이디어톤" },
+      { value: "HACKATHON", label: "해커톤" },
+    ],
+    [],
+  );
 
   const filtered = useMemo(() => {
     setCurrentPage(1);
@@ -94,10 +114,18 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
         s.project_name.toLowerCase().includes(q) ||
         s.summary.toLowerCase().includes(q);
       const matchesTech =
-        selectedTech === "전체" || s.tech_stacks.includes(selectedTech);
-      return matchesSearch && matchesTech;
+        selectedTech === "전체" ||
+        s.tech_stacks.some(
+          (techStack) =>
+            normalizeHackathonTechStack(techStack) ===
+            normalizeHackathonTechStack(selectedTech),
+        );
+      const matchesCompetitionType =
+        selectedCompetitionType === "전체" ||
+        s.competition_type === selectedCompetitionType;
+      return matchesSearch && matchesTech && matchesCompetitionType;
     });
-  }, [submissions, debouncedSearch, selectedTech]);
+  }, [submissions, debouncedSearch, selectedTech, selectedCompetitionType]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice(
@@ -132,7 +160,7 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
         />
 
         <div className="bg-surface-secondary-subtler rounded-xl p-10">
-          <div className="flex items-start gap-14 max-md:flex-col">
+          <div className="flex flex-wrap items-start gap-x-14 gap-y-6 max-md:flex-col">
             <div className="flex items-center gap-3 max-md:w-full">
               <Label className="text-text-basic whitespace-nowrap font-bold max-md:w-20">
                 해커톤 회차
@@ -147,6 +175,7 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
                     setSelectedId(Number(value));
                     setSearch("");
                     setSelectedTech("전체");
+                    setSelectedCompetitionType("전체");
                     setCurrentPage(1);
                   }}
                   options={hackathonOptions}
@@ -168,6 +197,28 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
                   value={selectedTech}
                   onChange={setSelectedTech}
                   options={techOptions}
+                  placeholder="전체"
+                  size="md"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 max-md:w-full">
+              <Label className="text-text-basic whitespace-nowrap font-bold max-md:w-20">
+                대회 유형
+              </Label>
+              <div
+                className={`${ARCHIVE_FILTER_WIDTH_CLASS_NAME.competitionType} max-md:min-w-0 max-md:flex-1`}
+              >
+                <SelectBox
+                  id="archive-competition-type"
+                  value={selectedCompetitionType}
+                  onChange={(value) =>
+                    setSelectedCompetitionType(
+                      value as CompetitionType | "전체",
+                    )
+                  }
+                  options={competitionTypeOptions}
                   placeholder="전체"
                   size="md"
                 />
@@ -205,9 +256,14 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
             >
               {/* Meta */}
               <div className="mb-3 flex items-center justify-between gap-3">
-                <Label size="m" className="text-text-basic font-bold">
-                  {submission.team_name}
-                </Label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Label size="m" className="text-text-basic font-bold">
+                    {submission.team_name}
+                  </Label>
+                  <CompetitionTypeBadge
+                    competitionType={submission.competition_type}
+                  />
+                </div>
                 {award && (
                   <Badge
                     label={award.award_name}

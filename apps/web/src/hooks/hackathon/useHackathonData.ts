@@ -13,6 +13,7 @@ import type {
   Submission,
   SubmissionRequest,
   Team,
+  UpdateTeamRequest,
 } from "@core/types/hackathon";
 import { useCallback, useEffect, useState } from "react";
 
@@ -29,7 +30,7 @@ interface UseHackathonDataReturn {
   registerParticipant: () => Promise<void>;
   cancelParticipant: () => Promise<void>;
   createTeam: (body: CreateTeamRequest) => Promise<void>;
-  updateTeam: (teamId: number, body: CreateTeamRequest) => Promise<void>;
+  updateTeam: (teamId: number, body: UpdateTeamRequest) => Promise<void>;
   disbandTeam: (teamId: number) => Promise<void>;
   createJoinRequest: (teamId: number, message?: string) => Promise<void>;
   fetchJoinRequests: (
@@ -185,7 +186,7 @@ export const useHackathonData = (
   );
 
   const updateTeam = useCallback(
-    async (teamId: number, body: CreateTeamRequest) => {
+    async (teamId: number, body: UpdateTeamRequest) => {
       if (!hackathonId) return;
       await apiClient
         .patch(`api/v1/hackathons/${hackathonId}/teams/${teamId}`, {

@@ -7,7 +7,7 @@ import {
   cancelStudyApplication,
   type ApplicationDetail,
   updateStudyApplication,
-} from "@core/my-page/api";
+} from "@/features/my-page/api";
 import { handleApiError } from "@core/utils/api-client";
 import {
   getNumericDifficultyBadgeVariant,

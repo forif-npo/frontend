@@ -20,8 +20,8 @@ import {
   type Applicant,
   type ApplicantsPage,
   type ApplyStatusFilter,
-} from "@core/study-manage/api";
-import { getCurrentSemesterSchedules } from "@core/semester/schedule-api";
+} from "@/features/study-manage/api";
+import { getCurrentSemesterSchedules } from "@/features/semester/schedule-api";
 import {
   ApplicantActionConfirmModal,
   ApplicantActionResultModal,

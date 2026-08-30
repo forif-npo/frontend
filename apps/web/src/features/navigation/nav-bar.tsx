@@ -1,7 +1,7 @@
 "use client";
 import { CloseIcon } from "@repo/assets/icons/krds";
 import { Home, Menu } from "@repo/assets/icons/lucide";
-import { getStudyApplicationStatus } from "@core/my-page/api";
+import { getStudyApplicationStatus } from "@/features/study/apply/api";
 import { AlertModal, Button } from "@ui/components/client";
 import { Link } from "@ui/components/server";
 import { cn } from "@ui/utils/cn";

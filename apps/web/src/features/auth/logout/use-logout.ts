@@ -1,6 +1,6 @@
 "use client";
 
-import { logout } from "@core/auth/api";
+import { logout } from "@/features/auth/api";
 import { signOut } from "next-auth/react";
 import { useTransition } from "react";
 

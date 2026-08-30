@@ -1,6 +1,8 @@
 "use client";
 
 import { SearchBar } from "@/components/list/search-bar";
+import { DataTable } from "@/components/list/data-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -94,6 +96,82 @@ export function ParticipantsTab({
     setStudyFilter("ALL");
   };
 
+  const columns = useMemo<ColumnDef<Participant>[]>(
+    () => [
+      {
+        accessorKey: "user_name",
+        header: "이름",
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.user_name ?? "-"}</span>
+        ),
+      },
+      {
+        accessorKey: "user_id",
+        header: "학번",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">{row.original.user_id}</span>
+        ),
+      },
+      {
+        id: "studies",
+        header: "스터디",
+        cell: ({ row }) => {
+          const studies = row.original.studies ?? [];
+          return studies.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {studies.map((study) => (
+                <Badge
+                  key={`${study.role}-${study.study_id}`}
+                  variant="outline"
+                  className={
+                    study.role === "MENTOR"
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-slate-300 bg-slate-50 text-slate-700"
+                  }
+                >
+                  {study.study_name ?? "-"}
+                  <span className="ml-1 text-[11px] opacity-70">
+                    {PARTICIPANT_STUDY_ROLE_LABELS[study.role]}
+                  </span>
+                </Badge>
+              ))}
+            </div>
+          ) : (
+            <span className="text-muted-foreground">-</span>
+          );
+        },
+      },
+      {
+        accessorKey: "status",
+        header: () => <div className="text-center">상태</div>,
+        cell: ({ row }) => (
+          <div className="text-center">
+            <Badge
+              variant="outline"
+              className={
+                row.original.status === "REGISTERED"
+                  ? "border-green-500 bg-green-50 text-green-700"
+                  : "border-gray-400 bg-gray-50 text-gray-600"
+              }
+            >
+              {PARTICIPANT_STATUS_LABELS[row.original.status]}
+            </Badge>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "registered_at",
+        header: () => <div className="text-right">등록일</div>,
+        cell: ({ row }) => (
+          <div className="text-muted-foreground text-right">
+            {formatDate(row.original.registered_at)}
+          </div>
+        ),
+      },
+    ],
+    [],
+  );
+
   return (
     <>
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -154,70 +232,12 @@ export function ParticipantsTab({
       ) : filteredParticipants.length === 0 ? (
         <EmptyState>조건에 맞는 참가자가 없습니다.</EmptyState>
       ) : (
-        <div className="overflow-hidden rounded-md border">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50">
-              <tr>
-                <th className="px-4 py-3 text-left font-medium">이름</th>
-                <th className="px-4 py-3 text-left font-medium">학번</th>
-                <th className="px-4 py-3 text-left font-medium">스터디</th>
-                <th className="px-4 py-3 text-center font-medium">상태</th>
-                <th className="px-4 py-3 text-right font-medium">등록일</th>
-              </tr>
-            </thead>
-            <tbody className="divide-border divide-y">
-              {filteredParticipants.map((participant) => (
-                <tr key={participant.participant_id}>
-                  <td className="px-4 py-3 font-medium">
-                    {participant.user_name ?? "-"}
-                  </td>
-                  <td className="text-muted-foreground px-4 py-3">
-                    {participant.user_id}
-                  </td>
-                  <td className="px-4 py-3">
-                    {(participant.studies?.length ?? 0) > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {participant.studies?.map((study) => (
-                          <Badge
-                            key={`${study.role}-${study.study_id}`}
-                            variant="outline"
-                            className={
-                              study.role === "MENTOR"
-                                ? "border-blue-500 bg-blue-50 text-blue-700"
-                                : "border-slate-300 bg-slate-50 text-slate-700"
-                            }
-                          >
-                            {study.study_name ?? "-"}
-                            <span className="ml-1 text-[11px] opacity-70">
-                              {PARTICIPANT_STUDY_ROLE_LABELS[study.role]}
-                            </span>
-                          </Badge>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <Badge
-                      variant="outline"
-                      className={
-                        participant.status === "REGISTERED"
-                          ? "border-green-500 bg-green-50 text-green-700"
-                          : "border-gray-400 bg-gray-50 text-gray-600"
-                      }
-                    >
-                      {PARTICIPANT_STATUS_LABELS[participant.status]}
-                    </Badge>
-                  </td>
-                  <td className="text-muted-foreground px-4 py-3 text-right">
-                    {formatDate(participant.registered_at)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={columns}
+          data={filteredParticipants}
+          getRowId={(participant) => String(participant.participant_id)}
+          showPagination={false}
+        />
       )}
       <div className="text-muted-foreground text-sm">
         총 {filteredParticipants.length}명 / 전체 {participants.length}명
@@ -233,61 +253,80 @@ export function TeamsTab({
   teams: Team[];
   onDeleteTeam: (team: Team) => void;
 }) {
+  const columns = useMemo<ColumnDef<Team>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: "팀",
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.name}</span>
+        ),
+      },
+      {
+        accessorKey: "topic",
+        header: "주제",
+        cell: ({ row }) => row.original.topic || "-",
+      },
+      { accessorKey: "leader_name", header: "팀장" },
+      {
+        accessorKey: "member_count",
+        header: () => <div className="text-center">인원</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.original.member_count}명</div>
+        ),
+      },
+      {
+        accessorKey: "status",
+        header: () => <div className="text-center">상태</div>,
+        cell: ({ row }) => (
+          <div className="text-center">
+            <Badge variant="outline">
+              {TEAM_STATUS_LABELS[row.original.status]}
+            </Badge>
+          </div>
+        ),
+      },
+      {
+        id: "members",
+        header: "구성원",
+        cell: ({ row }) => (
+          <div className="flex flex-wrap gap-1.5">
+            {row.original.members.map((member) => (
+              <Badge key={member.user_id} variant="secondary">
+                {member.user_name}
+                {member.role === "LEADER" && " (팀장)"}
+              </Badge>
+            ))}
+          </div>
+        ),
+      },
+    ],
+    [],
+  );
+
   return (
     <>
       {teams.length === 0 ? (
         <EmptyState>등록된 팀이 없습니다.</EmptyState>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {teams.map((team) => (
-            <div
-              key={team.hackathon_team_id}
-              className="space-y-3 rounded-md border p-4"
+        <DataTable
+          columns={columns}
+          data={teams}
+          getRowId={(team) => String(team.hackathon_team_id)}
+          renderActionCell={(team) => (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-destructive"
+              aria-label={`${team.name} 팀 삭제`}
+              onClick={() => onDeleteTeam(team)}
             >
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium">{team.name}</p>
-                    <Badge variant="outline">
-                      {TEAM_STATUS_LABELS[team.status]}
-                    </Badge>
-                  </div>
-                  {team.topic && (
-                    <p className="text-muted-foreground mt-1 text-sm">
-                      {team.topic}
-                    </p>
-                  )}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive shrink-0"
-                  onClick={() => onDeleteTeam(team)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="text-muted-foreground text-sm">
-                팀장 {team.leader_name} · {team.member_count}명
-              </div>
-
-              <ul className="flex flex-wrap gap-1.5">
-                {team.members.map((member) => (
-                  <li
-                    key={member.user_id}
-                    className="bg-muted rounded-full px-2.5 py-1 text-xs"
-                  >
-                    {member.user_name}
-                    {member.role === "LEADER" && (
-                      <span className="text-muted-foreground"> (팀장)</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+          actionColumnSize={56}
+          showPagination={false}
+        />
       )}
       <div className="text-muted-foreground text-sm">총 {teams.length}팀</div>
     </>
@@ -305,6 +344,47 @@ export function CriteriaTab({
   onEdit: (criterion: Criterion) => void;
   onDelete: (criterion: Criterion) => void;
 }) {
+  const columns = useMemo<ColumnDef<Criterion>[]>(
+    () => [
+      {
+        accessorKey: "display_order",
+        header: () => <div className="text-center">순서</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.original.display_order}</div>
+        ),
+      },
+      {
+        accessorKey: "name",
+        header: "평가 기준",
+        cell: ({ row }) => (
+          <div>
+            <p className="font-medium">{row.original.name}</p>
+            {row.original.description && (
+              <p className="text-muted-foreground mt-1 text-sm">
+                {row.original.description}
+              </p>
+            )}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "max_score",
+        header: () => <div className="text-center">만점</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.original.max_score}</div>
+        ),
+      },
+      {
+        accessorKey: "weight",
+        header: () => <div className="text-center">가중치</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.original.weight}</div>
+        ),
+      },
+    ],
+    [],
+  );
+
   return (
     <>
       <div className="flex justify-end">
@@ -317,48 +397,34 @@ export function CriteriaTab({
       {criteria.length === 0 ? (
         <EmptyState>등록된 평가 기준이 없습니다.</EmptyState>
       ) : (
-        <div className="divide-border divide-y rounded-md border">
-          {criteria.map((criterion) => (
-            <div
-              key={criterion.criterion_id}
-              className="flex items-center justify-between gap-4 px-4 py-3"
-            >
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">
-                    #{criterion.display_order}
-                  </span>
-                  <p className="font-medium">{criterion.name}</p>
-                  <Badge variant="outline">
-                    만점 {criterion.max_score} · 가중치 {criterion.weight}
-                  </Badge>
-                </div>
-                {criterion.description && (
-                  <p className="text-muted-foreground mt-1 text-sm">
-                    {criterion.description}
-                  </p>
-                )}
-              </div>
-              <div className="flex shrink-0 gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onEdit(criterion)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive"
-                  onClick={() => onDelete(criterion)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <DataTable
+          columns={columns}
+          data={criteria}
+          getRowId={(criterion) => String(criterion.criterion_id)}
+          renderActionCell={(criterion) => (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`${criterion.name} 평가 기준 수정`}
+                onClick={() => onEdit(criterion)}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-destructive"
+                aria-label={`${criterion.name} 평가 기준 삭제`}
+                onClick={() => onDelete(criterion)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </>
+          )}
+          actionColumnSize={96}
+          showPagination={false}
+        />
       )}
     </>
   );
@@ -373,55 +439,73 @@ export function EvaluationTab({
   summaryByTeam: Map<number, EvaluationSummary>;
   onScore: (team: Team) => void;
 }) {
+  const columns = useMemo<ColumnDef<Team>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: "팀",
+        cell: ({ row }) => (
+          <>
+            <p className="font-medium">{row.original.name}</p>
+            <p className="text-muted-foreground text-xs">
+              {row.original.leader_name} · {row.original.member_count}명
+            </p>
+          </>
+        ),
+      },
+      {
+        id: "evaluator_count",
+        header: () => <div className="text-center">평가자</div>,
+        cell: ({ row }) => (
+          <div className="text-center">
+            {summaryByTeam.get(row.original.hackathon_team_id)
+              ?.evaluator_count ?? 0}
+            명
+          </div>
+        ),
+      },
+      {
+        id: "average_total_score",
+        header: () => <div className="text-center">평균점수</div>,
+        cell: ({ row }) => {
+          const summary = summaryByTeam.get(row.original.hackathon_team_id);
+          return (
+            <div className="text-center">
+              {summary ? summary.average_total_score.toFixed(2) : "-"}
+            </div>
+          );
+        },
+      },
+      {
+        id: "sum_total_score",
+        header: () => <div className="text-center">합계</div>,
+        cell: ({ row }) => {
+          const summary = summaryByTeam.get(row.original.hackathon_team_id);
+          return (
+            <div className="text-center">
+              {summary ? summary.sum_total_score.toFixed(1) : "-"}
+            </div>
+          );
+        },
+      },
+    ],
+    [summaryByTeam],
+  );
+
   return teams.length === 0 ? (
     <EmptyState>등록된 팀이 없습니다.</EmptyState>
   ) : (
-    <div className="overflow-hidden rounded-md border">
-      <table className="w-full text-sm">
-        <thead className="bg-muted/50">
-          <tr>
-            <th className="px-4 py-3 text-left font-medium">팀</th>
-            <th className="px-4 py-3 text-center font-medium">평가자</th>
-            <th className="px-4 py-3 text-center font-medium">평균점수</th>
-            <th className="px-4 py-3 text-center font-medium">합계</th>
-            <th className="px-4 py-3 text-right font-medium">심사</th>
-          </tr>
-        </thead>
-        <tbody className="divide-border divide-y">
-          {teams.map((team) => {
-            const s = summaryByTeam.get(team.hackathon_team_id);
-            return (
-              <tr key={team.hackathon_team_id}>
-                <td className="px-4 py-3">
-                  <p className="font-medium">{team.name}</p>
-                  <p className="text-muted-foreground text-xs">
-                    {team.leader_name} · {team.member_count}명
-                  </p>
-                </td>
-                <td className="px-4 py-3 text-center">
-                  {s?.evaluator_count ?? 0}명
-                </td>
-                <td className="px-4 py-3 text-center">
-                  {s ? s.average_total_score.toFixed(2) : "-"}
-                </td>
-                <td className="px-4 py-3 text-center">
-                  {s ? s.sum_total_score.toFixed(1) : "-"}
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onScore(team)}
-                  >
-                    점수 입력
-                  </Button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+    <DataTable
+      columns={columns}
+      data={teams}
+      getRowId={(team) => String(team.hackathon_team_id)}
+      renderActionCell={(team) => (
+        <Button variant="outline" size="sm" onClick={() => onScore(team)}>
+          점수 입력
+        </Button>
+      )}
+      showPagination={false}
+    />
   );
 }
 
@@ -438,6 +522,36 @@ export function AwardsTab({
   onEdit: (award: Award) => void;
   onDelete: (award: Award) => void;
 }) {
+  const columns = useMemo<ColumnDef<Award>[]>(
+    () => [
+      {
+        accessorKey: "award_name",
+        header: "수상명",
+        cell: ({ row }) => (
+          <p className="font-medium">{row.original.award_name}</p>
+        ),
+      },
+      {
+        accessorKey: "award_rank",
+        header: () => <div className="text-center">순위</div>,
+        cell: ({ row }) => (
+          <div className="text-center">
+            {typeof row.original.award_rank === "number"
+              ? `${row.original.award_rank}위`
+              : "-"}
+          </div>
+        ),
+      },
+      {
+        id: "team_name",
+        header: "수상 팀",
+        cell: ({ row }) =>
+          row.original.team_name || teamName(row.original.hackathon_team_id),
+      },
+    ],
+    [teamName],
+  );
+
   return (
     <>
       <div className="flex justify-end">
@@ -450,43 +564,34 @@ export function AwardsTab({
       {awards.length === 0 ? (
         <EmptyState>등록된 수상 내역이 없습니다.</EmptyState>
       ) : (
-        <div className="divide-border divide-y rounded-md border">
-          {awards.map((award) => (
-            <div
-              key={award.award_id}
-              className="flex items-center justify-between gap-4 px-4 py-3"
-            >
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="font-medium">{award.award_name}</p>
-                  {typeof award.award_rank === "number" && (
-                    <Badge variant="outline">{award.award_rank}위</Badge>
-                  )}
-                </div>
-                <p className="text-muted-foreground mt-1 text-sm">
-                  {award.team_name || teamName(award.hackathon_team_id)}
-                </p>
-              </div>
-              <div className="flex shrink-0 gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onEdit(award)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive"
-                  onClick={() => onDelete(award)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <DataTable
+          columns={columns}
+          data={awards}
+          getRowId={(award) => String(award.award_id)}
+          renderActionCell={(award) => (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`${award.award_name} 수상 수정`}
+                onClick={() => onEdit(award)}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-destructive"
+                aria-label={`${award.award_name} 수상 삭제`}
+                onClick={() => onDelete(award)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </>
+          )}
+          actionColumnSize={96}
+          showPagination={false}
+        />
       )}
     </>
   );

@@ -44,8 +44,8 @@ export interface Study {
   recruit_status: RecruitStatus;
   one_liner: string;
   explanation: string;
-  start_time: string; // HH:mm 형식
-  end_time: string; // HH:mm 형식
+  start_time: string | null; // HH:mm 형식
+  end_time: string | null; // HH:mm 형식
   week_day: WeekDay;
   location: string;
   location_detail: string | null;

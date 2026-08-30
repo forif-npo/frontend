@@ -1,15 +1,18 @@
 "use client";
 
 import * as React from "react";
-import {
+import type {
   ColumnDef,
   RowSelectionState,
+  Table as ReactTable,
+  OnChangeFn,
+  SortingState,
+} from "@tanstack/react-table";
+import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  OnChangeFn,
-  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import { MoreVertical } from "lucide-react";
@@ -33,9 +36,18 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   renderRowActions?: (row: TData) => React.ReactNode;
+  /** 드롭다운 대신 행 안에 직접 표시할 액션 UI */
+  renderActionCell?: (row: TData) => React.ReactNode;
+  actionColumnSize?: number;
   showPagination?: boolean;
+  /** 선택 결과를 사용하는 화면에서만 선택 열을 노출한다. */
+  enableRowSelection?: boolean;
   getRowId?: (row: TData, index: number) => string;
   onSelectedRowsChange?: (rows: TData[]) => void;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>;
+  renderSelectionHeader?: (table: ReactTable<TData>) => React.ReactNode;
+  emptyMessage?: React.ReactNode;
   sorting?: SortingState;
   onSortingChange?: OnChangeFn<SortingState>;
   /** 목록 맥락이 바뀌면 비제어 정렬을 초기화할 식별자 */
@@ -46,39 +58,52 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   renderRowActions,
+  renderActionCell,
+  actionColumnSize,
   showPagination = true,
+  enableRowSelection = false,
   getRowId,
   onSelectedRowsChange,
+  rowSelection: controlledRowSelection,
+  onRowSelectionChange: controlledOnRowSelectionChange,
+  renderSelectionHeader,
+  emptyMessage = "No results.",
   sorting: controlledSorting,
   onSortingChange: controlledOnSortingChange,
   resetSortingKey,
 }: DataTableProps<TData, TValue>) {
   const [localSorting, setLocalSorting] = React.useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  const [localRowSelection, setLocalRowSelection] =
+    React.useState<RowSelectionState>({});
   const sorting = controlledSorting ?? localSorting;
   const onSortingChange = controlledOnSortingChange ?? setLocalSorting;
   const isExternallySorted = controlledSorting !== undefined;
+  const rowSelection = controlledRowSelection ?? localRowSelection;
+  const onRowSelectionChange =
+    controlledOnRowSelectionChange ?? setLocalRowSelection;
 
   const displayColumns = React.useMemo<ColumnDef<TData, TValue>[]>(() => {
     const selectionColumn: ColumnDef<TData, TValue> = {
       id: "select",
       header: ({ table }) => (
         <div className="flex items-center justify-center">
-          <input
-            type="checkbox"
-            aria-label="모든 행 선택"
-            className="h-4 w-4 cursor-pointer"
-            checked={table.getIsAllPageRowsSelected()}
-            ref={(el) => {
-              if (!el) return;
-              el.indeterminate =
-                !table.getIsAllPageRowsSelected() &&
-                table.getIsSomePageRowsSelected();
-            }}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              table.toggleAllPageRowsSelected(e.target.checked)
-            }
-          />
+          {renderSelectionHeader?.(table) ?? (
+            <input
+              type="checkbox"
+              aria-label="모든 행 선택"
+              className="h-4 w-4 cursor-pointer"
+              checked={table.getIsAllPageRowsSelected()}
+              ref={(el) => {
+                if (!el) return;
+                el.indeterminate =
+                  !table.getIsAllPageRowsSelected() &&
+                  table.getIsSomePageRowsSelected();
+              }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                table.toggleAllPageRowsSelected(e.target.checked)
+              }
+            />
+          )}
         </div>
       ),
       cell: ({ row }) => (
@@ -102,36 +127,52 @@ export function DataTable<TData, TValue>({
     const actionColumn: ColumnDef<TData, TValue> = {
       id: "actions",
       header: () => <div className="w-10" />,
-      cell: ({ row }) => (
-        <div className="relative flex items-center justify-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="text-muted-foreground h-8 w-8"
-              >
-                <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">행 액션 열기</span>
-              </Button>
-            </DropdownMenuTrigger>
+      cell: ({ row }) =>
+        renderActionCell ? (
+          <div className="flex items-center justify-end gap-1">
+            {renderActionCell(row.original)}
+          </div>
+        ) : (
+          <div className="relative flex items-center justify-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground h-8 w-8"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                  <span className="sr-only">행 액션 열기</span>
+                </Button>
+              </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="z-50 w-44">
-              {renderRowActions?.(row.original)}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ),
+              <DropdownMenuContent align="end" className="z-50 w-44">
+                {renderRowActions?.(row.original)}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ),
       enableSorting: false,
       enableHiding: false,
-      size: 56,
+      size: actionColumnSize ?? (renderActionCell ? 320 : 56),
     };
 
-    return renderRowActions
-      ? [selectionColumn, ...columns, actionColumn]
-      : [selectionColumn, ...columns];
-  }, [columns, renderRowActions]);
+    const columnsWithSelection = enableRowSelection
+      ? [selectionColumn, ...columns]
+      : columns;
+
+    return renderRowActions || renderActionCell
+      ? [...columnsWithSelection, actionColumn]
+      : columnsWithSelection;
+  }, [
+    actionColumnSize,
+    columns,
+    enableRowSelection,
+    renderActionCell,
+    renderRowActions,
+    renderSelectionHeader,
+  ]);
 
   const table = useReactTable({
     data,
@@ -140,10 +181,10 @@ export function DataTable<TData, TValue>({
       sorting,
       rowSelection,
     },
-    enableRowSelection: true,
+    enableRowSelection,
     enableMultiSort: true,
     onSortingChange,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange,
     getRowId,
     getCoreRowModel: getCoreRowModel(),
     // 제어형 목록은 페이지가 요청한 정렬 결과를 그대로 표시한다.
@@ -168,8 +209,10 @@ export function DataTable<TData, TValue>({
   }, [onSelectedRowsChange, selectedRows]);
 
   React.useEffect(() => {
-    setRowSelection({});
-  }, [data]);
+    if (controlledRowSelection === undefined) {
+      setLocalRowSelection({});
+    }
+  }, [controlledRowSelection, data]);
 
   React.useEffect(() => {
     if (controlledSorting === undefined) {
@@ -255,7 +298,7 @@ export function DataTable<TData, TValue>({
                   colSpan={displayColumns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {emptyMessage}
                 </TableCell>
               </TableRow>
             )}

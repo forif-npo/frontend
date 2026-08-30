@@ -35,6 +35,7 @@ import {
   ShieldCheck,
   UserCog,
   BookUser,
+  ClipboardList,
   Users,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -50,8 +51,9 @@ const menuItems = {
   studyManagement: {
     label: "스터디 관리",
     items: [
-      { title: "스터디 목록", url: "/studies", icon: BookOpen },
       { title: "스터디 승인", url: "/studies/approval", icon: CheckCircle },
+      { title: "스터디 목록", url: "/studies", icon: BookOpen },
+      { title: "신청자 관리", url: "/study-applications", icon: ClipboardList },
       { title: "멘티 인증서 발급", url: "/certificates", icon: Award },
       {
         title: "멘토 확인서 발급",

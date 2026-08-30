@@ -1,5 +1,5 @@
-import type { ApiResponse } from "../types/api";
-import { apiClient } from "../utils/api-client";
+import type { ApiResponse } from "@core/types/api";
+import { apiClient } from "@core/utils/api-client";
 
 /**
  * Study created by the mentor (GET /api/v1/studies/me/created)

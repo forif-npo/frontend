@@ -3,6 +3,7 @@ import { Body, Label } from "@ui/components/server";
 import { Button, Pagination } from "@ui/components/client";
 import { useState } from "react";
 import { Panel, PanelHeader } from "../shared";
+import { CompetitionTypeBadge } from "../CompetitionTypeBadge";
 import type { ActiveStage } from "./types";
 
 const TEAMS_PAGE_SIZE = 5;
@@ -46,12 +47,12 @@ export function TeamRecruitingPanel({
             className="border-divider-gray-light hover:bg-surface-gray-subtler group -mx-6 grid grid-cols-1 items-center gap-3 border-b px-6 py-4 transition-colors sm:grid-cols-[1fr_80px_auto]"
           >
             <div>
-              <Label
-                size="s"
-                className="text-text-basic mb-0.5 block font-bold"
-              >
-                {team.name}
-              </Label>
+              <div className="mb-0.5 flex flex-wrap items-center gap-2">
+                <Label size="s" className="text-text-basic font-bold">
+                  {team.name}
+                </Label>
+                <CompetitionTypeBadge competitionType={team.competition_type} />
+              </div>
               <Body size="s" className="text-text-subtle">
                 {team.topic || "주제 미정"}
               </Body>

@@ -14,14 +14,17 @@ import type {
   UserProfile,
   UserStudiesResponse,
   StudyApplicationsResponse,
-} from "@core/my-page/api";
+} from "@/features/my-page/api";
 import type {
   CreatedStudy,
   IssuedMentorConfirmation,
-} from "@core/study-manage/api";
-import type { StudyApplicationSummary } from "@core/study-application/api";
-import type { Semester } from "@core/semester/api";
-import type { ProductApplication, ProductSummary } from "@core/products/api";
+} from "@/features/study-manage/api";
+import type { StudyApplicationSummary } from "@/features/study-application/api";
+import type { Semester } from "@/features/semester/api";
+import type {
+  ProductApplication,
+  ProductSummary,
+} from "@/features/products/api";
 
 interface MyPageClientProps {
   profile: UserProfile;

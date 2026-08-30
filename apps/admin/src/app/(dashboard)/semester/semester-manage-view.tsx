@@ -29,7 +29,7 @@ import {
   getSemesters,
   type Semester,
   type SemesterChangePreview,
-} from "@core/semester/api";
+} from "@/features/semester/api";
 import { getAdminCandidates, type AdminCandidate } from "./api";
 import { ScheduleSection } from "./schedule-section";
 

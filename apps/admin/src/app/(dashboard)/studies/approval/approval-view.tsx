@@ -246,6 +246,7 @@ export function ApprovalView({
           columns={approvalColumns}
           data={initialData}
           showPagination={false}
+          enableRowSelection
           sorting={sorting}
           onSortingChange={handleSortingChange}
           getRowId={getStudyRowId}

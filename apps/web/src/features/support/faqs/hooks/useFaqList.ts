@@ -6,13 +6,19 @@ import type { FaqPost } from "../types/faq.type";
 
 type UseFaqListOptions = {
   query: string;
+  category: string;
   page: number;
   pageSize: number;
 };
 
 const normalize = (value: string) => value.trim().toLowerCase();
 
-export const useFaqList = ({ query, page, pageSize }: UseFaqListOptions) => {
+export const useFaqList = ({
+  query,
+  category,
+  page,
+  pageSize,
+}: UseFaqListOptions) => {
   const [allItems, setAllItems] = useState<FaqPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -50,7 +56,7 @@ export const useFaqList = ({ query, page, pageSize }: UseFaqListOptions) => {
     };
   }, []);
 
-  const filtered = useMemo(() => {
+  const searchedItems = useMemo(() => {
     const q = normalize(query);
     if (!q) return allItems;
 
@@ -61,6 +67,22 @@ export const useFaqList = ({ query, page, pageSize }: UseFaqListOptions) => {
       return title.includes(q) || content.includes(q) || tag.includes(q);
     });
   }, [allItems, query]);
+
+  const categories = useMemo(
+    () =>
+      Array.from(
+        new Set(allItems.map((item) => item.tag.trim()).filter(Boolean)),
+      ).sort((left, right) => left.localeCompare(right, "ko")),
+    [allItems],
+  );
+
+  const filtered = useMemo(
+    () =>
+      category
+        ? searchedItems.filter((item) => item.tag.trim() === category)
+        : searchedItems,
+    [searchedItems, category],
+  );
 
   const total = filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -76,6 +98,7 @@ export const useFaqList = ({ query, page, pageSize }: UseFaqListOptions) => {
     total,
     totalPages,
     page: safePage,
+    categories,
     isLoading,
     errorMessage,
   };

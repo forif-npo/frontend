@@ -62,12 +62,12 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   const stateClasses = disabled
     ? "bg-gray-10 border-gray-30 cursor-not-allowed"
     : checked
-      ? "bg-gray-0 border-primary cursor-pointer"
-      : "bg-gray-0 border-gray-30 hover:border-primary cursor-pointer";
+      ? "bg-surface-white border-border-primary cursor-pointer"
+      : "bg-surface-white border-border-gray hover:border-border-primary cursor-pointer";
 
   return (
     <div
-      className="focus:ring-primary flex items-center gap-3 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+      className="focus:ring-border-primary flex items-center gap-3 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
       role="radio"
       aria-checked={checked}
       aria-disabled={disabled}
@@ -80,7 +80,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({
             disabled && checked
               ? "bg-gray-40"
               : checked
-                ? "bg-primary"
+                ? "bg-button-primary-fill"
                 : "bg-transparent"
           } rounded-full transition-all duration-300 ease-in-out ${innerCircleSizes[size]} `}
         />
@@ -119,6 +119,7 @@ type RadioButtonGroupProps = {
   disabled?: boolean;
   size?: "sm" | "md" | "lg";
   direction?: "horizontal" | "vertical";
+  className?: string;
 };
 
 export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
@@ -129,6 +130,7 @@ export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
   disabled = false,
   size = "md",
   direction = "vertical",
+  className,
 }) => {
   const directionClasses = direction === "horizontal" ? "flex-row" : "flex-col";
   const gapStyle = direction === "horizontal" ? "gap-5" : "gap-2";
@@ -180,7 +182,7 @@ export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
 
   return (
     <div
-      className={`flex ${directionClasses} ${gapStyle}`}
+      className={`flex ${directionClasses} ${gapStyle} ${className ?? ""}`}
       ref={groupRef}
       role="radiogroup"
     >

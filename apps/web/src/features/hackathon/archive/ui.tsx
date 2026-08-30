@@ -8,6 +8,7 @@ export const ARCHIVE_ELEVATED_PANEL_CLASS_NAME = `${ARCHIVE_PANEL_CLASS_NAME} sh
 export const ARCHIVE_FILTER_WIDTH_CLASS_NAME = {
   hackathon: "w-[280px]",
   techStack: "w-[208px]",
+  competitionType: "w-[208px]",
 } as const;
 
 export const ARCHIVE_CARD_SUMMARY_MIN_HEIGHT_CLASS_NAME = "min-h-[60px]";

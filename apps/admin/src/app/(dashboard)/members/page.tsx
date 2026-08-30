@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { getCurrentSemester } from "@core/semester/api";
+import { getCurrentSemester } from "@/features/semester/api";
 import { fetchMembers } from "./api";
 import { MembersView } from "./members-view";
 import { MemberSemesterLabel } from "./types";

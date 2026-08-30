@@ -1,7 +1,10 @@
 "use server";
 
 import { auth } from "@/auth";
-import { updateUserPhoneNumber, updateUserProfile } from "@core/my-page/api";
+import {
+  updateUserPhoneNumber,
+  updateUserProfile,
+} from "@/features/my-page/api";
 
 interface UpdateMyProfileInput {
   profile?: {

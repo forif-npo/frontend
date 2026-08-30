@@ -1,17 +1,14 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
-import type {
-  DuesMember,
-  DuesPageData,
-  DuesSort,
-  UpdateDuesPayload,
-} from "./types";
+import { appendSortingParams } from "@/lib/list-sorting";
+import type { SortingState } from "@tanstack/react-table";
+import type { DuesMember, DuesPageData, UpdateDuesPayload } from "./types";
 
 interface FetchDuesParams {
   page?: number;
   size?: number;
   search?: string;
-  sort?: DuesSort;
+  sorting?: SortingState;
   accessToken: string;
 }
 
@@ -42,10 +39,6 @@ function mapMember(value: unknown): DuesMember {
     userId: pickNumber(item.userId, item.user_id),
     userName: pickString(item.userName, item.user_name) ?? "이름 없음",
     department: pickString(item.department),
-    currentStudyName: pickString(
-      item.currentStudyName,
-      item.current_study_name,
-    ),
     duesPaid: pickBoolean(item.duesPaid, item.dues_paid),
     googleFormSubmitted: pickBoolean(
       item.googleFormSubmitted,
@@ -90,17 +83,20 @@ export async function fetchDues({
   page = 0,
   size = 20,
   search,
-  sort = "NEEDS_ATTENTION",
+  sorting = [],
   accessToken,
 }: FetchDuesParams): Promise<DuesPageData> {
   const response = await apiClient
     .get("api/v1/admin/dues", {
-      searchParams: {
-        page: page.toString(),
-        size: size.toString(),
-        sort,
-        ...(search ? { search } : {}),
-      },
+      searchParams: (() => {
+        const params = new URLSearchParams({
+          page: page.toString(),
+          size: size.toString(),
+        });
+        if (search) params.set("search", search);
+        appendSortingParams(params, sorting);
+        return params;
+      })(),
       headers: { Authorization: `Bearer ${accessToken}` },
     })
     .json<ApiResponse<unknown>>();

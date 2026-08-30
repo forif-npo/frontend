@@ -1,7 +1,7 @@
 import type { RecruitStatus } from "@/types/study";
 import type { BadgeProps } from "@ui/components/server";
 import { DIFFICULTY_OPTIONS, RECRUIT_STATUS_OPTIONS } from "./options";
-import { fallbackSemester } from "@core/semester/api";
+import { fallbackSemester } from "@/features/semester/api";
 
 /**
  * 요일 변환 함수
@@ -33,7 +33,7 @@ export function formatStudyTimeRange(
 ): string {
   const s = formatStudyTime(start);
   const e = formatStudyTime(end);
-  if (!s && !e) return "";
+  if (!s || !e) return "";
   return `${s} - ${e}`;
 }
 

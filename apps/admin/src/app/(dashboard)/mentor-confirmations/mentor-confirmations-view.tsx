@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ExternalLink } from "lucide-react";
@@ -16,14 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { DataTable } from "@/components/list/data-table";
 import type { SemesterLabel, Study } from "../studies/types";
 import {
   getMentorConfirmationViewUrl,
@@ -44,6 +44,8 @@ const dateToIso = (date: Date | undefined) =>
   date ? format(date, "yyyy-MM-dd") : "";
 const isoToDate = (iso: string) =>
   iso ? new Date(`${iso}T00:00:00`) : undefined;
+type MentorConfirmationTarget =
+  MentorConfirmationTargetsData["targets"][number];
 
 export function MentorConfirmationsView({
   studies,
@@ -128,37 +130,40 @@ export function MentorConfirmationsView({
     }
   };
 
-  const handleDownload = async (userId: number) => {
-    if (selectedStudyId == null || downloadingUserId != null) return;
+  const handleDownload = useCallback(
+    async (userId: number) => {
+      if (selectedStudyId == null || downloadingUserId != null) return;
 
-    const downloadWindow = window.open("", "_blank");
-    if (downloadWindow == null) {
-      toast.error("팝업이 차단되어 확인서를 열 수 없습니다.");
-      return;
-    }
-
-    setDownloadingUserId(userId);
-    try {
-      const confirmation = await getMentorConfirmationViewUrl(
-        selectedStudyId,
-        userId,
-      );
-      if (confirmation.confirmation_url) {
-        downloadWindow.location.href = confirmation.confirmation_url;
-      } else {
-        downloadWindow.close();
+      const downloadWindow = window.open("", "_blank");
+      if (downloadWindow == null) {
+        toast.error("팝업이 차단되어 확인서를 열 수 없습니다.");
+        return;
       }
-    } catch (error) {
-      downloadWindow.close();
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "확인서를 불러오지 못했습니다.",
-      );
-    } finally {
-      setDownloadingUserId(null);
-    }
-  };
+
+      setDownloadingUserId(userId);
+      try {
+        const confirmation = await getMentorConfirmationViewUrl(
+          selectedStudyId,
+          userId,
+        );
+        if (confirmation.confirmation_url) {
+          downloadWindow.location.href = confirmation.confirmation_url;
+        } else {
+          downloadWindow.close();
+        }
+      } catch (error) {
+        downloadWindow.close();
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "확인서를 불러오지 못했습니다.",
+        );
+      } finally {
+        setDownloadingUserId(null);
+      }
+    },
+    [downloadingUserId, selectedStudyId],
+  );
 
   const handleSemesterChange = (semester: string) => {
     setSelectedStudyId(null);
@@ -167,6 +172,68 @@ export function MentorConfirmationsView({
     setIsLoading(false);
     router.push(`/mentor-confirmations?semester=${semester}`);
   };
+
+  const rowSelection = useMemo<RowSelectionState>(
+    () =>
+      Object.fromEntries(Array.from(selectedIds, (id) => [String(id), true])),
+    [selectedIds],
+  );
+  const updateRowSelection = (updater: SetStateAction<RowSelectionState>) => {
+    setSelectedIds((current) => {
+      const currentSelection = Object.fromEntries(
+        Array.from(current, (id) => [String(id), true]),
+      );
+      const nextSelection =
+        typeof updater === "function" ? updater(currentSelection) : updater;
+      return new Set(
+        Object.entries(nextSelection)
+          .filter(([, selected]) => selected)
+          .map(([id]) => Number(id)),
+      );
+    });
+  };
+  const columns = useMemo<ColumnDef<MentorConfirmationTarget>[]>(
+    () => [
+      {
+        accessorKey: "user_name",
+        header: "이름",
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.user_name}</span>
+        ),
+      },
+      { accessorKey: "user_id", header: "학번" },
+      {
+        accessorKey: "department",
+        header: "학과",
+        cell: ({ row }) => row.original.department ?? "-",
+      },
+      {
+        accessorKey: "confirmation_status",
+        header: () => <div className="text-center">발급 상태</div>,
+        cell: ({ row }) => (
+          <div className="text-center">
+            {row.original.confirmation_status === 1 ? (
+              <Button
+                type="button"
+                variant="link"
+                className="h-auto p-0 text-blue-600"
+                disabled={downloadingUserId != null}
+                onClick={() => handleDownload(row.original.user_id)}
+              >
+                {downloadingUserId === row.original.user_id
+                  ? "불러오는 중..."
+                  : "발급됨"}
+                <ExternalLink className="ml-1 h-3 w-3" />
+              </Button>
+            ) : (
+              <span className="text-muted-foreground">미발급</span>
+            )}
+          </div>
+        ),
+      },
+    ],
+    [downloadingUserId, handleDownload],
+  );
 
   const targets = targetsData?.targets ?? [];
 
@@ -243,77 +310,15 @@ export function MentorConfirmationsView({
           해당 스터디에 등록된 멘토가 없습니다.
         </div>
       ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12">
-                  <input
-                    type="checkbox"
-                    aria-label="전체 선택"
-                    checked={selectedIds.size === targets.length}
-                    onChange={() =>
-                      setSelectedIds((current) =>
-                        current.size === targets.length
-                          ? new Set()
-                          : new Set(targets.map((target) => target.user_id)),
-                      )
-                    }
-                  />
-                </TableHead>
-                <TableHead>이름</TableHead>
-                <TableHead>학번</TableHead>
-                <TableHead>학과</TableHead>
-                <TableHead className="text-center">발급 상태</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {targets.map((target) => (
-                <TableRow key={target.user_id}>
-                  <TableCell>
-                    <input
-                      type="checkbox"
-                      aria-label={`${target.user_name} 선택`}
-                      checked={selectedIds.has(target.user_id)}
-                      onChange={() =>
-                        setSelectedIds((current) => {
-                          const next = new Set(current);
-                          next.has(target.user_id)
-                            ? next.delete(target.user_id)
-                            : next.add(target.user_id);
-                          return next;
-                        })
-                      }
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {target.user_name}
-                  </TableCell>
-                  <TableCell>{target.user_id}</TableCell>
-                  <TableCell>{target.department ?? "-"}</TableCell>
-                  <TableCell className="text-center">
-                    {target.confirmation_status === 1 ? (
-                      <Button
-                        type="button"
-                        variant="link"
-                        className="h-auto p-0 text-blue-600"
-                        disabled={downloadingUserId != null}
-                        onClick={() => handleDownload(target.user_id)}
-                      >
-                        {downloadingUserId === target.user_id
-                          ? "불러오는 중..."
-                          : "발급됨"}
-                        <ExternalLink className="ml-1 h-3 w-3" />
-                      </Button>
-                    ) : (
-                      <span className="text-muted-foreground">미발급</span>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <DataTable
+          columns={columns}
+          data={targets}
+          getRowId={(target) => String(target.user_id)}
+          enableRowSelection
+          rowSelection={rowSelection}
+          onRowSelectionChange={updateRowSelection}
+          showPagination={false}
+        />
       )}
     </div>
   );

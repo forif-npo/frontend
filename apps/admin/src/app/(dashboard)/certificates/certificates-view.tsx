@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -16,14 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { DataTable } from "@/components/list/data-table";
 import { ActivitySemesterToggle } from "@/components/list/activity-semester-toggle";
 import { handleApiError } from "@core/utils/api-client";
 import type { SemesterLabel, Study } from "../studies/types";
@@ -93,6 +94,7 @@ const SIG_PREVIEW_W = 460;
 const SIG_PREVIEW_H = 208;
 const SIG_EXPORT_W = 1150;
 const SIG_EXPORT_H = 520;
+type CertificateTarget = CertificateTargetsData["targets"][number];
 
 interface CertificatesViewProps {
   studies: Study[];
@@ -408,21 +410,102 @@ export function CertificatesView({
     router.push(`/certificates?semester=${semester}`);
   };
 
-  const toggleSelect = (userId: number) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(userId)) {
-        next.delete(userId);
-      } else {
-        next.add(userId);
-      }
-      return next;
-    });
-  };
-
   // 선택된 대상 중 자격 미달자
   const ineligibleSelected = (targetsData?.targets ?? []).filter(
     (t) => selectedIds.has(t.user_id) && !t.eligible,
+  );
+
+  const rowSelection = useMemo<RowSelectionState>(
+    () =>
+      Object.fromEntries(Array.from(selectedIds, (id) => [String(id), true])),
+    [selectedIds],
+  );
+  const updateRowSelection = (updater: SetStateAction<RowSelectionState>) => {
+    setSelectedIds((current) => {
+      const currentSelection = Object.fromEntries(
+        Array.from(current, (id) => [String(id), true]),
+      );
+      const nextSelection =
+        typeof updater === "function" ? updater(currentSelection) : updater;
+      return new Set(
+        Object.entries(nextSelection)
+          .filter(([, selected]) => selected)
+          .map(([id]) => Number(id)),
+      );
+    });
+  };
+  const requiredAttendance = targetsData?.required_attendance ?? 5;
+  const columns = useMemo<ColumnDef<CertificateTarget>[]>(
+    () => [
+      {
+        accessorKey: "user_name",
+        header: "이름",
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.user_name}</span>
+        ),
+      },
+      { accessorKey: "user_id", header: "학번" },
+      {
+        accessorKey: "department",
+        header: "학과",
+        cell: ({ row }) => row.original.department ?? "-",
+      },
+      {
+        accessorKey: "attendance_count",
+        header: () => <div className="text-center">출석</div>,
+        cell: ({ row }) => (
+          <div
+            className={`text-center ${row.original.attendance_count >= requiredAttendance ? "font-bold text-blue-600" : ""}`}
+          >
+            {row.original.attendance_count}회
+          </div>
+        ),
+      },
+      {
+        accessorKey: "hackathon_participated",
+        header: () => <div className="text-center">해커톤</div>,
+        cell: ({ row }) => (
+          <div className="text-center">
+            {row.original.hackathon_participated ? "참여" : "미참여"}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "eligible",
+        header: () => <div className="text-center">자격</div>,
+        cell: ({ row }) => (
+          <div className="text-center">
+            {row.original.eligible ? (
+              <Badge>충족</Badge>
+            ) : (
+              <Badge variant="secondary">미달</Badge>
+            )}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "certificate_status",
+        header: () => <div className="text-center">발급 상태</div>,
+        cell: ({ row }) => (
+          <div className="text-center">
+            {row.original.certificate_status === 1 &&
+            row.original.certificate_url ? (
+              <a
+                href={row.original.certificate_url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-blue-600 hover:underline"
+              >
+                발급됨 <ExternalLink className="h-3 w-3" />
+              </a>
+            ) : (
+              <span className="text-muted-foreground">미발급</span>
+            )}
+          </div>
+        ),
+      },
+    ],
+    [requiredAttendance],
   );
 
   const executeIssue = async (ignoreEligibility: boolean) => {
@@ -641,95 +724,34 @@ export function CertificatesView({
             충족{" "}
             <span className="font-bold text-blue-600">{eligibleCount}</span>명
           </p>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">
-                    <input
-                      type="checkbox"
-                      aria-label="자격 충족자 전체 선택"
-                      checked={
-                        eligibleCount > 0 && selectedIds.size >= eligibleCount
-                      }
-                      onChange={() =>
-                        setSelectedIds((prev) =>
-                          prev.size > 0
-                            ? new Set()
-                            : new Set(
-                                targets
-                                  .filter((t) => t.eligible)
-                                  .map((t) => t.user_id),
-                              ),
-                        )
-                      }
-                    />
-                  </TableHead>
-                  <TableHead>이름</TableHead>
-                  <TableHead>학번</TableHead>
-                  <TableHead>학과</TableHead>
-                  <TableHead className="text-center">출석</TableHead>
-                  <TableHead className="text-center">해커톤</TableHead>
-                  <TableHead className="text-center">자격</TableHead>
-                  <TableHead className="text-center">발급 상태</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {targets.map((target) => (
-                  <TableRow key={target.user_id}>
-                    <TableCell>
-                      <input
-                        type="checkbox"
-                        aria-label={`${target.user_name} 선택`}
-                        checked={selectedIds.has(target.user_id)}
-                        onChange={() => toggleSelect(target.user_id)}
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {target.user_name}
-                    </TableCell>
-                    <TableCell>{target.user_id}</TableCell>
-                    <TableCell>{target.department ?? "-"}</TableCell>
-                    <TableCell
-                      className={`text-center ${
-                        target.attendance_count >=
-                        (targetsData?.required_attendance ?? 5)
-                          ? "font-bold text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      {target.attendance_count}회
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {target.hackathon_participated ? "참여" : "미참여"}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {target.eligible ? (
-                        <Badge>충족</Badge>
-                      ) : (
-                        <Badge variant="secondary">미달</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {target.certificate_status === 1 &&
-                      target.certificate_url ? (
-                        <a
-                          href={target.certificate_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-blue-600 hover:underline"
-                        >
-                          발급됨 <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        <span className="text-muted-foreground">미발급</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <DataTable
+            columns={columns}
+            data={targets}
+            getRowId={(target) => String(target.user_id)}
+            enableRowSelection
+            rowSelection={rowSelection}
+            onRowSelectionChange={updateRowSelection}
+            renderSelectionHeader={(table) => (
+              <input
+                type="checkbox"
+                aria-label="자격 충족자 전체 선택"
+                className="h-4 w-4 cursor-pointer"
+                checked={eligibleCount > 0 && selectedIds.size >= eligibleCount}
+                onChange={() =>
+                  table.setRowSelection(
+                    selectedIds.size > 0
+                      ? {}
+                      : Object.fromEntries(
+                          targets
+                            .filter((target) => target.eligible)
+                            .map((target) => [String(target.user_id), true]),
+                        ),
+                  )
+                }
+              />
+            )}
+            showPagination={false}
+          />
         </div>
       )}
 

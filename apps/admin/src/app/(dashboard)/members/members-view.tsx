@@ -1,15 +1,22 @@
 "use client";
 
-import {
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/list/dropdown-menu";
+import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
 import { formatPhoneNumber } from "@core/utils/phone-number";
@@ -20,7 +27,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
-import { deleteCurrentSemesterMember } from "./api";
+import { deleteCurrentSemesterMember, updateMemberInfo } from "./api";
 import { columns } from "./columns";
 import { Member, MemberSemesterLabel } from "./types";
 
@@ -49,6 +56,9 @@ export function MembersView({
 }: MembersViewProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [editTarget, setEditTarget] = useState<Member | null>(null);
+  const [editForm, setEditForm] = useState({ department: "", phoneNum: "" });
   const {
     searchQuery,
     setSearchQuery,
@@ -89,7 +99,34 @@ export function MembersView({
   };
 
   const handleEditMember = (member: Member) => {
-    console.log("부원 정보 수정", member);
+    setEditTarget(member);
+    setEditForm({
+      department: member.department ?? "",
+      phoneNum: member.phoneNum ?? "",
+    });
+  };
+
+  const handleUpdateMember = async () => {
+    if (!editTarget || isUpdating) return;
+
+    const department = editForm.department.trim();
+    const phoneNum = editForm.phoneNum.trim();
+    if (!department || !phoneNum) {
+      toast.error("학과와 전화번호를 모두 입력해주세요.");
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      await updateMemberInfo(editTarget.userId, { department, phoneNum });
+      toast.success("부원 정보가 수정되었습니다.");
+      setEditTarget(null);
+      router.refresh();
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const canDeleteCurrentSemesterMember =
@@ -116,18 +153,6 @@ export function MembersView({
     } finally {
       setIsDeleting(false);
     }
-  };
-
-  const handleGrantMentorRole = (member: Member) => {
-    console.log("멘토 권한 부여", member);
-  };
-
-  const handleGrantAdminRole = (member: Member) => {
-    console.log("운영진 권한 부여", member);
-  };
-
-  const handleManageAdmin = (member: Member) => {
-    console.log("운영진 관리", member);
   };
 
   const displayTotalCount =
@@ -180,16 +205,6 @@ export function MembersView({
                   현재 학기 부원 삭제
                 </DropdownMenuItem>
               )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleGrantMentorRole(member)}>
-                멘토 권한 부여
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleGrantAdminRole(member)}>
-                운영진 권한 부여
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleManageAdmin(member)}>
-                운영진 관리
-              </DropdownMenuItem>
             </>
           )}
         />
@@ -202,6 +217,66 @@ export function MembersView({
           onPageChange={handlePageChange}
         />
       </div>
+
+      <Dialog
+        open={editTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !isUpdating) setEditTarget(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>부원 정보 수정</DialogTitle>
+            <DialogDescription>
+              {editTarget && `${editTarget.userName} (${editTarget.userId})`}
+              님의 학과와 전화번호를 수정합니다. 학번은 수정할 수 없습니다.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="member-department">학과</Label>
+              <Input
+                id="member-department"
+                maxLength={50}
+                value={editForm.department}
+                onChange={(event) =>
+                  setEditForm((form) => ({
+                    ...form,
+                    department: event.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="member-phone-num">전화번호</Label>
+              <Input
+                id="member-phone-num"
+                type="tel"
+                maxLength={20}
+                value={editForm.phoneNum}
+                onChange={(event) =>
+                  setEditForm((form) => ({
+                    ...form,
+                    phoneNum: event.target.value,
+                  }))
+                }
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              disabled={isUpdating}
+              onClick={() => setEditTarget(null)}
+            >
+              취소
+            </Button>
+            <Button disabled={isUpdating} onClick={handleUpdateMember}>
+              {isUpdating ? "저장 중..." : "저장"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

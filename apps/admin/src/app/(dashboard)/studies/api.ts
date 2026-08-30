@@ -5,7 +5,7 @@ import type {
   StudyRejectRequest,
 } from "@core/types/api";
 import type { SemesterInfo } from "./types";
-import { getCurrentSemester as fetchActiveSemester } from "@core/semester/api";
+import { getCurrentSemester as fetchActiveSemester } from "@/features/semester/api";
 import type { SortingState } from "@tanstack/react-table";
 import { appendSortingParams } from "@/lib/list-sorting";
 

@@ -21,7 +21,7 @@ import { studyOpenSchema, type StudyOpenValues } from "@core/schemas";
 import {
   cancelStudyCreationApplication,
   type StudyApplicationDetail,
-} from "@core/study-application/api";
+} from "@/features/study-application/api";
 import { handleApiError } from "@core/utils/api-client";
 import { getStudyTagLabel } from "@/constants/study-tags";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";

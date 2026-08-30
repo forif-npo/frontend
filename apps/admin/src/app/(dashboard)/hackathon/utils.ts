@@ -9,7 +9,6 @@ import {
 export const EMPTY_FORM: HackathonFormState = {
   held_year: String(new Date().getFullYear()),
   held_semester: "1",
-  event_round: "1",
   title: "",
   description: "",
   location: "",
@@ -86,11 +85,6 @@ export function getNextStatus(status: HackathonStatus) {
   return index >= 0 ? HACKATHON_STATUS_FLOW[index + 1] : undefined;
 }
 
-/** 종료되지 않은(진행 중인) 해커톤 여부 */
-export function isActiveHackathon(status: HackathonStatus) {
-  return status !== "ENDED";
-}
-
 /** 발표 자료 파일 URL을 다운로드 URL로 변환한다. (해당 없으면 null) */
 export function toPresentationDownloadUrl(fileUrl?: string | null) {
   if (!fileUrl || !fileUrl.includes("/api/v1/files/")) {
@@ -115,7 +109,6 @@ export function toFormState(hackathon: Hackathon): HackathonFormState {
   return {
     held_year: String(hackathon.held_year),
     held_semester: String(hackathon.held_semester),
-    event_round: String(hackathon.event_round),
     title: hackathon.title ?? "",
     description: hackathon.description ?? "",
     location: hackathon.location ?? "",

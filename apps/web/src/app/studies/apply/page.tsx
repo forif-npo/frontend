@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertModal, SelectBox } from "@ui/components/client";
-import { getStudyApplicationStatus } from "@core/my-page/api";
+import { getStudyApplicationStatus } from "@/features/study/apply/api";
 import { StudyApplyInfoStep } from "@/features/study/apply/study-apply-info-step";
 import { StudyApplyReasonStep } from "@/features/study/apply/study-apply-reason-step";
 import { StudyApplyComplete } from "@/features/study/apply/StudyApplyComplete";

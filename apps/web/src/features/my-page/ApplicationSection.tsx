@@ -12,8 +12,8 @@ import type {
   StudyApplicationsResponse,
   ApplicationDetail,
   UserStudiesResponse,
-} from "@core/my-page/api";
-import type { Semester } from "@core/semester/api";
+} from "@/features/my-page/api";
+import type { Semester } from "@/features/semester/api";
 
 interface ApplicationSectionProps {
   applicationsData: StudyApplicationsResponse;

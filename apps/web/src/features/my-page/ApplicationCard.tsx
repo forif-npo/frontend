@@ -1,6 +1,6 @@
 import { Button } from "@ui/components/client";
 import { Badge } from "@ui/components/server";
-import type { ApplicationDetail } from "@core/my-page/api";
+import type { ApplicationDetail } from "@/features/my-page/api";
 import { StudyImage } from "@/components/study/ui/StudyImage";
 import {
   getNumericDifficultyBadgeVariant,

@@ -36,6 +36,7 @@ export type SemesterLabel = "전체" | `${number}-${number}` | "그 외";
  */
 export interface StudyEditForm {
   secondary_mentor_id: number | null;
+  secondary_mentor_name: string | null;
   study_name: string;
   one_liner: string;
   explanation: string;

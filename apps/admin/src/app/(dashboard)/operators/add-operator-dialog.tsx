@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { handleApiError } from "@core/utils/api-client";
-import { getCurrentSemester, type Semester } from "@core/semester/api";
+import { getCurrentSemester, type Semester } from "@/features/semester/api";
 import { addOperator } from "./api";
 
 interface AddOperatorDialogProps {
@@ -37,7 +37,9 @@ export function AddOperatorDialog({
   useEffect(() => {
     if (!open) return;
     setForm(EMPTY_FORM);
-    getCurrentSemester().then(setSemester).catch(() => setSemester(null));
+    getCurrentSemester()
+      .then(setSemester)
+      .catch(() => setSemester(null));
   }, [open]);
 
   const handleSubmit = async () => {

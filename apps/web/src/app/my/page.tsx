@@ -4,14 +4,14 @@ import {
   getUserProfile,
   getUserStudies,
   getStudyApplications,
-} from "@core/my-page/api";
+} from "@/features/my-page/api";
 import {
   getMyCreatedStudies,
   getMyIssuedMentorConfirmations,
-} from "@core/study-manage/api";
-import { getMyStudyApplications } from "@core/study-application/api";
-import { getCurrentSemester } from "@core/semester/api";
-import { getMyProductApplications, getProducts } from "@core/products/api";
+} from "@/features/study-manage/api";
+import { getMyStudyApplications } from "@/features/study-application/api";
+import { getCurrentSemester } from "@/features/semester/api";
+import { getMyProductApplications, getProducts } from "@/features/products/api";
 import { MyPageClient } from "./MyPageClient";
 
 export default async function MyPage() {
