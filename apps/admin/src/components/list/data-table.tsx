@@ -275,13 +275,15 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() ? "selected" : undefined}
-                  className="hover:bg-muted/40"
+                  className="hover:bg-muted/40 h-12"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
                       className={
-                        cell.column.id === "actions" ? "text-center" : ""
+                        cell.column.id === "actions"
+                          ? "h-12 px-4 py-0 text-center"
+                          : "h-12 px-4 py-0"
                       }
                     >
                       {flexRender(
