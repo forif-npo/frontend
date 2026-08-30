@@ -196,17 +196,38 @@ export function DataTable<TData, TValue>({
       : {}),
   });
 
-  const selectedRows = React.useMemo(
+  const selectedRowIdsKey = React.useMemo(
     () =>
-      data.filter((row, index) =>
-        Boolean(rowSelection[getRowId?.(row, index) ?? String(index)]),
-      ),
-    [data, getRowId, rowSelection],
+      Object.entries(rowSelection)
+        .filter(([, selected]) => selected)
+        .map(([rowId]) => rowId)
+        .sort()
+        .join(","),
+    [rowSelection],
   );
+  const dataRef = React.useRef(data);
+  const getRowIdRef = React.useRef(getRowId);
+  const onSelectedRowsChangeRef = React.useRef(onSelectedRowsChange);
+  const lastReportedSelectionKeyRef = React.useRef<string | null>(null);
 
   React.useEffect(() => {
-    onSelectedRowsChange?.(selectedRows);
-  }, [onSelectedRowsChange, selectedRows]);
+    dataRef.current = data;
+    getRowIdRef.current = getRowId;
+    onSelectedRowsChangeRef.current = onSelectedRowsChange;
+  }, [data, getRowId, onSelectedRowsChange]);
+
+  React.useEffect(() => {
+    if (lastReportedSelectionKeyRef.current === selectedRowIdsKey) return;
+
+    lastReportedSelectionKeyRef.current = selectedRowIdsKey;
+    const currentData = dataRef.current;
+    const currentGetRowId = getRowIdRef.current;
+    onSelectedRowsChangeRef.current?.(
+      currentData.filter((row, index) =>
+        Boolean(rowSelection[currentGetRowId?.(row, index) ?? String(index)]),
+      ),
+    );
+  }, [rowSelection, selectedRowIdsKey]);
 
   React.useEffect(() => {
     if (controlledRowSelection === undefined) {
