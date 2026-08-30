@@ -28,12 +28,17 @@ export default function GlobalError({
           textAlign: "center",
           fontFamily:
             "Pretendard, -apple-system, BlinkMacSystemFont, sans-serif",
-          color: "#2d2d2d",
-          backgroundColor: "#f6f8fb",
+          color: "var(--krds-color-gray-90)",
+          backgroundColor: "var(--krds-color-gray-5)",
         }}
       >
         <p
-          style={{ color: "#16408d", fontSize: 15, fontWeight: 700, margin: 0 }}
+          style={{
+            color: "var(--krds-color-primary-70)",
+            fontSize: 15,
+            fontWeight: 700,
+            margin: 0,
+          }}
         >
           ERROR
         </p>
@@ -42,7 +47,7 @@ export default function GlobalError({
         </h1>
         <p
           style={{
-            color: "#6b7280",
+            color: "var(--krds-color-gray-50)",
             fontSize: 16,
             lineHeight: 1.6,
             maxWidth: 420,
@@ -54,7 +59,13 @@ export default function GlobalError({
           잠시 후 다시 시도해 주세요.
         </p>
         {error.digest && (
-          <p style={{ color: "#9ca3af", fontSize: 13, margin: 0 }}>
+          <p
+            style={{
+              color: "var(--krds-color-gray-40)",
+              fontSize: 13,
+              margin: 0,
+            }}
+          >
             오류 코드: {error.digest}
           </p>
         )}
@@ -68,8 +79,8 @@ export default function GlobalError({
               padding: "12px 24px",
               fontSize: 16,
               fontWeight: 600,
-              color: "#ffffff",
-              backgroundColor: "#16408d",
+              color: "var(--krds-color-gray-0)",
+              backgroundColor: "var(--krds-color-primary-70)",
             }}
           >
             다시 시도
@@ -84,9 +95,9 @@ export default function GlobalError({
               padding: "12px 24px",
               fontSize: 16,
               fontWeight: 600,
-              color: "#2d2d2d",
-              backgroundColor: "#ffffff",
-              border: "1px solid #d1d5db",
+              color: "var(--krds-color-gray-90)",
+              backgroundColor: "var(--krds-color-gray-0)",
+              border: "1px solid var(--krds-color-gray-20)",
             }}
           >
             홈으로

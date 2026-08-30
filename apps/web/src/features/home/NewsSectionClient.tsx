@@ -56,7 +56,7 @@ export function NewsSectionClient({ announcements, mediumPosts }: Props) {
       </div>
 
       {/* Tabs + 더보기 */}
-      <div className="mb-6 flex items-center justify-between border-b border-[#e5e8eb]">
+      <div className="border-border-gray-light mb-6 flex items-center justify-between border-b">
         <div className="flex">
           {TABS.map((tab) => (
             <button
@@ -64,7 +64,7 @@ export function NewsSectionClient({ announcements, mediumPosts }: Props) {
               onClick={() => setActiveTab(tab.id)}
               className={`cursor-pointer px-3 pb-3 pt-1 text-[15px] leading-[1.5] transition-colors ${
                 activeTab === tab.id
-                  ? "border-b-2 border-[#052b57] font-bold text-[#052b57]"
+                  ? "border-secondary-80 text-secondary-80 border-b-2 font-bold"
                   : "text-text-subtle hover:text-text-basic"
               }`}
             >
@@ -87,7 +87,7 @@ export function NewsSectionClient({ announcements, mediumPosts }: Props) {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-start">
         {visibleItems.length === 0 && (
-          <div className="col-span-2 py-12 text-center text-[15px] text-[#8b95a1]">
+          <div className="text-text-disabled text-body-s col-span-2 py-12 text-center">
             항목이 없습니다.
           </div>
         )}
@@ -107,12 +107,12 @@ function NewsCard({ item }: { item: NewsItem }) {
       href={item.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noopener noreferrer" : undefined}
-      className="group flex h-[180px] flex-col overflow-hidden rounded-[12px] border border-[#e5e8eb] bg-white transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-md"
+      className="border-border-gray-light bg-surface-white group flex h-[180px] flex-col overflow-hidden rounded-xl border transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-md"
     >
       {/* content row */}
       <div className="flex flex-1 gap-0">
         {/* 썸네일 (로드 실패/부재 시 기본 이미지로 폴백) */}
-        <div className="relative w-[180px] shrink-0 overflow-hidden bg-[#dfe8f4]">
+        <div className="bg-primary-10 relative w-[180px] shrink-0 overflow-hidden">
           <ImageWithFallback
             src={item.imageUrl}
             alt={item.title}

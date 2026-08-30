@@ -55,7 +55,7 @@ export function StudySection({ studiesData }: StudySectionProps) {
       {/* Sort and Count */}
       <div className="mb-4 flex items-center justify-between">
         <p className="text-text-basic text-[19px] font-bold leading-[1.5]">
-          스터디 <span className="text-[#0b50d0]">{totalCount}</span>개
+          스터디 <span className="text-text-primary">{totalCount}</span>개
         </p>
 
         <StudySortControl value={sortOrder} onChange={setSortOrder} />

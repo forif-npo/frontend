@@ -10,7 +10,11 @@ import { HackathonBanner } from "./HackathonBanner";
 import { HackathonCard } from "./HackathonCard";
 import styles from "../home-animations.module.css";
 
-const CARD_COLORS = ["#e5e2ef", "#cee4ee", "#f5f5f5"];
+const CARD_BACKGROUND_CLASSES = [
+  "bg-graphic-10",
+  "bg-secondary-10",
+  "bg-gray-5",
+] as const;
 
 function orderHackathons(hackathons: Hackathon[]) {
   return [...hackathons].sort(
@@ -166,7 +170,11 @@ export function HackathonSection() {
             ) : mobileItem ? (
               <HackathonCard
                 submission={mobileItem}
-                bgColor={CARD_COLORS[mobileCurrentPage % CARD_COLORS.length]}
+                imageBackgroundClassName={
+                  CARD_BACKGROUND_CLASSES[
+                    mobileCurrentPage % CARD_BACKGROUND_CLASSES.length
+                  ]
+                }
               />
             ) : null}
           </div>
@@ -226,7 +234,11 @@ export function HackathonSection() {
                     <HackathonCard
                       key={submission.submission_id}
                       submission={submission}
-                      bgColor={CARD_COLORS[index % CARD_COLORS.length]}
+                      imageBackgroundClassName={
+                        CARD_BACKGROUND_CLASSES[
+                          index % CARD_BACKGROUND_CLASSES.length
+                        ]
+                      }
                     />
                   ))}
               {!loading && submissions.length === 0 && (

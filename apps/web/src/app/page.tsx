@@ -36,7 +36,7 @@ export default async function Page() {
   );
 
   return (
-    <div className="min-h-viewport overflow-x-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f7faff_42%,#ffffff_100%)] md:bg-none">
+    <div className="min-h-viewport from-surface-white via-primary-5 to-surface-white overflow-x-hidden bg-gradient-to-b md:bg-none">
       <main className="flex flex-col items-center gap-5 md:gap-8">
         <section className="hidden w-full md:flex md:flex-col md:items-center md:gap-4">
           <Carousel
@@ -54,7 +54,7 @@ export default async function Page() {
           <ForifIntroBanner variant="mobile-section" />
         </section>
         {/* Supported By */}
-        <div className="mb-6 w-full bg-gradient-to-br from-[#0b50d0] via-[#4f86ea] to-white py-10 md:mb-16 md:h-[240px] md:bg-gradient-to-r md:py-0">
+        <div className="from-primary-60 via-primary-40 to-surface-white mb-6 w-full bg-gradient-to-br py-10 md:mb-16 md:h-[240px] md:bg-gradient-to-r md:py-0">
           <div className="max-w-main mx-auto flex h-full flex-col justify-center gap-6 px-4 md:gap-0 md:px-8 lg:px-0">
             <Heading size="m" className="mb-6 text-left text-white">
               Supported by
