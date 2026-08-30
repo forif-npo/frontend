@@ -1,17 +1,8 @@
 "use client";
 
 import { SortableHeader } from "@/components/list/sortable-header";
-import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
 import { HACKATHON_STATUS_LABELS, type Hackathon } from "./types";
-
-const STATUS_BADGE_CLASS: Record<Hackathon["status"], string> = {
-  RECRUITING: "border-blue-500 bg-blue-50 text-blue-700",
-  TEAM_BUILDING: "border-indigo-500 bg-indigo-50 text-indigo-700",
-  IN_PROGRESS: "border-green-500 bg-green-50 text-green-700",
-  JUDGING: "border-yellow-500 bg-yellow-50 text-yellow-700",
-  ENDED: "border-gray-500 bg-gray-50 text-gray-700",
-};
 
 function formatDate(value?: string) {
   if (!value) return "-";
@@ -45,16 +36,11 @@ export const columns: ColumnDef<Hackathon>[] = [
   {
     accessorKey: "status",
     header: () => <div className="text-center text-xs">상태</div>,
-    cell: ({ row }) => {
-      const status = row.original.status;
-      return (
-        <div className="text-center">
-          <Badge variant="outline" className={STATUS_BADGE_CLASS[status]}>
-            {HACKATHON_STATUS_LABELS[status]}
-          </Badge>
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <div className="text-center">
+        {HACKATHON_STATUS_LABELS[row.original.status]}
+      </div>
+    ),
   },
   {
     accessorKey: "starts_at",
