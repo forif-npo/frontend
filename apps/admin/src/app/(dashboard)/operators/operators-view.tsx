@@ -31,6 +31,7 @@ import * as XLSX from "xlsx";
 import { AddOperatorDialog } from "./add-operator-dialog";
 import {
   deleteOperator,
+  fetchOperators,
   updateOperator,
   updateOperatorProfileImage,
 } from "./api";
@@ -86,6 +87,8 @@ export function OperatorsView({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Operator | null>(null);
+  const [selectedOperators, setSelectedOperators] = useState<Operator[]>([]);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [editForm, setEditForm] = useState<OperatorEditForm>({
     title: "",
     department: "",
@@ -95,27 +98,49 @@ export function OperatorsView({
     profileImage: null,
   });
 
-  const handleDownloadExcel = () => {
-    if (initialData.length === 0) {
-      alert("다운로드할 데이터가 없습니다.");
-      return;
+  const handleDownloadExcel = async () => {
+    if (isDownloading) return;
+
+    setIsDownloading(true);
+    try {
+      const operators =
+        selectedOperators.length > 0
+          ? selectedOperators
+          : (
+              await fetchOperators({
+                semester: currentSemester,
+                page: 0,
+                size: 10000,
+                search: initialSearch || undefined,
+                sorting,
+              })
+            ).content;
+
+      if (operators.length === 0) {
+        toast.error("다운로드할 데이터가 없습니다.");
+        return;
+      }
+
+      const ws = XLSX.utils.json_to_sheet(
+        operators.map((operator) => ({
+          학번: operator.userId,
+          부서: operator.department,
+          직급: operator.title,
+          이름: operator.name,
+          전화번호: formatPhoneNumber(operator.phoneNum),
+        })),
+      );
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Operators");
+
+      const date = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(wb, `operators_${currentSemester}_${date}.xlsx`);
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsDownloading(false);
     }
-
-    const ws = XLSX.utils.json_to_sheet(
-      initialData.map((operator) => ({
-        학번: operator.userId,
-        부서: operator.department,
-        직급: operator.title,
-        이름: operator.name,
-        전화번호: formatPhoneNumber(operator.phoneNum),
-      })),
-    );
-
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Operators");
-
-    const date = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(wb, `operators_${currentSemester}_${date}.xlsx`);
   };
 
   const handleEditOperator = (operator: Operator) => {
@@ -227,10 +252,11 @@ export function OperatorsView({
           <Button
             variant="outline"
             className="gap-2"
+            disabled={isDownloading}
             onClick={handleDownloadExcel}
           >
             <Download className="h-4 w-4" />
-            엑셀로 다운로드
+            {isDownloading ? "다운로드 중..." : "엑셀로 다운로드"}
           </Button>
         </div>
       </div>
@@ -253,6 +279,9 @@ export function OperatorsView({
           columns={columns}
           data={initialData}
           showPagination={false}
+          enableRowSelection
+          getRowId={(operator) => String(operator.id)}
+          onSelectedRowsChange={setSelectedOperators}
           sorting={sorting}
           onSortingChange={handleSortingChange}
           renderRowActions={(operator) => (

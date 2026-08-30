@@ -10,8 +10,11 @@ import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Download } from "lucide-react";
 import type { SortingState } from "@tanstack/react-table";
+import { useState } from "react";
+import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
+import { fetchMentors } from "./api";
 import { columns } from "./columns";
 import { Mentor, MentorSemesterLabel } from "./types";
 
@@ -36,6 +39,8 @@ export function MentorsView({
   initialSearch = "",
   initialSorting = [],
 }: MentorsViewProps) {
+  const [selectedMentors, setSelectedMentors] = useState<Mentor[]>([]);
+  const [isDownloading, setIsDownloading] = useState(false);
   const {
     searchQuery,
     setSearchQuery,
@@ -51,27 +56,51 @@ export function MentorsView({
     initialSorting,
   });
 
-  const handleDownloadExcel = () => {
-    if (initialData.length === 0) {
-      alert("다운로드할 데이터가 없습니다.");
-      return;
+  const handleDownloadExcel = async () => {
+    if (isDownloading) return;
+
+    setIsDownloading(true);
+    try {
+      const mentors =
+        selectedMentors.length > 0
+          ? selectedMentors
+          : (
+              await fetchMentors({
+                size: 10000,
+                page: 0,
+                semester: currentSemester,
+                search: initialSearch || undefined,
+                sorting,
+              })
+            ).content;
+
+      if (mentors.length === 0) {
+        toast.error("다운로드할 데이터가 없습니다.");
+        return;
+      }
+
+      const ws = XLSX.utils.json_to_sheet(
+        mentors.map((mentor) => ({
+          학번: mentor.userId,
+          학과: mentor.department,
+          이름: mentor.name,
+          전화번호: formatPhoneNumber(mentor.phoneNum),
+          스터디명: mentor.studyName,
+        })),
+      );
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Mentors");
+
+      const date = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(wb, `mentors_${currentSemester}_${date}.xlsx`);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "다운로드에 실패했습니다.",
+      );
+    } finally {
+      setIsDownloading(false);
     }
-
-    const ws = XLSX.utils.json_to_sheet(
-      initialData.map((mentor) => ({
-        학번: mentor.userId,
-        학과: mentor.department,
-        이름: mentor.name,
-        전화번호: formatPhoneNumber(mentor.phoneNum),
-        스터디명: mentor.studyName,
-      })),
-    );
-
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Mentors");
-
-    const date = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(wb, `mentors_${currentSemester}_${date}.xlsx`);
   };
 
   const displayTotalCount =
@@ -89,10 +118,11 @@ export function MentorsView({
         <Button
           variant="outline"
           className="gap-2"
+          disabled={isDownloading}
           onClick={handleDownloadExcel}
         >
           <Download className="h-4 w-4" />
-          엑셀로 다운로드
+          {isDownloading ? "다운로드 중..." : "엑셀로 다운로드"}
         </Button>
       </div>
 
@@ -108,6 +138,9 @@ export function MentorsView({
           columns={columns}
           data={initialData}
           showPagination={false}
+          enableRowSelection
+          getRowId={(mentor) => String(mentor.userId)}
+          onSelectedRowsChange={setSelectedMentors}
           sorting={sorting}
           onSortingChange={handleSortingChange}
         />

@@ -27,7 +27,11 @@ import { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
-import { deleteCurrentSemesterMember, updateMemberInfo } from "./api";
+import {
+  deleteCurrentSemesterMember,
+  fetchMembers,
+  updateMemberInfo,
+} from "./api";
 import { columns } from "./columns";
 import { Member, MemberSemesterLabel } from "./types";
 
@@ -59,6 +63,8 @@ export function MembersView({
   const [isUpdating, setIsUpdating] = useState(false);
   const [editTarget, setEditTarget] = useState<Member | null>(null);
   const [editForm, setEditForm] = useState({ department: "", phoneNum: "" });
+  const [selectedMembers, setSelectedMembers] = useState<Member[]>([]);
+  const [isDownloading, setIsDownloading] = useState(false);
   const {
     searchQuery,
     setSearchQuery,
@@ -74,28 +80,50 @@ export function MembersView({
     initialSorting,
   });
 
-  const handleDownloadExcel = () => {
-    if (initialData.length === 0) {
-      alert("다운로드할 데이터가 없습니다.");
-      return;
+  const handleDownloadExcel = async () => {
+    if (isDownloading) return;
+
+    setIsDownloading(true);
+    try {
+      const members =
+        selectedMembers.length > 0
+          ? selectedMembers
+          : (
+              await fetchMembers({
+                size: 10000,
+                page: 0,
+                semester: currentSemester,
+                search: initialSearch || undefined,
+                sorting,
+              })
+            ).content;
+
+      if (members.length === 0) {
+        toast.error("다운로드할 데이터가 없습니다.");
+        return;
+      }
+
+      const ws = XLSX.utils.json_to_sheet(
+        members.map((member) => ({
+          학번: member.userId,
+          학과: member.department,
+          이름: member.userName,
+          전화번호: formatPhoneNumber(member.phoneNum),
+          "멘토 여부": member.isMentor ? "Y" : "N",
+          "운영진 여부": member.isAdmin ? "Y" : "N",
+        })),
+      );
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Members");
+
+      const date = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(wb, `members_${currentSemester}_${date}.xlsx`);
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsDownloading(false);
     }
-
-    const ws = XLSX.utils.json_to_sheet(
-      initialData.map((member) => ({
-        학번: member.userId,
-        학과: member.department,
-        이름: member.userName,
-        전화번호: formatPhoneNumber(member.phoneNum),
-        "멘토 여부": member.isMentor ? "Y" : "N",
-        "운영진 여부": member.isAdmin ? "Y" : "N",
-      })),
-    );
-
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Members");
-
-    const date = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(wb, `members_${currentSemester}_${date}.xlsx`);
   };
 
   const handleEditMember = (member: Member) => {
@@ -170,10 +198,11 @@ export function MembersView({
         <Button
           variant="outline"
           className="gap-2"
+          disabled={isDownloading}
           onClick={handleDownloadExcel}
         >
           <Download className="h-4 w-4" />
-          엑셀로 다운로드
+          {isDownloading ? "다운로드 중..." : "엑셀로 다운로드"}
         </Button>
       </div>
 
@@ -189,6 +218,9 @@ export function MembersView({
           columns={columns}
           data={initialData}
           showPagination={false}
+          enableRowSelection
+          getRowId={(member) => String(member.userId)}
+          onSelectedRowsChange={setSelectedMembers}
           sorting={sorting}
           onSortingChange={handleSortingChange}
           renderRowActions={(member) => (
