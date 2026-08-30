@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { getCurrentSemesterSchedules } from "@/features/semester/schedule-api";
 import { parseSortingParams } from "@/lib/list-sorting";
 import { fetchStudyApplications } from "./api";
 import { StudyApplicationsView } from "./study-applications-view";
@@ -22,18 +23,27 @@ export default async function Page({
   const parsedPage = params.page ? Number.parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
   const sorting = parseSortingParams(params.sort);
-  const applications = await fetchStudyApplications({
-    accessToken: session.access_token,
-    page,
-    search: params.search,
-    sorting,
-  });
+  const [applications, schedules] = await Promise.all([
+    fetchStudyApplications({
+      accessToken: session.access_token,
+      page,
+      search: params.search,
+      sorting,
+    }),
+    getCurrentSemesterSchedules(),
+  ]);
+  const canDecideAutonomousStudyApplications = schedules.some(
+    (schedule) => schedule.phase === "MENTEE_REVIEW" && schedule.open,
+  );
 
   return (
     <StudyApplicationsView
       initialData={applications}
       initialSearch={params.search ?? ""}
       initialSorting={sorting}
+      canDecideAutonomousStudyApplications={
+        canDecideAutonomousStudyApplications
+      }
     />
   );
 }
