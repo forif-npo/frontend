@@ -7,6 +7,7 @@ export * from "./Chip";
 export * from "./Detail";
 export * from "./Display";
 export * from "./Divider";
+export * from "./EmptyState";
 export * from "./Heading";
 export * from "./HintText";
 export * from "./InfoBox";

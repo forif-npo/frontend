@@ -1,4 +1,5 @@
 import React from "react";
+import { EmptyState } from "@ui/components/server";
 import { StudyCard } from "./StudyCard";
 import { Study } from "@/types/study";
 
@@ -17,10 +18,12 @@ export const StudyCardGrid: React.FC<StudyCardGridProps> = ({
 }) => {
   if (studies.length === 0) {
     return (
-      <div className="flex h-64 flex-col items-center justify-center text-gray-500">
-        <p className="mb-2 text-lg">검색 결과가 없습니다</p>
-        <p className="text-sm">다른 검색어나 필터를 시도해보세요</p>
-      </div>
+      <EmptyState
+        className="h-64"
+        title="검색 결과가 없습니다"
+        description="다른 검색어나 필터를 시도해보세요"
+        titleClassName="text-lg"
+      />
     );
   }
 

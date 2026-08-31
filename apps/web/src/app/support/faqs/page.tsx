@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { Pagination, RadioButtonGroup } from "@ui/components/client";
+import { EmptyState } from "@ui/components/server";
 import { SearchBar } from "@/features/support/components/SearchBar";
 import { SearchResultCount } from "@/features/support/components/SearchResultCount";
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
@@ -97,9 +98,7 @@ export default function FaqPage() {
       )}
 
       {!isLoading && !errorMessage && items.length === 0 && (
-        <div className="py-12 text-center text-sm text-gray-500">
-          검색 결과가 없습니다.
-        </div>
+        <EmptyState title="검색 결과가 없습니다." />
       )}
 
       {!isLoading && !errorMessage && items.length > 0 && (
