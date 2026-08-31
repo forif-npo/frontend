@@ -2,9 +2,9 @@ import Link from "next/link";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
 import {
   PRODUCT_SOURCE_LABELS,
-  PRODUCT_STATUS_BADGE_VARIANTS,
-  PRODUCT_STATUS_LABELS,
+  PRODUCT_OPERATION_STATUS_BADGE_VARIANTS,
 } from "./constants";
+import { PRODUCT_OPERATION_STATUS_LABELS } from "@core/products";
 import type { ProductDetail } from "./api";
 import { ProductThumbnail } from "./ProductThumbnail";
 
@@ -20,7 +20,7 @@ function safeExternalUrl(url: string | null): string | null {
 export function ProductDetailView({ product }: ProductDetailViewProps) {
   const serviceUrl = safeExternalUrl(product.service_url);
   const githubUrl = safeExternalUrl(product.github_url);
-  const isVisitable = product.status === "LIVE" && !!serviceUrl;
+  const isVisitable = product.operation_status === "LIVE" && !!serviceUrl;
 
   return (
     <div className="mx-auto max-w-[900px]">
@@ -44,8 +44,10 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       <div className="mb-8 flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <Badge
-            label={PRODUCT_STATUS_LABELS[product.status]}
-            variant={PRODUCT_STATUS_BADGE_VARIANTS[product.status]}
+            label={PRODUCT_OPERATION_STATUS_LABELS[product.operation_status]}
+            variant={
+              PRODUCT_OPERATION_STATUS_BADGE_VARIANTS[product.operation_status]
+            }
             appearance="solid-pastel"
             size="small"
           />

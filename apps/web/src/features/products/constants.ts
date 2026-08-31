@@ -1,15 +1,13 @@
-import type { ProductStatus } from "./api";
+import type { ProductOperationStatus } from "./api";
 
-export { PRODUCT_SOURCE_LABELS, PRODUCT_STATUS_LABELS } from "@core/products";
+export { PRODUCT_SOURCE_LABELS } from "@core/products";
 
-export const PRODUCT_STATUS_BADGE_VARIANTS: Record<
-  ProductStatus,
+export const PRODUCT_OPERATION_STATUS_BADGE_VARIANTS: Record<
+  ProductOperationStatus,
   "primary" | "success" | "warning" | "danger" | "disabled" | "info"
 > = {
   LIVE: "success",
-  DEV: "info",
   PAUSED: "warning",
-  RETIRED: "disabled",
 };
 
 /** 목록 상단 필터 탭: 전체 + 출처별 */

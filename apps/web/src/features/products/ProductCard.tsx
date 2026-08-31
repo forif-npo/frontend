@@ -2,9 +2,9 @@ import Link from "next/link";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
 import {
   PRODUCT_SOURCE_LABELS,
-  PRODUCT_STATUS_BADGE_VARIANTS,
-  PRODUCT_STATUS_LABELS,
+  PRODUCT_OPERATION_STATUS_BADGE_VARIANTS,
 } from "./constants";
+import { PRODUCT_OPERATION_STATUS_LABELS } from "@core/products";
 import type { ProductSummary } from "./api";
 import { ProductThumbnail } from "./ProductThumbnail";
 
@@ -28,8 +28,10 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="flex flex-1 flex-col gap-2 p-4 md:gap-3 md:p-6">
         <div className="flex flex-wrap items-center gap-2">
           <Badge
-            label={PRODUCT_STATUS_LABELS[product.status]}
-            variant={PRODUCT_STATUS_BADGE_VARIANTS[product.status]}
+            label={PRODUCT_OPERATION_STATUS_LABELS[product.operation_status]}
+            variant={
+              PRODUCT_OPERATION_STATUS_BADGE_VARIANTS[product.operation_status]
+            }
             appearance="solid-pastel"
             size="small"
           />

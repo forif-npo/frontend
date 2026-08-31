@@ -1,8 +1,8 @@
 import type { ApiResponse } from "@core/types/api";
 import type {
   ProductApplicationStatus,
+  ProductOperationStatus,
   ProductSourceType,
-  ProductStatus,
 } from "@core/products";
 import { apiClient } from "@core/utils/api-client";
 
@@ -12,15 +12,16 @@ import { apiClient } from "@core/utils/api-client";
 
 export type {
   ProductApplicationStatus,
+  ProductOperationStatus,
   ProductSourceType,
-  ProductStatus,
 } from "@core/products";
 
 export interface ProductSummary {
   slug: string;
   name: string;
   one_liner: string;
-  status: ProductStatus;
+  status: ProductApplicationStatus;
+  operation_status: ProductOperationStatus;
   source_type: ProductSourceType;
   source_label: string | null;
   tags: string[];
@@ -55,6 +56,7 @@ export interface ProductApplication {
   tags: string[];
   tech_stack: string[];
   status: ProductApplicationStatus;
+  operation_status: ProductOperationStatus | null;
   reject_reason: string | null;
   applied_at: string;
 }

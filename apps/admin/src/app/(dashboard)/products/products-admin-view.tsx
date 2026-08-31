@@ -27,59 +27,60 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/page-header";
 import {
-  getProductStatusLabel,
-  PRODUCT_PUBLISHED_STATUSES,
+  PRODUCT_APPLICATION_STATUS_LABELS,
+  PRODUCT_OPERATION_STATUS_LABELS,
   PRODUCT_SOURCE_LABELS,
 } from "@core/products";
 import { handleApiError } from "@core/utils/api-client";
 import {
   approveProduct,
-  changeProductStatus,
+  changeProductOperationStatus,
   deleteProduct,
   getAdminProducts,
   rejectProduct,
   type AdminProduct,
-  type ProductStatus,
+  type ProductOperationStatus,
 } from "./api";
 import { ProductEditDialog } from "./product-edit-dialog";
 
-type StatusFilter = "ALL" | "PENDING" | "PUBLISHED" | "REJECTED";
+type StatusFilter = "ALL" | "PENDING" | "ACCEPTED" | "REJECTED";
 
 /** 링크 주입 방지: http(s) URL만 렌더링한다 */
 function safeExternalUrl(url: string | null): string | null {
   return url && /^https?:\/\//i.test(url) ? url : null;
 }
 
-function statusBadge(status: string) {
+function statusBadges(product: AdminProduct) {
+  const { status, operation_status: operationStatus } = product;
+
   switch (status) {
     case "PENDING":
       return (
         <Badge className="bg-warning-50 text-text-inverse-static">
-          {getProductStatusLabel(status)}
+          {PRODUCT_APPLICATION_STATUS_LABELS[status]}
         </Badge>
       );
     case "REJECTED":
       return (
-        <Badge variant="destructive">{getProductStatusLabel(status)}</Badge>
-      );
-    case "LIVE":
-      return (
-        <Badge className="bg-success-60 text-text-inverse-static">
-          {getProductStatusLabel(status)}
+        <Badge variant="destructive">
+          {PRODUCT_APPLICATION_STATUS_LABELS[status]}
         </Badge>
       );
-    case "DEV":
+    case "ACCEPTED":
       return (
-        <Badge className="bg-primary-60 text-text-inverse-static">
-          {getProductStatusLabel(status)}
-        </Badge>
+        <div className="flex flex-wrap justify-center gap-1">
+          <Badge className="bg-success-60 text-text-inverse-static">
+            {PRODUCT_APPLICATION_STATUS_LABELS[status]}
+          </Badge>
+          {operationStatus && (
+            <Badge
+              variant={operationStatus === "LIVE" ? "default" : "secondary"}
+            >
+              {PRODUCT_OPERATION_STATUS_LABELS[operationStatus]}
+            </Badge>
+          )}
+        </div>
       );
-    case "PAUSED":
-      return <Badge variant="secondary">{getProductStatusLabel(status)}</Badge>;
-    case "RETIRED":
-      return <Badge variant="outline">{getProductStatusLabel(status)}</Badge>;
-    default:
-      return <Badge variant="secondary">{status}</Badge>;
   }
 }
 
@@ -117,10 +118,8 @@ export function ProductsAdminView() {
         return products.filter((p) => p.status === "PENDING");
       case "REJECTED":
         return products.filter((p) => p.status === "REJECTED");
-      case "PUBLISHED":
-        return products.filter((p) =>
-          PRODUCT_PUBLISHED_STATUSES.includes(p.status as ProductStatus),
-        );
+      case "ACCEPTED":
+        return products.filter((p) => p.status === "ACCEPTED");
       default:
         return products;
     }
@@ -163,10 +162,13 @@ export function ProductsAdminView() {
     }, "반려 처리되었습니다. 신청자에게 사유가 표시됩니다.");
   };
 
-  const handleStatusChange = (product: AdminProduct, status: ProductStatus) => {
+  const handleOperationStatusChange = (
+    product: AdminProduct,
+    operationStatus: ProductOperationStatus,
+  ) => {
     runAction(
-      () => changeProductStatus(product.product_id, status),
-      "상태가 변경되었습니다.",
+      () => changeProductOperationStatus(product.product_id, operationStatus),
+      "운영 상태가 변경되었습니다.",
     );
   };
 
@@ -182,8 +184,8 @@ export function ProductsAdminView() {
     () => [
       {
         accessorKey: "status",
-        header: "상태",
-        cell: ({ row }) => statusBadge(row.original.status),
+        header: "신청·운영 상태",
+        cell: ({ row }) => statusBadges(row.original),
       },
       {
         accessorKey: "name",
@@ -273,20 +275,23 @@ export function ProductsAdminView() {
           </Button>
         </>
       )}
-      {PRODUCT_PUBLISHED_STATUSES.includes(product.status as ProductStatus) && (
+      {product.status === "ACCEPTED" && product.operation_status && (
         <Select
-          value={product.status}
+          value={product.operation_status}
           onValueChange={(value) =>
-            handleStatusChange(product, value as ProductStatus)
+            handleOperationStatusChange(
+              product,
+              value as ProductOperationStatus,
+            )
           }
         >
           <SelectTrigger className="h-8 w-[130px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {PRODUCT_PUBLISHED_STATUSES.map((status) => (
+            {(["LIVE", "PAUSED"] as const).map((status) => (
               <SelectItem key={status} value={status}>
-                {getProductStatusLabel(status)}
+                {PRODUCT_OPERATION_STATUS_LABELS[status]}
               </SelectItem>
             ))}
           </SelectContent>
@@ -318,7 +323,8 @@ export function ProductsAdminView() {
         title="서비스 관리"
         description={
           <>
-            부원들의 서비스 등록 신청을 검토하고 게시 상태를 관리합니다.
+            부원들의 서비스 등록 신청을 검토하고 승인된 서비스의 운영 상태를
+            관리합니다.
             {pendingCount > 0 && (
               <span className="text-text-warning ml-2 font-semibold">
                 검토 대기 {pendingCount}건
@@ -335,7 +341,7 @@ export function ProductsAdminView() {
         <TabsList>
           <TabsTrigger value="ALL">전체</TabsTrigger>
           <TabsTrigger value="PENDING">검토 대기</TabsTrigger>
-          <TabsTrigger value="PUBLISHED">게시 중</TabsTrigger>
+          <TabsTrigger value="ACCEPTED">승인</TabsTrigger>
           <TabsTrigger value="REJECTED">반려</TabsTrigger>
         </TabsList>
       </Tabs>
@@ -362,7 +368,7 @@ export function ProductsAdminView() {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   {detailTarget.name}
-                  {statusBadge(detailTarget.status)}
+                  {statusBadges(detailTarget)}
                 </DialogTitle>
                 <DialogDescription>
                   {detailTarget.slug}.forif.org · {detailTarget.applicant_name}(

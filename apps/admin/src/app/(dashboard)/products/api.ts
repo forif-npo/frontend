@@ -1,8 +1,8 @@
 import type { ApiResponse } from "@core/types/api";
 import type {
-  ProductAdminStatus,
+  ProductApplicationStatus,
+  ProductOperationStatus,
   ProductSourceType,
-  ProductStatus,
 } from "@core/products";
 import { apiClient } from "@core/utils/api-client";
 
@@ -12,8 +12,8 @@ import { apiClient } from "@core/utils/api-client";
 
 export type {
   ProductApplicationStatus,
+  ProductOperationStatus,
   ProductSourceType,
-  ProductStatus,
 } from "@core/products";
 
 // ── 운영진 ──────────────────────────────────────────────────────────
@@ -24,7 +24,8 @@ export interface AdminProduct {
   name: string;
   one_liner: string;
   description: string;
-  status: ProductAdminStatus;
+  status: ProductApplicationStatus;
+  operation_status: ProductOperationStatus | null;
   source_type: ProductSourceType;
   source_label: string | null;
   tags: string[];
@@ -61,12 +62,14 @@ export async function rejectProduct(
     .json();
 }
 
-export async function changeProductStatus(
+export async function changeProductOperationStatus(
   productId: number,
-  status: ProductStatus,
+  operationStatus: ProductOperationStatus,
 ): Promise<void> {
   await apiClient
-    .patch(`api/v1/admin/products/${productId}/status`, { json: { status } })
+    .patch(`api/v1/admin/products/${productId}/operation-status`, {
+      json: { operation_status: operationStatus },
+    })
     .json();
 }
 

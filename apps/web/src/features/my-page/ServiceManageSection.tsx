@@ -18,7 +18,7 @@ interface ServiceManageSectionProps {
 
 const APPLICATION_STATUS = {
   PENDING: { label: "검토 대기중", variant: "warning" },
-  APPROVED: { label: "승인", variant: "success" },
+  ACCEPTED: { label: "승인", variant: "success" },
   REJECTED: { label: "반려", variant: "danger" },
 } as const;
 
@@ -136,7 +136,7 @@ function MyServices({ applications, products }: ServiceManageSectionProps) {
     products.map((product) => [product.slug, product]),
   );
   const myProducts = applications
-    .filter((application) => application.status === "APPROVED")
+    .filter((application) => application.status === "ACCEPTED")
     .map((application) => productBySlug.get(application.slug))
     .filter((product): product is ProductSummary => Boolean(product));
 
