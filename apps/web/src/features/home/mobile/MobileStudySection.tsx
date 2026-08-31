@@ -16,7 +16,7 @@ export function MobileStudySection() {
   const items = studies.slice(0, 3).map((study) => ({
     id: study.id,
     title: study.study_name,
-    href: `/studies/${study.id}`,
+    href: `/studies/detail/${study.id}`,
   }));
 
   return (
