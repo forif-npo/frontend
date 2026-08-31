@@ -408,12 +408,12 @@ export function SmsView() {
             )}
 
             {error && (
-              <div className="rounded-md border border-red-200 bg-red-50 p-4">
-                <div className="flex items-center gap-2 text-red-800">
+              <div className="border-border-danger-light bg-danger-5 rounded-md border p-4">
+                <div className="text-text-danger flex items-center gap-2">
                   <XCircle className="h-5 w-5" />
                   <span className="font-medium">발송 실패</span>
                 </div>
-                <p className="mt-2 text-sm text-red-700">{error}</p>
+                <p className="text-text-danger mt-2 text-sm">{error}</p>
               </div>
             )}
 
@@ -425,13 +425,13 @@ export function SmsView() {
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="border-blue-200 bg-blue-50 text-blue-700"
+                    className="border-border-primary bg-primary-5 text-text-primary"
                   >
                     전체 {result.totalCount}건
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="border-green-200 bg-green-50 text-green-700"
+                    className="border-border-success-light bg-success-5 text-text-success"
                   >
                     <CheckCircle className="mr-1 h-3 w-3" />
                     성공 {result.successCount}건
@@ -439,7 +439,7 @@ export function SmsView() {
                   {result.failureCount > 0 && (
                     <Badge
                       variant="outline"
-                      className="border-red-200 bg-red-50 text-red-700"
+                      className="border-border-danger-light bg-danger-5 text-text-danger"
                     >
                       <XCircle className="mr-1 h-3 w-3" />
                       실패 {result.failureCount}건
@@ -455,8 +455,8 @@ export function SmsView() {
                         key={item.receiver}
                         className={`rounded px-3 py-2 text-sm ${
                           isSuccess
-                            ? "bg-green-50 text-green-800"
-                            : "bg-red-50 text-red-800"
+                            ? "bg-success-5 text-text-success"
+                            : "bg-danger-5 text-text-danger"
                         }`}
                       >
                         {isSuccess ? (

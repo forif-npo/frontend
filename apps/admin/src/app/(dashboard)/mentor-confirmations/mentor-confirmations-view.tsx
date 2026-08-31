@@ -248,7 +248,7 @@ export function MentorConfirmationsView({
               <Button
                 type="button"
                 variant="link"
-                className="h-auto p-0 text-blue-600"
+                className="text-text-primary h-auto p-0"
                 disabled={downloadingTargetKey != null}
                 onClick={() => handleDownload(row.original)}
               >

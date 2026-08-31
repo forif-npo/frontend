@@ -704,8 +704,8 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                           variant="outline"
                           className={
                             status.submitted
-                              ? "border-green-500 bg-green-50 text-green-700"
-                              : "border-gray-400 bg-gray-50 text-gray-600"
+                              ? "border-border-success bg-success-5 text-text-success"
+                              : "border-border-gray bg-surface-gray-subtler text-text-subtle"
                           }
                         >
                           {status.submitted ? "제출 완료" : "미제출"}

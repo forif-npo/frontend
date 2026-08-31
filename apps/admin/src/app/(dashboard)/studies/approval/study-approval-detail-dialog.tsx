@@ -11,6 +11,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { AdminStudyDetail } from "../api";
 import { getStudyTagLabel } from "../constants";
 import type { Study } from "../types";
@@ -89,8 +97,8 @@ export function StudyApprovalDetailDialog({
             )}
 
             <ReviewSection title="스터디 개요">
-              <table className="w-full">
-                <tbody className="divide-y divide-[#e5e8eb]">
+              <Table>
+                <TableBody className="divide-border divide-y">
                   <PreviewInfoRow
                     label="멘토"
                     value={
@@ -109,11 +117,11 @@ export function StudyApprovalDetailDialog({
                     label="한 줄 소개"
                     value={detail.one_liner || "-"}
                   />
-                  <tr>
-                    <td className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
+                  <TableRow>
+                    <TableCell className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
                       태그
-                    </td>
-                    <td className="py-3">
+                    </TableCell>
+                    <TableCell className="py-3">
                       {tags.length > 0 ? (
                         <span className={PREVIEW_VALUE_CLASS}>
                           {tags.map(getStudyTagLabel).join(", ")}
@@ -121,8 +129,8 @@ export function StudyApprovalDetailDialog({
                       ) : (
                         <EmptyValue />
                       )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                   <PreviewInfoRow
                     label="난이도"
                     value={
@@ -145,12 +153,12 @@ export function StudyApprovalDetailDialog({
                         : "없음"
                     }
                   />
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </ReviewSection>
 
             <ReviewSection title="스터디 소개">
-              <p className="text-text-basic whitespace-pre-wrap rounded-[12px] bg-[#f4f5f6] p-4 text-[15px] leading-[1.5] md:p-6 md:text-[17px]">
+              <p className="text-text-basic bg-surface-gray-subtler whitespace-pre-wrap rounded-xl p-4 text-[15px] leading-[1.5] md:p-6 md:text-[17px]">
                 {detail.explanation || detail.goal || "-"}
               </p>
             </ReviewSection>
@@ -229,22 +237,24 @@ function CurriculumReviewTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[640px] table-fixed border-collapse">
+      <Table className="w-full min-w-[640px] table-fixed border-collapse">
         <colgroup>
           <col className="w-[60px]" />
           <col className="w-[120px]" />
           <col className="w-[240px]" />
           <col />
         </colgroup>
-        <thead>
-          <tr>
-            <th className={CURRICULUM_HEADER_CELL_CLASS}>주차</th>
-            <th className={CURRICULUM_HEADER_CELL_CLASS}>진행 날짜</th>
-            <th className={CURRICULUM_HEADER_CELL_CLASS}>주제</th>
-            <th className={CURRICULUM_HEADER_CELL_CLASS}>내용</th>
-          </tr>
-        </thead>
-        <tbody>
+        <TableHeader>
+          <TableRow>
+            <TableHead className={CURRICULUM_HEADER_CELL_CLASS}>주차</TableHead>
+            <TableHead className={CURRICULUM_HEADER_CELL_CLASS}>
+              진행 날짜
+            </TableHead>
+            <TableHead className={CURRICULUM_HEADER_CELL_CLASS}>주제</TableHead>
+            <TableHead className={CURRICULUM_HEADER_CELL_CLASS}>내용</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {plans
             .slice()
             .sort((first, second) => first.week_num - second.week_num)
@@ -252,39 +262,39 @@ function CurriculumReviewTable({
               const contents = splitPlanContent(plan.content);
 
               return contents.map((content, contentIndex) => (
-                <tr key={`${plan.id}-${contentIndex}`}>
+                <TableRow key={`${plan.id}-${contentIndex}`}>
                   {contentIndex === 0 && (
                     <>
-                      <td
+                      <TableCell
                         rowSpan={contents.length}
                         className={`${CURRICULUM_BODY_CELL_CLASS} text-center`}
                       >
                         {plan.week_num}주차
-                      </td>
-                      <td
+                      </TableCell>
+                      <TableCell
                         rowSpan={contents.length}
                         className={`${CURRICULUM_BODY_CELL_CLASS} whitespace-nowrap`}
                       >
                         {formatDate(plan.date)}
-                      </td>
-                      <td
+                      </TableCell>
+                      <TableCell
                         rowSpan={contents.length}
                         className={`${CURRICULUM_BODY_CELL_CLASS} break-words`}
                       >
                         {plan.section || "-"}
-                      </td>
+                      </TableCell>
                     </>
                   )}
-                  <td
+                  <TableCell
                     className={`${CURRICULUM_BODY_CELL_CLASS} whitespace-pre-wrap break-words`}
                   >
                     {content}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ));
             })}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }
@@ -356,12 +366,12 @@ function ReviewSection({
 
 function PreviewInfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <tr>
-      <td className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
+    <TableRow>
+      <TableCell className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
         {label}
-      </td>
-      <td className={`py-3 ${PREVIEW_VALUE_CLASS}`}>{value}</td>
-    </tr>
+      </TableCell>
+      <TableCell className={`py-3 ${PREVIEW_VALUE_CLASS}`}>{value}</TableCell>
+    </TableRow>
   );
 }
 
@@ -372,7 +382,7 @@ function EmptyValue() {
 const CURRICULUM_HEADER_CELL_CLASS =
   "border-b border-secondary-10 bg-secondary-5 px-2 py-2 text-left text-[15px] font-bold leading-[1.5] text-text-bolder";
 const CURRICULUM_BODY_CELL_CLASS =
-  "border-b border-gray-20 bg-surface-white px-2 py-2 align-top text-[15px] leading-[1.5] text-text-basic";
+  "border-border-gray-light border-b bg-surface-white px-2 py-2 align-top text-[15px] leading-[1.5] text-text-basic";
 const PREVIEW_VALUE_CLASS = "text-text-basic text-[15px] leading-[1.5]";
 
 function formatStudyTime(detail: AdminStudyDetail) {

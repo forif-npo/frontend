@@ -247,7 +247,7 @@ export function AdminAccountsView({
   const affiliationBadge = useCallback((affiliation: string) => {
     if (affiliation === "회장") {
       return (
-        <Badge className="bg-amber-500 text-white hover:bg-amber-500">
+        <Badge className="bg-warning-50 text-text-inverse-static hover:bg-warning-50">
           <Crown className="mr-1 h-3 w-3" />
           회장
         </Badge>
@@ -255,7 +255,7 @@ export function AdminAccountsView({
     }
     if (affiliation === "부회장") {
       return (
-        <Badge className="bg-blue-600 text-white hover:bg-blue-600">
+        <Badge className="bg-primary-60 text-text-inverse-static hover:bg-primary-60">
           <ShieldCheck className="mr-1 h-3 w-3" />
           부회장
         </Badge>

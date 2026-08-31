@@ -34,7 +34,9 @@ export default async function Page({ searchParams }: PageProps) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center">
         <h2 className="mb-4 text-2xl font-bold">로그인이 필요합니다</h2>
-        <p className="mb-4 text-gray-600">access token을 찾을 수 없습니다.</p>
+        <p className="text-muted-foreground mb-4">
+          access token을 찾을 수 없습니다.
+        </p>
       </div>
     );
   }
@@ -70,7 +72,7 @@ export default async function Page({ searchParams }: PageProps) {
         <h2 className="mb-4 text-2xl font-bold">
           부원 데이터를 불러올 수 없습니다
         </h2>
-        <p className="mb-4 text-gray-600">
+        <p className="text-muted-foreground mb-4">
           {error instanceof Error
             ? error.message
             : "알 수 없는 오류가 발생했습니다"}

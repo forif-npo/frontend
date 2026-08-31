@@ -12,9 +12,9 @@ const STATUS_LABELS: Record<StudyApplication["status"], string> = {
 };
 
 const STATUS_BADGE_CLASS_NAMES: Record<StudyApplication["status"], string> = {
-  PENDING: "border-amber-500 bg-amber-50 text-amber-700",
-  ACCEPT: "border-emerald-600 bg-emerald-50 text-emerald-800",
-  REJECT: "border-red-500 bg-red-50 text-red-700",
+  PENDING: "border-border-warning bg-warning-5 text-text-warning",
+  ACCEPT: "border-border-success bg-success-5 text-text-success",
+  REJECT: "border-border-danger bg-danger-5 text-text-danger",
 };
 
 export const applicationColumns: ColumnDef<StudyApplication>[] = [

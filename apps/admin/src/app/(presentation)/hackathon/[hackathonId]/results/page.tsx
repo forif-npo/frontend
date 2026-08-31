@@ -10,7 +10,7 @@ export default async function ResultsPresentationPage({ params }: PageProps) {
 
   if (Number.isNaN(hackathonId)) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-300">
+      <main className="bg-surface-inverse text-text-subtle-inverse flex min-h-screen items-center justify-center">
         유효하지 않은 해커톤 ID입니다.
       </main>
     );

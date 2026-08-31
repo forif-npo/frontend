@@ -125,8 +125,8 @@ export function ParticipantsTab({
                   variant="outline"
                   className={
                     study.role === "MENTOR"
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-slate-300 bg-slate-50 text-slate-700"
+                      ? "border-border-primary bg-primary-5 text-text-primary"
+                      : "border-border-gray bg-surface-gray-subtler text-text-subtle"
                   }
                 >
                   {study.study_name ?? "-"}
@@ -150,8 +150,8 @@ export function ParticipantsTab({
               variant="outline"
               className={
                 row.original.status === "REGISTERED"
-                  ? "border-green-500 bg-green-50 text-green-700"
-                  : "border-gray-400 bg-gray-50 text-gray-600"
+                  ? "border-border-success bg-success-5 text-text-success"
+                  : "border-border-gray bg-surface-gray-subtler text-text-subtle"
               }
             >
               {PARTICIPANT_STATUS_LABELS[row.original.status]}

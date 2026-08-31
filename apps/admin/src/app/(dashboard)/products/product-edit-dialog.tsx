@@ -262,7 +262,7 @@ export function ProductEditDialog({
                     <p className="text-muted-foreground text-xs">
                       5MB 이하 이미지 · 가로형 권장
                       {thumbnailFile && (
-                        <span className="ml-1 font-medium text-amber-600">
+                        <span className="text-text-warning ml-1 font-medium">
                           (저장해야 반영됩니다)
                         </span>
                       )}

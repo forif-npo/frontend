@@ -244,7 +244,7 @@ export function ReceiverSelectorDialog({
             <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
               <input
                 type="checkbox"
-                className="h-4 w-4 rounded border-gray-300"
+                className="border-border h-4 w-4 rounded"
                 checked={
                   receivers.length > 0 &&
                   receivers.every((receiver) =>
@@ -285,7 +285,7 @@ export function ReceiverSelectorDialog({
               >
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300"
+                  className="border-border h-4 w-4 rounded"
                   checked={selectedReceivers.has(receiver.phoneNumber)}
                   onChange={() => toggleReceiver(receiver)}
                 />

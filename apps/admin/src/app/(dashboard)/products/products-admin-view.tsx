@@ -70,13 +70,25 @@ const PUBLISHED_STATUSES: ProductStatus[] = [
 function statusBadge(status: string) {
   switch (status) {
     case "PENDING":
-      return <Badge className="bg-amber-500 text-white">검토 대기</Badge>;
+      return (
+        <Badge className="bg-warning-50 text-text-inverse-static">
+          검토 대기
+        </Badge>
+      );
     case "REJECTED":
       return <Badge variant="destructive">반려</Badge>;
     case "LIVE":
-      return <Badge className="bg-emerald-600 text-white">운영 중</Badge>;
+      return (
+        <Badge className="bg-success-60 text-text-inverse-static">
+          운영 중
+        </Badge>
+      );
     case "DEV":
-      return <Badge className="bg-blue-600 text-white">개발 중</Badge>;
+      return (
+        <Badge className="bg-primary-60 text-text-inverse-static">
+          개발 중
+        </Badge>
+      );
     case "PAUSED":
       return <Badge variant="secondary">운영 중단</Badge>;
     case "RETIRED":
@@ -323,7 +335,7 @@ export function ProductsAdminView() {
           <>
             부원들의 서비스 등록 신청을 검토하고 게시 상태를 관리합니다.
             {pendingCount > 0 && (
-              <span className="ml-2 font-semibold text-amber-600">
+              <span className="text-text-warning ml-2 font-semibold">
                 검토 대기 {pendingCount}건
               </span>
             )}
@@ -438,7 +450,7 @@ export function ProductsAdminView() {
                 </div>
                 {detailTarget.status === "REJECTED" &&
                   detailTarget.reject_reason && (
-                    <div className="rounded-md bg-red-50 p-3 text-red-800">
+                    <div className="bg-danger-5 text-text-danger rounded-md p-3">
                       <p className="mb-1 font-semibold">반려 사유</p>
                       <p>{detailTarget.reject_reason}</p>
                     </div>
@@ -536,7 +548,7 @@ export function ProductsAdminView() {
               &quot;{approveTarget?.name}&quot; 신청을 승인할까요?
             </DialogDescription>
           </DialogHeader>
-          <div className="rounded-md bg-emerald-50 p-3 text-sm text-emerald-900">
+          <div className="bg-success-5 text-text-success rounded-md p-3 text-sm">
             승인하면 <span className="font-semibold">운영 중</span> 상태로
             전환되어 홈페이지 서비스 목록에 바로 게시되고,{" "}
             <span className="font-semibold">
@@ -579,7 +591,7 @@ export function ProductsAdminView() {
               서비스를 삭제할까요?
             </DialogDescription>
           </DialogHeader>
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-900">
+          <div className="bg-danger-5 text-text-danger rounded-md p-3 text-sm">
             삭제하면 서비스 목록과 신청 이력에서 모두 사라지며 되돌릴 수
             없습니다.
           </div>

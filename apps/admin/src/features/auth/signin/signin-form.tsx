@@ -70,7 +70,7 @@ export function SignInForm() {
         }
         disabled={isLoading}
       />
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-destructive text-sm">{error}</p>}
       <Button type="submit" size="large" disabled={isLoading}>
         {isLoading ? "로그인 중..." : "로그인"}
       </Button>

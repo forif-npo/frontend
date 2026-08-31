@@ -40,8 +40,8 @@ export const columns: ColumnDef<Study>[] = [
             variant="outline"
             className={
               isOpen
-                ? "border-green-500 bg-green-50 text-green-700"
-                : "border-gray-500 bg-gray-50 text-gray-700"
+                ? "border-border-success bg-success-5 text-text-success"
+                : "border-border-gray bg-surface-gray-subtler text-text-subtle"
             }
           >
             {isOpen ? "모집중" : "마감"}

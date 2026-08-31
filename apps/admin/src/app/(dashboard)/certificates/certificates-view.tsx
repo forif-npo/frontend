@@ -85,6 +85,8 @@ const isoToDate = (iso: string) =>
   iso ? new Date(`${iso}T00:00:00`) : undefined;
 const dateToIso = (date: Date | undefined) =>
   date ? format(date, "yyyy-MM-dd") : "";
+const getCanvasThemeColor = (token: string) =>
+  getComputedStyle(document.documentElement).getPropertyValue(token).trim();
 
 /** 수동 발급 작성 내용 임시저장 키 (localStorage) */
 const MANUAL_DRAFT_KEY = "forif-admin-manual-cert-draft";
@@ -315,7 +317,7 @@ export function CertificatesView({
     ctx.lineWidth = 4;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.strokeStyle = "#111";
+    ctx.strokeStyle = getCanvasThemeColor("--krds-color-gray-95");
     ctx.beginPath();
     ctx.moveTo(point.x, point.y);
   };
@@ -455,7 +457,7 @@ export function CertificatesView({
         header: () => <div className="text-center">출석</div>,
         cell: ({ row }) => (
           <div
-            className={`text-center ${row.original.attendance_count >= requiredAttendance ? "font-bold text-blue-600" : ""}`}
+            className={`text-center ${row.original.attendance_count >= requiredAttendance ? "text-text-primary font-bold" : ""}`}
           >
             {row.original.attendance_count}회
           </div>
@@ -494,7 +496,7 @@ export function CertificatesView({
                 href={row.original.certificate_url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 text-blue-600 hover:underline"
+                className="text-text-primary inline-flex items-center gap-1 hover:underline"
               >
                 발급됨 <ExternalLink className="h-3 w-3" />
               </a>
@@ -691,7 +693,7 @@ export function CertificatesView({
       </div>
 
       {lastResult && lastResult.skipped_count > 0 && (
-        <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm">
+        <div className="border-border-warning-light bg-warning-5 rounded-md border p-4 text-sm">
           <p className="mb-1 font-medium">스킵된 대상</p>
           <ul className="list-inside list-disc">
             {lastResult.results
@@ -722,7 +724,8 @@ export function CertificatesView({
           <p className="mb-3 text-sm">
             멘티 <span className="font-bold">{targets.length}</span>명 중 자격
             충족{" "}
-            <span className="font-bold text-blue-600">{eligibleCount}</span>명
+            <span className="text-text-primary font-bold">{eligibleCount}</span>
+            명
           </p>
           <DataTable
             columns={columns}
@@ -771,7 +774,7 @@ export function CertificatesView({
               참여)을 충족하지 못했습니다. 그래도 발급하시겠습니까?
             </DialogDescription>
           </DialogHeader>
-          <div className="max-h-60 overflow-y-auto rounded-md border border-amber-200 bg-amber-50 p-3 text-sm">
+          <div className="border-border-warning-light bg-warning-5 max-h-60 overflow-y-auto rounded-md border p-3 text-sm">
             <ul className="flex flex-col gap-1">
               {ineligibleSelected.map((t) => (
                 <li key={t.user_id}>
@@ -829,7 +832,7 @@ export function CertificatesView({
               {isSignatureLoading ? (
                 <p className="text-muted-foreground text-sm">불러오는 중...</p>
               ) : signatureUrl ? (
-                <div className="rounded-md border bg-gray-50 p-2">
+                <div className="bg-surface-gray-subtler rounded-md border p-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={signatureUrl}
@@ -924,7 +927,7 @@ export function CertificatesView({
                 ref={previewCanvasRef}
                 width={SIG_PREVIEW_W}
                 height={SIG_PREVIEW_H}
-                className="w-full rounded-md border border-dashed bg-gray-50"
+                className="bg-surface-gray-subtler w-full rounded-md border border-dashed"
               />
             </div>
           </div>
@@ -960,7 +963,7 @@ export function CertificatesView({
           </DialogHeader>
           <div className="flex flex-col gap-4">
             {/* 부원 검색으로 이름/학번/학과/스터디명 자동 채움 */}
-            <div className="flex flex-col gap-2 rounded-md border bg-gray-50 p-3">
+            <div className="bg-surface-gray-subtler flex flex-col gap-2 rounded-md border p-3">
               <Label htmlFor="manual-member-search">
                 부원 검색 (이름 또는 학번으로 자동 채움)
               </Label>
@@ -1129,13 +1132,13 @@ export function CertificatesView({
             </div>
 
             {manualResultUrl && (
-              <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm">
+              <div className="border-border-success-light bg-success-5 rounded-md border p-3 text-sm">
                 <p className="mb-1 font-medium">수료증이 생성되었습니다</p>
                 <a
                   href={manualResultUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 break-all text-blue-600 hover:underline"
+                  className="text-text-primary inline-flex items-center gap-1 break-all hover:underline"
                 >
                   {manualResultUrl}{" "}
                   <ExternalLink className="h-3 w-3 shrink-0" />

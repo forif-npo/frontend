@@ -10,13 +10,13 @@ export default function Error({
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-red-600">
+        <h2 className="text-destructive text-2xl font-bold">
           Something went wrong!
         </h2>
-        <p className="mt-2 text-gray-600">{error.message}</p>
+        <p className="text-muted-foreground mt-2">{error.message}</p>
         <button
           onClick={reset}
-          className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 rounded px-4 py-2"
         >
           Try again
         </button>
