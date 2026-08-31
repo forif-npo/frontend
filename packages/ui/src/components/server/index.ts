@@ -14,6 +14,8 @@ export * from "./InfoText";
 export * from "./Label";
 export * from "./Link";
 export * from "./LinkButton";
+export * from "./LoadingState";
+export * from "./PageState";
 export * from "./Spinner";
 export * from "./Switch";
 export * from "./Table";

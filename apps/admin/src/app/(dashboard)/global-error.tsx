@@ -1,5 +1,6 @@
 "use client";
-import Error from "next/error";
+
+import { GlobalErrorState } from "@ui/components/client";
 
 export default function GlobalError({
   error,
@@ -8,13 +9,5 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  console.error("Global error caught:", error);
-  return (
-    <html>
-      <body>
-        <Error statusCode={0} />
-        <button onClick={() => reset()}>Try again</button>
-      </body>
-    </html>
-  );
+  return <GlobalErrorState error={error} reset={reset} />;
 }
