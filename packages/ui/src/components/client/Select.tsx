@@ -126,7 +126,7 @@ export const Select = ({
 
   const variantClasses = {
     default:
-      "border-gray-30 focus:ring-primary-50 border bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:outline-none",
+      "border-gray-30 bg-surface-white focus:ring-primary-50 border focus:outline-none focus:ring-2 focus:ring-inset",
     text: "border-none bg-transparent",
   };
   const isInvalid = invalid || Boolean(error);
@@ -193,7 +193,7 @@ export const Select = ({
           aria-activedescendant={
             focusedIndex !== null ? `option-${focusedIndex}` : undefined
           }
-          className={`absolute z-10 mt-2 max-h-60 w-full min-w-[100px] overflow-y-auto rounded-md border border-gray-300 bg-white ${dropdownAlign === "right" ? "right-0" : "left-0"}`}
+          className={`border-gray-30 bg-surface-white absolute z-10 mt-2 max-h-60 w-full min-w-[100px] overflow-y-auto rounded-md border ${dropdownAlign === "right" ? "right-0" : "left-0"}`}
         >
           {options.map((option, index) => (
             <button
