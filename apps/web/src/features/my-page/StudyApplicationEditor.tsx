@@ -414,7 +414,7 @@ export function StudyApplicationEditor({
       >
         <fieldset disabled={!application.can_modify} className="contents">
           <section className="flex flex-col gap-6">
-            <div className="flex flex-col gap-3 rounded-xl border border-[#b1b8be] p-5">
+            <div className="border-border-gray flex flex-col gap-3 rounded-xl border p-5">
               <div className="flex items-center justify-between gap-3">
                 <StudySectionTitle>멘토 추가</StudySectionTitle>
                 {secondaryMentorId !== null && (
@@ -501,7 +501,7 @@ export function StudyApplicationEditor({
                         { shouldDirty: true, shouldValidate: true },
                       )
                     }
-                    className="flex h-8 items-center justify-center rounded-[4px] bg-[#ecf2fe] px-2"
+                    className="bg-surface-primary-subtler flex h-8 items-center justify-center rounded-[4px] px-2"
                   >
                     <span className="text-text-primary text-[17px] leading-[1.5]">
                       {tag}

@@ -26,63 +26,61 @@ import { DataTable } from "@/components/list/data-table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/page-header";
+import {
+  PRODUCT_APPLICATION_STATUS_LABELS,
+  PRODUCT_OPERATION_STATUS_LABELS,
+  PRODUCT_SOURCE_LABELS,
+} from "@core/products";
 import { handleApiError } from "@core/utils/api-client";
 import {
   approveProduct,
-  changeProductStatus,
+  changeProductOperationStatus,
   deleteProduct,
   getAdminProducts,
   rejectProduct,
   type AdminProduct,
-  type ProductStatus,
+  type ProductOperationStatus,
 } from "./api";
 import { ProductEditDialog } from "./product-edit-dialog";
 
-type StatusFilter = "ALL" | "PENDING" | "PUBLISHED" | "REJECTED";
+type StatusFilter = "ALL" | "PENDING" | "ACCEPTED" | "REJECTED";
 
 /** 링크 주입 방지: http(s) URL만 렌더링한다 */
 function safeExternalUrl(url: string | null): string | null {
   return url && /^https?:\/\//i.test(url) ? url : null;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: "검토 대기",
-  REJECTED: "반려",
-  LIVE: "운영 중",
-  DEV: "개발 중",
-  PAUSED: "운영 중단",
-  RETIRED: "서비스 종료",
-};
+function statusBadges(product: AdminProduct) {
+  const { status, operation_status: operationStatus } = product;
 
-const SOURCE_LABELS: Record<string, string> = {
-  STUDY: "스터디",
-  HACKATHON: "해커톤",
-  SIDE: "자율 프로젝트",
-};
-
-const PUBLISHED_STATUSES: ProductStatus[] = [
-  "LIVE",
-  "DEV",
-  "PAUSED",
-  "RETIRED",
-];
-
-function statusBadge(status: string) {
   switch (status) {
     case "PENDING":
-      return <Badge className="bg-amber-500 text-white">검토 대기</Badge>;
+      return (
+        <Badge className="bg-warning-50 text-text-inverse-static">
+          {PRODUCT_APPLICATION_STATUS_LABELS[status]}
+        </Badge>
+      );
     case "REJECTED":
-      return <Badge variant="destructive">반려</Badge>;
-    case "LIVE":
-      return <Badge className="bg-emerald-600 text-white">운영 중</Badge>;
-    case "DEV":
-      return <Badge className="bg-blue-600 text-white">개발 중</Badge>;
-    case "PAUSED":
-      return <Badge variant="secondary">운영 중단</Badge>;
-    case "RETIRED":
-      return <Badge variant="outline">서비스 종료</Badge>;
-    default:
-      return <Badge variant="secondary">{status}</Badge>;
+      return (
+        <Badge variant="destructive">
+          {PRODUCT_APPLICATION_STATUS_LABELS[status]}
+        </Badge>
+      );
+    case "ACCEPTED":
+      return (
+        <div className="flex flex-wrap justify-center gap-1">
+          <Badge className="bg-success-60 text-text-inverse-static">
+            {PRODUCT_APPLICATION_STATUS_LABELS[status]}
+          </Badge>
+          {operationStatus && (
+            <Badge
+              variant={operationStatus === "LIVE" ? "default" : "secondary"}
+            >
+              {PRODUCT_OPERATION_STATUS_LABELS[operationStatus]}
+            </Badge>
+          )}
+        </div>
+      );
   }
 }
 
@@ -120,10 +118,8 @@ export function ProductsAdminView() {
         return products.filter((p) => p.status === "PENDING");
       case "REJECTED":
         return products.filter((p) => p.status === "REJECTED");
-      case "PUBLISHED":
-        return products.filter((p) =>
-          PUBLISHED_STATUSES.includes(p.status as ProductStatus),
-        );
+      case "ACCEPTED":
+        return products.filter((p) => p.status === "ACCEPTED");
       default:
         return products;
     }
@@ -166,10 +162,13 @@ export function ProductsAdminView() {
     }, "반려 처리되었습니다. 신청자에게 사유가 표시됩니다.");
   };
 
-  const handleStatusChange = (product: AdminProduct, status: ProductStatus) => {
+  const handleOperationStatusChange = (
+    product: AdminProduct,
+    operationStatus: ProductOperationStatus,
+  ) => {
     runAction(
-      () => changeProductStatus(product.product_id, status),
-      "상태가 변경되었습니다.",
+      () => changeProductOperationStatus(product.product_id, operationStatus),
+      "운영 상태가 변경되었습니다.",
     );
   };
 
@@ -185,8 +184,8 @@ export function ProductsAdminView() {
     () => [
       {
         accessorKey: "status",
-        header: "상태",
-        cell: ({ row }) => statusBadge(row.original.status),
+        header: "신청·운영 상태",
+        cell: ({ row }) => statusBadges(row.original),
       },
       {
         accessorKey: "name",
@@ -222,7 +221,7 @@ export function ProductsAdminView() {
         header: "출처",
         cell: ({ row }) => (
           <span className="text-xs">
-            {SOURCE_LABELS[row.original.source_type] ??
+            {PRODUCT_SOURCE_LABELS[row.original.source_type] ??
               row.original.source_type}
           </span>
         ),
@@ -276,20 +275,23 @@ export function ProductsAdminView() {
           </Button>
         </>
       )}
-      {PUBLISHED_STATUSES.includes(product.status as ProductStatus) && (
+      {product.status === "ACCEPTED" && product.operation_status && (
         <Select
-          value={product.status}
+          value={product.operation_status}
           onValueChange={(value) =>
-            handleStatusChange(product, value as ProductStatus)
+            handleOperationStatusChange(
+              product,
+              value as ProductOperationStatus,
+            )
           }
         >
           <SelectTrigger className="h-8 w-[130px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {PUBLISHED_STATUSES.map((status) => (
+            {(["LIVE", "PAUSED"] as const).map((status) => (
               <SelectItem key={status} value={status}>
-                {STATUS_LABELS[status]}
+                {PRODUCT_OPERATION_STATUS_LABELS[status]}
               </SelectItem>
             ))}
           </SelectContent>
@@ -321,9 +323,10 @@ export function ProductsAdminView() {
         title="서비스 관리"
         description={
           <>
-            부원들의 서비스 등록 신청을 검토하고 게시 상태를 관리합니다.
+            부원들의 서비스 등록 신청을 검토하고 승인된 서비스의 운영 상태를
+            관리합니다.
             {pendingCount > 0 && (
-              <span className="ml-2 font-semibold text-amber-600">
+              <span className="text-text-warning ml-2 font-semibold">
                 검토 대기 {pendingCount}건
               </span>
             )}
@@ -338,7 +341,7 @@ export function ProductsAdminView() {
         <TabsList>
           <TabsTrigger value="ALL">전체</TabsTrigger>
           <TabsTrigger value="PENDING">검토 대기</TabsTrigger>
-          <TabsTrigger value="PUBLISHED">게시 중</TabsTrigger>
+          <TabsTrigger value="ACCEPTED">승인</TabsTrigger>
           <TabsTrigger value="REJECTED">반려</TabsTrigger>
         </TabsList>
       </Tabs>
@@ -365,7 +368,7 @@ export function ProductsAdminView() {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   {detailTarget.name}
-                  {statusBadge(detailTarget.status)}
+                  {statusBadges(detailTarget)}
                 </DialogTitle>
                 <DialogDescription>
                   {detailTarget.slug}.forif.org · {detailTarget.applicant_name}(
@@ -397,7 +400,7 @@ export function ProductsAdminView() {
                   <div>
                     <p className="mb-1 font-semibold">출처</p>
                     <p>
-                      {SOURCE_LABELS[detailTarget.source_type]}
+                      {PRODUCT_SOURCE_LABELS[detailTarget.source_type]}
                       {detailTarget.source_label
                         ? ` · ${detailTarget.source_label}`
                         : ""}
@@ -438,7 +441,7 @@ export function ProductsAdminView() {
                 </div>
                 {detailTarget.status === "REJECTED" &&
                   detailTarget.reject_reason && (
-                    <div className="rounded-md bg-red-50 p-3 text-red-800">
+                    <div className="bg-danger-5 text-text-danger rounded-md p-3">
                       <p className="mb-1 font-semibold">반려 사유</p>
                       <p>{detailTarget.reject_reason}</p>
                     </div>
@@ -536,7 +539,7 @@ export function ProductsAdminView() {
               &quot;{approveTarget?.name}&quot; 신청을 승인할까요?
             </DialogDescription>
           </DialogHeader>
-          <div className="rounded-md bg-emerald-50 p-3 text-sm text-emerald-900">
+          <div className="bg-success-5 text-text-success rounded-md p-3 text-sm">
             승인하면 <span className="font-semibold">운영 중</span> 상태로
             전환되어 홈페이지 서비스 목록에 바로 게시되고,{" "}
             <span className="font-semibold">
@@ -579,7 +582,7 @@ export function ProductsAdminView() {
               서비스를 삭제할까요?
             </DialogDescription>
           </DialogHeader>
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-900">
+          <div className="bg-danger-5 text-text-danger rounded-md p-3 text-sm">
             삭제하면 서비스 목록과 신청 이력에서 모두 사라지며 되돌릴 수
             없습니다.
           </div>

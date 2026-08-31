@@ -291,7 +291,7 @@ export function ResultsEditor({
       )}
 
       {warnings.length > 0 && (
-        <ul className="space-y-1 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <ul className="border-border-warning-light bg-warning-5 text-text-warning space-y-1 rounded-md border px-4 py-3 text-sm">
           {warnings.map((warning) => (
             <li key={warning} className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 shrink-0" />

@@ -140,7 +140,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
     const endsAt = addHoursToDateTime(form.starts_at, durationHours);
 
     if (!recruitStartsAt || !teamBuildingStartsAt || !startsAt) {
-      alert("모집 시작/팀 빌딩 시작/해커톤 시작 일시를 입력해주세요.");
+      alert("모집 시작/팀 구성 시작/해커톤 시작 일시를 입력해주세요.");
       return;
     }
 
@@ -163,12 +163,12 @@ export function HackathonView({ initialData }: HackathonViewProps) {
     }
 
     if (recruitStartsAtMs >= teamBuildingStartsAtMs) {
-      alert("모집 시작은 팀 빌딩 시작보다 빨라야 합니다.");
+      alert("모집 시작은 팀 구성 시작보다 빨라야 합니다.");
       return;
     }
 
     if (teamBuildingStartsAtMs >= startsAtMs) {
-      alert("팀 빌딩 시작은 해커톤 시작보다 빨라야 합니다.");
+      alert("팀 구성 시작은 해커톤 시작보다 빨라야 합니다.");
       return;
     }
 
@@ -455,7 +455,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="team-start">팀 빌딩 시작 *</Label>
+                <Label htmlFor="team-start">팀 구성 시작 *</Label>
                 <Input
                   id="team-start"
                   type="datetime-local"
@@ -507,7 +507,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-muted-foreground">팀 빌딩 종료</p>
+                  <p className="text-muted-foreground">팀 구성 종료</p>
                   <p className="font-medium">
                     {formatDateTimeLabel(form.starts_at)}
                   </p>
@@ -704,8 +704,8 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                           variant="outline"
                           className={
                             status.submitted
-                              ? "border-green-500 bg-green-50 text-green-700"
-                              : "border-gray-400 bg-gray-50 text-gray-600"
+                              ? "border-border-success bg-success-5 text-text-success"
+                              : "border-border-gray bg-surface-gray-subtler text-text-subtle"
                           }
                         >
                           {status.submitted ? "제출 완료" : "미제출"}

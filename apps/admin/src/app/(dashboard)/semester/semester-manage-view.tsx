@@ -258,7 +258,7 @@ export function SemesterManageView({
 
                 {/* 수료증 */}
                 {preview.has_pending_certificates && (
-                  <div className="rounded-md bg-amber-50 p-3 text-amber-900">
+                  <div className="bg-warning-5 text-text-warning rounded-md p-3">
                     <p className="flex items-center gap-1.5 font-semibold">
                       <AlertTriangle className="h-4 w-4 shrink-0" />
                       {preview.current.label} 수료증이 아직 다 나가지 않았습니다
@@ -274,7 +274,7 @@ export function SemesterManageView({
 
                 {/* 운영진 명단 */}
                 {preview.needs_team_setup ? (
-                  <div className="rounded-md bg-amber-50 p-3 text-amber-900">
+                  <div className="bg-warning-5 text-text-warning rounded-md p-3">
                     <p className="flex items-center gap-1.5 font-semibold">
                       <AlertTriangle className="h-4 w-4 shrink-0" />
                       {preview.target.label} 운영진이 아직 없습니다

@@ -4,6 +4,8 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { Button, Pagination, Select } from "@ui/components/client";
 import {
   Badge,
+  EmptyState,
+  InlineLoadingState,
   Table,
   TableBody,
   TableCell,
@@ -328,13 +330,17 @@ export function ApplicantsPanel({
 
       {/* Applicant table */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-20 text-gray-500">
-          <p className="text-lg">불러오는 중...</p>
-        </div>
+        <InlineLoadingState
+          message="불러오는 중..."
+          className="flex items-center justify-center py-20"
+          textClassName="text-lg"
+        />
       ) : applicants.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-          <p className="text-lg">신청자가 없습니다</p>
-        </div>
+        <EmptyState
+          title="신청자가 없습니다"
+          className="py-20"
+          titleClassName="text-lg"
+        />
       ) : (
         <Table>
           <TableHeader>

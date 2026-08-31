@@ -30,7 +30,7 @@ export default async function Page() {
           <Heading size="l" className="mb-2 text-2xl font-semibold">
             Hello Operators!
           </Heading>
-          <Body size="s" className="mb-6 text-sm text-gray-600">
+          <Body size="s" className="text-muted-foreground mb-6 text-sm">
             FORIF 운영진을 위한 관리자 페이지입니다. 계정이 존재하지 않는다면
             해당 학기 회장단/SW팀에게 계정 생성을 문의해주세요.
           </Body>

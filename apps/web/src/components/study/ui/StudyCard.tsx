@@ -285,7 +285,7 @@ export function StudyCard(props: StudyCardProps) {
 
   // ── Image ──
   const imageSection = (
-    <div className="relative h-[176px] w-full overflow-hidden bg-[#DFE8F4] md:h-[196px]">
+    <div className="bg-primary-10 relative h-[176px] w-full overflow-hidden md:h-[196px]">
       <StudyImage
         src={imgUrl}
         alt={studyName}
@@ -333,7 +333,7 @@ export function StudyCard(props: StudyCardProps) {
 
   return (
     <div className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border">
-      <div className="relative h-[196px] w-full bg-[#dfe8f4]">
+      <div className="bg-primary-10 relative h-[196px] w-full">
         <StudyImage
           src={imgUrl}
           alt={studyName}
@@ -380,7 +380,7 @@ export function StudyCard(props: StudyCardProps) {
               <span className="whitespace-nowrap">
                 {getWeekDayLabel(study.week_day)} {schedule}
               </span>
-              <span className="h-[21px] w-px bg-[#b1b8be]" />
+              <span className="bg-gray-30 h-[21px] w-px" />
             </>
           )}
           <span className="whitespace-nowrap">{mentorNames}</span>

@@ -12,6 +12,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Study, StudyListParams } from "@/types/study";
 import { getStudyTagName } from "@/constants/study-tags";
 import { Pagination } from "@ui/components/client";
+import { InlineErrorState } from "@ui/components/server";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -103,11 +104,12 @@ export default function StudyListPage() {
 
   if (error) {
     return (
-      <div className="bg-bg-base min-h-viewport flex items-center justify-center">
-        <div className="text-status-error text-lg">
-          오류가 발생했습니다: {error}
-        </div>
-      </div>
+      <InlineErrorState
+        message={`오류가 발생했습니다: ${error}`}
+        className="bg-bg-base min-h-viewport flex items-center justify-center py-0"
+        textClassName="text-lg"
+        textToneClassName="text-status-error"
+      />
     );
   }
 

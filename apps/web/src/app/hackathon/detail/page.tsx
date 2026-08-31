@@ -12,7 +12,13 @@ import {
 import { statusBadgeVariant, statusLabel } from "@/features/hackathon/utils";
 import { HackathonDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { handleApiError } from "@core/utils/api-client";
-import { Badge, Body, Heading, Link } from "@ui/components/server";
+import {
+  Badge,
+  Body,
+  Heading,
+  InlineErrorState,
+  Link,
+} from "@ui/components/server";
 import { Button } from "@ui/components/client";
 import { PageHeader } from "@/components/PageHeader";
 import type {
@@ -159,11 +165,11 @@ export default function HackathonDetailPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Body size="m" className="text-text-danger">
-          {error}
-        </Body>
-      </div>
+      <InlineErrorState
+        message={error}
+        className="flex min-h-[60vh] items-center justify-center py-0"
+        textClassName="text-body-m-mobile sm:text-body-m"
+      />
     );
   }
 

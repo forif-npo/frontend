@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { PageState } from "@ui/components/server";
 import { getCurrentSemester } from "@/features/semester/api";
 import { fetchMentors } from "./api";
 import { MentorsView } from "./mentors-view";
@@ -32,10 +33,11 @@ export default async function Page({ searchParams }: PageProps) {
 
   if (!accessToken) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <h2 className="mb-4 text-2xl font-bold">로그인이 필요합니다</h2>
-        <p className="mb-4 text-gray-600">access token을 찾을 수 없습니다.</p>
-      </div>
+      <PageState
+        fullHeight
+        title="로그인이 필요합니다"
+        description="access token을 찾을 수 없습니다."
+      />
     );
   }
 
@@ -65,16 +67,15 @@ export default async function Page({ searchParams }: PageProps) {
     console.error("[Mentors Page Error]", error);
 
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <h2 className="mb-4 text-2xl font-bold">
-          멘토 데이터를 불러올 수 없습니다
-        </h2>
-        <p className="mb-4 text-gray-600">
-          {error instanceof Error
+      <PageState
+        fullHeight
+        title="멘토 데이터를 불러올 수 없습니다"
+        description={
+          error instanceof Error
             ? error.message
-            : "알 수 없는 오류가 발생했습니다"}
-        </p>
-      </div>
+            : "알 수 없는 오류가 발생했습니다"
+        }
+      />
     );
   }
 }

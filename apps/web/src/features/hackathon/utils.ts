@@ -3,6 +3,7 @@ import type {
   HackathonStatus,
   TeamMember,
 } from "@core/types/hackathon";
+export { HACKATHON_STATUS_LABELS as statusLabel } from "@core/hackathon-status";
 
 export function sortTeamMembersLeaderFirst(members: TeamMember[]) {
   return [...members].sort(
@@ -17,14 +18,6 @@ export type MainStage =
   | "IN_PROGRESS"
   | "JUDGING"
   | "ENDED";
-
-export const statusLabel: Record<HackathonStatus, string> = {
-  RECRUITING: "모집중",
-  TEAM_BUILDING: "팀 구성",
-  IN_PROGRESS: "진행중",
-  JUDGING: "심사중",
-  ENDED: "종료",
-};
 
 export const statusBadgeVariant: Record<
   HackathonStatus,

@@ -1,4 +1,5 @@
 import { Body, Label } from "@ui/components/server";
+import { cn } from "@ui/utils/cn";
 import type { Submission } from "@core/types/hackathon";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,12 +7,12 @@ import { safeImageSrc } from "@/utils/image";
 
 interface HackathonCardProps {
   submission: Submission;
-  bgColor?: string;
+  imageBackgroundClassName?: string;
 }
 
 export function HackathonCard({
   submission,
-  bgColor = "#e5e2ef",
+  imageBackgroundClassName = "bg-graphic-10",
 }: HackathonCardProps) {
   return (
     <Link
@@ -19,8 +20,10 @@ export function HackathonCard({
       className="rounded-3 border-border-gray-light bg-surface-white focus-visible:outline-primary-50 group flex h-full flex-col overflow-hidden border transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-4"
     >
       <div
-        className="relative h-[196px] w-full shrink-0 overflow-hidden"
-        style={{ backgroundColor: bgColor }}
+        className={cn(
+          "relative h-[196px] w-full shrink-0 overflow-hidden",
+          imageBackgroundClassName,
+        )}
       >
         {safeImageSrc(submission.image_url) ? (
           <Image

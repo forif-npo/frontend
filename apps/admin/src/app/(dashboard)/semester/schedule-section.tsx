@@ -318,7 +318,7 @@ export function ScheduleSection({
       </div>
 
       {!isLoading && configuredCount === 0 && (
-        <div className="rounded-md bg-amber-50 p-3 text-amber-900">
+        <div className="bg-warning-5 text-text-warning rounded-md p-3">
           <p className="flex items-center gap-1.5 font-semibold">
             <AlertTriangle className="h-4 w-4 shrink-0" />이 학기 일정이
             설정되지 않았습니다
@@ -350,7 +350,7 @@ export function ScheduleSection({
                   <p className="flex items-center gap-1.5 text-sm font-semibold">
                     {SEMESTER_PHASE_LABELS[phase]}
                     {isOpen && (
-                      <span className="flex items-center gap-0.5 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-800">
+                      <span className="bg-success-10 text-text-success flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[11px] font-medium">
                         <Check className="h-3 w-3" />
                         진행 중
                       </span>

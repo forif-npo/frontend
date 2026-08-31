@@ -10,7 +10,7 @@ export function ForifIntroBanner({
 }: ForifIntroBannerProps) {
   if (variant === "mobile-section") {
     return (
-      <div className="flex w-full flex-col items-start gap-4 overflow-hidden bg-[radial-gradient(circle_at_18%_50%,rgba(219,234,254,0.72),transparent_36%),radial-gradient(circle_at_82%_50%,rgba(191,219,254,0.68),transparent_30%),linear-gradient(90deg,#f8fbff_0%,#ffffff_52%,#f7faff_100%)] px-5 py-9">
+      <div className="from-primary-5 via-surface-white to-primary-5 flex w-full flex-col items-start gap-4 overflow-hidden bg-gradient-to-r px-5 py-9">
         <Image
           src="/images/carousel-img.png"
           alt="FORIF 소개 이미지"
@@ -39,7 +39,7 @@ export function ForifIntroBanner({
   }
 
   return (
-    <div className="flex h-full w-full flex-row items-center justify-center gap-3 overflow-hidden bg-[radial-gradient(circle_at_18%_50%,rgba(219,234,254,0.72),transparent_36%),radial-gradient(circle_at_82%_50%,rgba(191,219,254,0.68),transparent_30%),linear-gradient(90deg,#f8fbff_0%,#ffffff_52%,#f7faff_100%)] px-5 py-4 md:gap-9 md:px-0 md:py-0">
+    <div className="from-primary-5 via-surface-white to-primary-5 flex h-full w-full flex-row items-center justify-center gap-3 overflow-hidden bg-gradient-to-r px-5 py-4 md:gap-9 md:px-0 md:py-0">
       <div className="max-w-[800px]">
         <Display
           size="s"

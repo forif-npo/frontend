@@ -68,7 +68,7 @@ export function ProfileSidebar({
     <>
       <nav
         aria-label="마이페이지 메뉴"
-        className="flex w-full gap-1 overflow-x-auto border-y border-[#cdd1d5] px-4 md:hidden"
+        className="border-border-gray-light flex w-full gap-1 overflow-x-auto border-y px-4 md:hidden"
       >
         {navItems.map((item) => {
           const isActive = activeNav === item.id;
@@ -92,7 +92,7 @@ export function ProfileSidebar({
         })}
       </nav>
 
-      <aside className="hidden w-[224px] shrink-0 flex-col items-center border-r border-[#cdd1d5] px-6 py-10 md:flex">
+      <aside className="border-border-gray-light hidden w-[224px] shrink-0 flex-col items-center border-r px-6 py-10 md:flex">
         {/* Profile Picture */}
         <div className="relative mb-4">
           {safeImageSrc(profile.img_url) ? (
@@ -105,7 +105,7 @@ export function ProfileSidebar({
             />
           ) : (
             <CircleUser
-              className="h-[120px] w-[120px] text-[#E6E8EA]"
+              className="text-gray-10 h-[120px] w-[120px]"
               strokeWidth={0.8}
             />
           )}
@@ -124,7 +124,7 @@ export function ProfileSidebar({
           </Label>
         </div>
 
-        <hr className="mb-4 w-full border-[#cdd1d5]" />
+        <hr className="border-border-gray-light mb-4 w-full" />
 
         {/* Navigation */}
         <nav

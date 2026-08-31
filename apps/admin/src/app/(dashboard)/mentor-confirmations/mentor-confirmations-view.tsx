@@ -11,6 +11,7 @@ import { ActivitySemesterToggle } from "@/components/list/activity-semester-togg
 import { Button } from "@/components/ui/button";
 import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import { DataTable } from "@/components/list/data-table";
+import { EmptyState, InlineLoadingState } from "@ui/components/server";
 import type { SemesterLabel, Study } from "../studies/types";
 import {
   getMentorConfirmationViewUrl,
@@ -248,7 +249,7 @@ export function MentorConfirmationsView({
               <Button
                 type="button"
                 variant="link"
-                className="h-auto p-0 text-blue-600"
+                className="text-text-primary h-auto p-0"
                 disabled={downloadingTargetKey != null}
                 onClick={() => handleDownload(row.original)}
               >
@@ -312,13 +313,19 @@ export function MentorConfirmationsView({
       </div>
 
       {isLoading ? (
-        <div className="text-muted-foreground flex justify-center py-20">
-          불러오는 중...
-        </div>
+        <InlineLoadingState
+          message="불러오는 중..."
+          className="flex items-center justify-center py-20"
+          textClassName="text-base"
+          textToneClassName="text-muted-foreground"
+        />
       ) : targets.length === 0 ? (
-        <div className="text-muted-foreground flex justify-center py-20">
-          해당 학기에 등록된 멘토가 없습니다.
-        </div>
+        <EmptyState
+          title="해당 학기에 등록된 멘토가 없습니다."
+          className="py-20"
+          textClassName="text-muted-foreground"
+          titleClassName="text-base"
+        />
       ) : (
         <DataTable
           columns={columns}

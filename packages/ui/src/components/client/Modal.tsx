@@ -118,7 +118,7 @@ export const Modal: React.FC<ModalProps> = ({
       ></div>
       <div
         ref={modalRef}
-        className={`relative mx-auto my-6 rounded-lg bg-white shadow-lg ${modalWidthStyle}`}
+        className={`bg-surface-white relative mx-auto my-6 rounded-lg shadow-lg ${modalWidthStyle}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={showHeader ? "modal-title" : undefined}

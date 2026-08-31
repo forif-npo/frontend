@@ -17,16 +17,16 @@ interface PresentationScreenProps {
  * - primary 블루, point 코랄레드, 딥 네이비 배경.
  */
 const COLORS = {
-  bgFrom: "#041a44",
-  bgVia: "#03132f",
-  bgTo: "#01081c",
-  primary: "#4c87f6",
-  primaryBright: "#86aff9",
-  point: "#e0858c",
-  pointBright: "#f0b0b5",
-  textMuted: "#aab4c5",
-  textFaint: "#6b7689",
-  hairline: "rgba(134, 175, 249, 0.18)",
+  bgFrom: "var(--krds-color-primary-90)",
+  bgVia: "var(--krds-color-primary-95)",
+  bgTo: "var(--krds-color-primary-95)",
+  primary: "var(--krds-color-primary-40)",
+  primaryBright: "var(--krds-color-primary-30)",
+  point: "var(--krds-color-point-30)",
+  pointBright: "var(--krds-color-point-20)",
+  textMuted: "var(--krds-color-secondary-20)",
+  textFaint: "var(--krds-color-gray-40)",
+  hairline: "color-mix(in srgb, var(--krds-color-primary-30) 18%, transparent)",
 } as const;
 
 // 부문별 강조색 — 두 부문을 또렷이 구분한다(단일 남색만 쓰지 않는다).
@@ -258,7 +258,8 @@ function SlideBody({ slide }: { slide: PresentationSlide }) {
             style={{
               color: accent,
               border: `1px solid ${accent}`,
-              backgroundColor: "rgba(255,255,255,0.04)",
+              backgroundColor:
+                "color-mix(in srgb, var(--krds-color-gray-0) 4%, transparent)",
             }}
           >
             <span>{TRACK_LABELS[result.track]}</span>

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import type { Hackathon } from "@core/types/hackathon";
+import { EmptyState } from "@ui/components/server";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { ArchiveMain } from "@/features/hackathon";
 
@@ -35,11 +36,12 @@ export default function HackathonArchivePage() {
 
   if (hackathons.length === 0) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <p className="text-[var(--krds-color-gray-50)]">
-          아카이브할 해커톤이 없습니다.
-        </p>
-      </div>
+      <EmptyState
+        title="아카이브할 해커톤이 없습니다."
+        className="min-h-[60vh]"
+        textClassName="text-[var(--krds-color-gray-50)]"
+        titleClassName="text-base"
+      />
     );
   }
 

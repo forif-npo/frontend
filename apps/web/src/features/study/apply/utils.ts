@@ -1,6 +1,7 @@
 import { getDifficultyBadgeVariant } from "@/constants/study";
 import { Study, StudyDifficulty } from "@/types/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
+import { STUDY_RECRUIT_STATUS_LABELS } from "@core/study-status";
 
 export type BadgeVariant =
   | "primary"
@@ -25,7 +26,7 @@ const DIFFICULTY_LABEL: Record<StudyDifficulty, string> = {
 
 export function getStudyBadgeTags(study: Study): BadgeTag[] {
   const statusBadge: BadgeTag = {
-    label: study.recruit_status === "APPLICABLE" ? "지원중" : "마감",
+    label: STUDY_RECRUIT_STATUS_LABELS[study.recruit_status],
     variant: study.recruit_status === "APPLICABLE" ? "info" : "disabled",
   };
 

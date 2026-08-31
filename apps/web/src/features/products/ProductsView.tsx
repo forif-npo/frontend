@@ -1,6 +1,7 @@
 "use client";
 
 import { Tabs } from "@ui/components/client";
+import { EmptyState } from "@ui/components/server";
 import { PRODUCT_SOURCE_FILTERS, type ProductSourceFilter } from "./constants";
 import type { ProductSummary } from "./api";
 import { ProductCard } from "./ProductCard";
@@ -12,9 +13,11 @@ interface ProductsViewProps {
 function ProductGrid({ products }: { products: ProductSummary[] }) {
   if (products.length === 0) {
     return (
-      <div className="text-text-subtle flex flex-col items-center justify-center py-24">
-        <p className="text-lg">해당하는 서비스가 아직 없습니다</p>
-      </div>
+      <EmptyState
+        className="py-24"
+        title="해당하는 서비스가 아직 없습니다"
+        titleClassName="text-lg"
+      />
     );
   }
 

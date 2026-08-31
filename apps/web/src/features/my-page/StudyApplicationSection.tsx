@@ -1,22 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge } from "@ui/components/server";
+import {
+  Badge,
+  EmptyState,
+  InlineErrorState,
+  InlineLoadingState,
+} from "@ui/components/server";
 import { Select } from "@ui/components/client";
 import {
   getMyStudyApplication,
   type StudyApplicationDetail,
   type StudyApplicationSummary,
 } from "@/features/study-application/api";
+import { STUDY_CREATION_STATUS_LABELS } from "@core/study-status";
 import { handleApiError } from "@core/utils/api-client";
 import { StudyApplicationEditor } from "./StudyApplicationEditor";
-
-const STATUS_LABELS: Record<StudyApplicationSummary["study_status"], string> = {
-  PENDING: "승인 대기",
-  RE_APPLIED: "재신청",
-  REJECTED: "반려",
-  APPROVED: "승인",
-};
 
 interface StudyApplicationSectionProps {
   applications: StudyApplicationSummary[];
@@ -63,9 +62,11 @@ export function StudyApplicationSection({
   return (
     <div>
       {applications.length === 0 ? (
-        <div className="text-text-subtle flex flex-col items-center justify-center py-20">
-          <p className="text-lg">진행 중인 스터디 개설 신청이 없습니다.</p>
-        </div>
+        <EmptyState
+          title="진행 중인 스터디 개설 신청이 없습니다."
+          className="py-20"
+          titleClassName="text-lg"
+        />
       ) : (
         <div>
           <div className="mb-6">
@@ -86,7 +87,11 @@ export function StudyApplicationSection({
             <article className="rounded-3 border-border-gray-light bg-surface-white flex flex-col gap-2 border p-5">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
-                  label={STATUS_LABELS[selectedApplication.study_status]}
+                  label={
+                    STUDY_CREATION_STATUS_LABELS[
+                      selectedApplication.study_status
+                    ]
+                  }
                   variant={
                     selectedApplication.study_status === "REJECTED"
                       ? "danger"
@@ -111,14 +116,18 @@ export function StudyApplicationSection({
           )}
 
           {isDetailLoading && (
-            <p className="text-text-subtle py-10 text-center text-[15px]">
-              신청서를 불러오는 중입니다.
-            </p>
+            <InlineLoadingState
+              message="신청서를 불러오는 중입니다."
+              className="py-10"
+              textClassName="text-[15px]"
+            />
           )}
           {detailError && (
-            <p className="text-text-danger py-10 text-center text-[15px]">
-              {detailError}
-            </p>
+            <InlineErrorState
+              message={detailError}
+              className="py-10"
+              textClassName="text-[15px]"
+            />
           )}
           {selectedApplicationDetail && (
             <StudyApplicationEditor application={selectedApplicationDetail} />

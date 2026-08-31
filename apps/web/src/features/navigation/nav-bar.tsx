@@ -147,7 +147,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
 
       {/* Mobile Full Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-[#f6f8fb] md:hidden">
+        <div className="bg-surface-gray-subtler fixed inset-0 z-[100] flex flex-col overflow-y-auto md:hidden">
           {/* Mobile Menu Header */}
           <div className="bg-surface-white/95 border-divider-gray-light sticky top-0 z-10 flex h-[64px] shrink-0 items-center justify-between gap-4 border-b px-4 backdrop-blur">
             <Link
@@ -219,7 +219,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                                 void handleStudyApplicationClick(event);
                               }
                             }}
-                            className="text-text-basic rounded-2 px-3 py-3 text-[16px] leading-[1.5] hover:bg-[#eef4ff] hover:font-semibold"
+                            className="text-text-basic hover:bg-action-primary-hover rounded-2 px-3 py-3 text-[16px] leading-[1.5] hover:font-semibold"
                           >
                             {subMenu.label}
                           </Link>
@@ -234,7 +234,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                             menu.external ? "noopener noreferrer" : undefined
                           }
                           onClick={() => setMobileMenuOpen(false)}
-                          className="text-text-basic rounded-2 block px-3 py-3 text-[16px] leading-[1.5] hover:bg-[#eef4ff] hover:font-semibold"
+                          className="text-text-basic hover:bg-action-primary-hover rounded-2 block px-3 py-3 text-[16px] leading-[1.5] hover:font-semibold"
                         >
                           {menu.label} 바로가기
                         </Link>

@@ -38,7 +38,7 @@ function FileThumbnail({ file }: { file: File }) {
     <img
       src={previewUrl}
       alt=""
-      className="h-10 w-10 shrink-0 rounded border border-[#cdd1d5] object-cover"
+      className="border-gray-20 h-10 w-10 shrink-0 rounded border object-cover"
     />
   );
 }
@@ -48,7 +48,7 @@ function ExistingFileThumbnail({ url }: { url: string }) {
     <img
       src={url}
       alt=""
-      className="h-10 w-10 shrink-0 rounded border border-[#cdd1d5] object-cover"
+      className="border-gray-20 h-10 w-10 shrink-0 rounded border object-cover"
     />
   );
 }
@@ -186,11 +186,11 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
 
   return (
     <div
-      className={`w-full rounded-lg border border-[#cdd1d5] bg-white p-4 ${className}`}
+      className={`border-gray-20 bg-surface-white w-full rounded-lg border p-4 ${className}`}
     >
       {title && <h2 className="mb-2 text-[17px] font-bold">{title}</h2>}
       {description && shouldShowDropZone && (
-        <p className="mb-4 text-gray-600">{description}</p>
+        <p className="text-text-subtle mb-4">{description}</p>
       )}
 
       {shouldShowDropZone && (
@@ -203,8 +203,8 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
           onClick={() => fileInputRef.current?.click()}
           className={`cursor-pointer rounded-lg border border-dashed px-6 py-8 text-center transition-colors ${
             isDragActive
-              ? "border-primary-80 bg-[#ecf2fe]"
-              : "border-gray-30 hover:border-primary bg-white"
+              ? "border-primary-80 bg-primary-5"
+              : "border-gray-30 bg-surface-white hover:border-primary"
           }`}
         >
           <input
@@ -259,7 +259,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
               {file.status === "success" && (
                 <button type="button" onClick={() => removeFile(file.name)}>
                   <Label
-                    className="flex cursor-pointer items-center text-red-500 hover:text-red-700"
+                    className="text-text-danger hover:text-danger-70 flex cursor-pointer items-center"
                     size={"s"}
                   >
                     <X className="h-5 w-5" /> 삭제
@@ -269,7 +269,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
               {file.status === "error" && (
                 <button type="button" onClick={() => removeFile(file.name)}>
                   <Label
-                    className="flex cursor-pointer items-center text-red-500 hover:text-red-700"
+                    className="text-text-danger hover:text-danger-70 flex cursor-pointer items-center"
                     size={"s"}
                   >
                     <X className="h-5 w-5" /> 에러

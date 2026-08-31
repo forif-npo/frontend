@@ -48,7 +48,7 @@ export const Switch = ({
       />
       <span
         aria-hidden="true"
-        className={`border-border-gray absolute left-0 top-0 -translate-x-1 transform rounded-full border bg-white transition-transform duration-200 ease-in-out ${sizeConf.knob} peer-checked:${sizeConf.translate} peer-disabled:opacity-75`}
+        className={`border-border-gray bg-surface-white absolute left-0 top-0 -translate-x-1 transform rounded-full border transition-transform duration-200 ease-in-out ${sizeConf.knob} peer-checked:${sizeConf.translate} peer-disabled:opacity-75`}
       />
     </span>
   );

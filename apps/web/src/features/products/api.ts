@@ -1,19 +1,27 @@
 import type { ApiResponse } from "@core/types/api";
+import type {
+  ProductApplicationStatus,
+  ProductOperationStatus,
+  ProductSourceType,
+} from "@core/products";
 import { apiClient } from "@core/utils/api-client";
 
 /**
  * 서비스 쇼케이스 API (FOR-105)
  */
 
-export type ProductStatus = "LIVE" | "DEV" | "PAUSED" | "RETIRED";
-export type ProductSourceType = "STUDY" | "HACKATHON" | "SIDE";
-export type ProductApplicationStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type {
+  ProductApplicationStatus,
+  ProductOperationStatus,
+  ProductSourceType,
+} from "@core/products";
 
 export interface ProductSummary {
   slug: string;
   name: string;
   one_liner: string;
-  status: ProductStatus;
+  status: ProductApplicationStatus;
+  operation_status: ProductOperationStatus;
   source_type: ProductSourceType;
   source_label: string | null;
   tags: string[];
@@ -48,6 +56,7 @@ export interface ProductApplication {
   tags: string[];
   tech_stack: string[];
   status: ProductApplicationStatus;
+  operation_status: ProductOperationStatus | null;
   reject_reason: string | null;
   applied_at: string;
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import { Select } from "@ui/components/client";
+import { EmptyState } from "@ui/components/server";
 import { FORIF_CONTACT_INFO } from "@/constants/organization";
 import { PageHeader } from "@/components/PageHeader";
 import { getCurrentSemester, type Semester } from "@/features/semester/api";
@@ -117,9 +118,7 @@ export default function TeamPage() {
           ))}
         </div>
       ) : team.length === 0 ? (
-        <div className="py-12 text-center text-sm text-gray-500">
-          해당 학기의 운영진 정보가 없습니다.
-        </div>
+        <EmptyState title="해당 학기의 운영진 정보가 없습니다." />
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {team.map((member) => (

@@ -226,7 +226,7 @@ export function DuesView({
         </p>
       )}
       {error && (
-        <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p className="border-border-danger-light bg-danger-5 text-text-danger rounded-md border px-4 py-3 text-sm">
           {error}
         </p>
       )}
@@ -293,9 +293,9 @@ function SummaryCard({
 }) {
   const className = {
     default: "text-foreground",
-    orange: "text-orange-600",
-    red: "text-red-600",
-    green: "text-green-600",
+    orange: "text-text-warning",
+    red: "text-text-danger",
+    green: "text-text-success",
   }[tone];
   return (
     <div className="rounded-md border p-4">

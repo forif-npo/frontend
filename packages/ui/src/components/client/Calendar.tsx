@@ -39,7 +39,7 @@ const TriangleIcon: React.FC<{
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     className={cn(
-      "hover:text-primary-50 text-gray-600 transition-colors",
+      "text-gray-60 hover:text-primary-50 transition-colors",
       className,
     )}
   >

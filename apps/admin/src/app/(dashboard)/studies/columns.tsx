@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { SortableHeader } from "@/components/list/sortable-header";
+import { STUDY_RECRUIT_STATUS_LABELS } from "@core/study-status";
 import { ColumnDef } from "@tanstack/react-table";
 import { getStudyTagLabel, WEEK_DAY_OPTIONS } from "./constants";
 import { Study } from "./types";
@@ -31,7 +32,7 @@ export const columns: ColumnDef<Study>[] = [
       <SortableHeader column={column}>모집 상태</SortableHeader>
     ),
     cell: ({ row }) => {
-      const status = row.getValue("recruit_status") as string;
+      const status = row.getValue("recruit_status") as Study["recruit_status"];
       const isOpen = status === "APPLICABLE";
 
       return (
@@ -40,11 +41,11 @@ export const columns: ColumnDef<Study>[] = [
             variant="outline"
             className={
               isOpen
-                ? "border-green-500 bg-green-50 text-green-700"
-                : "border-gray-500 bg-gray-50 text-gray-700"
+                ? "border-border-success bg-success-5 text-text-success"
+                : "border-border-gray bg-surface-gray-subtler text-text-subtle"
             }
           >
-            {isOpen ? "모집중" : "마감"}
+            {STUDY_RECRUIT_STATUS_LABELS[status]}
           </Badge>
         </div>
       );

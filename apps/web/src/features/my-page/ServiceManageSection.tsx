@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { Tabs, Button } from "@ui/components/client";
-import { Badge } from "@ui/components/server";
+import { Badge, EmptyState } from "@ui/components/server";
 import { ProductCard } from "@/features/products/ProductCard";
 import { ProductThumbnail } from "@/features/products/ProductThumbnail";
 import { PRODUCT_SOURCE_LABELS } from "@/features/products/constants";
+import { PRODUCT_APPLICATION_STATUS_LABELS } from "@core/products";
 import type {
   ProductApplication,
   ProductSummary,
@@ -16,29 +17,13 @@ interface ServiceManageSectionProps {
   products: ProductSummary[];
 }
 
-const APPLICATION_STATUS = {
-  PENDING: { label: "검토 대기중", variant: "warning" },
-  APPROVED: { label: "승인", variant: "success" },
-  REJECTED: { label: "반려", variant: "danger" },
+const APPLICATION_STATUS_VARIANTS = {
+  PENDING: "warning",
+  ACCEPTED: "success",
+  REJECTED: "danger",
 } as const;
 
-function EmptyState({
-  message,
-  action,
-}: {
-  message: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <div className="text-text-subtle flex flex-col items-center justify-center gap-4 py-20">
-      <p className="text-lg">{message}</p>
-      {action}
-    </div>
-  );
-}
-
 function ApplicationCard({ application }: { application: ProductApplication }) {
-  const status = APPLICATION_STATUS[application.status];
   const content = (
     <article className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border transition-shadow hover:shadow-md">
       <ProductThumbnail
@@ -50,8 +35,8 @@ function ApplicationCard({ application }: { application: ProductApplication }) {
       <div className="flex flex-1 flex-col gap-4 px-8 py-8">
         <div className="flex flex-wrap gap-2">
           <Badge
-            label={status.label}
-            variant={status.variant}
+            label={PRODUCT_APPLICATION_STATUS_LABELS[application.status]}
+            variant={APPLICATION_STATUS_VARIANTS[application.status]}
             appearance="solid-pastel"
             size="small"
           />
@@ -116,7 +101,13 @@ function ApplicationList({
   );
 
   if (sortedApplications.length === 0) {
-    return <EmptyState message="신청한 서비스가 없습니다." />;
+    return (
+      <EmptyState
+        title="신청한 서비스가 없습니다."
+        className="py-20"
+        titleClassName="text-lg"
+      />
+    );
   }
 
   return (
@@ -136,15 +127,17 @@ function MyServices({ applications, products }: ServiceManageSectionProps) {
     products.map((product) => [product.slug, product]),
   );
   const myProducts = applications
-    .filter((application) => application.status === "APPROVED")
+    .filter((application) => application.status === "ACCEPTED")
     .map((application) => productBySlug.get(application.slug))
     .filter((product): product is ProductSummary => Boolean(product));
 
   if (myProducts.length === 0) {
     return (
       <EmptyState
-        message="아직 승인된 서비스가 없습니다."
-        action={
+        title="아직 승인된 서비스가 없습니다."
+        className="py-20"
+        titleClassName="text-lg"
+        actions={
           <Link href="/products/apply">
             <Button variant="primary" size="medium">
               서비스 등록 신청

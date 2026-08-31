@@ -1,7 +1,7 @@
 "use client";
 
 import { Accordion } from "@ui/components/client";
-import { Badge, type BadgeProps } from "@ui/components/server";
+import { Badge, EmptyState, type BadgeProps } from "@ui/components/server";
 
 import type { FaqPost } from "../types/faq.type";
 
@@ -29,11 +29,7 @@ export function FaqAccordionList({
   hasQuery = false,
 }: FaqAccordionListProps) {
   if (items.length === 0) {
-    return (
-      <div className="py-12 text-center text-sm text-gray-500">
-        검색 결과가 없습니다.
-      </div>
-    );
+    return <EmptyState title="검색 결과가 없습니다." />;
   }
 
   const accordionItems = items.map((item) => {

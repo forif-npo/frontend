@@ -11,7 +11,7 @@ export function MobileDashboardHeader() {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center bg-neutral-950 px-2 text-white md:hidden">
+    <header className="bg-surface-inverse text-text-inverse-static sticky top-0 z-20 flex h-12 shrink-0 items-center px-2 md:hidden">
       <Button
         type="button"
         variant="ghost"

@@ -6,7 +6,7 @@ import type { DuesMember } from "./types";
 
 function statusLabel(value: boolean, done: string, pending: string) {
   return (
-    <span className={value ? "text-emerald-700" : "text-muted-foreground"}>
+    <span className={value ? "text-text-success" : "text-muted-foreground"}>
       {value ? done : pending}
     </span>
   );

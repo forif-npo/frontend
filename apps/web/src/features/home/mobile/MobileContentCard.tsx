@@ -1,9 +1,10 @@
 import { CalendarDays, ChevronRight } from "@repo/assets/icons/lucide";
 import Link from "next/link";
-import type { ComponentType, SVGProps, ReactNode } from "react";
+import type { ComponentType, ReactNode, SVGProps } from "react";
+import { cn } from "@ui/utils/cn";
 
-interface ListItem {
-  id: string;
+export interface MobileContentListItem {
+  id: string | number;
   title: string;
   href?: string;
 }
@@ -12,12 +13,16 @@ interface MobileContentCardProps {
   icon?: ComponentType<
     SVGProps<SVGSVGElement> & { size?: number; strokeWidth?: number }
   >;
-  title: string;
+  title?: string;
   moreHref?: string;
   moreText?: string;
-  items?: ListItem[];
+  moreTarget?: "_blank";
+  moreRel?: string;
+  items?: MobileContentListItem[];
   description?: string;
   footer?: ReactNode;
+  children?: ReactNode;
+  className?: string;
 }
 
 export function MobileContentCard({
@@ -25,52 +30,70 @@ export function MobileContentCard({
   title,
   moreHref,
   moreText = "더보기",
+  moreTarget,
+  moreRel,
   items,
   description,
   footer,
+  children,
+  className,
 }: MobileContentCardProps) {
   return (
-    <div className="flex w-full flex-col gap-4 rounded-xl border border-[#cdd1d5] p-6 shadow-[0px_0px_2px_0px_rgba(0,0,0,0.05),0px_4px_8px_0px_rgba(0,0,0,0.08)]">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <Icon size={24} strokeWidth={1.5} className="text-text-basic" />
-          <span className="text-[19px] font-bold leading-[1.5] text-black">
-            {title}
-          </span>
+    <section
+      className={cn(
+        "border-border-gray-light bg-surface-white flex w-full flex-col gap-4 rounded-xl border p-6 shadow-sm",
+        className,
+      )}
+    >
+      {title && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <Icon size={24} strokeWidth={1.5} className="text-text-basic" />
+            <span className="text-heading-s text-text-basic font-bold leading-[1.5]">
+              {title}
+            </span>
+          </div>
+          {moreHref && (
+            <Link
+              href={moreHref}
+              target={moreTarget}
+              rel={moreRel}
+              className="text-text-basic text-body-m flex h-8 items-center gap-1 px-0.5 leading-[1.5]"
+            >
+              {moreText}
+              <ChevronRight size={20} />
+            </Link>
+          )}
         </div>
-        {moreHref && (
-          <Link
-            href={moreHref}
-            className="flex h-8 items-center gap-1 px-0.5 text-[17px] leading-[1.5] text-[#1e2124]"
-          >
-            {moreText}
-            <ChevronRight size={20} className="text-[#1e2124]" />
-          </Link>
-        )}
-      </div>
+      )}
 
-      {/* List Items */}
       {items && items.length > 0 && (
         <div className="flex flex-col gap-4">
-          {items.slice(0, 3).map((item) => (
-            <p
-              key={item.id}
-              className="truncate text-[17px] leading-[1.5] text-black"
-            >
-              {item.title}
-            </p>
-          ))}
+          {items.slice(0, 3).map((item) => {
+            const className =
+              "text-text-basic block truncate text-body-m leading-[1.5]";
+
+            return item.href ? (
+              <Link key={item.id} href={item.href} className={className}>
+                {item.title}
+              </Link>
+            ) : (
+              <p key={item.id} className={className}>
+                {item.title}
+              </p>
+            );
+          })}
         </div>
       )}
 
-      {/* Description */}
       {description && (
-        <p className="text-[17px] leading-[1.5] text-black">{description}</p>
+        <p className="text-text-basic text-body-m leading-[1.5]">
+          {description}
+        </p>
       )}
 
-      {/* Footer */}
+      {children}
       {footer}
-    </div>
+    </section>
   );
 }

@@ -4,9 +4,9 @@ import Link from "next/link";
 
 export function MentorRecruitBanner() {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[linear-gradient(118deg,#063bb4_0%,#0b50d0_53%,#2b72e7_100%)] text-white shadow-[0_18px_50px_rgba(11,80,208,0.22)]">
-      <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_1px_1px,#fff_1px,transparent_0)] [background-size:22px_22px]" />
-      <div className="absolute -left-20 -top-24 h-64 w-64 rounded-full bg-[#7eb1ff]/20 blur-3xl" />
+    <div className="from-primary-70 via-primary-60 to-primary-40 relative h-full w-full overflow-hidden bg-gradient-to-br text-white shadow-2xl">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,currentColor_1px,transparent_0)] opacity-25 [background-size:22px_22px]" />
+      <div className="bg-primary-30/20 absolute -left-20 -top-24 h-64 w-64 rounded-full blur-3xl" />
       <div className="absolute inset-0 z-10 flex items-center px-5 py-4 md:grid md:grid-cols-1 md:items-center md:gap-4 md:px-12 md:py-9 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="flex w-full items-start max-md:flex-row max-md:items-center max-md:justify-between max-md:gap-2 md:flex-col xl:translate-x-20">
           <div className="flex flex-col">
@@ -52,7 +52,7 @@ export function MentorRecruitBanner() {
               <span className="text-xs font-bold tracking-[0.22em] text-white/70">
                 FORIF
               </span>
-              <span className="rounded-full bg-[#a9caff] px-2 py-1 text-[10px] font-bold text-[#063bb4]">
+              <span className="bg-primary-20 text-primary-70 rounded-full px-2 py-1 text-[10px] font-bold">
                 RECRUITING
               </span>
             </div>
@@ -65,7 +65,7 @@ export function MentorRecruitBanner() {
               </p>
             </div>
           </div>
-          <div className="absolute bottom-5 left-0 flex h-16 w-16 items-center justify-center rounded-full border border-white/30 bg-[#a9caff] text-center text-[11px] font-black leading-tight text-[#063bb4] shadow-lg">
+          <div className="bg-primary-20 text-primary-70 absolute bottom-5 left-0 flex h-16 w-16 items-center justify-center rounded-full border border-white/30 text-center text-[11px] font-black leading-tight shadow-lg">
             2026
             <br />
             2ND
