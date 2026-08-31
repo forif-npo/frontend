@@ -1,13 +1,20 @@
 import type { ApiResponse } from "@core/types/api";
+import type {
+  ProductApplicationStatus,
+  ProductSourceType,
+  ProductStatus,
+} from "@core/products";
 import { apiClient } from "@core/utils/api-client";
 
 /**
  * 서비스 쇼케이스 API (FOR-105)
  */
 
-export type ProductStatus = "LIVE" | "DEV" | "PAUSED" | "RETIRED";
-export type ProductSourceType = "STUDY" | "HACKATHON" | "SIDE";
-export type ProductApplicationStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type {
+  ProductApplicationStatus,
+  ProductSourceType,
+  ProductStatus,
+} from "@core/products";
 
 export interface ProductSummary {
   slug: string;

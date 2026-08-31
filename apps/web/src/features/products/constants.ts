@@ -1,11 +1,6 @@
-import type { ProductSourceType, ProductStatus } from "./api";
+import type { ProductStatus } from "./api";
 
-export const PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
-  LIVE: "운영 중",
-  DEV: "개발 중",
-  PAUSED: "운영 중단",
-  RETIRED: "서비스 종료",
-};
+export { PRODUCT_SOURCE_LABELS, PRODUCT_STATUS_LABELS } from "@core/products";
 
 export const PRODUCT_STATUS_BADGE_VARIANTS: Record<
   ProductStatus,
@@ -15,12 +10,6 @@ export const PRODUCT_STATUS_BADGE_VARIANTS: Record<
   DEV: "info",
   PAUSED: "warning",
   RETIRED: "disabled",
-};
-
-export const PRODUCT_SOURCE_LABELS: Record<ProductSourceType, string> = {
-  STUDY: "스터디",
-  HACKATHON: "해커톤",
-  SIDE: "자율 프로젝트",
 };
 
 /** 목록 상단 필터 탭: 전체 + 출처별 */

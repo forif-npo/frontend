@@ -8,15 +8,9 @@ import {
   type StudyApplicationDetail,
   type StudyApplicationSummary,
 } from "@/features/study-application/api";
+import { STUDY_CREATION_STATUS_LABELS } from "@core/study-status";
 import { handleApiError } from "@core/utils/api-client";
 import { StudyApplicationEditor } from "./StudyApplicationEditor";
-
-const STATUS_LABELS: Record<StudyApplicationSummary["study_status"], string> = {
-  PENDING: "승인 대기",
-  RE_APPLIED: "재신청",
-  REJECTED: "반려",
-  APPROVED: "승인",
-};
 
 interface StudyApplicationSectionProps {
   applications: StudyApplicationSummary[];
@@ -86,7 +80,11 @@ export function StudyApplicationSection({
             <article className="rounded-3 border-border-gray-light bg-surface-white flex flex-col gap-2 border p-5">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
-                  label={STATUS_LABELS[selectedApplication.study_status]}
+                  label={
+                    STUDY_CREATION_STATUS_LABELS[
+                      selectedApplication.study_status
+                    ]
+                  }
                   variant={
                     selectedApplication.study_status === "REJECTED"
                       ? "danger"

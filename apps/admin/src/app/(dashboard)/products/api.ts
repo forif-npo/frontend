@@ -1,13 +1,20 @@
 import type { ApiResponse } from "@core/types/api";
+import type {
+  ProductAdminStatus,
+  ProductSourceType,
+  ProductStatus,
+} from "@core/products";
 import { apiClient } from "@core/utils/api-client";
 
 /**
  * 서비스 쇼케이스 API (FOR-105)
  */
 
-export type ProductStatus = "LIVE" | "DEV" | "PAUSED" | "RETIRED";
-export type ProductSourceType = "STUDY" | "HACKATHON" | "SIDE";
-export type ProductApplicationStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type {
+  ProductApplicationStatus,
+  ProductSourceType,
+  ProductStatus,
+} from "@core/products";
 
 // ── 운영진 ──────────────────────────────────────────────────────────
 
@@ -17,7 +24,7 @@ export interface AdminProduct {
   name: string;
   one_liner: string;
   description: string;
-  status: "PENDING" | "REJECTED" | ProductStatus;
+  status: ProductAdminStatus;
   source_type: ProductSourceType;
   source_label: string | null;
   tags: string[];

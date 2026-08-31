@@ -26,6 +26,11 @@ import { DataTable } from "@/components/list/data-table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/page-header";
+import {
+  getProductStatusLabel,
+  PRODUCT_PUBLISHED_STATUSES,
+  PRODUCT_SOURCE_LABELS,
+} from "@core/products";
 import { handleApiError } from "@core/utils/api-client";
 import {
   approveProduct,
@@ -45,54 +50,34 @@ function safeExternalUrl(url: string | null): string | null {
   return url && /^https?:\/\//i.test(url) ? url : null;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: "검토 대기",
-  REJECTED: "반려",
-  LIVE: "운영 중",
-  DEV: "개발 중",
-  PAUSED: "운영 중단",
-  RETIRED: "서비스 종료",
-};
-
-const SOURCE_LABELS: Record<string, string> = {
-  STUDY: "스터디",
-  HACKATHON: "해커톤",
-  SIDE: "자율 프로젝트",
-};
-
-const PUBLISHED_STATUSES: ProductStatus[] = [
-  "LIVE",
-  "DEV",
-  "PAUSED",
-  "RETIRED",
-];
-
 function statusBadge(status: string) {
   switch (status) {
     case "PENDING":
       return (
         <Badge className="bg-warning-50 text-text-inverse-static">
-          검토 대기
+          {getProductStatusLabel(status)}
         </Badge>
       );
     case "REJECTED":
-      return <Badge variant="destructive">반려</Badge>;
+      return (
+        <Badge variant="destructive">{getProductStatusLabel(status)}</Badge>
+      );
     case "LIVE":
       return (
         <Badge className="bg-success-60 text-text-inverse-static">
-          운영 중
+          {getProductStatusLabel(status)}
         </Badge>
       );
     case "DEV":
       return (
         <Badge className="bg-primary-60 text-text-inverse-static">
-          개발 중
+          {getProductStatusLabel(status)}
         </Badge>
       );
     case "PAUSED":
-      return <Badge variant="secondary">운영 중단</Badge>;
+      return <Badge variant="secondary">{getProductStatusLabel(status)}</Badge>;
     case "RETIRED":
-      return <Badge variant="outline">서비스 종료</Badge>;
+      return <Badge variant="outline">{getProductStatusLabel(status)}</Badge>;
     default:
       return <Badge variant="secondary">{status}</Badge>;
   }
@@ -134,7 +119,7 @@ export function ProductsAdminView() {
         return products.filter((p) => p.status === "REJECTED");
       case "PUBLISHED":
         return products.filter((p) =>
-          PUBLISHED_STATUSES.includes(p.status as ProductStatus),
+          PRODUCT_PUBLISHED_STATUSES.includes(p.status as ProductStatus),
         );
       default:
         return products;
@@ -234,7 +219,7 @@ export function ProductsAdminView() {
         header: "출처",
         cell: ({ row }) => (
           <span className="text-xs">
-            {SOURCE_LABELS[row.original.source_type] ??
+            {PRODUCT_SOURCE_LABELS[row.original.source_type] ??
               row.original.source_type}
           </span>
         ),
@@ -288,7 +273,7 @@ export function ProductsAdminView() {
           </Button>
         </>
       )}
-      {PUBLISHED_STATUSES.includes(product.status as ProductStatus) && (
+      {PRODUCT_PUBLISHED_STATUSES.includes(product.status as ProductStatus) && (
         <Select
           value={product.status}
           onValueChange={(value) =>
@@ -299,9 +284,9 @@ export function ProductsAdminView() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {PUBLISHED_STATUSES.map((status) => (
+            {PRODUCT_PUBLISHED_STATUSES.map((status) => (
               <SelectItem key={status} value={status}>
-                {STATUS_LABELS[status]}
+                {getProductStatusLabel(status)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -409,7 +394,7 @@ export function ProductsAdminView() {
                   <div>
                     <p className="mb-1 font-semibold">출처</p>
                     <p>
-                      {SOURCE_LABELS[detailTarget.source_type]}
+                      {PRODUCT_SOURCE_LABELS[detailTarget.source_type]}
                       {detailTarget.source_label
                         ? ` · ${detailTarget.source_label}`
                         : ""}

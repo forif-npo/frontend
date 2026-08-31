@@ -2,16 +2,15 @@
 
 import { SortableHeader } from "@/components/list/sortable-header";
 import { Badge } from "@/components/ui/badge";
+import { STUDY_CREATION_STATUS_LABELS } from "@core/study-status";
 import { ColumnDef } from "@tanstack/react-table";
 import { getStudyTagLabel, WEEK_DAY_OPTIONS } from "../constants";
 import { Study } from "../types";
 
 const STATUS_LABELS: Record<Study["study_status"], string> = {
-  PENDING: "승인 대기",
+  ...STUDY_CREATION_STATUS_LABELS,
   APPROVED: "승인 완료",
   STARTED: "개설됨",
-  REJECTED: "반려",
-  RE_APPLIED: "재신청",
 };
 
 const STATUS_BADGE_CLASS_NAMES: Record<Study["study_status"], string> = {

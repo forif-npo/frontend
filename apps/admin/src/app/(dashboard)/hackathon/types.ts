@@ -1,3 +1,4 @@
+import { HACKATHON_STATUS_LABELS as SHARED_HACKATHON_STATUS_LABELS } from "@core/hackathon-status";
 import type { HackathonStatus } from "@core/types/hackathon";
 
 export type { Hackathon, SubmissionStatus } from "@core/types/hackathon";
@@ -14,11 +15,9 @@ export const HACKATHON_STATUS_FLOW: HackathonStatus[] = [
 ];
 
 export const HACKATHON_STATUS_LABELS: Record<HackathonStatus, string> = {
-  RECRUITING: "모집중",
+  ...SHARED_HACKATHON_STATUS_LABELS,
+  // 운영 화면의 기존 표현을 그대로 유지한다.
   TEAM_BUILDING: "팀 빌딩",
-  IN_PROGRESS: "진행중",
-  JUDGING: "심사중",
-  ENDED: "종료",
 };
 
 /**
