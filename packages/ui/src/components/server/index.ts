@@ -12,6 +12,7 @@ export * from "./Heading";
 export * from "./HintText";
 export * from "./InfoBox";
 export * from "./InfoText";
+export * from "./InlineErrorState";
 export * from "./Label";
 export * from "./Link";
 export * from "./LinkButton";

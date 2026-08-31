@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { Pagination, RadioButtonGroup } from "@ui/components/client";
-import { EmptyState } from "@ui/components/server";
+import { EmptyState, InlineErrorState } from "@ui/components/server";
 import { SearchBar } from "@/features/support/components/SearchBar";
 import { SearchResultCount } from "@/features/support/components/SearchResultCount";
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
@@ -92,9 +92,7 @@ export default function FaqPage() {
       {isLoading && <FaqListSkeleton />}
 
       {errorMessage && !isLoading && (
-        <div className="py-12 text-center text-sm text-red-600">
-          {errorMessage}
-        </div>
+        <InlineErrorState message={errorMessage} />
       )}
 
       {!isLoading && !errorMessage && items.length === 0 && (

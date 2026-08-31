@@ -5,7 +5,11 @@ import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
 import { ShareIcon } from "@repo/assets/icons/krds";
-import { Breadcrumb, EmptyState } from "@ui/components/server";
+import {
+  Breadcrumb,
+  EmptyState,
+  InlineErrorState,
+} from "@ui/components/server";
 
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 import { AnnouncementDetailSkeleton } from "@/components/skeleton/AnnouncementDetailSkeleton";
@@ -47,9 +51,7 @@ export default function AnnouncementDetailPage() {
 
       {isLoading && <AnnouncementDetailSkeleton />}
       {errorMessage && !isLoading && (
-        <div className="py-12 text-center text-sm text-red-600">
-          {errorMessage}
-        </div>
+        <InlineErrorState message={errorMessage} />
       )}
       {!isLoading && !errorMessage && !item && (
         <EmptyState title="공지사항을 찾을 수 없습니다." />

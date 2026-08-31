@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Pagination } from "@ui/components/client";
+import { InlineErrorState } from "@ui/components/server";
 import { SearchBar } from "@/features/support/components/SearchBar";
 import { SearchResultCount } from "@/features/support/components/SearchResultCount";
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
@@ -57,9 +58,7 @@ export default function AnnouncementPage() {
       {isLoading && <AnnouncementListSkeleton />}
 
       {errorMessage && !isLoading && (
-        <div className="py-12 text-center text-sm text-red-600">
-          {errorMessage}
-        </div>
+        <InlineErrorState message={errorMessage} />
       )}
 
       {!isLoading && !errorMessage && <AnnouncementList items={items} />}
