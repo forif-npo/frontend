@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge } from "@ui/components/server";
+import { Badge, EmptyState, InlineErrorState } from "@ui/components/server";
 import { Select } from "@ui/components/client";
 import {
   getMyStudyApplication,
@@ -57,9 +57,11 @@ export function StudyApplicationSection({
   return (
     <div>
       {applications.length === 0 ? (
-        <div className="text-text-subtle flex flex-col items-center justify-center py-20">
-          <p className="text-lg">진행 중인 스터디 개설 신청이 없습니다.</p>
-        </div>
+        <EmptyState
+          title="진행 중인 스터디 개설 신청이 없습니다."
+          className="py-20"
+          titleClassName="text-lg"
+        />
       ) : (
         <div>
           <div className="mb-6">
@@ -114,9 +116,11 @@ export function StudyApplicationSection({
             </p>
           )}
           {detailError && (
-            <p className="text-text-danger py-10 text-center text-[15px]">
-              {detailError}
-            </p>
+            <InlineErrorState
+              message={detailError}
+              className="py-10"
+              textClassName="text-[15px]"
+            />
           )}
           {selectedApplicationDetail && (
             <StudyApplicationEditor application={selectedApplicationDetail} />

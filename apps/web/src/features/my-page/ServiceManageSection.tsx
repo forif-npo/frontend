@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Tabs, Button } from "@ui/components/client";
-import { Badge } from "@ui/components/server";
+import { Badge, EmptyState } from "@ui/components/server";
 import { ProductCard } from "@/features/products/ProductCard";
 import { ProductThumbnail } from "@/features/products/ProductThumbnail";
 import { PRODUCT_SOURCE_LABELS } from "@/features/products/constants";
@@ -22,21 +22,6 @@ const APPLICATION_STATUS_VARIANTS = {
   ACCEPTED: "success",
   REJECTED: "danger",
 } as const;
-
-function EmptyState({
-  message,
-  action,
-}: {
-  message: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <div className="text-text-subtle flex flex-col items-center justify-center gap-4 py-20">
-      <p className="text-lg">{message}</p>
-      {action}
-    </div>
-  );
-}
 
 function ApplicationCard({ application }: { application: ProductApplication }) {
   const content = (
@@ -116,7 +101,13 @@ function ApplicationList({
   );
 
   if (sortedApplications.length === 0) {
-    return <EmptyState message="신청한 서비스가 없습니다." />;
+    return (
+      <EmptyState
+        title="신청한 서비스가 없습니다."
+        className="py-20"
+        titleClassName="text-lg"
+      />
+    );
   }
 
   return (
@@ -143,8 +134,10 @@ function MyServices({ applications, products }: ServiceManageSectionProps) {
   if (myProducts.length === 0) {
     return (
       <EmptyState
-        message="아직 승인된 서비스가 없습니다."
-        action={
+        title="아직 승인된 서비스가 없습니다."
+        className="py-20"
+        titleClassName="text-lg"
+        actions={
           <Link href="/products/apply">
             <Button variant="primary" size="medium">
               서비스 등록 신청

@@ -10,7 +10,7 @@ import {
 } from "@/features/hackathon";
 import { useCurrentHackathon } from "@/hooks/hackathon";
 import { HackathonPageSkeleton } from "@/components/skeleton/HackathonSkeleton";
-import { Body, Heading, Link } from "@ui/components/server";
+import { Body, Heading, InlineErrorState, Link } from "@ui/components/server";
 import { Button } from "@ui/components/client";
 
 function detailCtaLabel(stage: MainStage): string {
@@ -40,11 +40,11 @@ export default function HackathonPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Body size="m" className="text-text-danger">
-          {error}
-        </Body>
-      </div>
+      <InlineErrorState
+        message={error}
+        className="flex min-h-[60vh] items-center justify-center py-0"
+        textClassName="text-body-m-mobile sm:text-body-m"
+      />
     );
   }
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Label } from "@ui/components/server";
+import { EmptyState, Label } from "@ui/components/server";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
 import type { NewsItem } from "./NewsSection";
@@ -87,9 +87,12 @@ export function NewsSectionClient({ announcements, mediumPosts }: Props) {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-start">
         {visibleItems.length === 0 && (
-          <div className="text-text-disabled text-body-s col-span-2 py-12 text-center">
-            항목이 없습니다.
-          </div>
+          <EmptyState
+            title="항목이 없습니다."
+            className="col-span-2 py-12"
+            textClassName="text-text-disabled"
+            titleClassName="text-body-s"
+          />
         )}
         {visibleItems.map((item) => (
           <NewsCard key={item.id} item={item} />

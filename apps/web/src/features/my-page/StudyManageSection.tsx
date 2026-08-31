@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { Button, Select, Tabs } from "@ui/components/client";
-import { Badge } from "@ui/components/server";
+import { Badge, EmptyState, InlineErrorState } from "@ui/components/server";
 import { ApplicantsPanel } from "./ApplicantsPanel";
 import { AttendancePanel } from "./AttendancePanel";
 import { StudyApplicationSection } from "./StudyApplicationSection";
@@ -83,7 +83,13 @@ export function StudyManageSection({
       selectedStudy.act_semester !== activeSemester.act_semester);
   const startedStudyContent = (content: ReactNode) => {
     if (sortedCreatedStudies.length === 0 || selectedStartedStudyId === null) {
-      return <EmptyOperatingStudies />;
+      return (
+        <EmptyState
+          title="개설된 스터디가 없습니다."
+          className="py-20"
+          titleClassName="text-lg"
+        />
+      );
     }
 
     return (
@@ -125,7 +131,11 @@ export function StudyManageSection({
             content:
               applicantManagementStudies.length === 0 ||
               selectedApplicantStudyId === null ? (
-                <EmptyApplicantManagementStudies />
+                <EmptyState
+                  title="신청자를 관리할 스터디가 없습니다."
+                  className="py-20"
+                  titleClassName="text-lg"
+                />
               ) : (
                 <div>
                   <StudySelector
@@ -250,7 +260,13 @@ function OperatingStudyOverview({
   );
 
   if (createdStudies.length === 0 || selectedStudyId === null) {
-    return <EmptyOperatingStudies />;
+    return (
+      <EmptyState
+        title="개설된 스터디가 없습니다."
+        className="py-20"
+        titleClassName="text-lg"
+      />
+    );
   }
 
   return (
@@ -266,9 +282,7 @@ function OperatingStudyOverview({
           스터디 정보를 불러오는 중입니다.
         </p>
       ) : error || !study ? (
-        <p className="text-text-danger py-12 text-center">
-          스터디 정보를 불러오지 못했습니다.
-        </p>
+        <InlineErrorState message="스터디 정보를 불러오지 못했습니다." />
       ) : (
         <StudyDetailContent study={study} />
       )}
@@ -310,22 +324,6 @@ function StudySelector({
           ) : undefined
         }
       />
-    </div>
-  );
-}
-
-function EmptyOperatingStudies() {
-  return (
-    <div className="text-text-subtle flex flex-col items-center justify-center py-20">
-      <p className="text-lg">개설된 스터디가 없습니다.</p>
-    </div>
-  );
-}
-
-function EmptyApplicantManagementStudies() {
-  return (
-    <div className="text-text-subtle flex flex-col items-center justify-center py-20">
-      <p className="text-lg">신청자를 관리할 스터디가 없습니다.</p>
     </div>
   );
 }

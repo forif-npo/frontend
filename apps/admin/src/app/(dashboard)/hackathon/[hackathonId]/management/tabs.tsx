@@ -5,6 +5,7 @@ import { DataTable } from "@/components/list/data-table";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@ui/components/server";
 import {
   Select,
   SelectContent,
@@ -28,14 +29,6 @@ import {
   TEAM_STATUS_LABELS,
   formatDate,
 } from "./types";
-
-function EmptyState({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="text-muted-foreground rounded-md border py-10 text-center text-sm">
-      {children}
-    </div>
-  );
-}
 
 export function ParticipantsTab({
   participants,
@@ -228,9 +221,17 @@ export function ParticipantsTab({
       </div>
 
       {participants.length === 0 ? (
-        <EmptyState>참가자가 없습니다.</EmptyState>
+        <EmptyState
+          title="참가자가 없습니다."
+          className="rounded-md border py-10"
+          textClassName="text-muted-foreground"
+        />
       ) : filteredParticipants.length === 0 ? (
-        <EmptyState>조건에 맞는 참가자가 없습니다.</EmptyState>
+        <EmptyState
+          title="조건에 맞는 참가자가 없습니다."
+          className="rounded-md border py-10"
+          textClassName="text-muted-foreground"
+        />
       ) : (
         <DataTable
           columns={columns}
@@ -307,7 +308,11 @@ export function TeamsTab({
   return (
     <>
       {teams.length === 0 ? (
-        <EmptyState>등록된 팀이 없습니다.</EmptyState>
+        <EmptyState
+          title="등록된 팀이 없습니다."
+          className="rounded-md border py-10"
+          textClassName="text-muted-foreground"
+        />
       ) : (
         <DataTable
           columns={columns}
@@ -395,7 +400,11 @@ export function CriteriaTab({
       </div>
 
       {criteria.length === 0 ? (
-        <EmptyState>등록된 평가 기준이 없습니다.</EmptyState>
+        <EmptyState
+          title="등록된 평가 기준이 없습니다."
+          className="rounded-md border py-10"
+          textClassName="text-muted-foreground"
+        />
       ) : (
         <DataTable
           columns={columns}
@@ -493,7 +502,11 @@ export function EvaluationTab({
   );
 
   return teams.length === 0 ? (
-    <EmptyState>등록된 팀이 없습니다.</EmptyState>
+    <EmptyState
+      title="등록된 팀이 없습니다."
+      className="rounded-md border py-10"
+      textClassName="text-muted-foreground"
+    />
   ) : (
     <DataTable
       columns={columns}
@@ -562,7 +575,11 @@ export function AwardsTab({
       </div>
 
       {awards.length === 0 ? (
-        <EmptyState>등록된 수상 내역이 없습니다.</EmptyState>
+        <EmptyState
+          title="등록된 수상 내역이 없습니다."
+          className="rounded-md border py-10"
+          textClassName="text-muted-foreground"
+        />
       ) : (
         <DataTable
           columns={columns}

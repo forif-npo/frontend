@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getStudyApplicationStatus } from "@/features/study/apply/api";
 import { AlertModal, Button } from "@ui/components/client";
+import { InlineErrorState } from "@ui/components/server";
 import { STUDY_RECRUIT_STATUS_LABELS } from "@core/study-status";
 import { StudyDetailContent } from "@/features/study/detail/StudyDetailContent";
 import { StudyDetailNavigation } from "@/features/study/detail/StudyDetailNavigation";
@@ -58,11 +59,11 @@ export default function StudyDetailPage({ params }: Props) {
   if (error || !study) {
     return (
       <div className="px-6 py-8">
-        <div className="flex h-[400px] items-center justify-center">
-          <div className="text-text-danger text-lg">
-            스터디 정보를 불러올 수 없습니다.
-          </div>
-        </div>
+        <InlineErrorState
+          message="스터디 정보를 불러올 수 없습니다."
+          className="flex h-[400px] items-center justify-center py-0"
+          textClassName="text-lg"
+        />
       </div>
     );
   }
