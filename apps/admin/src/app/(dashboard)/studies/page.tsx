@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { PageState } from "@ui/components/server";
 import { fetchStudiesWithFallback, getCurrentSemester } from "./api";
 import { StudiesView } from "./studies-view";
 import { SemesterLabel } from "./types";
@@ -54,12 +55,11 @@ export default async function Page({ searchParams }: PageProps) {
 
   if (!accessToken) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <h2 className="mb-4 text-2xl font-bold">로그인이 필요합니다</h2>
-        <p className="text-muted-foreground mb-4">
-          access token을 찾을 수 없습니다.
-        </p>
-      </div>
+      <PageState
+        fullHeight
+        title="로그인이 필요합니다"
+        description="access token을 찾을 수 없습니다."
+      />
     );
   }
 
@@ -95,20 +95,24 @@ export default async function Page({ searchParams }: PageProps) {
   } catch (error) {
     console.error("[Page Error]", error);
 
-    // Return error state
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <h2 className="mb-4 text-2xl font-bold">데이터를 불러올 수 없습니다</h2>
-        <p className="text-muted-foreground mb-4">
-          {error instanceof Error
-            ? error.message
-            : "알 수 없는 오류가 발생했습니다"}
-        </p>
-        <p className="text-muted-foreground text-sm">
-          .env 파일에서 USE_MOCK_DATA=true로 설정하여 목 데이터를 사용할 수
-          있습니다
-        </p>
-      </div>
+      <PageState
+        fullHeight
+        title="데이터를 불러올 수 없습니다"
+        description={
+          <>
+            <p>
+              {error instanceof Error
+                ? error.message
+                : "알 수 없는 오류가 발생했습니다"}
+            </p>
+            <p className="mt-2 text-sm">
+              .env 파일에서 USE_MOCK_DATA=true로 설정하여 목 데이터를 사용할 수
+              있습니다
+            </p>
+          </>
+        }
+      />
     );
   }
 }
