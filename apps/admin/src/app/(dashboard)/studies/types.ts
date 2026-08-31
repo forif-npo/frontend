@@ -10,6 +10,7 @@ export interface Study {
   tags: string[];
   one_liner: string;
   mentee_count: number;
+  has_applications: boolean;
   recruit_status: "APPLICABLE" | "CLOSED";
   week_day: number | null;
   difficulty: "EASY" | "SEMI_EASY" | "NORMAL" | "SEMI_HARD" | "HARD" | null;
