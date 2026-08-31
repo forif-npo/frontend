@@ -2,7 +2,12 @@
 
 import { useState, type ReactNode } from "react";
 import { Button, Select, Tabs } from "@ui/components/client";
-import { Badge, EmptyState, InlineErrorState } from "@ui/components/server";
+import {
+  Badge,
+  EmptyState,
+  InlineErrorState,
+  InlineLoadingState,
+} from "@ui/components/server";
 import { ApplicantsPanel } from "./ApplicantsPanel";
 import { AttendancePanel } from "./AttendancePanel";
 import { StudyApplicationSection } from "./StudyApplicationSection";
@@ -278,9 +283,10 @@ function OperatingStudyOverview({
         isPastSemester={isPastSemester}
       />
       {isLoading ? (
-        <p className="text-text-subtle py-12 text-center">
-          스터디 정보를 불러오는 중입니다.
-        </p>
+        <InlineLoadingState
+          message="스터디 정보를 불러오는 중입니다."
+          textClassName="text-base"
+        />
       ) : error || !study ? (
         <InlineErrorState message="스터디 정보를 불러오지 못했습니다." />
       ) : (

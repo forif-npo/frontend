@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { EmptyState } from "@ui/components/server";
 import { ApplicationCard } from "./ApplicationCard";
 import { ApplicationDetailView } from "./ApplicationDetailView";
 import {
@@ -135,9 +136,11 @@ export function ApplicationSection({
       </div>
 
       {sortedApplications.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-          <p className="text-lg">신청한 스터디가 없습니다</p>
-        </div>
+        <EmptyState
+          title="신청한 스터디가 없습니다"
+          className="py-20"
+          titleClassName="text-lg"
+        />
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {sortedApplications.map((app, index) => (

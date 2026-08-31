@@ -39,6 +39,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EmptyState, InlineLoadingState } from "@ui/components/server";
 import {
   getCertificateTargets,
   getMySignature,
@@ -708,17 +709,26 @@ export function CertificatesView({
       )}
 
       {selectedStudyId == null ? (
-        <div className="text-muted-foreground flex flex-col items-center justify-center py-20">
-          <p>스터디를 선택하면 발급 대상이 표시됩니다</p>
-        </div>
+        <EmptyState
+          title="스터디를 선택하면 발급 대상이 표시됩니다"
+          className="py-20"
+          textClassName="text-muted-foreground"
+          titleClassName="text-base"
+        />
       ) : isLoading ? (
-        <div className="text-muted-foreground flex items-center justify-center py-20">
-          <p>불러오는 중...</p>
-        </div>
+        <InlineLoadingState
+          message="불러오는 중..."
+          className="flex items-center justify-center py-20"
+          textClassName="text-base"
+          textToneClassName="text-muted-foreground"
+        />
       ) : targets.length === 0 ? (
-        <div className="text-muted-foreground flex flex-col items-center justify-center py-20">
-          <p>해당 스터디에 멘티가 없습니다</p>
-        </div>
+        <EmptyState
+          title="해당 스터디에 멘티가 없습니다"
+          className="py-20"
+          textClassName="text-muted-foreground"
+          titleClassName="text-base"
+        />
       ) : (
         <div>
           <p className="mb-3 text-sm">

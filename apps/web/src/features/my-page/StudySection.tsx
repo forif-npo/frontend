@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { EmptyState } from "@ui/components/server";
 import { StudyCard } from "@/components/study/ui/StudyCard";
 import {
   StudySortControl,
@@ -63,9 +64,11 @@ export function StudySection({ studiesData }: StudySectionProps) {
 
       {/* Study List */}
       {sortedStudies.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-          <p className="text-lg">등록된 스터디가 없습니다</p>
-        </div>
+        <EmptyState
+          title="등록된 스터디가 없습니다"
+          className="py-20"
+          titleClassName="text-lg"
+        />
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {sortedStudies.map((study) => (

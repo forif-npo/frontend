@@ -107,7 +107,8 @@ export default function StudyListPage() {
       <InlineErrorState
         message={`오류가 발생했습니다: ${error}`}
         className="bg-bg-base min-h-viewport flex items-center justify-center py-0"
-        textClassName="text-status-error text-lg"
+        textClassName="text-lg"
+        textToneClassName="text-status-error"
       />
     );
   }

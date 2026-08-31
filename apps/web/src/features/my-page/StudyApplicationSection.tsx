@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge, EmptyState, InlineErrorState } from "@ui/components/server";
+import {
+  Badge,
+  EmptyState,
+  InlineErrorState,
+  InlineLoadingState,
+} from "@ui/components/server";
 import { Select } from "@ui/components/client";
 import {
   getMyStudyApplication,
@@ -111,9 +116,11 @@ export function StudyApplicationSection({
           )}
 
           {isDetailLoading && (
-            <p className="text-text-subtle py-10 text-center text-[15px]">
-              신청서를 불러오는 중입니다.
-            </p>
+            <InlineLoadingState
+              message="신청서를 불러오는 중입니다."
+              className="py-10"
+              textClassName="text-[15px]"
+            />
           )}
           {detailError && (
             <InlineErrorState

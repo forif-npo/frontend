@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { toFileDownloadUrl } from "@core/utils/file-download";
+import { InlineErrorState, InlineLoadingState } from "@ui/components/server";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -83,9 +84,11 @@ export function StudyApprovalDetailDialog({
         </DialogHeader>
 
         {isLoading ? (
-          <div className="text-muted-foreground py-16 text-center text-sm">
-            신청 정보를 불러오는 중입니다.
-          </div>
+          <InlineLoadingState
+            message="신청 정보를 불러오는 중입니다."
+            className="py-16"
+            textToneClassName="text-muted-foreground"
+          />
         ) : detail ? (
           <div className="flex flex-col gap-10">
             {thumbnailUrl && (
@@ -196,9 +199,11 @@ export function StudyApprovalDetailDialog({
             </ReviewSection>
           </div>
         ) : (
-          <div className="text-destructive py-16 text-center text-sm">
-            신청 정보를 불러오지 못했습니다.
-          </div>
+          <InlineErrorState
+            message="신청 정보를 불러오지 못했습니다."
+            className="py-16"
+            textToneClassName="text-destructive"
+          />
         )}
 
         <DialogFooter>
