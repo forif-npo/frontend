@@ -1,5 +1,6 @@
 import type { RecruitStatus } from "@/types/study";
 import type { BadgeProps } from "@ui/components/server";
+import { STUDY_RECRUIT_STATUS_LABELS } from "@core/study-status";
 
 /**
  * 난이도 옵션 (API 스펙 기준)
@@ -57,8 +58,16 @@ export const RECRUIT_STATUS_OPTIONS: Array<{
   label: string;
   variant: BadgeProps["variant"];
 }> = [
-  { value: "APPLICABLE", label: "모집 중", variant: "success" },
-  { value: "CLOSED", label: "모집 마감", variant: "disabled" },
+  {
+    value: "APPLICABLE",
+    label: STUDY_RECRUIT_STATUS_LABELS.APPLICABLE,
+    variant: "success",
+  },
+  {
+    value: "CLOSED",
+    label: STUDY_RECRUIT_STATUS_LABELS.CLOSED,
+    variant: "disabled",
+  },
 ];
 
 /**

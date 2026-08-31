@@ -6,6 +6,7 @@ import { Badge } from "@ui/components/server";
 import { ProductCard } from "@/features/products/ProductCard";
 import { ProductThumbnail } from "@/features/products/ProductThumbnail";
 import { PRODUCT_SOURCE_LABELS } from "@/features/products/constants";
+import { PRODUCT_APPLICATION_STATUS_LABELS } from "@core/products";
 import type {
   ProductApplication,
   ProductSummary,
@@ -16,10 +17,10 @@ interface ServiceManageSectionProps {
   products: ProductSummary[];
 }
 
-const APPLICATION_STATUS = {
-  PENDING: { label: "검토 대기중", variant: "warning" },
-  ACCEPTED: { label: "승인", variant: "success" },
-  REJECTED: { label: "반려", variant: "danger" },
+const APPLICATION_STATUS_VARIANTS = {
+  PENDING: "warning",
+  ACCEPTED: "success",
+  REJECTED: "danger",
 } as const;
 
 function EmptyState({
@@ -38,7 +39,6 @@ function EmptyState({
 }
 
 function ApplicationCard({ application }: { application: ProductApplication }) {
-  const status = APPLICATION_STATUS[application.status];
   const content = (
     <article className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border transition-shadow hover:shadow-md">
       <ProductThumbnail
@@ -50,8 +50,8 @@ function ApplicationCard({ application }: { application: ProductApplication }) {
       <div className="flex flex-1 flex-col gap-4 px-8 py-8">
         <div className="flex flex-wrap gap-2">
           <Badge
-            label={status.label}
-            variant={status.variant}
+            label={PRODUCT_APPLICATION_STATUS_LABELS[application.status]}
+            variant={APPLICATION_STATUS_VARIANTS[application.status]}
             appearance="solid-pastel"
             size="small"
           />

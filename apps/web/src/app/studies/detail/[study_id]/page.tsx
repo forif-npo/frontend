@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getStudyApplicationStatus } from "@/features/study/apply/api";
 import { AlertModal, Button } from "@ui/components/client";
+import { STUDY_RECRUIT_STATUS_LABELS } from "@core/study-status";
 import { StudyDetailContent } from "@/features/study/detail/StudyDetailContent";
 import { StudyDetailNavigation } from "@/features/study/detail/StudyDetailNavigation";
 import { useStudyDetail } from "@/hooks/useStudyDetail";
@@ -100,7 +101,7 @@ export default function StudyDetailPage({ params }: Props) {
         >
           {study.recruit_status === "APPLICABLE"
             ? "스터디 신청하기"
-            : "모집 마감"}
+            : STUDY_RECRUIT_STATUS_LABELS.CLOSED}
         </Button>
       </div>
       <AlertModal

@@ -9,7 +9,6 @@ import { Study } from "../types";
 
 const STATUS_LABELS: Record<Study["study_status"], string> = {
   ...STUDY_CREATION_STATUS_LABELS,
-  APPROVED: "승인 완료",
   STARTED: "개설됨",
 };
 

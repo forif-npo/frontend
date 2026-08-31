@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import type { SortingState } from "@tanstack/react-table";
 import { apiClient, handleApiError } from "@core/utils/api-client";
+import { STUDY_RECRUIT_STATUS_LABELS } from "@core/study-status";
 import type { ApiResponse } from "@core/types/api";
 import { Download, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -139,7 +140,7 @@ export function StudiesView({
           태그: study.tags.map(getStudyTagLabel).join(", "),
           "한 줄 소개": study.one_liner,
           멘티수: study.mentee_count,
-          모집상태: study.recruit_status === "APPLICABLE" ? "모집중" : "마감",
+          모집상태: STUDY_RECRUIT_STATUS_LABELS[study.recruit_status],
         })),
       );
 
