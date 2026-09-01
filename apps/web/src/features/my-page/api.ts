@@ -31,6 +31,7 @@ export interface StudyDetail {
   difficulty: number;
   img_url: string;
   thumbnail_image: string | null;
+  thumbnail_url?: string | null;
   /** 수료증 발급 여부 (다운로드 버튼 활성화 판단) */
   certificate_issued: boolean;
 }
@@ -184,6 +185,7 @@ export interface StudyInfo {
   difficulty: number;
   img_url: string;
   thumbnail_image: string | null;
+  thumbnail_url?: string | null;
   autonomous_study: boolean;
 }
 

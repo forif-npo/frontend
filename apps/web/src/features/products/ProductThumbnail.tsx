@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { safeImageSrc } from "@/utils/image";
 
 interface ProductThumbnailProps {
@@ -36,18 +35,22 @@ export function ProductThumbnail({
   className = "",
 }: ProductThumbnailProps) {
   // 업로드된 이미지는 삭제·이동될 수 있으므로 로드 실패 시 그라디언트로 되돌린다
-  const [hasError, setHasError] = useState(false);
   const validSrc = safeImageSrc(thumbnailUrl);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+  }, [validSrc]);
 
   if (validSrc && !hasError) {
     return (
       <div className={`bg-graphic-10 relative overflow-hidden ${className}`}>
-        <Image
+        {/* 서비스 신청 응답의 업로드 URL은 브라우저에서 직접 불러와 remotePatterns 설정에 영향받지 않는다. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={validSrc}
           alt={name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="absolute inset-0 h-full w-full object-cover"
           onError={() => setHasError(true)}
         />
       </div>

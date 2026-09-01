@@ -13,5 +13,5 @@ import type { ComponentProps } from "react";
 export function StudyImage(
   props: Omit<ComponentProps<typeof ImageWithFallback>, "fallbackSrc">,
 ) {
-  return <ImageWithFallback {...props} />;
+  return <ImageWithFallback {...props} native />;
 }

@@ -71,7 +71,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
 
     try {
       const status = await getStudyApplicationStatus();
-      const blockMessage = getStudyApplicationBlockMessage(status, false);
+      const blockMessage = getStudyApplicationBlockMessage(status);
       if (blockMessage) {
         setStudyApplicationBlockedMessage(blockMessage);
         return;
