@@ -14,13 +14,13 @@ export const DUPLICATE_PRIORITY_STUDY_MESSAGE =
 
 export function getStudyApplicationBlockMessage(
   status: StudyApplicationStatusResponse,
-  isAutonomousStudy: boolean,
+  isAutonomousStudy?: boolean,
   studyId?: number,
 ) {
   if (status.has_autonomous_study_application) {
-    return isAutonomousStudy
-      ? DUPLICATE_AUTONOMOUS_STUDY_MESSAGE
-      : AUTONOMOUS_STUDY_CONFLICT_MESSAGE;
+    return isAutonomousStudy === false
+      ? AUTONOMOUS_STUDY_CONFLICT_MESSAGE
+      : DUPLICATE_AUTONOMOUS_STUDY_MESSAGE;
   }
 
   if (isAutonomousStudy && !status.can_apply_autonomous_study) {
