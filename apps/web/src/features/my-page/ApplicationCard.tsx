@@ -28,7 +28,7 @@ export function ApplicationCard({
       {/* Study Image */}
       <div className="bg-surface-gray-subtle relative h-[196px] w-full">
         <StudyImage
-          src={study.thumbnail_image}
+          src={study.thumbnail_image ?? study.thumbnail_url}
           fallbackSources={[study.img_url]}
           alt={study.study_name}
           fill

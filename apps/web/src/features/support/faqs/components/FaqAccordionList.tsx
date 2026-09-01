@@ -7,7 +7,6 @@ import type { FaqPost } from "../types/faq.type";
 
 type FaqAccordionListProps = {
   items: FaqPost[];
-  hasQuery?: boolean;
 };
 
 const FAQ_TAG_VARIANTS: Record<string, BadgeProps["variant"]> = {
@@ -24,10 +23,7 @@ function getFaqTagVariant(tag: string): BadgeProps["variant"] {
   return FAQ_TAG_VARIANTS[tag.trim()] ?? "primary";
 }
 
-export function FaqAccordionList({
-  items,
-  hasQuery = false,
-}: FaqAccordionListProps) {
+export function FaqAccordionList({ items }: FaqAccordionListProps) {
   if (items.length === 0) {
     return <EmptyState title="검색 결과가 없습니다." />;
   }
@@ -71,11 +67,7 @@ export function FaqAccordionList({
 
   return (
     <div className="mt-6">
-      <Accordion
-        items={accordionItems}
-        defaultOpenIndex={hasQuery ? 0 : null}
-        contentClassName="px-6 pb-6 pt-2"
-      />
+      <Accordion items={accordionItems} contentClassName="px-6 pb-6 pt-2" />
     </div>
   );
 }

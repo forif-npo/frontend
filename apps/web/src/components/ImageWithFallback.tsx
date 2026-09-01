@@ -12,6 +12,8 @@ type ImageWithFallbackProps = Omit<ImageProps, "src"> & {
   fallbackSrc?: string;
   /** 원본 이미지 로드 실패 시 순서대로 시도할 이미지 URL 목록. */
   fallbackSources?: Array<string | null | undefined>;
+  /** Next 이미지 최적화 경로를 거치지 않고 브라우저에서 원본 URL을 직접 불러온다. */
+  native?: boolean;
   /** 폴백 이미지에 적용할 className. 원본을 꽉 채우지 않고 작게 보여준다. */
   fallbackClassName?: string;
 };
@@ -33,6 +35,7 @@ export function ImageWithFallback({
   fallbackSrc = DEFAULT_FALLBACK_SRC,
   fallbackSources = [],
   fallbackClassName = DEFAULT_FALLBACK_CLASSNAME,
+  native = false,
   ...props
 }: ImageWithFallbackProps) {
   const validSources = [src, ...fallbackSources]
@@ -49,6 +52,26 @@ export function ImageWithFallback({
     validSources.find((source) => !failedSources.includes(source)) ??
     fallbackSrc;
   const isFallback = currentSrc === fallbackSrc;
+  const imageClassName = isFallback ? fallbackClassName : className;
+
+  if (native) {
+    return (
+      // 외부 이미지 URL은 Next 이미지 최적화 서버의 remotePatterns 영향을 받지 않도록 직접 로드한다.
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={currentSrc}
+        alt={alt}
+        className={`${props.fill ? "absolute inset-0 h-full w-full" : ""} ${imageClassName ?? ""}`}
+        onError={() => {
+          if (!isFallback) {
+            setFailedSources((sources) =>
+              sources.includes(currentSrc) ? sources : [...sources, currentSrc],
+            );
+          }
+        }}
+      />
+    );
+  }
 
   return (
     <Image
@@ -61,7 +84,7 @@ export function ImageWithFallback({
           );
         }
       }}
-      className={isFallback ? fallbackClassName : className}
+      className={imageClassName}
       {...props}
     />
   );
