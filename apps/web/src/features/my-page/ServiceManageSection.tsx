@@ -69,7 +69,7 @@ function ApplicationCard({ application }: { application: ProductApplication }) {
         </div>
         {application.status === "REJECTED" && application.reject_reason && (
           <div className="bg-surface-danger-subtler text-text-danger rounded-2 p-3 text-[14px] leading-[1.6]">
-            <span className="font-bold">반려 사유</span> ·{" "}
+            <span className="font-bold">반려사유: </span>
             {application.reject_reason}
           </div>
         )}
