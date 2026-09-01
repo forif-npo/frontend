@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import { Input } from "@/components/ui/input";
+import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
@@ -358,17 +360,35 @@ export function SmsView() {
                 <FormItem key={variable}>
                   <FormLabel>{getVariableLabel(variable)}</FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={isSubmitting}
-                      placeholder={
-                        variable === "#{응답일정}" || variable === "#{일시}"
-                          ? "0000-00-00"
-                          : variable === "#{장소}"
+                    {variable === "#{응답일정}" || variable === "#{일시}" ? (
+                      <SingleDayPicker
+                        disabled={isSubmitting}
+                        placeholder="날짜 선택"
+                        labelVariant="yyyy-MM-dd"
+                        value={
+                          variableValues[variable]
+                            ? new Date(`${variableValues[variable]}T00:00:00`)
+                            : undefined
+                        }
+                        onSelect={(date) =>
+                          form.setValue(
+                            `variables.${variable}`,
+                            date ? format(date, "yyyy-MM-dd") : "",
+                            { shouldValidate: true },
+                          )
+                        }
+                      />
+                    ) : (
+                      <Input
+                        disabled={isSubmitting}
+                        placeholder={
+                          variable === "#{장소}"
                             ? "FTC관"
                             : `${getVariableLabel(variable)}${getObjectParticle(getVariableLabel(variable))} 입력해주세요.`
-                      }
-                      {...form.register(`variables.${variable}`)}
-                    />
+                        }
+                        {...form.register(`variables.${variable}`)}
+                      />
+                    )}
                   </FormControl>
                 </FormItem>
               ))}
