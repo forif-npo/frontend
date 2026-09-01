@@ -37,7 +37,9 @@ export default async function ProductApplicationEditPage({
     throw error;
   });
   const application = applications.find(
-    (item) => item.application_id === id && item.status === "PENDING",
+    (item) =>
+      item.application_id === id &&
+      (item.status === "PENDING" || item.status === "REJECTED"),
   );
   if (!application) {
     notFound();

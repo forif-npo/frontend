@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Tabs, Button } from "@ui/components/client";
 import { Badge, EmptyState } from "@ui/components/server";
 import { ProductCard } from "@/features/products/ProductCard";
@@ -24,8 +25,12 @@ const APPLICATION_STATUS_VARIANTS = {
 } as const;
 
 function ApplicationCard({ application }: { application: ProductApplication }) {
-  const content = (
-    <article className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border transition-shadow hover:shadow-md">
+  const router = useRouter();
+  const isEditable =
+    application.status === "PENDING" || application.status === "REJECTED";
+
+  return (
+    <article className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border">
       <ProductThumbnail
         slug={application.slug}
         name={application.name}
@@ -73,19 +78,23 @@ function ApplicationCard({ application }: { application: ProductApplication }) {
             {application.reject_reason}
           </div>
         )}
+        {isEditable && (
+          <div className="flex justify-end">
+            <Button
+              variant="tertiary"
+              size="medium"
+              onClick={() =>
+                router.push(
+                  `/products/applications/${application.application_id}/edit`,
+                )
+              }
+            >
+              자세히 보기
+            </Button>
+          </div>
+        )}
       </div>
     </article>
-  );
-
-  return application.status === "PENDING" ? (
-    <Link
-      href={`/products/applications/${application.application_id}/edit`}
-      className="focus-visible:ring-primary block focus-visible:outline-none focus-visible:ring-2"
-    >
-      {content}
-    </Link>
-  ) : (
-    content
   );
 }
 
