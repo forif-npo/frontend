@@ -24,6 +24,8 @@ import {
   type StudyTypeGuide,
 } from "@/constants/study-guide";
 import { useScrollFollower, useScrollSpy } from "@/hooks/useScrollSpy";
+import { useActiveSemester } from "@/hooks/useActiveSemester";
+import type { Semester } from "@/features/semester/api";
 
 // --- Components ---
 
@@ -191,9 +193,11 @@ function StudyTypeSection({
 function RecommendationModal({
   open,
   onClose,
+  activeSemester,
 }: {
   open: boolean;
   onClose: () => void;
+  activeSemester: Semester;
 }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
@@ -229,6 +233,8 @@ function RecommendationModal({
         (() => {
           const result = getStudyRecommendation(answers);
           const params = new URLSearchParams();
+          params.set("year", String(activeSemester.act_year));
+          params.set("semester", String(activeSemester.act_semester));
           if (result.tag) params.set("tag", result.tag);
           if (result.difficulty) params.set("difficulty", result.difficulty);
           const listHref = `/studies/list${
@@ -321,6 +327,7 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
 }
 
 export default function StudyGuidePage() {
+  const activeSemester = useActiveSemester();
   const activeTab = useScrollSpy(GUIDE_TAB_IDS, { offset: 140 });
   const recommendationPanel = useScrollFollower<HTMLDivElement, HTMLDivElement>(
     {
@@ -530,6 +537,7 @@ export default function StudyGuidePage() {
       <RecommendationModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
+        activeSemester={activeSemester}
       />
 
       <ProgrammingCardModal
