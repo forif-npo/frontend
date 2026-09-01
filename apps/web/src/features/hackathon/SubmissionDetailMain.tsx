@@ -139,6 +139,7 @@ export function SubmissionDetailMain({
             alt={`${submission.project_name} 대표 이미지`}
             width={1200}
             height={675}
+            unoptimized
             className="h-auto w-full object-cover"
           />
         </section>

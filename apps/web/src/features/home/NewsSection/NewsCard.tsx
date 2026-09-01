@@ -27,6 +27,7 @@ export function NewsCard({ news }: NewsCardProps) {
           alt={news.title}
           fill
           sizes="200px"
+          unoptimized
           className="object-cover"
         />
       </div>

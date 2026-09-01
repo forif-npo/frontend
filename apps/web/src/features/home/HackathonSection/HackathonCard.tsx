@@ -30,6 +30,7 @@ export function HackathonCard({
             src={safeImageSrc(submission.image_url)!}
             alt={submission.project_name}
             fill
+            unoptimized
             className="object-cover"
           />
         ) : (
