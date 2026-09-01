@@ -620,7 +620,7 @@ export function CertificatesView({
   return (
     <div className="space-y-6 p-8">
       <PageHeader
-        title="인증서 발급"
+        title="수료증 발급"
         description={
           <>
             수료 기준(출석 {targetsData?.required_attendance ?? 5}회 이상 + 해당

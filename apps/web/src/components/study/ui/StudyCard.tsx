@@ -404,7 +404,7 @@ export function StudyCard(props: StudyCardProps) {
             }
             onClick={props.onDownloadCertificate}
           >
-            인증서 다운로드
+            수료증 다운로드
           </Button>
         </div>
       </div>

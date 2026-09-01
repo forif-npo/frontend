@@ -46,7 +46,7 @@ export function StudySection({ studiesData }: StudySectionProps) {
         window.open(certificateUrl, "_blank");
       } catch (error) {
         console.error("Failed to download certificate:", error);
-        alert("인증서 다운로드에 실패했습니다.");
+        alert("수료증 다운로드에 실패했습니다.");
       }
     });
   };

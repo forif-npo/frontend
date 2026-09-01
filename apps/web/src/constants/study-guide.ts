@@ -278,7 +278,7 @@ export const STUDY_OPERATION_GUIDE = {
           lines: [
             { text: "스터디 별 기준에 따라 최대 5만원 지급" },
             {
-              text: "* 자율스터디 수강은 포리프 인증서가 발급되지 않습니다.",
+              text: "* 자율스터디 수강은 포리프 수료증이 발급되지 않습니다.",
               tone: "subtle",
             },
             {
