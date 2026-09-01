@@ -260,7 +260,7 @@ export function PostManagementView({
                 id="post-tag"
                 value={form.tag}
                 disabled={submitting}
-                placeholder="예: 공지, 운영, 스터디"
+                placeholder="태그를 입력해주세요."
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, tag: event.target.value }))
                 }
