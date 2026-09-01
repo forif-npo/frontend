@@ -128,7 +128,15 @@ function MyServices({ applications, products }: ServiceManageSectionProps) {
   );
   const myProducts = applications
     .filter((application) => application.status === "ACCEPTED")
-    .map((application) => productBySlug.get(application.slug))
+    .map((application) => {
+      const product = productBySlug.get(application.slug);
+      if (!product) return null;
+
+      return {
+        ...product,
+        thumbnail_url: application.thumbnail_url,
+      };
+    })
     .filter((product): product is ProductSummary => Boolean(product));
 
   if (myProducts.length === 0) {
