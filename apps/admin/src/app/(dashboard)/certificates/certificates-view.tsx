@@ -53,8 +53,6 @@ import {
   type MemberSearchItem,
 } from "./api";
 
-const AUTONOMOUS_STUDY_NAME = "자율스터디";
-
 interface ManualForm {
   userName: string;
   studentNumber: string;
@@ -113,9 +111,7 @@ export function CertificatesView({
   previousSemester,
   selectedSemester,
 }: CertificatesViewProps) {
-  const certificateStudies = studies.filter(
-    (study) => study.study_name !== AUTONOMOUS_STUDY_NAME,
-  );
+  const certificateStudies = studies.filter((study) => !study.autonomous_study);
   const router = useRouter();
   const [selectedStudyId, setSelectedStudyId] = useState<number | null>(null);
   const [targetsData, setTargetsData] = useState<CertificateTargetsData | null>(

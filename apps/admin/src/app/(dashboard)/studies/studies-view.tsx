@@ -401,7 +401,7 @@ export function StudiesView({
     try {
       setIsCreatingAutonomousStudy(true);
       await createAutonomousStudy();
-      toast.success("현재 학기에 자율스터디가 개설되었습니다.");
+      toast.success("현재 학기에 자율부원 스터디가 생성되었습니다.");
       setIsAutonomousStudyDialogOpen(false);
       router.refresh();
     } catch (error) {
@@ -440,7 +440,7 @@ export function StudiesView({
             onClick={() => setIsAutonomousStudyDialogOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            자율스터디 개설
+            자율부원 스터디 생성
           </Button>
           <Button
             variant="outline"
