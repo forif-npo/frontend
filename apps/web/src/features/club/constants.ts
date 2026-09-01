@@ -13,7 +13,7 @@ export interface ClubStat {
 export const CLUB_STATS: ClubStat[] = [
   { value: 10, suffix: "년+", label: "함께한 시간" },
   { value: 200, suffix: "명+", label: "한 학기 부원" },
-  { value: 16, suffix: "회", label: "누적 해커톤" },
+  { value: 17, suffix: "회", label: "누적 해커톤" },
   { value: 2, suffix: "회", label: "알고리즘 대회" },
 ];
 

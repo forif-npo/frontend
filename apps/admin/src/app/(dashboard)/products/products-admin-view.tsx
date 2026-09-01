@@ -15,14 +15,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { DataTable } from "@/components/list/data-table";
+import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/page-header";
@@ -35,7 +29,6 @@ import { handleApiError } from "@core/utils/api-client";
 import {
   approveProduct,
   changeProductOperationStatus,
-  deleteProduct,
   getAdminProducts,
   rejectProduct,
   type AdminProduct,
@@ -94,7 +87,6 @@ export function ProductsAdminView() {
   const [approveTarget, setApproveTarget] = useState<AdminProduct | null>(null);
   const [rejectTarget, setRejectTarget] = useState<AdminProduct | null>(null);
   const [rejectReason, setRejectReason] = useState("");
-  const [deleteTarget, setDeleteTarget] = useState<AdminProduct | null>(null);
   const [editTarget, setEditTarget] = useState<AdminProduct | null>(null);
 
   const fetchProducts = useCallback(async () => {
@@ -172,14 +164,6 @@ export function ProductsAdminView() {
     );
   };
 
-  const handleDelete = () => {
-    if (!deleteTarget) return;
-    runAction(async () => {
-      await deleteProduct(deleteTarget.product_id);
-      setDeleteTarget(null);
-    }, "삭제되었습니다.");
-  };
-
   const columns = useMemo<ColumnDef<AdminProduct>[]>(
     () => [
       {
@@ -255,65 +239,44 @@ export function ProductsAdminView() {
     <>
       {product.status === "PENDING" && (
         <>
-          <Button
-            size="sm"
+          <DropdownMenuItem
             onClick={() => setApproveTarget(product)}
             disabled={isSubmitting}
           >
             승인
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
+          </DropdownMenuItem>
+          <DropdownMenuItem
             onClick={() => {
               setRejectTarget(product);
               setRejectReason("");
             }}
             disabled={isSubmitting}
+            className="text-destructive focus:text-destructive"
           >
             반려
-          </Button>
+          </DropdownMenuItem>
         </>
       )}
       {product.status === "ACCEPTED" && product.operation_status && (
-        <Select
-          value={product.operation_status}
-          onValueChange={(value) =>
+        <DropdownMenuItem
+          onClick={() =>
             handleOperationStatusChange(
               product,
-              value as ProductOperationStatus,
+              product.operation_status === "LIVE" ? "PAUSED" : "LIVE",
             )
           }
+          disabled={isSubmitting}
         >
-          <SelectTrigger className="h-8 w-[130px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {(["LIVE", "PAUSED"] as const).map((status) => (
-              <SelectItem key={status} value={status}>
-                {PRODUCT_OPERATION_STATUS_LABELS[status]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          {product.operation_status === "LIVE" ? "일시 중지" : "운영 재개"}
+        </DropdownMenuItem>
       )}
-      <Button
-        size="sm"
-        variant="outline"
+      <DropdownMenuItem
         onClick={() => setEditTarget(product)}
         disabled={isSubmitting}
       >
-        <Pencil className="mr-1 h-3.5 w-3.5" />
+        <Pencil className="mr-2 h-4 w-4" />
         수정
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => setDeleteTarget(product)}
-        disabled={isSubmitting}
-      >
-        삭제
-      </Button>
+      </DropdownMenuItem>
     </>
   );
 
@@ -350,7 +313,7 @@ export function ProductsAdminView() {
         columns={columns}
         data={isLoading ? [] : filtered}
         getRowId={(product) => String(product.product_id)}
-        renderActionCell={renderProductActions}
+        renderRowActions={renderProductActions}
         showPagination={false}
         emptyMessage={
           isLoading ? "불러오는 중..." : "해당하는 서비스가 없습니다."
@@ -568,42 +531,6 @@ export function ProductsAdminView() {
         onClose={() => setEditTarget(null)}
         onSaved={fetchProducts}
       />
-
-      {/* 삭제 확인 다이얼로그 */}
-      <Dialog
-        open={deleteTarget !== null}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <DialogContent className="sm:max-w-[440px]">
-          <DialogHeader>
-            <DialogTitle>서비스 삭제</DialogTitle>
-            <DialogDescription>
-              &quot;{deleteTarget?.name}&quot; ({deleteTarget?.slug}.forif.org)
-              서비스를 삭제할까요?
-            </DialogDescription>
-          </DialogHeader>
-          <div className="bg-danger-5 text-text-danger rounded-md p-3 text-sm">
-            삭제하면 서비스 목록과 신청 이력에서 모두 사라지며 되돌릴 수
-            없습니다.
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteTarget(null)}
-              disabled={isSubmitting}
-            >
-              취소
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "처리 중..." : "삭제하기"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

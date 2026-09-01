@@ -276,10 +276,6 @@ export function StudyCard(props: StudyCardProps) {
 
   const studyName = study.study_name;
   const oneLiner = study.one_liner;
-  const imgUrl =
-    variant === "mypage"
-      ? study.thumbnail_image || study.img_url
-      : study.thumbnail_image || study.img_url;
   const primaryMentor = study.primary_mentor_name;
   const secondaryMentor = study.secondary_mentor_name;
 
@@ -287,7 +283,8 @@ export function StudyCard(props: StudyCardProps) {
   const imageSection = (
     <div className="bg-primary-10 relative h-[176px] w-full overflow-hidden md:h-[196px]">
       <StudyImage
-        src={imgUrl}
+        src={study.thumbnail_image}
+        fallbackSources={[study.img_url]}
         alt={studyName}
         fill
         className="object-cover"
@@ -335,7 +332,8 @@ export function StudyCard(props: StudyCardProps) {
     <div className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border">
       <div className="bg-primary-10 relative h-[196px] w-full">
         <StudyImage
-          src={imgUrl}
+          src={study.thumbnail_image}
+          fallbackSources={[study.img_url]}
           alt={studyName}
           fill
           className="object-cover"
@@ -406,7 +404,7 @@ export function StudyCard(props: StudyCardProps) {
             }
             onClick={props.onDownloadCertificate}
           >
-            인증서 다운로드
+            수료증 다운로드
           </Button>
         </div>
       </div>

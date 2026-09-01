@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Tabs, Button } from "@ui/components/client";
 import { Badge, EmptyState } from "@ui/components/server";
 import { ProductCard } from "@/features/products/ProductCard";
@@ -24,8 +25,12 @@ const APPLICATION_STATUS_VARIANTS = {
 } as const;
 
 function ApplicationCard({ application }: { application: ProductApplication }) {
-  const content = (
-    <article className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border transition-shadow hover:shadow-md">
+  const router = useRouter();
+  const isEditable =
+    application.status === "PENDING" || application.status === "REJECTED";
+
+  return (
+    <article className="rounded-3 border-border-gray-light bg-surface-white flex min-w-[240px] flex-col overflow-hidden border">
       <ProductThumbnail
         slug={application.slug}
         name={application.name}
@@ -69,23 +74,27 @@ function ApplicationCard({ application }: { application: ProductApplication }) {
         </div>
         {application.status === "REJECTED" && application.reject_reason && (
           <div className="bg-surface-danger-subtler text-text-danger rounded-2 p-3 text-[14px] leading-[1.6]">
-            <span className="font-bold">반려 사유</span> ·{" "}
+            <span className="font-bold">반려사유: </span>
             {application.reject_reason}
+          </div>
+        )}
+        {isEditable && (
+          <div className="flex justify-end">
+            <Button
+              variant="tertiary"
+              size="medium"
+              onClick={() =>
+                router.push(
+                  `/products/applications/${application.application_id}/edit`,
+                )
+              }
+            >
+              자세히 보기
+            </Button>
           </div>
         )}
       </div>
     </article>
-  );
-
-  return application.status === "PENDING" ? (
-    <Link
-      href={`/products/applications/${application.application_id}/edit`}
-      className="focus-visible:ring-primary block focus-visible:outline-none focus-visible:ring-2"
-    >
-      {content}
-    </Link>
-  ) : (
-    content
   );
 }
 
@@ -128,7 +137,15 @@ function MyServices({ applications, products }: ServiceManageSectionProps) {
   );
   const myProducts = applications
     .filter((application) => application.status === "ACCEPTED")
-    .map((application) => productBySlug.get(application.slug))
+    .map((application) => {
+      const product = productBySlug.get(application.slug);
+      if (!product) return null;
+
+      return {
+        ...product,
+        thumbnail_url: application.thumbnail_url,
+      };
+    })
     .filter((product): product is ProductSummary => Boolean(product));
 
   if (myProducts.length === 0) {

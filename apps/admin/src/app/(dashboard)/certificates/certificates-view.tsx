@@ -27,6 +27,7 @@ import {
 import { DataTable } from "@/components/list/data-table";
 import { ActivitySemesterToggle } from "@/components/list/activity-semester-toggle";
 import { handleApiError } from "@core/utils/api-client";
+import { getObjectParticle } from "@core/utils/korean-particle";
 import type { SemesterLabel, Study } from "../studies/types";
 import {
   Dialog,
@@ -573,7 +574,9 @@ export function CertificatesView({
     ];
     const missing = required.find(([value]) => !value.trim());
     if (missing) {
-      toast.error(`${missing[1]}을(를) 입력해주세요.`);
+      toast.error(
+        `${missing[1]}${getObjectParticle(missing[1])} 입력해주세요.`,
+      );
       return;
     }
     if (manualForm.startDate > manualForm.endDate) {
@@ -620,7 +623,7 @@ export function CertificatesView({
   return (
     <div className="space-y-6 p-8">
       <PageHeader
-        title="인증서 발급"
+        title="수료증 발급"
         description={
           <>
             수료 기준(출석 {targetsData?.required_attendance ?? 5}회 이상 + 해당

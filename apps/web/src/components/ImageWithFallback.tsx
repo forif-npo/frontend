@@ -2,7 +2,7 @@
 
 import { safeImageSrc } from "@/utils/image";
 import Image, { type ImageProps } from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const DEFAULT_FALLBACK_SRC = "/images/default-study-img.png";
 const DEFAULT_FALLBACK_CLASSNAME = "object-contain p-8 opacity-80";
@@ -10,6 +10,8 @@ const DEFAULT_FALLBACK_CLASSNAME = "object-contain p-8 opacity-80";
 type ImageWithFallbackProps = Omit<ImageProps, "src"> & {
   src?: string | null;
   fallbackSrc?: string;
+  /** 원본 이미지 로드 실패 시 순서대로 시도할 이미지 URL 목록. */
+  fallbackSources?: Array<string | null | undefined>;
   /** 폴백 이미지에 적용할 className. 원본을 꽉 채우지 않고 작게 보여준다. */
   fallbackClassName?: string;
 };
@@ -29,18 +31,36 @@ export function ImageWithFallback({
   alt,
   className,
   fallbackSrc = DEFAULT_FALLBACK_SRC,
+  fallbackSources = [],
   fallbackClassName = DEFAULT_FALLBACK_CLASSNAME,
   ...props
 }: ImageWithFallbackProps) {
-  const [errored, setErrored] = useState(false);
-  const validSrc = safeImageSrc(src);
-  const isFallback = errored || validSrc === null;
+  const validSources = [src, ...fallbackSources]
+    .map(safeImageSrc)
+    .filter((source): source is string => source !== null);
+  const sourceKey = validSources.join("\u0000");
+  const [failedSources, setFailedSources] = useState<string[]>([]);
+
+  useEffect(() => {
+    setFailedSources([]);
+  }, [sourceKey]);
+
+  const currentSrc =
+    validSources.find((source) => !failedSources.includes(source)) ??
+    fallbackSrc;
+  const isFallback = currentSrc === fallbackSrc;
 
   return (
     <Image
-      src={isFallback ? fallbackSrc : validSrc!}
+      src={currentSrc}
       alt={alt}
-      onError={() => setErrored(true)}
+      onError={() => {
+        if (!isFallback) {
+          setFailedSources((sources) =>
+            sources.includes(currentSrc) ? sources : [...sources, currentSrc],
+          );
+        }
+      }}
       className={isFallback ? fallbackClassName : className}
       {...props}
     />

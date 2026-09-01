@@ -54,7 +54,7 @@ const menuItems = {
       { title: "스터디 승인", url: "/studies/approval", icon: CheckCircle },
       { title: "스터디 목록", url: "/studies", icon: BookOpen },
       { title: "신청자 관리", url: "/study-applications", icon: ClipboardList },
-      { title: "멘티 인증서 발급", url: "/certificates", icon: Award },
+      { title: "멘티 수료증 발급", url: "/certificates", icon: Award },
       {
         title: "멘토 확인서 발급",
         url: "/mentor-confirmations",
