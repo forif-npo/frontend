@@ -101,6 +101,7 @@ export function ProfileSidebar({
               alt={profile.user_name}
               width={120}
               height={120}
+              unoptimized
               className="h-[120px] w-[120px] rounded-full object-cover"
             />
           ) : (

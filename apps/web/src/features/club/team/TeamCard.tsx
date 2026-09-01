@@ -54,6 +54,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
           alt={member.user_name || "FORIF 운영진"}
           width={120}
           height={120}
+          unoptimized
           className="h-[120px] w-[120px] rounded-full object-cover"
           onError={() => {
             if (imageSrc !== DEFAULT_PROFILE_IMAGE_SRC) {

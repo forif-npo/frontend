@@ -348,6 +348,7 @@ function ProfileImage({
         alt={`${userName} 프로필 이미지`}
         width={96}
         height={96}
+        unoptimized
         className="rounded-2 h-24 w-24 object-cover"
       />
     );
