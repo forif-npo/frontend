@@ -46,7 +46,7 @@ export async function fetchStudyApplications({
   search,
   sorting = [],
 }: {
-  accessToken: string;
+  accessToken?: string;
   page?: number;
   size?: number;
   search?: string;
@@ -54,7 +54,9 @@ export async function fetchStudyApplications({
 }): Promise<StudyApplicationPage> {
   const response = await apiClient
     .get("api/v1/admin/study-applications", {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      ...(accessToken
+        ? { headers: { Authorization: `Bearer ${accessToken}` } }
+        : {}),
       searchParams: (() => {
         const params = new URLSearchParams({
           page: String(page),

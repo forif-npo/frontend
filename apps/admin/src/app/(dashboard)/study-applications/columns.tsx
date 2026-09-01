@@ -5,7 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { StudyApplication } from "./types";
 
-const STATUS_LABELS: Record<StudyApplication["status"], string> = {
+export const STUDY_APPLICATION_STATUS_LABELS: Record<
+  StudyApplication["status"],
+  string
+> = {
   PENDING: "대기",
   ACCEPT: "합격",
   REJECT: "불합격",
@@ -60,7 +63,7 @@ export const applicationColumns: ColumnDef<StudyApplication>[] = [
       const status = row.getValue<StudyApplication["status"]>("status");
       return (
         <Badge variant="outline" className={STATUS_BADGE_CLASS_NAMES[status]}>
-          {STATUS_LABELS[status]}
+          {STUDY_APPLICATION_STATUS_LABELS[status]}
         </Badge>
       );
     },

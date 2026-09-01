@@ -14,12 +14,16 @@ import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
 import type { SortingState } from "@tanstack/react-table";
+import { Download, MoreVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MoreVertical } from "lucide-react";
-import { decideAutonomousStudyApplication } from "./api";
-import { applicationColumns } from "./columns";
+import * as XLSX from "xlsx";
+import {
+  decideAutonomousStudyApplication,
+  fetchStudyApplications,
+} from "./api";
+import { applicationColumns, STUDY_APPLICATION_STATUS_LABELS } from "./columns";
 import type { StudyApplication, StudyApplicationPage } from "./types";
 
 interface StudyApplicationsViewProps {
@@ -37,6 +41,10 @@ export function StudyApplicationsView({
 }: StudyApplicationsViewProps) {
   const router = useRouter();
   const [isDeciding, setIsDeciding] = useState(false);
+  const [selectedApplications, setSelectedApplications] = useState<
+    StudyApplication[]
+  >([]);
+  const [isDownloading, setIsDownloading] = useState(false);
   const {
     searchQuery,
     setSearchQuery,
@@ -78,11 +86,68 @@ export function StudyApplicationsView({
     }
   };
 
+  const handleDownloadExcel = async () => {
+    if (isDownloading) return;
+
+    setIsDownloading(true);
+    try {
+      const applications =
+        selectedApplications.length > 0
+          ? selectedApplications
+          : (
+              await fetchStudyApplications({
+                page: 0,
+                size: 10000,
+                search: initialSearch || undefined,
+                sorting,
+              })
+            ).content;
+
+      if (applications.length === 0) {
+        toast.error("다운로드할 데이터가 없습니다.");
+        return;
+      }
+
+      const worksheet = XLSX.utils.json_to_sheet(
+        applications.map((application) => ({
+          학번: application.userId,
+          이름: application.userName,
+          학과: application.department ?? "-",
+          스터디명: application.studyName,
+          순위: `${application.priority}순위`,
+          "처리 상태": STUDY_APPLICATION_STATUS_LABELS[application.status],
+          "자율부원 여부": application.autonomousStudy ? "Y" : "N",
+          신청일자: application.appliedAt.replace("T", " ").slice(0, 16),
+        })),
+      );
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Study Applications");
+
+      const date = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(workbook, `study_applications_${date}.xlsx`);
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <div className="space-y-6 p-8">
       <PageHeader
         title="신청자 관리"
         description="현재 학기 스터디 신청 내역을 확인하고 자율부원 신청을 처리합니다."
+        actions={
+          <Button
+            variant="outline"
+            className="gap-2"
+            disabled={isDownloading}
+            onClick={handleDownloadExcel}
+          >
+            <Download className="h-4 w-4" />
+            {isDownloading ? "다운로드 중..." : "엑셀로 다운로드"}
+          </Button>
+        }
       />
 
       <SearchBar
@@ -96,7 +161,9 @@ export function StudyApplicationsView({
         columns={applicationColumns}
         data={initialData.content}
         showPagination={false}
-        getRowId={(row) => `${row.userId}-${row.priority}`}
+        enableRowSelection
+        getRowId={(row) => String(row.applicationId)}
+        onSelectedRowsChange={setSelectedApplications}
         sorting={sorting}
         onSortingChange={handleSortingChange}
         renderActionCell={(application) => {

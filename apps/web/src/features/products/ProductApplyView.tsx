@@ -454,7 +454,7 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
                 onClick={() => setConfirmAction("delete")}
                 disabled={isSubmitting || isDeleting}
               >
-                {isDeleting ? "삭제 중..." : "삭제"}
+                {isDeleting ? "취소 중..." : "신청 취소"}
               </Button>
             )}
             <Button
@@ -489,8 +489,8 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
       />
       <ActionConfirmModal
         isOpen={confirmAction !== null}
-        target="서비스 등록 신청서"
-        action={confirmAction === "modify" ? "수정" : "삭제"}
+        target="서비스 등록 신청"
+        action={confirmAction === "modify" ? "수정" : "취소"}
         onClose={() => setConfirmAction(null)}
         onConfirm={() => {
           if (confirmAction === "modify") {
