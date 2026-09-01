@@ -80,9 +80,7 @@ export function MentorConfirmationsView({
         if (!cancelled) {
           const allTargets = targetGroups.flat();
           setTargets(allTargets);
-          setSelectedTargetKeys(
-            new Set(allTargets.map((target) => getTargetKey(target))),
-          );
+          setSelectedTargetKeys(new Set());
         }
       })
       .catch((error) => {
