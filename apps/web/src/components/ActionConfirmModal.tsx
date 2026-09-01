@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertModal } from "@ui/components/client";
+import { getObjectParticle } from "@core/utils/korean-particle";
 
 interface ActionConfirmModalProps {
   isOpen: boolean;
@@ -22,8 +23,7 @@ export function ActionConfirmModal({
   cancelLabel = "취소",
   confirmLabel = action,
 }: ActionConfirmModalProps) {
-  const objectParticle =
-    (target.charCodeAt(target.length - 1) - 0xac00) % 28 === 0 ? "를" : "을";
+  const objectParticle = getObjectParticle(target);
 
   return (
     <AlertModal

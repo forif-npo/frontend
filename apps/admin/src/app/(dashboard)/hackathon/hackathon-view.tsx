@@ -31,6 +31,7 @@ import {
   toLocalDateTime,
 } from "@/utils/datetime";
 import { handleApiError } from "@core/utils/api-client";
+import { getObjectParticle } from "@core/utils/korean-particle";
 import type {
   CreateHackathonRequest,
   HackathonStatus,
@@ -611,8 +612,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
           <DialogHeader>
             <DialogTitle>해커톤 삭제</DialogTitle>
             <DialogDescription>
-              {deleteTarget?.title ?? "선택한 해커톤"}을(를) 삭제합니다. 삭제
-              후에는 복구할 수 없습니다.
+              {`${deleteTarget?.title ?? "선택한 해커톤"}${getObjectParticle(deleteTarget?.title ?? "선택한 해커톤")} 삭제합니다. 삭제 후에는 복구할 수 없습니다.`}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
