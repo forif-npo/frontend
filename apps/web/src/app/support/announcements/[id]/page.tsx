@@ -102,6 +102,7 @@ export default function AnnouncementDetailPage() {
                         alt={`announcement-image-${idx + 1}`}
                         width={1200}
                         height={800}
+                        unoptimized
                         className="h-auto w-full"
                       />
                     </div>
