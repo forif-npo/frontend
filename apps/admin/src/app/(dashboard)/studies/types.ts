@@ -16,6 +16,7 @@ export interface Study {
   difficulty: "EASY" | "SEMI_EASY" | "NORMAL" | "SEMI_HARD" | "HARD" | null;
   study_status: "PENDING" | "APPROVED" | "STARTED" | "REJECTED" | "RE_APPLIED";
   reject_reason: string | null;
+  autonomous_study: boolean;
   created_at: string;
 }
 

@@ -19,10 +19,6 @@ interface PostItem {
   image_urls?: string[] | null;
 }
 
-type AnnouncementPostRequest = Omit<PostFormState, "tag"> & {
-  tag: string[];
-};
-
 interface FetchPostsParams {
   kind: PostKind;
   page?: number;
@@ -92,24 +88,11 @@ export async function fetchPosts({
   };
 }
 
-function appendRequestPart(
-  formData: FormData,
-  form: PostFormState | AnnouncementPostRequest,
-) {
+function appendRequestPart(formData: FormData, form: PostFormState) {
   formData.append(
     "request",
     new Blob([JSON.stringify(form)], { type: "application/json" }),
   );
-}
-
-function toAnnouncementRequest(form: PostFormState): AnnouncementPostRequest {
-  return {
-    ...form,
-    tag: form.tag
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean),
-  };
 }
 
 export async function createPost(
@@ -127,7 +110,7 @@ export async function createPost(
   }
 
   const formData = new FormData();
-  appendRequestPart(formData, toAnnouncementRequest(form));
+  appendRequestPart(formData, form);
   images.forEach((image) => formData.append("images", image));
 
   await apiClient
@@ -153,7 +136,7 @@ export async function updatePost(
   }
 
   const formData = new FormData();
-  appendRequestPart(formData, toAnnouncementRequest(form));
+  appendRequestPart(formData, form);
   images.forEach((image) => formData.append("images", image));
 
   await apiClient

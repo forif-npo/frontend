@@ -28,10 +28,10 @@ export function AutonomousStudyCreateDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>자율스터디 개설</DialogTitle>
+          <DialogTitle>자율부원 스터디 생성</DialogTitle>
           <DialogDescription>
-            현재 활동 학기에 자율스터디를 즉시 개설하고, 개설한 운영진을 대표
-            멘토로 지정합니다.
+            현재 활동 학기에 자율부원 등록용 스터디를 즉시 생성하고, 생성한
+            운영진을 대표 멘토로 지정합니다.
           </DialogDescription>
         </DialogHeader>
 

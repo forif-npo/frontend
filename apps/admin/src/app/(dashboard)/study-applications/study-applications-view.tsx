@@ -60,7 +60,7 @@ export function StudyApplicationsView({
     const label = decision === "accept" ? "합격" : "불합격";
     if (
       !confirm(
-        `${application.userName}(${application.userId})님의 자율스터디 신청을 ${label} 처리할까요?`,
+        `${application.userName}(${application.userId})님의 자율부원 신청을 ${label} 처리할까요?`,
       )
     ) {
       return;
@@ -69,7 +69,7 @@ export function StudyApplicationsView({
     setIsDeciding(true);
     try {
       await decideAutonomousStudyApplication(application, decision);
-      toast.success(`자율스터디 신청을 ${label} 처리했습니다.`);
+      toast.success(`자율부원 신청을 ${label} 처리했습니다.`);
       router.refresh();
     } catch (error) {
       toast.error(await handleApiError(error));
@@ -82,7 +82,7 @@ export function StudyApplicationsView({
     <div className="space-y-6 p-8">
       <PageHeader
         title="신청자 관리"
-        description="현재 학기 스터디 신청 내역을 확인하고 자율스터디 신청을 처리합니다."
+        description="현재 학기 스터디 신청 내역을 확인하고 자율부원 신청을 처리합니다."
       />
 
       <SearchBar
@@ -111,7 +111,7 @@ export function StudyApplicationsView({
                   size="icon"
                   className="text-muted-foreground h-8 w-8"
                   disabled={isDeciding || !canDecideAutonomousStudyApplications}
-                  aria-label="자율스터디 신청 처리 메뉴"
+                  aria-label="자율부원 신청 처리 메뉴"
                 >
                   <MoreVertical className="h-4 w-4" />
                 </Button>

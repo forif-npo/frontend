@@ -260,7 +260,7 @@ export function PostManagementView({
                 id="post-tag"
                 value={form.tag}
                 disabled={submitting}
-                placeholder="예: 공지, 운영, 스터디"
+                placeholder="태그를 입력해주세요."
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, tag: event.target.value }))
                 }
@@ -283,6 +283,24 @@ export function PostManagementView({
             {isAnnouncement && (
               <div className="space-y-2">
                 <Label htmlFor="post-images">이미지</Label>
+                {editingPost && editingPost.imageUrls.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {editingPost.imageUrls.map((imageUrl, index) => (
+                      <div
+                        key={imageUrl}
+                        className="border-border bg-muted overflow-hidden rounded-md border"
+                      >
+                        {/* 외부 파일 서버의 원본을 직접 표시해 Vercel 이미지 최적화를 거치지 않는다. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={imageUrl}
+                          alt={`현재 등록 이미지 ${index + 1}`}
+                          className="aspect-video w-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <Input
                   ref={fileInputRef}
                   id="post-images"
@@ -296,7 +314,8 @@ export function PostManagementView({
                 />
                 {editingPost && editingPost.imageUrls.length > 0 && (
                   <p className="text-muted-foreground text-xs">
-                    새 이미지를 선택하면 기존 이미지가 교체됩니다.
+                    현재 등록된 이미지입니다. 새 이미지를 선택하면 기존 이미지가
+                    교체됩니다.
                   </p>
                 )}
               </div>

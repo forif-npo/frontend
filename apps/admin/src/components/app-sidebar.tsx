@@ -72,12 +72,10 @@ const menuItems = {
   memberManagement: {
     label: "회원 관리",
     items: [
-      // 운영진 명단 관리는 회장단 전용 (presidentTeamOnly)
       {
         title: "운영진",
         url: "/operators",
         icon: UserCog,
-        presidentTeamOnly: true,
       },
       { title: "멘토", url: "/mentors", icon: BookUser },
       { title: "부원", url: "/members", icon: Users },
@@ -228,22 +226,16 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.memberManagement.items
-                .filter(
-                  (item) =>
-                    !("presidentTeamOnly" in item && item.presidentTeamOnly) ||
-                    isPresidentTeam,
-                )
-                .map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={pathname === item.url}>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+              {menuItems.memberManagement.items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

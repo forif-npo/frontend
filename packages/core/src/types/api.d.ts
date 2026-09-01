@@ -161,6 +161,7 @@ export interface AdminStudyResponse {
   difficulty: "EASY" | "SEMI_EASY" | "NORMAL" | "SEMI_HARD" | "HARD" | null;
   study_status: "PENDING" | "APPROVED" | "STARTED" | "REJECTED" | "RE_APPLIED";
   reject_reason: string | null;
+  autonomous_study: boolean;
   created_at: string;
 }
 
@@ -297,6 +298,7 @@ export interface StudyResponse {
   location: string | null;
   difficulty: StudyDifficulty; // String enum, not number!
   img_url: string | null; // API uses 'img_url', not 'thumbnail_url'
+  autonomous_study: boolean;
   act_year: number; // API uses 'act_year', not 'year'
   act_semester: number; // API uses 'act_semester', not 'semester'
 }
