@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
-import { Select } from "@ui/components/client";
+import { Button, Modal, Select } from "@ui/components/client";
 import { EmptyState } from "@ui/components/server";
+import Image from "next/image";
 import { FORIF_CONTACT_INFO } from "@/constants/organization";
 import { PageHeader } from "@/components/PageHeader";
 import { getCurrentSemester, type Semester } from "@/features/semester/api";
@@ -40,6 +41,7 @@ export default function TeamPage() {
   const [semester, setSemester] = useState<number | null>(null);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isOrganizationChartOpen, setIsOrganizationChartOpen] = useState(false);
 
   useEffect(() => {
     getCurrentSemester().then((current) => {
@@ -82,7 +84,7 @@ export default function TeamPage() {
       />
 
       <div className="mb-8 flex flex-col items-start justify-between gap-3 md:flex-row md:items-end">
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <Select
             id="team-year"
             size="sm"
@@ -101,6 +103,14 @@ export default function TeamPage() {
             placeholder="학기"
             options={SEMESTER_OPTIONS}
           />
+          <Button
+            type="button"
+            variant="tertiary"
+            size="small"
+            onClick={() => setIsOrganizationChartOpen(true)}
+          >
+            조직도로 보기
+          </Button>
         </div>
         <p className="max-w-xl text-xs leading-5 text-gray-500 md:text-right">
           * 2024년 2학기 이전 운영진으로 활동하셨다면,{" "}
@@ -126,6 +136,23 @@ export default function TeamPage() {
           ))}
         </div>
       )}
+
+      <Modal
+        isOpen={isOrganizationChartOpen}
+        onClose={() => setIsOrganizationChartOpen(false)}
+        title="조직도"
+        width="xl"
+        showCancelButton={false}
+        closeOnOverlayClick={false}
+      >
+        <Image
+          src="/images/organization-chart-2026-2.png"
+          alt="FORIF 조직도"
+          width={836}
+          height={836}
+          className="h-auto w-full rounded-lg object-contain"
+        />
+      </Modal>
     </main>
   );
 }
