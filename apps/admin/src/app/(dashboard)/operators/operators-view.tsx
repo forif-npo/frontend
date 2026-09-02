@@ -57,6 +57,7 @@ interface OperatorsViewProps {
   initialSearch?: string;
   initialSorting?: SortingState;
   canManageOperators: boolean;
+  currentUserId: number;
 }
 
 export function OperatorsView({
@@ -69,6 +70,7 @@ export function OperatorsView({
   initialSearch = "",
   initialSorting = [],
   canManageOperators,
+  currentUserId,
 }: OperatorsViewProps) {
   const router = useRouter();
   const {
@@ -233,6 +235,9 @@ export function OperatorsView({
 
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
+  const canEditOperator = (operator: Operator) =>
+    canManageOperators || operator.userId === currentUserId;
+  const canManageEditTarget = canManageOperators;
 
   return (
     <div className="space-y-6 p-8">
@@ -288,22 +293,25 @@ export function OperatorsView({
           sorting={sorting}
           onSortingChange={handleSortingChange}
           renderRowActions={
-            canManageOperators
-              ? (operator) => (
-                  <>
-                    <DropdownMenuItem
-                      onClick={() => handleEditOperator(operator)}
-                    >
-                      운영진 정보 수정
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      onClick={() => handleDeleteOperator(operator)}
-                    >
-                      운영진 정보 삭제
-                    </DropdownMenuItem>
-                  </>
-                )
+            canManageOperators || currentUserId > 0
+              ? (operator) =>
+                  canEditOperator(operator) ? (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() => handleEditOperator(operator)}
+                      >
+                        운영진 정보 수정
+                      </DropdownMenuItem>
+                      {canManageOperators && (
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => handleDeleteOperator(operator)}
+                        >
+                          운영진 정보 삭제
+                        </DropdownMenuItem>
+                      )}
+                    </>
+                  ) : null
               : undefined
           }
         />
@@ -329,7 +337,9 @@ export function OperatorsView({
               <DialogDescription>
                 {editTarget?.name} ({editTarget?.actYear}-
                 {editTarget?.actSemester}) — 운영진 소개 페이지에 표시되는
-                정보입니다.
+                정보입니다.{" "}
+                {!canManageEditTarget &&
+                  "소개, 사진, 졸업년도만 수정할 수 있습니다."}
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-4">
@@ -340,6 +350,7 @@ export function OperatorsView({
                     id="op-title"
                     placeholder="회장 / 부장 / 팀원"
                     value={editForm.title}
+                    disabled={!canManageEditTarget}
                     onChange={(e) =>
                       setEditForm((f) => ({ ...f, title: e.target.value }))
                     }
@@ -351,6 +362,7 @@ export function OperatorsView({
                     id="op-department"
                     placeholder="기획팀"
                     value={editForm.department}
+                    disabled={!canManageEditTarget}
                     onChange={(e) =>
                       setEditForm((f) => ({ ...f, department: e.target.value }))
                     }
