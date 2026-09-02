@@ -162,7 +162,7 @@ export function StudyApplicationsView({
         data={initialData.content}
         showPagination={false}
         enableRowSelection
-        getRowId={(row) => String(row.applicationId)}
+        getRowId={(row) => `${row.applicationId}-${row.priority}`}
         onSelectedRowsChange={setSelectedApplications}
         sorting={sorting}
         onSortingChange={handleSortingChange}
