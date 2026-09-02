@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { ExternalLink, Github, Pencil } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge, type BadgeProps } from "@ui/components/server";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,6 +24,8 @@ import {
   PRODUCT_APPLICATION_STATUS_LABELS,
   PRODUCT_OPERATION_STATUS_LABELS,
   PRODUCT_SOURCE_LABELS,
+  type ProductApplicationStatus,
+  type ProductOperationStatus,
 } from "@core/products";
 import { handleApiError } from "@core/utils/api-client";
 import {
@@ -32,11 +34,28 @@ import {
   getAdminProducts,
   rejectProduct,
   type AdminProduct,
-  type ProductOperationStatus,
 } from "./api";
 import { ProductEditDialog } from "./product-edit-dialog";
 
 type StatusFilter = "ALL" | "PENDING" | "ACCEPTED" | "REJECTED";
+type StatusBadgeVariant = NonNullable<BadgeProps["variant"]>;
+
+const APPLICATION_STATUS_VARIANTS: Record<
+  ProductApplicationStatus,
+  StatusBadgeVariant
+> = {
+  PENDING: "warning",
+  ACCEPTED: "success",
+  REJECTED: "danger",
+};
+
+const OPERATION_STATUS_VARIANTS: Record<
+  ProductOperationStatus,
+  StatusBadgeVariant
+> = {
+  LIVE: "success",
+  PAUSED: "disabled",
+};
 
 /** 링크 주입 방지: http(s) URL만 렌더링한다 */
 function safeExternalUrl(url: string | null): string | null {
@@ -46,35 +65,24 @@ function safeExternalUrl(url: string | null): string | null {
 function statusBadges(product: AdminProduct) {
   const { status, operation_status: operationStatus } = product;
 
-  switch (status) {
-    case "PENDING":
-      return (
-        <Badge className="bg-warning-50 text-text-inverse-static">
-          {PRODUCT_APPLICATION_STATUS_LABELS[status]}
-        </Badge>
-      );
-    case "REJECTED":
-      return (
-        <Badge variant="destructive">
-          {PRODUCT_APPLICATION_STATUS_LABELS[status]}
-        </Badge>
-      );
-    case "ACCEPTED":
-      return (
-        <div className="flex flex-wrap justify-center gap-1">
-          <Badge className="bg-success-60 text-text-inverse-static">
-            {PRODUCT_APPLICATION_STATUS_LABELS[status]}
-          </Badge>
-          {operationStatus && (
-            <Badge
-              variant={operationStatus === "LIVE" ? "default" : "secondary"}
-            >
-              {PRODUCT_OPERATION_STATUS_LABELS[operationStatus]}
-            </Badge>
-          )}
-        </div>
-      );
-  }
+  return (
+    <div className="flex flex-wrap justify-center gap-1">
+      <Badge
+        label={PRODUCT_APPLICATION_STATUS_LABELS[status]}
+        variant={APPLICATION_STATUS_VARIANTS[status]}
+        appearance="solid-pastel"
+        size="small"
+      />
+      {status === "ACCEPTED" && operationStatus && (
+        <Badge
+          label={PRODUCT_OPERATION_STATUS_LABELS[operationStatus]}
+          variant={OPERATION_STATUS_VARIANTS[operationStatus]}
+          appearance="solid-pastel"
+          size="small"
+        />
+      )}
+    </div>
+  );
 }
 
 export function ProductsAdminView() {
