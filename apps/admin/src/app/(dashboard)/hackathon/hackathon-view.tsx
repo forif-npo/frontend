@@ -103,7 +103,8 @@ export function HackathonView({ initialData }: HackathonViewProps) {
     return (
       (hackathon.title ?? "").toLowerCase().includes(query) ||
       (hackathon.location ?? "").toLowerCase().includes(query) ||
-      `${hackathon.held_year}-${hackathon.held_semester}`.includes(query)
+      `${hackathon.held_year}-${hackathon.held_semester}`.includes(query) ||
+      String(hackathon.event_round).includes(query)
     );
   });
   const updateForm = <K extends keyof HackathonFormState>(
