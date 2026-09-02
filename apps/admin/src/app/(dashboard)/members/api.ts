@@ -14,6 +14,24 @@ import {
 } from "@/utils/roster";
 import { Member, MemberListResult, MemberSemesterLabel } from "./types";
 
+export type MentorHistory = {
+  actYear: number;
+  actSemester: number;
+  studyName: string;
+};
+
+export type OperatorHistory = {
+  actYear: number;
+  actSemester: number;
+  team: string;
+  title: string;
+};
+
+export type MemberHistory = {
+  mentors: MentorHistory[];
+  operators: OperatorHistory[];
+};
+
 interface FetchMembersParams {
   size: number;
   page?: number;
@@ -28,6 +46,10 @@ interface MemberItem {
 }
 
 interface MemberPageData extends PaginationInterface {
+  content: MemberItem[];
+}
+
+interface MentorHistoryPageData extends PaginationInterface {
   content: MemberItem[];
 }
 
@@ -164,4 +186,89 @@ export async function updateMemberInfo(
   await apiClient
     .patch(`api/v1/admin/users/${userId}`, { json: info })
     .json<ApiResponse<null>>();
+}
+
+/**
+ * 부원별 멘토·운영진 이력.
+ * 각 목록 API는 전체 이력을 반환하므로, 상세 팝업을 열 때만 해당 부원의 기록을 추린다.
+ */
+export async function fetchMemberHistory(
+  userId: number,
+): Promise<MemberHistory> {
+  const [mentorResponse, operatorResponse] = await Promise.all([
+    apiClient
+      .get("api/v1/admin/mentors", {
+        searchParams: { page: "0", size: "10000" },
+      })
+      .json<ApiResponse<MentorHistoryPageData>>(),
+    apiClient.get("api/v1/forif-team").json<ApiResponse<MemberItem[]>>(),
+  ]);
+
+  const mentors = (mentorResponse.data?.content ?? [])
+    .filter(
+      (item) =>
+        pickNumber(
+          item.userId,
+          item.user_id,
+          item.studentId,
+          item.student_id,
+        ) === userId,
+    )
+    .map((item) => ({
+      actYear: pickNumber(item.actYear, item.act_year, item.year),
+      actSemester: pickNumber(
+        item.actSemester,
+        item.act_semester,
+        item.semester,
+      ),
+      studyName: pickString(
+        item.studyName,
+        item.study_name,
+        item.currentStudyName,
+      ),
+    }))
+    .sort(compareHistoryBySemester);
+
+  const operators = (operatorResponse.data ?? [])
+    .filter(
+      (item) =>
+        pickNumber(
+          item.userId,
+          item.user_id,
+          item.studentId,
+          item.student_id,
+        ) === userId,
+    )
+    .map((item) => ({
+      actYear: pickNumber(item.actYear, item.act_year, item.year),
+      actSemester: pickNumber(
+        item.actSemester,
+        item.act_semester,
+        item.semester,
+      ),
+      team: pickString(
+        item.clubDepartment,
+        item.club_department,
+        item.department,
+      ),
+      title: pickString(
+        item.userTitle,
+        item.user_title,
+        item.title,
+        item.role,
+        item.position,
+      ),
+    }))
+    .sort(compareHistoryBySemester);
+
+  return { mentors, operators };
+}
+
+function compareHistoryBySemester(
+  first: { actYear: number; actSemester: number },
+  second: { actYear: number; actSemester: number },
+) {
+  return (
+    second.actYear - first.actYear || second.actSemester - first.actSemester
+  );
 }

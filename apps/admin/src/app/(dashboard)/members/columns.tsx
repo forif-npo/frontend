@@ -45,32 +45,30 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "isMentor",
-    header: () => <div className="w-full text-center text-xs">멘토 여부</div>,
+    header: () => <div className="w-full text-center text-xs">멘토 이력</div>,
     cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <input
-          type="checkbox"
-          checked={Boolean(row.getValue("isMentor"))}
-          readOnly
-          tabIndex={-1}
-          className="pointer-events-none h-4 w-4"
-        />
-      </div>
+      <HistoryIndicator exists={Boolean(row.getValue("isMentor"))} />
     ),
   },
   {
     accessorKey: "isAdmin",
-    header: () => <div className="w-full text-center text-xs">운영진 여부</div>,
+    header: () => <div className="w-full text-center text-xs">운영진 이력</div>,
     cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <input
-          type="checkbox"
-          checked={Boolean(row.getValue("isAdmin"))}
-          readOnly
-          tabIndex={-1}
-          className="pointer-events-none h-4 w-4"
-        />
-      </div>
+      <HistoryIndicator exists={Boolean(row.getValue("isAdmin"))} />
     ),
   },
 ];
+
+function HistoryIndicator({ exists }: { exists: boolean }) {
+  return (
+    <div className="flex items-center justify-center">
+      {exists ? (
+        <span className="text-sm">있음</span>
+      ) : (
+        <span className="text-muted-foreground" aria-label="이력 없음">
+          —
+        </span>
+      )}
+    </div>
+  );
+}
