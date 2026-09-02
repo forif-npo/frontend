@@ -3,14 +3,12 @@ import React from "react";
 import { Button } from "@repo/ui/components/client";
 
 interface StudyActionButtonsProps {
-  onApplyClick?: () => void;
   onCreateClick?: () => void;
   size?: "small" | "medium" | "large";
   className?: string;
 }
 
 export const StudyActionButtons: React.FC<StudyActionButtonsProps> = ({
-  onApplyClick,
   onCreateClick,
   size = "large",
   className = "",

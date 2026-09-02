@@ -4,6 +4,29 @@ import type { StudyApplicationDetail } from "@/features/study-application/api";
 import { DEFAULT_CURRICULUM } from "@/features/study/create/constants";
 import type { StudyApplicationReferenceUpdate } from "@/features/study/create/actions";
 
+interface StudyApplicationUpdateState {
+  canModify: boolean;
+  hasReferenceUpdates: boolean;
+  isCancelling: boolean;
+  isDirty: boolean;
+  isSubmitting: boolean;
+}
+
+export function canUpdateStudyApplication({
+  canModify,
+  hasReferenceUpdates,
+  isCancelling,
+  isDirty,
+  isSubmitting,
+}: StudyApplicationUpdateState) {
+  return (
+    canModify &&
+    (isDirty || hasReferenceUpdates) &&
+    !isSubmitting &&
+    !isCancelling
+  );
+}
+
 export function toShortDate(value: string | null | undefined) {
   if (!value) return "";
 

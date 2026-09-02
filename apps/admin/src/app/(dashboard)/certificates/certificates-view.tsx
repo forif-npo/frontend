@@ -10,7 +10,6 @@ import {
 } from "react";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
 import { toast } from "sonner";
 import { Eraser, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
@@ -52,6 +51,12 @@ import {
   type IssueCertificatesData,
   type MemberSearchItem,
 } from "./api";
+import {
+  dateToIso,
+  isoToDate,
+  toDotDate,
+  toIssueDate,
+} from "./certificate-date-formatters";
 
 interface ManualForm {
   userName: string;
@@ -76,15 +81,6 @@ const EMPTY_MANUAL_FORM: ManualForm = {
   presidentName: "",
 };
 
-/** yyyy-MM-dd → 수료증 표기용 "yyyy.MM.dd." */
-const toDotDate = (isoDate: string) => `${isoDate.replaceAll("-", ".")}.`;
-/** yyyy-MM-dd → 발급일 표기용 "yyyy. MM. dd." */
-const toIssueDate = (isoDate: string) => `${isoDate.split("-").join(". ")}.`;
-/** date picker 값 ↔ 폼의 yyyy-MM-dd 문자열 변환 */
-const isoToDate = (iso: string) =>
-  iso ? new Date(`${iso}T00:00:00`) : undefined;
-const dateToIso = (date: Date | undefined) =>
-  date ? format(date, "yyyy-MM-dd") : "";
 const getCanvasThemeColor = (token: string) =>
   getComputedStyle(document.documentElement).getPropertyValue(token).trim();
 
