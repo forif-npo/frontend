@@ -206,6 +206,10 @@ export function StudyApprovalDetailDialog({
           />
         )}
 
+        {study?.study_status === "REJECTED" && (
+          <RejectReasonPanel reason={study.reject_reason} />
+        )}
+
         <DialogFooter>
           <Button type="button" variant="outline" onClick={onClose}>
             닫기
@@ -382,6 +386,17 @@ function PreviewInfoRow({ label, value }: { label: string; value: string }) {
 
 function EmptyValue() {
   return <span className="text-text-subtle">-</span>;
+}
+
+function RejectReasonPanel({ reason }: { reason: string | null }) {
+  return (
+    <section className="border-border-danger-light bg-surface-danger-subtler rounded-lg border p-4">
+      <h3 className="text-text-danger text-sm font-semibold">반려 사유</h3>
+      <p className="text-text-basic mt-2 whitespace-pre-wrap text-sm leading-6">
+        {reason?.trim() || "등록된 반려 사유가 없습니다."}
+      </p>
+    </section>
+  );
 }
 
 const CURRICULUM_HEADER_CELL_CLASS =
