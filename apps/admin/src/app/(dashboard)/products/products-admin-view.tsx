@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
-import { ExternalLink, Github, Pencil } from "lucide-react";
+import { ExternalLink, Eye, Github, Pencil } from "lucide-react";
 import { Badge, type BadgeProps } from "@ui/components/server";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +16,10 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { DataTable } from "@/components/list/data-table";
-import { DropdownMenuItem } from "@/components/list/dropdown-menu";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/list/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/page-header";
@@ -245,46 +248,35 @@ export function ProductsAdminView() {
 
   const renderProductActions = (product: AdminProduct) => (
     <>
-      {product.status === "PENDING" && (
+      <DropdownMenuItem onClick={() => setDetailTarget(product)}>
+        <Eye className="mr-2 h-4 w-4" />
+        상세보기
+      </DropdownMenuItem>
+      {product.status === "ACCEPTED" && (
         <>
+          <DropdownMenuSeparator />
+          {product.operation_status && (
+            <DropdownMenuItem
+              onClick={() =>
+                handleOperationStatusChange(
+                  product,
+                  product.operation_status === "LIVE" ? "PAUSED" : "LIVE",
+                )
+              }
+              disabled={isSubmitting}
+            >
+              {product.operation_status === "LIVE" ? "일시 중지" : "운영 재개"}
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
-            onClick={() => setApproveTarget(product)}
+            onClick={() => setEditTarget(product)}
             disabled={isSubmitting}
           >
-            승인
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              setRejectTarget(product);
-              setRejectReason("");
-            }}
-            disabled={isSubmitting}
-            className="text-destructive focus:text-destructive"
-          >
-            반려
+            <Pencil className="mr-2 h-4 w-4" />
+            수정
           </DropdownMenuItem>
         </>
       )}
-      {product.status === "ACCEPTED" && product.operation_status && (
-        <DropdownMenuItem
-          onClick={() =>
-            handleOperationStatusChange(
-              product,
-              product.operation_status === "LIVE" ? "PAUSED" : "LIVE",
-            )
-          }
-          disabled={isSubmitting}
-        >
-          {product.operation_status === "LIVE" ? "일시 중지" : "운영 재개"}
-        </DropdownMenuItem>
-      )}
-      <DropdownMenuItem
-        onClick={() => setEditTarget(product)}
-        disabled={isSubmitting}
-      >
-        <Pencil className="mr-2 h-4 w-4" />
-        수정
-      </DropdownMenuItem>
     </>
   );
 
@@ -342,8 +334,9 @@ export function ProductsAdminView() {
                   {statusBadges(detailTarget)}
                 </DialogTitle>
                 <DialogDescription>
-                  {detailTarget.slug}.forif.org · {detailTarget.applicant_name}(
-                  {detailTarget.applicant_id}) · {detailTarget.applied_at} 신청
+                  {detailTarget.slug}.forif.org에서{" "}
+                  {detailTarget.applicant_name}({detailTarget.applicant_id})님이{" "}
+                  {detailTarget.applied_at}에 신청했습니다.
                 </DialogDescription>
               </DialogHeader>
 
@@ -373,7 +366,7 @@ export function ProductsAdminView() {
                     <p>
                       {PRODUCT_SOURCE_LABELS[detailTarget.source_type]}
                       {detailTarget.source_label
-                        ? ` · ${detailTarget.source_label}`
+                        ? ` (${detailTarget.source_label})`
                         : ""}
                     </p>
                   </div>
@@ -410,39 +403,46 @@ export function ProductsAdminView() {
                     </a>
                   )}
                 </div>
-                {detailTarget.status === "REJECTED" &&
-                  detailTarget.reject_reason && (
-                    <div className="bg-danger-5 text-text-danger rounded-md p-3">
-                      <p className="mb-1 font-semibold">반려 사유</p>
-                      <p>{detailTarget.reject_reason}</p>
-                    </div>
-                  )}
               </div>
 
-              {detailTarget.status === "PENDING" && (
-                <DialogFooter>
-                  <Button
-                    variant="destructive"
-                    onClick={() => {
-                      setRejectTarget(detailTarget);
-                      setRejectReason("");
-                      setDetailTarget(null);
-                    }}
-                    disabled={isSubmitting}
-                  >
-                    반려
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setApproveTarget(detailTarget);
-                      setDetailTarget(null);
-                    }}
-                    disabled={isSubmitting}
-                  >
-                    승인
-                  </Button>
-                </DialogFooter>
-              )}
+              {detailTarget.status === "REJECTED" &&
+                detailTarget.reject_reason?.trim() && (
+                  <RejectReasonPanel reason={detailTarget.reject_reason} />
+                )}
+
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setDetailTarget(null)}
+                  disabled={isSubmitting}
+                >
+                  닫기
+                </Button>
+                {detailTarget.status === "PENDING" && (
+                  <>
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        setRejectTarget(detailTarget);
+                        setRejectReason("");
+                        setDetailTarget(null);
+                      }}
+                      disabled={isSubmitting}
+                    >
+                      반려
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setApproveTarget(detailTarget);
+                        setDetailTarget(null);
+                      }}
+                      disabled={isSubmitting}
+                    >
+                      승인
+                    </Button>
+                  </>
+                )}
+              </DialogFooter>
             </>
           )}
         </DialogContent>
@@ -540,5 +540,16 @@ export function ProductsAdminView() {
         onSaved={fetchProducts}
       />
     </div>
+  );
+}
+
+function RejectReasonPanel({ reason }: { reason: string }) {
+  return (
+    <section className="border-border-danger-light bg-surface-danger-subtler rounded-lg border p-4">
+      <h3 className="text-text-danger text-sm font-semibold">반려 사유</h3>
+      <p className="text-text-basic mt-2 whitespace-pre-wrap text-sm leading-6">
+        {reason}
+      </p>
+    </section>
   );
 }
