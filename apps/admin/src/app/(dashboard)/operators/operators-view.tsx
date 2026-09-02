@@ -36,6 +36,10 @@ import {
   updateOperatorProfileImage,
 } from "./api";
 import { columns } from "./columns";
+import {
+  canEditOperator,
+  canShowOperatorActions,
+} from "./operator-permissions";
 import { Operator, OperatorSemesterLabel } from "./types";
 
 interface OperatorEditForm {
@@ -235,8 +239,6 @@ export function OperatorsView({
 
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
-  const canEditOperator = (operator: Operator) =>
-    canManageOperators || operator.userId === currentUserId;
   const canManageEditTarget = canManageOperators;
 
   return (
@@ -293,9 +295,13 @@ export function OperatorsView({
           sorting={sorting}
           onSortingChange={handleSortingChange}
           renderRowActions={
-            canManageOperators || currentUserId > 0
+            canShowOperatorActions(canManageOperators, currentUserId)
               ? (operator) =>
-                  canEditOperator(operator) ? (
+                  canEditOperator(
+                    canManageOperators,
+                    currentUserId,
+                    operator.userId,
+                  ) ? (
                     <>
                       <DropdownMenuItem
                         onClick={() => handleEditOperator(operator)}
