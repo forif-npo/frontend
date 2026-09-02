@@ -29,10 +29,12 @@ import * as XLSX from "xlsx";
 
 import {
   deleteCurrentSemesterMember,
+  fetchMemberHistory,
   fetchMembers,
   updateMemberInfo,
 } from "./api";
 import { columns } from "./columns";
+import { MemberHistoryDialog } from "./member-history-dialog";
 import { Member, MemberSemesterLabel } from "./types";
 
 interface MembersViewProps {
@@ -63,6 +65,14 @@ export function MembersView({
   const [isUpdating, setIsUpdating] = useState(false);
   const [editTarget, setEditTarget] = useState<Member | null>(null);
   const [editForm, setEditForm] = useState({ department: "", phoneNum: "" });
+  const [historyTarget, setHistoryTarget] = useState<Member | null>(null);
+  const [memberHistory, setMemberHistory] = useState<Awaited<
+    ReturnType<typeof fetchMemberHistory>
+  > | null>(null);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
+  const [historyErrorMessage, setHistoryErrorMessage] = useState<string | null>(
+    null,
+  );
   const [selectedMembers, setSelectedMembers] = useState<Member[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
   const {
@@ -109,8 +119,8 @@ export function MembersView({
           학과: member.department,
           이름: member.userName,
           전화번호: formatPhoneNumber(member.phoneNum),
-          "멘토 여부": member.isMentor ? "Y" : "N",
-          "운영진 여부": member.isAdmin ? "Y" : "N",
+          "멘토 이력 있음": member.isMentor ? "Y" : "N",
+          "운영진 이력 있음": member.isAdmin ? "Y" : "N",
         })),
       );
 
@@ -132,6 +142,27 @@ export function MembersView({
       department: member.department ?? "",
       phoneNum: member.phoneNum ?? "",
     });
+  };
+
+  const handleOpenMemberHistory = async (member: Member) => {
+    setHistoryTarget(member);
+    setMemberHistory(null);
+    setHistoryErrorMessage(null);
+    setIsHistoryLoading(true);
+
+    try {
+      setMemberHistory(await fetchMemberHistory(member.userId));
+    } catch (error) {
+      setHistoryErrorMessage(await handleApiError(error));
+    } finally {
+      setIsHistoryLoading(false);
+    }
+  };
+
+  const handleCloseMemberHistory = () => {
+    setHistoryTarget(null);
+    setMemberHistory(null);
+    setHistoryErrorMessage(null);
   };
 
   const handleUpdateMember = async () => {
@@ -225,6 +256,13 @@ export function MembersView({
           onSortingChange={handleSortingChange}
           renderRowActions={(member) => (
             <>
+              {(member.isMentor || member.isAdmin) && (
+                <DropdownMenuItem
+                  onClick={() => void handleOpenMemberHistory(member)}
+                >
+                  부원 이력 상세
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onClick={() => handleEditMember(member)}>
                 부원 정보 수정
               </DropdownMenuItem>
@@ -249,6 +287,14 @@ export function MembersView({
           onPageChange={handlePageChange}
         />
       </div>
+
+      <MemberHistoryDialog
+        member={historyTarget}
+        history={memberHistory}
+        isLoading={isHistoryLoading}
+        errorMessage={historyErrorMessage}
+        onClose={handleCloseMemberHistory}
+      />
 
       <Dialog
         open={editTarget !== null}
