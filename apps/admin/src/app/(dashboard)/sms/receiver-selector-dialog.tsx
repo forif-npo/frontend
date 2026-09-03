@@ -27,8 +27,12 @@ import type { Receiver, ReceiverTarget } from "./types";
 
 const RECEIVER_TARGET_OPTIONS: { value: ReceiverTarget; label: string }[] = [
   {
-    value: "CURRENT_SEMESTER_ACCEPTED_APPLICANTS",
-    label: "현재 학기 합격자",
+    value: "CURRENT_SEMESTER_REGULAR_STUDY_ACCEPTED_APPLICANTS",
+    label: "현재 학기 정규스터디 합격자",
+  },
+  {
+    value: "CURRENT_SEMESTER_AUTONOMOUS_STUDY_ACCEPTED_APPLICANTS",
+    label: "현재 학기 자율부원 합격자",
   },
   {
     value: "CURRENT_SEMESTER_REJECTED_APPLICANTS",
@@ -47,6 +51,16 @@ const RECEIVER_TARGET_OPTIONS: { value: ReceiverTarget; label: string }[] = [
   { value: "PREVIOUS_SEMESTER_MEMBERS", label: "직전 학기 부원" },
   { value: "ALL_MEMBERS", label: "전체 부원" },
 ];
+
+const CURRENT_SEMESTER_RECEIVER_TARGETS = new Set<ReceiverTarget>([
+  "CURRENT_SEMESTER_REGULAR_STUDY_ACCEPTED_APPLICANTS",
+  "CURRENT_SEMESTER_AUTONOMOUS_STUDY_ACCEPTED_APPLICANTS",
+  "CURRENT_SEMESTER_REJECTED_APPLICANTS",
+  "CURRENT_SEMESTER_APPLICANTS",
+  "ACCEPTED_DUES_UNPAID",
+  "ACCEPTED_GOOGLE_FORM_NOT_SUBMITTED",
+  "CURRENT_SEMESTER_MEMBERS",
+]);
 
 interface ReceiverSelectorDialogProps {
   open: boolean;
@@ -353,7 +367,8 @@ export function ReceiverSelectorDialog({
                   <div className="text-muted-foreground text-xs">
                     {formatPhoneNumber(receiver.phoneNumber)} |{" "}
                     {receiver.department}
-                    {receiver.currentStudyName &&
+                    {CURRENT_SEMESTER_RECEIVER_TARGETS.has(receiverTarget) &&
+                      receiver.currentStudyName &&
                       ` | ${receiver.currentStudyName}`}
                   </div>
                 </div>
