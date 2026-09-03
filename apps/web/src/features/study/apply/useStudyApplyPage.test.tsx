@@ -60,7 +60,11 @@ type PostMock = {
 
 const mockedUseStudyApplyData = useStudyApplyData as unknown as {
   mockReturnValue: (value: {
-    currentStudy: typeof currentStudy | null;
+    currentStudy: {
+      id: number;
+      study_name: string;
+      autonomous_study: boolean;
+    } | null;
     userInfo: null;
     studyOptions: [];
     isLoading: boolean;
@@ -71,9 +75,9 @@ const mockedUseStudyApplyData = useStudyApplyData as unknown as {
 const mockedGetStatus = getStudyApplicationStatus as unknown as StatusMock;
 const mockedPost = apiClient.post as unknown as PostMock;
 
-function mockAvailableData() {
+function mockAvailableData(study = currentStudy) {
   mockedUseStudyApplyData.mockReturnValue({
-    currentStudy,
+    currentStudy: study,
     userInfo: null,
     studyOptions: [],
     isLoading: false,
@@ -153,5 +157,37 @@ describe("useStudyApplyPage", () => {
     expect(result.current.step).toBe(3);
     expect(result.current.submittedIntro).toBe(reason);
     expect(result.current.submittedPriority).toBe(1);
+  });
+
+  it("submits an autonomous-study application without a reason or priority", async () => {
+    mockAvailableData({ ...currentStudy, autonomous_study: true });
+    mockedGetStatus.mockResolvedValue(availableStatus);
+    mockedPost.mockReturnValue({ json: () => Promise.resolve({}) });
+    const { result } = renderHook(() => useStudyApplyPage("42", true));
+
+    await waitFor(() => {
+      expect(result.current.applicationAvailability).toBe("available");
+    });
+
+    let response:
+      | Awaited<ReturnType<typeof result.current.handleSubmit>>
+      | undefined;
+    await act(async () => {
+      response = await result.current.handleSubmit(
+        { errors: {}, values: { primaryStudyId: 0, isAutonomousStudy: false } },
+        new FormData(),
+      );
+    });
+
+    expect(apiClient.post).toHaveBeenCalledWith("api/v1/users/apply", {
+      json: { study_id: 42 },
+    });
+    expect(response).toEqual({
+      values: { primaryStudyId: 42, isAutonomousStudy: true },
+      errors: {},
+    });
+    expect(result.current.step).toBe(3);
+    expect(result.current.submittedIsAutonomousStudy).toBe(true);
+    expect(result.current.submittedIntro).toBe("");
   });
 });
