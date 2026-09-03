@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { HTTPError } from "ky";
-import { CriticalAlert, TextInput } from "@ui/components/client";
+import { CriticalAlert } from "@ui/components/client";
 import { GuideCheckIcon, SearchIcon } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";
 import type { UseFormReturn } from "react-hook-form";

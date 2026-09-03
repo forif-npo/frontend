@@ -21,6 +21,19 @@ export const EMPTY_FORM: HackathonFormState = {
   duration_hours: "8",
 };
 
+export function filterHackathons(hackathons: Hackathon[], searchQuery: string) {
+  const query = searchQuery.trim().toLowerCase();
+  if (!query) return hackathons;
+
+  return hackathons.filter(
+    (hackathon) =>
+      (hackathon.title ?? "").toLowerCase().includes(query) ||
+      (hackathon.location ?? "").toLowerCase().includes(query) ||
+      `${hackathon.held_year}-${hackathon.held_semester}`.includes(query) ||
+      String(hackathon.event_round).includes(query),
+  );
+}
+
 // 상태별 행 액션 노출 규칙
 export type RowAction = "manage" | "edit" | "status" | "submissions" | "delete";
 
