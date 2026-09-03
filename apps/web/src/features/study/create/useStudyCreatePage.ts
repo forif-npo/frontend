@@ -103,8 +103,8 @@ export function useStudyCreatePage() {
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
 
-    const subscription = form.watch(() => {
-      if (!form.formState.isDirty) return;
+    const subscription = form.watch((_, { name }) => {
+      if (!name || isSubmittedRef.current) return;
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {
         if (isSubmittedRef.current) return;
