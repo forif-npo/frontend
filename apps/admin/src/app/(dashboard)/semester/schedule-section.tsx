@@ -162,6 +162,7 @@ export function ScheduleSection({
     STUDY_START: EMPTY,
   });
   const [openPhases, setOpenPhases] = useState<Set<SemesterPhase>>(new Set());
+  const [savedPhases, setSavedPhases] = useState<Set<SemesterPhase>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -193,6 +194,7 @@ export function ScheduleSection({
 
       setForms(next);
       setOpenPhases(open);
+      setSavedPhases(new Set(items.map((item) => item.phase)));
     } catch (error) {
       toast.error(await handleApiError(error));
     } finally {
@@ -277,6 +279,18 @@ export function ScheduleSection({
           ends_at: addOneMinute(form.endDate, form.endHour, form.endMinute),
         });
       }
+    }
+
+    const removesMenteeReview =
+      savedPhases.has("MENTEE_REVIEW") &&
+      !phases.some((phase) => phase.phase === "MENTEE_REVIEW");
+    if (
+      removesMenteeReview &&
+      !window.confirm(
+        "멘티 수락/거절 일정을 삭제하시겠습니까? 현재 활동 학기의 남아 있는 대기 신청은 즉시 불합격 처리되며 되돌릴 수 없습니다.",
+      )
+    ) {
+      return;
     }
 
     setIsSubmitting(true);

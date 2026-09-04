@@ -115,3 +115,12 @@ export async function updateDues(updates: UpdateDuesPayload[]): Promise<void> {
     .post("api/v1/admin/dues/batch", { json: { updates } })
     .json<ApiResponse<null>>();
 }
+
+/** 합격 상태는 유지하고, 선택한 사용자의 현재 학기 활동부원 등록만 철회한다. */
+export async function withdrawRegistrations(userIds: number[]): Promise<void> {
+  await apiClient
+    .post("api/v1/admin/dues/registration-withdrawals", {
+      json: { user_ids: userIds },
+    })
+    .json<ApiResponse<null>>();
+}

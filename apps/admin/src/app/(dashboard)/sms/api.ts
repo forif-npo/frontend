@@ -79,6 +79,35 @@ export async function getReceiverPage({
   };
 }
 
+/** 현재 대상·검색 조건의 모든 수신자를 페이지 단위로 가져온다. */
+export async function getAllReceivers({
+  search,
+  target,
+}: {
+  search?: string;
+  target: ReceiverTarget;
+}): Promise<Receiver[]> {
+  const receiverByPhoneNumber = new Map<string, Receiver>();
+  const seenCursors = new Set<number>();
+  let cursor: number | undefined;
+
+  do {
+    const page = await getReceiverPage({ cursor, search, target });
+    page.receivers.forEach((receiver) => {
+      receiverByPhoneNumber.set(receiver.phoneNumber, receiver);
+    });
+
+    if (!page.hasNext || page.nextCursor === null) break;
+    if (seenCursors.has(page.nextCursor)) {
+      throw new Error("수신자 목록 페이지를 계속 불러올 수 없습니다.");
+    }
+    seenCursors.add(page.nextCursor);
+    cursor = page.nextCursor;
+  } while (true);
+
+  return Array.from(receiverByPhoneNumber.values());
+}
+
 export async function getAlimTalkTemplates(): Promise<AlimTalkTemplate[]> {
   const response = await apiClient
     .get("api/v1/notifications/templates")

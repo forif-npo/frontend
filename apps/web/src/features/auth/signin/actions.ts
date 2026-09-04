@@ -80,7 +80,7 @@ export const signUp = async (data: SignUpValues) => {
       student_id: Number(data.id), // string을 number로 변환
       user_name: data.name,
       access_token: googleAccessToken,
-      phone_num: data.phoneNumber,
+      phone_num: data.phoneNumber.replace(/\D/g, ""),
       department: data.department,
     });
 

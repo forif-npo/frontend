@@ -47,6 +47,10 @@ import {
 import { getAlimTalkTemplates, sendAlimTalk } from "./api";
 import { AlimTalkPreview } from "./alimtalk-preview";
 import { ReceiverSelectorDialog } from "./receiver-selector-dialog";
+import {
+  extractPhoneNumber,
+  getUniqueReceiverPhoneNumbers,
+} from "./receiver-utils";
 
 const AUTO_FILLED_VARIABLES = new Set(["#{이름}"]);
 const PHONE_NUMBER_IN_RECEIVER_LINE_REGEX =
@@ -70,11 +74,6 @@ function formatPhoneNumberLines(value: string) {
       return line.replace(phoneNumber, formatPhoneNumber(phoneNumber));
     })
     .join("\n");
-}
-
-function extractPhoneNumber(value: string) {
-  const phoneNumber = value.match(PHONE_NUMBER_IN_RECEIVER_LINE_REGEX)?.[0];
-  return (phoneNumber ?? value).replace(/\D/g, "");
 }
 
 function formatReceiverLine(receiver: Receiver) {
@@ -143,10 +142,7 @@ export function SmsView() {
   const requiredVariables = templateVariables.filter(
     (variable) => !AUTO_FILLED_VARIABLES.has(variable),
   );
-  const receiverCount = receiversText
-    .split("\n")
-    .map((n) => n.trim())
-    .filter(Boolean).length;
+  const receiverCount = getUniqueReceiverPhoneNumbers(receiversText).length;
 
   const applySelectedReceivers = (selectedReceivers: Receiver[]) => {
     const currentText = form.getValues("receivers");
@@ -202,10 +198,7 @@ export function SmsView() {
     const values = form.getValues();
 
     try {
-      const receivers = values.receivers
-        .split("\n")
-        .map(extractPhoneNumber)
-        .filter(Boolean);
+      const receivers = getUniqueReceiverPhoneNumbers(values.receivers);
       const variables = Object.fromEntries(
         requiredVariables.map((variable) => [
           variable,
