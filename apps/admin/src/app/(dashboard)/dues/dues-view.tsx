@@ -1,6 +1,7 @@
 "use client";
 
 import { DataTable } from "@/components/list/data-table";
+import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
@@ -137,19 +138,20 @@ export function DuesView({
     appendSortingParams(params, nextSorting);
     window.location.assign(`${pathname}?${params}`);
   };
-  const updateSelected = (
+  const updateMembers = (
+    members: DuesMember[],
     field: "duesPaid" | "googleFormSubmitted",
     value: boolean,
   ) => {
-    if (selectedMembers.length === 0) return;
+    if (members.length === 0) return;
     setError(null);
     setPendingUpdates((current) => {
       const next = new Map(current);
-      selectedMembers.forEach((member) => {
-        const original = initialData.content.find(
-          (item) => item.userId === member.userId,
-        );
-        if (!original) return;
+      members.forEach((member) => {
+        const original =
+          selectedMembersById.get(member.userId) ??
+          initialData.content.find((item) => item.userId === member.userId) ??
+          member;
         const updated = {
           ...(next.get(member.userId) ?? original),
           [field]: value,
@@ -164,6 +166,10 @@ export function DuesView({
       return next;
     });
   };
+  const updateSelected = (
+    field: "duesPaid" | "googleFormSubmitted",
+    value: boolean,
+  ) => updateMembers(selectedMembers, field, value);
   const save = async () => {
     if (pendingUpdates.size === 0 || isSaving) return;
     try {
@@ -252,26 +258,10 @@ export function DuesView({
         </Button>
         <Button
           size="sm"
-          variant="outline"
-          disabled={!selectedMembers.length || isSaving}
-          onClick={() => updateSelected("googleFormSubmitted", false)}
-        >
-          구글폼 제출 취소
-        </Button>
-        <Button
-          size="sm"
           disabled={!selectedMembers.length || isSaving}
           onClick={() => updateSelected("duesPaid", true)}
         >
           회비 납부 처리
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={!selectedMembers.length || isSaving}
-          onClick={() => updateSelected("duesPaid", false)}
-        >
-          회비 납부 취소
         </Button>
       </div>
       {pendingUpdates.size > 0 && (
@@ -290,6 +280,32 @@ export function DuesView({
         showPagination={false}
         enableRowSelection
         getRowId={(member) => String(member.userId)}
+        renderRowActions={(member) => (
+          <>
+            <DropdownMenuItem
+              disabled={isSaving}
+              onClick={() =>
+                updateMembers(
+                  [member],
+                  "googleFormSubmitted",
+                  !member.googleFormSubmitted,
+                )
+              }
+            >
+              {member.googleFormSubmitted
+                ? "구글폼 제출 처리 취소"
+                : "구글폼 제출 처리"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={isSaving}
+              onClick={() =>
+                updateMembers([member], "duesPaid", !member.duesPaid)
+              }
+            >
+              {member.duesPaid ? "회비 납부 처리 취소" : "회비 납부 처리"}
+            </DropdownMenuItem>
+          </>
+        )}
         rowSelection={rowSelection}
         onRowSelectionChange={updateRowSelection}
         renderSelectionHeader={(table) => (
