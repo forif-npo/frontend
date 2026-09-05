@@ -15,7 +15,11 @@ import {
 } from "@/components/ui/dialog";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import type { OnChangeFn, SortingState } from "@tanstack/react-table";
+import type {
+  OnChangeFn,
+  RowSelectionState,
+  SortingState,
+} from "@tanstack/react-table";
 import { appendSortingParams } from "@/lib/list-sorting";
 import { updateDues } from "./api";
 import { duesColumns } from "./dues-columns";
@@ -34,7 +38,10 @@ export function DuesView({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(initialSearch);
-  const [selectedMembers, setSelectedMembers] = useState<DuesMember[]>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [selectedMembersById, setSelectedMembersById] = useState<
+    Map<number, DuesMember>
+  >(new Map());
   const [pendingUpdates, setPendingUpdates] = useState<Map<number, DuesMember>>(
     new Map(),
   );
@@ -45,13 +52,22 @@ export function DuesView({
     string | null
   > | null>(null);
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
+  const initialSortingKey = useMemo(
+    () => JSON.stringify(initialSorting),
+    [initialSorting],
+  );
 
   useEffect(() => {
     setSearch(initialSearch);
-    setPendingUpdates(new Map());
-    setSelectedMembers([]);
     setSorting(initialSorting);
-  }, [initialData.content, initialSearch, initialSorting]);
+  }, [initialSearch, initialSorting, initialSortingKey]);
+
+  // 검색어나 정렬 기준이 바뀌면 숨겨진 대상까지 일괄 처리되는 일을 막는다.
+  // 페이지 이동만으로는 이 상태를 초기화하지 않아 선택이 누적된다.
+  useEffect(() => {
+    setRowSelection({});
+    setSelectedMembersById(new Map());
+  }, [initialSearch, initialSortingKey]);
 
   const displayMembers = useMemo(
     () =>
@@ -60,6 +76,37 @@ export function DuesView({
       ),
     [initialData.content, pendingUpdates],
   );
+  const selectedMembers = useMemo(
+    () => Array.from(selectedMembersById.values()),
+    [selectedMembersById],
+  );
+  const updateRowSelection: OnChangeFn<RowSelectionState> = (updater) => {
+    setRowSelection((currentSelection) => {
+      const nextSelection =
+        typeof updater === "function" ? updater(currentSelection) : updater;
+
+      setSelectedMembersById((currentMembers) => {
+        const nextMembers = new Map(currentMembers);
+        initialData.content.forEach((member) => {
+          if (nextSelection[String(member.userId)]) {
+            // 이미 선택한 대상은 최초 조회 상태를 보존해 변경 취소 여부를 판별한다.
+            if (!nextMembers.has(member.userId)) {
+              nextMembers.set(member.userId, member);
+            }
+          } else {
+            nextMembers.delete(member.userId);
+          }
+        });
+        return nextMembers;
+      });
+
+      return nextSelection;
+    });
+  };
+  const clearSelection = () => {
+    setRowSelection({});
+    setSelectedMembersById(new Map());
+  };
   const navigate = (next: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
     Object.entries(next).forEach(([key, value]) =>
@@ -129,6 +176,8 @@ export function DuesView({
           googleFormSubmitted: member.googleFormSubmitted,
         })),
       );
+      setPendingUpdates(new Map());
+      clearSelection();
       router.refresh();
     } catch (caught) {
       setError(
@@ -189,6 +238,11 @@ export function DuesView({
       </div>
       <div className="bg-muted/30 flex flex-wrap items-center gap-2 rounded-md border p-3">
         <span className="mr-2 text-sm">{selectedMembers.length}명 선택</span>
+        {selectedMembers.length > 0 && (
+          <Button size="sm" variant="ghost" onClick={clearSelection}>
+            선택 해제
+          </Button>
+        )}
         <Button
           size="sm"
           disabled={!selectedMembers.length || isSaving}
@@ -236,7 +290,23 @@ export function DuesView({
         showPagination={false}
         enableRowSelection
         getRowId={(member) => String(member.userId)}
-        onSelectedRowsChange={setSelectedMembers}
+        rowSelection={rowSelection}
+        onRowSelectionChange={updateRowSelection}
+        renderSelectionHeader={(table) => (
+          <input
+            type="checkbox"
+            aria-label="현재 페이지 전체 선택 또는 전체 선택 해제"
+            className="h-4 w-4 cursor-pointer"
+            checked={table.getIsAllPageRowsSelected()}
+            onChange={() => {
+              if (table.getIsAllPageRowsSelected()) {
+                clearSelection();
+                return;
+              }
+              table.toggleAllPageRowsSelected(true);
+            }}
+          />
+        )}
         sorting={sorting}
         onSortingChange={handleSortingChange}
       />
