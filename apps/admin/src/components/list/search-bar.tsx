@@ -9,6 +9,9 @@ interface SearchBarProps {
   onChange: (value: string) => void;
   placeholder?: string;
   onSearch?: () => void;
+  autoFocus?: boolean;
+  selectOnFocus?: boolean;
+  inputRef?: React.Ref<HTMLInputElement>;
 }
 
 export function SearchBar({
@@ -16,6 +19,9 @@ export function SearchBar({
   onChange,
   placeholder = "목록 검색",
   onSearch,
+  autoFocus = false,
+  selectOnFocus = false,
+  inputRef,
 }: SearchBarProps) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,8 +34,11 @@ export function SearchBar({
         type="search"
         placeholder={placeholder}
         className="h-10 pr-10"
+        autoFocus={autoFocus}
+        ref={inputRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onFocus={(event) => selectOnFocus && event.currentTarget.select()}
       />
       {onSearch && (
         <Button

@@ -8,6 +8,8 @@ interface PageProps {
   searchParams: Promise<{
     page?: string;
     search?: string;
+    dues_paid?: string;
+    google_form_submitted?: string;
     sort?: string | string[];
   }>;
 }
@@ -35,6 +37,9 @@ export default async function Page({ searchParams }: PageProps) {
       page,
       size: 20,
       search: params.search,
+      duesPaid: params.dues_paid === "false" ? false : undefined,
+      googleFormSubmitted:
+        params.google_form_submitted === "false" ? false : undefined,
       sorting,
       accessToken,
     });
@@ -43,6 +48,10 @@ export default async function Page({ searchParams }: PageProps) {
       <DuesView
         initialData={duesData}
         initialSearch={params.search ?? ""}
+        initialDuesPaidFilter={params.dues_paid === "false" ? false : undefined}
+        initialGoogleFormSubmittedFilter={
+          params.google_form_submitted === "false" ? false : undefined
+        }
         initialSorting={sorting}
       />
     );
