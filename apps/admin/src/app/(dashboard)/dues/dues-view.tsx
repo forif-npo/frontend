@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type {
   OnChangeFn,
   RowSelectionState,
@@ -29,15 +29,20 @@ import type { DuesMember, DuesPageData } from "./types";
 export function DuesView({
   initialData,
   initialSearch,
+  initialDuesPaidFilter,
+  initialGoogleFormSubmittedFilter,
   initialSorting,
 }: {
   initialData: DuesPageData;
   initialSearch: string;
+  initialDuesPaidFilter?: boolean;
+  initialGoogleFormSubmittedFilter?: boolean;
   initialSorting: SortingState;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState(initialSearch);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [selectedMembersById, setSelectedMembersById] = useState<
@@ -68,7 +73,12 @@ export function DuesView({
   useEffect(() => {
     setRowSelection({});
     setSelectedMembersById(new Map());
-  }, [initialSearch, initialSortingKey]);
+  }, [
+    initialDuesPaidFilter,
+    initialGoogleFormSubmittedFilter,
+    initialSearch,
+    initialSortingKey,
+  ]);
 
   const displayMembers = useMemo(
     () =>
@@ -107,6 +117,12 @@ export function DuesView({
   const clearSelection = () => {
     setRowSelection({});
     setSelectedMembersById(new Map());
+  };
+  const focusSearchInput = () => {
+    requestAnimationFrame(() => {
+      searchInputRef.current?.focus();
+      searchInputRef.current?.select();
+    });
   };
   const navigate = (next: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -205,7 +221,7 @@ export function DuesView({
     <div className="space-y-6 p-8">
       <PageHeader
         title="회비 관리"
-        description={`${initialData.semester.label} 합격 부원의 회비 납부와 구글폼 제출 여부를 일괄 관리합니다.`}
+        description={`${initialData.semester.label} 계좌 입금 내역을 부원 정보와 대조해 회비 납부와 구글폼 제출 여부를 관리합니다.`}
       />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <SummaryCard
@@ -225,14 +241,46 @@ export function DuesView({
         />
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <SearchBar
-          value={search}
-          onChange={setSearch}
-          onSearch={() =>
-            requestNavigation({ search: search || null, page: "0" })
-          }
-          placeholder="이름 또는 학과 검색"
-        />
+        <div className="flex flex-1 flex-wrap items-center gap-2">
+          <SearchBar
+            value={search}
+            onChange={setSearch}
+            onSearch={() =>
+              requestNavigation({ search: search || null, page: "0" })
+            }
+            placeholder="입금자명 또는 부원 이름 검색"
+            autoFocus
+            selectOnFocus
+            inputRef={searchInputRef}
+          />
+          <Button
+            type="button"
+            variant={initialDuesPaidFilter === false ? "default" : "outline"}
+            onClick={() =>
+              requestNavigation({
+                dues_paid: initialDuesPaidFilter === false ? null : "false",
+                page: "0",
+              })
+            }
+          >
+            입금 미확인만 보기
+          </Button>
+          <Button
+            type="button"
+            variant={
+              initialGoogleFormSubmittedFilter === false ? "default" : "outline"
+            }
+            onClick={() =>
+              requestNavigation({
+                google_form_submitted:
+                  initialGoogleFormSubmittedFilter === false ? null : "false",
+                page: "0",
+              })
+            }
+          >
+            구글폼 미제출만 보기
+          </Button>
+        </div>
         <Button
           disabled={pendingUpdates.size === 0 || isSaving}
           onClick={() => void save()}
@@ -242,6 +290,13 @@ export function DuesView({
             : `저장${pendingUpdates.size ? ` (${pendingUpdates.size})` : ""}`}
         </Button>
       </div>
+      {initialSearch && (
+        <p className="text-muted-foreground text-sm">
+          <span className="text-foreground font-medium">“{initialSearch}”</span>
+          검색 결과 {initialData.totalElements}명입니다. 이름, 학번, 학과를
+          확인한 뒤 입금 확인 처리하세요.
+        </p>
+      )}
       <div className="bg-muted/30 flex flex-wrap items-center gap-2 rounded-md border p-3">
         <span className="mr-2 text-sm">{selectedMembers.length}명 선택</span>
         {selectedMembers.length > 0 && (
@@ -261,7 +316,7 @@ export function DuesView({
           disabled={!selectedMembers.length || isSaving}
           onClick={() => updateSelected("duesPaid", true)}
         >
-          회비 납부 처리
+          입금 확인 처리
         </Button>
       </div>
       {pendingUpdates.size > 0 && (
@@ -284,6 +339,15 @@ export function DuesView({
           <>
             <DropdownMenuItem
               disabled={isSaving}
+              onClick={() => {
+                updateMembers([member], "duesPaid", !member.duesPaid);
+                focusSearchInput();
+              }}
+            >
+              {member.duesPaid ? "입금 확인 취소" : "입금 확인 처리"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={isSaving}
               onClick={() =>
                 updateMembers(
                   [member],
@@ -295,14 +359,6 @@ export function DuesView({
               {member.googleFormSubmitted
                 ? "구글폼 제출 처리 취소"
                 : "구글폼 제출 처리"}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={isSaving}
-              onClick={() =>
-                updateMembers([member], "duesPaid", !member.duesPaid)
-              }
-            >
-              {member.duesPaid ? "회비 납부 처리 취소" : "회비 납부 처리"}
             </DropdownMenuItem>
           </>
         )}

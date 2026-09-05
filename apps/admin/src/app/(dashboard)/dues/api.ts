@@ -8,6 +8,8 @@ interface FetchDuesParams {
   page?: number;
   size?: number;
   search?: string;
+  duesPaid?: boolean;
+  googleFormSubmitted?: boolean;
   sorting?: SortingState;
   accessToken: string;
 }
@@ -83,6 +85,8 @@ export async function fetchDues({
   page = 0,
   size = 20,
   search,
+  duesPaid,
+  googleFormSubmitted,
   sorting = [],
   accessToken,
 }: FetchDuesParams): Promise<DuesPageData> {
@@ -94,6 +98,12 @@ export async function fetchDues({
           size: size.toString(),
         });
         if (search) params.set("search", search);
+        if (duesPaid !== undefined) {
+          params.set("dues_paid", String(duesPaid));
+        }
+        if (googleFormSubmitted !== undefined) {
+          params.set("google_form_submitted", String(googleFormSubmitted));
+        }
         appendSortingParams(params, sorting);
         return params;
       })(),
