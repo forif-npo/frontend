@@ -6,14 +6,6 @@ import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type {
@@ -24,7 +16,7 @@ import type {
 import { appendSortingParams } from "@/lib/list-sorting";
 import { updateDues } from "./api";
 import { duesColumns } from "./dues-columns";
-import type { DuesMember, DuesPageData } from "./types";
+import type { DuesMember, DuesPageData, UpdateDuesPayload } from "./types";
 
 export function DuesView({
   initialData,
@@ -48,15 +40,8 @@ export function DuesView({
   const [selectedMembersById, setSelectedMembersById] = useState<
     Map<number, DuesMember>
   >(new Map());
-  const [pendingUpdates, setPendingUpdates] = useState<Map<number, DuesMember>>(
-    new Map(),
-  );
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [pendingNavigation, setPendingNavigation] = useState<Record<
-    string,
-    string | null
-  > | null>(null);
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const initialSortingKey = useMemo(
     () => JSON.stringify(initialSorting),
@@ -80,13 +65,6 @@ export function DuesView({
     initialSortingKey,
   ]);
 
-  const displayMembers = useMemo(
-    () =>
-      initialData.content.map(
-        (member) => pendingUpdates.get(member.userId) ?? member,
-      ),
-    [initialData.content, pendingUpdates],
-  );
   const selectedMembers = useMemo(
     () => Array.from(selectedMembersById.values()),
     [selectedMembersById],
@@ -132,19 +110,11 @@ export function DuesView({
     router.push(`${pathname}?${params}`);
   };
   const requestNavigation = (next: Record<string, string | null>) => {
-    if (pendingUpdates.size > 0) {
-      setPendingNavigation(next);
-      return;
-    }
+    if (isSaving) return;
     navigate(next);
   };
   const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
-    if (pendingUpdates.size > 0) {
-      setError(
-        "저장하지 않은 일괄 처리 내용이 있습니다. 저장하거나 이동을 취소한 뒤 정렬해주세요.",
-      );
-      return;
-    }
+    if (isSaving) return;
     const nextSorting =
       typeof updater === "function" ? updater(sorting) : updater;
     setSorting(nextSorting);
@@ -154,52 +124,22 @@ export function DuesView({
     appendSortingParams(params, nextSorting);
     window.location.assign(`${pathname}?${params}`);
   };
-  const updateMembers = (
+  const updateMembers = async (
     members: DuesMember[],
     field: "duesPaid" | "googleFormSubmitted",
     value: boolean,
+    clearSelectionAfterSave = false,
   ) => {
-    if (members.length === 0) return;
-    setError(null);
-    setPendingUpdates((current) => {
-      const next = new Map(current);
-      members.forEach((member) => {
-        const original =
-          selectedMembersById.get(member.userId) ??
-          initialData.content.find((item) => item.userId === member.userId) ??
-          member;
-        const updated = {
-          ...(next.get(member.userId) ?? original),
-          [field]: value,
-        };
-        if (
-          updated.duesPaid === original.duesPaid &&
-          updated.googleFormSubmitted === original.googleFormSubmitted
-        )
-          next.delete(member.userId);
-        else next.set(member.userId, updated);
-      });
-      return next;
-    });
-  };
-  const updateSelected = (
-    field: "duesPaid" | "googleFormSubmitted",
-    value: boolean,
-  ) => updateMembers(selectedMembers, field, value);
-  const save = async () => {
-    if (pendingUpdates.size === 0 || isSaving) return;
+    if (members.length === 0 || isSaving) return;
     try {
       setIsSaving(true);
       setError(null);
-      await updateDues(
-        Array.from(pendingUpdates.values()).map((member) => ({
-          userId: member.userId,
-          duesPaid: member.duesPaid,
-          googleFormSubmitted: member.googleFormSubmitted,
-        })),
-      );
-      setPendingUpdates(new Map());
-      clearSelection();
+      const updates: UpdateDuesPayload[] = members.map((member) => ({
+        userId: member.userId,
+        [field]: value,
+      }));
+      await updateDues(updates);
+      if (clearSelectionAfterSave) clearSelection();
       router.refresh();
     } catch (caught) {
       setError(
@@ -211,6 +151,10 @@ export function DuesView({
       setIsSaving(false);
     }
   };
+  const updateSelected = (
+    field: "duesPaid" | "googleFormSubmitted",
+    value: boolean,
+  ) => updateMembers(selectedMembers, field, value, true);
   const formNotSubmitted =
     initialData.summary.totalCount -
     initialData.summary.googleFormSubmittedCount;
@@ -256,6 +200,7 @@ export function DuesView({
           <Button
             type="button"
             variant={initialDuesPaidFilter === false ? "default" : "outline"}
+            disabled={isSaving}
             onClick={() =>
               requestNavigation({
                 dues_paid: initialDuesPaidFilter === false ? null : "false",
@@ -270,6 +215,7 @@ export function DuesView({
             variant={
               initialGoogleFormSubmittedFilter === false ? "default" : "outline"
             }
+            disabled={isSaving}
             onClick={() =>
               requestNavigation({
                 google_form_submitted:
@@ -280,15 +226,12 @@ export function DuesView({
           >
             구글폼 미제출만 보기
           </Button>
+          {isSaving && (
+            <span className="text-muted-foreground text-sm" role="status">
+              처리 중...
+            </span>
+          )}
         </div>
-        <Button
-          disabled={pendingUpdates.size === 0 || isSaving}
-          onClick={() => void save()}
-        >
-          {isSaving
-            ? "저장 중..."
-            : `저장${pendingUpdates.size ? ` (${pendingUpdates.size})` : ""}`}
-        </Button>
       </div>
       {initialSearch && (
         <p className="text-muted-foreground text-sm">
@@ -307,23 +250,18 @@ export function DuesView({
         <Button
           size="sm"
           disabled={!selectedMembers.length || isSaving}
-          onClick={() => updateSelected("googleFormSubmitted", true)}
+          onClick={() => void updateSelected("googleFormSubmitted", true)}
         >
           구글폼 제출 처리
         </Button>
         <Button
           size="sm"
           disabled={!selectedMembers.length || isSaving}
-          onClick={() => updateSelected("duesPaid", true)}
+          onClick={() => void updateSelected("duesPaid", true)}
         >
           입금 확인 처리
         </Button>
       </div>
-      {pendingUpdates.size > 0 && (
-        <p className="text-muted-foreground text-sm">
-          변경한 {pendingUpdates.size}건은 저장 버튼을 눌러야 반영됩니다.
-        </p>
-      )}
       {error && (
         <p className="border-border-danger-light bg-danger-5 text-text-danger rounded-md border px-4 py-3 text-sm">
           {error}
@@ -331,7 +269,7 @@ export function DuesView({
       )}
       <DataTable
         columns={duesColumns}
-        data={displayMembers}
+        data={initialData.content}
         showPagination={false}
         enableRowSelection
         getRowId={(member) => String(member.userId)}
@@ -340,7 +278,7 @@ export function DuesView({
             <DropdownMenuItem
               disabled={isSaving}
               onClick={() => {
-                updateMembers([member], "duesPaid", !member.duesPaid);
+                void updateMembers([member], "duesPaid", !member.duesPaid);
                 focusSearchInput();
               }}
             >
@@ -349,7 +287,7 @@ export function DuesView({
             <DropdownMenuItem
               disabled={isSaving}
               onClick={() =>
-                updateMembers(
+                void updateMembers(
                   [member],
                   "googleFormSubmitted",
                   !member.googleFormSubmitted,
@@ -389,37 +327,6 @@ export function DuesView({
         pageSize={initialData.pageSize}
         onPageChange={(page) => requestNavigation({ page: String(page) })}
       />
-      <Dialog
-        open={pendingNavigation !== null}
-        onOpenChange={(open) => !open && setPendingNavigation(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>저장하지 않은 변경사항이 있습니다</DialogTitle>
-            <DialogDescription>
-              이동하면 일괄 처리한 내용이 저장되지 않습니다.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setPendingNavigation(null)}
-            >
-              계속 수정
-            </Button>
-            <Button
-              onClick={() => {
-                const next = pendingNavigation;
-                setPendingUpdates(new Map());
-                setPendingNavigation(null);
-                if (next) navigate(next);
-              }}
-            >
-              저장하지 않고 이동
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
