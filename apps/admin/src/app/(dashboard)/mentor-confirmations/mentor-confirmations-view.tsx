@@ -62,11 +62,19 @@ export function MentorConfirmationsView({
   >(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const isCurrentSemester = selectedSemester === currentSemester;
 
   useEffect(() => {
+    if (isCurrentSemester) {
+      setTargets([]);
+      setSelectedTargetKeys(new Set());
+      setIsLoading(false);
+      return;
+    }
+
     let cancelled = false;
     setIsLoading(true);
-    Promise.all(
+    Promise.allSettled(
       studies.map(async (study) => {
         const data = await getMentorConfirmationTargets(study.id);
         return data.targets.map((target) => ({
@@ -76,22 +84,25 @@ export function MentorConfirmationsView({
         }));
       }),
     )
-      .then((targetGroups) => {
+      .then((results) => {
         if (!cancelled) {
+          const targetGroups = results.flatMap((result) =>
+            result.status === "fulfilled" ? [result.value] : [],
+          );
           const allTargets = targetGroups.flat();
           setTargets(allTargets);
           setSelectedTargetKeys(new Set());
-        }
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          setTargets([]);
-          setSelectedTargetKeys(new Set());
-          toast.error(
-            error instanceof Error
-              ? error.message
-              : "발급 대상을 불러오지 못했습니다.",
+          const rejected = results.find(
+            (result) => result.status === "rejected",
           );
+          if (rejected?.status === "rejected") {
+            const error = rejected.reason;
+            toast.error(
+              error instanceof Error
+                ? `일부 스터디의 발급 대상을 불러오지 못했습니다. ${error.message}`
+                : "일부 스터디의 발급 대상을 불러오지 못했습니다.",
+            );
+          }
         }
       })
       .finally(() => {
@@ -101,7 +112,7 @@ export function MentorConfirmationsView({
     return () => {
       cancelled = true;
     };
-  }, [studies]);
+  }, [isCurrentSemester, studies]);
 
   const handleIssue = async () => {
     if (selectedTargetKeys.size === 0 || isIssuing) return;
@@ -316,6 +327,13 @@ export function MentorConfirmationsView({
           className="flex items-center justify-center py-20"
           textClassName="text-base"
           textToneClassName="text-muted-foreground"
+        />
+      ) : isCurrentSemester ? (
+        <EmptyState
+          title="멘토 확인서는 종료된 학기에만 발급할 수 있습니다."
+          className="py-20"
+          textClassName="text-muted-foreground"
+          titleClassName="text-base"
         />
       ) : targets.length === 0 ? (
         <EmptyState
