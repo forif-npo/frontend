@@ -57,6 +57,7 @@ import {
 import {
   ACTION_VISIBILITY,
   EMPTY_FORM,
+  filterHackathons,
   getNextStatus,
   toFormState,
   toPresentationDownloadUrl,
@@ -97,15 +98,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
   >([]);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
 
-  const filteredData = initialData.filter((hackathon) => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) return true;
-    return (
-      (hackathon.title ?? "").toLowerCase().includes(query) ||
-      (hackathon.location ?? "").toLowerCase().includes(query) ||
-      `${hackathon.held_year}-${hackathon.held_semester}`.includes(query)
-    );
-  });
+  const filteredData = filterHackathons(initialData, searchQuery);
   const updateForm = <K extends keyof HackathonFormState>(
     field: K,
     value: HackathonFormState[K],

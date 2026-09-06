@@ -112,7 +112,8 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
       const matchesSearch =
         q.length === 0 ||
         s.project_name.toLowerCase().includes(q) ||
-        s.summary.toLowerCase().includes(q);
+        s.summary.toLowerCase().includes(q) ||
+        s.team_name.toLowerCase().includes(q);
       const matchesTech =
         selectedTech === "전체" ||
         s.tech_stacks.some(
@@ -155,7 +156,7 @@ export function ArchiveMain({ hackathons }: ArchiveMainProps) {
           value={search}
           onChange={setSearch}
           onSubmit={() => setCurrentPage(1)}
-          placeholder="프로젝트명, 한 줄 소개를 검색해보세요"
+          placeholder="프로젝트명, 팀명, 한 줄 소개를 검색해보세요"
           className="mb-6 w-full md:!max-w-none"
         />
 

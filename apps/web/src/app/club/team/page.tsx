@@ -109,7 +109,7 @@ export default function TeamPage() {
             size="small"
             onClick={() => setIsOrganizationChartOpen(true)}
           >
-            조직도로 보기
+            조직도 보기
           </Button>
         </div>
         <p className="max-w-xl text-xs leading-5 text-gray-500 md:text-right">

@@ -44,6 +44,7 @@ export default async function Page({ searchParams }: PageProps) {
   }
 
   const affiliation = session?.user?.affiliation ?? null;
+  const currentUserId = Number(session?.user?.id ?? 0);
   const canManageOperators = Boolean(
     affiliation && PRESIDENT_TEAM.includes(affiliation),
   );
@@ -69,6 +70,7 @@ export default async function Page({ searchParams }: PageProps) {
         initialSearch={search ?? ""}
         initialSorting={sorting}
         canManageOperators={canManageOperators}
+        currentUserId={currentUserId}
       />
     );
   } catch (error) {

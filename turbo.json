@@ -26,7 +26,6 @@
       ]
     },
     "test": {
-      "outputs": ["coverage/**"],
       "dependsOn": []
     },
     "test:watch": {
