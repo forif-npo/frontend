@@ -6,15 +6,12 @@ import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type {
-  OnChangeFn,
-  RowSelectionState,
-  SortingState,
-} from "@tanstack/react-table";
+import type { OnChangeFn, RowSelectionState, SortingState } from "@tanstack/react-table";
 import { appendSortingParams } from "@/lib/list-sorting";
-import { updateDues } from "./api";
+import { updateDues, withdrawRegistrations } from "./api";
 import { duesColumns } from "./dues-columns";
 import type { DuesMember, DuesPageData, UpdateDuesPayload } from "./types";
 
@@ -41,6 +38,8 @@ export function DuesView({
     Map<number, DuesMember>
   >(new Map());
   const [isSaving, setIsSaving] = useState(false);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const initialSortingKey = useMemo(
@@ -69,6 +68,7 @@ export function DuesView({
     () => Array.from(selectedMembersById.values()),
     [selectedMembersById],
   );
+
   const updateRowSelection: OnChangeFn<RowSelectionState> = (updater) => {
     setRowSelection((currentSelection) => {
       const nextSelection =
@@ -76,6 +76,7 @@ export function DuesView({
 
       setSelectedMembersById((currentMembers) => {
         const nextMembers = new Map(currentMembers);
+
         initialData.content.forEach((member) => {
           if (nextSelection[String(member.userId)]) {
             // 이미 선택한 대상은 최초 조회 상태를 보존해 변경 취소 여부를 판별한다.
@@ -86,60 +87,80 @@ export function DuesView({
             nextMembers.delete(member.userId);
           }
         });
+
         return nextMembers;
       });
 
       return nextSelection;
     });
   };
+
   const clearSelection = () => {
     setRowSelection({});
     setSelectedMembersById(new Map());
   };
+
   const focusSearchInput = () => {
     requestAnimationFrame(() => {
       searchInputRef.current?.focus();
       searchInputRef.current?.select();
     });
   };
+
   const navigate = (next: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
+
     Object.entries(next).forEach(([key, value]) =>
       value ? params.set(key, value) : params.delete(key),
     );
+
     router.push(`${pathname}?${params}`);
   };
+
   const requestNavigation = (next: Record<string, string | null>) => {
-    if (isSaving) return;
+    if (isSaving || isWithdrawing) return;
     navigate(next);
   };
+
   const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
-    if (isSaving) return;
+    if (isSaving || isWithdrawing) return;
+
     const nextSorting =
       typeof updater === "function" ? updater(sorting) : updater;
+
     setSorting(nextSorting);
+
     const params = new URLSearchParams(searchParams.toString());
     params.delete("sort");
     params.set("page", "0");
     appendSortingParams(params, nextSorting);
+
     window.location.assign(`${pathname}?${params}`);
   };
+
   const updateMembers = async (
     members: DuesMember[],
     field: "duesPaid" | "googleFormSubmitted",
     value: boolean,
     clearSelectionAfterSave = false,
   ) => {
-    if (members.length === 0 || isSaving) return;
+    if (members.length === 0 || isSaving || isWithdrawing) return;
+
     try {
       setIsSaving(true);
       setError(null);
+
       const updates: UpdateDuesPayload[] = members.map((member) => ({
         userId: member.userId,
         [field]: value,
       }));
+
       await updateDues(updates);
-      if (clearSelectionAfterSave) clearSelection();
+
+      if (clearSelectionAfterSave) {
+        clearSelection();
+      }
+
       router.refresh();
     } catch (caught) {
       setError(
@@ -151,10 +172,37 @@ export function DuesView({
       setIsSaving(false);
     }
   };
+
   const updateSelected = (
     field: "duesPaid" | "googleFormSubmitted",
     value: boolean,
   ) => updateMembers(selectedMembers, field, value, true);
+
+  const withdrawSelectedRegistrations = async () => {
+    if (!selectedMembers.length || isSaving || isWithdrawing) return;
+
+    try {
+      setIsWithdrawing(true);
+      setError(null);
+
+      await withdrawRegistrations(
+        selectedMembers.map((member) => member.userId),
+      );
+
+      clearSelection();
+      setIsWithdrawalDialogOpen(false);
+      router.refresh();
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "등록을 철회하지 못했습니다.",
+      );
+    } finally {
+      setIsWithdrawing(false);
+    }
+  };
+
   const formNotSubmitted =
     initialData.summary.totalCount -
     initialData.summary.googleFormSubmittedCount;
@@ -167,6 +215,7 @@ export function DuesView({
         title="회비 관리"
         description={`${initialData.semester.label} 계좌 입금 내역을 부원 정보와 대조해 회비 납부와 구글폼 제출 여부를 관리합니다.`}
       />
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <SummaryCard
           label="전체 합격 부원"
@@ -184,6 +233,7 @@ export function DuesView({
           tone="green"
         />
       </div>
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <SearchBar
@@ -200,7 +250,7 @@ export function DuesView({
           <Button
             type="button"
             variant={initialDuesPaidFilter === false ? "default" : "outline"}
-            disabled={isSaving}
+            disabled={isSaving || isWithdrawing}
             onClick={() =>
               requestNavigation({
                 dues_paid: initialDuesPaidFilter === false ? null : "false",
@@ -215,7 +265,7 @@ export function DuesView({
             variant={
               initialGoogleFormSubmittedFilter === false ? "default" : "outline"
             }
-            disabled={isSaving}
+            disabled={isSaving || isWithdrawing}
             onClick={() =>
               requestNavigation({
                 google_form_submitted:
@@ -226,13 +276,14 @@ export function DuesView({
           >
             구글폼 미제출만 보기
           </Button>
-          {isSaving && (
+          {(isSaving || isWithdrawing) && (
             <span className="text-muted-foreground text-sm" role="status">
               처리 중...
             </span>
           )}
         </div>
       </div>
+
       {initialSearch && (
         <p className="text-muted-foreground text-sm">
           <span className="text-foreground font-medium">“{initialSearch}”</span>
@@ -240,33 +291,53 @@ export function DuesView({
           확인한 뒤 입금 확인 처리하세요.
         </p>
       )}
+
       <div className="bg-muted/30 flex flex-wrap items-center gap-2 rounded-md border p-3">
         <span className="mr-2 text-sm">{selectedMembers.length}명 선택</span>
+
         {selectedMembers.length > 0 && (
-          <Button size="sm" variant="ghost" onClick={clearSelection}>
+          <Button
+            size="sm"
+            variant="ghost"
+            disabled={isSaving || isWithdrawing}
+            onClick={clearSelection}
+          >
             선택 해제
           </Button>
         )}
+
         <Button
           size="sm"
-          disabled={!selectedMembers.length || isSaving}
+          disabled={!selectedMembers.length || isSaving || isWithdrawing}
           onClick={() => void updateSelected("googleFormSubmitted", true)}
         >
           구글폼 제출 처리
         </Button>
+
         <Button
           size="sm"
-          disabled={!selectedMembers.length || isSaving}
+          disabled={!selectedMembers.length || isSaving || isWithdrawing}
           onClick={() => void updateSelected("duesPaid", true)}
         >
           입금 확인 처리
         </Button>
+
+        <Button
+          size="sm"
+          variant="destructive"
+          disabled={!selectedMembers.length || isSaving || isWithdrawing}
+          onClick={() => setIsWithdrawalDialogOpen(true)}
+        >
+          등록 철회
+        </Button>
       </div>
+
       {error && (
         <p className="border-border-danger-light bg-danger-5 text-text-danger rounded-md border px-4 py-3 text-sm">
           {error}
         </p>
       )}
+
       <DataTable
         columns={duesColumns}
         data={initialData.content}
@@ -276,7 +347,7 @@ export function DuesView({
         renderRowActions={(member) => (
           <>
             <DropdownMenuItem
-              disabled={isSaving}
+              disabled={isSaving || isWithdrawing}
               onClick={() => {
                 void updateMembers([member], "duesPaid", !member.duesPaid);
                 focusSearchInput();
@@ -284,8 +355,9 @@ export function DuesView({
             >
               {member.duesPaid ? "입금 확인 취소" : "입금 확인 처리"}
             </DropdownMenuItem>
+
             <DropdownMenuItem
-              disabled={isSaving}
+              disabled={isSaving || isWithdrawing}
               onClick={() =>
                 void updateMembers(
                   [member],
@@ -308,11 +380,13 @@ export function DuesView({
             aria-label="현재 페이지 전체 선택 또는 전체 선택 해제"
             className="h-4 w-4 cursor-pointer"
             checked={table.getIsAllPageRowsSelected()}
+            disabled={isSaving || isWithdrawing}
             onChange={() => {
               if (table.getIsAllPageRowsSelected()) {
                 clearSelection();
                 return;
               }
+
               table.toggleAllPageRowsSelected(true);
             }}
           />
@@ -320,6 +394,7 @@ export function DuesView({
         sorting={sorting}
         onSortingChange={handleSortingChange}
       />
+
       <OffsetPagination
         currentPage={initialData.currentPage}
         totalPages={initialData.totalPages}
@@ -327,6 +402,41 @@ export function DuesView({
         pageSize={initialData.pageSize}
         onPageChange={(page) => requestNavigation({ page: String(page) })}
       />
+
+      <Dialog
+        open={isWithdrawalDialogOpen}
+        onOpenChange={(open) =>
+          !isWithdrawing && setIsWithdrawalDialogOpen(open)
+        }
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>이번 학기 등록을 철회할까요?</DialogTitle>
+            <DialogDescription>
+              선택한 {selectedMembers.length}명의 합격 및 신청 이력은
+              유지됩니다. 회비 관리 대상에서는 제외되며, 회비·구글폼 상태가
+              변경돼도 현재 학기 활동부원으로 등록되지 않습니다.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              disabled={isWithdrawing}
+              onClick={() => setIsWithdrawalDialogOpen(false)}
+            >
+              취소
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={isWithdrawing}
+              onClick={() => void withdrawSelectedRegistrations()}
+            >
+              {isWithdrawing ? "철회 중..." : "등록 철회"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -346,6 +456,7 @@ function SummaryCard({
     red: "text-text-danger",
     green: "text-text-success",
   }[tone];
+
   return (
     <div className="rounded-md border p-4">
       <p className="text-muted-foreground text-sm">{label}</p>

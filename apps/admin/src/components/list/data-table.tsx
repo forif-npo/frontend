@@ -127,12 +127,19 @@ export function DataTable<TData, TValue>({
     const actionColumn: ColumnDef<TData, TValue> = {
       id: "actions",
       header: () => <div className="w-10" />,
-      cell: ({ row }) =>
-        renderActionCell ? (
-          <div className="flex items-center justify-end gap-1">
-            {renderActionCell(row.original)}
-          </div>
-        ) : (
+      cell: ({ row }) => {
+        if (renderActionCell) {
+          return (
+            <div className="flex items-center justify-end gap-1">
+              {renderActionCell(row.original)}
+            </div>
+          );
+        }
+
+        const rowActions = renderRowActions?.(row.original);
+        if (!rowActions) return null;
+
+        return (
           <div className="relative flex items-center justify-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -148,11 +155,12 @@ export function DataTable<TData, TValue>({
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end" className="z-50 w-44">
-                {renderRowActions?.(row.original)}
+                {rowActions}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        ),
+        );
+      },
       enableSorting: false,
       enableHiding: false,
       size: actionColumnSize ?? (renderActionCell ? 320 : 56),

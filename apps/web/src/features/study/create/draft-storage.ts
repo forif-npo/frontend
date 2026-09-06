@@ -22,7 +22,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function toDraftValues(values: Partial<StudyOpenValues>) {
-  const { thumbnail: _thumbnail, ...draftValues } = values;
+  const draftValues = { ...values };
+  delete draftValues.thumbnail;
+
   return {
     ...draftValues,
     references: draftValues.references?.map((reference) =>

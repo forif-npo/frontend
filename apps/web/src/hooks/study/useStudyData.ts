@@ -18,9 +18,7 @@ interface UseStudyDataReturn {
   refetch: (params?: StudyListParams) => Promise<void>;
 }
 
-export const useStudyData = (
-  initialParams?: StudyListParams,
-): UseStudyDataReturn => {
+export const useStudyData = (): UseStudyDataReturn => {
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

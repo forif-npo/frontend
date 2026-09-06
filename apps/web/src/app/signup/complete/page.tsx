@@ -5,31 +5,21 @@ import { Button } from "@ui/components/client";
 import { Body, Divider, Heading, LinkButton } from "@ui/components/server";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AuthLoadingIndicator } from "@/components/AuthLoadingIndicator";
 import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 
 export default function Page() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   useEffect(() => {
     if (status === "loading") return;
-
-    // NextAuth 세션에 토큰이 있는지 확인
-    const hasToken = !!session?.accessToken;
-    setIsAuthenticated(hasToken);
 
     // 세션이 없거나 accessToken이 없으면 로그인 페이지로
     if (!session?.accessToken) {
       router.push("/signin");
     }
   }, [session, status, router]);
-
-  const handleGoToMyPage = () => {
-    router.push("/my");
-  };
 
   if (status === "loading" || !session?.accessToken) {
     return <AuthLoadingIndicator message="회원가입 처리 중입니다." />;

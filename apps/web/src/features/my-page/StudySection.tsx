@@ -15,7 +15,7 @@ interface StudySectionProps {
 
 export function StudySection({ studiesData }: StudySectionProps) {
   const [sortOrder, setSortOrder] = useState<StudySortOrder>("latest");
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   type FlatStudy = StudyDetail & {
     semester_label: string;

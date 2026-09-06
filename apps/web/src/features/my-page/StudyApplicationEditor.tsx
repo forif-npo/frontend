@@ -23,18 +23,19 @@ import {
   type StudyApplicationDetail,
 } from "@/features/study-application/api";
 import { handleApiError } from "@core/utils/api-client";
-import { getStudyTagLabel } from "@/constants/study-tags";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { useDateInput } from "@/hooks/useDateInput";
 import { useTimeInput } from "@/hooks/useTimeInput";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
 import { StudySectionTitle } from "@/features/study/components/StudySectionTitle";
+import { submitStudyCreate } from "@/features/study/create/actions";
 import {
-  submitStudyCreate,
-  type StudyApplicationReferenceUpdate,
-} from "@/features/study/create/actions";
+  addCurriculumContent,
+  addCurriculumWeek,
+  removeCurriculumContent,
+  removeCurriculumWeek,
+} from "@/features/study/create/curriculum";
 import {
-  DEFAULT_CURRICULUM,
   DIFFICULTY_OPTIONS,
   LOCATION_OPTIONS,
   WEEKDAY_OPTIONS,
@@ -44,110 +45,16 @@ import { StudyCreatePreviewModal } from "@/features/study/create/components/Stud
 import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
 import { fetchUserInfo } from "@/features/study/create/user-info";
 import { useStudyCreateData } from "@/features/study/create/useStudyCreateData";
-import type { UserInfo } from "@/features/study/create/types";
+import { getThumbnailValidationMessage } from "@/features/study/create/thumbnail-validation";
+import { useSecondaryMentor } from "@/features/study/create/useSecondaryMentor";
+import {
+  buildReferenceUpdate,
+  canUpdateStudyApplication,
+  toFormValues,
+} from "./study-application-editor-utils";
 
 interface StudyApplicationEditorProps {
   application: StudyApplicationDetail;
-}
-
-function toShortDate(value: string | null | undefined) {
-  if (!value) return "";
-
-  const isoDate = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (isoDate) return `${isoDate[1].slice(2)}${isoDate[2]}${isoDate[3]}`;
-
-  const digits = value.replace(/\D/g, "");
-  if (digits.length === 8) return digits.slice(2);
-  return digits.slice(0, 6);
-}
-
-function toFormValues(application: StudyApplicationDetail): StudyOpenValues {
-  const { study } = application;
-  const curriculum = study.plans
-    .slice()
-    .sort((first, second) => first.week_num - second.week_num)
-    .map((plan, index) => ({
-      week: plan.week_num || index + 1,
-      date: toShortDate(plan.date),
-      topic: plan.section ?? "",
-      contents: plan.content ? plan.content.split("; ") : [""],
-    }));
-
-  return {
-    mentorIds:
-      study.mentors
-        ?.filter((mentor) => mentor.mentor_num !== 1)
-        .map((mentor) => mentor.mentor_id) ?? [],
-    studyName: study.study_name,
-    oneLiner: study.one_liner ?? "",
-    tags: study.tags.map(getStudyTagLabel),
-    thumbnail: null,
-    introduction: study.explanation ?? study.goal ?? "",
-    isOnline: Boolean(study.is_online),
-    location: study.location ?? "",
-    room: study.location_detail ?? "",
-    weekDay: study.week_day === null ? "" : String(study.week_day),
-    startTime: study.start_time ?? "",
-    endTime: study.end_time ?? "",
-    curriculum:
-      curriculum.length >= 8
-        ? curriculum
-        : DEFAULT_CURRICULUM.map((week) => ({ ...week, contents: [""] })),
-    difficulty: study.difficulty ?? "",
-    hasInterview: Boolean(study.requires_interview),
-    interviewDate: toShortDate(study.interview_date) || null,
-    references: study.references.map((reference) => ({
-      id: reference.id,
-      type: reference.reference_type === "FILE" ? "DOWNLOAD" : "LINK",
-      value:
-        reference.reference_type === "FILE"
-          ? (reference.content ?? "")
-          : (reference.content ?? ""),
-      fileName: reference.file_name ?? null,
-    })),
-  };
-}
-
-function buildReferenceUpdate(
-  references: StudyOpenValues["references"],
-  originalReferences: StudyApplicationDetail["study"]["references"],
-): StudyApplicationReferenceUpdate {
-  const originalById = new Map(
-    originalReferences
-      .filter((reference): reference is typeof reference & { id: string } =>
-        Boolean(reference.id),
-      )
-      .map((reference) => [reference.id, reference]),
-  );
-  const retainedReferenceIds: string[] = [];
-  const updatedReferences: StudyOpenValues["references"] = [];
-
-  references.forEach((reference) => {
-    const original = reference.id ? originalById.get(reference.id) : undefined;
-    const isUnchangedUrl =
-      original?.reference_type === "URL" &&
-      reference.type === "LINK" &&
-      reference.value === original.content;
-    const isUnchangedFile =
-      original?.reference_type === "FILE" &&
-      reference.type === "DOWNLOAD" &&
-      typeof reference.value === "string" &&
-      reference.value === original.content;
-
-    if (original && (isUnchangedUrl || isUnchangedFile)) {
-      retainedReferenceIds.push(original.id);
-    } else {
-      updatedReferences.push(reference);
-    }
-  });
-
-  return {
-    retainedReferenceIds,
-    references: updatedReferences,
-    hasChanges:
-      updatedReferences.length > 0 ||
-      retainedReferenceIds.length !== originalById.size,
-  };
 }
 
 export function StudyApplicationEditor({
@@ -166,9 +73,6 @@ export function StudyApplicationEditor({
   const [confirmAction, setConfirmAction] = useState<
     "modify" | "cancel" | null
   >(null);
-  const [mentorSearchValue, setMentorSearchValue] = useState("");
-  const [secondaryMentor, setSecondaryMentor] = useState<UserInfo | null>(null);
-  const [mentorError, setMentorError] = useState<string | null>(null);
   const [message, setMessage] = useState<{
     text: string;
     type: "success" | "error";
@@ -198,12 +102,33 @@ export function StudyApplicationEditor({
   const selectedLocation = watch("location");
   const hasInterview = watch("hasInterview");
   const secondaryMentorId = watch("mentorIds")?.[0] ?? null;
+  const {
+    mentorSearchValue,
+    secondaryMentor,
+    mentorError,
+    updateMentorSearchValue,
+    handleSecondaryMentorSearch,
+    handleSecondaryMentorRemove,
+  } = useSecondaryMentor({
+    currentUserInfo,
+    secondaryMentorId,
+    fetchUser: fetchUserInfo,
+    onMentorIdsChange: (mentorIds) =>
+      setValue("mentorIds", mentorIds, { shouldDirty: true }),
+  });
   const referenceUpdate = buildReferenceUpdate(
     newReferences,
     application.study.references,
   );
   const hasReferenceUpdates =
     Boolean(dirtyFields.references) && referenceUpdate.hasChanges;
+  const canSubmit = canUpdateStudyApplication({
+    canModify: application.can_modify,
+    hasReferenceUpdates,
+    isCancelling,
+    isDirty,
+    isSubmitting,
+  });
   const isRoomDisabled = isOnline || selectedLocation === "장소 미정";
 
   useEffect(() => {
@@ -211,84 +136,15 @@ export function StudyApplicationEditor({
     setMessage(null);
   }, [application, form]);
 
-  useEffect(() => {
-    if (secondaryMentorId === null) {
-      setSecondaryMentor(null);
-      return;
-    }
-
-    let isCanceled = false;
-    const loadSecondaryMentor = async () => {
-      try {
-        const mentor = await fetchUserInfo(String(secondaryMentorId));
-        if (isCanceled) return;
-
-        setSecondaryMentor(mentor);
-        setMentorSearchValue(mentor?.studentId ?? String(secondaryMentorId));
-      } catch {
-        if (isCanceled) return;
-        setSecondaryMentor(null);
-      }
-    };
-
-    void loadSecondaryMentor();
-    return () => {
-      isCanceled = true;
-    };
-  }, [secondaryMentorId]);
-
   const handleTagsConfirm = (tags: string[]) => {
     setValue("tags", tags, { shouldDirty: true, shouldValidate: true });
     setIsTagModalOpen(false);
   };
 
-  const handleSecondaryMentorSearch = async () => {
-    const mentorId = mentorSearchValue.trim();
-    if (!mentorId) return;
-
-    try {
-      const mentor = await fetchUserInfo(mentorId);
-      if (!mentor) {
-        throw new Error("Mentor not found");
-      }
-      if (!currentUserInfo) {
-        setMentorError("사용자 정보를 불러온 뒤 다시 시도해주세요.");
-        return;
-      }
-      if (mentor.studentId === currentUserInfo.studentId) {
-        setSecondaryMentor(null);
-        setMentorError("본인은 추가 멘토로 등록할 수 없습니다.");
-        setValue("mentorIds", [], { shouldDirty: true });
-        return;
-      }
-
-      setSecondaryMentor(mentor);
-      setMentorSearchValue(mentor.studentId);
-      setMentorError(null);
-      setValue("mentorIds", [Number(mentor.studentId)], { shouldDirty: true });
-    } catch {
-      setMentorError("해당 아이디의 부원을 찾을 수 없습니다.");
-    }
-  };
-
-  const handleSecondaryMentorRemove = () => {
-    setSecondaryMentor(null);
-    setMentorSearchValue("");
-    setMentorError(null);
-    setValue("mentorIds", [], { shouldDirty: true });
-  };
-
   const handleThumbnailUpload = async (file: File) => {
-    if (!["image/jpeg", "image/png"].includes(file.type)) {
-      setThumbnailAlertMessage(
-        "jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.",
-      );
-      return false;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      setThumbnailAlertMessage(
-        "이미지 파일은 최대 5MB까지 업로드할 수 있습니다.",
-      );
+    const validationMessage = getThumbnailValidationMessage(file);
+    if (validationMessage) {
+      setThumbnailAlertMessage(validationMessage);
       return false;
     }
     setValue("thumbnail", file, { shouldDirty: true });
@@ -299,53 +155,25 @@ export function StudyApplicationEditor({
     setValue("curriculum", next, { shouldDirty: true });
 
   const addContent = (weekIndex: number) => {
-    const next = [...curriculum];
-    next[weekIndex] = {
-      ...next[weekIndex],
-      contents: [...next[weekIndex].contents, ""],
-    };
-    updateCurriculum(next);
+    updateCurriculum(addCurriculumContent(curriculum, weekIndex));
   };
 
   const removeContent = (weekIndex: number, contentIndex: number) => {
-    const targetWeek = curriculum[weekIndex];
-    if (!targetWeek || targetWeek.contents.length <= 1) return;
-    const next = [...curriculum];
-    next[weekIndex] = {
-      ...targetWeek,
-      contents: targetWeek.contents.filter(
-        (_, index) => index !== contentIndex,
-      ),
-    };
-    updateCurriculum(next);
+    const next = removeCurriculumContent(curriculum, weekIndex, contentIndex);
+    if (next) updateCurriculum(next);
   };
 
   const addWeek = () => {
-    const lastWeek = curriculum.at(-1)?.week ?? curriculum.length;
-    updateCurriculum([
-      ...curriculum,
-      { week: lastWeek + 1, date: "", topic: "", contents: [""] },
-    ]);
+    updateCurriculum(addCurriculumWeek(curriculum));
   };
 
   const removeWeek = (weekIndex: number) => {
-    if (weekIndex < 8 || curriculum.length <= 8) return;
-    updateCurriculum(
-      curriculum
-        .filter((_, index) => index !== weekIndex)
-        .map((week, index) => ({ ...week, week: index + 1 })),
-    );
+    const next = removeCurriculumWeek(curriculum, weekIndex);
+    if (next) updateCurriculum(next);
   };
 
   const handleSubmit = async () => {
-    if (
-      !application.can_modify ||
-      (!isDirty && !hasReferenceUpdates) ||
-      isSubmitting ||
-      isCancelling
-    ) {
-      return;
-    }
+    if (!canSubmit) return;
     if (!(await form.trigger())) {
       setMessage({ text: "필수 입력 항목을 확인해주세요.", type: "error" });
       return;
@@ -373,14 +201,7 @@ export function StudyApplicationEditor({
   };
 
   const requestSubmit = async () => {
-    if (
-      !application.can_modify ||
-      (!isDirty && !hasReferenceUpdates) ||
-      isSubmitting ||
-      isCancelling
-    ) {
-      return;
-    }
+    if (!canSubmit) return;
     if (!(await form.trigger())) {
       setMessage({ text: "필수 입력 항목을 확인해주세요.", type: "error" });
       return;
@@ -434,8 +255,7 @@ export function StudyApplicationEditor({
                   placeholder="추가할 멘토의 학번을 입력해주세요"
                   value={mentorSearchValue}
                   onChange={(event) => {
-                    setMentorSearchValue(event.target.value);
-                    setMentorError(null);
+                    updateMentorSearchValue(event.target.value);
                   }}
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
@@ -780,12 +600,7 @@ export function StudyApplicationEditor({
               variant="primary"
               size="large"
               type="submit"
-              disabled={
-                !application.can_modify ||
-                (!isDirty && !hasReferenceUpdates) ||
-                isSubmitting ||
-                isCancelling
-              }
+              disabled={!canSubmit}
             >
               {isSubmitting ? "수정 중..." : "수정"}
             </Button>

@@ -71,8 +71,7 @@ export default function StudyListPage() {
     filters.search,
   ]);
 
-  const { studies, loading, error, totalElements, refetch } =
-    useStudyData(apiParams);
+  const { studies, loading, error, totalElements, refetch } = useStudyData();
 
   useEffect(() => {
     refetch(apiParams);
