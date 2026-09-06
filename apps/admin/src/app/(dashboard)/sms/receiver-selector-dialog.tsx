@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { getReceiverPage } from "./api";
+import { getAllReceivers, getReceiverPage } from "./api";
 import {
   Select,
   SelectContent,
@@ -26,16 +26,41 @@ import {
 import type { Receiver, ReceiverTarget } from "./types";
 
 const RECEIVER_TARGET_OPTIONS: { value: ReceiverTarget; label: string }[] = [
-  { value: "CURRENT_SEMESTER_MEMBERS", label: "현재 학기 부원" },
+  {
+    value: "CURRENT_SEMESTER_REGULAR_STUDY_ACCEPTED_APPLICANTS",
+    label: "현재 학기 정규스터디 합격자",
+  },
+  {
+    value: "CURRENT_SEMESTER_AUTONOMOUS_STUDY_ACCEPTED_APPLICANTS",
+    label: "현재 학기 자율부원 합격자",
+  },
+  {
+    value: "CURRENT_SEMESTER_REJECTED_APPLICANTS",
+    label: "현재 학기 불합격자",
+  },
   { value: "CURRENT_SEMESTER_APPLICANTS", label: "현재 학기 신청자" },
-  { value: "ACCEPTED_DUES_UNPAID", label: "회비 미납 합격자" },
+  {
+    value: "ACCEPTED_DUES_UNPAID",
+    label: "현재 학기 회비 미납 합격자",
+  },
   {
     value: "ACCEPTED_GOOGLE_FORM_NOT_SUBMITTED",
-    label: "구글폼 미제출 합격자",
+    label: "현재 학기 구글폼 미제출 합격자",
   },
+  { value: "CURRENT_SEMESTER_MEMBERS", label: "현재 학기 부원" },
   { value: "PREVIOUS_SEMESTER_MEMBERS", label: "직전 학기 부원" },
   { value: "ALL_MEMBERS", label: "전체 부원" },
 ];
+
+const CURRENT_SEMESTER_RECEIVER_TARGETS = new Set<ReceiverTarget>([
+  "CURRENT_SEMESTER_REGULAR_STUDY_ACCEPTED_APPLICANTS",
+  "CURRENT_SEMESTER_AUTONOMOUS_STUDY_ACCEPTED_APPLICANTS",
+  "CURRENT_SEMESTER_REJECTED_APPLICANTS",
+  "CURRENT_SEMESTER_APPLICANTS",
+  "ACCEPTED_DUES_UNPAID",
+  "ACCEPTED_GOOGLE_FORM_NOT_SUBMITTED",
+  "CURRENT_SEMESTER_MEMBERS",
+]);
 
 interface ReceiverSelectorDialogProps {
   open: boolean;
@@ -65,6 +90,14 @@ export function ReceiverSelectorDialog({
   const [selectedReceivers, setSelectedReceivers] = useState<
     Map<string, Receiver>
   >(new Map());
+
+  const confirmSelectionReset = () => {
+    if (selectedReceivers.size === 0) return true;
+
+    return window.confirm(
+      `선택한 ${selectedReceivers.size}명이 해제됩니다. 계속하시겠습니까?`,
+    );
+  };
 
   const loadReceivers = useCallback(
     async ({
@@ -143,6 +176,9 @@ export function ReceiverSelectorDialog({
   }, [loadReceivers, open]);
 
   const searchReceivers = () => {
+    if (!confirmSelectionReset()) return;
+
+    setSelectedReceivers(new Map());
     void loadReceivers({
       search: receiverSearch.trim(),
       replace: true,
@@ -151,8 +187,11 @@ export function ReceiverSelectorDialog({
   };
 
   const changeReceiverTarget = (target: ReceiverTarget) => {
+    if (!confirmSelectionReset()) return;
+
     setReceiverTarget(target);
     setReceiverSearch("");
+    setSelectedReceivers(new Map());
     void loadReceivers({ search: "", replace: true, target });
   };
 
@@ -165,7 +204,7 @@ export function ReceiverSelectorDialog({
     });
   };
 
-  const toggleAll = () => {
+  const toggleVisibleReceivers = () => {
     setSelectedReceivers((previous) => {
       const next = new Map(previous);
       const allVisibleReceiversSelected = receivers.every((receiver) =>
@@ -179,6 +218,28 @@ export function ReceiverSelectorDialog({
       );
       return next;
     });
+  };
+
+  const selectAllSearchResults = async () => {
+    setIsReceiversLoading(true);
+    setReceiverError(null);
+
+    try {
+      const allReceivers = await getAllReceivers({
+        search: activeReceiverSearch,
+        target: receiverTarget,
+      });
+      setSelectedReceivers(
+        new Map(
+          allReceivers.map((receiver) => [receiver.phoneNumber, receiver]),
+        ),
+      );
+      setTotalReceiverCount(allReceivers.length);
+    } catch (err) {
+      setReceiverError(await handleApiError(err));
+    } finally {
+      setIsReceiversLoading(false);
+    }
   };
 
   return (
@@ -251,14 +312,26 @@ export function ReceiverSelectorDialog({
                     selectedReceivers.has(receiver.phoneNumber),
                   )
                 }
-                onChange={toggleAll}
+                onChange={toggleVisibleReceivers}
               />
-              현재 목록 전체 선택
+              현재 불러온 {receivers.length}명 선택
             </label>
             <Badge variant="secondary">
               {selectedReceivers.size}/{totalReceiverCount}
             </Badge>
           </div>
+
+          {totalReceiverCount > receivers.length && (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              disabled={isReceiversLoading}
+              onClick={() => void selectAllSearchResults()}
+            >
+              검색 결과 전체 {totalReceiverCount}명 선택
+            </Button>
+          )}
 
           <div className="max-h-60 space-y-1 overflow-y-auto">
             {isReceiversLoading && receivers.length === 0 && (
@@ -294,7 +367,8 @@ export function ReceiverSelectorDialog({
                   <div className="text-muted-foreground text-xs">
                     {formatPhoneNumber(receiver.phoneNumber)} |{" "}
                     {receiver.department}
-                    {receiver.currentStudyName &&
+                    {CURRENT_SEMESTER_RECEIVER_TARGETS.has(receiverTarget) &&
+                      receiver.currentStudyName &&
                       ` | ${receiver.currentStudyName}`}
                   </div>
                 </div>

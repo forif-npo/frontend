@@ -17,7 +17,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { OnChangeFn, SortingState } from "@tanstack/react-table";
 import { appendSortingParams } from "@/lib/list-sorting";
-import { updateDues } from "./api";
+import { updateDues, withdrawRegistrations } from "./api";
 import { duesColumns } from "./dues-columns";
 import type { DuesMember, DuesPageData } from "./types";
 
@@ -39,6 +39,8 @@ export function DuesView({
     new Map(),
   );
   const [isSaving, setIsSaving] = useState(false);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingNavigation, setPendingNavigation] = useState<Record<
     string,
@@ -140,6 +142,28 @@ export function DuesView({
       setIsSaving(false);
     }
   };
+  const withdrawSelectedRegistrations = async () => {
+    if (!selectedMembers.length || isWithdrawing) return;
+
+    try {
+      setIsWithdrawing(true);
+      setError(null);
+      await withdrawRegistrations(
+        selectedMembers.map((member) => member.userId),
+      );
+      setSelectedMembers([]);
+      setIsWithdrawalDialogOpen(false);
+      router.refresh();
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "등록을 철회하지 못했습니다.",
+      );
+    } finally {
+      setIsWithdrawing(false);
+    }
+  };
   const formNotSubmitted =
     initialData.summary.totalCount -
     initialData.summary.googleFormSubmittedCount;
@@ -219,6 +243,16 @@ export function DuesView({
         >
           회비 납부 취소
         </Button>
+        <Button
+          size="sm"
+          variant="destructive"
+          disabled={
+            !selectedMembers.length || isSaving || pendingUpdates.size > 0
+          }
+          onClick={() => setIsWithdrawalDialogOpen(true)}
+        >
+          등록 철회
+        </Button>
       </div>
       {pendingUpdates.size > 0 && (
         <p className="text-muted-foreground text-sm">
@@ -274,6 +308,39 @@ export function DuesView({
               }}
             >
               저장하지 않고 이동
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={isWithdrawalDialogOpen}
+        onOpenChange={(open) =>
+          !isWithdrawing && setIsWithdrawalDialogOpen(open)
+        }
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>이번 학기 등록을 철회할까요?</DialogTitle>
+            <DialogDescription>
+              선택한 {selectedMembers.length}명의 합격 및 신청 이력은
+              유지됩니다. 회비 관리 대상에서는 제외되며, 회비·구글폼 상태가
+              변경돼도 현재 학기 활동부원으로 등록되지 않습니다.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              disabled={isWithdrawing}
+              onClick={() => setIsWithdrawalDialogOpen(false)}
+            >
+              취소
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={isWithdrawing}
+              onClick={() => void withdrawSelectedRegistrations()}
+            >
+              {isWithdrawing ? "철회 중..." : "등록 철회"}
             </Button>
           </DialogFooter>
         </DialogContent>

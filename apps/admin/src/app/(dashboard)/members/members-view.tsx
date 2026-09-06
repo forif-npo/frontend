@@ -196,7 +196,7 @@ export function MembersView({
 
     if (
       !confirm(
-        `${member.userName}(${member.userId})님을 현재 학기 부원 명단에서 삭제할까요?\n사용자 계정과 이전 학기 이력은 유지됩니다.`,
+        `${member.userName}(${member.userId})님의 현재 학기 등록을 철회할까요?\n합격 및 신청 이력은 유지되며, 회비 관리 대상에서는 제외됩니다.`,
       )
     ) {
       return;
@@ -205,7 +205,7 @@ export function MembersView({
     setIsDeleting(true);
     try {
       await deleteCurrentSemesterMember(member.userId);
-      toast.success("현재 학기 부원 명단에서 삭제되었습니다.");
+      toast.success("현재 학기 등록이 철회되었습니다.");
       router.refresh();
     } catch (error) {
       toast.error(await handleApiError(error));
@@ -272,7 +272,7 @@ export function MembersView({
                   disabled={isDeleting}
                   onClick={() => handleDeleteMember(member)}
                 >
-                  현재 학기 부원 삭제
+                  현재 학기 등록 철회
                 </DropdownMenuItem>
               )}
             </>
