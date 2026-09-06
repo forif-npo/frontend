@@ -53,9 +53,9 @@ export const duesColumns: ColumnDef<DuesMember>[] = [
   {
     accessorKey: "duesPaid",
     header: ({ column }) => (
-      <SortableHeader column={column}>회비 납부</SortableHeader>
+      <SortableHeader column={column}>입금 확인</SortableHeader>
     ),
     cell: ({ row }) =>
-      statusLabel(row.getValue<boolean>("duesPaid"), "납부", "미납"),
+      statusLabel(row.getValue<boolean>("duesPaid"), "확인", "미확인"),
   },
 ];
