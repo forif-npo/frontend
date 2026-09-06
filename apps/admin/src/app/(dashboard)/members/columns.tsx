@@ -35,6 +35,15 @@ export const columns: ColumnDef<Member>[] = [
     ),
   },
   {
+    accessorKey: "currentStudyName",
+    header: () => <div className="w-full text-center text-xs">스터디</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        {row.getValue("currentStudyName") || "-"}
+      </div>
+    ),
+  },
+  {
     accessorKey: "phoneNum",
     header: () => <div className="w-full text-center text-xs">전화번호</div>,
     cell: ({ row }) => (
