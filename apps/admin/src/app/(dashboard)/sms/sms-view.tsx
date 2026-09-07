@@ -51,50 +51,15 @@ import {
   extractPhoneNumber,
   getUniqueReceiverPhoneNumbers,
 } from "./receiver-utils";
-
-const AUTO_FILLED_VARIABLES = new Set(["#{이름}"]);
-const PHONE_NUMBER_IN_RECEIVER_LINE_REGEX =
-  /01[016789][\s-]?\d{3,4}[\s-]?\d{4}/;
-
-const VARIABLE_LABELS: Record<string, string> = {
-  "#{스터디명}": "스터디명",
-  "#{응답일정}": "응답 기한",
-  "#{일시}": "일시",
-  "#{장소}": "장소",
-  "#{url}": "URL",
-};
-
-function formatPhoneNumberLines(value: string) {
-  return value
-    .split("\n")
-    .map((line) => {
-      const phoneNumber = line.match(PHONE_NUMBER_IN_RECEIVER_LINE_REGEX)?.[0];
-      if (!phoneNumber) return formatPhoneNumber(line.trim());
-
-      return line.replace(phoneNumber, formatPhoneNumber(phoneNumber));
-    })
-    .join("\n");
-}
-
-function formatReceiverLine(receiver: Receiver) {
-  return `${receiver.name}, ${formatPhoneNumber(receiver.phoneNumber)}, ${receiver.department}`;
-}
-
-function getVariableLabel(variable: string) {
-  return VARIABLE_LABELS[variable] ?? variable;
-}
-
-function getTemplateVariables(template: AlimTalkTemplate | undefined) {
-  if (!template) return [];
-
-  const contentVariables = template.content.match(/#\{[^}]+\}/g) ?? [];
-  const buttonVariables = template.buttonLinks.flatMap(
-    (link) => link.match(/#\{[^}]+\}/g) ?? [],
-  );
-  return Array.from(
-    new Set([...template.variables, ...contentVariables, ...buttonVariables]),
-  );
-}
+import {
+  buildAlimTalkVariables,
+  formatPhoneNumberLines,
+  formatReceiverLine,
+  getMissingTemplateVariables,
+  getRequiredTemplateVariables,
+  getTemplateVariables,
+  getVariableLabel,
+} from "./sms-utils";
 
 export function SmsView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -139,9 +104,7 @@ export function SmsView() {
     (template) => template.templateId === selectedTemplateCode,
   );
   const templateVariables = getTemplateVariables(selectedTemplate);
-  const requiredVariables = templateVariables.filter(
-    (variable) => !AUTO_FILLED_VARIABLES.has(variable),
-  );
+  const requiredVariables = getRequiredTemplateVariables(templateVariables);
   const receiverCount = getUniqueReceiverPhoneNumbers(receiversText).length;
 
   const applySelectedReceivers = (selectedReceivers: Receiver[]) => {
@@ -174,8 +137,9 @@ export function SmsView() {
   };
 
   const handleFormSubmit = (values: SendAlimTalkFormValues) => {
-    const missingVariables = requiredVariables.filter(
-      (variable) => !values.variables[variable]?.trim(),
+    const missingVariables = getMissingTemplateVariables(
+      requiredVariables,
+      values.variables,
     );
 
     if (missingVariables.length > 0) {
@@ -199,11 +163,9 @@ export function SmsView() {
 
     try {
       const receivers = getUniqueReceiverPhoneNumbers(values.receivers);
-      const variables = Object.fromEntries(
-        requiredVariables.map((variable) => [
-          variable,
-          values.variables[variable]?.trim() ?? "",
-        ]),
+      const variables = buildAlimTalkVariables(
+        requiredVariables,
+        values.variables,
       );
 
       const response = await sendAlimTalk({
