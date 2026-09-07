@@ -17,7 +17,7 @@ jest.mock("googleapis", () => ({
 
 import { auth } from "@/auth";
 import { google } from "googleapis";
-import { POST } from "./route";
+import { GET, POST } from "./route";
 
 const mockedAuth = auth as jest.MockedFunction<typeof auth>;
 const mockedCalendar = google.calendar as jest.MockedFunction<
@@ -39,6 +39,16 @@ describe("calendar event POST", () => {
         body: JSON.stringify({ summary: "FORIF 회의" }),
       }),
     );
+
+    expect(response.status).toBe(401);
+    await expect(response.json()).resolves.toEqual({ error: "Unauthorized" });
+    expect(mockedCalendar).not.toHaveBeenCalled();
+  });
+
+  it("rejects unauthenticated event reads before calling Google Calendar", async () => {
+    mockedAuth.mockResolvedValue(null as never);
+
+    const response = await GET();
 
     expect(response.status).toBe(401);
     await expect(response.json()).resolves.toEqual({ error: "Unauthorized" });
