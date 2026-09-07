@@ -1,9 +1,13 @@
 import { env } from "@/env";
+import { requireCalendarAdmin } from "../auth";
 import type { IAttendee } from "@repo/big-calendar";
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
 
 export async function GET() {
+  const authorizationError = await requireCalendarAdmin();
+  if (authorizationError) return authorizationError;
+
   try {
     const auth = new google.auth.GoogleAuth({
       credentials: {

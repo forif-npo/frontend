@@ -61,6 +61,8 @@ async function handler(
   // Refresh Token 가져오기 (쿠키에서)
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get("refreshToken")?.value;
+  // 요청 본문은 한 번만 읽을 수 있으므로 401 재시도에 쓸 복사본을 미리 만든다.
+  const retryRequest = refreshToken ? req.clone() : null;
 
   // 요청 헤더 구성
   const headers = new Headers(req.headers);
@@ -90,7 +92,7 @@ async function handler(
       response = await fetch(targetUrl, {
         method: req.method,
         headers,
-        body: req.body,
+        body: retryRequest?.body,
         // @ts-expect-error - duplex is required for streaming body
         duplex: "half",
       });

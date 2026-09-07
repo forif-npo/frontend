@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { requireCalendarAdmin } from "../../auth";
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
 import { mapEventColorToColorId } from "../transform";
@@ -21,6 +22,9 @@ function getCalendarAuth() {
 
 // 이벤트 수정 (PATCH)
 export async function PATCH(req: Request, { params }: RouteParams) {
+  const authorizationError = await requireCalendarAdmin();
+  if (authorizationError) return authorizationError;
+
   const { eventId } = await params;
 
   try {
@@ -79,6 +83,9 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
 // 이벤트 삭제 (DELETE)
 export async function DELETE(_req: Request, { params }: RouteParams) {
+  const authorizationError = await requireCalendarAdmin();
+  if (authorizationError) return authorizationError;
+
   const { eventId } = await params;
 
   try {
@@ -102,6 +109,9 @@ export async function DELETE(_req: Request, { params }: RouteParams) {
 
 // 개별 이벤트 조회 (GET)
 export async function GET(_req: Request, { params }: RouteParams) {
+  const authorizationError = await requireCalendarAdmin();
+  if (authorizationError) return authorizationError;
+
   const { eventId } = await params;
 
   try {
