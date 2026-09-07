@@ -42,6 +42,7 @@ export type HomeCarouselBanner =
 export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
   {
     id: "study-apply-2026-2",
+    disabled: true,
     type: "svg",
     component: SvgBanner,
     href: "/studies/list",
