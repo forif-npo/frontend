@@ -585,7 +585,7 @@ export function StudyApplicationEditor({
           </p>
         )}
 
-        <div className="mt-4 flex items-center justify-between gap-4">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <Button
             variant="tertiary"
             size="large"
@@ -595,7 +595,7 @@ export function StudyApplicationEditor({
           >
             {isCancelling ? "취소 중..." : "신청 취소"}
           </Button>
-          <div className="flex items-center gap-4">
+          <div className="flex w-full items-center gap-3 sm:w-auto sm:gap-4">
             <Button
               variant="primary"
               size="large"

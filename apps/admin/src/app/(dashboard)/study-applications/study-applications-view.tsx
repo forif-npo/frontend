@@ -133,7 +133,7 @@ export function StudyApplicationsView({
   };
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="신청자 관리"
         description="현재 학기 스터디 신청 내역을 확인하고 자율부원 신청을 처리합니다."

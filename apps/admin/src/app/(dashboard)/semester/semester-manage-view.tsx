@@ -137,7 +137,7 @@ export function SemesterManageView({
   const next = nextSemester();
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="학기 관리"
         description="동아리의 활동 학기를 지정합니다. 새로 등록되는 스터디 개설·수강 신청이 이 학기로 기록되고, 목록과 마이페이지의 현재 학기 판정이 바뀝니다."

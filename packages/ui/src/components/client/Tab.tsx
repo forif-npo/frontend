@@ -29,7 +29,7 @@ const Tab: React.FC<{
       id={id}
       onClick={onClick}
       disabled={disabled}
-      className={`focus-visible:ring-border-gray-dark relative flex h-12 min-w-16 items-center justify-center whitespace-nowrap border-b-[3px] px-2 transition-colors duration-200 focus:outline-none focus-visible:ring-2 ${
+      className={`focus-visible:ring-border-gray-dark relative flex h-12 min-w-16 shrink-0 items-center justify-center whitespace-nowrap border-b-[3px] px-2 transition-colors duration-200 focus:outline-none focus-visible:ring-2 ${
         isSelected ? "border-border-secondary" : "border-transparent"
       } ${
         disabled
@@ -84,7 +84,7 @@ export const Tabs: React.FC<TabsProps> = ({
       <div
         role="tablist"
         aria-label="Tab Navigation"
-        className="border-gray-20 flex border-b"
+        className="border-gray-20 flex max-w-full overflow-x-auto border-b"
       >
         {tabs.map((tab, index) => (
           <Tab

@@ -281,7 +281,7 @@ export function ProductsAdminView() {
   );
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="서비스 관리"
         description={

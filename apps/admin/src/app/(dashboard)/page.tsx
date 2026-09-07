@@ -6,7 +6,7 @@ export default async function Page() {
   const { events, users } = await getCalendarData();
 
   return (
-    <main className="min-h-screen min-w-full p-8">
+    <main className="min-h-screen min-w-full p-4 sm:p-6 md:p-8">
       <PageHeader
         className="mb-6"
         title="캘린더"

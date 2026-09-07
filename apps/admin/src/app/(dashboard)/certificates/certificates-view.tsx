@@ -613,7 +613,7 @@ export function CertificatesView({
   const eligibleCount = targets.filter((t) => t.eligible).length;
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="수료증 발급"
         description={
@@ -648,7 +648,7 @@ export function CertificatesView({
             value={selectedStudyId != null ? String(selectedStudyId) : ""}
             onValueChange={(v) => setSelectedStudyId(Number(v))}
           >
-            <SelectTrigger className="w-[320px]">
+            <SelectTrigger className="w-full max-w-[320px]">
               <SelectValue placeholder="스터디를 선택하세요" />
             </SelectTrigger>
             <SelectContent>
@@ -662,9 +662,9 @@ export function CertificatesView({
         </div>
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium">활동 기간 (수료증 표기)</label>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <SingleDayPicker
-              className="w-[160px]"
+              className="w-full sm:w-[160px]"
               placeholder="시작일 선택"
               labelVariant="yyyy. MM. dd."
               value={isoToDate(batchStartDate)}
@@ -672,7 +672,7 @@ export function CertificatesView({
             />
             <span className="text-muted-foreground">~</span>
             <SingleDayPicker
-              className="w-[160px]"
+              className="w-full sm:w-[160px]"
               placeholder="종료일 선택"
               labelVariant="yyyy. MM. dd."
               value={isoToDate(batchEndDate)}
@@ -1018,7 +1018,7 @@ export function CertificatesView({
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="manual-name">이름</Label>
                 <Input
@@ -1067,7 +1067,7 @@ export function CertificatesView({
                 }
               />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid gap-4 sm:grid-cols-3">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="manual-start-date">활동 시작일</Label>
                 <SingleDayPicker

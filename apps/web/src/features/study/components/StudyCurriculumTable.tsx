@@ -55,143 +55,148 @@ export function StudyCurriculumTable<TContent>({
   const tableColumnCount = showDateColumn ? 5 : 4;
 
   return (
-    <div className="w-full">
-      <table className="w-full table-fixed border-collapse">
-        <colgroup>
-          <col className="w-[24px]" />
-          <col className="w-[36px]" />
-          {showDateColumn && <col className="w-[120px]" />}
-          <col className="w-[240px]" />
-          <col />
-        </colgroup>
-        <thead>
-          <tr>
-            <th scope="col" colSpan={2} className={HEADER_CELL_CLASS}>
-              주차
-            </th>
-            {showDateColumn && (
-              <th scope="col" className={HEADER_CELL_CLASS}>
-                진행 날짜
+    <div className="w-full max-w-full overflow-x-auto">
+      <div className={showDateColumn ? "min-w-[520px]" : "min-w-[420px]"}>
+        <table className="w-full table-fixed border-collapse">
+          <colgroup>
+            <col className="w-[24px]" />
+            <col className="w-[36px]" />
+            {showDateColumn && <col className="w-[120px]" />}
+            <col className="w-[240px]" />
+            <col />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col" colSpan={2} className={HEADER_CELL_CLASS}>
+                주차
               </th>
-            )}
-            <th scope="col" className={HEADER_CELL_CLASS}>
-              주제
-            </th>
-            <th scope="col" className={HEADER_CELL_CLASS}>
-              내용
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, weekIndex) => {
-            const rowKey = row.id ?? weekIndex;
-            const rowSpan = Math.max(row.contents.length, 1);
-            const canRemoveContent =
-              Boolean(onRemoveContent) && row.contents.length > 1;
-            const canAddContent = Boolean(onAddContent);
-            const canRemoveWeek = Boolean(onRemoveWeek) && weekIndex >= 8;
+              {showDateColumn && (
+                <th scope="col" className={HEADER_CELL_CLASS}>
+                  진행 날짜
+                </th>
+              )}
+              <th scope="col" className={HEADER_CELL_CLASS}>
+                주제
+              </th>
+              <th scope="col" className={HEADER_CELL_CLASS}>
+                내용
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, weekIndex) => {
+              const rowKey = row.id ?? weekIndex;
+              const rowSpan = Math.max(row.contents.length, 1);
+              const canRemoveContent =
+                Boolean(onRemoveContent) && row.contents.length > 1;
+              const canAddContent = Boolean(onAddContent);
+              const canRemoveWeek = Boolean(onRemoveWeek) && weekIndex >= 8;
 
-            return (
-              <Fragment key={rowKey}>
-                {row.contents.map((_, contentIndex) => {
-                  const isLastContent =
-                    contentIndex === row.contents.length - 1;
+              return (
+                <Fragment key={rowKey}>
+                  {row.contents.map((_, contentIndex) => {
+                    const isLastContent =
+                      contentIndex === row.contents.length - 1;
 
-                  return (
-                    <tr key={`${rowKey}-${contentIndex}`}>
-                      {contentIndex === 0 && (
-                        <>
-                          <td
-                            rowSpan={rowSpan}
-                            className={SPANNED_BODY_CELL_CLASS}
-                          >
-                            {canRemoveWeek && (
+                    return (
+                      <tr key={`${rowKey}-${contentIndex}`}>
+                        {contentIndex === 0 && (
+                          <>
+                            <td
+                              rowSpan={rowSpan}
+                              className={SPANNED_BODY_CELL_CLASS}
+                            >
+                              {canRemoveWeek && (
+                                <button
+                                  type="button"
+                                  onClick={() => onRemoveWeek?.(weekIndex)}
+                                  className="text-text-danger flex h-4 w-4 items-center justify-center"
+                                  aria-label={`${row.week}주차 삭제`}
+                                >
+                                  <CircleMinus className="h-4 w-4" />
+                                </button>
+                              )}
+                            </td>
+                            <td
+                              rowSpan={rowSpan}
+                              className={`${SPANNED_BODY_CELL_CLASS} text-text-basic text-center`}
+                            >
+                              {row.week}
+                            </td>
+                            {showDateColumn && (
+                              <td
+                                rowSpan={rowSpan}
+                                className={INPUT_CELL_CLASS}
+                              >
+                                {renderDateInput(weekIndex, TABLE_INPUT_CLASS)}
+                              </td>
+                            )}
+                            <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
+                              {renderTopicInput(weekIndex, TABLE_INPUT_CLASS)}
+                            </td>
+                          </>
+                        )}
+                        <td className={CONTENT_CELL_CLASS}>
+                          <div className={`${CONTENT_ROW_CLASS} gap-2`}>
+                            <div className="min-w-0 flex-1">
+                              {renderContentInput(
+                                weekIndex,
+                                contentIndex,
+                                TABLE_INPUT_CLASS,
+                              )}
+                            </div>
+                            {canRemoveContent && (
                               <button
                                 type="button"
-                                onClick={() => onRemoveWeek?.(weekIndex)}
-                                className="text-text-danger flex h-4 w-4 items-center justify-center"
-                                aria-label={`${row.week}주차 삭제`}
+                                onClick={() =>
+                                  onRemoveContent?.(weekIndex, contentIndex)
+                                }
+                                className="text-text-danger mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
+                                aria-label={`${row.week}주차 ${contentIndex + 1}번째 내용 삭제`}
                               >
                                 <CircleMinus className="h-4 w-4" />
                               </button>
                             )}
-                          </td>
-                          <td
-                            rowSpan={rowSpan}
-                            className={`${SPANNED_BODY_CELL_CLASS} text-text-basic text-center`}
-                          >
-                            {row.week}
-                          </td>
-                          {showDateColumn && (
-                            <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
-                              {renderDateInput(weekIndex, TABLE_INPUT_CLASS)}
-                            </td>
-                          )}
-                          <td rowSpan={rowSpan} className={INPUT_CELL_CLASS}>
-                            {renderTopicInput(weekIndex, TABLE_INPUT_CLASS)}
-                          </td>
-                        </>
-                      )}
-                      <td className={CONTENT_CELL_CLASS}>
-                        <div className={`${CONTENT_ROW_CLASS} gap-2`}>
-                          <div className="min-w-0 flex-1">
-                            {renderContentInput(
-                              weekIndex,
-                              contentIndex,
-                              TABLE_INPUT_CLASS,
+                            {isLastContent && canAddContent && (
+                              <button
+                                type="button"
+                                onClick={() => onAddContent?.(weekIndex)}
+                                className="text-text-primary mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
+                                aria-label={`${row.week}주차 ${addContentLabel.replace(/^\+\s*/, "")}`}
+                                title={addContentLabel}
+                              >
+                                <CirclePlus className="h-4 w-4" />
+                              </button>
                             )}
                           </div>
-                          {canRemoveContent && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                onRemoveContent?.(weekIndex, contentIndex)
-                              }
-                              className="text-text-danger mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
-                              aria-label={`${row.week}주차 ${contentIndex + 1}번째 내용 삭제`}
-                            >
-                              <CircleMinus className="h-4 w-4" />
-                            </button>
-                          )}
-                          {isLastContent && canAddContent && (
-                            <button
-                              type="button"
-                              onClick={() => onAddContent?.(weekIndex)}
-                              className="text-text-primary mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center"
-                              aria-label={`${row.week}주차 ${addContentLabel.replace(/^\+\s*/, "")}`}
-                              title={addContentLabel}
-                            >
-                              <CirclePlus className="h-4 w-4" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </Fragment>
-            );
-          })}
-          {onAddWeek && (
-            <tr>
-              <td
-                colSpan={tableColumnCount}
-                className="border-gray-10 bg-surface-white border-b px-4 py-0"
-              >
-                <div className="flex min-h-[40px] items-center justify-start">
-                  <button
-                    type="button"
-                    onClick={onAddWeek}
-                    className="text-text-secondary text-[13px] leading-[1.5] hover:underline"
-                  >
-                    {addWeekLabel}
-                  </button>
-                </div>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </Fragment>
+              );
+            })}
+            {onAddWeek && (
+              <tr>
+                <td
+                  colSpan={tableColumnCount}
+                  className="border-gray-10 bg-surface-white border-b px-4 py-0"
+                >
+                  <div className="flex min-h-[40px] items-center justify-start">
+                    <button
+                      type="button"
+                      onClick={onAddWeek}
+                      className="text-text-secondary text-[13px] leading-[1.5] hover:underline"
+                    >
+                      {addWeekLabel}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

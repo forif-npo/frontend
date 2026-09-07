@@ -220,7 +220,7 @@ export function DuesView({
     initialData.summary.totalCount - initialData.summary.duesPaidCount;
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="회비 관리"
         description={`${initialData.semester.label} 계좌 입금 내역을 부원 정보와 대조해 회비 납부와 구글폼 제출 여부를 관리합니다.`}

@@ -107,17 +107,17 @@ function DateTimeInput({
       <Label htmlFor={`${id}-date`} className="text-xs">
         {label}
       </Label>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <Input
           id={`${id}-date`}
           type="date"
-          className="w-[170px]"
+          className="w-full sm:w-[170px]"
           value={date}
           onChange={(event) => onDateChange(event.target.value)}
           disabled={disabled}
         />
         <Select value={hour} onValueChange={onHourChange} disabled={disabled}>
-          <SelectTrigger id={`${id}-hour`} className="w-[88px]">
+          <SelectTrigger id={`${id}-hour`} className="w-full sm:w-[88px]">
             <SelectValue placeholder="시간" />
           </SelectTrigger>
           <SelectContent>
@@ -133,7 +133,7 @@ function DateTimeInput({
           onValueChange={onMinuteChange}
           disabled={disabled}
         >
-          <SelectTrigger id={`${id}-minute`} className="w-[88px]">
+          <SelectTrigger id={`${id}-minute`} className="w-full sm:w-[88px]">
             <SelectValue placeholder="분" />
           </SelectTrigger>
           <SelectContent>

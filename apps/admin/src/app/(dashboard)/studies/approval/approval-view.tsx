@@ -196,7 +196,7 @@ export function ApprovalView({
   };
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="스터디 승인"
         description="승인 대기 또는 재신청된 스터디 개설 요청을 검토할 수 있습니다."

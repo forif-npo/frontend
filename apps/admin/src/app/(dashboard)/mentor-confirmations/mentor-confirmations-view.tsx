@@ -278,7 +278,7 @@ export function MentorConfirmationsView({
   );
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="멘토 확인서 발급"
         description="종료된 학기에 스터디를 운영한 멘토에게 활동 확인서를 발급합니다."
@@ -293,9 +293,9 @@ export function MentorConfirmationsView({
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium">활동 기간 (확인서 표기)</label>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <SingleDayPicker
-              className="w-[160px]"
+              className="w-full sm:w-[160px]"
               placeholder="시작일 선택"
               labelVariant="yyyy. MM. dd."
               value={isoToDate(startDate)}
@@ -303,7 +303,7 @@ export function MentorConfirmationsView({
             />
             <span className="text-muted-foreground">~</span>
             <SingleDayPicker
-              className="w-[160px]"
+              className="w-full sm:w-[160px]"
               placeholder="종료일 선택"
               labelVariant="yyyy. MM. dd."
               value={isoToDate(endDate)}

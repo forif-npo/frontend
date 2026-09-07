@@ -342,7 +342,7 @@ export function ApplicantsPanel({
           titleClassName="text-lg"
         />
       ) : (
-        <Table>
+        <Table className="min-w-[860px]">
           <TableHeader>
             <TableRow>
               <TableHead className="w-12">

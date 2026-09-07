@@ -57,7 +57,7 @@ export function SettingsView() {
   };
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-8 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="설정"
         description="운영진 계정의 비밀번호를 변경합니다. 변경 후 다시 로그인해주세요."
