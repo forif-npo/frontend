@@ -78,7 +78,7 @@ export async function getSemesterChangePreview(
 ): Promise<SemesterChangePreview> {
   const response = await apiClient
     .get("api/v1/admin/semesters/preview", {
-      searchParams: { actYear, actSemester },
+      searchParams: { act_year: actYear, act_semester: actSemester },
     })
     .json<ApiResponse<SemesterChangePreview>>();
   return response.data!;
