@@ -108,7 +108,10 @@ jest.mock("../api", () => ({
 jest.mock("@core/utils/api-client", () => ({ handleApiError: jest.fn() }));
 
 import { handleApiError } from "@core/utils/api-client";
-import { approveStudy, fetchStudyDetail } from "../api";
+import { approveStudy, fetchStudyDetail, rejectStudy } from "../api";
+const mockedRejectStudy = rejectStudy as unknown as {
+  mockReset: () => void;
+};
 import { ApprovalView } from "./approval-view";
 
 const mockedApproveStudy = approveStudy as unknown as {
@@ -162,12 +165,12 @@ const studies = [
   },
 ];
 
-function renderApprovalView() {
+function renderApprovalView(includeProcessed = false) {
   return render(
     <ApprovalView
       initialData={studies}
       currentSemester="26-2"
-      includeProcessed={false}
+      includeProcessed={includeProcessed}
     />,
   );
 }
@@ -179,6 +182,7 @@ describe("ApprovalView", () => {
     mockPush.mockReset();
     mockedApproveStudy.mockReset();
     mockedFetchStudyDetail.mockReset();
+    mockedRejectStudy.mockReset();
     mockedHandleApiError.mockReset();
     mockedHandleApiError.mockResolvedValue("서버 오류");
   });
@@ -205,6 +209,28 @@ describe("ApprovalView", () => {
     );
   });
 
+  it("does not submit a rejection without a reason", () => {
+    renderApprovalView();
+
+    fireEvent.click(screen.getByRole("button", { name: "반려" }));
+
+    expect(window.alert).toHaveBeenCalledWith("반려 사유를 입력해주세요.");
+    expect(rejectStudy).not.toHaveBeenCalled();
+  });
+
+  it("disables batch approval when processed studies are included", () => {
+    renderApprovalView(true);
+
+    fireEvent.click(screen.getByRole("button", { name: "테스트 선택" }));
+
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "선택 승낙",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+  });
   it("reports a detail-loading failure without submitting an approval", async () => {
     mockedFetchStudyDetail.mockRejectedValue(new Error("network failure"));
     renderApprovalView();
