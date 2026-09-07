@@ -90,13 +90,19 @@ export function ApplicantsPanel({
   useEffect(() => {
     let isCancelled = false;
     const refreshMenteeReviewOpen = async () => {
-      const schedules = await getCurrentSemesterSchedules();
-      if (!isCancelled) {
-        setIsMenteeReviewOpen(
-          schedules.some(
-            (schedule) => schedule.phase === "MENTEE_REVIEW" && schedule.open,
-          ),
-        );
+      try {
+        const schedules = await getCurrentSemesterSchedules();
+        if (!isCancelled) {
+          setIsMenteeReviewOpen(
+            schedules.some(
+              (schedule) => schedule.phase === "MENTEE_REVIEW" && schedule.open,
+            ),
+          );
+        }
+      } catch {
+        if (!isCancelled) {
+          setIsMenteeReviewOpen(false);
+        }
       }
     };
 

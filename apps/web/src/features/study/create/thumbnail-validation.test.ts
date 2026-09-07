@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { getThumbnailValidationMessage } from "./thumbnail-validation";
+import { getThumbnailValidationMessage } from "@/utils/thumbnail-validation";
 
 describe("getThumbnailValidationMessage", () => {
   it("accepts jpeg and png files up to 5MB", () => {

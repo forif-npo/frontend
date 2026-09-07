@@ -9,8 +9,10 @@ jest.mock("@core/utils/api-client", () => ({
 import { apiClient } from "@core/utils/api-client";
 import {
   getCertificateTargets,
+  getMySignature,
   issueCertificates,
   issueManualCertificate,
+  searchMembers,
   uploadMySignature,
 } from "./api";
 
@@ -72,6 +74,45 @@ describe("certificates api", () => {
       { body: expect.any(FormData), timeout: 30000 },
     );
     expect((options.body.get("file") as File).name).toBe("signature.png");
+  });
+
+  it("reads the current operator signature and treats an absent value as unregistered", async () => {
+    mockedGet.mockReturnValue(
+      response({ signature_url: "https://cdn/sign.png" }),
+    );
+
+    await expect(getMySignature()).resolves.toBe("https://cdn/sign.png");
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "api/v1/admin/certificates/signature",
+    );
+
+    mockedGet.mockReturnValue(response(null));
+    await expect(getMySignature()).resolves.toBeNull();
+  });
+
+  it("uses the existing member-search endpoint, page size, and empty fallback", async () => {
+    mockedGet.mockReturnValue(
+      response({
+        content: [
+          {
+            user_id: 20260001,
+            user_name: "홍길동",
+            department: "컴퓨터소프트웨어학부",
+            current_study_name: "React 심화",
+          },
+        ],
+      }),
+    );
+
+    await expect(searchMembers("홍길동")).resolves.toEqual([
+      expect.objectContaining({ user_id: 20260001 }),
+    ]);
+    expect(apiClient.get).toHaveBeenCalledWith("api/v1/admin/users", {
+      searchParams: { page: 0, size: 5, search: "홍길동" },
+    });
+
+    mockedGet.mockReturnValue(response(null));
+    await expect(searchMembers("없는 사용자")).resolves.toEqual([]);
   });
 
   it("preserves the manual and batch issuance payloads and long request timeout", async () => {

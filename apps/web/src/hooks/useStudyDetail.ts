@@ -15,6 +15,8 @@ export function useStudyDetail(studyId: string): UseStudyDetailReturn {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    let isCurrentRequest = true;
+
     const fetchStudy = async () => {
       try {
         setIsLoading(true);
@@ -25,23 +27,33 @@ export function useStudyDetail(studyId: string): UseStudyDetailReturn {
           .json<ApiResponse<Study>>();
 
         if (response.data) {
-          setStudy(response.data);
+          if (isCurrentRequest) {
+            setStudy(response.data);
+          }
         } else {
           throw new Error("스터디 정보를 불러올 수 없습니다.");
         }
       } catch (err) {
+        if (!isCurrentRequest) return;
+
         const error =
           err instanceof Error ? err : new Error("Failed to fetch study");
         setError(error);
         console.error("Failed to fetch study:", error);
       } finally {
-        setIsLoading(false);
+        if (isCurrentRequest) {
+          setIsLoading(false);
+        }
       }
     };
 
     if (studyId) {
       fetchStudy();
     }
+
+    return () => {
+      isCurrentRequest = false;
+    };
   }, [studyId]);
 
   return {

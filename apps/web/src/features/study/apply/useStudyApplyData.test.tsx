@@ -165,4 +165,29 @@ describe("useStudyApplyData", () => {
     );
     expect(result.current.error).toBeNull();
   });
+
+  it("keeps the loading error and returns to the study list for other request failures", async () => {
+    const requestError = new Error("studies request failed");
+    mockedGetSchedules.mockResolvedValue([schedule("MENTEE_RECRUIT", true)]);
+    mockedGet.mockReturnValueOnce({
+      json: <T,>() => Promise.reject(requestError) as Promise<T>,
+    });
+    mockedGet.mockReturnValueOnce(response({ content: [] }));
+
+    const consoleError = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const { result } = renderHook(() => useStudyApplyData());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.error).toBe(requestError);
+    expect(mockPush).toHaveBeenCalledWith("/studies/list");
+    expect(consoleError).toHaveBeenCalledWith(
+      "Failed to fetch data:",
+      requestError,
+    );
+  });
 });

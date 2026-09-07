@@ -6,9 +6,8 @@ export const signInWithGoogle = async () => {
   await signIn("google", { redirectTo: "/signup" });
 };
 
-export const signUp = async (data: SignUpValues) => {
-  // throw new Error("Unknown error")
-  console.log(data);
+export const signUp = async (_data: SignUpValues) => {
+  void _data;
 };
 
 export const signOutAction = async () => {

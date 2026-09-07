@@ -79,6 +79,7 @@ const mockedGetApplicationDetail = getApplicationDetail as unknown as {
 };
 const mockedGetSchedules = getCurrentSemesterSchedules as unknown as {
   mockReset: () => void;
+  mockRejectedValue: (value: unknown) => void;
   mockResolvedValue: (value: unknown) => void;
 };
 
@@ -136,5 +137,20 @@ describe("ApplicantsPanel", () => {
     });
     expect(getApplicationDetail).toHaveBeenCalledWith(10, 3);
     expect(screen.queryByText("불러오는 중...")).toBeNull();
+  });
+
+  it("fails closed when the mentee-review schedule cannot be loaded", async () => {
+    mockedGetSchedules.mockRejectedValue(new Error("network failure"));
+    render(<ApplicantsPanel studyId={10} />);
+
+    await screen.findByText("홍길동");
+
+    expect(
+      (
+        (await screen.findByRole("button", {
+          name: "선택 승낙",
+        })) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
   });
 });

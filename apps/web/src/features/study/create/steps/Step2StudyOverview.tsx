@@ -14,6 +14,7 @@ import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";
 import { useTimeInput } from "@/hooks/useTimeInput";
+import { getThumbnailValidationMessage } from "@/utils/thumbnail-validation";
 import { TagSelectModal } from "../components/TagSelectModal";
 import { StepNavigation } from "../components/StepNavigation";
 import { StudySectionTitle } from "../../components/StudySectionTitle";
@@ -100,19 +101,9 @@ export function Step2StudyOverview({
   };
 
   const handleThumbnailUpload = async (file: File) => {
-    const allowedTypes = ["image/jpeg", "image/png"];
-
-    if (!allowedTypes.includes(file.type)) {
-      setThumbnailAlertMessage(
-        "jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.",
-      );
-      return false;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setThumbnailAlertMessage(
-        "이미지 파일은 최대 5MB까지 업로드할 수 있습니다.",
-      );
+    const validationMessage = getThumbnailValidationMessage(file);
+    if (validationMessage) {
+      setThumbnailAlertMessage(validationMessage);
       return false;
     }
 

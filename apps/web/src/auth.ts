@@ -36,7 +36,11 @@ function shouldRefreshBackendJwt(token: JWT): boolean {
 
 async function refreshBackendJwt(token: JWT): Promise<JWT> {
   if (!token.backendRefreshToken) {
-    return { ...token, error: "RefreshAccessTokenError" };
+    return {
+      ...token,
+      backendJwt: undefined,
+      error: "RefreshAccessTokenError",
+    };
   }
 
   try {
@@ -65,7 +69,11 @@ async function refreshBackendJwt(token: JWT): Promise<JWT> {
     } else {
       console.error("Backend token refresh failed:", error);
     }
-    return { ...token, error: "RefreshAccessTokenError" };
+    return {
+      ...token,
+      backendJwt: undefined,
+      error: "RefreshAccessTokenError",
+    };
   }
 }
 

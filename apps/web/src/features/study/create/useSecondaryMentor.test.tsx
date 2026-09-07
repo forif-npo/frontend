@@ -19,6 +19,14 @@ const secondaryMentor: UserInfo = {
   phone: "010-0000-0001",
 };
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((resolvePromise) => {
+    resolve = resolvePromise;
+  });
+  return { promise, resolve };
+}
+
 describe("useSecondaryMentor", () => {
   it("loads the saved secondary mentor and keeps its student id in the search field", async () => {
     const fetchUser = jest.fn(async () => secondaryMentor);
@@ -87,5 +95,42 @@ describe("useSecondaryMentor", () => {
     expect(result.current.mentorSearchValue).toBe("");
     expect(result.current.mentorError).toBeNull();
     expect(onMentorIdsChange).toHaveBeenLastCalledWith([]);
+  });
+
+  it("keeps the latest mentor search result when an earlier search resolves later", async () => {
+    const first = deferred<UserInfo | null>();
+    const latest = deferred<UserInfo | null>();
+    const fetchUser = jest.fn((studentId: string) =>
+      studentId === "20260002" ? first.promise : latest.promise,
+    );
+    const onMentorIdsChange = jest.fn();
+    const { result } = renderHook(() =>
+      useSecondaryMentor({
+        currentUserInfo: currentUser,
+        secondaryMentorId: null,
+        onMentorIdsChange,
+        fetchUser,
+      }),
+    );
+
+    act(() => result.current.updateMentorSearchValue("20260002"));
+    void result.current.handleSecondaryMentorSearch();
+    act(() => result.current.updateMentorSearchValue("20260003"));
+    void result.current.handleSecondaryMentorSearch();
+
+    const latestMentor = { ...secondaryMentor, studentId: "20260003" };
+    await act(async () => {
+      latest.resolve(latestMentor);
+      await Promise.resolve();
+    });
+    expect(result.current.secondaryMentor).toEqual(latestMentor);
+
+    await act(async () => {
+      first.resolve(secondaryMentor);
+      await Promise.resolve();
+    });
+
+    expect(result.current.secondaryMentor).toEqual(latestMentor);
+    expect(onMentorIdsChange).toHaveBeenLastCalledWith([20260003]);
   });
 });
