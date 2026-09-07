@@ -23,17 +23,26 @@ jest.mock("@/components/ui/button", () => ({
 jest.mock("@/components/list/data-table", () => ({
   DataTable: ({
     onRowSelectionChange,
+    data,
+    renderRowActions,
   }: {
     onRowSelectionChange: (value: Record<string, boolean>) => void;
+    data: Array<{ userId: number }>;
+    renderRowActions: (member: { userId: number }) => ReactNode;
   }) => (
-    <button onClick={() => onRowSelectionChange({ "20260001": true })}>
-      첫 부원 선택
-    </button>
+    <>
+      <button onClick={() => onRowSelectionChange({ "20260001": true })}>
+        첫 부원 선택
+      </button>
+      {renderRowActions(data[0])}
+    </>
   ),
 }));
 
 jest.mock("@/components/list/dropdown-menu", () => ({
-  DropdownMenuItem: ({ children }: { children: ReactNode }) => <>{children}</>,
+  DropdownMenuItem: ({ children, ...props }: ComponentProps<"button">) => (
+    <button {...props}>{children}</button>
+  ),
 }));
 
 jest.mock("@/components/list/offset-pagination", () => ({
@@ -72,10 +81,14 @@ jest.mock("./api", () => ({
   withdrawRegistrations: jest.fn(),
 }));
 
-import { updateDues } from "./api";
+import { updateDues, withdrawRegistrations } from "./api";
 import { DuesView } from "./dues-view";
 
 const mockedUpdateDues = updateDues as unknown as {
+  mockReset: () => void;
+  mockResolvedValue: (value: undefined) => void;
+};
+const mockedWithdrawRegistrations = withdrawRegistrations as unknown as {
   mockReset: () => void;
   mockResolvedValue: (value: undefined) => void;
 };
@@ -85,6 +98,8 @@ describe("DuesView", () => {
     mockRefresh.mockReset();
     mockedUpdateDues.mockReset();
     mockedUpdateDues.mockResolvedValue(undefined);
+    mockedWithdrawRegistrations.mockReset();
+    mockedWithdrawRegistrations.mockResolvedValue(undefined);
   });
 
   it("updates only the selected member when applying the bulk payment action", async () => {
@@ -118,7 +133,9 @@ describe("DuesView", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "첫 부원 선택" }));
-    fireEvent.click(screen.getByRole("button", { name: "입금 확인 처리" }));
+    fireEvent.click(
+      screen.getAllByRole("button", { name: "입금 확인 처리" })[0],
+    );
 
     await waitFor(() => {
       expect(updateDues).toHaveBeenCalledWith([
@@ -127,5 +144,46 @@ describe("DuesView", () => {
     });
     expect(mockRefresh).toHaveBeenCalledTimes(1);
     expect(screen.queryByText("0명 선택")).not.toBeNull();
+  });
+
+  it("withdraws only the member selected from the row action", async () => {
+    render(
+      <DuesView
+        initialData={{
+          semester: { actYear: 2026, actSemester: 2, label: "2026-2학기" },
+          summary: {
+            totalCount: 1,
+            duesPaidCount: 0,
+            googleFormSubmittedCount: 0,
+            completedCount: 0,
+          },
+          content: [
+            {
+              userId: 20260001,
+              userName: "홍길동",
+              department: "컴퓨터소프트웨어학부",
+              duesPaid: false,
+              googleFormSubmitted: false,
+            },
+          ],
+          totalElements: 1,
+          currentPage: 0,
+          totalPages: 1,
+          pageSize: 20,
+        }}
+        initialSearch=""
+        initialSorting={[]}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "현재 학기 등록 철회" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "등록 철회" }));
+
+    await waitFor(() => {
+      expect(mockedWithdrawRegistrations).toHaveBeenCalledWith([20260001]);
+    });
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
 });
