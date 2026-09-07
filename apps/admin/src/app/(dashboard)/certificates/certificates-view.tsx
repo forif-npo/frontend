@@ -26,7 +26,6 @@ import {
 import { DataTable } from "@/components/list/data-table";
 import { ActivitySemesterToggle } from "@/components/list/activity-semester-toggle";
 import { handleApiError } from "@core/utils/api-client";
-import { getObjectParticle } from "@core/utils/korean-particle";
 import type { SemesterLabel, Study } from "../studies/types";
 import {
   Dialog,
@@ -41,6 +40,12 @@ import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState, InlineLoadingState } from "@ui/components/server";
 import {
+  EMPTY_MANUAL_CERTIFICATE_FORM,
+  toManualCertificateBody,
+  type ManualCertificateForm,
+  validateManualCertificateForm,
+} from "./manual-certificate-form";
+import {
   getCertificateTargets,
   getMySignature,
   issueCertificates,
@@ -51,35 +56,7 @@ import {
   type IssueCertificatesData,
   type MemberSearchItem,
 } from "./api";
-import {
-  dateToIso,
-  isoToDate,
-  toDotDate,
-  toIssueDate,
-} from "./certificate-date-formatters";
-
-interface ManualForm {
-  userName: string;
-  studentNumber: string;
-  department: string;
-  studyName: string;
-  /** yyyy-MM-dd (date input 값) */
-  startDate: string;
-  endDate: string;
-  issueDate: string;
-  presidentName: string;
-}
-
-const EMPTY_MANUAL_FORM: ManualForm = {
-  userName: "",
-  studentNumber: "",
-  department: "",
-  studyName: "",
-  startDate: "",
-  endDate: "",
-  issueDate: "",
-  presidentName: "",
-};
+import { dateToIso, isoToDate, toDotDate } from "./certificate-date-formatters";
 
 const getCanvasThemeColor = (token: string) =>
   getComputedStyle(document.documentElement).getPropertyValue(token).trim();
@@ -124,7 +101,9 @@ export function CertificatesView({
   );
 
   const [manualOpen, setManualOpen] = useState(false);
-  const [manualForm, setManualForm] = useState<ManualForm>(EMPTY_MANUAL_FORM);
+  const [manualForm, setManualForm] = useState<ManualCertificateForm>(
+    EMPTY_MANUAL_CERTIFICATE_FORM,
+  );
   const [manualResultUrl, setManualResultUrl] = useState<string | null>(null);
   const [isManualIssuing, setIsManualIssuing] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
@@ -134,7 +113,10 @@ export function CertificatesView({
     try {
       const raw = localStorage.getItem(MANUAL_DRAFT_KEY);
       if (raw) {
-        setManualForm({ ...EMPTY_MANUAL_FORM, ...JSON.parse(raw) });
+        setManualForm({
+          ...EMPTY_MANUAL_CERTIFICATE_FORM,
+          ...JSON.parse(raw),
+        });
         setHasDraft(true);
       }
     } catch {
@@ -157,7 +139,7 @@ export function CertificatesView({
   }, [manualForm]);
 
   const resetManualForm = () => {
-    setManualForm(EMPTY_MANUAL_FORM);
+    setManualForm(EMPTY_MANUAL_CERTIFICATE_FORM);
     setManualResultUrl(null);
     localStorage.removeItem(MANUAL_DRAFT_KEY);
     setHasDraft(false);
@@ -556,39 +538,17 @@ export function CertificatesView({
 
   const handleManualIssue = async () => {
     if (isManualIssuing) return;
-    const required: [string, string][] = [
-      [manualForm.userName, "이름"],
-      [manualForm.studentNumber, "학번"],
-      [manualForm.department, "학과"],
-      [manualForm.studyName, "스터디명"],
-      [manualForm.startDate, "활동 시작일"],
-      [manualForm.endDate, "활동 종료일"],
-    ];
-    const missing = required.find(([value]) => !value.trim());
-    if (missing) {
-      toast.error(
-        `${missing[1]}${getObjectParticle(missing[1])} 입력해주세요.`,
-      );
-      return;
-    }
-    if (manualForm.startDate > manualForm.endDate) {
-      toast.error("활동 시작일이 종료일보다 늦을 수 없습니다.");
+    const validationError = validateManualCertificateForm(manualForm);
+    if (validationError) {
+      toast.error(validationError);
       return;
     }
 
     setIsManualIssuing(true);
     try {
-      const url = await issueManualCertificate({
-        user_name: manualForm.userName.trim(),
-        student_number: manualForm.studentNumber.trim(),
-        department: manualForm.department.trim(),
-        study_name: manualForm.studyName.trim(),
-        activity_period: `${toDotDate(manualForm.startDate)}~${toDotDate(manualForm.endDate)}`,
-        issue_date: manualForm.issueDate
-          ? toIssueDate(manualForm.issueDate)
-          : undefined,
-        president_name: manualForm.presidentName.trim() || undefined,
-      });
+      const url = await issueManualCertificate(
+        toManualCertificateBody(manualForm),
+      );
       setManualResultUrl(url);
       toast.success("수료증이 생성되었습니다.");
       // 발급이 끝났으므로 임시저장 제거 (결과 URL은 다이얼로그에 유지)
