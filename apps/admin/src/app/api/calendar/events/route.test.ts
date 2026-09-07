@@ -44,4 +44,36 @@ describe("calendar event POST", () => {
     await expect(response.json()).resolves.toEqual({ error: "Unauthorized" });
     expect(mockedCalendar).not.toHaveBeenCalled();
   });
+
+  it("keeps the existing event payload for an authenticated admin", async () => {
+    const insert = jest.fn(async () => ({ data: { id: "event-id" } }));
+    mockedAuth.mockResolvedValue({ role: "ADMIN" } as never);
+    mockedCalendar.mockReturnValue({ events: { insert } } as never);
+
+    const response = await POST(
+      new Request("https://admin.forif.org/api/calendar/events", {
+        method: "POST",
+        body: JSON.stringify({
+          summary: "FORIF 회의",
+          description: "릴리즈 점검",
+          start: "2026-09-07T10:00:00",
+          end: "2026-09-07T11:00:00",
+          color: "green",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ id: "event-id" });
+    expect(insert).toHaveBeenCalledWith({
+      calendarId: "calendar-id",
+      requestBody: {
+        summary: "FORIF 회의",
+        description: "릴리즈 점검",
+        start: { dateTime: "2026-09-07T10:00:00", timeZone: "Asia/Seoul" },
+        end: { dateTime: "2026-09-07T11:00:00", timeZone: "Asia/Seoul" },
+        colorId: "2",
+      },
+    });
+  });
 });
