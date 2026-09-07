@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@core/types/api";
 import { apiClient } from "@core/utils/api-client";
 import { Study, StudyListParams } from "@/types/study";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface PaginatedData<T> {
   content: T[];
@@ -23,8 +23,16 @@ export const useStudyData = (): UseStudyDataReturn => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalElements, setTotalElements] = useState(0);
+  const latestRequestId = useRef(0);
+
+  useEffect(() => {
+    return () => {
+      latestRequestId.current += 1;
+    };
+  }, []);
 
   const fetchStudies = useCallback(async (fetchParams?: StudyListParams) => {
+    const requestId = ++latestRequestId.current;
     setError(null);
     setLoading(true);
     try {
@@ -55,12 +63,18 @@ export const useStudyData = (): UseStudyDataReturn => {
         .json<ApiResponse<PaginatedData<Study>>>();
 
       const paginated = response.data;
+      if (requestId !== latestRequestId.current) return;
+
       setStudies(paginated?.content ?? []);
       setTotalElements(paginated?.total_elements ?? 0);
     } catch (err) {
+      if (requestId !== latestRequestId.current) return;
+
       setError(err instanceof Error ? err.message : "Failed to fetch studies");
     } finally {
-      setLoading(false);
+      if (requestId === latestRequestId.current) {
+        setLoading(false);
+      }
     }
   }, []);
 
