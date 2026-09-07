@@ -88,11 +88,6 @@ export async function fetchStudiesWithFallback(
   params: FetchStudiesParams,
   token?: string,
 ): Promise<AdminStudyListResponse> {
-  console.log("[Studies API] Fetching from API:", {
-    endpoint: "/api/v1/admin/studies",
-    params,
-  });
-
   const searchParams = new URLSearchParams();
   searchParams.set("page", (params.page ?? 0).toString());
   searchParams.set("size", params.size.toString());
@@ -122,13 +117,6 @@ export async function fetchStudiesWithFallback(
   if (!response.data || !response.data.content) {
     throw new Error("Invalid API response structure");
   }
-
-  console.log("[Studies API] Success:", {
-    count: response.data.content.length,
-    total: response.data.total_elements,
-    page: response.data.current_page,
-    totalPages: response.data.total_pages,
-  });
 
   return response.data;
 }

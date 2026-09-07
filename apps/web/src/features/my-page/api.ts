@@ -77,7 +77,6 @@ export async function getUserProfile(token?: string): Promise<UserProfile> {
   const response = await apiClient
     .get("api/v1/users/me/profile", options)
     .json<ApiResponse<UserProfile>>();
-  console.log("User profile response:", response.data);
   return response.data!;
 }
 
@@ -254,10 +253,6 @@ export async function cancelStudyApplication(
 export async function getStudyApplications(
   token?: string,
 ): Promise<StudyApplicationsResponse> {
-  console.log(
-    "[getStudyApplications] called, token:",
-    token ? "exists" : "missing",
-  );
   const options = token
     ? { headers: { Authorization: `Bearer ${token}` } }
     : {};
@@ -265,7 +260,6 @@ export async function getStudyApplications(
     const response = await apiClient
       .get("api/v1/users/me/study-applications", options)
       .json<ApiResponse<StudyApplicationsResponse>>();
-    console.log("[getStudyApplications] status:", response);
     return response.data ?? { applications: [] };
   } catch (err) {
     console.error("[getStudyApplications] error:", err);
