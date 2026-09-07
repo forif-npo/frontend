@@ -6,10 +6,21 @@ import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { OnChangeFn, RowSelectionState, SortingState } from "@tanstack/react-table";
+import type {
+  OnChangeFn,
+  RowSelectionState,
+  SortingState,
+} from "@tanstack/react-table";
 import { appendSortingParams } from "@/lib/list-sorting";
 import { updateDues, withdrawRegistrations } from "./api";
 import { duesColumns } from "./dues-columns";
@@ -39,7 +50,9 @@ export function DuesView({
   >(new Map());
   const [isSaving, setIsSaving] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
-  const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen] = useState(false);
+  const [withdrawalTarget, setWithdrawalTarget] = useState<DuesMember | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const initialSortingKey = useMemo(
@@ -178,19 +191,16 @@ export function DuesView({
     value: boolean,
   ) => updateMembers(selectedMembers, field, value, true);
 
-  const withdrawSelectedRegistrations = async () => {
-    if (!selectedMembers.length || isSaving || isWithdrawing) return;
+  const withdrawRegistration = async () => {
+    if (!withdrawalTarget || isSaving || isWithdrawing) return;
 
     try {
       setIsWithdrawing(true);
       setError(null);
 
-      await withdrawRegistrations(
-        selectedMembers.map((member) => member.userId),
-      );
+      await withdrawRegistrations([withdrawalTarget.userId]);
 
-      clearSelection();
-      setIsWithdrawalDialogOpen(false);
+      setWithdrawalTarget(null);
       router.refresh();
     } catch (caught) {
       setError(
@@ -321,15 +331,6 @@ export function DuesView({
         >
           입금 확인 처리
         </Button>
-
-        <Button
-          size="sm"
-          variant="destructive"
-          disabled={!selectedMembers.length || isSaving || isWithdrawing}
-          onClick={() => setIsWithdrawalDialogOpen(true)}
-        >
-          등록 철회
-        </Button>
       </div>
 
       {error && (
@@ -370,6 +371,14 @@ export function DuesView({
                 ? "구글폼 제출 처리 취소"
                 : "구글폼 제출 처리"}
             </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              disabled={isSaving || isWithdrawing}
+              onClick={() => setWithdrawalTarget(member)}
+            >
+              현재 학기 등록 철회
+            </DropdownMenuItem>
           </>
         )}
         rowSelection={rowSelection}
@@ -404,18 +413,20 @@ export function DuesView({
       />
 
       <Dialog
-        open={isWithdrawalDialogOpen}
+        open={withdrawalTarget !== null}
         onOpenChange={(open) =>
-          !isWithdrawing && setIsWithdrawalDialogOpen(open)
+          !open && !isWithdrawing && setWithdrawalTarget(null)
         }
       >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>이번 학기 등록을 철회할까요?</DialogTitle>
             <DialogDescription>
-              선택한 {selectedMembers.length}명의 합격 및 신청 이력은
-              유지됩니다. 회비 관리 대상에서는 제외되며, 회비·구글폼 상태가
-              변경돼도 현재 학기 활동부원으로 등록되지 않습니다.
+              {withdrawalTarget &&
+                `${withdrawalTarget.userName} (${withdrawalTarget.userId})`}
+              님의 합격 및 신청 이력은 유지됩니다. 회비 관리 대상에서는
+              제외되며, 회비·구글폼 상태가 변경돼도 현재 학기 활동부원으로
+              등록되지 않습니다.
             </DialogDescription>
           </DialogHeader>
 
@@ -423,14 +434,14 @@ export function DuesView({
             <Button
               variant="outline"
               disabled={isWithdrawing}
-              onClick={() => setIsWithdrawalDialogOpen(false)}
+              onClick={() => setWithdrawalTarget(null)}
             >
               취소
             </Button>
             <Button
               variant="destructive"
               disabled={isWithdrawing}
-              onClick={() => void withdrawSelectedRegistrations()}
+              onClick={() => void withdrawRegistration()}
             >
               {isWithdrawing ? "철회 중..." : "등록 철회"}
             </Button>

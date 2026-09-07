@@ -90,20 +90,26 @@ export async function getAllReceivers({
   const receiverByPhoneNumber = new Map<string, Receiver>();
   const seenCursors = new Set<number>();
   let cursor: number | undefined;
+  let hasNextPage = true;
 
-  do {
+  while (hasNextPage) {
     const page = await getReceiverPage({ cursor, search, target });
     page.receivers.forEach((receiver) => {
       receiverByPhoneNumber.set(receiver.phoneNumber, receiver);
     });
 
-    if (!page.hasNext || page.nextCursor === null) break;
-    if (seenCursors.has(page.nextCursor)) {
-      throw new Error("수신자 목록 페이지를 계속 불러올 수 없습니다.");
+    hasNextPage = page.hasNext;
+    if (hasNextPage) {
+      if (page.nextCursor === null) {
+        throw new Error("수신자 목록의 다음 페이지 정보를 확인할 수 없습니다.");
+      }
+      if (seenCursors.has(page.nextCursor)) {
+        throw new Error("수신자 목록 페이지를 계속 불러올 수 없습니다.");
+      }
+      seenCursors.add(page.nextCursor);
+      cursor = page.nextCursor;
     }
-    seenCursors.add(page.nextCursor);
-    cursor = page.nextCursor;
-  } while (true);
+  }
 
   return Array.from(receiverByPhoneNumber.values());
 }
