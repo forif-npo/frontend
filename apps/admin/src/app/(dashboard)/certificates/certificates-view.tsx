@@ -613,7 +613,7 @@ export function CertificatesView({
   const eligibleCount = targets.filter((t) => t.eligible).length;
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="수료증 발급"
         description={

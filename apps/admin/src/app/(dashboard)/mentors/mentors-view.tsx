@@ -107,7 +107,7 @@ export function MentorsView({
     totalElements && totalElements > 0 ? totalElements : initialData.length;
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader title="멘토 목록" description="학기별 멘토 목록입니다." />
 
       <div className="flex items-center justify-between gap-4">

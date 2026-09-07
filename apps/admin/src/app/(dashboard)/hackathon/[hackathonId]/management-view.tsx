@@ -313,7 +313,7 @@ export function ManagementView({
   };
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <div>
         <Button
           variant="ghost"

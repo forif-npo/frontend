@@ -265,12 +265,12 @@ export function DataTable<TData, TValue>({
   }, [onSortingChange, sorting.length]);
 
   return (
-    <div>
+    <div className="min-w-0 max-w-full">
       <div className="text-muted-foreground mb-1 flex justify-end px-1 text-[10px]">
         Esc 키를 누르면 정렬이 해제됩니다.
       </div>
       <div className="rounded-md border">
-        <Table>
+        <Table className="min-w-max">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -311,8 +311,8 @@ export function DataTable<TData, TValue>({
                       key={cell.id}
                       className={
                         cell.column.id === "actions"
-                          ? "h-12 px-4 py-0 text-center"
-                          : "h-12 px-4 py-0"
+                          ? "h-12 whitespace-nowrap px-3 py-0 text-center md:px-4"
+                          : "h-12 whitespace-nowrap px-3 py-0 md:px-4"
                       }
                     >
                       {flexRender(

@@ -242,7 +242,7 @@ export function OperatorsView({
   const canManageEditTarget = canManageOperators;
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader title="운영진 목록" description="학기별 운영진 명단입니다." />
 
       <div className="flex items-center justify-between gap-4">

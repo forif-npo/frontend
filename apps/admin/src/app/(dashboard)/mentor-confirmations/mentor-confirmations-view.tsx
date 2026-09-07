@@ -278,7 +278,7 @@ export function MentorConfirmationsView({
   );
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="멘토 확인서 발급"
         description="종료된 학기에 스터디를 운영한 멘토에게 활동 확인서를 발급합니다."

@@ -224,7 +224,7 @@ export function SmsView() {
   };
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="문자 발송 서비스"
         description="카카오 알림톡을 통해 스터디 관련 알림을 발송할 수 있습니다."

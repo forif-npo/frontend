@@ -421,7 +421,7 @@ export function StudiesView({
     deleteTarget !== null && submittingStudyId === deleteTarget.id;
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="스터디 목록"
         description="FORIF 스터디 강좌 목록을 확인하고 관리할 수 있습니다."

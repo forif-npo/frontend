@@ -284,7 +284,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
       : undefined;
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="해커톤 관리"
         description="해커톤을 생성하고 상태와 제출 현황을 관리할 수 있습니다."

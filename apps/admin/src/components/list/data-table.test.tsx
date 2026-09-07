@@ -36,6 +36,9 @@ describe("DataTable", () => {
     expect(
       screen.getAllByRole("button", { name: "행 액션 열기" }),
     ).toHaveLength(1);
+    expect(screen.getByRole("table").parentElement?.className).toContain(
+      "overflow-x-auto",
+    );
   });
 
   it("행 선택을 부모에게 전달하고 반복 상태 갱신 없이 화면을 유지한다", () => {
