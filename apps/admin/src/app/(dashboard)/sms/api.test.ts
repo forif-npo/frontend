@@ -150,6 +150,66 @@ describe("sms api", () => {
     ]);
   });
 
+  it("fails instead of silently omitting receivers when a next cursor is missing", async () => {
+    mockedGet.mockReturnValue(
+      response({
+        content: [],
+        next_cursor: null,
+        has_next: true,
+        total_elements: 101,
+      }),
+    );
+
+    await expect(
+      getAllReceivers({ target: "CURRENT_SEMESTER_MEMBERS" }),
+    ).rejects.toThrow("수신자 목록의 다음 페이지 정보를 확인할 수 없습니다.");
+    expect(apiClient.get).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails before requesting an already-seen cursor", async () => {
+    mockedGet.mockReturnValueOnce(
+      response({
+        content: [],
+        next_cursor: 5,
+        has_next: true,
+        total_elements: 2,
+      }),
+    );
+    mockedGet.mockReturnValueOnce(
+      response({
+        content: [],
+        next_cursor: 5,
+        has_next: true,
+        total_elements: 2,
+      }),
+    );
+
+    await expect(
+      getAllReceivers({ target: "CURRENT_SEMESTER_MEMBERS" }),
+    ).rejects.toThrow("수신자 목록 페이지를 계속 불러올 수 없습니다.");
+    expect(apiClient.get).toHaveBeenNthCalledWith(
+      1,
+      "api/v1/notifications/receivers",
+      {
+        searchParams: {
+          size: 100,
+          target_type: "CURRENT_SEMESTER_MEMBERS",
+        },
+      },
+    );
+    expect(apiClient.get).toHaveBeenNthCalledWith(
+      2,
+      "api/v1/notifications/receivers",
+      {
+        searchParams: {
+          size: 100,
+          target_type: "CURRENT_SEMESTER_MEMBERS",
+          cursor: 5,
+        },
+      },
+    );
+  });
+
   it("preserves the send payload and maps the snake_case delivery result", async () => {
     mockedPost.mockReturnValue(
       response({
