@@ -14,6 +14,7 @@ import {
 import { handleApiError } from "@core/utils/api-client";
 import { useRouter } from "next/navigation";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
+import { getThumbnailValidationMessage } from "@/utils/thumbnail-validation";
 import {
   applyProduct,
   deleteProductApplication,
@@ -22,59 +23,14 @@ import {
   type ProductSourceType,
 } from "./api";
 import { PRODUCT_SOURCE_OPTIONS } from "./constants";
-
-const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,18})[a-z0-9]$/;
-const RESERVED_SLUGS = new Set([
-  "www",
-  "dev",
-  "api",
-  "admin",
-  "mail",
-  "apply",
-  "applications",
-  "products",
-  "forif",
-]);
-
-type FieldErrors = Partial<Record<keyof FormState | "thumbnail", string>>;
-
-interface FormState {
-  name: string;
-  slug: string;
-  oneLiner: string;
-  description: string;
-  sourceType: ProductSourceType;
-  serviceUrl: string;
-  githubUrl: string;
-  tags: string;
-  techStack: string;
-}
-
-const EMPTY_FORM: FormState = {
-  name: "",
-  slug: "",
-  oneLiner: "",
-  description: "",
-  sourceType: "STUDY",
-  serviceUrl: "",
-  githubUrl: "",
-  tags: "",
-  techStack: "",
-};
-
-function toFormState(application: ProductApplication): FormState {
-  return {
-    name: application.name,
-    slug: application.slug,
-    oneLiner: application.one_liner,
-    description: application.description,
-    sourceType: application.source_type,
-    serviceUrl: application.service_url ?? "",
-    githubUrl: application.github_url ?? "",
-    tags: application.tags.join(", "),
-    techStack: application.tech_stack.join(", "),
-  };
-}
+import {
+  EMPTY_PRODUCT_APPLICATION_FORM,
+  toProductApplicationFormState,
+  toProductApplicationRequest,
+  validateProductApplicationForm,
+  type ProductApplicationFieldErrors,
+  type ProductApplicationFormState,
+} from "./product-application-form";
 
 interface ProductApplyViewProps {
   application?: ProductApplication;
@@ -88,10 +44,14 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
   const [confirmAction, setConfirmAction] = useState<
     "modify" | "delete" | null
   >(null);
-  const [form, setForm] = useState<FormState>(() =>
-    application ? toFormState(application) : EMPTY_FORM,
+  const [form, setForm] = useState<ProductApplicationFormState>(() =>
+    application
+      ? toProductApplicationFormState(application)
+      : EMPTY_PRODUCT_APPLICATION_FORM,
   );
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [fieldErrors, setFieldErrors] = useState<ProductApplicationFieldErrors>(
+    {},
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [isExistingThumbnailRemoved, setIsExistingThumbnailRemoved] =
@@ -100,79 +60,25 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
     string | null
   >(null);
 
-  const update = (patch: Partial<FormState>) => {
+  const update = (patch: Partial<ProductApplicationFormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
     // 수정한 필드의 오류만 지운다
     setFieldErrors((prev) => {
       const next = { ...prev };
-      (Object.keys(patch) as (keyof FormState)[]).forEach((key) => {
-        delete next[key];
-      });
+      (Object.keys(patch) as (keyof ProductApplicationFormState)[]).forEach(
+        (key) => {
+          delete next[key];
+        },
+      );
       return next;
     });
     setErrorMessage(null);
   };
 
-  /** 필드별 검증 — 오류가 있는 필드만 담아 반환 */
-  const validate = (): FieldErrors => {
-    const errors: FieldErrors = {};
-
-    if (!form.name.trim()) {
-      errors.name = "서비스 이름을 입력해주세요.";
-    }
-
-    const slug = form.slug.trim().toLowerCase();
-    if (!slug) {
-      errors.slug = "희망 서브도메인을 입력해주세요.";
-    } else if (!SLUG_PATTERN.test(slug)) {
-      errors.slug =
-        "영소문자·숫자·하이픈 3~20자로, 하이픈으로 시작하거나 끝날 수 없습니다.";
-    } else if (RESERVED_SLUGS.has(slug)) {
-      errors.slug = `"${slug}"는 사용할 수 없는 예약된 주소입니다.`;
-    }
-
-    if (!form.oneLiner.trim()) {
-      errors.oneLiner = "한 줄 소개를 입력해주세요.";
-    }
-    if (!form.description.trim()) {
-      errors.description = "상세 소개를 입력해주세요.";
-    }
-    if (
-      !thumbnail &&
-      (!application?.thumbnail_url || isExistingThumbnailRemoved)
-    ) {
-      errors.thumbnail = "썸네일을 등록해주세요.";
-    }
-
-    if (
-      form.serviceUrl.trim() &&
-      !/^https?:\/\//i.test(form.serviceUrl.trim())
-    ) {
-      errors.serviceUrl =
-        "http:// 또는 https:// 로 시작하는 주소를 입력해주세요.";
-    }
-    if (form.githubUrl.trim() && !/^https?:\/\//i.test(form.githubUrl.trim())) {
-      errors.githubUrl =
-        "http:// 또는 https:// 로 시작하는 주소를 입력해주세요.";
-    }
-
-    return errors;
-  };
-
   const handleThumbnailUpload = async (file: File) => {
-    const allowedTypes = ["image/jpeg", "image/png"];
-
-    if (!allowedTypes.includes(file.type)) {
-      setThumbnailAlertMessage(
-        "jpg, jpeg, png 형식의 이미지만 업로드할 수 있습니다.",
-      );
-      return false;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setThumbnailAlertMessage(
-        "이미지 파일은 최대 5MB까지 업로드할 수 있습니다.",
-      );
+    const validationMessage = getThumbnailValidationMessage(file);
+    if (validationMessage) {
+      setThumbnailAlertMessage(validationMessage);
       return false;
     }
 
@@ -190,7 +96,12 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
-    const errors = validate();
+    const errors = validateProductApplicationForm({
+      form,
+      thumbnail,
+      existingThumbnailUrl: application?.thumbnail_url,
+      isExistingThumbnailRemoved,
+    });
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       setErrorMessage(null);
@@ -199,27 +110,10 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
       return;
     }
 
-    const slug = form.slug.trim().toLowerCase();
     setFieldErrors({});
     setIsSubmitting(true);
     try {
-      const request = {
-        name: form.name.trim(),
-        slug,
-        one_liner: form.oneLiner.trim(),
-        description: form.description.trim(),
-        source_type: form.sourceType,
-        service_url: form.serviceUrl.trim() || null,
-        github_url: form.githubUrl.trim() || null,
-        tags: form.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter(Boolean),
-        tech_stack: form.techStack
-          .split(",")
-          .map((tech) => tech.trim())
-          .filter(Boolean),
-      };
+      const request = toProductApplicationRequest(form);
 
       if (application) {
         await updateProductApplication(

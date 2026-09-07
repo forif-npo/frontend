@@ -45,7 +45,7 @@ import { StudyCreatePreviewModal } from "@/features/study/create/components/Stud
 import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
 import { fetchUserInfo } from "@/features/study/create/user-info";
 import { useStudyCreateData } from "@/features/study/create/useStudyCreateData";
-import { getThumbnailValidationMessage } from "@/features/study/create/thumbnail-validation";
+import { getThumbnailValidationMessage } from "@/utils/thumbnail-validation";
 import { useSecondaryMentor } from "@/features/study/create/useSecondaryMentor";
 import {
   buildReferenceUpdate,
