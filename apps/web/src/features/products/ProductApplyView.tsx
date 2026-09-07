@@ -21,6 +21,7 @@ import {
   type ProductApplication,
   type ProductSourceType,
 } from "./api";
+import { PRODUCT_SOURCE_OPTIONS } from "./constants";
 
 const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,18})[a-z0-9]$/;
 const RESERVED_SLUGS = new Set([
@@ -60,12 +61,6 @@ const EMPTY_FORM: FormState = {
   tags: "",
   techStack: "",
 };
-
-const SOURCE_TYPE_OPTIONS = [
-  { value: "STUDY", label: "스터디" },
-  { value: "HACKATHON", label: "해커톤" },
-  { value: "SIDE", label: "자율 프로젝트" },
-];
 
 function toFormState(application: ProductApplication): FormState {
   return {
@@ -386,7 +381,7 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
             <SelectBox
               id="sourceType"
               value={form.sourceType}
-              options={SOURCE_TYPE_OPTIONS}
+              options={PRODUCT_SOURCE_OPTIONS}
               placeholder="출처를 선택해주세요"
               onChange={(value) =>
                 update({ sourceType: value as ProductSourceType })
