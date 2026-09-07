@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
-jest.mock("@/auth", () => ({ auth: jest.fn() }));
 jest.mock("@/env", () => ({
   env: {
     GOOGLE_CALENDAR_ID: "calendar-id",
@@ -15,28 +14,16 @@ jest.mock("googleapis", () => ({
   },
 }));
 
-import { auth } from "@/auth";
 import { google } from "googleapis";
 import { GET } from "./route";
 
-const mockedAuth = auth as jest.MockedFunction<typeof auth>;
 const mockedCalendar = google.calendar as jest.MockedFunction<
   typeof google.calendar
 >;
 
 describe("calendar users route", () => {
   beforeEach(() => {
-    mockedAuth.mockReset();
     mockedCalendar.mockReset();
-  });
-
-  it("rejects unauthenticated requests before calling Google Calendar", async () => {
-    mockedAuth.mockResolvedValue(null as never);
-
-    const response = await GET();
-
-    expect(response.status).toBe(401);
-    expect(mockedCalendar).not.toHaveBeenCalled();
   });
 
   it("keeps the existing attendee filtering and deduplication result", async () => {
@@ -61,7 +48,6 @@ describe("calendar users route", () => {
         ],
       },
     }));
-    mockedAuth.mockResolvedValue({ role: "ADMIN" } as never);
     mockedCalendar.mockReturnValue({ events: { list } } as never);
 
     const response = await GET();

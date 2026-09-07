@@ -1,5 +1,4 @@
 import { env } from "@/env";
-import { requireCalendarAdmin } from "../auth";
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
 import {
@@ -10,9 +9,6 @@ import {
 import type { TEventColor } from "@repo/big-calendar";
 
 export async function GET() {
-  const authorizationError = await requireCalendarAdmin();
-  if (authorizationError) return authorizationError;
-
   try {
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -44,9 +40,6 @@ export async function GET() {
 
 // 이벤트 생성
 export async function POST(req: Request) {
-  const authorizationError = await requireCalendarAdmin();
-  if (authorizationError) return authorizationError;
-
   const { summary, description, start, end, color } = (await req.json()) as {
     summary: string;
     description: string;
