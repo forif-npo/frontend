@@ -204,18 +204,18 @@ export function AttendancePanel({
 
   return (
     <div>
-      <div className="mb-4 flex items-center gap-4">
-        <p className="text-text-basic text-body-l font-bold leading-normal">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <p className="text-text-basic text-body-l min-w-0 font-bold leading-normal">
           멘티 <span className="text-text-primary">{data.mentees.length}</span>
           명
-          <span className="text-text-subtle text-body-s ml-3 font-normal">
+          <span className="text-text-subtle text-body-s mt-1 block font-normal sm:ml-3 sm:mt-0 sm:inline">
             칸을 눌러 출석/결석을 표시한 뒤 저장하세요
           </span>
         </p>
         <Button
           variant="tertiary"
           size="medium"
-          className="ml-auto"
+          className="self-start sm:ml-auto"
           disabled={
             !readOnly ||
             !mentorConfirmation?.issued ||

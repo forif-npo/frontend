@@ -10,7 +10,7 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
   ({ className, containerClassName, ...props }, ref) => (
     <div
       className={cn(
-        "border-border-gray-light rounded-2 w-full overflow-hidden border",
+        "border-border-gray-light rounded-2 w-full overflow-x-auto overflow-y-hidden border",
         containerClassName,
       )}
     >
