@@ -16,15 +16,17 @@ import {
 } from "@/components/ui/dialog";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type {
-  OnChangeFn,
-  RowSelectionState,
-  SortingState,
-} from "@tanstack/react-table";
+import type { OnChangeFn, SortingState } from "@tanstack/react-table";
 import { appendSortingParams } from "@/lib/list-sorting";
 import { updateDues, withdrawRegistrations } from "./api";
 import { duesColumns } from "./dues-columns";
-import type { DuesMember, DuesPageData, UpdateDuesPayload } from "./types";
+import {
+  createDuesUpdates,
+  getDuesOutstandingCounts,
+  type DuesStatusField,
+} from "./dues-utils";
+import { useDuesSelection } from "./use-dues-selection";
+import type { DuesMember, DuesPageData } from "./types";
 
 export function DuesView({
   initialData,
@@ -44,10 +46,6 @@ export function DuesView({
   const searchParams = useSearchParams();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState(initialSearch);
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [selectedMembersById, setSelectedMembersById] = useState<
-    Map<number, DuesMember>
-  >(new Map());
   const [isSaving, setIsSaving] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawalTarget, setWithdrawalTarget] = useState<DuesMember | null>(
@@ -59,59 +57,22 @@ export function DuesView({
     () => JSON.stringify(initialSorting),
     [initialSorting],
   );
+  const selectionResetKey = JSON.stringify({
+    duesPaid: initialDuesPaidFilter,
+    googleFormSubmitted: initialGoogleFormSubmittedFilter,
+    search: initialSearch,
+    sorting: initialSortingKey,
+  });
+  const { rowSelection, selectedMembers, updateRowSelection, clearSelection } =
+    useDuesSelection({
+      pageMembers: initialData.content,
+      resetKey: selectionResetKey,
+    });
 
   useEffect(() => {
     setSearch(initialSearch);
     setSorting(initialSorting);
   }, [initialSearch, initialSorting, initialSortingKey]);
-
-  // 검색어나 정렬 기준이 바뀌면 숨겨진 대상까지 일괄 처리되는 일을 막는다.
-  // 페이지 이동만으로는 이 상태를 초기화하지 않아 선택이 누적된다.
-  useEffect(() => {
-    setRowSelection({});
-    setSelectedMembersById(new Map());
-  }, [
-    initialDuesPaidFilter,
-    initialGoogleFormSubmittedFilter,
-    initialSearch,
-    initialSortingKey,
-  ]);
-
-  const selectedMembers = useMemo(
-    () => Array.from(selectedMembersById.values()),
-    [selectedMembersById],
-  );
-
-  const updateRowSelection: OnChangeFn<RowSelectionState> = (updater) => {
-    setRowSelection((currentSelection) => {
-      const nextSelection =
-        typeof updater === "function" ? updater(currentSelection) : updater;
-
-      setSelectedMembersById((currentMembers) => {
-        const nextMembers = new Map(currentMembers);
-
-        initialData.content.forEach((member) => {
-          if (nextSelection[String(member.userId)]) {
-            // 이미 선택한 대상은 최초 조회 상태를 보존해 변경 취소 여부를 판별한다.
-            if (!nextMembers.has(member.userId)) {
-              nextMembers.set(member.userId, member);
-            }
-          } else {
-            nextMembers.delete(member.userId);
-          }
-        });
-
-        return nextMembers;
-      });
-
-      return nextSelection;
-    });
-  };
-
-  const clearSelection = () => {
-    setRowSelection({});
-    setSelectedMembersById(new Map());
-  };
 
   const focusSearchInput = () => {
     requestAnimationFrame(() => {
@@ -153,7 +114,7 @@ export function DuesView({
 
   const updateMembers = async (
     members: DuesMember[],
-    field: "duesPaid" | "googleFormSubmitted",
+    field: DuesStatusField,
     value: boolean,
     clearSelectionAfterSave = false,
   ) => {
@@ -163,12 +124,7 @@ export function DuesView({
       setIsSaving(true);
       setError(null);
 
-      const updates: UpdateDuesPayload[] = members.map((member) => ({
-        userId: member.userId,
-        [field]: value,
-      }));
-
-      await updateDues(updates);
+      await updateDues(createDuesUpdates(members, field, value));
 
       if (clearSelectionAfterSave) {
         clearSelection();
@@ -186,10 +142,8 @@ export function DuesView({
     }
   };
 
-  const updateSelected = (
-    field: "duesPaid" | "googleFormSubmitted",
-    value: boolean,
-  ) => updateMembers(selectedMembers, field, value, true);
+  const updateSelected = (field: DuesStatusField, value: boolean) =>
+    updateMembers(selectedMembers, field, value, true);
 
   const withdrawRegistration = async () => {
     if (!withdrawalTarget || isSaving || isWithdrawing) return;
@@ -213,11 +167,9 @@ export function DuesView({
     }
   };
 
-  const formNotSubmitted =
-    initialData.summary.totalCount -
-    initialData.summary.googleFormSubmittedCount;
-  const duesNotPaid =
-    initialData.summary.totalCount - initialData.summary.duesPaidCount;
+  const { formNotSubmitted, duesNotPaid } = getDuesOutstandingCounts(
+    initialData.summary,
+  );
 
   return (
     <div className="space-y-6 p-4 sm:p-6 md:p-8">

@@ -186,4 +186,42 @@ describe("DuesView", () => {
     });
     expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
+
+  it("clears the accumulated selection when the search condition changes", () => {
+    const props = {
+      initialData: {
+        semester: { actYear: 2026, actSemester: 2, label: "2026-2학기" },
+        summary: {
+          totalCount: 1,
+          duesPaidCount: 0,
+          googleFormSubmittedCount: 0,
+          completedCount: 0,
+        },
+        content: [
+          {
+            userId: 20260001,
+            userName: "홍길동",
+            department: "컴퓨터소프트웨어학부",
+            duesPaid: false,
+            googleFormSubmitted: false,
+          },
+        ],
+        totalElements: 1,
+        currentPage: 0,
+        totalPages: 1,
+        pageSize: 20,
+      },
+      initialDuesPaidFilter: undefined,
+      initialGoogleFormSubmittedFilter: undefined,
+      initialSorting: [],
+    };
+    const { rerender } = render(<DuesView {...props} initialSearch="" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "첫 부원 선택" }));
+    expect(screen.getByText("1명 선택")).not.toBeNull();
+
+    rerender(<DuesView {...props} initialSearch="홍길동" />);
+
+    expect(screen.getByText("0명 선택")).not.toBeNull();
+  });
 });
