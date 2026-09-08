@@ -59,6 +59,7 @@ import {
   getRequiredTemplateVariables,
   getTemplateVariables,
   getVariableLabel,
+  sortAlimTalkTemplatesByNameDescending,
 } from "./sms-utils";
 
 export function SmsView() {
@@ -86,7 +87,9 @@ export function SmsView() {
   useEffect(() => {
     const loadTemplates = async () => {
       try {
-        setTemplates(await getAlimTalkTemplates());
+        setTemplates(
+          sortAlimTalkTemplatesByNameDescending(await getAlimTalkTemplates()),
+        );
       } catch (err) {
         setTemplateError(await handleApiError(err));
       } finally {

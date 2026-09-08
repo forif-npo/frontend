@@ -7,6 +7,7 @@ import {
   getRequiredTemplateVariables,
   getTemplateVariables,
   getVariableLabel,
+  sortAlimTalkTemplatesByNameDescending,
 } from "./sms-utils";
 import type { AlimTalkTemplate, Receiver } from "./types";
 
@@ -66,5 +67,22 @@ describe("sms utils", () => {
     });
     expect(getVariableLabel("#{응답일정}")).toBe("응답 기한");
     expect(getVariableLabel("#{사용자정의}")).toBe("#{사용자정의}");
+  });
+
+  it("sorts every template by name in descending order", () => {
+    const templates = [
+      { ...template, templateId: "unprefixed", name: "운영진 공지" },
+      { ...template, templateId: "24-2-a", name: "[24-2] 합격 문자" },
+      { ...template, templateId: "26-1", name: "[26-1] 안내 문자" },
+      { ...template, templateId: "26-2-a", name: "[26-2] 합격 문자" },
+      { ...template, templateId: "26-2-b", name: "[26-2] 미납 안내" },
+    ];
+
+    expect(
+      sortAlimTalkTemplatesByNameDescending(templates).map(
+        (item) => item.templateId,
+      ),
+    ).toEqual(["unprefixed", "26-2-a", "26-2-b", "26-1", "24-2-a"]);
+    expect(templates[0]?.templateId).toBe("unprefixed");
   });
 });

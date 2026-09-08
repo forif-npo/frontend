@@ -69,3 +69,11 @@ export function buildAlimTalkVariables(
     ]),
   );
 }
+
+export function sortAlimTalkTemplatesByNameDescending(
+  templates: AlimTalkTemplate[],
+) {
+  return [...templates].sort((left, right) =>
+    right.name.localeCompare(left.name, "ko"),
+  );
+}
