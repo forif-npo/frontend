@@ -18,6 +18,26 @@ function renderMessage(content: string, variables: Record<string, string>) {
   });
 }
 
+function getPreviewLinkHref(link: string, variables: Record<string, string>) {
+  const hasMissingVariable = (link.match(/#\{[^}]+\}/g) ?? []).some(
+    (variable) => !variables[variable]?.trim(),
+  );
+  if (hasMissingVariable) return null;
+
+  const resolvedLink = link
+    .replace(/#\{[^}]+\}/g, (variable) => variables[variable]?.trim() ?? "")
+    .trim();
+
+  try {
+    const url = new URL(resolvedLink);
+    return url.protocol === "https:" || url.protocol === "http:"
+      ? url.toString()
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 export function AlimTalkPreview({ template, variables }: AlimTalkPreviewProps) {
   return (
     <section className="rounded-md border p-6">
@@ -58,6 +78,39 @@ export function AlimTalkPreview({ template, variables }: AlimTalkPreviewProps) {
               ? renderMessage(template.content, variables)
               : "템플릿을 선택하면 알림톡 내용을 미리 볼 수 있습니다."}
           </p>
+          {template?.buttonLinks.length ? (
+            <div className="space-y-2 px-4 pb-4">
+              {template.buttonLinks.map((link, index) => {
+                const href = getPreviewLinkHref(link, variables);
+                const label =
+                  template.buttonLinks.length === 1
+                    ? "링크 바로가기"
+                    : `링크 ${index + 1} 바로가기`;
+                const className =
+                  "border-border bg-muted/40 text-foreground flex min-h-11 w-full items-center justify-center rounded-md border px-3 py-2 text-sm font-medium";
+
+                return href ? (
+                  <a
+                    key={`${link}-${index}`}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={className}
+                  >
+                    {label}
+                  </a>
+                ) : (
+                  <span
+                    key={`${link}-${index}`}
+                    aria-disabled="true"
+                    className={`${className} text-muted-foreground cursor-not-allowed`}
+                  >
+                    {label}
+                  </span>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
         <p className="text-muted-foreground mt-1 text-right text-xs">방금</p>
       </div>
