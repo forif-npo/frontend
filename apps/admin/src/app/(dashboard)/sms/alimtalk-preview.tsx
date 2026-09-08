@@ -39,6 +39,9 @@ function getPreviewLinkHref(link: string, variables: Record<string, string>) {
 }
 
 export function AlimTalkPreview({ template, variables }: AlimTalkPreviewProps) {
+  const link = template?.buttonLinks[0];
+  const href = link ? getPreviewLinkHref(link, variables) : null;
+
   return (
     <section className="min-w-0 rounded-md border p-4 sm:p-6">
       <div className="mb-4">
@@ -75,37 +78,25 @@ export function AlimTalkPreview({ template, variables }: AlimTalkPreviewProps) {
               ? renderMessage(template.content, variables)
               : "템플릿을 선택하면 알림톡 내용을 미리 볼 수 있습니다."}
           </p>
-          {template?.buttonLinks.length ? (
+          {link ? (
             <div className="space-y-2 px-4 pb-4">
-              {template.buttonLinks.map((link, index) => {
-                const href = getPreviewLinkHref(link, variables);
-                const label =
-                  template.buttonLinks.length === 1
-                    ? "링크 바로가기"
-                    : `링크 ${index + 1} 바로가기`;
-                const className =
-                  "border-border bg-muted/40 text-foreground flex min-h-11 w-full items-center justify-center rounded-md border px-3 py-2 text-sm font-medium";
-
-                return href ? (
-                  <a
-                    key={`${link}-${index}`}
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={className}
-                  >
-                    {label}
-                  </a>
-                ) : (
-                  <span
-                    key={`${link}-${index}`}
-                    aria-disabled="true"
-                    className={`${className} text-muted-foreground cursor-not-allowed`}
-                  >
-                    {label}
-                  </span>
-                );
-              })}
+              {href ? (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border-border bg-muted/40 text-foreground flex min-h-11 w-full items-center justify-center rounded-md border px-3 py-2 text-sm font-medium"
+                >
+                  링크 바로가기
+                </a>
+              ) : (
+                <span
+                  aria-disabled="true"
+                  className="border-border bg-muted/40 text-muted-foreground flex min-h-11 w-full cursor-not-allowed items-center justify-center rounded-md border px-3 py-2 text-sm font-medium"
+                >
+                  링크 바로가기
+                </span>
+              )}
             </div>
           ) : null}
         </div>

@@ -23,7 +23,10 @@ describe("AlimTalkPreview", () => {
           dateCreated: null,
           dateUpdated: null,
           variables: ["#{url}"],
-          buttonLinks: ["https://forms.google.com/#{url}"],
+          buttonLinks: [
+            "https://forms.google.com/#{url}",
+            "https://example.com/unused",
+          ],
         }}
         variables={{ "#{url}": "example" }}
       />,
@@ -32,6 +35,7 @@ describe("AlimTalkPreview", () => {
     const link = screen.getByRole("link", { name: "링크 바로가기" });
     expect(link.getAttribute("href")).toBe("https://forms.google.com/example");
     expect(link.getAttribute("target")).toBe("_blank");
+    expect(screen.getAllByRole("link")).toHaveLength(1);
   });
 
   it("keeps a template button disabled until its link variable is valid", () => {
