@@ -2,6 +2,6 @@ export interface Member {
   email: string;
   id: string;
   name: string;
-  department: string;
+  departmentId: string;
   phoneNumber: string;
 }

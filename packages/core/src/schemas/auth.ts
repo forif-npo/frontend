@@ -12,7 +12,7 @@ export const signUpSchema = createSchema<Member>()(
       .length(10, "학번은 10자리여야 합니다."),
 
     name: z.string().min(1, "이름을 입력해주세요."),
-    department: z.string().min(1, "학과를 선택해주세요."),
+    departmentId: z.string().min(1, "학과를 선택해주세요."),
     phoneNumber: z
       .string()
       .min(1, "전화번호를 입력해주세요.")

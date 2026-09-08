@@ -81,7 +81,7 @@ export const signUp = async (data: SignUpValues) => {
       user_name: data.name,
       access_token: googleAccessToken,
       phone_num: data.phoneNumber.replace(/\D/g, ""),
-      department: data.department,
+      department_id: Number(data.departmentId),
     });
 
     // refreshToken은 HttpOnly 쿠키로 자동 저장됨

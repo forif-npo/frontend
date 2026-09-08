@@ -40,6 +40,7 @@ function response() {
           user_name: "홍길동",
           email: "user@forif.org",
           phone_num: "010-1234-5678",
+          department_id: 1,
           department: "컴퓨터소프트웨어학부",
         },
       } as T),
@@ -71,6 +72,7 @@ describe("my page profile api", () => {
       user_name: "홍길동",
       email: "user@forif.org",
       phone_num: "010-1234-5678",
+      department_id: 1,
       department: "컴퓨터소프트웨어학부",
     };
     const applications = { applications: [] };
@@ -103,13 +105,13 @@ describe("my page profile api", () => {
     expect(logSpy).not.toHaveBeenCalled();
   });
 
-  it("sends profile metadata and image through the existing multipart contract", async () => {
+  it("sends the department id and image through the existing multipart contract", async () => {
     mockedPatch.mockReturnValue(response());
     const image = new File(["image"], "profile.png", { type: "image/png" });
 
     await updateUserProfile(
       {
-        department: "컴퓨터소프트웨어학부",
+        department_id: 1,
         profile_image: image,
       },
       "access-token",
@@ -127,7 +129,7 @@ describe("my page profile api", () => {
     expect(
       JSON.parse(await readBlob(options.body.get("request") as Blob)),
     ).toEqual({
-      department: "컴퓨터소프트웨어학부",
+      department_id: 1,
     });
     expect((options.body.get("profileImage") as File).name).toBe("profile.png");
   });

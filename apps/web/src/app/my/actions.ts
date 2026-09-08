@@ -8,7 +8,7 @@ import {
 
 interface UpdateMyProfileInput {
   profile?: {
-    department: string;
+    department_id: number;
     profile_image: File | null;
   };
   phone_num?: string;

@@ -40,7 +40,7 @@ describe("updateMyProfile", () => {
 
   it("keeps the existing profile and phone update payloads", async () => {
     const profile = {
-      department: "컴퓨터소프트웨어학부",
+      department_id: 1,
       profile_image: null,
     };
     mockedAuth.mockResolvedValue({ accessToken: "access-token" } as never);

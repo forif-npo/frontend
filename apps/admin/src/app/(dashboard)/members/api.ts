@@ -58,6 +58,7 @@ type MemberWithSemester = Member & { actYear?: number; actSemester?: number };
 function mapToMember(item: MemberItem): MemberWithSemester {
   return {
     userId: pickNumber(item.userId, item.user_id),
+    departmentId: pickNumber(item.departmentId, item.department_id) || null,
     department: pickString(item.department),
     userName: pickString(item.userName, item.user_name, item.name),
     currentStudyName: pickString(
@@ -74,6 +75,7 @@ function mapToMember(item: MemberItem): MemberWithSemester {
 
 function stripSemester({
   userId,
+  departmentId,
   department,
   userName,
   currentStudyName,
@@ -83,6 +85,7 @@ function stripSemester({
 }: MemberWithSemester): Member {
   return {
     userId,
+    departmentId,
     department,
     userName,
     currentStudyName,
@@ -187,10 +190,15 @@ export async function deleteCurrentSemesterMember(
 
 export async function updateMemberInfo(
   userId: number,
-  info: Pick<Member, "department" | "phoneNum">,
+  info: Pick<Member, "departmentId" | "phoneNum">,
 ): Promise<void> {
   await apiClient
-    .patch(`api/v1/admin/users/${userId}`, { json: info })
+    .patch(`api/v1/admin/users/${userId}`, {
+      json: {
+        department_id: info.departmentId,
+        phone_num: info.phoneNum,
+      },
+    })
     .json<ApiResponse<null>>();
 }
 

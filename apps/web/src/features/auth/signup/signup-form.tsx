@@ -1,6 +1,6 @@
 "use client";
 import { TermsButton } from "@/components/terms-modal";
-import { departmentsOptions } from "@/constants/options.constant";
+import type { DepartmentOption } from "@/features/departments/api";
 import { MemberEligibilityInfo } from "@/features/auth/member-eligibility-info";
 import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { signUpSchema, SignUpValues } from "@core/schemas";
@@ -33,15 +33,16 @@ interface SignUpFormProps {
     formData: FormData,
   ) => Promise<ActionState>;
   email: string;
+  departments: DepartmentOption[];
 }
 
-export function SignUpForm({ action, email }: SignUpFormProps) {
+export function SignUpForm({ action, email, departments }: SignUpFormProps) {
   const router = useRouter();
   const { update } = useSession();
   const initialValues: SignUpValues = {
     email: email,
     id: "",
-    department: "",
+    departmentId: "",
     name: "",
     phoneNumber: "",
     serviceTermAgree: false,
@@ -175,23 +176,26 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
         />
         <Controller
           control={control}
-          name="department"
+          name="departmentId"
           rules={{ required: true }}
           render={({ field: { value, onChange } }) => (
             <>
               <SelectBox
-                id="department"
+                id="departmentId"
                 value={value || null}
-                options={departmentsOptions}
+                options={departments.map((department) => ({
+                  label: department.department,
+                  value: String(department.department_id),
+                }))}
                 placeholder="정보시스템학과"
                 title="학과"
                 required
                 onChange={onChange}
-                error={errors.department?.message}
+                error={errors.departmentId?.message}
                 disabled={isLoading}
               />
               {/* Hidden input for FormData */}
-              <input type="hidden" name="department" value={value || ""} />
+              <input type="hidden" name="departmentId" value={value || ""} />
             </>
           )}
         />
@@ -336,6 +340,7 @@ export function SignUpForm({ action, email }: SignUpFormProps) {
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleConfirmSignUp}
         formValues={watchedValues}
+        departments={departments}
       />
     </div>
   );

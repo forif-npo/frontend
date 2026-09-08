@@ -11,6 +11,7 @@ import {
 } from "@/features/study-manage/api";
 import { getMyStudyApplications } from "@/features/study-application/api";
 import { getCurrentSemester } from "@/features/semester/api";
+import { getDepartments } from "@/features/departments/api";
 import { getMyProductApplications, getProducts } from "@/features/products/api";
 import { MyPageClient } from "./MyPageClient";
 
@@ -35,6 +36,7 @@ export default async function MyPage() {
     activeSemester,
     productApplications,
     products,
+    departments,
   ] = await Promise.all([
     getUserProfile(token),
     getUserStudies(token).catch(() => []),
@@ -45,6 +47,7 @@ export default async function MyPage() {
     getCurrentSemester(),
     getMyProductApplications(token).catch(() => []),
     getProducts().catch(() => []),
+    getDepartments(),
   ]);
 
   return (
@@ -58,6 +61,7 @@ export default async function MyPage() {
       activeSemester={activeSemester}
       productApplications={productApplications}
       products={products}
+      departments={departments}
     />
   );
 }

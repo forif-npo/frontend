@@ -26,7 +26,7 @@ export interface SignUpRequest {
   user_name: string;
   access_token: string;
   phone_num: string;
-  department: string;
+  department_id: number;
 }
 
 /**
@@ -96,6 +96,7 @@ export interface User {
   user_name: string;
   email: string;
   phone_num: string;
+  department_id: number | null;
   department: string;
   img_url: string | null;
   role: "USER";

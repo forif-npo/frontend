@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { signUp } from "@/features/auth/signin/actions";
 import { SignUpForm } from "@/features/auth/signup/signup-form";
+import { getDepartments } from "@/features/departments/api";
 import { signUpSchema, SignUpValues } from "@core/schemas";
 import { Body, Heading } from "@ui/components/server";
 import { redirect } from "next/navigation";
@@ -17,7 +18,7 @@ const submitForm = async (_: ActionState, formData: FormData) => {
   "use server";
   const values: SignUpValues = {
     name: String(formData.get("name") || ""),
-    department: String(formData.get("department") || ""),
+    departmentId: String(formData.get("departmentId") || ""),
     email: String(formData.get("email") || ""),
     id: String(formData.get("id") || ""),
     phoneNumber: String(formData.get("phoneNumber") || ""),
@@ -45,7 +46,7 @@ const submitForm = async (_: ActionState, formData: FormData) => {
       return {
         values: {
           name: "",
-          department: "",
+          departmentId: "",
           email: "",
           id: "",
           phoneNumber: "",
@@ -79,6 +80,8 @@ export default async function Page() {
     redirect("/");
   }
 
+  const departments = await getDepartments();
+
   return (
     <main className="mx-auto w-full max-w-[800px] px-5 py-12 sm:px-6 lg:px-0 lg:py-16">
       <Heading size="l" className="text-text-basic text-left">
@@ -90,7 +93,11 @@ export default async function Page() {
         스터디 신청, 스터디 개설, 해커톤 참여 등 더 많은 기능을 이용해보세요.
       </Body>
       <section className="mb-10 mt-12 w-full">
-        <SignUpForm action={submitForm} email={session.user.email} />
+        <SignUpForm
+          action={submitForm}
+          email={session.user.email}
+          departments={departments}
+        />
       </section>
     </main>
   );

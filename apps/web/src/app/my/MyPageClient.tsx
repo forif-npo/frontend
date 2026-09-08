@@ -25,6 +25,7 @@ import type {
   ProductApplication,
   ProductSummary,
 } from "@/features/products/api";
+import type { DepartmentOption } from "@/features/departments/api";
 
 interface MyPageClientProps {
   profile: UserProfile;
@@ -36,6 +37,7 @@ interface MyPageClientProps {
   activeSemester: Semester;
   productApplications: ProductApplication[];
   products: ProductSummary[];
+  departments: DepartmentOption[];
 }
 
 export function MyPageClient({
@@ -48,6 +50,7 @@ export function MyPageClient({
   activeSemester,
   productApplications,
   products,
+  departments,
 }: MyPageClientProps) {
   const searchParams = useSearchParams();
   const requestedSection = searchParams.get("section");
@@ -154,7 +157,7 @@ export function MyPageClient({
             products={products}
           />
         ) : activeNav === "settings" ? (
-          <SettingsSection profile={profile} />
+          <SettingsSection profile={profile} departments={departments} />
         ) : (
           <>
             <Tabs

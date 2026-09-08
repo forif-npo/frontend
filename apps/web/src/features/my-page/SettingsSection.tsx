@@ -3,7 +3,7 @@
 import { updateMyProfile } from "@/app/my/actions";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { useLogout } from "@/features/auth/logout/use-logout";
-import { departmentsOptions } from "@/constants/options.constant";
+import type { DepartmentOption } from "@/features/departments/api";
 import { safeImageSrc } from "@/utils/image";
 import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import type { UserProfile } from "@/features/my-page/api";
@@ -16,16 +16,22 @@ import { useState, useTransition } from "react";
 
 interface SettingsSectionProps {
   profile: UserProfile;
+  departments: DepartmentOption[];
 }
 
 const MAX_PROFILE_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 const PROFILE_IMAGE_TYPES = new Set(["image/jpeg", "image/jpg", "image/png"]);
 
-export function SettingsSection({ profile }: SettingsSectionProps) {
+export function SettingsSection({
+  profile,
+  departments,
+}: SettingsSectionProps) {
   const router = useRouter();
   const { isPending: isLoggingOut, logout } = useLogout();
   const [isEditing, setIsEditing] = useState(false);
-  const [department, setDepartment] = useState(profile.department ?? "");
+  const [departmentId, setDepartmentId] = useState(
+    String(profile.department_id ?? ""),
+  );
   const [phoneNumber, setPhoneNumber] = useState(
     formatPhoneNumber(profile.phone_num),
   );
@@ -59,7 +65,7 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
   };
 
   const handleCancel = () => {
-    setDepartment(profile.department ?? "");
+    setDepartmentId(String(profile.department_id ?? ""));
     setPhoneNumber(formatPhoneNumber(profile.phone_num));
     setImageFile(null);
     setImagePreview(null);
@@ -69,12 +75,18 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
 
   const handleSave = () => {
     const isProfileChanged =
-      department !== (profile.department ?? "") || imageFile !== null;
+      departmentId !== String(profile.department_id ?? "") ||
+      imageFile !== null;
     const isPhoneNumberChanged =
       phoneNumber !== formatPhoneNumber(profile.phone_num);
 
     if (!isProfileChanged && !isPhoneNumberChanged) {
       setIsEditing(false);
+      return;
+    }
+
+    if (isProfileChanged && !Number(departmentId)) {
+      setErrorMessage("학과를 선택해주세요.");
       return;
     }
 
@@ -84,7 +96,7 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
         await updateMyProfile({
           profile: isProfileChanged
             ? {
-                department,
+                department_id: Number(departmentId),
                 profile_image: imageFile,
               }
             : undefined,
@@ -106,12 +118,18 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
 
   const requestSave = () => {
     const isProfileChanged =
-      department !== (profile.department ?? "") || imageFile !== null;
+      departmentId !== String(profile.department_id ?? "") ||
+      imageFile !== null;
     const isPhoneNumberChanged =
       phoneNumber !== formatPhoneNumber(profile.phone_num);
 
     if (!isProfileChanged && !isPhoneNumberChanged) {
       setIsEditing(false);
+      return;
+    }
+
+    if (isProfileChanged && !Number(departmentId)) {
+      setErrorMessage("학과를 선택해주세요.");
       return;
     }
 
@@ -205,9 +223,12 @@ export function SettingsSection({ profile }: SettingsSectionProps) {
                       {isEditing ? (
                         <SelectBox
                           id="profile-department"
-                          value={department}
-                          onChange={setDepartment}
-                          options={departmentsOptions}
+                          value={departmentId}
+                          onChange={setDepartmentId}
+                          options={departments.map((department) => ({
+                            label: department.department,
+                            value: String(department.department_id),
+                          }))}
                           placeholder="학과를 선택해주세요."
                           disabled={isPending}
                         />

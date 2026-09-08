@@ -49,7 +49,7 @@ describe("signUp", () => {
     mockedSessionUpdate.mockReset();
   });
 
-  it("sends a digit-only phone number in the existing Google signup request", async () => {
+  it("sends a digit-only phone number and department id in the Google signup request", async () => {
     mockedGetGoogleAccessToken.mockResolvedValue("google-access-token");
     mockedMemberSignUp.mockResolvedValue({
       data: {
@@ -64,7 +64,7 @@ describe("signUp", () => {
         email: "user@forif.org",
         id: "20260001",
         name: "홍길동",
-        department: "컴퓨터소프트웨어학부",
+        departmentId: "1",
         phoneNumber: "010-1234-5678",
         serviceTermAgree: true,
         privacyPolicyAgree: true,
@@ -80,7 +80,7 @@ describe("signUp", () => {
       user_name: "홍길동",
       access_token: "google-access-token",
       phone_num: "01012345678",
-      department: "컴퓨터소프트웨어학부",
+      department_id: 1,
     });
     expect(unstable_update).toHaveBeenCalledWith({
       accessToken: "forif-access-token",
