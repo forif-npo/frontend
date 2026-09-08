@@ -12,7 +12,7 @@ export default function DashboardLayout({
     <SidebarProvider>
       <SessionExpiredGuard />
       <AppSidebar />
-      <main className="flex min-w-0 flex-1 flex-col overflow-x-clip">
+      <main className="flex min-w-0 flex-1 flex-col max-md:overflow-x-clip">
         <MobileDashboardHeader />
         {children}
       </main>

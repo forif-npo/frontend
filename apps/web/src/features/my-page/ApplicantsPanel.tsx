@@ -348,7 +348,7 @@ export function ApplicantsPanel({
           titleClassName="text-lg"
         />
       ) : (
-        <Table className="min-w-[860px]">
+        <Table className="max-md:min-w-[860px]">
           <TableHeader>
             <TableRow>
               <TableHead className="w-12">

@@ -8,7 +8,7 @@ const Table = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     data-slot="table-container"
-    className="relative w-full max-w-full overflow-x-auto"
+    className="relative w-full max-w-full max-md:overflow-x-auto"
   >
     <table
       ref={ref}
