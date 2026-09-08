@@ -8,7 +8,6 @@
     "./theme.css": "./src/theme.css",
     "./components/server": "./src/components/server/index.ts",
     "./components/client": "./src/components/client/index.ts",
-    "./theme-provider": "./src/provider.tsx",
     "./colors": "./src/colors/color.ts"
   },
   "scripts": {

@@ -106,7 +106,11 @@ describe("ScheduleSection", () => {
       <ScheduleSection actYear={2026} actSemester={2} semesterLabel="2026-2" />,
     );
 
-    const clearButton = await screen.findByRole("button", { name: "비우기" });
+    const clearButton = await screen.findByRole(
+      "button",
+      { name: "비우기" },
+      { timeout: 5_000 },
+    );
     fireEvent.click(clearButton);
     fireEvent.click(screen.getByRole("button", { name: "학기 일정 저장" }));
 

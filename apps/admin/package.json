@@ -64,7 +64,6 @@
     "@faker-js/faker": "^10.2.0",
     "@jest/globals": "^29.7.0",
     "@repo/eslint-config": "workspace:*",
-    "@repo/jest-presets": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
