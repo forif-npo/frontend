@@ -241,17 +241,6 @@ export function SubmissionDetailMain({
           )}
         </aside>
       </section>
-
-      {/* Back */}
-      <div className="mt-12">
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={() => router.push("/hackathon/archive")}
-        >
-          아카이브로 돌아가기
-        </Button>
-      </div>
     </main>
   );
 }
