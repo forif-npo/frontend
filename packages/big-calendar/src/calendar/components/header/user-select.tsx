@@ -39,7 +39,7 @@ export function UserSelect() {
                 </Avatar>
               ))}
             </AvatarGroup>
-            All
+            전체
           </div>
         </SelectItem>
 

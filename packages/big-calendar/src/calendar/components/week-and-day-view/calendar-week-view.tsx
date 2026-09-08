@@ -46,8 +46,8 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
   return (
     <>
       <div className="text-muted-foreground flex flex-col items-center justify-center border-b py-4 text-sm sm:hidden">
-        <p>Weekly view is not available on smaller devices.</p>
-        <p>Please switch to daily or monthly view.</p>
+        <p>작은 화면에서는 주별 보기를 지원하지 않습니다.</p>
+        <p>일별 또는 월별 보기로 전환해주세요.</p>
       </div>
 
       <div className="hidden flex-col sm:flex">

@@ -70,7 +70,8 @@ export const useStudyData = (): UseStudyDataReturn => {
     } catch (err) {
       if (requestId !== latestRequestId.current) return;
 
-      setError(err instanceof Error ? err.message : "Failed to fetch studies");
+      console.error("스터디 목록 조회 실패:", err);
+      setError("스터디 목록을 불러오지 못했습니다.");
     } finally {
       if (requestId === latestRequestId.current) {
         setLoading(false);

@@ -43,7 +43,7 @@ export function Carousel({ carouselItems, bannerClassName }: CarouselProps) {
   }, [totalItems]);
 
   if (totalItems === 0) {
-    return <div className="text-center">No items to display</div>;
+    return <div className="text-center">표시할 항목이 없습니다.</div>;
   }
 
   const handlePrev = () => {

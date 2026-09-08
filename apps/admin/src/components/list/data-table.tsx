@@ -67,7 +67,7 @@ export function DataTable<TData, TValue>({
   rowSelection: controlledRowSelection,
   onRowSelectionChange: controlledOnRowSelectionChange,
   renderSelectionHeader,
-  emptyMessage = "No results.",
+  emptyMessage = "결과가 없습니다.",
   sorting: controlledSorting,
   onSortingChange: controlledOnSortingChange,
   resetSortingKey,

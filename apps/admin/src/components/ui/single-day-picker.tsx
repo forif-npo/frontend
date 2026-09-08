@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
 import { useDisclosure } from "@/hooks/use-disclosure";
 
@@ -63,7 +64,7 @@ function SingleDayPicker({
           {...props}
           disabled={disabled}
         >
-          {value && <span>{format(value, labelVariant)}</span>}
+          {value && <span>{format(value, labelVariant, { locale: ko })}</span>}
           {!value && (
             <span className="text-muted-foreground">{placeholder}</span>
           )}

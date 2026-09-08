@@ -114,11 +114,11 @@ export function EventDetailsDialog({ event, children }: IProps) {
               onClick={handleDelete}
               disabled={isDeleting}
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? "삭제 중..." : "삭제"}
             </Button>
             <EditEventDialog event={event}>
               <Button type="button" variant="outline">
-                Edit
+                수정
               </Button>
             </EditEventDialog>
           </DialogFooter>
