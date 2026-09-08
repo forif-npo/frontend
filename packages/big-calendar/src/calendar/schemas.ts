@@ -3,21 +3,21 @@ import { z } from "zod";
 export const eventSchema = z
   .object({
     user: z.string(),
-    title: z.string().min(1, "Title is required"),
-    description: z.string().min(1, "Description is required"),
-    startDate: z.date({ required_error: "Start date is required" }),
+    title: z.string().min(1, "일정 제목을 입력해주세요."),
+    description: z.string().min(1, "설명을 입력해주세요."),
+    startDate: z.date({ required_error: "시작일을 선택해주세요." }),
     startTime: z.object(
       { hour: z.number(), minute: z.number() },
-      { required_error: "Start time is required" },
+      { required_error: "시작 시간을 선택해주세요." },
     ),
-    endDate: z.date({ required_error: "End date is required" }),
+    endDate: z.date({ required_error: "종료일을 선택해주세요." }),
     endTime: z.object(
       { hour: z.number(), minute: z.number() },
-      { required_error: "End time is required" },
+      { required_error: "종료 시간을 선택해주세요." },
     ),
     color: z.enum(
       ["blue", "green", "red", "yellow", "purple", "orange", "gray"],
-      { required_error: "Color is required" },
+      { required_error: "색상을 선택해주세요." },
     ),
   })
   .refine(
@@ -31,7 +31,7 @@ export const eventSchema = z
       return startDateTime < endDateTime;
     },
     {
-      message: "Start date cannot be after end date",
+      message: "종료 일시는 시작 일시보다 늦어야 합니다.",
       path: ["startDate"],
     },
   );

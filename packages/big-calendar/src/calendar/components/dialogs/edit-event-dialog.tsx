@@ -127,11 +127,11 @@ export function EditEventDialog({ children, event }: IProps) {
               name="user"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>Responsible</FormLabel>
+                  <FormLabel>담당자</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger data-invalid={fieldState.invalid}>
-                        <SelectValue placeholder="Select an option" />
+                        <SelectValue placeholder="선택해주세요" />
                       </SelectTrigger>
 
                       <SelectContent>
@@ -169,12 +169,12 @@ export function EditEventDialog({ children, event }: IProps) {
               name="title"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel htmlFor="title">Title</FormLabel>
+                  <FormLabel htmlFor="title">일정 제목</FormLabel>
 
                   <FormControl>
                     <Input
                       id="title"
-                      placeholder="Enter a title"
+                      placeholder="제목을 입력해주세요"
                       data-invalid={fieldState.invalid}
                       {...field}
                     />
@@ -191,14 +191,14 @@ export function EditEventDialog({ children, event }: IProps) {
                 name="startDate"
                 render={({ field, fieldState }) => (
                   <FormItem className="flex-1">
-                    <FormLabel htmlFor="startDate">Start Date</FormLabel>
+                    <FormLabel htmlFor="startDate">시작일</FormLabel>
 
                     <FormControl>
                       <SingleDayPicker
                         id="startDate"
                         value={field.value}
                         onSelect={(date) => field.onChange(date as Date)}
-                        placeholder="Select a date"
+                        placeholder="날짜를 선택해주세요"
                         data-invalid={fieldState.invalid}
                       />
                     </FormControl>
@@ -213,7 +213,7 @@ export function EditEventDialog({ children, event }: IProps) {
                 name="startTime"
                 render={({ field, fieldState }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Start Time</FormLabel>
+                    <FormLabel>시작 시간</FormLabel>
 
                     <FormControl>
                       <TimeInput
@@ -236,12 +236,12 @@ export function EditEventDialog({ children, event }: IProps) {
                 name="endDate"
                 render={({ field, fieldState }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>End Date</FormLabel>
+                    <FormLabel>종료일</FormLabel>
                     <FormControl>
                       <SingleDayPicker
                         value={field.value}
                         onSelect={(date) => field.onChange(date as Date)}
-                        placeholder="Select a date"
+                        placeholder="날짜를 선택해주세요"
                         data-invalid={fieldState.invalid}
                       />
                     </FormControl>
@@ -255,7 +255,7 @@ export function EditEventDialog({ children, event }: IProps) {
                 name="endTime"
                 render={({ field, fieldState }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>End Time</FormLabel>
+                    <FormLabel>종료 시간</FormLabel>
                     <FormControl>
                       <TimeInput
                         value={field.value as TimeValue}
@@ -275,60 +275,60 @@ export function EditEventDialog({ children, event }: IProps) {
               name="color"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>Color</FormLabel>
+                  <FormLabel>색상</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger data-invalid={fieldState.invalid}>
-                        <SelectValue placeholder="Select an option" />
+                        <SelectValue placeholder="선택해주세요" />
                       </SelectTrigger>
 
                       <SelectContent>
                         <SelectItem value="blue">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-blue-600" />
-                            Blue
+                            파랑
                           </div>
                         </SelectItem>
 
                         <SelectItem value="green">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-green-600" />
-                            Green
+                            초록
                           </div>
                         </SelectItem>
 
                         <SelectItem value="red">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-red-600" />
-                            Red
+                            빨강
                           </div>
                         </SelectItem>
 
                         <SelectItem value="yellow">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-yellow-600" />
-                            Yellow
+                            노랑
                           </div>
                         </SelectItem>
 
                         <SelectItem value="purple">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-purple-600" />
-                            Purple
+                            보라
                           </div>
                         </SelectItem>
 
                         <SelectItem value="orange">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-orange-600" />
-                            Orange
+                            주황
                           </div>
                         </SelectItem>
 
                         <SelectItem value="gray">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-neutral-600" />
-                            Gray
+                            회색
                           </div>
                         </SelectItem>
                       </SelectContent>
@@ -344,7 +344,7 @@ export function EditEventDialog({ children, event }: IProps) {
               name="description"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>설명</FormLabel>
 
                   <FormControl>
                     <Textarea
@@ -364,12 +364,12 @@ export function EditEventDialog({ children, event }: IProps) {
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">
-              Cancel
+              취소
             </Button>
           </DialogClose>
 
           <Button form="event-form" type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save changes"}
+            {isLoading ? "저장 중..." : "변경사항 저장"}
           </Button>
         </DialogFooter>
       </DialogContent>
