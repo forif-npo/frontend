@@ -50,6 +50,10 @@
 UI 리팩토링은 시각적 동등성을 제품 계약으로 취급합니다. 레이아웃, 반응형 동작,
 상태별 화면, 키보드 조작, focus, label, role을 유지합니다.
 
+UI 변경 또는 UI 리팩터링 후보 탐색 전에는 [DESIGN_REVIEW.md](DESIGN_REVIEW.md)를 따라
+실제 브라우저 렌더링과 접근성 구조를 검토합니다. 기존 화면과의 시각적 동등성을
+확인하면서도, 근거 없는 불일치와 정보 위계 문제는 발견 사항으로 기록합니다.
+
 ### 컴포넌트 우선순위
 
 1. `@repo/ui`의 컴포넌트와 variant를 사용합니다.
@@ -93,7 +97,8 @@ UI 테스트는 사용자 동작과 접근성 의미에 결합합니다. 제품 
 3. 변경 영역 테스트와 타입 검사를 먼저 실행한다.
 4. 병합 후보는 `pnpm lint`, `pnpm type-check`, `pnpm test`를 실행한다.
 5. 빌드·배포 설정을 바꿨다면 `pnpm build`를 실행한다.
-6. UI 변경이 포함되면 desktop/mobile의 주요 상태를 수동 또는 Storybook으로 비교한다.
+6. UI 변경이 포함되면 `DESIGN_REVIEW.md`에 따라 browser 또는 Storybook에서
+   desktop/mobile의 주요 상태와 접근성 구조를 비교한다.
 
 Vercel Preview와 실제 배포 검증은 별도 릴리즈 게이트로 관리합니다. Windows의
 standalone symlink 권한 오류는 컴파일·타입·정적 생성 결과와 구분해 기록합니다.

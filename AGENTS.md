@@ -6,6 +6,7 @@
 
 1. 이 문서에서 공통 작업 원칙을 확인합니다.
 2. 코드, 테스트, UI, 문서 구조를 변경할 때는 [REFACTORING.md](REFACTORING.md)를
+   확인합니다. UI를 만들거나 수정하거나 리뷰할 때는 [DESIGN_REVIEW.md](DESIGN_REVIEW.md)도
    확인합니다.
 3. Codex는 [CODEX.md](CODEX.md), Claude Code는 [CLAUDE.md](CLAUDE.md)의 도구별
    지침을 확인합니다.
@@ -23,6 +24,8 @@
   자율적으로 진행합니다.
 - 사용자가 계속 진행을 요청하면 P0, P1, P2, P3 순서로 다음 후보를 선택합니다.
 - 테스트는 사용자 동작과 데이터 경계의 계약을 검증합니다.
+- UI 작업은 코드 검토에 그치지 않고 `DESIGN_REVIEW.md`에 따라 실제 브라우저 렌더링과
+  접근성 구조를 확인하고, 발견한 디자인 결함을 근거와 우선순위와 함께 보고합니다.
 - 작업 시작과 완료 시 작업 트리를 확인하고 작업 범위 밖 변경을 보존합니다.
 - Git의 stage, commit, push, branch, merge는 사용자가 명시적으로 요청한 경우에만
   수행합니다.
