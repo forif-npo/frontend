@@ -617,3 +617,27 @@ export interface SendNotificationResponse {
   failure_count: number;
   failed_receivers: string[];
 }
+
+/**
+ * Solapi에 보관된 알림톡 발송 이력 항목
+ */
+export interface NotificationHistoryItem {
+  message_id: string;
+  template_id: string | null;
+  receiver: string | null;
+  status: string | null;
+  status_code: string | null;
+  created_at: string | null;
+  processed_at: string | null;
+  reported_at: string | null;
+  updated_at: string | null;
+}
+
+/**
+ * 알림톡 발송 이력 커서 페이지 응답
+ */
+export interface NotificationHistoryResponse {
+  content: NotificationHistoryItem[];
+  next_cursor: string | null;
+  has_next: boolean;
+}

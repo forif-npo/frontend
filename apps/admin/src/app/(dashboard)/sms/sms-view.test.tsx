@@ -124,6 +124,10 @@ jest.mock("./alimtalk-preview", () => ({
   AlimTalkPreview: () => null,
 }));
 
+jest.mock("./alimtalk-history", () => ({
+  AlimTalkHistory: () => null,
+}));
+
 jest.mock("./receiver-selector-dialog", () => ({
   ReceiverSelectorDialog: () => null,
 }));

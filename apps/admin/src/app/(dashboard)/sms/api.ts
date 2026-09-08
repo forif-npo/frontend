@@ -2,6 +2,8 @@ import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import type {
   AlimTalkTemplate,
+  AlimTalkHistoryItem,
+  AlimTalkHistoryPage,
   SendAlimTalkRequest,
   SendAlimTalkResult,
   Receiver,
@@ -33,6 +35,24 @@ interface CursorPage<T> {
   next_cursor: number | null;
   has_next: boolean;
   total_elements: number;
+}
+
+interface AlimTalkHistoryItemResponse {
+  message_id: string;
+  template_id: string | null;
+  receiver: string | null;
+  status: string | null;
+  status_code: string | null;
+  created_at: string | null;
+  processed_at: string | null;
+  reported_at: string | null;
+  updated_at: string | null;
+}
+
+interface AlimTalkHistoryPageResponse {
+  content: AlimTalkHistoryItemResponse[];
+  next_cursor: string | null;
+  has_next: boolean;
 }
 
 export interface ReceiverPage {
@@ -130,6 +150,44 @@ export async function getAlimTalkTemplates(): Promise<AlimTalkTemplate[]> {
     variables: template.variables ?? [],
     buttonLinks: template.button_links ?? [],
   }));
+}
+
+function toAlimTalkHistoryItem(
+  item: AlimTalkHistoryItemResponse,
+): AlimTalkHistoryItem {
+  return {
+    messageId: item.message_id,
+    templateId: item.template_id,
+    receiver: item.receiver,
+    status: item.status,
+    statusCode: item.status_code,
+    createdAt: item.created_at,
+    processedAt: item.processed_at,
+    reportedAt: item.reported_at,
+    updatedAt: item.updated_at,
+  };
+}
+
+export async function getAlimTalkHistory({
+  cursor,
+}: {
+  cursor?: string;
+} = {}): Promise<AlimTalkHistoryPage> {
+  const response = await apiClient
+    .get("api/v1/notifications/history", {
+      searchParams: {
+        size: 50,
+        ...(cursor ? { cursor } : {}),
+      },
+    })
+    .json<ApiResponse<AlimTalkHistoryPageResponse>>();
+
+  const page = response.data;
+  return {
+    content: (page?.content ?? []).map(toAlimTalkHistoryItem),
+    nextCursor: page?.next_cursor ?? null,
+    hasNext: page?.has_next ?? false,
+  };
 }
 
 export async function sendAlimTalk(

@@ -19,6 +19,24 @@ export interface SendAlimTalkResult {
   results: SendAlimTalkMessageResult[];
 }
 
+export interface AlimTalkHistoryItem {
+  messageId: string;
+  templateId: string | null;
+  receiver: string | null;
+  status: string | null;
+  statusCode: string | null;
+  createdAt: string | null;
+  processedAt: string | null;
+  reportedAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface AlimTalkHistoryPage {
+  content: AlimTalkHistoryItem[];
+  nextCursor: string | null;
+  hasNext: boolean;
+}
+
 export interface AlimTalkTemplate {
   templateId: string;
   name: string;

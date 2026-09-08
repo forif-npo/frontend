@@ -46,6 +46,7 @@ import {
 } from "./types";
 import { getAlimTalkTemplates, sendAlimTalk } from "./api";
 import { AlimTalkPreview } from "./alimtalk-preview";
+import { AlimTalkHistory } from "./alimtalk-history";
 import { ReceiverSelectorDialog } from "./receiver-selector-dialog";
 import {
   extractPhoneNumber,
@@ -504,6 +505,8 @@ export function SmsView() {
           )}
         </div>
       </div>
+
+      <AlimTalkHistory templates={templates} />
 
       {/* 발송 확인 다이얼로그 */}
       <Dialog open={showConfirm} onOpenChange={setShowConfirm}>

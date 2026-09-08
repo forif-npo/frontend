@@ -5,7 +5,12 @@ jest.mock("@core/utils/api-client", () => ({
 }));
 
 import { apiClient } from "@core/utils/api-client";
-import { getAllReceivers, getReceiverPage, sendAlimTalk } from "./api";
+import {
+  getAlimTalkHistory,
+  getAllReceivers,
+  getReceiverPage,
+  sendAlimTalk,
+} from "./api";
 
 type GetMock = {
   mockReset: () => void;
@@ -208,6 +213,51 @@ describe("sms api", () => {
         },
       },
     );
+  });
+
+  it("maps a six-month AlimTalk history page and forwards its cursor", async () => {
+    mockedGet.mockReturnValue(
+      response({
+        content: [
+          {
+            message_id: "message-1",
+            template_id: "template-1",
+            receiver: "01011112222",
+            status: "SENT",
+            status_code: "2000",
+            created_at: "2026-09-08T10:00:00",
+            processed_at: "2026-09-08T10:00:01",
+            reported_at: null,
+            updated_at: "2026-09-08T10:00:01",
+          },
+        ],
+        next_cursor: "next-key",
+        has_next: true,
+      }),
+    );
+
+    await expect(
+      getAlimTalkHistory({ cursor: "previous-key" }),
+    ).resolves.toEqual({
+      content: [
+        {
+          messageId: "message-1",
+          templateId: "template-1",
+          receiver: "01011112222",
+          status: "SENT",
+          statusCode: "2000",
+          createdAt: "2026-09-08T10:00:00",
+          processedAt: "2026-09-08T10:00:01",
+          reportedAt: null,
+          updatedAt: "2026-09-08T10:00:01",
+        },
+      ],
+      nextCursor: "next-key",
+      hasNext: true,
+    });
+    expect(apiClient.get).toHaveBeenCalledWith("api/v1/notifications/history", {
+      searchParams: { size: 50, cursor: "previous-key" },
+    });
   });
 
   it("preserves the send payload and maps the snake_case delivery result", async () => {
