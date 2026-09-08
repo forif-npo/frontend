@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FORIF Admin
 
-## Getting Started
+운영진이 회원, 스터디, 공지, 수료증 등 운영 업무를 관리하는 서비스입니다.
 
-First, run the development server:
+## 실행
+
+저장소 루트에서 실행합니다.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm dev --filter=admin
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+개발 서버는 기본적으로 http://localhost:3001 에서 실행됩니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 환경 변수
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`apps/admin/.env.example`을 `apps/admin/.env.local`로 복사한 뒤 값을 설정합니다. 변수 이름과
+유효성 규칙은 [`src/env.ts`](src/env.ts)를 기준으로 확인합니다.
 
-## Learn More
+## 검증
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm lint --filter=admin
+pnpm type-check --filter=admin
+pnpm test --filter=admin
+pnpm build --filter=admin
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+환경 변수와 API 계약을 바꾸기 전에는 루트의
+[기여 가이드](../../CONTRIBUTING.md)와 [FORIF Scalar](https://dev.forif.org/scalar)를
+확인하세요.
