@@ -37,6 +37,7 @@ pnpm storybook
 ## 문서
 
 - [기여 가이드](CONTRIBUTING.md): 검증, 커밋, PR, API 계약 기준
+- [Git 작업·배포 흐름](GIT_WORKFLOW.md): 브랜치, PR 승격, 배포와 hotfix 기준
 - [web 안내](apps/web/README.md)
 - [admin 안내](apps/admin/README.md)
 - [Codex 지침](CODEX.md)

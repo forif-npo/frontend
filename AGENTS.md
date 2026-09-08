@@ -9,7 +9,8 @@
    확인합니다.
 3. Codex는 [CODEX.md](CODEX.md), Claude Code는 [CLAUDE.md](CLAUDE.md)의 도구별
    지침을 확인합니다.
-4. 사람이 실행하는 개발·검증·PR 절차는 [CONTRIBUTING.md](CONTRIBUTING.md)를
+4. 브랜치, PR 승격, 배포 절차는 [GIT_WORKFLOW.md](GIT_WORKFLOW.md)를 확인합니다.
+5. 사람이 실행하는 개발·검증·PR 절차는 [CONTRIBUTING.md](CONTRIBUTING.md)를
    확인합니다.
 
 ## 공통 원칙

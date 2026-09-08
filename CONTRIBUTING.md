@@ -57,6 +57,15 @@ PR에는 다음을 적습니다.
 
 PR 검증과 배포 검증은 로컬 전체 검증, Vercel Preview, 릴리즈 게이트로 관리합니다.
 
+## Git 작업·배포 흐름
+
+브랜치 역할, 작업 브랜치 접두사, PR 대상, 긴급 수정, 실제 배포 절차는
+[GIT_WORKFLOW.md](GIT_WORKFLOW.md)를 기준으로 관리합니다.
+
+일반 작업은 `dev`에서 분기해 `dev`로 PR을 생성합니다. 배포 후보는 `dev`에서
+`release`로 승격하고, 실제 배포 확인을 마친 내용은 `main`에 기록합니다. 운영 서비스의
+긴급 수정은 `release`에서 분기한 `hotfix/*`로 처리합니다.
+
 ## API 계약
 
 API 경로·인증·요청·응답 필드는 [FORIF Scalar](https://dev.forif.org/scalar)를
@@ -67,6 +76,7 @@ API 경로·인증·요청·응답 필드는 [FORIF Scalar](https://dev.forif.or
 
 - [README.md](README.md): 저장소 소개와 빠른 시작
 - 이 문서: 공통 개발·검증·PR 흐름
+- [GIT_WORKFLOW.md](GIT_WORKFLOW.md): 브랜치, PR 승격, 배포와 hotfix 기준
 - [CODEX.md](CODEX.md): Codex 작업 지침
 - [CLAUDE.md](CLAUDE.md): Claude Code 작업 지침
 - 앱 README: 앱별 실행과 환경 설정

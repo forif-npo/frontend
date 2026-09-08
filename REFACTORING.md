@@ -101,6 +101,8 @@ standalone symlink 권한 오류는 컴파일·타입·정적 생성 결과와 �
 ## Git과 기록
 
 - Git의 stage, commit, push, branch, merge는 사용자가 제어합니다.
+- 브랜치, PR 승격, 배포와 hotfix 절차는 [GIT_WORKFLOW.md](GIT_WORKFLOW.md)를
+  기준으로 관리합니다.
 - 하나의 작업은 한 가지 의도를 가진 diff로 유지합니다.
 - 각 리팩토링 결과에는 문제, 변경 이유, 사용자 영향, 실행한 검증, 남은 위험을
   기록합니다.

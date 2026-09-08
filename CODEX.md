@@ -1,7 +1,7 @@
 # Codex 작업 보충 지침
 
-Codex는 [AGENTS.md](AGENTS.md)와 [REFACTORING.md](REFACTORING.md)를 먼저 읽고
-작업합니다.
+Codex는 [AGENTS.md](AGENTS.md), [REFACTORING.md](REFACTORING.md),
+[GIT_WORKFLOW.md](GIT_WORKFLOW.md)를 먼저 읽고 작업합니다.
 
 ## 실행
 
@@ -15,5 +15,6 @@ Codex는 [AGENTS.md](AGENTS.md)와 [REFACTORING.md](REFACTORING.md)를 먼저 �
 ## 작업 문서
 
 - 개발·검증·PR 절차: [CONTRIBUTING.md](CONTRIBUTING.md)
+- 브랜치·배포 절차: [GIT_WORKFLOW.md](GIT_WORKFLOW.md)
 - web 앱: [apps/web/README.md](apps/web/README.md)
 - admin 앱: [apps/admin/README.md](apps/admin/README.md)
