@@ -95,6 +95,7 @@ const mockedWithdrawRegistrations = withdrawRegistrations as unknown as {
 
 describe("DuesView", () => {
   beforeEach(() => {
+    mockRouter.push.mockReset();
     mockRefresh.mockReset();
     mockedUpdateDues.mockReset();
     mockedUpdateDues.mockResolvedValue(undefined);
@@ -223,5 +224,48 @@ describe("DuesView", () => {
     rerender(<DuesView {...props} initialSearch="홍길동" />);
 
     expect(screen.getByText("0명 선택")).not.toBeNull();
+  });
+
+  it("navigates with each top-level outstanding filter", () => {
+    render(
+      <DuesView
+        initialData={{
+          semester: { actYear: 2026, actSemester: 2, label: "2026-2학기" },
+          summary: {
+            totalCount: 1,
+            duesPaidCount: 0,
+            googleFormSubmittedCount: 0,
+            completedCount: 0,
+          },
+          content: [
+            {
+              userId: 20260001,
+              userName: "홍길동",
+              department: "컴퓨터소프트웨어학부",
+              duesPaid: false,
+              googleFormSubmitted: false,
+            },
+          ],
+          totalElements: 1,
+          currentPage: 0,
+          totalPages: 1,
+          pageSize: 20,
+        }}
+        initialSearch=""
+        initialSorting={[]}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "구글폼 미제출자만 보기" }),
+    );
+    expect(mockRouter.push).toHaveBeenLastCalledWith(
+      "/dues?google_form_submitted=false&page=0",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "회비 미납자만 보기" }));
+    expect(mockRouter.push).toHaveBeenLastCalledWith(
+      "/dues?dues_paid=false&page=0",
+    );
   });
 });
