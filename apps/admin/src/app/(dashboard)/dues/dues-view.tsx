@@ -196,8 +196,8 @@ export function DuesView({
         />
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-1 flex-wrap items-center gap-2">
+      <div className="space-y-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <SearchBar
             value={search}
             onChange={setSearch}
@@ -209,41 +209,45 @@ export function DuesView({
             selectOnFocus
             inputRef={searchInputRef}
           />
-          <Button
-            type="button"
-            variant={initialDuesPaidFilter === false ? "default" : "outline"}
-            disabled={isSaving || isWithdrawing}
-            onClick={() =>
-              requestNavigation({
-                dues_paid: initialDuesPaidFilter === false ? null : "false",
-                page: "0",
-              })
-            }
-          >
-            입금 미확인만 보기
-          </Button>
-          <Button
-            type="button"
-            variant={
-              initialGoogleFormSubmittedFilter === false ? "default" : "outline"
-            }
-            disabled={isSaving || isWithdrawing}
-            onClick={() =>
-              requestNavigation({
-                google_form_submitted:
-                  initialGoogleFormSubmittedFilter === false ? null : "false",
-                page: "0",
-              })
-            }
-          >
-            구글폼 미제출만 보기
-          </Button>
-          {(isSaving || isWithdrawing) && (
-            <span className="text-muted-foreground text-sm" role="status">
-              처리 중...
-            </span>
-          )}
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button
+              type="button"
+              variant={
+                initialGoogleFormSubmittedFilter === false
+                  ? "default"
+                  : "outline"
+              }
+              disabled={isSaving || isWithdrawing}
+              onClick={() =>
+                requestNavigation({
+                  google_form_submitted:
+                    initialGoogleFormSubmittedFilter === false ? null : "false",
+                  page: "0",
+                })
+              }
+            >
+              구글폼 미제출자만 보기
+            </Button>
+            <Button
+              type="button"
+              variant={initialDuesPaidFilter === false ? "default" : "outline"}
+              disabled={isSaving || isWithdrawing}
+              onClick={() =>
+                requestNavigation({
+                  dues_paid: initialDuesPaidFilter === false ? null : "false",
+                  page: "0",
+                })
+              }
+            >
+              회비 미납자만 보기
+            </Button>
+          </div>
         </div>
+        {(isSaving || isWithdrawing) && (
+          <span className="text-muted-foreground text-sm" role="status">
+            처리 중...
+          </span>
+        )}
       </div>
 
       {initialSearch && (

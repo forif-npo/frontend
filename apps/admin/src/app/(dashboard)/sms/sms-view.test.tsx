@@ -28,7 +28,29 @@ jest.mock("@/components/ui/textarea", () => ({
 }));
 
 jest.mock("@/components/ui/single-day-picker", () => ({
-  SingleDayPicker: () => null,
+  SingleDayPicker: ({
+    onSelect,
+    onTimeChange,
+  }: {
+    onSelect: (date: Date | undefined) => void;
+    onTimeChange?: (time: string) => void;
+  }) => (
+    <>
+      <button
+        type="button"
+        onClick={() => onSelect(new Date("2026-09-08T00:00:00"))}
+      >
+        날짜 선택
+      </button>
+      {onTimeChange && (
+        <input
+          type="time"
+          aria-label="시간 (선택)"
+          onChange={(event) => onTimeChange(event.target.value)}
+        />
+      )}
+    </>
+  ),
 }));
 
 jest.mock("@/components/ui/form", () => {
@@ -190,6 +212,54 @@ describe("SmsView", () => {
         receivers: ["01011112222"],
         templateCode: "template-1",
         variables: { "#{스터디명}": "React 심화" },
+      });
+    });
+  });
+
+  it("includes a selected time in the schedule variable and omits it when cleared", async () => {
+    mockedGetTemplates.mockResolvedValue([
+      {
+        ...template,
+        content: "일시는 #{일시}입니다.",
+        variables: ["#{일시}"],
+      },
+    ]);
+
+    render(<SmsView />);
+    await screen.findByRole("option", { name: "스터디 안내" });
+    fireEvent.change(screen.getByRole("combobox"), {
+      target: { value: "template-1" },
+    });
+    fireEvent.change(screen.getAllByRole("textbox")[0], {
+      target: { value: "01011112222" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "날짜 선택" }));
+    fireEvent.change(screen.getByLabelText("시간 (선택)"), {
+      target: { value: "19:30" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "알림톡 발송" }));
+    fireEvent.click(await screen.findByRole("button", { name: "발송" }));
+
+    await waitFor(() => {
+      expect(sendAlimTalk).toHaveBeenCalledWith({
+        receivers: ["01011112222"],
+        templateCode: "template-1",
+        variables: { "#{일시}": "2026-09-08 19:30" },
+      });
+    });
+
+    fireEvent.change(screen.getByLabelText("시간 (선택)"), {
+      target: { value: "" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "알림톡 발송" }));
+    fireEvent.click(await screen.findByRole("button", { name: "발송" }));
+
+    await waitFor(() => {
+      expect(sendAlimTalk).toHaveBeenLastCalledWith({
+        receivers: ["01011112222"],
+        templateCode: "template-1",
+        variables: { "#{일시}": "2026-09-08" },
       });
     });
   });

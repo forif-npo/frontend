@@ -57,7 +57,7 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.29.3",
   "msw": {
     "workerDirectory": [
       "public"

@@ -270,7 +270,7 @@ export function DataTable<TData, TValue>({
         Esc 키를 누르면 정렬이 해제됩니다.
       </div>
       <div className="rounded-md border">
-        <Table className="min-w-max">
+        <Table className="max-md:min-w-max">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -311,8 +311,8 @@ export function DataTable<TData, TValue>({
                       key={cell.id}
                       className={
                         cell.column.id === "actions"
-                          ? "h-12 whitespace-nowrap px-3 py-0 text-center md:px-4"
-                          : "h-12 whitespace-nowrap px-3 py-0 md:px-4"
+                          ? "h-12 px-3 py-0 text-center max-md:whitespace-nowrap md:px-4"
+                          : "h-12 px-3 py-0 max-md:whitespace-nowrap md:px-4"
                       }
                     >
                       {flexRender(

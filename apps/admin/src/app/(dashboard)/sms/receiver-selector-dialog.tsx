@@ -25,7 +25,10 @@ import {
 } from "@/components/ui/select";
 import type { Receiver, ReceiverTarget } from "./types";
 
+const DEFAULT_RECEIVER_TARGET: ReceiverTarget = "CURRENT_SEMESTER_APPLICANTS";
+
 const RECEIVER_TARGET_OPTIONS: { value: ReceiverTarget; label: string }[] = [
+  { value: "CURRENT_SEMESTER_APPLICANTS", label: "현재 학기 신청자" },
   {
     value: "CURRENT_SEMESTER_REGULAR_STUDY_ACCEPTED_APPLICANTS",
     label: "현재 학기 정규스터디 합격자",
@@ -38,7 +41,6 @@ const RECEIVER_TARGET_OPTIONS: { value: ReceiverTarget; label: string }[] = [
     value: "CURRENT_SEMESTER_REJECTED_APPLICANTS",
     label: "현재 학기 불합격자",
   },
-  { value: "CURRENT_SEMESTER_APPLICANTS", label: "현재 학기 신청자" },
   {
     value: "ACCEPTED_DUES_UNPAID",
     label: "현재 학기 회비 미납 합격자",
@@ -77,7 +79,7 @@ export function ReceiverSelectorDialog({
   const [receiverSearch, setReceiverSearch] = useState("");
   const [activeReceiverSearch, setActiveReceiverSearch] = useState("");
   const [receiverTarget, setReceiverTarget] = useState<ReceiverTarget>(
-    "CURRENT_SEMESTER_MEMBERS",
+    DEFAULT_RECEIVER_TARGET,
   );
   const [nextReceiverCursor, setNextReceiverCursor] = useState<number | null>(
     null,
@@ -154,7 +156,7 @@ export function ReceiverSelectorDialog({
 
     const initialize = async () => {
       setReceiverSearch("");
-      setReceiverTarget("CURRENT_SEMESTER_MEMBERS");
+      setReceiverTarget(DEFAULT_RECEIVER_TARGET);
       setSelectedReceivers(new Map());
       setIsReceiversLoading(true);
       setReceiverError(null);
@@ -163,7 +165,7 @@ export function ReceiverSelectorDialog({
         await loadReceivers({
           search: "",
           replace: true,
-          target: "CURRENT_SEMESTER_MEMBERS",
+          target: DEFAULT_RECEIVER_TARGET,
         });
       } catch (err) {
         setReceiverError(await handleApiError(err));

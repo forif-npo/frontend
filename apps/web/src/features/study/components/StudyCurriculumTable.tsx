@@ -55,8 +55,12 @@ export function StudyCurriculumTable<TContent>({
   const tableColumnCount = showDateColumn ? 5 : 4;
 
   return (
-    <div className="w-full max-w-full overflow-x-auto">
-      <div className={showDateColumn ? "min-w-[520px]" : "min-w-[420px]"}>
+    <div className="w-full max-w-full max-md:overflow-x-auto">
+      <div
+        className={
+          showDateColumn ? "max-md:min-w-[520px]" : "max-md:min-w-[420px]"
+        }
+      >
         <table className="w-full table-fixed border-collapse">
           <colgroup>
             <col className="w-[24px]" />

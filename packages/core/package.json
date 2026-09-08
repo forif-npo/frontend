@@ -44,7 +44,7 @@
     "ts-jest": "^29.3.2",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.29.3",
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
