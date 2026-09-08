@@ -62,6 +62,24 @@ import {
   sortAlimTalkTemplatesByNameDescending,
 } from "./sms-utils";
 
+function getSelectedDate(value: string | undefined) {
+  if (!value) return undefined;
+
+  const date = new Date(
+    value.includes(" ") ? `${value.replace(" ", "T")}:00` : `${value}T00:00:00`,
+  );
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
+function getSelectedTime(value: string | undefined) {
+  return value?.match(/^\d{4}-\d{2}-\d{2} (\d{2}:\d{2})$/)?.[1] ?? "";
+}
+
+function formatScheduleValue(date: Date, time = "") {
+  const dateValue = format(date, "yyyy-MM-dd");
+  return time ? `${dateValue} ${time}` : dateValue;
+}
+
 export function SmsView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [templates, setTemplates] = useState<AlimTalkTemplate[]>([]);
@@ -322,19 +340,41 @@ export function SmsView() {
                       <SingleDayPicker
                         disabled={isSubmitting}
                         placeholder="날짜 선택"
-                        labelVariant="yyyy-MM-dd"
-                        value={
-                          variableValues[variable]
-                            ? new Date(`${variableValues[variable]}T00:00:00`)
-                            : undefined
+                        labelVariant={
+                          getSelectedTime(variableValues[variable])
+                            ? "yyyy-MM-dd HH:mm"
+                            : "yyyy-MM-dd"
                         }
+                        value={getSelectedDate(variableValues[variable])}
                         onSelect={(date) =>
                           form.setValue(
                             `variables.${variable}`,
-                            date ? format(date, "yyyy-MM-dd") : "",
+                            date
+                              ? formatScheduleValue(
+                                  date,
+                                  getSelectedTime(variableValues[variable]),
+                                )
+                              : "",
                             { shouldValidate: true },
                           )
                         }
+                        {...(variable === "#{일시}"
+                          ? {
+                              time: getSelectedTime(variableValues[variable]),
+                              onTimeChange: (time: string) => {
+                                const date = getSelectedDate(
+                                  variableValues[variable],
+                                );
+                                if (!date) return;
+
+                                form.setValue(
+                                  `variables.${variable}`,
+                                  formatScheduleValue(date, time),
+                                  { shouldValidate: true },
+                                );
+                              },
+                            }
+                          : {})}
                       />
                     ) : (
                       <Input
