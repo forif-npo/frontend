@@ -44,12 +44,14 @@ export default async function Page() {
             bannerClassName="max-w-none rounded-none"
           />
         </section>
-        <section className="mb-2 w-full md:hidden">
-          <Carousel
-            carouselItems={mobileCarouselItems}
-            bannerClassName="max-w-none rounded-none"
-          />
-        </section>
+        {mobileCarouselItems.length > 0 && (
+          <section className="mb-2 w-full md:hidden">
+            <Carousel
+              carouselItems={mobileCarouselItems}
+              bannerClassName="max-w-none rounded-none"
+            />
+          </section>
+        )}
         <section className="-mb-5 w-full md:hidden">
           <ForifIntroBanner variant="mobile-section" />
         </section>

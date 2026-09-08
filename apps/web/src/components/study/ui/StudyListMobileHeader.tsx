@@ -56,7 +56,7 @@ export const StudyListMobileHeader: React.FC<StudyListMobileHeaderProps> = ({
   );
 
   return (
-    <div className="z-[9999] md:hidden">
+    <div className="z-[9999] lg:hidden">
       <div className="mb-4">
         <SearchBar
           value={searchInput}

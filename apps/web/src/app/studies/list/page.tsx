@@ -180,7 +180,7 @@ export default function StudyListPage() {
           loading={loading}
         />
 
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <div className="mb-6 flex items-center justify-between gap-7">
             <SearchBar
               value={searchInput}

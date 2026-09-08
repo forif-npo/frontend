@@ -39,11 +39,13 @@ export function PageHeader({
       >
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-3xl font-semibold text-gray-900">{title}</h1>
+            <h1 className="text-text-basic text-title-xxl-mobile sm:text-title-xxl font-bold">
+              {title}
+            </h1>
             {titleAddon}
           </div>
           {description && (
-            <p className="text-text-basic mt-2 text-sm">{description}</p>
+            <p className="text-text-basic text-body-s mt-2">{description}</p>
           )}
         </div>
         {action}
