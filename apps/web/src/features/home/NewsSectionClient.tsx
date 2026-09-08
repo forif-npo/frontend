@@ -5,7 +5,7 @@ import Link from "next/link";
 import { EmptyState, Label } from "@ui/components/server";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
-import type { NewsItem } from "./NewsSection";
+import type { NewsItem } from "./news-items";
 
 type Tab = "all" | "announcement" | "medium";
 

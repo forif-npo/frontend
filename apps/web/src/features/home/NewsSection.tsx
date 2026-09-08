@@ -1,15 +1,6 @@
 import { getAnnouncements } from "@/features/support/announcements/api/announcements.api";
 import { NewsSectionClient } from "./NewsSectionClient";
-
-export type NewsItem = {
-  type: "announcement" | "medium" | "faq";
-  id: string;
-  title: string;
-  excerpt: string;
-  imageUrl?: string;
-  href: string;
-  date?: string; // ISO string
-};
+import { toMediumNewsItems, type NewsItem } from "./news-items";
 
 async function getMediumPosts(): Promise<NewsItem[]> {
   try {
@@ -18,28 +9,7 @@ async function getMediumPosts(): Promise<NewsItem[]> {
       { next: { revalidate: 3600 } },
     );
     if (!res.ok) return [];
-    const data = await res.json();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (data.items ?? []).slice(0, 6).map((item: any) => {
-      // rss2json provides thumbnail, fallback to first <img> in content
-      let imageUrl: string | undefined =
-        item.thumbnail || item.enclosure?.link || undefined;
-      if (!imageUrl && item.description) {
-        const match = item.description.match(/<img[^>]+src="([^"]+)"/);
-        if (match) imageUrl = match[1];
-      }
-      return {
-        type: "medium" as const,
-        id: item.guid ?? item.link,
-        title: item.title,
-        excerpt: item.description
-          ? item.description.replace(/<[^>]+>/g, "").slice(0, 100) + "…"
-          : "",
-        imageUrl,
-        href: item.link,
-        date: item.pubDate ?? undefined,
-      };
-    });
+    return toMediumNewsItems(await res.json());
   } catch {
     return [];
   }
