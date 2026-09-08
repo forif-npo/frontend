@@ -244,7 +244,7 @@ export function SemesterManageView({
                           value={String(admin.user_id)}
                         >
                           {admin.name} ({admin.user_id})
-                          {admin.user_id === currentUserId ? " — 본인" : ""}
+                          {admin.user_id === currentUserId ? " - 본인" : ""}
                         </SelectItem>
                       ))}
                     </SelectContent>

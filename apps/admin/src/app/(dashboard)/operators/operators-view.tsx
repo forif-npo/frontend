@@ -341,7 +341,7 @@ export function OperatorsView({
             <DialogTitle>운영진 정보 수정</DialogTitle>
             <DialogDescription>
               {editTarget?.name} ({editTarget?.actYear}-
-              {editTarget?.actSemester}) — 운영진 소개 페이지에 표시되는
+              {editTarget?.actSemester}) 운영진 소개 페이지에 표시되는
               정보입니다.{" "}
               {!canManageEditTarget &&
                 "소개, 사진, 졸업년도만 수정할 수 있습니다."}

@@ -744,7 +744,7 @@ export function CertificatesView({
               {ineligibleSelected.map((t) => (
                 <li key={t.user_id}>
                   <span className="font-medium">{t.user_name}</span> (
-                  {t.user_id}) —{" "}
+                  {t.user_id}) -{" "}
                   {[
                     t.attendance_count < (targetsData?.required_attendance ?? 5)
                       ? `출석 ${t.attendance_count}/${targetsData?.required_attendance ?? 5}회`

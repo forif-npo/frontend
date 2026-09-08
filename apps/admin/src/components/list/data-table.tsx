@@ -251,10 +251,14 @@ export function DataTable<TData, TValue>({
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape" || sorting.length === 0) return;
-
-      const target = event.target;
-      if (!(target instanceof Element) || !target.closest("table")) return;
+      if (
+        event.key !== "Escape" ||
+        event.defaultPrevented ||
+        event.isComposing ||
+        sorting.length === 0
+      ) {
+        return;
+      }
 
       event.preventDefault();
       onSortingChange([]);

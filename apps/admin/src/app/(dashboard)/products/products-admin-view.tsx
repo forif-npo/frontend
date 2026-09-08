@@ -179,7 +179,7 @@ export function ProductsAdminView() {
     () => [
       {
         accessorKey: "status",
-        header: "신청·운영 상태",
+        header: "신청 상태",
         cell: ({ row }) => statusBadges(row.original),
       },
       {
