@@ -71,6 +71,7 @@ describe("members api", () => {
       content: [
         {
           userId: 20260001,
+          departmentId: null,
           userName: "홍길동",
           currentStudyName: "React 심화",
           department: "컴퓨터소프트웨어학부",

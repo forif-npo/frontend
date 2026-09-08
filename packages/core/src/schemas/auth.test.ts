@@ -5,7 +5,7 @@ const validSignUp = {
   email: "member@forif.org",
   id: "2026000001",
   name: "홍길동",
-  department: "컴퓨터소프트웨어학부",
+  departmentId: "1",
   phoneNumber: "010-1234-5678",
   serviceTermAgree: true,
   privacyPolicyAgree: true,
