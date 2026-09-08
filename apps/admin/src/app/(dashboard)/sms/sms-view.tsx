@@ -213,9 +213,9 @@ export function SmsView() {
         description="카카오 알림톡을 통해 스터디 관련 알림을 발송할 수 있습니다."
       />
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
         {/* 발송 폼 */}
-        <div className="rounded-md border p-6">
+        <div className="min-w-0 rounded-md border p-4 sm:p-6">
           <h2 className="mb-4 text-lg font-semibold">알림톡 발송</h2>
           <Form {...form}>
             <form
@@ -416,96 +416,92 @@ export function SmsView() {
           </Form>
         </div>
 
-        <div className="space-y-8">
-          <AlimTalkPreview
-            template={selectedTemplate}
-            variables={variableValues}
-          />
+        <AlimTalkPreview
+          template={selectedTemplate}
+          variables={variableValues}
+        />
 
-          {/* 발송 결과 */}
-          <div className="rounded-md border p-6">
-            <h2 className="mb-4 text-lg font-semibold">발송 결과</h2>
+        {/* 발송 결과 */}
+        <div className="min-w-0 rounded-md border p-4 sm:p-6">
+          <h2 className="mb-4 text-lg font-semibold">발송 결과</h2>
 
-            {!result && !error && (
-              <div className="text-muted-foreground flex h-48 items-center justify-center text-sm">
-                알림톡을 발송하면 결과가 여기에 표시됩니다.
+          {!result && !error && (
+            <div className="text-muted-foreground flex h-48 items-center justify-center text-sm">
+              알림톡을 발송하면 결과가 여기에 표시됩니다.
+            </div>
+          )}
+
+          {error && (
+            <div className="border-border-danger-light bg-danger-5 rounded-md border p-4">
+              <div className="text-text-danger flex items-center gap-2">
+                <XCircle className="h-5 w-5" />
+                <span className="font-medium">발송 실패</span>
               </div>
-            )}
+              <p className="text-text-danger mt-2 text-sm">{error}</p>
+            </div>
+          )}
 
-            {error && (
-              <div className="border-border-danger-light bg-danger-5 rounded-md border p-4">
-                <div className="text-text-danger flex items-center gap-2">
-                  <XCircle className="h-5 w-5" />
-                  <span className="font-medium">발송 실패</span>
-                </div>
-                <p className="text-text-danger mt-2 text-sm">{error}</p>
-              </div>
-            )}
-
-            {result && (
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <Badge variant="outline">
-                    템플릿 ID: {result.templateId}
-                  </Badge>
+          {result && (
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="outline">템플릿 ID: {result.templateId}</Badge>
+                <Badge
+                  variant="outline"
+                  className="border-border-primary bg-primary-5 text-text-primary"
+                >
+                  전체 {result.totalCount}건
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="border-border-success-light bg-success-5 text-text-success"
+                >
+                  <CheckCircle className="mr-1 h-3 w-3" />
+                  성공 {result.successCount}건
+                </Badge>
+                {result.failureCount > 0 && (
                   <Badge
                     variant="outline"
-                    className="border-border-primary bg-primary-5 text-text-primary"
+                    className="border-border-danger-light bg-danger-5 text-text-danger"
                   >
-                    전체 {result.totalCount}건
+                    <XCircle className="mr-1 h-3 w-3" />
+                    실패 {result.failureCount}건
                   </Badge>
-                  <Badge
-                    variant="outline"
-                    className="border-border-success-light bg-success-5 text-text-success"
-                  >
-                    <CheckCircle className="mr-1 h-3 w-3" />
-                    성공 {result.successCount}건
-                  </Badge>
-                  {result.failureCount > 0 && (
-                    <Badge
-                      variant="outline"
-                      className="border-border-danger-light bg-danger-5 text-text-danger"
+                )}
+              </div>
+
+              <div className="max-h-80 space-y-1 overflow-y-auto">
+                {result.results.map((item) => {
+                  const isSuccess = item.success;
+                  return (
+                    <div
+                      key={item.receiver}
+                      className={`rounded px-3 py-2 text-sm ${
+                        isSuccess
+                          ? "bg-success-5 text-text-success"
+                          : "bg-danger-5 text-text-danger"
+                      }`}
                     >
-                      <XCircle className="mr-1 h-3 w-3" />
-                      실패 {result.failureCount}건
-                    </Badge>
-                  )}
-                </div>
-
-                <div className="max-h-80 space-y-1 overflow-y-auto">
-                  {result.results.map((item) => {
-                    const isSuccess = item.success;
-                    return (
-                      <div
-                        key={item.receiver}
-                        className={`rounded px-3 py-2 text-sm ${
-                          isSuccess
-                            ? "bg-success-5 text-text-success"
-                            : "bg-danger-5 text-text-danger"
-                        }`}
-                      >
-                        {isSuccess ? (
-                          <CheckCircle className="mr-2 inline h-3 w-3" />
-                        ) : (
-                          <XCircle className="mr-2 inline h-3 w-3" />
-                        )}
-                        <span className="font-medium">
-                          {formatPhoneNumber(item.receiver)}
+                      {isSuccess ? (
+                        <CheckCircle className="mr-2 inline h-3 w-3" />
+                      ) : (
+                        <XCircle className="mr-2 inline h-3 w-3" />
+                      )}
+                      <span className="font-medium">
+                        {formatPhoneNumber(item.receiver)}
+                      </span>
+                      {!isSuccess && (
+                        <span className="ml-2 break-words">
+                          {item.errorCode && `[${item.errorCode}] `}
+                          {item.errorMessage ??
+                            "Solapi에서 발송을 거절했습니다."}
                         </span>
-                        {!isSuccess && (
-                          <span className="ml-2">
-                            {item.errorCode && `[${item.errorCode}] `}
-                            {item.errorMessage ??
-                              "Solapi에서 발송을 거절했습니다."}
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 

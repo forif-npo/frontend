@@ -40,12 +40,9 @@ function getPreviewLinkHref(link: string, variables: Record<string, string>) {
 
 export function AlimTalkPreview({ template, variables }: AlimTalkPreviewProps) {
   return (
-    <section className="rounded-md border p-6">
-      <div className="mb-4 flex items-center justify-between">
+    <section className="min-w-0 rounded-md border p-4 sm:p-6">
+      <div className="mb-4">
         <h2 className="text-lg font-semibold">알림톡 미리보기</h2>
-        {template && (
-          <span className="text-muted-foreground text-xs">미리보기</span>
-        )}
       </div>
 
       <div className="bg-secondary-20 mx-auto max-w-sm overflow-hidden rounded-xl p-4 shadow-sm">
