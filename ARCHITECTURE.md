@@ -30,7 +30,9 @@
 2. 파일이 어느 사용자·운영 기능을 소유하는지 정한다.
 3. 한 앱에서만 쓰는지, web과 admin이 모두 쓰는지 확인한다.
 4. 화면 조합·React 상태·API 호출을 갖는지, 순수 도메인 계약인지 구분한다.
-5. 현재 소비자가 둘 이상이고 독립적으로 변경될 이유가 있을 때만 공통 위치로 승격한다.
+5. 현재 소비자가 둘 이상이고 독립적으로 변경될 이유가 있을 때만 `core` 또는 `ui` 같은
+   공통 위치로 승격한다. 단일 소비자라도 독립 공개 API와 변경 주기가 분명한 라이브러리는
+   `big-calendar`처럼 별도 패키지로 둘 수 있다.
 
 파일을 옮기기 전에는 `rg`로 import와 테스트를 확인한다. 경로 자체가 외부 공개 계약인지는
 `package.json`의 `exports`, TypeScript path alias, 동적 import를 함께 확인한다.
@@ -165,26 +167,29 @@ web과 admin에서 재사용 근거가 있는 UI와 토큰을 둔다.
 | 독립적으로 관리하는 캘린더 UI·상태·스키마             | `packages/big-calendar`           |
 | 빌드·lint·TypeScript·Tailwind 공통 설정               | 해당 `packages/*-config`          |
 
-공통화는 “나중에 쓸 수도 있음”이 아니라 현재 중복 또는 둘 이상의 실제 소비자가 근거다.
-반대로 공통 모듈을 앱으로 내릴 때는 다른 앱·패키지의 import가 없는지 먼저 확인한다.
+`core`와 `ui` 공통화는 “나중에 쓸 수도 있음”이 아니라 현재 중복 또는 둘 이상의 실제
+소비자가 근거다. 단일 소비자 라이브러리는 독립 공개 API와 변경 주기가 확인될 때만 별도
+패키지로 둔다. 반대로 공통 모듈을 앱으로 내릴 때는 다른 앱·패키지의 import가 없는지 먼저
+확인한다.
 
 ## 의존성 방향
 
 ```text
 apps/*/src/app
   ├─ apps/*/src/features, components, providers
-  └─ packages/core, packages/ui
+  └─ packages/core, packages/ui, packages/assets
 
 apps/*/src/features
   ├─ 같은 feature의 내부 모듈
   ├─ 앱 공통 모듈
-  └─ packages/core, packages/ui
+  └─ packages/core, packages/ui, packages/assets
 
 apps/admin/src/app, features
   └─ packages/big-calendar
 
-packages/ui ── 디자인 토큰·UI primitive
+packages/ui ──> packages/core, packages/assets
 packages/core ── 도메인 계약·스키마·공통 유틸리티
+packages/assets ── 공용 정적 자산
 packages/big-calendar ── 캘린더 UI·상태·스키마
 ```
 
