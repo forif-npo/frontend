@@ -43,6 +43,7 @@ pnpm storybook
 - [Codex 지침](CODEX.md)
 - [Claude Code 지침](CLAUDE.md)
 - [리팩토링 운영 기준](REFACTORING.md)
+- [저장소 구조와 명명 규칙](ARCHITECTURE.md): 디렉터리 책임, 의존성 방향, 파일 명명 기준
 - [공유 캘린더](packages/big-calendar/README.md)
 - [공유 ESLint 설정](packages/eslint-config/README.md)
 - [공유 TypeScript 설정](packages/typescript-config/README.md)

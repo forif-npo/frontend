@@ -5,9 +5,9 @@
 ## 읽는 순서
 
 1. 이 문서에서 공통 작업 원칙을 확인합니다.
-2. 코드, 테스트, UI, 문서 구조를 변경할 때는 [REFACTORING.md](REFACTORING.md)를
-   확인합니다. UI를 만들거나 수정하거나 리뷰할 때는 [DESIGN_REVIEW.md](DESIGN_REVIEW.md)도
-   확인합니다.
+2. 코드, 테스트, UI, 문서 구조를 변경할 때는 [ARCHITECTURE.md](ARCHITECTURE.md)와
+   [REFACTORING.md](REFACTORING.md)를 확인합니다. UI를 만들거나 수정하거나 리뷰할 때는
+   [DESIGN_REVIEW.md](DESIGN_REVIEW.md)도 확인합니다.
 3. Codex는 [CODEX.md](CODEX.md), Claude Code는 [CLAUDE.md](CLAUDE.md)의 도구별
    지침을 확인합니다.
 4. 브랜치, PR 승격, 배포 절차는 [GIT_WORKFLOW.md](GIT_WORKFLOW.md)를 확인합니다.

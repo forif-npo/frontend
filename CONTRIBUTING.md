@@ -77,6 +77,7 @@ API 경로·인증·요청·응답 필드는 [FORIF Scalar](https://dev.forif.or
 - [README.md](README.md): 저장소 소개와 빠른 시작
 - 이 문서: 공통 개발·검증·PR 흐름
 - [GIT_WORKFLOW.md](GIT_WORKFLOW.md): 브랜치, PR 승격, 배포와 hotfix 기준
+- [ARCHITECTURE.md](ARCHITECTURE.md): 디렉터리 책임, 의존성 방향, 파일 명명 기준
 - [CODEX.md](CODEX.md): Codex 작업 지침
 - [CLAUDE.md](CLAUDE.md): Claude Code 작업 지침
 - 앱 README: 앱별 실행과 환경 설정

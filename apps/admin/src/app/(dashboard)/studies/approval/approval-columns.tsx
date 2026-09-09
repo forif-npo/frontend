@@ -1,5 +1,4 @@
 "use client";
-
 import { SortableHeader } from "@/components/list/sortable-header";
 import { Badge } from "@/components/ui/badge";
 import { STUDY_CREATION_STATUS_LABELS } from "@core/study-status";
