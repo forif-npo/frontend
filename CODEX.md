@@ -18,5 +18,6 @@ Codex는 [AGENTS.md](AGENTS.md), [REFACTORING.md](REFACTORING.md),
 
 - 개발·검증·PR 절차: [CONTRIBUTING.md](CONTRIBUTING.md)
 - 브랜치·배포 절차: [GIT_WORKFLOW.md](GIT_WORKFLOW.md)
+- 테스트 대상·mock 기준: [TESTING.md](TESTING.md)
 - web 앱: [apps/web/README.md](apps/web/README.md)
 - admin 앱: [apps/admin/README.md](apps/admin/README.md)
