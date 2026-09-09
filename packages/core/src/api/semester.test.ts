@@ -7,17 +7,17 @@ import {
   jest,
 } from "@jest/globals";
 
-jest.mock("@core/utils/api-client", () => ({
+jest.mock("../utils/api-client", () => ({
   apiClient: { get: jest.fn() },
 }));
 
-import { apiClient } from "@core/utils/api-client";
+import { apiClient } from "../utils/api-client";
 import {
   fallbackSemester,
   getCurrentSemester,
   getSemesters,
   toSemesterLabel,
-} from "./api";
+} from "./semester";
 
 type GetMock = {
   mockReset: () => void;
@@ -32,7 +32,7 @@ function response(data: unknown) {
   };
 }
 
-describe("semester api", () => {
+describe("semester API", () => {
   beforeEach(() => {
     mockedGet.mockReset();
   });
@@ -41,7 +41,7 @@ describe("semester api", () => {
     jest.useRealTimers();
   });
 
-  it("formats semester labels and keeps the documented date-based fallback", () => {
+  it("formats labels and uses the documented date-based fallback", () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date("2026-08-01T00:00:00Z"));
 
@@ -62,7 +62,7 @@ describe("semester api", () => {
     expect(apiClient.get).toHaveBeenCalledWith("api/v1/semesters/current");
   });
 
-  it("falls back to the local semester and an empty list when the API omits data", async () => {
+  it("uses the existing fallbacks when the API omits data", async () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date("2026-03-01T00:00:00Z"));
     mockedGet.mockReturnValue(response(null));

@@ -102,6 +102,8 @@ UI 없는 공통 도메인 계약을 둔다.
 
 - `types`: API 요청·응답과 공통 도메인 타입. 백엔드 필드는 `snake_case`를 보존한다.
 - `schemas`: 경계를 검증하는 Zod 스키마와 그로부터 파생한 타입.
+- `api`: web·admin이 실제로 함께 쓰는 endpoint adapter. 화면 상태·권한 판단 없이
+  공통 API client와 도메인 계약만 사용한다. 앱 전용 요청 흐름은 각 feature의 `api.ts`에 둔다.
 - `utils`: 앱과 화면에 독립적인 순수 함수, API client 같은 공통 기술 유틸리티.
 - 루트 도메인 모듈: web·admin이 공통으로 사용하는 상태 라벨, 선택지, 도메인 상수.
 

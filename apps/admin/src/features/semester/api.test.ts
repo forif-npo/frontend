@@ -5,13 +5,7 @@ jest.mock("@core/utils/api-client", () => ({
 }));
 
 import { apiClient } from "@core/utils/api-client";
-import {
-  changeCurrentSemester,
-  getCurrentSemester,
-  getSemesterChangePreview,
-  getSemesters,
-  toSemesterLabel,
-} from "./api";
+import { changeCurrentSemester, getSemesterChangePreview } from "./api";
 
 type ApiMock = {
   mockReset: () => void;
@@ -38,22 +32,6 @@ describe("semester feature api", () => {
   beforeEach(() => {
     mockedGet.mockReset();
     mockedPatch.mockReset();
-  });
-
-  it("returns current and selectable semesters from their existing endpoints", async () => {
-    mockedGet
-      .mockReturnValueOnce(response(semester))
-      .mockReturnValue(response([semester]));
-
-    await expect(getCurrentSemester()).resolves.toEqual(semester);
-    await expect(getSemesters()).resolves.toEqual([semester]);
-
-    expect(apiClient.get).toHaveBeenNthCalledWith(
-      1,
-      "api/v1/semesters/current",
-    );
-    expect(apiClient.get).toHaveBeenNthCalledWith(2, "api/v1/semesters");
-    expect(toSemesterLabel(2026, 2)).toBe("26-2");
   });
 
   it("uses snake_case query fields for the semester change preview", async () => {

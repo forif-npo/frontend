@@ -4,6 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
+    "./api/*": "./src/api/*.ts",
     "./*": [
       "./src/*.ts"
     ],
