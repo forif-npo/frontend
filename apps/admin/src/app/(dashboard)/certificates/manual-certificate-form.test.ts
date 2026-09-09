@@ -1,9 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  EMPTY_MANUAL_CERTIFICATE_FORM,
-  toManualCertificateBody,
-  validateManualCertificateForm,
-} from "./manual-certificate-form";
+import { EMPTY_MANUAL_CERTIFICATE_FORM, toManualCertificateBody, validateManualCertificateForm } from "./manual-certificate-form";
 
 const completeForm = {
   ...EMPTY_MANUAL_CERTIFICATE_FORM,

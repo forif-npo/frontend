@@ -6,14 +6,7 @@ import { Crown, Pencil, ShieldCheck, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatPhoneNumber } from "@core/utils/phone-number";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DataTable } from "@/components/list/data-table";
@@ -22,14 +15,7 @@ import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { handleApiError } from "@core/utils/api-client";
 import { passwordSchema } from "@core/schemas";
-import {
-  createAdminAccount,
-  deleteAdminAccount,
-  delegatePresidency,
-  getAdminAccounts,
-  updateAdminAccount,
-  type AdminAccount,
-} from "./api";
+import { createAdminAccount, deleteAdminAccount, delegatePresidency, getAdminAccounts, updateAdminAccount, type AdminAccount } from "./api";
 
 interface AdminAccountsViewProps {
   /** 로그인한 운영진의 소속 (회장 / 부회장 / 운영진 ...) */

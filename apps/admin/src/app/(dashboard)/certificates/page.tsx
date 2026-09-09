@@ -1,11 +1,7 @@
 import { auth } from "@/auth";
 import { PageState } from "@ui/components/server";
 import { loadSemesterOptions } from "@/lib/semester";
-import {
-  fetchStudiesWithFallback,
-  parseStudySemesterFilter,
-  type SemesterLabel,
-} from "@/features/studies";
+import { fetchStudiesWithFallback, parseStudySemesterFilter, type SemesterLabel } from "@/features/studies";
 import { CertificatesView } from "./certificates-view";
 
 interface PageProps {
