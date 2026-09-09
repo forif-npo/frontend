@@ -30,17 +30,8 @@ import { StudyDeleteDialog } from "./components/StudyDeleteDialog";
 import { StudyEditDialog } from "./components/StudyEditDialog";
 import { EMPTY_STUDY_EDIT_FORM, getStudyTagLabel } from "./constants";
 import { buildStudyUpdateFormData, toStudyEditForm } from "./form-utils";
+import { parseStudySemesterFilter } from "./semester-utils";
 import { SemesterLabel, Study, StudyEditForm } from "./types";
-
-const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;
-
-function parseSemesterFilter(semester: SemesterLabel) {
-  const match = semester.match(SEMESTER_LABEL_PATTERN);
-
-  return match
-    ? { year: Number(`20${match[1]}`), semester: Number(match[2]) }
-    : {};
-}
 
 interface StudiesViewProps {
   initialData: Study[];
@@ -114,7 +105,7 @@ export function StudiesView({
                 {
                   size: 10000,
                   page: 0,
-                  ...parseSemesterFilter(currentSemester),
+                  ...parseStudySemesterFilter(currentSemester),
                   search: initialSearch || undefined,
                   studyStatuses: ["APPROVED", "STARTED"],
                   sorting,

@@ -4,11 +4,11 @@ import {
   fetchStudiesWithFallback,
   getCurrentSemester,
 } from "@/features/studies/api";
+import { parseStudySemesterFilter } from "@/features/studies/semester-utils";
 import { StudiesView } from "@/features/studies/studies-view";
 import type { SemesterLabel } from "@/features/studies/types";
 import { parseSortingParams } from "@/lib/list-sorting";
 
-const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;
 const PAGE_SIZE = 20;
 
 interface PageProps {
@@ -19,19 +19,6 @@ interface PageProps {
     page?: string;
     sort?: string | string[];
   }>;
-}
-
-function parseSemesterFilter(semester: SemesterLabel) {
-  const match = semester.match(SEMESTER_LABEL_PATTERN);
-
-  if (!match) {
-    return {};
-  }
-
-  return {
-    year: Number(`20${match[1]}`),
-    semester: Number(match[2]),
-  };
 }
 
 export default async function Page({ searchParams }: PageProps) {
@@ -49,7 +36,7 @@ export default async function Page({ searchParams }: PageProps) {
   const activeSemester = (params.semester as SemesterLabel) || defaultSemester;
 
   // Parse filters for API
-  const semesterFilter = parseSemesterFilter(activeSemester);
+  const semesterFilter = parseStudySemesterFilter(activeSemester);
   const search = params.search;
   const parsedPage = params.page ? parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);

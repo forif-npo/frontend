@@ -2,28 +2,14 @@ import { auth } from "@/auth";
 import { PageState } from "@ui/components/server";
 import { loadSemesterOptions } from "@/lib/semester";
 import { fetchStudiesWithFallback } from "@/features/studies/api";
+import { parseStudySemesterFilter } from "@/features/studies/semester-utils";
 import type { SemesterLabel } from "@/features/studies/types";
 import { CertificatesView } from "./certificates-view";
-
-const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;
 
 interface PageProps {
   searchParams: Promise<{
     semester?: string;
   }>;
-}
-
-function parseSemesterFilter(semester: SemesterLabel) {
-  const match = semester.match(SEMESTER_LABEL_PATTERN);
-
-  if (!match) {
-    return {};
-  }
-
-  return {
-    year: Number(`20${match[1]}`),
-    semester: Number(match[2]),
-  };
 }
 
 export default async function Page({ searchParams }: PageProps) {
@@ -41,7 +27,7 @@ export default async function Page({ searchParams }: PageProps) {
     params.semester === currentSemester || params.semester === previousSemester
       ? (params.semester as SemesterLabel)
       : currentSemester;
-  const semesterFilter = parseSemesterFilter(activeSemester);
+  const semesterFilter = parseStudySemesterFilter(activeSemester);
   const accessToken = session?.access_token;
 
   if (!accessToken) {

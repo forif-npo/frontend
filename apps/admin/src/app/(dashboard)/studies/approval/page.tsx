@@ -5,10 +5,10 @@ import {
   getCurrentSemester,
 } from "@/features/studies/api";
 import { ApprovalView } from "@/features/studies/approval/approval-view";
+import { parseStudySemesterFilter } from "@/features/studies/semester-utils";
 import type { SemesterLabel } from "@/features/studies/types";
 import { parseSortingParams } from "@/lib/list-sorting";
 
-const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;
 const PAGE_SIZE = 20;
 
 interface PageProps {
@@ -22,19 +22,6 @@ interface PageProps {
   }>;
 }
 
-function parseSemesterFilter(semester: SemesterLabel) {
-  const match = semester.match(SEMESTER_LABEL_PATTERN);
-
-  if (!match) {
-    return {};
-  }
-
-  return {
-    year: Number(`20${match[1]}`),
-    semester: Number(match[2]),
-  };
-}
-
 export default async function Page({ searchParams }: PageProps) {
   const [params, currentSemester, session] = await Promise.all([
     searchParams,
@@ -45,7 +32,7 @@ export default async function Page({ searchParams }: PageProps) {
   const defaultSemester =
     `${currentSemester.year.toString().slice(2)}-${currentSemester.semester}` as SemesterLabel;
   const activeSemester = (params.semester as SemesterLabel) || defaultSemester;
-  const semesterFilter = parseSemesterFilter(activeSemester);
+  const semesterFilter = parseStudySemesterFilter(activeSemester);
   const search = params.search;
   const includeProcessed = params.include_processed === "true";
   const parsedPage = params.page ? parseInt(params.page, 10) : 0;
