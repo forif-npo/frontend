@@ -1,5 +1,4 @@
 "use client";
-
 import { SortableHeader } from "@/components/list/sortable-header";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { DuesMember } from "./types";

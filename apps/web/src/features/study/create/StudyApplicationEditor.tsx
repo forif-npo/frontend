@@ -21,7 +21,7 @@ import { studyOpenSchema, type StudyOpenValues } from "@core/schemas";
 import {
   cancelStudyCreationApplication,
   type StudyApplicationDetail,
-} from "@/features/study-application/api";
+} from "@/features/study-application";
 import { handleApiError } from "@core/utils/api-client";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { useDateInput } from "@/hooks/useDateInput";

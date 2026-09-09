@@ -1,6 +1,6 @@
 import type { StudyOpenValues } from "@core/schemas";
 import { getStudyTagLabel } from "@/constants/study-tags";
-import type { StudyApplicationDetail } from "@/features/study-application/api";
+import type { StudyApplicationDetail } from "@/features/study-application";
 import { DEFAULT_CURRICULUM } from "@/features/study/create/constants";
 import type { StudyApplicationReferenceUpdate } from "@/features/study/create/actions";
 

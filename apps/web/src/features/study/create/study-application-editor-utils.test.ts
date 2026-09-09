@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type { StudyOpenValues } from "@core/schemas";
-import type { StudyApplicationDetail } from "@/features/study-application/api";
+import type { StudyApplicationDetail } from "@/features/study-application";
 import {
   buildReferenceUpdate,
   canUpdateStudyApplication,

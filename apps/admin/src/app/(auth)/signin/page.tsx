@@ -1,6 +1,7 @@
 import { SignInForm } from "@/features/auth/signin/signin-form";
 import { Body, Heading } from "@ui/components/server";
 import Image from "next/image";
+
 export default async function Page() {
   return (
     <main className="min-h-screen">

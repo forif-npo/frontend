@@ -9,7 +9,7 @@ import {
   getMyCreatedStudies,
   getMyIssuedMentorConfirmations,
 } from "@/features/study-manage/api";
-import { getMyStudyApplications } from "@/features/study-application/api";
+import { getMyStudyApplications } from "@/features/study-application";
 import { getCurrentSemester } from "@/features/semester/api";
 import { getDepartments } from "@/features/departments/api";
 import { getMyProductApplications, getProducts } from "@/features/products/api";

@@ -19,7 +19,7 @@ import type {
   CreatedStudy,
   IssuedMentorConfirmation,
 } from "@/features/study-manage/api";
-import type { StudyApplicationSummary } from "@/features/study-application/api";
+import type { StudyApplicationSummary } from "@/features/study-application";
 import type { Semester } from "@/features/semester/api";
 import type {
   ProductApplication,
