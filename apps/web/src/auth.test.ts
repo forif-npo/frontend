@@ -6,7 +6,6 @@ import {
   it,
   jest,
 } from "@jest/globals";
-
 jest.mock("@/env", () => ({
   env: {
     AUTH_SECRET: "test-secret",
@@ -34,7 +33,6 @@ jest.mock("@/features/auth/api", () => ({
 jest.mock("ky", () => ({
   HTTPError: class HTTPError extends Error {},
 }));
-
 import NextAuth from "next-auth";
 import { refreshTokenWithCookie } from "@/features/auth/api";
 import "./auth";

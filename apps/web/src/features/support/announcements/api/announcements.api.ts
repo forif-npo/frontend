@@ -3,7 +3,6 @@ import type {
   AnnouncementListResponse,
   AnnouncementPost,
 } from "../types/announcement.type";
-
 import { apiClient } from "@core/utils/api-client";
 
 type ApiAnnouncementPost = {

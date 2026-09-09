@@ -1,5 +1,4 @@
 "use client";
-
 import { TextInput, Checkbox, SelectBox } from "@ui/components/client";
 import { UseFormReturn, Controller } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";

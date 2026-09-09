@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useMemo, useState } from "react";
 import { getFaqs } from "../api/faqs.api";
 import type { FaqPost } from "../types/faq.type";

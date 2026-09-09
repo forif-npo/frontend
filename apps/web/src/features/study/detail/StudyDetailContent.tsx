@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useRef, useEffect } from "react";
 import { Badge } from "@ui/components/server";
 import { toFileDownloadUrl } from "@core/utils/file-download";

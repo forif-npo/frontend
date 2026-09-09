@@ -1,15 +1,11 @@
 import { isToday, startOfDay } from "date-fns";
 import { useMemo } from "react";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { DroppableDayCell } from "@big-calendar/calendar/components/dnd/droppable-day-cell";
 import { EventBullet } from "@big-calendar/calendar/components/month-view/event-bullet";
 import { MonthEventBadge } from "@big-calendar/calendar/components/month-view/month-event-badge";
-
 import { getMonthCellEvents } from "@big-calendar/calendar/helpers";
 import { cn } from "@big-calendar/lib/utils";
-
 import type { ICalendarCell, IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {

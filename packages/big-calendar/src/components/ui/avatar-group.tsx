@@ -1,13 +1,6 @@
 import { cloneElement, Children, forwardRef, useMemo } from "react";
-
 import { cn } from "@big-calendar/lib/utils";
-
-import type {
-  ElementRef,
-  HTMLAttributes,
-  ReactElement,
-  CSSProperties,
-} from "react";
+import type { ElementRef, HTMLAttributes, ReactElement, CSSProperties, } from "react";
 
 // ================================== //
 

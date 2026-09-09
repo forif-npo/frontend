@@ -1,19 +1,10 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
-
 import { formatDate } from "@big-calendar/lib/date";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { Badge } from "@big-calendar/components/ui/badge";
 import { Button } from "@big-calendar/components/ui/button";
-
-import {
-  getEventsCount,
-  navigateDate,
-  rangeText,
-} from "@big-calendar/calendar/helpers";
-
+import { getEventsCount, navigateDate, rangeText, } from "@big-calendar/calendar/helpers";
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 import type { TCalendarView } from "@big-calendar/calendar/types";
 

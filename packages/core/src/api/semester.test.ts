@@ -6,11 +6,9 @@ import {
   it,
   jest,
 } from "@jest/globals";
-
 jest.mock("../utils/api-client", () => ({
   apiClient: { get: jest.fn() },
 }));
-
 import { apiClient } from "../utils/api-client";
 import {
   fallbackSemester,

@@ -1,32 +1,24 @@
 /** @jest-environment jsdom */
-
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 const mockPush = jest.fn();
 const mockRouter = { push: mockPush };
-
 jest.mock("next/navigation", () => ({
   useRouter: () => mockRouter,
 }));
-
 jest.mock("./useStudyApplyData", () => ({
   useStudyApplyData: jest.fn(),
 }));
-
 jest.mock("./api", () => ({
   getStudyApplicationStatus: jest.fn(),
 }));
-
 jest.mock("./utils", () => ({
   getStudyBadgeTags: jest.fn(() => []),
 }));
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: { post: jest.fn() },
   handleApiError: jest.fn(),
 }));
-
 import { apiClient } from "@core/utils/api-client";
 import { getStudyApplicationStatus } from "./api";
 import type { StudyApplicationStatusResponse } from "./api";

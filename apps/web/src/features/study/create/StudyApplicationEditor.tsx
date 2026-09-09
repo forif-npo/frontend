@@ -1,7 +1,5 @@
 "use client";
-
 /* eslint-disable @next/next/no-img-element */
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";

@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: { post: jest.fn() },
 }));
-
 import { apiClient } from "@core/utils/api-client";
 import { logout, memberSignUp, refreshTokenWithCookie, userLogin } from "./api";
 

@@ -1,14 +1,10 @@
 import { useMemo } from "react";
 import { CalendarX2 } from "lucide-react";
 import { endOfDay, startOfDay, isSameMonth } from "date-fns";
-
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { ScrollArea } from "@big-calendar/components/ui/scroll-area";
 import { AgendaDayGroup } from "@big-calendar/calendar/components/agenda-view/agenda-day-group";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {

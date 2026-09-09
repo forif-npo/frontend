@@ -1,5 +1,4 @@
 "use client";
-
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";

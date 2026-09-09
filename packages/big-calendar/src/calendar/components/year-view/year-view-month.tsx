@@ -1,12 +1,8 @@
 import { useMemo } from "react";
 import { isSameDay, getDaysInMonth, startOfMonth } from "date-fns";
-
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { YearViewDayCell } from "@big-calendar/calendar/components/year-view/year-view-day-cell";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {

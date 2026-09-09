@@ -1,25 +1,19 @@
 /** @jest-environment jsdom */
-
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps, ReactNode } from "react";
-
 jest.mock("lucide-react", () => ({ Users: () => null }));
-
 jest.mock("@core/utils/api-client", () => ({
   handleApiError: jest.fn(),
 }));
-
 jest.mock("@/components/ui/badge", () => ({
   Badge: ({ children }: { children: ReactNode }) => <span>{children}</span>,
 }));
-
 jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }: ComponentProps<"button">) => (
     <button {...props}>{children}</button>
   ),
 }));
-
 jest.mock("@/components/ui/dialog", () => ({
   Dialog: ({ children }: { children: ReactNode }) => <>{children}</>,
   DialogContent: ({ children }: { children: ReactNode }) => (
@@ -36,11 +30,9 @@ jest.mock("@/components/ui/dialog", () => ({
   ),
   DialogTitle: ({ children }: { children: ReactNode }) => <h2>{children}</h2>,
 }));
-
 jest.mock("@/components/ui/input", () => ({
   Input: (props: ComponentProps<"input">) => <input {...props} />,
 }));
-
 jest.mock("@/components/ui/select", () => ({
   Select: ({
     children,
@@ -65,12 +57,10 @@ jest.mock("@/components/ui/select", () => ({
   SelectTrigger: () => null,
   SelectValue: () => null,
 }));
-
 jest.mock("./api", () => ({
   getAllReceivers: jest.fn(),
   getReceiverPage: jest.fn(),
 }));
-
 import { getReceiverPage } from "./api";
 import { ReceiverSelectorDialog } from "./receiver-selector-dialog";
 

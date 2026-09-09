@@ -1,14 +1,11 @@
 /** @jest-environment jsdom */
-
 import { describe, expect, it, jest, beforeEach } from "@jest/globals";
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: {
     post: jest.fn(),
     patch: jest.fn(),
   },
 }));
-
 import type { StudyOpenValues } from "@core/schemas";
 import { apiClient } from "@core/utils/api-client";
 import { submitStudyCreate } from "./actions";

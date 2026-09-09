@@ -1,10 +1,8 @@
 /** @jest-environment jsdom */
-
 import { describe, expect, it } from "@jest/globals";
 import { fireEvent, render, screen } from "@testing-library/react";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import { useState } from "react";
-
 import { DataTable } from "./data-table";
 
 type Row = {

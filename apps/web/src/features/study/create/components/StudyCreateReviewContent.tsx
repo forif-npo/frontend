@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState, type ReactNode } from "react";
 import { Badge } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";

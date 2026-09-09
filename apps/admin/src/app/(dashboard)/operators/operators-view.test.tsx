@@ -1,32 +1,25 @@
 /** @jest-environment jsdom */
-
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps, ReactNode } from "react";
-
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: jest.fn() }),
 }));
-
 jest.mock("lucide-react", () => ({
   Download: () => null,
   UserPlus: () => null,
 }));
-
 jest.mock("xlsx", () => ({
   utils: {},
   writeFile: jest.fn(),
 }));
-
 jest.mock("sonner", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
-
 jest.mock("@core/utils/api-client", () => ({ handleApiError: jest.fn() }));
 jest.mock("@core/utils/phone-number", () => ({
   formatPhoneNumber: (value: string) => value,
 }));
-
 jest.mock("@/hooks/use-list-view-filters", () => ({
   useListViewFilters: () => ({
     searchQuery: "",
@@ -38,7 +31,6 @@ jest.mock("@/hooks/use-list-view-filters", () => ({
     sorting: [],
   }),
 }));
-
 jest.mock("@/components/list/data-table", () => ({
   DataTable: ({
     data,
@@ -48,13 +40,11 @@ jest.mock("@/components/list/data-table", () => ({
     renderRowActions: (row: { userId: number }) => ReactNode;
   }) => <>{renderRowActions(data[0] as { userId: number })}</>,
 }));
-
 jest.mock("@/components/list/dropdown-menu", () => ({
   DropdownMenuItem: ({ children, ...props }: ComponentProps<"button">) => (
     <button {...props}>{children}</button>
   ),
 }));
-
 jest.mock("@/components/list/offset-pagination", () => ({
   OffsetPagination: () => null,
 }));
@@ -63,7 +53,6 @@ jest.mock("@/components/list/semester-tabs", () => ({
   SemesterTabs: () => null,
 }));
 jest.mock("@/components/page-header", () => ({ PageHeader: () => null }));
-
 jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }: ComponentProps<"button">) => (
     <button {...props}>{children}</button>
@@ -95,7 +84,6 @@ jest.mock("@/components/ui/dialog", () => ({
   ),
   DialogTitle: ({ children }: { children: ReactNode }) => <h2>{children}</h2>,
 }));
-
 jest.mock("./add-operator-dialog", () => ({ AddOperatorDialog: () => null }));
 jest.mock("./api", () => ({
   deleteOperator: jest.fn(),
@@ -104,7 +92,6 @@ jest.mock("./api", () => ({
   updateOperatorProfileImage: jest.fn(),
 }));
 jest.mock("./columns", () => ({ columns: [] }));
-
 import { OperatorsView } from "./operators-view";
 
 describe("OperatorsView", () => {

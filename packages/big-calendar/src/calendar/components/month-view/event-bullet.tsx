@@ -1,7 +1,5 @@
 import { cva } from "class-variance-authority";
-
 import { cn } from "@big-calendar/lib/utils";
-
 import type { TEventColor } from "@big-calendar/calendar/types";
 
 const eventBulletVariants = cva("size-2 shrink-0 rounded-full", {

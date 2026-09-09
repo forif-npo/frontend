@@ -1,16 +1,6 @@
-import {
-  addDays,
-  differenceInDays,
-  endOfWeek,
-  isAfter,
-  isBefore,
-  startOfDay,
-  startOfWeek,
-} from "date-fns";
+import { addDays, differenceInDays, endOfWeek, isAfter, isBefore, startOfDay, startOfWeek, } from "date-fns";
 import { useMemo } from "react";
-
 import { MonthEventBadge } from "@big-calendar/calendar/components/month-view/month-event-badge";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 import { parseToKST } from "@big-calendar/lib/date";
 

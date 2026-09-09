@@ -1,11 +1,9 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@/auth", () => ({ auth: jest.fn() }));
 jest.mock("@/features/my-page/api", () => ({
   updateUserPhoneNumber: jest.fn(),
   updateUserProfile: jest.fn(),
 }));
-
 import { auth } from "@/auth";
 import {
   updateUserPhoneNumber,

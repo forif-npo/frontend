@@ -1,5 +1,4 @@
 "use client";
-
 import { Modal } from "@ui/components/client";
 
 interface SubmitConfirmModalProps {

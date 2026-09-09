@@ -1,5 +1,4 @@
 "use client";
-
 import { Modal } from "@ui/components/client";
 import type { UseFormReturn } from "react-hook-form";
 import type { StudyOpenValues } from "@core/schemas";

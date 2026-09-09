@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useHackathonResults } from "../hooks/use-hackathon-results";
 import { generateSlides } from "../slides";

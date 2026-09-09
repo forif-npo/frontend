@@ -1,30 +1,24 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@/auth", () => ({
   auth: jest.fn(),
   signIn: jest.fn(),
   signOut: jest.fn(),
   unstable_update: jest.fn(),
 }));
-
 jest.mock("@/features/auth/signup/get-google-access-token", () => ({
   getGoogleAccessToken: jest.fn(),
 }));
-
 jest.mock("@/features/auth/api", () => ({
   memberSignUp: jest.fn(),
   userLogin: jest.fn(),
   logout: jest.fn(),
 }));
-
 jest.mock("@core/utils/api-client", () => ({
   handleApiError: jest.fn(),
 }));
-
 jest.mock("next/headers", () => ({
   cookies: jest.fn(),
 }));
-
 import { unstable_update } from "@/auth";
 import { memberSignUp } from "@/features/auth/api";
 import { getGoogleAccessToken } from "@/features/auth/signup/get-google-access-token";

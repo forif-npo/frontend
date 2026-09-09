@@ -1,23 +1,18 @@
 /** @jest-environment jsdom */
-
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps, ReactNode } from "react";
-
 jest.mock("sonner", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
-
 jest.mock("@/components/page-header", () => ({
   PageHeader: () => null,
 }));
-
 jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }: ComponentProps<"button">) => (
     <button {...props}>{children}</button>
   ),
 }));
-
 jest.mock("@/components/ui/dialog", () => ({
   Dialog: ({ children }: { children: ReactNode }) => <>{children}</>,
   DialogContent: ({ children }: { children: ReactNode }) => (
@@ -34,13 +29,11 @@ jest.mock("@/components/ui/dialog", () => ({
   ),
   DialogTitle: ({ children }: { children: ReactNode }) => <h2>{children}</h2>,
 }));
-
 jest.mock("@/components/ui/label", () => ({
   Label: ({ children, ...props }: ComponentProps<"label">) => (
     <label {...props}>{children}</label>
   ),
 }));
-
 jest.mock("@/components/ui/select", () => ({
   Select: ({ children }: { children: ReactNode }) => <>{children}</>,
   SelectContent: ({ children }: { children: ReactNode }) => (
@@ -52,11 +45,9 @@ jest.mock("@/components/ui/select", () => ({
   ),
   SelectValue: () => null,
 }));
-
 jest.mock("@core/utils/api-client", () => ({
   handleApiError: jest.fn(),
 }));
-
 jest.mock("./api", () => ({
   changeCurrentSemester: jest.fn(),
   getAdminCandidates: jest.fn(),
@@ -64,9 +55,7 @@ jest.mock("./api", () => ({
   getSemesterChangePreview: jest.fn(),
   getSemesters: jest.fn(),
 }));
-
 jest.mock("./schedule-section", () => ({ ScheduleSection: () => null }));
-
 import { toast } from "sonner";
 import {
   changeCurrentSemester,

@@ -5,7 +5,6 @@ import {
   mapEventColorToColorId,
   transformGoogleEventsToIEvents,
 } from "./transform";
-
 import type { TEventColor } from "@repo/big-calendar";
 
 export async function GET() {

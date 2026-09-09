@@ -1,5 +1,4 @@
 import { describe, expect, it } from "@jest/globals";
-
 import { buildListViewParams } from "./list-view-params";
 
 describe("buildListViewParams", () => {

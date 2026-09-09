@@ -1,5 +1,4 @@
 "use client";
-
 import { SortableHeader } from "@/components/list/sortable-header";
 import { ColumnDef } from "@tanstack/react-table";
 import { HACKATHON_STATUS_LABELS, type Hackathon } from "./types";

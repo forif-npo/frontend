@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import { Modal, Checkbox } from "@ui/components/client";
 import { STUDY_TAG_OPTIONS_BY_CATEGORY } from "@core/study-form";

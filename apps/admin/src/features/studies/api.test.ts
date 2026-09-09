@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: {
     post: jest.fn(),
@@ -7,11 +6,9 @@ jest.mock("@core/utils/api-client", () => ({
     delete: jest.fn(),
   },
 }));
-
 jest.mock("@/features/semester/api", () => ({
   getCurrentSemester: jest.fn(),
 }));
-
 import { apiClient } from "@core/utils/api-client";
 import {
   approveStudy,

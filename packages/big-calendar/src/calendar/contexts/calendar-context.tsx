@@ -1,14 +1,7 @@
 "use client";
-
 import { createContext, useContext, useEffect, useState } from "react";
-
 import type { IAttendee, IEvent } from "@big-calendar/calendar/interfaces";
-import type {
-  TBadgeVariant,
-  TCalendarView,
-  TVisibleHours,
-  TWorkingHours,
-} from "@big-calendar/calendar/types";
+import type { TBadgeVariant, TCalendarView, TVisibleHours, TWorkingHours, } from "@big-calendar/calendar/types";
 import type { Dispatch, SetStateAction } from "react";
 
 interface ICalendarContext {

@@ -1,7 +1,5 @@
 "use client";
-
 import { Button } from "@ui/components/client";
-
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 
 interface NavItem {

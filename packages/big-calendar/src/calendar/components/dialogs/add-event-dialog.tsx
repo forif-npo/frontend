@@ -1,50 +1,20 @@
 "use client";
-
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useDisclosure } from "@big-calendar/hooks/use-disclosure";
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
 import { useAddEvent } from "@big-calendar/calendar/hooks/use-add-event";
-
 import { Input } from "@big-calendar/components/ui/input";
 import { Button } from "@big-calendar/components/ui/button";
 import { Textarea } from "@big-calendar/components/ui/textarea";
 import { TimeInput } from "@big-calendar/components/ui/time-input";
 import { SingleDayPicker } from "@big-calendar/components/ui/single-day-picker";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@big-calendar/components/ui/avatar";
-import {
-  Form,
-  FormField,
-  FormLabel,
-  FormItem,
-  FormControl,
-  FormMessage,
-} from "@big-calendar/components/ui/form";
-import {
-  Select,
-  SelectItem,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from "@big-calendar/components/ui/select";
-import {
-  Dialog,
-  DialogHeader,
-  DialogClose,
-  DialogContent,
-  DialogTrigger,
-  DialogTitle,
-  DialogFooter,
-} from "@big-calendar/components/ui/dialog";
-
+import { Avatar, AvatarFallback, AvatarImage, } from "@big-calendar/components/ui/avatar";
+import { Form, FormField, FormLabel, FormItem, FormControl, FormMessage, } from "@big-calendar/components/ui/form";
+import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue, } from "@big-calendar/components/ui/select";
+import { Dialog, DialogHeader, DialogClose, DialogContent, DialogTrigger, DialogTitle, DialogFooter, } from "@big-calendar/components/ui/dialog";
 import { eventSchema } from "@big-calendar/calendar/schemas";
-
 import type { TimeValue } from "react-aria-components";
 import type { TEventFormData } from "@big-calendar/calendar/schemas";
 

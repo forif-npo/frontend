@@ -1,11 +1,8 @@
 "use client";
-
 import { useDrag } from "react-dnd";
 import { useRef, useEffect } from "react";
 import { getEmptyImage } from "react-dnd-html5-backend";
-
 import { cn } from "@big-calendar/lib/utils";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 export const ItemTypes = {

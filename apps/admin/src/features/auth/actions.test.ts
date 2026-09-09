@@ -1,7 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@/auth", () => ({ signOut: jest.fn() }));
-
 import { signOut } from "@/auth";
 import { signOutAction } from "./actions";
 

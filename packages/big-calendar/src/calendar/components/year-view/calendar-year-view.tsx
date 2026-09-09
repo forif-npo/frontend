@@ -1,10 +1,7 @@
 import { useMemo } from "react";
 import { addMonths, startOfYear } from "date-fns";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { YearViewMonth } from "@big-calendar/calendar/components/year-view/year-view-month";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {

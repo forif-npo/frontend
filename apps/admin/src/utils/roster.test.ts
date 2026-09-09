@@ -1,9 +1,7 @@
 import { describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@/lib/semester", () => ({
   loadSemesterOptions: jest.fn(),
 }));
-
 import {
   buildSemesterEndpoint,
   isMainSemester,

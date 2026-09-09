@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@/env", () => ({
   env: {
     GOOGLE_CALENDAR_ID: "calendar-id",
@@ -13,7 +12,6 @@ jest.mock("googleapis", () => ({
     calendar: jest.fn(),
   },
 }));
-
 import { google } from "googleapis";
 import { GET } from "./route";
 

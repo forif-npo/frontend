@@ -1,5 +1,4 @@
 "use client";
-
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 
 type UseSearchPaginationOptions = {

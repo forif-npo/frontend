@@ -1,5 +1,4 @@
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { formatDate } from "@big-calendar/lib/date";
 
 export function TodayButton() {

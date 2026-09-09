@@ -1,5 +1,4 @@
 "use client";
-
 import { studyApplySchema, StudyApplyValues } from "@core/schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { SelectBox, TextArea } from "@ui/components/client";

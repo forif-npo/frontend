@@ -1,9 +1,7 @@
 /** @jest-environment jsdom */
-
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-
 jest.mock("@ui/components/client", () => ({
   Button: ({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) => (
     <button {...props}>{children}</button>
@@ -11,7 +9,6 @@ jest.mock("@ui/components/client", () => ({
   Pagination: () => null,
   Select: () => null,
 }));
-
 jest.mock("@ui/components/server", () => ({
   Badge: ({ label }: { label: string }) => <span>{label}</span>,
   EmptyState: ({ title }: { title: string }) => <p>{title}</p>,
@@ -42,18 +39,15 @@ jest.mock("@ui/components/server", () => ({
     </tr>
   ),
 }));
-
 jest.mock("@/features/study-manage/api", () => ({
   acceptApplications: jest.fn(),
   getApplicationDetail: jest.fn(),
   getApplicants: jest.fn(),
   rejectApplications: jest.fn(),
 }));
-
 jest.mock("@/features/semester/schedule-api", () => ({
   getCurrentSemesterSchedules: jest.fn(),
 }));
-
 jest.mock("./ApplicantActionModal", () => ({
   ApplicantActionConfirmModal: () => null,
   ApplicantActionResultModal: ({ result }: { result: { message: string } }) => (
@@ -61,7 +55,6 @@ jest.mock("./ApplicantActionModal", () => ({
   ),
   applicantActionLabel: { accept: "승낙", reject: "거절" },
 }));
-
 import {
   getApplicationDetail,
   getApplicants,

@@ -1,13 +1,11 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { NextRequest } from "next/server";
-
 jest.mock("@/auth", () => ({ auth: jest.fn() }));
 jest.mock("next/headers", () => ({ cookies: jest.fn() }));
 jest.mock("ky", () => ({
   __esModule: true,
   default: { post: jest.fn() },
 }));
-
 import { auth } from "@/auth";
 import { cookies } from "next/headers";
 import ky from "ky";

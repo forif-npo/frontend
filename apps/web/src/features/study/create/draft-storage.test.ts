@@ -1,8 +1,6 @@
 /** @jest-environment jsdom */
-
 import { beforeEach, describe, expect, it } from "@jest/globals";
 import type { StudyOpenValues } from "@core/schemas";
-
 import {
   clearStudyCreateDraft,
   loadStudyCreateDraft,

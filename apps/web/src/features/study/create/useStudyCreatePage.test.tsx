@@ -1,5 +1,4 @@
 /** @jest-environment jsdom */
-
 import { act, renderHook, waitFor } from "@testing-library/react";
 import {
   afterEach,
@@ -9,33 +8,26 @@ import {
   it,
   jest,
 } from "@jest/globals";
-
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
-
 jest.mock("./useStudyCreateData", () => ({
   useStudyCreateData: jest.fn(),
 }));
-
 jest.mock("./actions", () => ({
   submitStudyCreate: jest.fn(),
 }));
-
 jest.mock("./draft-storage", () => ({
   clearStudyCreateDraft: jest.fn(),
   loadStudyCreateDraft: jest.fn(),
   saveStudyCreateDraft: jest.fn(),
 }));
-
 jest.mock("@core/utils/api-client", () => ({
   handleApiError: jest.fn(),
 }));
-
 jest.mock("ky", () => ({
   HTTPError: class HTTPError extends Error {},
 }));
-
 import type { StudyOpenValues } from "@core/schemas";
 import { handleApiError } from "@core/utils/api-client";
 import { submitStudyCreate } from "./actions";

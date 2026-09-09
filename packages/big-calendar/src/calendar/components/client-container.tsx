@@ -1,13 +1,9 @@
 "use client";
-
 import { isSameDay } from "date-fns";
 import { useMemo } from "react";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
 import { parseToKST } from "@big-calendar/lib/date";
-
 import { DndProviderWrapper } from "@big-calendar/calendar/components/dnd/dnd-provider";
-
 import { CalendarAgendaView } from "@big-calendar/calendar/components/agenda-view/calendar-agenda-view";
 import { CalendarHeader } from "@big-calendar/calendar/components/header/calendar-header";
 import { CalendarMonthView } from "@big-calendar/calendar/components/month-view/calendar-month-view";

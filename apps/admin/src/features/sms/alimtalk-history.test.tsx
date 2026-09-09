@@ -1,28 +1,22 @@
 /** @jest-environment jsdom */
-
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps, ReactNode } from "react";
-
 jest.mock("lucide-react", () => ({
   Loader2: () => null,
   RefreshCw: () => null,
 }));
-
 jest.mock("@core/utils/api-client", () => ({
   handleApiError: jest.fn(),
 }));
-
 jest.mock("@core/utils/phone-number", () => ({
   formatPhoneNumber: (phoneNumber: string) => phoneNumber,
 }));
-
 jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }: ComponentProps<"button">) => (
     <button {...props}>{children}</button>
   ),
 }));
-
 jest.mock("@/components/ui/table", () => ({
   Table: ({ children }: { children: ReactNode }) => <table>{children}</table>,
   TableBody: ({ children }: { children: ReactNode }) => (
@@ -35,11 +29,9 @@ jest.mock("@/components/ui/table", () => ({
   ),
   TableRow: ({ children }: { children: ReactNode }) => <tr>{children}</tr>,
 }));
-
 jest.mock("./api", () => ({
   getAlimTalkHistory: jest.fn(),
 }));
-
 import { getAlimTalkHistory } from "./api";
 import { AlimTalkHistory } from "./alimtalk-history";
 

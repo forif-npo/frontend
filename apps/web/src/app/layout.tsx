@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-
 import { auth } from "@/auth";
 import { NAV_MENUS } from "@/constants/nav-menu.constant";
 import { Footer } from "@/features/navigation/footer";

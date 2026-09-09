@@ -1,5 +1,4 @@
 "use client";
-
 import { SearchIcon } from "@repo/assets/icons/krds";
 import { useState } from "react";
 

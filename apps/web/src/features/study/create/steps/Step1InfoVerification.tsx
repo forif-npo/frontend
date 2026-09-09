@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { HTTPError } from "ky";
 import { CriticalAlert } from "@ui/components/client";

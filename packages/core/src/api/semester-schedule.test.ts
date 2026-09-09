@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("../utils/api-client", () => ({
   apiClient: { get: jest.fn(), put: jest.fn() },
 }));
-
 import { apiClient } from "../utils/api-client";
 import {
   getCurrentSemesterSchedules,

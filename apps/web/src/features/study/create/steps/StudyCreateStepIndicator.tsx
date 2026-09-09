@@ -1,5 +1,4 @@
 "use client";
-
 import { StudyStepIndicator } from "../../components/StudyStepIndicator";
 
 const STEPS = [

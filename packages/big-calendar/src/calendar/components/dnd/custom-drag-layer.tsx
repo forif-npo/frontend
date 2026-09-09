@@ -1,7 +1,5 @@
 "use client";
-
 import { useDragLayer } from "react-dnd";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IDragItem {

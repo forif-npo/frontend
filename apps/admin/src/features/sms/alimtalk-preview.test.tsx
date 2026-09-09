@@ -1,13 +1,10 @@
 /** @jest-environment jsdom */
-
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: React.ComponentProps<"img">) => <img {...props} />,
 }));
-
 import { AlimTalkPreview } from "./alimtalk-preview";
 
 describe("AlimTalkPreview", () => {

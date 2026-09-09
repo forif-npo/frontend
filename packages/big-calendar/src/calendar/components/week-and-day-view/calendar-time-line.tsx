@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { formatDate } from "@big-calendar/lib/date";
 
 interface IProps {

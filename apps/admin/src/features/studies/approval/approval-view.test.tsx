@@ -1,5 +1,4 @@
 /** @jest-environment jsdom */
-
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import {
   afterEach,
@@ -14,15 +13,12 @@ import type {
   ReactNode,
   TextareaHTMLAttributes,
 } from "react";
-
 const mockRefresh = jest.fn();
 const mockPush = jest.fn();
-
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush, refresh: mockRefresh }),
   useSearchParams: () => new URLSearchParams(),
 }));
-
 jest.mock("@/hooks/use-list-view-filters", () => ({
   useListViewFilters: () => ({
     searchQuery: "",
@@ -34,7 +30,6 @@ jest.mock("@/hooks/use-list-view-filters", () => ({
     sorting: [],
   }),
 }));
-
 jest.mock("@/components/list/data-table", () => ({
   DataTable: ({
     data,
@@ -53,7 +48,6 @@ jest.mock("@/components/list/data-table", () => ({
     </div>
   ),
 }));
-
 jest.mock("@/components/list/dropdown-menu", () => ({
   DropdownMenuItem: ({
     children,
@@ -62,7 +56,6 @@ jest.mock("@/components/list/dropdown-menu", () => ({
     <button {...props}>{children}</button>
   ),
 }));
-
 jest.mock("@/components/list/offset-pagination", () => ({
   OffsetPagination: () => null,
 }));
@@ -106,7 +99,6 @@ jest.mock("../api", () => ({
   rejectStudy: jest.fn(),
 }));
 jest.mock("@core/utils/api-client", () => ({ handleApiError: jest.fn() }));
-
 import { handleApiError } from "@core/utils/api-client";
 import { approveStudy, fetchStudyDetail, rejectStudy } from "../api";
 const mockedRejectStudy = rejectStudy as unknown as {

@@ -1,32 +1,25 @@
 /** @jest-environment jsdom */
-
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps, ReactNode } from "react";
 import { Controller as mockController } from "react-hook-form";
-
 jest.mock("@/components/page-header", () => ({
   PageHeader: () => null,
 }));
-
 jest.mock("@core/utils/api-client", () => ({
   handleApiError: jest.fn(),
 }));
-
 jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }: ComponentProps<"button">) => (
     <button {...props}>{children}</button>
   ),
 }));
-
 jest.mock("@/components/ui/input", () => ({
   Input: (props: ComponentProps<"input">) => <input {...props} />,
 }));
-
 jest.mock("@/components/ui/textarea", () => ({
   Textarea: (props: ComponentProps<"textarea">) => <textarea {...props} />,
 }));
-
 jest.mock("@/components/ui/single-day-picker", () => ({
   SingleDayPicker: ({
     onSelect,
@@ -52,7 +45,6 @@ jest.mock("@/components/ui/single-day-picker", () => ({
     </>
   ),
 }));
-
 jest.mock("@/components/ui/form", () => {
   return {
     Form: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -68,7 +60,6 @@ jest.mock("@/components/ui/form", () => {
     FormMessage: () => null,
   };
 });
-
 jest.mock("@/components/ui/select", () => ({
   Select: ({
     children,
@@ -97,7 +88,6 @@ jest.mock("@/components/ui/select", () => ({
   SelectTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,
   SelectValue: () => null,
 }));
-
 jest.mock("@/components/ui/dialog", () => ({
   Dialog: ({ children, open }: { children: ReactNode; open: boolean }) =>
     open ? <>{children}</> : null,
@@ -115,28 +105,22 @@ jest.mock("@/components/ui/dialog", () => ({
   ),
   DialogTitle: ({ children }: { children: ReactNode }) => <h2>{children}</h2>,
 }));
-
 jest.mock("@/components/ui/badge", () => ({
   Badge: ({ children }: { children: ReactNode }) => <span>{children}</span>,
 }));
-
 jest.mock("./alimtalk-preview", () => ({
   AlimTalkPreview: () => null,
 }));
-
 jest.mock("./alimtalk-history", () => ({
   AlimTalkHistory: () => null,
 }));
-
 jest.mock("./receiver-selector-dialog", () => ({
   ReceiverSelectorDialog: () => null,
 }));
-
 jest.mock("./api", () => ({
   getAlimTalkTemplates: jest.fn(),
   sendAlimTalk: jest.fn(),
 }));
-
 import { getAlimTalkTemplates, sendAlimTalk } from "./api";
 import { SmsView } from "./sms-view";
 

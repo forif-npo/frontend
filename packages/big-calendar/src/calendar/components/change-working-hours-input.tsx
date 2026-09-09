@@ -1,13 +1,10 @@
 "use client";
-
 import { useState } from "react";
 import { Info, Moon } from "lucide-react";
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { Button } from "@big-calendar/components/ui/button";
 import { Switch } from "@big-calendar/components/ui/switch";
 import { TimeInput } from "@big-calendar/components/ui/time-input";
-
 import type { TimeValue } from "react-aria-components";
 import { TooltipContent } from "@big-calendar/components/ui/tooltip";
 import { Tooltip, TooltipTrigger } from "@big-calendar/components/ui/tooltip";

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 export function useUpdateEvent() {

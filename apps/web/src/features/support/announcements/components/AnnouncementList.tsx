@@ -1,5 +1,4 @@
 "use client";
-
 import type { AnnouncementPost } from "../types/announcement.type";
 import { EmptyState } from "@ui/components/server";
 import { AnnouncementListItem } from "./AnnouncementListItem";

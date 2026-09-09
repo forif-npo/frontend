@@ -1,30 +1,14 @@
-import {
-  startOfWeek,
-  addDays,
-  isSameDay,
-  areIntervalsOverlapping,
-} from "date-fns";
-
+import { startOfWeek, addDays, isSameDay, areIntervalsOverlapping, } from "date-fns";
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { ScrollArea } from "@big-calendar/components/ui/scroll-area";
-
 import { AddEventDialog } from "@big-calendar/calendar/components/dialogs/add-event-dialog";
 import { EventBlock } from "@big-calendar/calendar/components/week-and-day-view/event-block";
 import { DroppableTimeBlock } from "@big-calendar/calendar/components/dnd/droppable-time-block";
 import { CalendarTimeline } from "@big-calendar/calendar/components/week-and-day-view/calendar-time-line";
 import { WeekViewMultiDayEventsRow } from "@big-calendar/calendar/components/week-and-day-view/week-view-multi-day-events-row";
-
 import { cn } from "@big-calendar/lib/utils";
-import {
-  groupEvents,
-  getEventBlockStyle,
-  isWorkingHour,
-  getVisibleHours,
-} from "@big-calendar/calendar/helpers";
-
+import { groupEvents, getEventBlockStyle, isWorkingHour, getVisibleHours, } from "@big-calendar/calendar/helpers";
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {

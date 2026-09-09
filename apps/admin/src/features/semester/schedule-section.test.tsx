@@ -1,29 +1,23 @@
 /** @jest-environment jsdom */
-
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps, ReactNode } from "react";
-
 jest.mock("sonner", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
-
 jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }: ComponentProps<"button">) => (
     <button {...props}>{children}</button>
   ),
 }));
-
 jest.mock("@/components/ui/input", () => ({
   Input: (props: ComponentProps<"input">) => <input {...props} />,
 }));
-
 jest.mock("@/components/ui/label", () => ({
   Label: ({ children, ...props }: ComponentProps<"label">) => (
     <label {...props}>{children}</label>
   ),
 }));
-
 jest.mock("@/components/ui/select", () => ({
   Select: ({ children }: { children: ReactNode }) => <>{children}</>,
   SelectContent: ({ children }: { children: ReactNode }) => (
@@ -35,11 +29,9 @@ jest.mock("@/components/ui/select", () => ({
   ),
   SelectValue: () => null,
 }));
-
 jest.mock("@core/utils/api-client", () => ({
   handleApiError: jest.fn(),
 }));
-
 jest.mock("@/features/semester/schedule-api", () => ({
   SEMESTER_PHASES: [
     "MENTOR_RECRUIT",
@@ -65,7 +57,6 @@ jest.mock("@/features/semester/schedule-api", () => ({
   getSemesterSchedules: jest.fn(),
   saveSemesterSchedules: jest.fn(),
 }));
-
 import {
   getSemesterSchedules,
   saveSemesterSchedules,

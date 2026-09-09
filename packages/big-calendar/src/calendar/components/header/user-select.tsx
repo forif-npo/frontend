@@ -1,18 +1,7 @@
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { AvatarGroup } from "@big-calendar/components/ui/avatar-group";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@big-calendar/components/ui/avatar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@big-calendar/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage, } from "@big-calendar/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@big-calendar/components/ui/select";
 
 export function UserSelect() {
   const { users, selectedUserId, setSelectedUserId } = useCalendar();

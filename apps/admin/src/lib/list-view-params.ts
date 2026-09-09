@@ -1,5 +1,4 @@
 import type { SortingState } from "@tanstack/react-table";
-
 import { appendSortingParams } from "./list-sorting";
 
 export interface BuildListViewParamsOptions {

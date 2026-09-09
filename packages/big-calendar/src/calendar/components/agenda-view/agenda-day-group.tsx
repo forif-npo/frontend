@@ -1,9 +1,6 @@
 import { differenceInDays, startOfDay } from "date-fns";
-
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
-
 import { AgendaEventCard } from "@big-calendar/calendar/components/agenda-view/agenda-event-card";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {
