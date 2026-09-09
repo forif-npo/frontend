@@ -14,7 +14,7 @@
 
 1. 사용자 URL에 맞는 `apps/*/src/app`의 route 파일에서 진입점과 권한·데이터 경계를 찾는다.
 2. route가 조합하는 `features/<feature>`에서 화면, 상태, API 흐름을 읽는다.
-3. 요청·응답 필드와 검증은 `packages/core/types`, `schemas`, Scalar 계약을 함께 확인한다.
+3. 요청·응답 필드와 검증은 `packages/core/src/types`, `packages/core/src/schemas`, Scalar 계약을 함께 확인한다.
 4. 공통 UI 동작과 디자인 토큰이 필요할 때만 `packages/ui`를 읽는다.
 5. 같은 이름의 코드가 web과 admin에 모두 있으면 공통 계약인지, 우연한 이름 중복인지
    import와 변경 주기로 판단한다.
@@ -37,14 +37,15 @@
 
 ## 최상위 구조
 
-| 위치                | 책임                                                | 두지 않는 것                                       |
-| ------------------- | --------------------------------------------------- | -------------------------------------------------- |
-| `apps/web`          | 부원·멘토 서비스의 라우트와 기능                    | admin 전용 화면, 다른 앱에서 검증되지 않은 공통 UI |
-| `apps/admin`        | 운영진 서비스의 라우트와 기능                       | web 전용 화면, 다른 앱에서 검증되지 않은 공통 UI   |
-| `packages/core`     | 앱에 독립적인 도메인 계약, 검증, 공통 유틸리티      | 화면 상태, React UI 조합, 앱 전용 API 흐름         |
-| `packages/ui`       | web·admin에서 재사용하는 UI primitive와 디자인 토큰 | 도메인 규칙, API 호출, 특정 화면의 상태            |
-| `packages/*-config` | 도구 설정                                           | 제품 기능 코드                                     |
-| `packages/assets`   | 공용 정적 자산                                      | 화면별 조합이나 비즈니스 로직                      |
+| 위치                    | 책임                                                | 두지 않는 것                                       |
+| ----------------------- | --------------------------------------------------- | -------------------------------------------------- |
+| `apps/web`              | 부원·멘토 서비스의 라우트와 기능                    | admin 전용 화면, 다른 앱에서 검증되지 않은 공통 UI |
+| `apps/admin`            | 운영진 서비스의 라우트와 기능                       | web 전용 화면, 다른 앱에서 검증되지 않은 공통 UI   |
+| `packages/core`         | 앱에 독립적인 도메인 계약, 검증, 공통 유틸리티      | 화면 상태, React UI 조합, 앱 전용 API 흐름         |
+| `packages/ui`           | web·admin에서 재사용하는 UI primitive와 디자인 토큰 | 도메인 규칙, API 호출, 특정 화면의 상태            |
+| `packages/big-calendar` | 독립 캘린더 UI·상태·스키마 라이브러리               | 앱의 API 호출, 권한 판단, 라우트 데이터 흐름       |
+| `packages/*-config`     | 도구 설정                                           | 제품 기능 코드                                     |
+| `packages/assets`       | 공용 정적 자산                                      | 화면별 조합이나 비즈니스 로직                      |
 
 `apps/web`과 `apps/admin`은 서로의 소스 코드를 직접 import하지 않는다. 공유가 필요하면
 성격에 따라 `packages/core` 또는 `packages/ui`로 추출한다.
@@ -79,16 +80,16 @@ Next.js 라우팅 경계다. `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx
 
 ### 앱 공통 디렉터리
 
-| 위치             | 책임                                                                 |
-| ---------------- | -------------------------------------------------------------------- |
-| `src/components` | 해당 앱 전반에서 쓰는 도메인 비종속 UI 조합                          |
-| `src/hooks`      | 해당 앱 전반에서 쓰는 도메인 비종속 React 훅                         |
-| `src/constants`  | 해당 앱 전체의 고정 값과 표시 상수                                   |
-| `src/types`      | 해당 앱에서만 필요한 타입. API 계약 타입은 `@core/types`를 우선 사용 |
-| `src/utils`      | React와 화면 상태에 의존하지 않는 앱 전반 보조 함수                  |
-| `src/providers`  | React context와 앱 단위 provider 조합                                |
-| `src/lib`        | 프레임워크·외부 라이브러리의 앱별 설정 또는 어댑터                   |
-| `src/mocks`      | 개발·테스트용 mock과 handler                                         |
+| 위치             | 책임                                                                                                 |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| `src/components` | 해당 앱 전반에서 쓰는 도메인 비종속 UI 조합                                                          |
+| `src/hooks`      | 해당 앱 전반에서 쓰는 도메인 비종속 React 훅                                                         |
+| `src/constants`  | 해당 앱 전체의 고정 값과 표시 상수                                                                   |
+| `src/types`      | 해당 앱에서만 필요한 타입. API 계약 타입은 `@core/types/<domain>`(예: `@core/types/api`)을 우선 사용 |
+| `src/utils`      | React와 화면 상태에 의존하지 않는 앱 전반 보조 함수                                                  |
+| `src/providers`  | React context와 앱 단위 provider 조합                                                                |
+| `src/lib`        | 프레임워크·외부 라이브러리의 앱별 설정 또는 어댑터                                                   |
+| `src/mocks`      | 개발·테스트용 mock과 handler                                                                         |
 
 `cookies`처럼 앱에 이미 있는 기술 경계 디렉터리는 위 표와 같은 원칙으로 유지한다.
 feature 이름이 붙는 코드가 하나의 feature에서만 쓰이면 앱 공통 디렉터리에 두지 않는다.
@@ -124,6 +125,18 @@ web과 admin에서 재사용 근거가 있는 UI와 토큰을 둔다.
 - 특정 도메인명, API client, 권한 판단, 화면 상태를 import하지 않는다.
 - 앱에서 한 번만 쓰이는 화면 조합은 해당 앱 feature에 둔다.
 
+### `packages/big-calendar`
+
+캘린더의 UI, 상태, 타입, 스키마, helper를 독립적으로 제공하는 라이브러리다. 현재 admin이
+소비하며, 사용 앱의 수와 관계없이 캘린더 자체의 변경 주기와 공개 API를 독립적으로 관리할
+필요가 있을 때 유지한다.
+
+- `CalendarProvider`, view, dialog, drag-and-drop UI와 캘린더 도메인 타입·스키마를 둔다.
+- 이벤트 생성·수정·삭제 API 호출, 서버 데이터 재검증, 권한 판단은 소비 앱의 feature 또는
+  route가 관리한다.
+- `apps/*`를 import하지 않는다. 일반 UI primitive로 분리할 수 있는 부분은 재사용 근거가
+  있을 때 `packages/ui`로 승격한다.
+
 ## 파일과 심볼 명명
 
 | 대상                       | 규칙                                           | 예시                                     |
@@ -149,6 +162,7 @@ web과 admin에서 재사용 근거가 있는 UI와 토큰을 둔다.
 | 한 앱의 여러 feature에서 쓰는 비도메인 UI·hook·helper | 앱의 `components`·`hooks`·`utils` |
 | web·admin 공통 도메인 타입·스키마·상수·순수 유틸리티  | `packages/core`                   |
 | web·admin 공통 UI primitive·토큰                      | `packages/ui`                     |
+| 독립적으로 관리하는 캘린더 UI·상태·스키마             | `packages/big-calendar`           |
 | 빌드·lint·TypeScript·Tailwind 공통 설정               | 해당 `packages/*-config`          |
 
 공통화는 “나중에 쓸 수도 있음”이 아니라 현재 중복 또는 둘 이상의 실제 소비자가 근거다.
@@ -166,8 +180,12 @@ apps/*/src/features
   ├─ 앱 공통 모듈
   └─ packages/core, packages/ui
 
+apps/admin/src/app, features
+  └─ packages/big-calendar
+
 packages/ui ── 디자인 토큰·UI primitive
 packages/core ── 도메인 계약·스키마·공통 유틸리티
+packages/big-calendar ── 캘린더 UI·상태·스키마
 ```
 
 상위 계층이 하위 계층을 사용한다. `core`와 `ui`는 앱 feature를 알지 못하며, feature는
