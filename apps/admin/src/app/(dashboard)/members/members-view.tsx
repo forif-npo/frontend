@@ -1,5 +1,4 @@
 "use client";
-
 import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
@@ -34,7 +33,6 @@ import { useState } from "react";
 import type { DepartmentOption } from "@/features/departments/api";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-
 import {
   deleteCurrentSemesterMember,
   fetchMemberHistory,

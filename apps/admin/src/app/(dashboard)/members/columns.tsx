@@ -1,7 +1,5 @@
 "use client";
-
 import { ColumnDef } from "@tanstack/react-table";
-
 import { SortableHeader } from "@/components/list/sortable-header";
 import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Member } from "./types";
