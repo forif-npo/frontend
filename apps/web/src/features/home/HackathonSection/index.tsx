@@ -1,5 +1,4 @@
 "use client";
-
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import type { Hackathon, Submission } from "@core/types/hackathon";
 import { apiClient } from "@core/utils/api-client";

@@ -1,12 +1,9 @@
 "use client";
-
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-
 import { Badge, Body, Breadcrumb, Heading, Label } from "@ui/components/server";
 import { Button } from "@ui/components/client";
-
 import { useArchiveSubmissionDetail } from "@/hooks/hackathon";
 import { HackathonSubmissionDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { safeImageSrc } from "@/utils/image";

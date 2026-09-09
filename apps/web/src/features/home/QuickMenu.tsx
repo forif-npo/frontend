@@ -1,5 +1,4 @@
 "use client";
-
 import { FaqIcon } from "@repo/assets/icons/krds";
 import {
   BookMarked,

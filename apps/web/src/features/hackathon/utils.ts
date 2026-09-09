@@ -3,6 +3,7 @@ import type {
   HackathonStatus,
   TeamMember,
 } from "@core/types/hackathon";
+
 export { HACKATHON_STATUS_LABELS as statusLabel } from "@core/hackathon-status";
 
 export function sortTeamMembersLeaderFirst(members: TeamMember[]) {

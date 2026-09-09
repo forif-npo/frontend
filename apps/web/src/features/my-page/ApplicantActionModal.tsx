@@ -1,5 +1,4 @@
 "use client";
-
 import { CircleAlert, X } from "@repo/assets/icons/lucide";
 import { SuccessFillIcon } from "@repo/assets/icons/krds";
 import { AlertModal, Modal } from "@ui/components/client";

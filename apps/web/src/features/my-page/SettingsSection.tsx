@@ -1,5 +1,4 @@
 "use client";
-
 import { updateMyProfile } from "@/app/my/actions";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { useLogout } from "@/features/auth/logout/use-logout";

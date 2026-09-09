@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 import { CalendarDays, ChevronRight } from "@repo/assets/icons/lucide";
 import Link from "next/link";

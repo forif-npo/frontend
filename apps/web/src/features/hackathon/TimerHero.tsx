@@ -1,5 +1,4 @@
 "use client";
-
 import type { Hackathon } from "@core/types/hackathon";
 import { Badge } from "@ui/components/server";
 import { CountdownBlocks } from "./CountdownBlocks";

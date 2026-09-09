@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { CalendarDays } from "@repo/assets/icons/lucide";
 import { getAnnouncements } from "@/features/support/announcements/api/announcements.api";
