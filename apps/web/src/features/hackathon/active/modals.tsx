@@ -4,7 +4,7 @@ import {
   HACKATHON_TECH_STACK_LIMIT,
   HACKATHON_TECH_STACK_OPTIONS,
   normalizeHackathonTechStack,
-} from "@core/hackathon/tags";
+} from "../tech-stack";
 import { Body, Label } from "@ui/components/server";
 import {
   Button,
