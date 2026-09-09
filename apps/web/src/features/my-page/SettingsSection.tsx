@@ -1,5 +1,5 @@
 "use client";
-import { updateMyProfile } from "@/app/my/actions";
+import { updateMyProfile } from "./actions";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { useLogout } from "@/features/auth/logout/use-logout";
 import type { DepartmentOption } from "@/features/departments/api";
