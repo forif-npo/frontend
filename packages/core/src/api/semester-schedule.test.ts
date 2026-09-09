@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
-jest.mock("@core/utils/api-client", () => ({
+jest.mock("../utils/api-client", () => ({
   apiClient: { get: jest.fn(), put: jest.fn() },
 }));
 
-import { apiClient } from "@core/utils/api-client";
+import { apiClient } from "../utils/api-client";
 import {
   getCurrentSemesterSchedules,
   getSemesterSchedules,
   saveSemesterSchedules,
-} from "./schedule-api";
+} from "./semester-schedule";
 
 type ApiMock = {
   mockReset: () => void;
@@ -37,7 +37,7 @@ function response(data: unknown) {
   };
 }
 
-describe("semester schedule api", () => {
+describe("semester schedule API", () => {
   beforeEach(() => {
     mockedGet.mockReset();
     mockedPut.mockReset();
