@@ -1,5 +1,4 @@
 import { describe, expect, it } from "@jest/globals";
-
 import { processOperators } from "./operator-list";
 import type { Operator } from "./types";
 

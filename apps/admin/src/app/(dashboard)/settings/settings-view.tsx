@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { signOutAction } from "@/features/auth/actions";

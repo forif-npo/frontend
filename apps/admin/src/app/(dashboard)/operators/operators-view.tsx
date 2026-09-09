@@ -1,5 +1,4 @@
 "use client";
-
 import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
@@ -27,7 +26,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-
 import { AddOperatorDialog } from "./add-operator-dialog";
 import {
   deleteOperator,

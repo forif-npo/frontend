@@ -1,7 +1,5 @@
 "use client";
-
 import { type MouseEvent } from "react";
-
 import { signOutAction } from "@/features/auth/actions";
 import {
   Sidebar,
