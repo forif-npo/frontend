@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import { cn } from "../../utils/cn";
+import { cn } from "@repo/core/utils/cn";
 
 export type LinkProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s";

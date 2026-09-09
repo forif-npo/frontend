@@ -1,7 +1,7 @@
 import { CalendarDays, ChevronRight } from "@repo/assets/icons/lucide";
 import Link from "next/link";
 import type { ComponentType, ReactNode, SVGProps } from "react";
-import { cn } from "@ui/utils/cn";
+import { cn } from "@core/utils/cn";
 
 export interface MobileContentListItem {
   id: string | number;

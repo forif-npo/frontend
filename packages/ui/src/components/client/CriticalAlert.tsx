@@ -1,4 +1,4 @@
-import { cn } from "../../utils/cn";
+import { cn } from "@repo/core/utils/cn";
 import { Label } from "../server/Label";
 import { LinkButton } from "../server/LinkButton";
 

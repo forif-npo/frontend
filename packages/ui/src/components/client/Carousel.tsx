@@ -7,7 +7,7 @@ import {
   type ReactNode,
   type TouchEvent,
 } from "react";
-import { cn } from "../../utils/cn";
+import { cn } from "@repo/core/utils/cn";
 
 interface CarouselProps {
   carouselItems: CarouselItem[];

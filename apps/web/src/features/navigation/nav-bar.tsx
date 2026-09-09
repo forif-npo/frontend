@@ -4,7 +4,7 @@ import { Home, Menu } from "@repo/assets/icons/lucide";
 import { getStudyApplicationStatus } from "@/features/study/apply/api";
 import { AlertModal, Button } from "@ui/components/client";
 import { Link } from "@ui/components/server";
-import { cn } from "@ui/utils/cn";
+import { cn } from "@core/utils/cn";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {

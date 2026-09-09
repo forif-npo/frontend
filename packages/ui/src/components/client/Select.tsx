@@ -1,7 +1,7 @@
 "use client";
 import { ArrowDropdownIcon } from "@repo/assets/icons/krds";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "../../utils/cn";
+import { cn } from "@repo/core/utils/cn";
 import { Label } from "../server/Label";
 
 export interface Option {
