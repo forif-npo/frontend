@@ -12,7 +12,7 @@ import {
   NUMERIC_DIFFICULTY_LABELS,
 } from "@/constants/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
-import type { Study } from "@/types/study";
+import type { Study } from "@core/types/study";
 import { Button } from "@ui/components/client";
 import { Badge, Body } from "@ui/components/server";
 import { useRouter } from "next/navigation";

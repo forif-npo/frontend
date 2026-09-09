@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Badge } from "@ui/components/server";
 import { toFileDownloadUrl } from "@core/utils/file-download";
-import { Study } from "@/types/study";
+import type { Study } from "@core/types/study";
 import { KakaoMap } from "@/components/KakaoMap";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";

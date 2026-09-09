@@ -1,6 +1,6 @@
 import type { ApiResponse } from "@core/types/api";
 import { apiClient } from "@core/utils/api-client";
-import { Study, StudyListParams } from "@/types/study";
+import type { Study, StudyListParams } from "@core/types/study";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface PaginatedData<T> {

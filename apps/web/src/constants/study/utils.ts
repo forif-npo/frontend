@@ -1,4 +1,4 @@
-import type { RecruitStatus } from "@/types/study";
+import type { RecruitStatus } from "@core/types/study";
 import type { BadgeProps } from "@ui/components/server";
 import { DIFFICULTY_OPTIONS, RECRUIT_STATUS_OPTIONS } from "./options";
 import { fallbackSemester } from "@/features/semester/api";

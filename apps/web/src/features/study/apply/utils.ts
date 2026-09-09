@@ -1,5 +1,5 @@
 import { getDifficultyBadgeVariant } from "@/constants/study";
-import { Study, StudyDifficulty } from "@/types/study";
+import type { Study, StudyDifficulty } from "@core/types/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
 import { STUDY_RECRUIT_STATUS_LABELS } from "@core/study-status";
 

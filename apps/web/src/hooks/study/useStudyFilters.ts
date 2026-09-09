@@ -1,6 +1,7 @@
 import { useMemo, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { StudyFilters, RecruitStatus } from "@/types/study";
+import type { RecruitStatus } from "@core/types/study";
+import type { StudyFilters } from "@/types/study";
 
 interface UseStudyFiltersReturn {
   filters: StudyFilters;

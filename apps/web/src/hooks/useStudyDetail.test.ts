@@ -15,7 +15,7 @@ jest.mock("@core/utils/api-client", () => ({
 }));
 
 import { apiClient } from "@core/utils/api-client";
-import type { Study } from "@/types/study";
+import type { Study } from "@core/types/study";
 import { useStudyDetail } from "./useStudyDetail";
 
 type GetMock = {

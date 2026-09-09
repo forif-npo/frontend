@@ -7,7 +7,7 @@ import { HintText } from "@ui/components/server";
 import Form from "next/form";
 import { useActionState, useEffect, useRef, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Study } from "@/types/study";
+import type { Study } from "@core/types/study";
 import { StepNavigation } from "../create/components/StepNavigation";
 import { StudySectionTitle } from "../components/StudySectionTitle";
 import { StudyApplyTitle } from "./StudyApplyTitle";
