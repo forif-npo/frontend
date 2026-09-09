@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { loadSemesterOptions } from "@/lib/semester";
-import { fetchStudiesWithFallback } from "../studies/api";
-import type { SemesterLabel } from "../studies/types";
+import { fetchStudiesWithFallback } from "@/features/studies/api";
+import type { SemesterLabel } from "@/features/studies/types";
 import { MentorConfirmationsView } from "./mentor-confirmations-view";
 
 const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;

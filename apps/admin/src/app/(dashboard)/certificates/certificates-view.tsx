@@ -25,7 +25,7 @@ import {
 import { DataTable } from "@/components/list/data-table";
 import { ActivitySemesterToggle } from "@/components/list/activity-semester-toggle";
 import { handleApiError } from "@core/utils/api-client";
-import type { SemesterLabel, Study } from "../studies/types";
+import type { SemesterLabel, Study } from "@/features/studies/types";
 import {
   Dialog,
   DialogContent,

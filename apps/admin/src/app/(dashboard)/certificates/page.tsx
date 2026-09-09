@@ -1,8 +1,8 @@
 import { auth } from "@/auth";
 import { PageState } from "@ui/components/server";
 import { loadSemesterOptions } from "@/lib/semester";
-import { fetchStudiesWithFallback } from "../studies/api";
-import type { SemesterLabel } from "../studies/types";
+import { fetchStudiesWithFallback } from "@/features/studies/api";
+import type { SemesterLabel } from "@/features/studies/types";
 import { CertificatesView } from "./certificates-view";
 
 const SEMESTER_LABEL_PATTERN = /^(\d{2})-([12])$/;
