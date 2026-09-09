@@ -21,8 +21,7 @@
         "GOOGLE_CALENDAR_ID",
         "NAVER_MAP_CLIENT_SECRET",
         "CI",
-        "NODE_ENV",
-        "USE_MOCK_DATA"
+        "NODE_ENV"
       ]
     },
     "test": {

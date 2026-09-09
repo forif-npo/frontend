@@ -96,10 +96,6 @@ export default async function Page({ searchParams }: PageProps) {
                 ? error.message
                 : "알 수 없는 오류가 발생했습니다"}
             </p>
-            <p className="mt-2 text-sm">
-              .env 파일에서 USE_MOCK_DATA=true로 설정하여 목 데이터를 사용할 수
-              있습니다
-            </p>
           </>
         }
       />
