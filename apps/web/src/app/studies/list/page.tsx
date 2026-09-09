@@ -1,5 +1,4 @@
 "use client";
-
 import { SearchBar } from "@/components/SearchBar";
 import { StudyListSkeleton } from "@/components/study/skeleton/StudyCardSkeleton";
 import { StudyActionButtons } from "@/components/study/ui/StudyActionButtons";

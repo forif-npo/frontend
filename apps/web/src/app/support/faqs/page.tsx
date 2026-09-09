@@ -1,13 +1,10 @@
 "use client";
-
 import { useEffect, useState } from "react";
-
 import { Pagination, RadioButtonGroup } from "@ui/components/client";
 import { EmptyState, InlineErrorState } from "@ui/components/server";
 import { SearchBar } from "@/features/support/components/SearchBar";
 import { SearchResultCount } from "@/features/support/components/SearchResultCount";
 import { useSearchPagination } from "@/features/support/hooks/useSearchPagination";
-
 import { useFaqList } from "@/features/support/faqs/hooks/useFaqList";
 import { FaqAccordionList } from "@/features/support/faqs/components/FaqAccordionList";
 import { FaqListSkeleton } from "@/components/skeleton/SupportListSkeleton";

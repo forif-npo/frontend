@@ -91,7 +91,6 @@ Next.js 라우팅 경계다. `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx
 | `src/utils`      | React와 화면 상태에 의존하지 않는 앱 전반 보조 함수                                                  |
 | `src/providers`  | React context와 앱 단위 provider 조합                                                                |
 | `src/lib`        | 프레임워크·외부 라이브러리의 앱별 설정 또는 어댑터                                                   |
-| `src/mocks`      | 개발·테스트용 mock과 handler                                                                         |
 
 `cookies`처럼 앱에 이미 있는 기술 경계 디렉터리는 위 표와 같은 원칙으로 유지한다.
 feature 이름이 붙는 코드가 하나의 feature에서만 쓰이면 앱 공통 디렉터리에 두지 않는다.

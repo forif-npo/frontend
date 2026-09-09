@@ -1,16 +1,13 @@
 "use client";
-
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
-
 import { ShareIcon } from "@repo/assets/icons/krds";
 import {
   Breadcrumb,
   EmptyState,
   InlineErrorState,
 } from "@ui/components/server";
-
 import { useAnnouncementDetail } from "@/features/support/announcements/hooks/useAnnouncementDetail";
 import { AnnouncementDetailSkeleton } from "@/components/skeleton/AnnouncementDetailSkeleton";
 import { MarkdownContent } from "@/components/MarkdownContent";

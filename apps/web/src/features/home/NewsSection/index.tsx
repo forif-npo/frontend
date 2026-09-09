@@ -3,8 +3,6 @@
 // import { useState } from "react";
 // import { Label } from "@ui/components/server";
 // import Link from "next/link";
-// import { newsData } from "@/mocks/data/home";
-// import type { NewsData } from "@/mocks/data/home";
 // import { NewsCard } from "./NewsCard";
 //
 // const CATEGORIES = [
