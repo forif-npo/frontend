@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { PageState } from "@ui/components/server";
-import { fetchHackathons } from "./api";
-import { HackathonView } from "./hackathon-view";
+import { fetchHackathons } from "@/features/hackathon/api";
+import { HackathonView } from "@/features/hackathon/hackathon-view";
 
 export default async function Page() {
   const session = await auth();

@@ -28,7 +28,7 @@ import {
   submitTeamEvaluation,
   updateAward,
   updateCriterion,
-} from "../api";
+} from "./api";
 import {
   AwardDialog,
   ConfirmDeleteDialog,
