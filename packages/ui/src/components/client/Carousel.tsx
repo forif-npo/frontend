@@ -202,15 +202,12 @@ export function CarouselIndicators({
         <button
           key={index}
           onClick={() => onSelect(index)}
-          className={`h-2 rounded-full transition-all ${
-            index === current ? "w-8" : "w-2"
-          }`}
-          style={{
-            backgroundColor:
-              index === current
-                ? "var(--krds-color-primary-60)"
-                : "var(--krds-color-gray-20)",
-          }}
+          className={cn(
+            "h-2 rounded-full transition-all",
+            index === current
+              ? "bg-text-primary w-8"
+              : "bg-action-disabled w-2",
+          )}
           aria-label={`슬라이드 ${index + 1}로 이동`}
           aria-current={index === current ? "true" : "false"}
         />

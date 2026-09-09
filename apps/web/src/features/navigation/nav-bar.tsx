@@ -351,6 +351,8 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
             <li key={label}>
               {subMenus ? (
                 <Button
+                  aria-controls={`desktop-menu-${label}`}
+                  aria-expanded={openMenu === label}
                   size="medium"
                   onClick={() => handleMenuClick(label, true)}
                   variant="text"
@@ -371,15 +373,15 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
 
               {subMenus && (openMenu === label || closingMenu === label) && (
                 <div
+                  id={`desktop-menu-${label}`}
                   className={`bg-surface-white border-divider-gray-light shadow-divider-primary-light absolute left-0 top-full z-50 w-full border-t px-16 py-4 shadow ${openMenu === label ? styles.menuOpen : styles.menuClose}`}
-                  role="menubar"
                   onAnimationEnd={() => {
                     if (closingMenu === label) setClosingMenu(null);
                   }}
                 >
                   <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 md:grid-cols-4">
                     {subMenus.map(({ label: subLabel, href: subHref }) => (
-                      <li key={subLabel} className="py-2.5" role="menuitem">
+                      <li key={subLabel} className="py-2.5">
                         <Link
                           size="m"
                           href={subHref}

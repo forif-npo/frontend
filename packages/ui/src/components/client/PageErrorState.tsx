@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 import { PageState } from "../server/PageState";
 import { Button } from "./Button";

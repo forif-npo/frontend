@@ -1,5 +1,4 @@
 import { Label } from "./Label";
-
 import React from "react";
 
 export type BadgeProps = {
