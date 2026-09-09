@@ -3,10 +3,10 @@ import { PageState } from "@ui/components/server";
 import {
   fetchStudiesWithFallback,
   getCurrentSemester,
-} from "@/features/studies/api";
+  parseStudySemesterFilter,
+  type SemesterLabel,
+} from "@/features/studies";
 import { ApprovalView } from "@/features/studies/approval/approval-view";
-import { parseStudySemesterFilter } from "@/features/studies/semester-utils";
-import type { SemesterLabel } from "@/features/studies/types";
 import { parseSortingParams } from "@/lib/list-sorting";
 
 const PAGE_SIZE = 20;

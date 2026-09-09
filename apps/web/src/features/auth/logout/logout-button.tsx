@@ -1,7 +1,5 @@
 "use client";
-
 import { Button } from "@ui/components/client";
-
 import { useLogout } from "./use-logout";
 
 export function LogoutButton() {

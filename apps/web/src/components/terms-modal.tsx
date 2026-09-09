@@ -1,5 +1,4 @@
 "use client";
-
 import { PRIVACY_POLICY, TERMS_OF_SERVICE } from "@/constants/legal";
 import { Modal } from "@ui/components/client";
 import { Body } from "@ui/components/server";

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import { DataTable } from "@/components/list/data-table";
 import { EmptyState, InlineLoadingState } from "@ui/components/server";
-import type { SemesterLabel, Study } from "@/features/studies/types";
+import type { SemesterLabel, Study } from "@/features/studies";
 import {
   getMentorConfirmationViewUrl,
   getMentorConfirmationTargets,

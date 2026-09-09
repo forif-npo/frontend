@@ -1,5 +1,4 @@
 "use client";
-
 import { useRef, type WheelEvent } from "react";
 import {
   formatStudyTimeRange,

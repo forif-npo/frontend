@@ -1,5 +1,4 @@
 "use client";
-
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import type { ComponentProps } from "react";
 

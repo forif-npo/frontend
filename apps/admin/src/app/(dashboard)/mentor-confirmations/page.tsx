@@ -1,8 +1,10 @@
 import { auth } from "@/auth";
 import { loadSemesterOptions } from "@/lib/semester";
-import { fetchStudiesWithFallback } from "@/features/studies/api";
-import { parseStudySemesterFilter } from "@/features/studies/semester-utils";
-import type { SemesterLabel } from "@/features/studies/types";
+import {
+  fetchStudiesWithFallback,
+  parseStudySemesterFilter,
+  type SemesterLabel,
+} from "@/features/studies";
 import { MentorConfirmationsView } from "./mentor-confirmations-view";
 
 export default async function MentorConfirmationsPage({
