@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Users } from "lucide-react";
 import { handleApiError } from "@core/utils/api-client";

@@ -1,5 +1,4 @@
 "use client";
-
 import { SearchBar } from "@/components/list/search-bar";
 import { DataTable } from "@/components/list/data-table";
 import type { ColumnDef } from "@tanstack/react-table";
