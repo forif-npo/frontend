@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { auth } from "@/auth";
-import { SemesterManageView } from "./semester-manage-view";
+import { SemesterManageView } from "@/features/semester/semester-manage-view";
 
 export const metadata: Metadata = {
   title: "학기 관리 | FORIF Admin",

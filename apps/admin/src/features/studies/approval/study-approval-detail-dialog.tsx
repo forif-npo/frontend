@@ -1,5 +1,4 @@
 "use client";
-
 import type { ReactNode } from "react";
 import { toFileDownloadUrl } from "@core/utils/file-download";
 import { InlineErrorState, InlineLoadingState } from "@ui/components/server";

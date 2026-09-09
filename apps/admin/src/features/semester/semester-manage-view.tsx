@@ -24,13 +24,14 @@ import {
 import { handleApiError } from "@core/utils/api-client";
 import {
   changeCurrentSemester,
+  getAdminCandidates,
   getCurrentSemester,
   getSemesterChangePreview,
   getSemesters,
+  type AdminCandidate,
   type Semester,
   type SemesterChangePreview,
-} from "@/features/semester/api";
-import { getAdminCandidates, type AdminCandidate } from "./api";
+} from "./api";
 import { ScheduleSection } from "./schedule-section";
 
 function parseLabel(label: string): { year: number; semester: number } | null {

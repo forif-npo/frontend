@@ -57,14 +57,14 @@ jest.mock("@core/utils/api-client", () => ({
   handleApiError: jest.fn(),
 }));
 
-jest.mock("@/features/semester/api", () => ({
+jest.mock("./api", () => ({
   changeCurrentSemester: jest.fn(),
+  getAdminCandidates: jest.fn(),
   getCurrentSemester: jest.fn(),
   getSemesterChangePreview: jest.fn(),
   getSemesters: jest.fn(),
 }));
 
-jest.mock("./api", () => ({ getAdminCandidates: jest.fn() }));
 jest.mock("./schedule-section", () => ({ ScheduleSection: () => null }));
 
 import { toast } from "sonner";
@@ -73,8 +73,8 @@ import {
   getCurrentSemester,
   getSemesterChangePreview,
   getSemesters,
-} from "@/features/semester/api";
-import { getAdminCandidates } from "./api";
+  getAdminCandidates,
+} from "./api";
 import { SemesterManageView } from "./semester-manage-view";
 
 type AsyncMock = {
