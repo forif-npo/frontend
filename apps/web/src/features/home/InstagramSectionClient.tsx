@@ -1,5 +1,4 @@
 "use client";
-
 import { InstagramIcon } from "@repo/assets/icons/krds";
 import {
   ArrowLeft,

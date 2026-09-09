@@ -1,5 +1,4 @@
 "use client";
-
 import type {
   Award,
   CompetitionType,
@@ -14,7 +13,7 @@ import { apiClient } from "@core/utils/api-client";
 import {
   HACKATHON_TECH_STACK_OPTIONS,
   normalizeHackathonTechStack,
-} from "@core/hackathon/tags";
+} from "./tech-stack";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";

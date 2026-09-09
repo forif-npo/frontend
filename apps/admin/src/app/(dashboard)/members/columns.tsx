@@ -1,7 +1,5 @@
 "use client";
-
 import { ColumnDef } from "@tanstack/react-table";
-
 import { SortableHeader } from "@/components/list/sortable-header";
 import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Member } from "./types";
@@ -72,10 +70,10 @@ function HistoryIndicator({ exists }: { exists: boolean }) {
   return (
     <div className="flex items-center justify-center">
       {exists ? (
-        <span className="text-sm">있음</span>
+        <span>있음</span>
       ) : (
         <span className="text-muted-foreground" aria-label="이력 없음">
-          —
+          -
         </span>
       )}
     </div>

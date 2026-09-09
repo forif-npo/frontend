@@ -1,5 +1,4 @@
 "use client";
-
 import type { ReactNode } from "react";
 import { SuccessFillIcon } from "@repo/assets/icons/krds";
 import { Button } from "@ui/components/client";

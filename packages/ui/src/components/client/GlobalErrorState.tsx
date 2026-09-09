@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, type CSSProperties } from "react";
 
 export interface GlobalErrorStateProps {

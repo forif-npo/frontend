@@ -1,5 +1,4 @@
 "use client";
-
 import { PageErrorState } from "@ui/components/client";
 
 export default function Error({

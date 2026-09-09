@@ -1,5 +1,4 @@
 "use client";
-
 import { SearchIcon } from "@repo/assets/icons/krds";
 import clsx from "clsx";
 import React from "react";

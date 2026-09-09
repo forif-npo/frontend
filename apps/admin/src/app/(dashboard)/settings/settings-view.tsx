@@ -1,8 +1,7 @@
 "use client";
-
 import { useState } from "react";
 import { toast } from "sonner";
-import { signOutAction } from "@/app/actions";
+import { signOutAction } from "@/features/auth/actions";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

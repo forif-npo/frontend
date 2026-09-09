@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "motion/react";
 import { Body, Display } from "@ui/components/server";

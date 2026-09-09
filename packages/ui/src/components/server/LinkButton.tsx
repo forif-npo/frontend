@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "../../utils/cn";
+import { cn } from "@repo/core/utils/cn";
 import { Link } from "./Link";
 
 export type LinkButtonProps<E extends React.ElementType> = {

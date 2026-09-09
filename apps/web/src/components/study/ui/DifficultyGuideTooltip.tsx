@@ -1,5 +1,4 @@
 "use client";
-
 import { STUDY_DIFFICULTY_GUIDE } from "@/constants/study";
 import { QuestionBubble } from "@repo/assets/icons/krds";
 import { Modal } from "@ui/components/client";

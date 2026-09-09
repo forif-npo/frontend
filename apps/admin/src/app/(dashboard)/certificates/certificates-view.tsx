@@ -1,13 +1,5 @@
 "use client";
-
-import {
-  type SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -16,46 +8,18 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DataTable } from "@/components/list/data-table";
 import { ActivitySemesterToggle } from "@/components/list/activity-semester-toggle";
 import { handleApiError } from "@core/utils/api-client";
-import type { SemesterLabel, Study } from "../studies/types";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import type { SemesterLabel, Study } from "@/features/studies";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState, InlineLoadingState } from "@ui/components/server";
-import {
-  EMPTY_MANUAL_CERTIFICATE_FORM,
-  toManualCertificateBody,
-  type ManualCertificateForm,
-  validateManualCertificateForm,
-} from "./manual-certificate-form";
-import {
-  getCertificateTargets,
-  getMySignature,
-  issueCertificates,
-  issueManualCertificate,
-  searchMembers,
-  uploadMySignature,
-  type CertificateTargetsData,
-  type IssueCertificatesData,
-  type MemberSearchItem,
-} from "./api";
+import { EMPTY_MANUAL_CERTIFICATE_FORM, toManualCertificateBody, type ManualCertificateForm, validateManualCertificateForm } from "./manual-certificate-form";
+import { getCertificateTargets, getMySignature, issueCertificates, issueManualCertificate, searchMembers, uploadMySignature, type CertificateTargetsData, type IssueCertificatesData, type MemberSearchItem } from "./api";
 import { dateToIso, isoToDate, toDotDate } from "./certificate-date-formatters";
 
 const getCanvasThemeColor = (token: string) =>
@@ -744,7 +708,7 @@ export function CertificatesView({
               {ineligibleSelected.map((t) => (
                 <li key={t.user_id}>
                   <span className="font-medium">{t.user_name}</span> (
-                  {t.user_id}) —{" "}
+                  {t.user_id}) -{" "}
                   {[
                     t.attendance_count < (targetsData?.required_attendance ?? 5)
                       ? `출석 ${t.attendance_count}/${targetsData?.required_attendance ?? 5}회`

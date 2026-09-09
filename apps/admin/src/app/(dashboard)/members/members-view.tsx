@@ -1,5 +1,4 @@
 "use client";
-
 import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
@@ -16,6 +15,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
@@ -24,9 +30,9 @@ import type { SortingState } from "@tanstack/react-table";
 import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import type { DepartmentOption } from "@/features/departments/api";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-
 import {
   deleteCurrentSemesterMember,
   fetchMemberHistory,
@@ -47,6 +53,7 @@ interface MembersViewProps {
   initialSearch?: string;
   activeSemesterLabel: string;
   initialSorting?: SortingState;
+  departments: DepartmentOption[];
 }
 
 export function MembersView({
@@ -59,12 +66,13 @@ export function MembersView({
   initialSearch = "",
   activeSemesterLabel,
   initialSorting = [],
+  departments,
 }: MembersViewProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [editTarget, setEditTarget] = useState<Member | null>(null);
-  const [editForm, setEditForm] = useState({ department: "", phoneNum: "" });
+  const [editForm, setEditForm] = useState({ departmentId: "", phoneNum: "" });
   const [historyTarget, setHistoryTarget] = useState<Member | null>(null);
   const [memberHistory, setMemberHistory] = useState<Awaited<
     ReturnType<typeof fetchMemberHistory>
@@ -139,7 +147,7 @@ export function MembersView({
   const handleEditMember = (member: Member) => {
     setEditTarget(member);
     setEditForm({
-      department: member.department ?? "",
+      departmentId: String(member.departmentId ?? ""),
       phoneNum: member.phoneNum ?? "",
     });
   };
@@ -168,16 +176,16 @@ export function MembersView({
   const handleUpdateMember = async () => {
     if (!editTarget || isUpdating) return;
 
-    const department = editForm.department.trim();
+    const departmentId = Number(editForm.departmentId);
     const phoneNum = editForm.phoneNum.trim();
-    if (!department || !phoneNum) {
+    if (!departmentId || !phoneNum) {
       toast.error("학과와 전화번호를 모두 입력해주세요.");
       return;
     }
 
     setIsUpdating(true);
     try {
-      await updateMemberInfo(editTarget.userId, { department, phoneNum });
+      await updateMemberInfo(editTarget.userId, { departmentId, phoneNum });
       toast.success("부원 정보가 수정되었습니다.");
       setEditTarget(null);
       router.refresh();
@@ -313,17 +321,29 @@ export function MembersView({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="member-department">학과</Label>
-              <Input
-                id="member-department"
-                maxLength={50}
-                value={editForm.department}
-                onChange={(event) =>
+              <Select
+                value={editForm.departmentId}
+                onValueChange={(departmentId) =>
                   setEditForm((form) => ({
                     ...form,
-                    department: event.target.value,
+                    departmentId,
                   }))
                 }
-              />
+              >
+                <SelectTrigger id="member-department">
+                  <SelectValue placeholder="학과를 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments.map((department) => (
+                    <SelectItem
+                      key={department.department_id}
+                      value={String(department.department_id)}
+                    >
+                      {department.department}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="member-phone-num">전화번호</Label>

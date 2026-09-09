@@ -1,5 +1,4 @@
 "use client";
-
 import { FaqIcon } from "@repo/assets/icons/krds";
 import {
   BookMarked,
@@ -144,7 +143,7 @@ export function QuickMenu() {
                 href={item.href}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noopener noreferrer" : undefined}
-                className="rounded-3 border-border-gray bg-surface-white-subtle hover:bg-surface-gray-subtler flex min-h-[108px] w-[calc((100%_-_12px)_/_2)] flex-col items-center justify-center gap-3 border px-3 py-5 text-center shadow-[0_8px_24px_rgba(30,33,36,0.04)] transition-colors sm:min-h-[120px] sm:w-[calc((100%_-_36px)_/_4)] md:min-h-0 md:w-[calc((100%_-_84px)_/_8)] md:py-6 md:shadow-none"
+                className="rounded-3 border-border-gray bg-surface-white-subtle hover:bg-surface-gray-subtler flex min-h-[108px] w-[calc((100%_-_12px)_/_2)] flex-col items-center justify-center gap-3 border px-3 py-5 text-center shadow-[0_8px_24px_rgba(30,33,36,0.04)] transition-colors sm:min-h-[120px] sm:w-[calc((100%_-_36px)_/_4)] md:min-h-0 md:w-[calc((100%_-_36px)_/_4)] md:py-6 md:shadow-none lg:w-[calc((100%_-_84px)_/_8)]"
               >
                 <item.icon
                   className="text-text-basic"

@@ -1,5 +1,4 @@
 "use client";
-
 import { GlobalErrorState } from "@ui/components/client";
 
 export default function GlobalError({

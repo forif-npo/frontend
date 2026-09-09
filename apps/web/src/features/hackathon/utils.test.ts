@@ -1,6 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
 import type { Hackathon, TeamMember } from "@core/types/hackathon";
-
 import {
   getCountdownTarget,
   getMainStage,

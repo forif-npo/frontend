@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
@@ -179,7 +178,7 @@ export function ProductsAdminView() {
     () => [
       {
         accessorKey: "status",
-        header: "신청·운영 상태",
+        header: "신청 상태",
         cell: ({ row }) => statusBadges(row.original),
       },
       {

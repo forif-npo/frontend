@@ -1,5 +1,4 @@
 "use client";
-
 import { Tabs } from "@ui/components/client";
 import { EmptyState } from "@ui/components/server";
 import { PRODUCT_SOURCE_FILTERS, type ProductSourceFilter } from "./constants";

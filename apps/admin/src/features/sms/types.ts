@@ -1,0 +1,69 @@
+export interface SendAlimTalkRequest {
+  receivers: string[];
+  templateCode: string;
+  variables: Record<string, string>;
+}
+
+export interface SendAlimTalkMessageResult {
+  receiver: string;
+  success: boolean;
+  errorCode: string | null;
+  errorMessage: string | null;
+}
+
+export interface SendAlimTalkResult {
+  templateId: string;
+  totalCount: number;
+  successCount: number;
+  failureCount: number;
+  results: SendAlimTalkMessageResult[];
+}
+
+export interface AlimTalkHistoryItem {
+  messageId: string;
+  templateId: string | null;
+  receiver: string | null;
+  status: string | null;
+  statusCode: string | null;
+  createdAt: string | null;
+  processedAt: string | null;
+  reportedAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface AlimTalkHistoryPage {
+  content: AlimTalkHistoryItem[];
+  nextCursor: string | null;
+  hasNext: boolean;
+}
+
+export interface AlimTalkTemplate {
+  templateId: string;
+  name: string;
+  content: string;
+  status: string | null;
+  messageType: string | null;
+  dateCreated: string | null;
+  dateUpdated: string | null;
+  variables: string[];
+  buttonLinks: string[];
+}
+
+export interface Receiver {
+  userId: number;
+  name: string;
+  phoneNumber: string;
+  department: string;
+  currentStudyName: string | null;
+}
+
+export type ReceiverTarget =
+  | "CURRENT_SEMESTER_MEMBERS"
+  | "CURRENT_SEMESTER_APPLICANTS"
+  | "CURRENT_SEMESTER_REGULAR_STUDY_ACCEPTED_APPLICANTS"
+  | "CURRENT_SEMESTER_AUTONOMOUS_STUDY_ACCEPTED_APPLICANTS"
+  | "CURRENT_SEMESTER_REJECTED_APPLICANTS"
+  | "PREVIOUS_SEMESTER_MEMBERS"
+  | "ALL_MEMBERS"
+  | "ACCEPTED_DUES_UNPAID"
+  | "ACCEPTED_GOOGLE_FORM_NOT_SUBMITTED";

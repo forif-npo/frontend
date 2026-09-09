@@ -1,9 +1,6 @@
 "use client";
-
 import { useRouter } from "next/navigation";
-
 import { AngleIcon } from "@repo/assets/icons/krds";
-
 import type { AnnouncementPost } from "../types/announcement.type";
 
 type AnnouncementListItemProps = {

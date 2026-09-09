@@ -1,5 +1,4 @@
 "use client";
-
 import { DataTable } from "@/components/list/data-table";
 import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { OffsetPagination } from "@/components/list/offset-pagination";

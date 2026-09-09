@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import {
   Badge,
@@ -12,10 +11,10 @@ import {
   getMyStudyApplication,
   type StudyApplicationDetail,
   type StudyApplicationSummary,
-} from "@/features/study-application/api";
+} from "@/features/study-application";
 import { STUDY_CREATION_STATUS_LABELS } from "@core/study-status";
 import { handleApiError } from "@core/utils/api-client";
-import { StudyApplicationEditor } from "./StudyApplicationEditor";
+import { StudyApplicationEditor } from "@/features/study/create";
 
 interface StudyApplicationSectionProps {
   applications: StudyApplicationSummary[];

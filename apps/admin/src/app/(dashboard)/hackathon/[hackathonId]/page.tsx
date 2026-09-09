@@ -7,8 +7,8 @@ import {
   fetchHackathon,
   fetchParticipants,
   fetchTeams,
-} from "../api";
-import { ManagementView } from "./management-view";
+} from "@/features/hackathon/api";
+import { ManagementView } from "@/features/hackathon/management-view";
 
 interface PageProps {
   params: Promise<{ hackathonId: string }>;

@@ -1,5 +1,4 @@
 "use client";
-
 import { GuideCheckIcon } from "@ui/components/server";
 import { useFormattedPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { StepNavigation } from "../create/components/StepNavigation";

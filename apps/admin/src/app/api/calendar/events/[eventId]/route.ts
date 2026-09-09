@@ -2,7 +2,6 @@ import { env } from "@/env";
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
 import { mapEventColorToColorId } from "../transform";
-
 import type { TEventColor } from "@repo/big-calendar";
 
 interface RouteParams {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
-import { Study } from "@/types/study";
+import type { Study } from "@core/types/study";
 
 type UseStudyDetailReturn = {
   study: Study | null;

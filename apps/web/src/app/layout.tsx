@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-
 import { auth } from "@/auth";
 import { NAV_MENUS } from "@/constants/nav-menu.constant";
 import { Footer } from "@/features/navigation/footer";
@@ -43,9 +42,11 @@ export default async function RootLayout({
           <ApiClientProvider>
             <NuqsAdapter>
               <NavBar items={NAV_MENUS} isLoggedIn={isLoggedIn} />
-              <div className="h-[64px] md:h-[80px]" />
-              {children}
-              <Footer />
+              <div id="app-content">
+                <div className="h-[64px] xl:h-[80px]" />
+                {children}
+                <Footer />
+              </div>
             </NuqsAdapter>
           </ApiClientProvider>
         </SessionProvider>

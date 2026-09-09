@@ -1,12 +1,9 @@
 /** @jest-environment jsdom */
-
 import { renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("../api/announcements.api", () => ({
   getAnnouncements: jest.fn(),
 }));
-
 import { getAnnouncements } from "../api/announcements.api";
 import type { AnnouncementPost } from "../types/announcement.type";
 import { useAnnouncementList } from "./useAnnouncementList";

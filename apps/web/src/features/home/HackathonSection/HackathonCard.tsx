@@ -1,5 +1,5 @@
 import { Body, Label } from "@ui/components/server";
-import { cn } from "@ui/utils/cn";
+import { cn } from "@core/utils/cn";
 import type { Submission } from "@core/types/hackathon";
 import Image from "next/image";
 import Link from "next/link";

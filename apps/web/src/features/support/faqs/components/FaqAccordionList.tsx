@@ -1,8 +1,6 @@
 "use client";
-
 import { Accordion } from "@ui/components/client";
 import { Badge, EmptyState, type BadgeProps } from "@ui/components/server";
-
 import type { FaqPost } from "../types/faq.type";
 
 type FaqAccordionListProps = {

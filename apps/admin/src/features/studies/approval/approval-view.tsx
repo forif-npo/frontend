@@ -1,0 +1,327 @@
+"use client";
+import { DropdownMenuItem } from "@/components/list/dropdown-menu";
+import { DataTable } from "@/components/list/data-table";
+import { OffsetPagination } from "@/components/list/offset-pagination";
+import { SearchBar } from "@/components/list/search-bar";
+import { SemesterTabs } from "@/components/list/semester-tabs";
+import { PageHeader } from "@/components/page-header";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { useListViewFilters } from "@/hooks/use-list-view-filters";
+import { handleApiError } from "@core/utils/api-client";
+import type { SortingState } from "@tanstack/react-table";
+import { Eye } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useState } from "react";
+import { approveStudy, fetchStudyDetail, rejectStudy } from "../api";
+import type { AdminStudyDetail } from "../api";
+import { SemesterLabel, Study } from "../types";
+import { approvalColumns } from "./approval-columns";
+import { StudyApprovalDetailDialog } from "./study-approval-detail-dialog";
+
+interface ApprovalViewProps {
+  initialData: Study[];
+  currentSemester: SemesterLabel;
+  totalElements?: number;
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
+  initialSearch?: string;
+  includeProcessed: boolean;
+  initialSorting?: SortingState;
+}
+
+export function ApprovalView({
+  initialData,
+  currentSemester,
+  totalElements = 0,
+  currentPage = 0,
+  totalPages = 1,
+  pageSize = 20,
+  initialSearch = "",
+  includeProcessed,
+  initialSorting = [],
+}: ApprovalViewProps) {
+  const {
+    searchQuery,
+    setSearchQuery,
+    handleSemesterChange,
+    handleSearch,
+    handlePageChange,
+    handleSortingChange,
+    sorting,
+  } = useListViewFilters({
+    route: "/studies/approval",
+    currentSemester,
+    initialSearch,
+    initialSorting,
+    preservedParams: {
+      include_processed: includeProcessed ? "true" : undefined,
+    },
+  });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [reviewingStudy, setReviewingStudy] = useState<Study | null>(null);
+  const [reviewDetail, setReviewDetail] = useState<AdminStudyDetail | null>(
+    null,
+  );
+  const [isReviewLoading, setIsReviewLoading] = useState(false);
+  const [rejectingStudy, setRejectingStudy] = useState<Study | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
+    null,
+  );
+  const [selectedStudies, setSelectedStudies] = useState<Study[]>([]);
+  const [isBatchSubmitting, setIsBatchSubmitting] = useState(false);
+
+  const getStudyRowId = useCallback((study: Study) => String(study.id), []);
+
+  const displayTotalCount =
+    totalElements && totalElements > 0 ? totalElements : initialData.length;
+  const canReviewStudy =
+    !includeProcessed &&
+    reviewingStudy != null &&
+    (reviewingStudy.study_status === "PENDING" ||
+      reviewingStudy.study_status === "RE_APPLIED");
+
+  const handleIncludeProcessedChange = (checked: boolean) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (checked) {
+      params.set("include_processed", "true");
+    } else {
+      params.delete("include_processed");
+    }
+    params.delete("sort");
+    params.set("page", "0");
+    router.push(`/studies/approval?${params.toString()}`);
+  };
+
+  const closeReviewDialog = () => {
+    setReviewingStudy(null);
+    setReviewDetail(null);
+    setIsReviewLoading(false);
+  };
+
+  const handleOpenReview = async (study: Study) => {
+    setReviewingStudy(study);
+    setReviewDetail(null);
+    setIsReviewLoading(true);
+
+    try {
+      const detail = await fetchStudyDetail(study.id);
+      setReviewDetail(detail);
+    } catch (error) {
+      alert(await handleApiError(error));
+    } finally {
+      setIsReviewLoading(false);
+    }
+  };
+
+  const handleApproveStudy = async (study: Study) => {
+    try {
+      setSubmittingStudyId(study.id);
+      await approveStudy(study.id);
+      closeReviewDialog();
+      router.refresh();
+    } catch (error) {
+      alert(await handleApiError(error));
+    } finally {
+      setSubmittingStudyId(null);
+    }
+  };
+
+  const closeRejectDialog = () => {
+    setRejectingStudy(null);
+    setRejectReason("");
+  };
+
+  const handleOpenRejectDialog = (study: Study) => {
+    closeReviewDialog();
+    setRejectingStudy(study);
+  };
+
+  const handleRejectStudy = async () => {
+    const reason = rejectReason.trim();
+
+    if (!rejectingStudy || !reason) {
+      alert("반려 사유를 입력해주세요.");
+      return;
+    }
+
+    try {
+      setSubmittingStudyId(rejectingStudy.id);
+      await rejectStudy(rejectingStudy.id, reason);
+      closeRejectDialog();
+      closeReviewDialog();
+      router.refresh();
+    } catch (error) {
+      alert(await handleApiError(error));
+    } finally {
+      setSubmittingStudyId(null);
+    }
+  };
+
+  const handleBatchApprove = async () => {
+    if (selectedStudies.length === 0 || isBatchSubmitting) return;
+
+    setIsBatchSubmitting(true);
+    const results = await Promise.allSettled(
+      selectedStudies.map((study) => approveStudy(study.id)),
+    );
+    const failed = results.find(
+      (result): result is PromiseRejectedResult => result.status === "rejected",
+    );
+
+    setIsBatchSubmitting(false);
+    setSelectedStudies([]);
+    router.refresh();
+
+    if (failed) {
+      alert(
+        `일부 요청을 처리하지 못했습니다. ${await handleApiError(failed.reason)}`,
+      );
+      return;
+    }
+
+    alert(`${selectedStudies.length}개 스터디를 승인했습니다.`);
+  };
+
+  return (
+    <div className="space-y-6 p-4 sm:p-6 md:p-8">
+      <PageHeader
+        title="스터디 승인"
+        description="승인 대기 또는 재신청된 스터디 개설 요청을 검토할 수 있습니다."
+      />
+
+      <SemesterTabs
+        currentSemester={currentSemester}
+        onSemesterChange={handleSemesterChange}
+        includeEtc={false}
+      />
+
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSearch={handleSearch}
+              placeholder="승인 대기 스터디 검색"
+            />
+          </div>
+          <label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={includeProcessed}
+              onChange={(event) =>
+                handleIncludeProcessedChange(event.target.checked)
+              }
+              className="h-4 w-4 cursor-pointer"
+            />
+            승인/반려 건 포함
+          </label>
+          <Button
+            type="button"
+            disabled={
+              includeProcessed ||
+              selectedStudies.length === 0 ||
+              isBatchSubmitting
+            }
+            onClick={() => void handleBatchApprove()}
+          >
+            {isBatchSubmitting ? "처리 중..." : "선택 승낙"}
+          </Button>
+        </div>
+
+        <DataTable
+          columns={approvalColumns}
+          data={initialData}
+          showPagination={false}
+          enableRowSelection
+          sorting={sorting}
+          onSortingChange={handleSortingChange}
+          getRowId={getStudyRowId}
+          onSelectedRowsChange={setSelectedStudies}
+          renderRowActions={(study) => (
+            <DropdownMenuItem
+              disabled={submittingStudyId === study.id}
+              onClick={() => handleOpenReview(study)}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              상세 검토
+            </DropdownMenuItem>
+          )}
+        />
+
+        <OffsetPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalElements={displayTotalCount}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+        />
+      </div>
+
+      <StudyApprovalDetailDialog
+        study={reviewingStudy}
+        detail={reviewDetail}
+        isLoading={isReviewLoading}
+        isSubmitting={submittingStudyId === reviewingStudy?.id}
+        showReviewActions={canReviewStudy}
+        onClose={closeReviewDialog}
+        onApprove={handleApproveStudy}
+        onReject={handleOpenRejectDialog}
+      />
+
+      <Dialog
+        open={Boolean(rejectingStudy)}
+        onOpenChange={(open) => {
+          if (!open) closeRejectDialog();
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>스터디 개설 요청 반려</DialogTitle>
+            <DialogDescription>
+              {rejectingStudy?.study_name} 요청을 반려할 사유를 입력해주세요.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Textarea
+            value={rejectReason}
+            onChange={(event) => setRejectReason(event.target.value)}
+            placeholder="반려 사유"
+            rows={5}
+          />
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={closeRejectDialog}
+              disabled={submittingStudyId === rejectingStudy?.id}
+            >
+              취소
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleRejectStudy}
+              disabled={submittingStudyId === rejectingStudy?.id}
+            >
+              반려
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

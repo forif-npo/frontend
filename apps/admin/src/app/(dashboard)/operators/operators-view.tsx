@@ -1,5 +1,4 @@
 "use client";
-
 import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
@@ -27,7 +26,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-
 import { AddOperatorDialog } from "./add-operator-dialog";
 import {
   deleteOperator,
@@ -332,123 +330,121 @@ export function OperatorsView({
       </div>
 
       {/* 운영진 정보 수정 다이얼로그 */}
-      {canManageOperators && (
-        <Dialog
-          open={editTarget !== null}
-          onOpenChange={(open) => !open && setEditTarget(null)}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>운영진 정보 수정</DialogTitle>
-              <DialogDescription>
-                {editTarget?.name} ({editTarget?.actYear}-
-                {editTarget?.actSemester}) — 운영진 소개 페이지에 표시되는
-                정보입니다.{" "}
-                {!canManageEditTarget &&
-                  "소개, 사진, 졸업년도만 수정할 수 있습니다."}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="op-title">직급</Label>
-                  <Input
-                    id="op-title"
-                    placeholder="회장 / 부장 / 팀원"
-                    value={editForm.title}
-                    disabled={!canManageEditTarget}
-                    onChange={(e) =>
-                      setEditForm((f) => ({ ...f, title: e.target.value }))
-                    }
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="op-department">부서</Label>
-                  <Input
-                    id="op-department"
-                    placeholder="기획팀"
-                    value={editForm.department}
-                    disabled={!canManageEditTarget}
-                    onChange={(e) =>
-                      setEditForm((f) => ({ ...f, department: e.target.value }))
-                    }
-                  />
-                </div>
-              </div>
+      <Dialog
+        open={editTarget !== null}
+        onOpenChange={(open) => !open && setEditTarget(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>운영진 정보 수정</DialogTitle>
+            <DialogDescription>
+              {editTarget?.name} ({editTarget?.actYear}-
+              {editTarget?.actSemester}) 운영진 소개 페이지에 표시되는
+              정보입니다.{" "}
+              {!canManageEditTarget &&
+                "소개, 사진, 졸업년도만 수정할 수 있습니다."}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="op-intro-tag">소개 태그</Label>
+                <Label htmlFor="op-title">직급</Label>
                 <Input
-                  id="op-intro-tag"
-                  placeholder="백엔드, 커피러버 (쉼표로 구분)"
-                  value={editForm.introTag}
+                  id="op-title"
+                  placeholder="회장 / 부장 / 팀원"
+                  value={editForm.title}
+                  disabled={!canManageEditTarget}
                   onChange={(e) =>
-                    setEditForm((f) => ({ ...f, introTag: e.target.value }))
+                    setEditForm((f) => ({ ...f, title: e.target.value }))
                   }
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="op-self-intro">자기소개</Label>
-                <Textarea
-                  id="op-self-intro"
-                  rows={3}
-                  value={editForm.selfIntro}
+                <Label htmlFor="op-department">부서</Label>
+                <Input
+                  id="op-department"
+                  placeholder="기획팀"
+                  value={editForm.department}
+                  disabled={!canManageEditTarget}
                   onChange={(e) =>
-                    setEditForm((f) => ({ ...f, selfIntro: e.target.value }))
+                    setEditForm((f) => ({ ...f, department: e.target.value }))
                   }
                 />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="op-graduate-year">졸업년도 (선택)</Label>
-                <Input
-                  id="op-graduate-year"
-                  placeholder="2027"
-                  value={editForm.graduateYear}
-                  onChange={(e) =>
-                    setEditForm((f) => ({ ...f, graduateYear: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="op-profile-image">프로필 사진 (선택)</Label>
-                <Input
-                  id="op-profile-image"
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] ?? null;
-                    if (
-                      file &&
-                      (!["image/jpeg", "image/jpg", "image/png"].includes(
-                        file.type,
-                      ) ||
-                        file.size > 5 * 1024 * 1024)
-                    ) {
-                      toast.error(
-                        "프로필 사진은 5MB 이하의 JPG 또는 PNG 파일만 가능합니다.",
-                      );
-                      e.target.value = "";
-                      return;
-                    }
-                    setEditForm((form) => ({ ...form, profileImage: file }));
-                  }}
-                />
-                <p className="text-muted-foreground text-xs">
-                  부원 마이페이지와 운영진 소개 페이지에 같은 사진으로
-                  표시됩니다. JPG 또는 PNG, 최대 5MB까지 업로드할 수 있습니다.
-                </p>
               </div>
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setEditTarget(null)}>
-                취소
-              </Button>
-              <Button onClick={handleUpdateSubmit} disabled={isSubmitting}>
-                {isSubmitting ? "저장 중..." : "저장"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="op-intro-tag">소개 태그</Label>
+              <Input
+                id="op-intro-tag"
+                placeholder="백엔드, 커피러버 (쉼표로 구분)"
+                value={editForm.introTag}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, introTag: e.target.value }))
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="op-self-intro">자기소개</Label>
+              <Textarea
+                id="op-self-intro"
+                rows={3}
+                value={editForm.selfIntro}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, selfIntro: e.target.value }))
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="op-graduate-year">졸업년도 (선택)</Label>
+              <Input
+                id="op-graduate-year"
+                placeholder="2027"
+                value={editForm.graduateYear}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, graduateYear: e.target.value }))
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="op-profile-image">프로필 사진 (선택)</Label>
+              <Input
+                id="op-profile-image"
+                type="file"
+                accept="image/jpeg,image/jpg,image/png"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  if (
+                    file &&
+                    (!["image/jpeg", "image/jpg", "image/png"].includes(
+                      file.type,
+                    ) ||
+                      file.size > 5 * 1024 * 1024)
+                  ) {
+                    toast.error(
+                      "프로필 사진은 5MB 이하의 JPG 또는 PNG 파일만 가능합니다.",
+                    );
+                    e.target.value = "";
+                    return;
+                  }
+                  setEditForm((form) => ({ ...form, profileImage: file }));
+                }}
+              />
+              <p className="text-muted-foreground text-xs">
+                부원 마이페이지와 운영진 소개 페이지에 같은 사진으로 표시됩니다.
+                JPG 또는 PNG, 최대 5MB까지 업로드할 수 있습니다.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditTarget(null)}>
+              취소
+            </Button>
+            <Button onClick={handleUpdateSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "저장 중..." : "저장"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

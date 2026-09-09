@@ -39,17 +39,20 @@ export default async function Page() {
     <div className="min-h-viewport from-surface-white via-primary-5 to-surface-white overflow-x-hidden bg-gradient-to-b md:bg-none">
       <main className="flex flex-col items-center gap-5 md:gap-8">
         <section className="hidden w-full md:flex md:flex-col md:items-center md:gap-4">
+          {/* At md widths, the introductory banner needs extra height for wrapped copy. */}
           <Carousel
             carouselItems={carouselItems}
-            bannerClassName="max-w-none rounded-none"
+            bannerClassName="max-w-none rounded-none md:aspect-[7/3] lg:aspect-[4/1]"
           />
         </section>
-        <section className="mb-2 w-full md:hidden">
-          <Carousel
-            carouselItems={mobileCarouselItems}
-            bannerClassName="max-w-none rounded-none"
-          />
-        </section>
+        {mobileCarouselItems.length > 0 && (
+          <section className="mb-2 w-full md:hidden">
+            <Carousel
+              carouselItems={mobileCarouselItems}
+              bannerClassName="max-w-none rounded-none"
+            />
+          </section>
+        )}
         <section className="-mb-5 w-full md:hidden">
           <ForifIntroBanner variant="mobile-section" />
         </section>

@@ -1,6 +1,6 @@
 "use client";
 import React, { forwardRef, useState } from "react";
-import { cn } from "../../utils/cn";
+import { cn } from "@repo/core/utils/cn";
 import { CharacterCount } from "../server/CharacterCount";
 import { HintText } from "../server/HintText";
 import { Label } from "../server/Label";

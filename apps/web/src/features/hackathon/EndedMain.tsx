@@ -1,5 +1,4 @@
 "use client";
-
 import type { Hackathon } from "@core/types/hackathon";
 import { Heading } from "@ui/components/server";
 import { Button } from "@ui/components/client";

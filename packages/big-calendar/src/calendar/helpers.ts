@@ -1,35 +1,6 @@
-import {
-  addDays,
-  addMonths,
-  addWeeks,
-  addYears,
-  differenceInDays,
-  differenceInMinutes,
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
-  endOfYear,
-  isSameDay,
-  isSameMonth,
-  isSameWeek,
-  isSameYear,
-  isWithinInterval,
-  startOfDay,
-  startOfMonth,
-  startOfWeek,
-  startOfYear,
-  subDays,
-  subMonths,
-  subWeeks,
-  subYears,
-} from "date-fns";
-
+import { addDays, addMonths, addWeeks, addYears, differenceInDays, differenceInMinutes, eachDayOfInterval, endOfMonth, endOfWeek, endOfYear, isSameDay, isSameMonth, isSameWeek, isSameYear, isWithinInterval, startOfDay, startOfMonth, startOfWeek, startOfYear, subDays, subMonths, subWeeks, subYears, } from "date-fns";
 import type { ICalendarCell, IEvent } from "@big-calendar/calendar/interfaces";
-import type {
-  TCalendarView,
-  TVisibleHours,
-  TWorkingHours,
-} from "@big-calendar/calendar/types";
+import type { TCalendarView, TVisibleHours, TWorkingHours, } from "@big-calendar/calendar/types";
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
 
 // ================ Header helper functions ================ //

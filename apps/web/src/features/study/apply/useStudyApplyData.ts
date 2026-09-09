@@ -4,7 +4,7 @@ import { HTTPError } from "ky";
 import { getCurrentSemesterSchedules } from "@/features/semester/schedule-api";
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
-import { Study } from "@/types/study";
+import type { Study } from "@core/types/study";
 
 type ApiUserInfo = {
   user_id: number;

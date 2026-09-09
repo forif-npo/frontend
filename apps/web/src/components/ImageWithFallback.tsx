@@ -1,5 +1,4 @@
 "use client";
-
 import { safeImageSrc } from "@/utils/image";
 import Image, { type ImageProps } from "next/image";
 import { useEffect, useState } from "react";

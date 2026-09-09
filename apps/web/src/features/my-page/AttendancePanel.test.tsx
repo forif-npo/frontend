@@ -1,15 +1,12 @@
 /** @jest-environment jsdom */
-
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-
 jest.mock("@ui/components/client", () => ({
   Button: ({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) => (
     <button {...props}>{children}</button>
   ),
 }));
-
 jest.mock("@ui/components/server", () => ({
   EmptyState: ({ title }: { title: string }) => <p>{title}</p>,
   InlineLoadingState: ({ message }: { message: string }) => <p>{message}</p>,
@@ -30,7 +27,6 @@ jest.mock("@ui/components/server", () => ({
     <tr {...props}>{children}</tr>
   ),
 }));
-
 jest.mock("@/components/ActionConfirmModal", () => ({
   ActionConfirmModal: ({
     isOpen,
@@ -40,13 +36,11 @@ jest.mock("@/components/ActionConfirmModal", () => ({
     onConfirm: () => void;
   }) => (isOpen ? <button onClick={onConfirm}>확인</button> : null),
 }));
-
 jest.mock("@/features/study-manage/api", () => ({
   getAttendance: jest.fn(),
   getMentorConfirmation: jest.fn(),
   updateAttendance: jest.fn(),
 }));
-
 import { getAttendance, updateAttendance } from "@/features/study-manage/api";
 import { AttendancePanel } from "./AttendancePanel";
 

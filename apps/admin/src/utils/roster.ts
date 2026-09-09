@@ -2,7 +2,6 @@
  * members / mentors 목록 API에서 공통으로 쓰이는 유틸.
  * (학기 라벨 파싱, 주요 학기 판별, 응답 필드 정규화)
  */
-
 import { loadSemesterOptions } from "@/lib/semester";
 
 /**

@@ -1,5 +1,4 @@
 "use client";
-
 import { handleGoogleCallback } from "@/features/auth/signin/actions";
 import { Body } from "@ui/components/server";
 import { useEffect, useRef, useState } from "react";

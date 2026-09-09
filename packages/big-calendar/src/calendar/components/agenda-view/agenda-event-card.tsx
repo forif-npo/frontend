@@ -1,14 +1,9 @@
 "use client";
-
 import { cva } from "class-variance-authority";
 import { Clock, Text, User } from "lucide-react";
-
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { EventDetailsDialog } from "@big-calendar/calendar/components/dialogs/event-details-dialog";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 import type { VariantProps } from "class-variance-authority";
 

@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: { get: jest.fn(), delete: jest.fn(), patch: jest.fn() },
 }));
-
 import { apiClient } from "@core/utils/api-client";
 import {
   deleteCurrentSemesterMember,
@@ -71,6 +69,7 @@ describe("members api", () => {
       content: [
         {
           userId: 20260001,
+          departmentId: null,
           userName: "홍길동",
           currentStudyName: "React 심화",
           department: "컴퓨터소프트웨어학부",
@@ -98,13 +97,13 @@ describe("members api", () => {
     );
   });
 
-  it("updates only the editable member fields with their current values", async () => {
+  it("updates only the editable member fields with snake_case wire fields", async () => {
     mockedPatch.mockReturnValue({
       json: <T>() => Promise.resolve({ data: null } as T),
     });
 
     await updateMemberInfo(20260001, {
-      department: "정보시스템학과",
+      departmentId: 2,
       phoneNum: "010-3333-4444",
     });
 
@@ -112,8 +111,8 @@ describe("members api", () => {
       "api/v1/admin/users/20260001",
       {
         json: {
-          department: "정보시스템학과",
-          phoneNum: "010-3333-4444",
+          department_id: 2,
+          phone_num: "010-3333-4444",
         },
       },
     );

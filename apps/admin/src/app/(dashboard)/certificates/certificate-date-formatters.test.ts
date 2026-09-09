@@ -1,10 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  dateToIso,
-  isoToDate,
-  toDotDate,
-  toIssueDate,
-} from "./certificate-date-formatters";
+import { dateToIso, isoToDate, toDotDate, toIssueDate } from "./certificate-date-formatters";
 
 describe("certificate date formatters", () => {
   it("keeps the certificate period format", () => {

@@ -1,4 +1,4 @@
-import type { RecruitStatus } from "@/types/study";
+import type { RecruitStatus } from "@core/types/study";
 import type { BadgeProps } from "@ui/components/server";
 import { STUDY_RECRUIT_STATUS_LABELS } from "@core/study-status";
 

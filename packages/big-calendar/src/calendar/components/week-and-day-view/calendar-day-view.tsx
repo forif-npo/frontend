@@ -1,28 +1,16 @@
 import { areIntervalsOverlapping } from "date-fns";
 import { Calendar, Clock, User } from "lucide-react";
-
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { ScrollArea } from "@big-calendar/components/ui/scroll-area";
 import { SingleCalendar } from "@big-calendar/components/ui/single-calendar";
-
 import { AddEventDialog } from "@big-calendar/calendar/components/dialogs/add-event-dialog";
 import { DroppableTimeBlock } from "@big-calendar/calendar/components/dnd/droppable-time-block";
 import { CalendarTimeline } from "@big-calendar/calendar/components/week-and-day-view/calendar-time-line";
 import { DayViewMultiDayEventsRow } from "@big-calendar/calendar/components/week-and-day-view/day-view-multi-day-events-row";
 import { EventBlock } from "@big-calendar/calendar/components/week-and-day-view/event-block";
-
-import {
-  getCurrentEvents,
-  getEventBlockStyle,
-  getVisibleHours,
-  groupEvents,
-  isWorkingHour,
-} from "@big-calendar/calendar/helpers";
+import { getCurrentEvents, getEventBlockStyle, getVisibleHours, groupEvents, isWorkingHour, } from "@big-calendar/calendar/helpers";
 import { cn } from "@big-calendar/lib/utils";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {

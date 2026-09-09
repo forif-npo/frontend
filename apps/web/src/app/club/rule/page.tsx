@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "motion/react";
 import { RULE, RULE_CHAPTERS } from "@/constants/club-rule";
 import { PageHeader } from "@/components/PageHeader";

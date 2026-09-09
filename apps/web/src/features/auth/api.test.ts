@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: { post: jest.fn() },
 }));
-
 import { apiClient } from "@core/utils/api-client";
 import { logout, memberSignUp, refreshTokenWithCookie, userLogin } from "./api";
 
@@ -31,7 +29,7 @@ describe("auth api", () => {
     mockedPost.mockReset();
   });
 
-  it("forwards the existing signup payload and merges the refresh cookie", async () => {
+  it("forwards the department id signup payload and merges the refresh cookie", async () => {
     mockedPost.mockResolvedValue(
       response(
         { access_token: "access", role: "USER" },
@@ -43,7 +41,7 @@ describe("auth api", () => {
       user_name: "홍길동",
       access_token: "oauth-token",
       phone_num: "010-1234-5678",
-      department: "컴퓨터소프트웨어학부",
+      department_id: 1,
     };
 
     const result = await memberSignUp(request);

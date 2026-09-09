@@ -1,22 +1,11 @@
 "use client";
-
 import { Calendar, Clock, Text, User, Video } from "lucide-react";
 import { useState } from "react";
-
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
-
 import { EditEventDialog } from "@big-calendar/calendar/components/dialogs/edit-event-dialog";
 import { useDeleteEvent } from "@big-calendar/calendar/hooks/use-delete-event";
 import { Button } from "@big-calendar/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@big-calendar/components/ui/dialog";
-
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@big-calendar/components/ui/dialog";
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {
@@ -114,11 +103,11 @@ export function EventDetailsDialog({ event, children }: IProps) {
               onClick={handleDelete}
               disabled={isDeleting}
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? "삭제 중..." : "삭제"}
             </Button>
             <EditEventDialog event={event}>
               <Button type="button" variant="outline">
-                Edit
+                수정
               </Button>
             </EditEventDialog>
           </DialogFooter>

@@ -1,5 +1,4 @@
 "use client";
-
 import { useRef, type TouchEvent } from "react";
 
 type SwipeOptions = {

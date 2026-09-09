@@ -1,6 +1,5 @@
 "use client";
-
-import { departmentsOptions } from "@/constants/options.constant";
+import type { DepartmentOption } from "@/features/departments/api";
 import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { SignUpValues } from "@core/schemas";
 import { Modal } from "@ui/components/client";
@@ -11,6 +10,7 @@ interface SignUpConfirmationModalProps {
   onClose: () => void;
   onConfirm: () => void;
   formValues: SignUpValues;
+  departments: DepartmentOption[];
 }
 
 export function SignUpConfirmationModal({
@@ -18,6 +18,7 @@ export function SignUpConfirmationModal({
   onClose,
   onConfirm,
   formValues,
+  departments,
 }: SignUpConfirmationModalProps) {
   return (
     <Modal
@@ -79,9 +80,11 @@ export function SignUpConfirmationModal({
               <tr className="bg-surface-secondary border-divider-gray-light border-b">
                 <td className="text-text-subtle px-4 py-3 text-sm">학과</td>
                 <td className="text-text-subtle px-4 py-3 text-sm">
-                  {departmentsOptions.find(
-                    (opt) => opt.value === formValues.department,
-                  )?.label || formValues.department}
+                  {departments.find(
+                    (department) =>
+                      department.department_id ===
+                      Number(formValues.departmentId),
+                  )?.department || "-"}
                 </td>
               </tr>
               <tr className="bg-surface-secondary border-divider-gray-light border-b">

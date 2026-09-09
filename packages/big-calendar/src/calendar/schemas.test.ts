@@ -29,7 +29,7 @@ describe("eventSchema", () => {
         expect.arrayContaining([
           expect.objectContaining({
             path: ["startDate"],
-            message: "Start date cannot be after end date",
+            message: "종료 일시는 시작 일시보다 늦어야 합니다.",
           }),
         ]),
       );

@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import type {
   ColumnDef,
@@ -16,7 +15,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { MoreVertical } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -67,7 +65,7 @@ export function DataTable<TData, TValue>({
   rowSelection: controlledRowSelection,
   onRowSelectionChange: controlledOnRowSelectionChange,
   renderSelectionHeader,
-  emptyMessage = "No results.",
+  emptyMessage = "결과가 없습니다.",
   sorting: controlledSorting,
   onSortingChange: controlledOnSortingChange,
   resetSortingKey,
@@ -251,10 +249,14 @@ export function DataTable<TData, TValue>({
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape" || sorting.length === 0) return;
-
-      const target = event.target;
-      if (!(target instanceof Element) || !target.closest("table")) return;
+      if (
+        event.key !== "Escape" ||
+        event.defaultPrevented ||
+        event.isComposing ||
+        sorting.length === 0
+      ) {
+        return;
+      }
 
       event.preventDefault();
       onSortingChange([]);

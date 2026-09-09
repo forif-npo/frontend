@@ -1,13 +1,10 @@
 /** @jest-environment jsdom */
-
 import { renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@/features/semester/api", () => ({
   fallbackSemester: jest.fn(),
   getCurrentSemester: jest.fn(),
 }));
-
 import { fallbackSemester, getCurrentSemester } from "@/features/semester/api";
 import { useActiveSemester } from "./useActiveSemester";
 

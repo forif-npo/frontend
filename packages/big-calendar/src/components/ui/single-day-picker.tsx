@@ -1,17 +1,9 @@
 import { useDisclosure } from "@big-calendar/hooks/use-disclosure";
-
 import { formatDate } from "@big-calendar/lib/date";
-
 import { Button } from "@big-calendar/components/ui/button";
 import { SingleCalendar } from "@big-calendar/components/ui/single-calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@big-calendar/components/ui/popover";
-
+import { Popover, PopoverContent, PopoverTrigger, } from "@big-calendar/components/ui/popover";
 import { cn } from "@big-calendar/lib/utils";
-
 import type { ButtonHTMLAttributes } from "react";
 
 // ================================== //

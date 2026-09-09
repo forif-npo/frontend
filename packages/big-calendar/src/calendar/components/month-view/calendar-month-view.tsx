@@ -1,14 +1,7 @@
 import { useMemo } from "react";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { DayCell } from "@big-calendar/calendar/components/month-view/day-cell";
-
-import {
-  calculateMonthEventPositions,
-  getCalendarCells,
-} from "@big-calendar/calendar/helpers";
-
+import { calculateMonthEventPositions, getCalendarCells, } from "@big-calendar/calendar/helpers";
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {

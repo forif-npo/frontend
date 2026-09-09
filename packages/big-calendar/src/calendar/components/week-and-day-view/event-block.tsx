@@ -1,15 +1,10 @@
 import { cva } from "class-variance-authority";
 import { differenceInMinutes } from "date-fns";
-
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { DraggableEvent } from "@big-calendar/calendar/components/dnd/draggable-event";
 import { EventDetailsDialog } from "@big-calendar/calendar/components/dialogs/event-details-dialog";
-
 import { cn } from "@big-calendar/lib/utils";
-
 import type { HTMLAttributes } from "react";
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 import type { VariantProps } from "class-variance-authority";

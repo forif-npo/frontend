@@ -1,14 +1,11 @@
 /** @jest-environment jsdom */
-
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: { get: jest.fn() },
 }));
-
 import { apiClient } from "@core/utils/api-client";
-import type { Study } from "@/types/study";
+import type { Study } from "@core/types/study";
 import { useStudyData } from "./useStudyData";
 
 type GetMock = {

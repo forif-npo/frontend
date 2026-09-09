@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback, useState } from "react";
 import { useCurrentHackathon, useHackathonData } from "@/hooks/hackathon";
 import {

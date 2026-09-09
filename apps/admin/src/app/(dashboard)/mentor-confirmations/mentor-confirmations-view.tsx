@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
@@ -12,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import { DataTable } from "@/components/list/data-table";
 import { EmptyState, InlineLoadingState } from "@ui/components/server";
-import type { SemesterLabel, Study } from "../studies/types";
+import type { SemesterLabel, Study } from "@/features/studies";
 import {
   getMentorConfirmationViewUrl,
   getMentorConfirmationTargets,

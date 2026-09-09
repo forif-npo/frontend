@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, type ReactNode } from "react";
 import { Button, Select, Tabs } from "@ui/components/client";
 import {
@@ -18,7 +17,7 @@ import {
   getMentorConfirmation,
   type IssuedMentorConfirmation,
 } from "@/features/study-manage/api";
-import type { StudyApplicationSummary } from "@/features/study-application/api";
+import type { StudyApplicationSummary } from "@/features/study-application";
 import { useActiveSemester } from "@/hooks/useActiveSemester";
 
 interface StudyManageSectionProps {

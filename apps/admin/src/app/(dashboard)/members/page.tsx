@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { PageState } from "@ui/components/server";
 import { getCurrentSemester } from "@/features/semester/api";
+import { getDepartments } from "@/features/departments/api";
 import { fetchMembers } from "./api";
 import { MembersView } from "./members-view";
 import { MemberSemesterLabel } from "./types";
@@ -21,9 +22,10 @@ export default async function Page({ searchParams }: PageProps) {
   const parsedPage = params.page ? parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
 
-  const [session, currentSemester] = await Promise.all([
+  const [session, currentSemester, departments] = await Promise.all([
     auth(),
     getCurrentSemester(),
+    getDepartments(),
   ]);
   const activeSemester =
     (params.semester as MemberSemesterLabel) ||
@@ -62,6 +64,7 @@ export default async function Page({ searchParams }: PageProps) {
         initialSearch={search ?? ""}
         initialSorting={sorting}
         activeSemesterLabel={currentSemester.label}
+        departments={departments}
       />
     );
   } catch (error) {

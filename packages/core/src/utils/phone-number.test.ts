@@ -1,5 +1,4 @@
 import { describe, expect, it } from "@jest/globals";
-
 import { formatPhoneNumber } from "./phone-number";
 
 describe("formatPhoneNumber", () => {

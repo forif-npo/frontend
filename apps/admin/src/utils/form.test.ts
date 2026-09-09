@@ -1,5 +1,4 @@
 import { describe, expect, it, jest } from "@jest/globals";
-
 import { autoHyphenPhoneNumber } from "./form";
 
 describe("autoHyphenPhoneNumber", () => {

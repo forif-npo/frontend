@@ -1,50 +1,20 @@
 "use client";
-
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useDisclosure } from "@big-calendar/hooks/use-disclosure";
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
 import { useAddEvent } from "@big-calendar/calendar/hooks/use-add-event";
-
 import { Input } from "@big-calendar/components/ui/input";
 import { Button } from "@big-calendar/components/ui/button";
 import { Textarea } from "@big-calendar/components/ui/textarea";
 import { TimeInput } from "@big-calendar/components/ui/time-input";
 import { SingleDayPicker } from "@big-calendar/components/ui/single-day-picker";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@big-calendar/components/ui/avatar";
-import {
-  Form,
-  FormField,
-  FormLabel,
-  FormItem,
-  FormControl,
-  FormMessage,
-} from "@big-calendar/components/ui/form";
-import {
-  Select,
-  SelectItem,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from "@big-calendar/components/ui/select";
-import {
-  Dialog,
-  DialogHeader,
-  DialogClose,
-  DialogContent,
-  DialogTrigger,
-  DialogTitle,
-  DialogFooter,
-} from "@big-calendar/components/ui/dialog";
-
+import { Avatar, AvatarFallback, AvatarImage, } from "@big-calendar/components/ui/avatar";
+import { Form, FormField, FormLabel, FormItem, FormControl, FormMessage, } from "@big-calendar/components/ui/form";
+import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue, } from "@big-calendar/components/ui/select";
+import { Dialog, DialogHeader, DialogClose, DialogContent, DialogTrigger, DialogTitle, DialogFooter, } from "@big-calendar/components/ui/dialog";
 import { eventSchema } from "@big-calendar/calendar/schemas";
-
 import type { TimeValue } from "react-aria-components";
 import type { TEventFormData } from "@big-calendar/calendar/schemas";
 
@@ -109,7 +79,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Event</DialogTitle>
+          <DialogTitle>일정 추가</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -123,11 +93,11 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
               name="user"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>Responsible</FormLabel>
+                  <FormLabel>담당자</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger data-invalid={fieldState.invalid}>
-                        <SelectValue placeholder="Select an option" />
+                        <SelectValue placeholder="선택해주세요" />
                       </SelectTrigger>
 
                       <SelectContent>
@@ -165,12 +135,12 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
               name="title"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel htmlFor="title">Title</FormLabel>
+                  <FormLabel htmlFor="title">일정 제목</FormLabel>
 
                   <FormControl>
                     <Input
                       id="title"
-                      placeholder="Enter a title"
+                      placeholder="제목을 입력해주세요"
                       data-invalid={fieldState.invalid}
                       {...field}
                     />
@@ -187,14 +157,14 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                 name="startDate"
                 render={({ field, fieldState }) => (
                   <FormItem className="flex-1">
-                    <FormLabel htmlFor="startDate">Start Date</FormLabel>
+                    <FormLabel htmlFor="startDate">시작일</FormLabel>
 
                     <FormControl>
                       <SingleDayPicker
                         id="startDate"
                         value={field.value}
                         onSelect={(date) => field.onChange(date as Date)}
-                        placeholder="Select a date"
+                        placeholder="날짜를 선택해주세요"
                         data-invalid={fieldState.invalid}
                       />
                     </FormControl>
@@ -209,7 +179,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                 name="startTime"
                 render={({ field, fieldState }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Start Time</FormLabel>
+                    <FormLabel>시작 시간</FormLabel>
 
                     <FormControl>
                       <TimeInput
@@ -232,12 +202,12 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                 name="endDate"
                 render={({ field, fieldState }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>End Date</FormLabel>
+                    <FormLabel>종료일</FormLabel>
                     <FormControl>
                       <SingleDayPicker
                         value={field.value}
                         onSelect={(date) => field.onChange(date as Date)}
-                        placeholder="Select a date"
+                        placeholder="날짜를 선택해주세요"
                         data-invalid={fieldState.invalid}
                       />
                     </FormControl>
@@ -251,7 +221,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                 name="endTime"
                 render={({ field, fieldState }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>End Time</FormLabel>
+                    <FormLabel>종료 시간</FormLabel>
 
                     <FormControl>
                       <TimeInput
@@ -273,60 +243,60 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
               name="color"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>Color</FormLabel>
+                  <FormLabel>색상</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger data-invalid={fieldState.invalid}>
-                        <SelectValue placeholder="Select an option" />
+                        <SelectValue placeholder="선택해주세요" />
                       </SelectTrigger>
 
                       <SelectContent>
                         <SelectItem value="blue">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-blue-600" />
-                            Blue
+                            파랑
                           </div>
                         </SelectItem>
 
                         <SelectItem value="green">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-green-600" />
-                            Green
+                            초록
                           </div>
                         </SelectItem>
 
                         <SelectItem value="red">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-red-600" />
-                            Red
+                            빨강
                           </div>
                         </SelectItem>
 
                         <SelectItem value="yellow">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-yellow-600" />
-                            Yellow
+                            노랑
                           </div>
                         </SelectItem>
 
                         <SelectItem value="purple">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-purple-600" />
-                            Purple
+                            보라
                           </div>
                         </SelectItem>
 
                         <SelectItem value="orange">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-orange-600" />
-                            Orange
+                            주황
                           </div>
                         </SelectItem>
 
                         <SelectItem value="gray">
                           <div className="flex items-center gap-2">
                             <div className="size-3.5 rounded-full bg-neutral-600" />
-                            Gray
+                            회색
                           </div>
                         </SelectItem>
                       </SelectContent>
@@ -342,7 +312,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
               name="description"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>설명</FormLabel>
 
                   <FormControl>
                     <Textarea
@@ -362,12 +332,12 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">
-              Cancel
+              취소
             </Button>
           </DialogClose>
 
           <Button form="event-form" type="submit" disabled={isLoading}>
-            {isLoading ? "Creating..." : "Create Event"}
+            {isLoading ? "생성 중..." : "일정 추가"}
           </Button>
         </DialogFooter>
       </DialogContent>

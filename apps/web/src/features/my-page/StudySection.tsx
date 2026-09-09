@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useTransition } from "react";
 import { EmptyState } from "@ui/components/server";
 import { StudyCard } from "@/components/study/ui/StudyCard";

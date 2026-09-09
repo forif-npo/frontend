@@ -7,7 +7,7 @@ import { apiClient } from "@core/utils/api-client";
 export type UserProfile = User;
 
 export interface UpdateUserProfileRequest {
-  department: string;
+  department_id: number;
   profile_image?: File | null;
 }
 export interface UpdateUserPhoneNumberRequest {
@@ -84,13 +84,13 @@ export async function getUserProfile(token?: string): Promise<UserProfile> {
  * Update user's profile information and optional profile image.
  */
 export async function updateUserProfile(
-  { department, profile_image }: UpdateUserProfileRequest,
+  { department_id, profile_image }: UpdateUserProfileRequest,
   token?: string,
 ): Promise<UserProfile> {
   const formData = new FormData();
   formData.append(
     "request",
-    new Blob([JSON.stringify({ department })], {
+    new Blob([JSON.stringify({ department_id })], {
       type: "application/json",
     }),
   );

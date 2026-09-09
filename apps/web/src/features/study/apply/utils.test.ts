@@ -1,11 +1,9 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import type { Study } from "@/types/study";
-
+import type { Study } from "@core/types/study";
 jest.mock("@/constants/study", () => ({
   getDifficultyBadgeVariant: (difficulty: Study["difficulty"]) =>
     difficulty === "SEMI_HARD" ? "warning" : "primary",
 }));
-
 import { getStudyBadgeTags } from "./utils";
 
 const study: Study = {

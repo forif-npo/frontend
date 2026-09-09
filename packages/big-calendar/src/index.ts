@@ -50,6 +50,3 @@ export { useDeleteEvent } from "./calendar/hooks/use-delete-event";
 
 // Schemas
 export * from "./calendar/schemas";
-
-// Mocks
-export { USERS_MOCK, CALENDAR_ITEMS_MOCK } from "./calendar/mocks";

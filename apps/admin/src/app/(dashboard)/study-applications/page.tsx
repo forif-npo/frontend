@@ -1,8 +1,8 @@
 import { auth } from "@/auth";
 import { getCurrentSemesterSchedules } from "@/features/semester/schedule-api";
 import { parseSortingParams } from "@/lib/list-sorting";
-import { fetchStudyApplications } from "./api";
-import { StudyApplicationsView } from "./study-applications-view";
+import { fetchStudyApplications } from "@/features/study-applications/api";
+import { StudyApplicationsView } from "@/features/study-applications/study-applications-view";
 
 export default async function Page({
   searchParams,

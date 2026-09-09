@@ -1,5 +1,4 @@
 import { describe, expect, it } from "@jest/globals";
-
 import { getObjectParticle } from "./korean-particle";
 
 describe("getObjectParticle", () => {

@@ -1,23 +1,11 @@
 "use client";
-
-import {
-  Columns,
-  Grid3x3,
-  List,
-  Plus,
-  Grid2x2,
-  CalendarRange,
-} from "lucide-react";
-
+import { Columns, Grid3x3, List, Plus, Grid2x2, CalendarRange, } from "lucide-react";
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { Button } from "@big-calendar/components/ui/button";
-
 import { UserSelect } from "@big-calendar/calendar/components/header/user-select";
 import { TodayButton } from "@big-calendar/calendar/components/header/today-button";
 import { DateNavigator } from "@big-calendar/calendar/components/header/date-navigator";
 import { AddEventDialog } from "@big-calendar/calendar/components/dialogs/add-event-dialog";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 import type { TCalendarView } from "@big-calendar/calendar/types";
 

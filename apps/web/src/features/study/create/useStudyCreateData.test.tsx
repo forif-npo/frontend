@@ -1,5 +1,4 @@
 /** @jest-environment jsdom */
-
 import { renderHook, waitFor } from "@testing-library/react";
 import {
   afterEach,
@@ -9,17 +8,14 @@ import {
   it,
   jest,
 } from "@jest/globals";
-
 jest.mock("@/features/semester/schedule-api", () => ({
   getCurrentSemesterSchedules: jest.fn(),
 }));
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: {
     get: jest.fn(),
   },
 }));
-
 import type { SemesterScheduleItem } from "@/features/semester/schedule-api";
 import { getCurrentSemesterSchedules } from "@/features/semester/schedule-api";
 import { apiClient } from "@core/utils/api-client";

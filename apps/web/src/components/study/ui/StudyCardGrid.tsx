@@ -1,7 +1,7 @@
 import React from "react";
 import { EmptyState } from "@ui/components/server";
 import { StudyCard } from "./StudyCard";
-import { Study } from "@/types/study";
+import type { Study } from "@core/types/study";
 
 interface StudyCardGridProps {
   studies: Study[];

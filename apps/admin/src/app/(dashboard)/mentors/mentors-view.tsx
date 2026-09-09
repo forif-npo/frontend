@@ -1,5 +1,4 @@
 "use client";
-
 import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
@@ -13,7 +12,6 @@ import type { SortingState } from "@tanstack/react-table";
 import { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-
 import { fetchMentors } from "./api";
 import { columns } from "./columns";
 import { Mentor, MentorSemesterLabel } from "./types";

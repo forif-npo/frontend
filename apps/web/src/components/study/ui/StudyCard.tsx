@@ -1,11 +1,5 @@
 "use client";
-
-import {
-  useRef,
-  type KeyboardEvent,
-  type MouseEvent,
-  type WheelEvent,
-} from "react";
+import { useRef, type WheelEvent } from "react";
 import {
   formatStudyTimeRange,
   getDifficultyBadgeVariant,
@@ -17,9 +11,9 @@ import {
   NUMERIC_DIFFICULTY_LABELS,
 } from "@/constants/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
-import type { Study } from "@/types/study";
+import type { Study } from "@core/types/study";
 import { Button } from "@ui/components/client";
-import { Badge, Body, Heading } from "@ui/components/server";
+import { Badge, Body } from "@ui/components/server";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { StudyImage } from "./StudyImage";
@@ -102,7 +96,15 @@ function SemesterBadge({ label }: { label: string }) {
   );
 }
 
-function StudyTags({ children }: { children: React.ReactNode }) {
+function StudyTags({
+  children,
+  focusable = true,
+  onClick,
+}: {
+  children: React.ReactNode;
+  focusable?: boolean;
+  onClick?: () => void;
+}) {
   const tagsRef = useRef<HTMLDivElement>(null);
 
   const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
@@ -126,14 +128,15 @@ function StudyTags({ children }: { children: React.ReactNode }) {
   return (
     <div
       ref={tagsRef}
-      className="scrollbar-hidden flex min-w-0 gap-2 overflow-x-auto text-nowrap [&>*]:shrink-0"
+      className="scrollbar-hidden pointer-events-auto flex min-w-0 gap-2 overflow-x-auto text-nowrap [&>*]:shrink-0"
       onWheel={handleWheel}
       onTouchStart={(event) => event.stopPropagation()}
       onTouchMove={(event) => event.stopPropagation()}
       onTouchEnd={(event) => event.stopPropagation()}
       onTouchCancel={(event) => event.stopPropagation()}
-      tabIndex={0}
-      aria-label="스터디 태그"
+      onClick={onClick}
+      tabIndex={focusable ? 0 : undefined}
+      aria-label={focusable ? "스터디 태그" : undefined}
     >
       {children}
     </div>
@@ -143,7 +146,8 @@ function StudyTags({ children }: { children: React.ReactNode }) {
 interface StandardStudyCardProps {
   study: Study;
   imageSection: React.ReactNode;
-  onCardClick?: () => void;
+  detailHref?: string;
+  onTagClick?: () => void;
   onDetailClick?: () => void;
   onApplyClick?: () => void;
   showDetailAction?: boolean;
@@ -152,7 +156,8 @@ interface StandardStudyCardProps {
 function StandardStudyCard({
   study,
   imageSection,
-  onCardClick,
+  detailHref,
+  onTagClick,
   onDetailClick,
   onApplyClick,
   showDetailAction = true,
@@ -166,38 +171,34 @@ function StandardStudyCard({
   const tagLabels = getVisibleTagLabels(study.tags);
   const difficultyLabel = getVisibleDifficultyLabel(study.difficulty);
   const hasSchedule = schedule !== "";
-  const isClickable = onCardClick !== undefined;
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (!isClickable || (event.key !== "Enter" && event.key !== " ")) return;
-
-    event.preventDefault();
-    onCardClick();
-  };
-
-  const handleActionClick = (
-    event: MouseEvent<HTMLButtonElement>,
-    action?: () => void,
-  ) => {
-    event.stopPropagation();
-    action?.();
-  };
+  const studyTitleId = `study-title-${study.id}`;
 
   return (
-    <div
-      className={`rounded-3 border-border-gray-light bg-surface-white flex w-full flex-col overflow-hidden border ${
-        isClickable
-          ? "cursor-pointer transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-md"
+    <article
+      className={`rounded-3 border-border-gray-light bg-surface-white relative flex w-full flex-col overflow-hidden border ${
+        detailHref
+          ? "focus-within:ring-border-secondary transition-[transform,box-shadow] duration-200 focus-within:ring-2 hover:-translate-y-1 hover:shadow-md"
           : ""
       }`}
-      onClick={onCardClick}
-      onKeyDown={handleKeyDown}
-      role={isClickable ? "link" : undefined}
-      tabIndex={isClickable ? 0 : undefined}
     >
-      {imageSection}
-      <div className="flex flex-col gap-4 p-8">
-        <StudyTags>
+      {detailHref && (
+        <Link
+          href={detailHref}
+          aria-labelledby={studyTitleId}
+          className="absolute inset-0 z-0 focus:outline-none"
+        />
+      )}
+      <div
+        className={detailHref ? "pointer-events-none relative z-10" : undefined}
+      >
+        {imageSection}
+      </div>
+      <div
+        className={`flex flex-col gap-4 px-8 pb-0 pt-8 ${
+          detailHref ? "pointer-events-none relative z-10" : ""
+        }`}
+      >
+        <StudyTags focusable={!detailHref} onClick={onTagClick}>
           <Badge
             label={getRecruitStatusLabel(study.recruit_status)}
             variant={getRecruitStatusBadgeVariant(study.recruit_status)}
@@ -224,9 +225,12 @@ function StandardStudyCard({
           )}
         </StudyTags>
         <div className="flex flex-1 flex-col gap-4">
-          <Heading size="xs" className="text-text-basic line-clamp-1">
+          <h3
+            id={studyTitleId}
+            className="text-heading-xs-mobile text-text-basic sm:text-heading-xs line-clamp-1 font-bold"
+          >
             {study.study_name}
-          </Heading>
+          </h3>
           <Body size="m" className="text-text-subtle line-clamp-5 h-20">
             {study.one_liner}
           </Body>
@@ -244,27 +248,33 @@ function StandardStudyCard({
             </Body>
           </div>
         </div>
-        <div className="mt-2 flex items-center justify-end gap-4 self-stretch">
-          {showDetailAction && (
-            <Button
-              variant="tertiary"
-              size="medium"
-              onClick={(event) => handleActionClick(event, onDetailClick)}
-            >
-              자세히 보기
-            </Button>
-          )}
-          <Button
-            variant="primary"
-            size="medium"
-            onClick={(event) => handleActionClick(event, onApplyClick)}
-            disabled={study.recruit_status !== "APPLICABLE"}
-          >
-            신청하기
-          </Button>
-        </div>
       </div>
-    </div>
+      <div
+        className={`mt-6 flex items-center justify-end gap-4 self-stretch px-8 pb-8 ${
+          detailHref ? "pointer-events-none relative z-10" : ""
+        }`}
+      >
+        {showDetailAction && (
+          <Button
+            variant="tertiary"
+            size="medium"
+            className={detailHref ? "pointer-events-auto" : undefined}
+            onClick={onDetailClick}
+          >
+            자세히 보기
+          </Button>
+        )}
+        <Button
+          variant="primary"
+          size="medium"
+          className={detailHref ? "pointer-events-auto" : undefined}
+          onClick={onApplyClick}
+          disabled={study.recruit_status !== "APPLICABLE"}
+        >
+          신청하기
+        </Button>
+      </div>
+    </article>
   );
 }
 
@@ -300,8 +310,8 @@ export function StudyCard(props: StudyCardProps) {
       <StandardStudyCard
         study={s}
         imageSection={imageSection}
-        onCardClick={() => router.push(`/studies/detail/${s.id}`)}
-        onDetailClick={() => router.push(`/studies/detail/${s.id}`)}
+        detailHref={`/studies/detail/${s.id}`}
+        onTagClick={() => router.push(`/studies/detail/${s.id}`)}
         onApplyClick={() => router.push(`/studies/apply?study_id=${s.id}`)}
         showDetailAction={false}
       />

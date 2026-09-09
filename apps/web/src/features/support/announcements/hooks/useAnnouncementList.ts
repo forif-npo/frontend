@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useMemo, useState } from "react";
 import { getAnnouncements } from "../api/announcements.api";
 import type { AnnouncementPost } from "../types/announcement.type";

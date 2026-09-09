@@ -1,9 +1,6 @@
 import { isToday } from "date-fns";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { cn } from "@big-calendar/lib/utils";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {

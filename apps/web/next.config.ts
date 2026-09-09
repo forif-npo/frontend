@@ -28,12 +28,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "5mb",
     },
   },
-  transpilePackages: [
-    "@t3-oss/env-nextjs",
-    "@t3-oss/env-core",
-    "@repo/ui",
-    "msw",
-  ],
+  transpilePackages: ["@t3-oss/env-nextjs", "@t3-oss/env-core", "@repo/ui"],
   images: {
     remotePatterns: [
       {

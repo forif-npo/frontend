@@ -1,4 +1,4 @@
-import { cn } from "../../utils/cn";
+import { cn } from "@repo/core/utils/cn";
 
 export type BodyProps<E extends React.ElementType> = {
   size?: "l" | "m" | "s";

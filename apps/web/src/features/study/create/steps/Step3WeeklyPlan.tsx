@@ -1,5 +1,4 @@
 "use client";
-
 import { UseFormReturn } from "react-hook-form";
 import { HintText } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";

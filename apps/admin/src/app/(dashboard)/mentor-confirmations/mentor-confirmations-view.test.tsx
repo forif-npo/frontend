@@ -1,56 +1,44 @@
 /** @jest-environment jsdom */
-
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps } from "react";
-
 const mockPush = jest.fn();
-
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
-
 jest.mock("sonner", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
-
 jest.mock("@/components/page-header", () => ({
   PageHeader: () => null,
 }));
-
 jest.mock("@/components/list/activity-semester-toggle", () => ({
   ActivitySemesterToggle: () => null,
 }));
-
 jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }: ComponentProps<"button">) => (
     <button {...props}>{children}</button>
   ),
 }));
-
 jest.mock("@/components/ui/single-day-picker", () => ({
   SingleDayPicker: () => null,
 }));
-
 jest.mock("@/components/list/data-table", () => ({
   DataTable: ({ data }: { data: Array<{ user_name: string }> }) => (
     <div>{data.map((target) => target.user_name).join(", ")}</div>
   ),
 }));
-
 jest.mock("@ui/components/server", () => ({
   EmptyState: ({ title }: { title: string }) => <div>{title}</div>,
   InlineLoadingState: ({ message }: { message: string }) => (
     <div>{message}</div>
   ),
 }));
-
 jest.mock("./api", () => ({
   getMentorConfirmationTargets: jest.fn(),
   getMentorConfirmationViewUrl: jest.fn(),
   issueMentorConfirmations: jest.fn(),
 }));
-
 import { toast } from "sonner";
 import { getMentorConfirmationTargets } from "./api";
 import { MentorConfirmationsView } from "./mentor-confirmations-view";

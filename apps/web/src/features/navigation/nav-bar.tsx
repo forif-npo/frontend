@@ -4,10 +4,11 @@ import { Home, Menu } from "@repo/assets/icons/lucide";
 import { getStudyApplicationStatus } from "@/features/study/apply/api";
 import { AlertModal, Button } from "@ui/components/client";
 import { Link } from "@ui/components/server";
-import { cn } from "@ui/utils/cn";
+import { cn } from "@core/utils/cn";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
+  type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
   type ReactNode,
   useCallback,
@@ -45,6 +46,9 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
   const [studyApplicationBlockedMessage, setStudyApplicationBlockedMessage] =
     useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuTriggerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuCloseRef = useRef<HTMLButtonElement>(null);
 
   const closeDesktopMenu = useCallback(() => {
     if (!openMenu) return;
@@ -94,6 +98,9 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       if (event.key === "Escape") {
         closeDesktopMenu();
         setMobileMenuOpen(false);
+        window.requestAnimationFrame(() =>
+          mobileMenuTriggerRef.current?.focus(),
+        );
       }
     };
 
@@ -118,6 +125,57 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
     };
   }, [mobileMenuOpen]);
 
+  useEffect(() => {
+    const appContent = document.getElementById("app-content");
+    if (!appContent) return;
+
+    appContent.inert = mobileMenuOpen;
+
+    return () => {
+      appContent.inert = false;
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const focusCloseButton = window.requestAnimationFrame(() => {
+      mobileMenuCloseRef.current?.focus();
+    });
+
+    return () => window.cancelAnimationFrame(focusCloseButton);
+  }, [mobileMenuOpen]);
+
+  const closeMobileMenu = (restoreFocus = true) => {
+    setMobileMenuOpen(false);
+    if (restoreFocus) {
+      window.requestAnimationFrame(() => mobileMenuTriggerRef.current?.focus());
+    }
+  };
+
+  const handleMobileMenuKeyDown = (
+    event: ReactKeyboardEvent<HTMLDivElement>,
+  ) => {
+    if (event.key !== "Tab") return;
+
+    const focusableElements =
+      mobileMenuRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+    if (!focusableElements?.length) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  };
+
   if (!navMenus) return null;
 
   return (
@@ -125,21 +183,26 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       {/* Desktop overlay */}
       {(openMenu || closingMenu) && (
         <div
-          className="fixed inset-0 z-40 hidden bg-black/50 md:block"
+          className="fixed inset-0 z-40 hidden bg-black/50 xl:block"
           aria-hidden="true"
         />
       )}
 
       {/* Mobile NavBar */}
-      <nav className="bg-surface-white/95 border-divider-gray-light fixed left-0 right-0 top-0 z-50 flex h-[64px] shrink-0 items-center justify-between gap-4 border-b px-4 backdrop-blur md:hidden">
+      <nav
+        aria-hidden={mobileMenuOpen}
+        className="bg-surface-white/95 border-divider-gray-light fixed left-0 right-0 top-0 z-50 flex h-[64px] shrink-0 items-center justify-between gap-4 border-b px-4 backdrop-blur xl:hidden"
+      >
         <Link href="/" className="flex items-center">
           <Image src={NAV_LOGO_SRC} width={62} height={40} alt="FORIF Logo" />
         </Link>
         <button
+          ref={mobileMenuTriggerRef}
           onClick={() => setMobileMenuOpen(true)}
           className="border-border-gray-light bg-surface-white flex h-10 w-10 items-center justify-center rounded-full border shadow-sm"
           aria-label="전체 메뉴 열기"
           aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-menu"
         >
           <Menu size={20} className="text-text-basic" />
         </button>
@@ -147,12 +210,23 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
 
       {/* Mobile Full Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="bg-surface-gray-subtler fixed inset-0 z-[100] flex flex-col overflow-y-auto md:hidden">
+        <div
+          ref={mobileMenuRef}
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mobile-menu-title"
+          className="bg-surface-gray-subtler fixed inset-0 z-[100] flex flex-col overflow-y-auto xl:hidden"
+          onKeyDown={handleMobileMenuKeyDown}
+        >
+          <h2 id="mobile-menu-title" className="sr-only">
+            전체 메뉴
+          </h2>
           {/* Mobile Menu Header */}
           <div className="bg-surface-white/95 border-divider-gray-light sticky top-0 z-10 flex h-[64px] shrink-0 items-center justify-between gap-4 border-b px-4 backdrop-blur">
             <Link
               href="/"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => closeMobileMenu(false)}
               className="flex items-center gap-2"
             >
               <Image
@@ -163,7 +237,8 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
               />
             </Link>
             <button
-              onClick={() => setMobileMenuOpen(false)}
+              ref={mobileMenuCloseRef}
+              onClick={() => closeMobileMenu()}
               className="flex h-10 w-10 items-center justify-center"
               aria-label="전체 메뉴 닫기"
             >
@@ -184,7 +259,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
               </div>
               <Link
                 href={isLoggedIn ? "/my" : "/signin"}
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => closeMobileMenu(false)}
                 className="bg-primary-50 rounded-2 flex h-12 items-center justify-center gap-2 text-[17px] font-bold leading-[1.5] text-white hover:font-bold"
               >
                 {isLoggedIn ? "마이페이지" : "로그인"}
@@ -192,7 +267,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
               {!isLoggedIn && (
                 <Link
                   href="/signup"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => closeMobileMenu(false)}
                   className="border-border-gray-light text-text-basic rounded-2 flex h-12 items-center justify-center border text-[16px] font-semibold leading-[1.5]"
                 >
                   회원가입
@@ -214,7 +289,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                             key={subMenu.label}
                             href={subMenu.href}
                             onClick={(event) => {
-                              setMobileMenuOpen(false);
+                              closeMobileMenu(false);
                               if (subMenu.href === "/studies/apply") {
                                 void handleStudyApplicationClick(event);
                               }
@@ -233,7 +308,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
                           rel={
                             menu.external ? "noopener noreferrer" : undefined
                           }
-                          onClick={() => setMobileMenuOpen(false)}
+                          onClick={() => closeMobileMenu(false)}
                           className="text-text-basic hover:bg-action-primary-hover rounded-2 block px-3 py-3 text-[16px] leading-[1.5] hover:font-semibold"
                         >
                           {menu.label} 바로가기
@@ -247,7 +322,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
 
             <Link
               href="/"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => closeMobileMenu(false)}
               className="text-text-subtle rounded-2 mb-2 flex items-center justify-center gap-2 py-3 text-[15px] leading-[1.5]"
             >
               <Home size={18} />
@@ -261,7 +336,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
       <nav
         ref={navRef}
         className={cn(
-          "bg-surface-white border-divider-gray-light fixed left-0 right-0 top-0 z-50 hidden h-[80px] items-center gap-16 border-b px-16 md:flex",
+          "bg-surface-white border-divider-gray-light fixed left-0 right-0 top-0 z-50 hidden h-[80px] items-center gap-16 border-b px-16 xl:flex",
         )}
       >
         <Link
@@ -276,6 +351,8 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
             <li key={label}>
               {subMenus ? (
                 <Button
+                  aria-controls={`desktop-menu-${label}`}
+                  aria-expanded={openMenu === label}
                   size="medium"
                   onClick={() => handleMenuClick(label, true)}
                   variant="text"
@@ -296,15 +373,15 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
 
               {subMenus && (openMenu === label || closingMenu === label) && (
                 <div
+                  id={`desktop-menu-${label}`}
                   className={`bg-surface-white border-divider-gray-light shadow-divider-primary-light absolute left-0 top-full z-50 w-full border-t px-16 py-4 shadow ${openMenu === label ? styles.menuOpen : styles.menuClose}`}
-                  role="menubar"
                   onAnimationEnd={() => {
                     if (closingMenu === label) setClosingMenu(null);
                   }}
                 >
                   <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 md:grid-cols-4">
                     {subMenus.map(({ label: subLabel, href: subHref }) => (
-                      <li key={subLabel} className="py-2.5" role="menuitem">
+                      <li key={subLabel} className="py-2.5">
                         <Link
                           size="m"
                           href={subHref}

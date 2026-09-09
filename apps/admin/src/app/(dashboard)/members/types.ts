@@ -1,5 +1,6 @@
 export type Member = {
   userId: number;
+  departmentId: number | null;
   department: string;
   userName: string;
   currentStudyName: string;

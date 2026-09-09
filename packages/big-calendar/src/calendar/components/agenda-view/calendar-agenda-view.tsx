@@ -1,14 +1,10 @@
 import { useMemo } from "react";
 import { CalendarX2 } from "lucide-react";
 import { endOfDay, startOfDay, isSameMonth } from "date-fns";
-
 import { formatDate, parseToKST } from "@big-calendar/lib/date";
-
 import { useCalendar } from "@big-calendar/calendar/contexts/calendar-context";
-
 import { ScrollArea } from "@big-calendar/components/ui/scroll-area";
 import { AgendaDayGroup } from "@big-calendar/calendar/components/agenda-view/agenda-day-group";
-
 import type { IEvent } from "@big-calendar/calendar/interfaces";
 
 interface IProps {
@@ -94,7 +90,7 @@ export function CalendarAgendaView({
             <div className="text-muted-foreground flex flex-col items-center justify-center gap-2 py-20">
               <CalendarX2 className="size-10" />
               <p className="text-sm md:text-base">
-                No events scheduled for the selected month
+                선택한 달에 등록된 일정이 없습니다.
               </p>
             </div>
           )}

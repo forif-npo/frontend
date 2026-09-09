@@ -1,5 +1,4 @@
 import { describe, expect, it } from "@jest/globals";
-
 import { safeImageSrc } from "./image";
 
 describe("safeImageSrc", () => {

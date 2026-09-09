@@ -1,7 +1,5 @@
 "use client";
-
 import { useState } from "react";
-
 import { Pagination } from "@ui/components/client";
 import { InlineErrorState } from "@ui/components/server";
 import { SearchBar } from "@/features/support/components/SearchBar";

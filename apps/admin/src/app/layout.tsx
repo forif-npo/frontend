@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-
 import { auth } from "@/auth";
 import { ApiClientProvider } from "@/providers/ApiClientProvider";
 import localFont from "next/font/local";

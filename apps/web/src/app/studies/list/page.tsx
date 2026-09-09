@@ -1,5 +1,4 @@
 "use client";
-
 import { SearchBar } from "@/components/SearchBar";
 import { StudyListSkeleton } from "@/components/study/skeleton/StudyCardSkeleton";
 import { StudyActionButtons } from "@/components/study/ui/StudyActionButtons";
@@ -9,7 +8,7 @@ import { StudyListMobileHeader } from "@/components/study/ui/StudyListMobileHead
 import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
 import { useStudyData, useStudyFilters } from "@/hooks/study";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Study, StudyListParams } from "@/types/study";
+import type { Study, StudyListParams } from "@core/types/study";
 import { getStudyTagName } from "@/constants/study-tags";
 import { Pagination } from "@ui/components/client";
 import { InlineErrorState } from "@ui/components/server";
@@ -180,7 +179,7 @@ export default function StudyListPage() {
           loading={loading}
         />
 
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <div className="mb-6 flex items-center justify-between gap-7">
             <SearchBar
               value={searchInput}

@@ -7,7 +7,7 @@ import {
   type ReactNode,
   type TouchEvent,
 } from "react";
-import { cn } from "../../utils/cn";
+import { cn } from "@repo/core/utils/cn";
 
 interface CarouselProps {
   carouselItems: CarouselItem[];
@@ -43,7 +43,7 @@ export function Carousel({ carouselItems, bannerClassName }: CarouselProps) {
   }, [totalItems]);
 
   if (totalItems === 0) {
-    return <div className="text-center">No items to display</div>;
+    return <div className="text-center">표시할 항목이 없습니다.</div>;
   }
 
   const handlePrev = () => {
@@ -202,15 +202,12 @@ export function CarouselIndicators({
         <button
           key={index}
           onClick={() => onSelect(index)}
-          className={`h-2 rounded-full transition-all ${
-            index === current ? "w-8" : "w-2"
-          }`}
-          style={{
-            backgroundColor:
-              index === current
-                ? "var(--krds-color-primary-60)"
-                : "var(--krds-color-gray-20)",
-          }}
+          className={cn(
+            "h-2 rounded-full transition-all",
+            index === current
+              ? "bg-text-primary w-8"
+              : "bg-action-disabled w-2",
+          )}
           aria-label={`슬라이드 ${index + 1}로 이동`}
           aria-current={index === current ? "true" : "false"}
         />
