@@ -1,5 +1,4 @@
 "use client";
-
 import { GoogleButton } from "@/components/GoogleButton";
 import { MemberEligibilityInfo } from "@/features/auth/member-eligibility-info";
 import { signUpWithGoogle } from "@/features/auth/signin/actions";

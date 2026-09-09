@@ -1,5 +1,4 @@
 "use client";
-
 import type { DepartmentOption } from "@/features/departments/api";
 import { formatPhoneNumber } from "@/hooks/useFormattedPhoneNumber";
 import { SignUpValues } from "@core/schemas";
