@@ -7,11 +7,7 @@ import { studyOpenSchema, StudyOpenValues } from "@core/schemas";
 import { handleApiError } from "@core/utils/api-client";
 import { useStudyCreateData } from "./useStudyCreateData";
 import { submitStudyCreate } from "./actions";
-import {
-  clearStudyCreateDraft,
-  loadStudyCreateDraft,
-  saveStudyCreateDraft,
-} from "./draft-storage";
+import { clearStudyCreateDraft, loadStudyCreateDraft, saveStudyCreateDraft } from "./draft-storage";
 import { DEFAULT_CURRICULUM } from "./constants";
 import type { StudyCreateStep } from "./types";
 

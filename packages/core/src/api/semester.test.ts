@@ -1,21 +1,9 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 jest.mock("../utils/api-client", () => ({
   apiClient: { get: jest.fn() },
 }));
 import { apiClient } from "../utils/api-client";
-import {
-  fallbackSemester,
-  getCurrentSemester,
-  getSemesters,
-  toSemesterLabel,
-} from "./semester";
+import { fallbackSemester, getCurrentSemester, getSemesters, toSemesterLabel } from "./semester";
 
 type GetMock = {
   mockReset: () => void;

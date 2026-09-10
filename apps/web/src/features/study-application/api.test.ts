@@ -3,11 +3,7 @@ jest.mock("@core/utils/api-client", () => ({
   apiClient: { get: jest.fn(), delete: jest.fn() },
 }));
 import { apiClient } from "@core/utils/api-client";
-import {
-  cancelStudyCreationApplication,
-  getMyStudyApplication,
-  getMyStudyApplications,
-} from "./api";
+import { cancelStudyCreationApplication, getMyStudyApplication, getMyStudyApplications } from "./api";
 
 type GetMock = {
   mockReset: () => void;

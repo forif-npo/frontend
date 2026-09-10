@@ -1,13 +1,6 @@
 /** @jest-environment jsdom */
 import { act, renderHook, waitFor } from "@testing-library/react";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
@@ -31,11 +24,7 @@ jest.mock("ky", () => ({
 import type { StudyOpenValues } from "@core/schemas";
 import { handleApiError } from "@core/utils/api-client";
 import { submitStudyCreate } from "./actions";
-import {
-  clearStudyCreateDraft,
-  loadStudyCreateDraft,
-  saveStudyCreateDraft,
-} from "./draft-storage";
+import { clearStudyCreateDraft, loadStudyCreateDraft, saveStudyCreateDraft } from "./draft-storage";
 import { useStudyCreateData } from "./useStudyCreateData";
 import { useStudyCreatePage } from "./useStudyCreatePage";
 

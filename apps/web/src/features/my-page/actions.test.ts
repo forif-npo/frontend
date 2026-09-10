@@ -5,10 +5,7 @@ jest.mock("@/features/my-page/api", () => ({
   updateUserProfile: jest.fn(),
 }));
 import { auth } from "@/auth";
-import {
-  updateUserPhoneNumber,
-  updateUserProfile,
-} from "@/features/my-page/api";
+import { updateUserPhoneNumber, updateUserProfile } from "@/features/my-page/api";
 import { updateMyProfile } from "./actions";
 
 const mockedAuth = auth as jest.MockedFunction<typeof auth>;

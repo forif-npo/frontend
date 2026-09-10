@@ -1,14 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  buildAlimTalkVariables,
-  formatPhoneNumberLines,
-  formatReceiverLine,
-  getMissingTemplateVariables,
-  getRequiredTemplateVariables,
-  getTemplateVariables,
-  getVariableLabel,
-  sortAlimTalkTemplatesByNameDescending,
-} from "./sms-utils";
+import { buildAlimTalkVariables, formatPhoneNumberLines, formatReceiverLine, getMissingTemplateVariables, getRequiredTemplateVariables, getTemplateVariables, getVariableLabel, sortAlimTalkTemplatesByNameDescending } from "./sms-utils";
 import type { AlimTalkTemplate, Receiver } from "./types";
 
 const template: AlimTalkTemplate = {

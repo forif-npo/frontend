@@ -1,15 +1,6 @@
 "use client";
 import { useRef, type WheelEvent } from "react";
-import {
-  formatStudyTimeRange,
-  getDifficultyBadgeVariant,
-  getDifficultyLabel,
-  getNumericDifficultyBadgeVariant,
-  getRecruitStatusBadgeVariant,
-  getRecruitStatusLabel,
-  getWeekDayLabel,
-  NUMERIC_DIFFICULTY_LABELS,
-} from "@/constants/study";
+import { formatStudyTimeRange, getDifficultyBadgeVariant, getDifficultyLabel, getNumericDifficultyBadgeVariant, getRecruitStatusBadgeVariant, getRecruitStatusLabel, getWeekDayLabel, NUMERIC_DIFFICULTY_LABELS } from "@/constants/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
 import type { Study } from "@core/types/study";
 import { Button } from "@ui/components/client";

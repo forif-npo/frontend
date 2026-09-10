@@ -1,18 +1,5 @@
 "use client";
-import type {
-  CreateTeamRequest,
-  Criterion,
-  Evaluation,
-  EvaluationScore,
-  Hackathon,
-  JoinRequest,
-  JoinRequestStatus,
-  Participant,
-  Submission,
-  SubmissionRequest,
-  Team,
-  UpdateTeamRequest,
-} from "@core/types/hackathon";
+import type { CreateTeamRequest, Criterion, Evaluation, EvaluationScore, Hackathon, JoinRequest, JoinRequestStatus, Participant, Submission, SubmissionRequest, Team, UpdateTeamRequest } from "@core/types/hackathon";
 import { handleApiError } from "@core/utils/api-client";
 import { Heading } from "@ui/components/server";
 import { useEffect, useMemo, useState } from "react";
@@ -22,21 +9,8 @@ import { EvaluationPanel } from "./active/EvaluationPanel";
 import { TeamRecruitingPanel } from "./active/TeamRecruitingPanel";
 import { TeamStatusBoard } from "./active/TeamStatusBoard";
 import { TeamWorkspacePanel } from "./active/TeamWorkspacePanel";
-import {
-  EvaluationModal,
-  JoinRequestModal,
-  SubmissionModal,
-  TeamFormModal,
-  type SubmissionFieldErrors,
-} from "./active/modals";
-import {
-  EMPTY_SUBMISSION_FORM,
-  EMPTY_TEAM_FORM,
-  statusValue,
-  type ActiveStage,
-  type SubmissionFormState,
-  type TeamFormState,
-} from "./active/types";
+import { EvaluationModal, JoinRequestModal, SubmissionModal, TeamFormModal, type SubmissionFieldErrors } from "./active/modals";
+import { EMPTY_SUBMISSION_FORM, EMPTY_TEAM_FORM, statusValue, type ActiveStage, type SubmissionFormState, type TeamFormState } from "./active/types";
 
 interface ActiveHackathonMainProps {
   hackathon: Hackathon;

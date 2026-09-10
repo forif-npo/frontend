@@ -1,9 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  mapEventColorToColorId,
-  transformGoogleEventToIEvent,
-  transformGoogleEventsToIEvents,
-} from "./transform";
+import { mapEventColorToColorId, transformGoogleEventToIEvent, transformGoogleEventsToIEvents } from "./transform";
 
 describe("calendar event transforms", () => {
   it("keeps the existing event fields while excluding resource attendees", () => {

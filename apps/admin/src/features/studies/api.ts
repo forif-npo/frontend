@@ -1,9 +1,5 @@
 import { apiClient } from "@core/utils/api-client";
-import type {
-  AdminStudyListResponse,
-  ApiResponse,
-  StudyRejectRequest,
-} from "@core/types/api";
+import type { AdminStudyListResponse, ApiResponse, StudyRejectRequest } from "@core/types/api";
 import type { SemesterInfo } from "./types";
 import { getCurrentSemester as fetchActiveSemester } from "@/features/semester/api";
 import type { SortingState } from "@tanstack/react-table";

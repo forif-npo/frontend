@@ -9,12 +9,7 @@ jest.mock("@core/utils/api-client", () => ({
   },
 }));
 import { apiClient } from "@core/utils/api-client";
-import {
-  applyProduct,
-  deleteProductApplication,
-  getMyProductApplications,
-  updateProductApplication,
-} from "./api";
+import { applyProduct, deleteProductApplication, getMyProductApplications, updateProductApplication } from "./api";
 
 type JsonMock = {
   mockReset: () => void;

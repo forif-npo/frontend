@@ -1,12 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  addHoursToDateTime,
-  formatDateTimeLabel,
-  toDateTimeInputValue,
-  toDateTimeMs,
-  toInputDateTime,
-  toLocalDateTime,
-} from "./datetime";
+import { addHoursToDateTime, formatDateTimeLabel, toDateTimeInputValue, toDateTimeMs, toInputDateTime, toLocalDateTime } from "./datetime";
 
 describe("datetime utils", () => {
   it("keeps local date-time fields intact for form inputs and API values", () => {

@@ -1,13 +1,6 @@
 import { auth } from "@/auth";
 import { PageState } from "@ui/components/server";
-import {
-  fetchAwards,
-  fetchCriteria,
-  fetchEvaluationSummary,
-  fetchHackathon,
-  fetchParticipants,
-  fetchTeams,
-} from "@/features/hackathon/api";
+import { fetchAwards, fetchCriteria, fetchEvaluationSummary, fetchHackathon, fetchParticipants, fetchTeams } from "@/features/hackathon/api";
 import { ManagementView } from "@/features/hackathon/management-view";
 
 interface PageProps {

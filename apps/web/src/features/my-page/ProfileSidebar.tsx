@@ -1,12 +1,6 @@
 "use client";
 import { Body, Label } from "@ui/components/server";
-import {
-  CircleUser,
-  ClipboardCheck,
-  Package,
-  Settings,
-  UsersRound,
-} from "@repo/assets/icons/lucide";
+import { CircleUser, ClipboardCheck, Package, Settings, UsersRound } from "@repo/assets/icons/lucide";
 import Image from "next/image";
 import { safeImageSrc } from "@/utils/image";
 

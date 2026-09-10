@@ -1,19 +1,11 @@
 "use client";
-import type {
-  Award,
-  CompetitionType,
-  Hackathon,
-  Submission,
-} from "@core/types/hackathon";
+import type { Award, CompetitionType, Hackathon, Submission } from "@core/types/hackathon";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
 import { Pagination, SelectBox } from "@ui/components/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "@core/utils/api-client";
-import {
-  HACKATHON_TECH_STACK_OPTIONS,
-  normalizeHackathonTechStack,
-} from "./tech-stack";
+import { HACKATHON_TECH_STACK_OPTIONS, normalizeHackathonTechStack } from "./tech-stack";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { HackathonArchiveSkeleton } from "@/components/skeleton/HackathonSkeleton";
@@ -21,14 +13,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { SearchBar } from "@/components/SearchBar";
 import type { ArchiveHackathonDetail } from "@core/types/hackathon";
 import { CompetitionTypeBadge } from "./CompetitionTypeBadge";
-import {
-  ARCHIVE_CARD_LINKS_CLASS_NAME,
-  ARCHIVE_CARD_SUMMARY_MIN_HEIGHT_CLASS_NAME,
-  ARCHIVE_ELEVATED_PANEL_CLASS_NAME,
-  ARCHIVE_FILTER_WIDTH_CLASS_NAME,
-  ArchiveExternalLinks,
-  ArchiveTechStackBadges,
-} from "./archive/ui";
+import { ARCHIVE_CARD_LINKS_CLASS_NAME, ARCHIVE_CARD_SUMMARY_MIN_HEIGHT_CLASS_NAME, ARCHIVE_ELEVATED_PANEL_CLASS_NAME, ARCHIVE_FILTER_WIDTH_CLASS_NAME, ArchiveExternalLinks, ArchiveTechStackBadges } from "./archive/ui";
 
 interface ArchiveMainProps {
   hackathons: Hackathon[];

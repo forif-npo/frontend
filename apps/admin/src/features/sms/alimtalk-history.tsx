@@ -3,14 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loader2, RefreshCw } from "lucide-react";
 import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { handleApiError } from "@core/utils/api-client";
 import { getAlimTalkHistory } from "./api";
 import type { AlimTalkTemplate } from "./types";

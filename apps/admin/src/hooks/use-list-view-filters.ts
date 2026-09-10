@@ -3,10 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { OnChangeFn, SortingState } from "@tanstack/react-table";
 import { parseSortingParams, serializeSortingParams } from "@/lib/list-sorting";
-import {
-  buildListViewParams,
-  type BuildListViewParamsOptions,
-} from "@/lib/list-view-params";
+import { buildListViewParams, type BuildListViewParamsOptions } from "@/lib/list-view-params";
 
 interface UseListViewFiltersOptions {
   route: string;

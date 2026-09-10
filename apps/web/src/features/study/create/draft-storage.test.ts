@@ -1,11 +1,7 @@
 /** @jest-environment jsdom */
 import { beforeEach, describe, expect, it } from "@jest/globals";
 import type { StudyOpenValues } from "@core/schemas";
-import {
-  clearStudyCreateDraft,
-  loadStudyCreateDraft,
-  saveStudyCreateDraft,
-} from "./draft-storage";
+import { clearStudyCreateDraft, loadStudyCreateDraft, saveStudyCreateDraft } from "./draft-storage";
 
 const DRAFT_STORAGE_KEY = "study-create-draft";
 

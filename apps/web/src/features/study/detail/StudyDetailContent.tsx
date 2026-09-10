@@ -6,13 +6,7 @@ import type { Study } from "@core/types/study";
 import { KakaoMap } from "@/components/KakaoMap";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
-import {
-  formatStudyTimeRange,
-  getDifficultyLabel,
-  getRecruitStatusLabel,
-  getRecruitStatusBadgeVariant,
-  getWeekDayLabel,
-} from "@/constants/study";
+import { formatStudyTimeRange, getDifficultyLabel, getRecruitStatusLabel, getRecruitStatusBadgeVariant, getWeekDayLabel } from "@/constants/study";
 import { getStudyLocationMap } from "@/constants/locations";
 import { getStudyTagLabel } from "@/constants/study-tags";
 

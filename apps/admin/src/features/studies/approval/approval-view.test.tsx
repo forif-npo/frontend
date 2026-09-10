@@ -1,18 +1,7 @@
 /** @jest-environment jsdom */
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
-import type {
-  ButtonHTMLAttributes,
-  ReactNode,
-  TextareaHTMLAttributes,
-} from "react";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import type { ButtonHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 const mockRefresh = jest.fn();
 const mockPush = jest.fn();
 jest.mock("next/navigation", () => ({

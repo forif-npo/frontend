@@ -1,9 +1,5 @@
 import type { ApiResponse } from "@core/types/api";
-import type {
-  ProductApplicationStatus,
-  ProductOperationStatus,
-  ProductSourceType,
-} from "@core/products";
+import type { ProductApplicationStatus, ProductOperationStatus, ProductSourceType } from "@core/products";
 import { apiClient } from "@core/utils/api-client";
 
 /**

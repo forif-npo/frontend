@@ -1,9 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  EMPTY_PRODUCT_APPLICATION_FORM,
-  toProductApplicationRequest,
-  validateProductApplicationForm,
-} from "./product-application-form";
+import { EMPTY_PRODUCT_APPLICATION_FORM, toProductApplicationRequest, validateProductApplicationForm } from "./product-application-form";
 
 const validForm = {
   ...EMPTY_PRODUCT_APPLICATION_FORM,

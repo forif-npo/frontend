@@ -1,8 +1,4 @@
-import {
-  ChannelTalkIcon,
-  InstagramIcon,
-  KakaotalkIcon,
-} from "@repo/assets/icons/krds";
+import { ChannelTalkIcon, InstagramIcon, KakaotalkIcon } from "@repo/assets/icons/krds";
 import { ChevronRight, Github } from "@repo/assets/icons/lucide";
 import { Body, Link } from "@ui/components/server";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";

@@ -4,15 +4,8 @@ import { useRouter } from "next/navigation";
 import { EmptyState } from "@ui/components/server";
 import { ApplicationCard } from "./ApplicationCard";
 import { ApplicationDetailView } from "./ApplicationDetailView";
-import {
-  StudySortControl,
-  type StudySortOrder,
-} from "@/components/study/ui/StudySortControl";
-import type {
-  StudyApplicationsResponse,
-  ApplicationDetail,
-  UserStudiesResponse,
-} from "@/features/my-page/api";
+import { StudySortControl, type StudySortOrder } from "@/components/study/ui/StudySortControl";
+import type { StudyApplicationsResponse, ApplicationDetail, UserStudiesResponse } from "@/features/my-page/api";
 import type { Semester } from "@/features/semester/api";
 
 interface ApplicationSectionProps {

@@ -1,8 +1,4 @@
-import {
-  InformationFillIcon,
-  SuccessFillIcon,
-  UrgentBadgeDangerIcon,
-} from "@repo/assets/icons/krds";
+import { InformationFillIcon, SuccessFillIcon, UrgentBadgeDangerIcon } from "@repo/assets/icons/krds";
 import { ReactNode } from "react";
 import { Heading } from "./Heading";
 

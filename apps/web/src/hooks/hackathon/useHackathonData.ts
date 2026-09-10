@@ -1,20 +1,6 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
-import type {
-  ArchiveHackathonDetail,
-  CreateTeamRequest,
-  Criterion,
-  Evaluation,
-  EvaluationScore,
-  Hackathon,
-  JoinRequest,
-  JoinRequestStatus,
-  Participant,
-  Submission,
-  SubmissionRequest,
-  Team,
-  UpdateTeamRequest,
-} from "@core/types/hackathon";
+import type { ArchiveHackathonDetail, CreateTeamRequest, Criterion, Evaluation, EvaluationScore, Hackathon, JoinRequest, JoinRequestStatus, Participant, Submission, SubmissionRequest, Team, UpdateTeamRequest } from "@core/types/hackathon";
 import { useCallback, useEffect, useState } from "react";
 
 interface UseHackathonDataReturn {

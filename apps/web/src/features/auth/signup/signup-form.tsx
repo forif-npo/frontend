@@ -10,13 +10,7 @@ import { Label } from "@ui/components/server";
 import Form from "next/form";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import {
-  useActionState,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { SignUpConfirmationModal } from "./signup-confirmation-modal";
 

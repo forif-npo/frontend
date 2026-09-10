@@ -1,9 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import { buildListViewParams } from "../../lib/list-view-params";
-import {
-  parseSortingParams,
-  serializeSortingParams,
-} from "../../lib/list-sorting";
+import { parseSortingParams, serializeSortingParams } from "../../lib/list-sorting";
 
 describe("buildListViewParams", () => {
   it("정렬 요청에도 화면별 보존 파라미터를 유지한다", () => {

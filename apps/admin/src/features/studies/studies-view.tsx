@@ -16,13 +16,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-import {
-  createAutonomousStudy,
-  deleteStudy,
-  fetchStudyDetail,
-  fetchStudiesWithFallback,
-  updateStudy,
-} from "./api";
+import { createAutonomousStudy, deleteStudy, fetchStudyDetail, fetchStudiesWithFallback, updateStudy } from "./api";
 import { columns } from "./columns";
 import { AutonomousStudyCreateDialog } from "./components/AutonomousStudyCreateDialog";
 import { StudyDeleteDialog } from "./components/StudyDeleteDialog";

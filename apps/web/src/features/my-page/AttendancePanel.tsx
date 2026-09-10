@@ -2,24 +2,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@ui/components/client";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
-import {
-  EmptyState,
-  InlineLoadingState,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@ui/components/server";
-import {
-  getAttendance,
-  getMentorConfirmation,
-  updateAttendance,
-  type AttendanceStatus,
-  type MentorConfirmationStatus,
-  type StudyAttendanceData,
-} from "@/features/study-manage/api";
+import { EmptyState, InlineLoadingState, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/server";
+import { getAttendance, getMentorConfirmation, updateAttendance, type AttendanceStatus, type MentorConfirmationStatus, type StudyAttendanceData } from "@/features/study-manage/api";
 
 interface AttendancePanelProps {
   studyId: number;

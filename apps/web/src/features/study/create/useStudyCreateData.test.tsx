@@ -1,13 +1,6 @@
 /** @jest-environment jsdom */
 import { renderHook, waitFor } from "@testing-library/react";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 jest.mock("@/features/semester/schedule-api", () => ({
   getCurrentSemesterSchedules: jest.fn(),
 }));

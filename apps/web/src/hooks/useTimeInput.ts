@@ -1,11 +1,5 @@
 import { type FocusEvent, useCallback } from "react";
-import type {
-  FieldPath,
-  FieldValues,
-  PathValue,
-  UseFormRegister,
-  UseFormSetValue,
-} from "react-hook-form";
+import type { FieldPath, FieldValues, PathValue, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 type TimeInputValue = string | number | null | undefined;
 

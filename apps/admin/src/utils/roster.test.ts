@@ -2,14 +2,7 @@ import { describe, expect, it, jest } from "@jest/globals";
 jest.mock("@/lib/semester", () => ({
   loadSemesterOptions: jest.fn(),
 }));
-import {
-  buildSemesterEndpoint,
-  isMainSemester,
-  parseSemesterLabel,
-  pickBoolean,
-  pickNumber,
-  pickString,
-} from "./roster";
+import { buildSemesterEndpoint, isMainSemester, parseSemesterLabel, pickBoolean, pickNumber, pickString } from "./roster";
 
 describe("roster utils", () => {
   it("parses valid semester labels and only appends valid selected semesters", () => {

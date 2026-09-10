@@ -1,25 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import type { Team } from "@core/types/hackathon";
-import {
-  AlertTriangle,
-  Check,
-  Download,
-  Loader2,
-  Plus,
-  Presentation,
-  Trash2,
-  Upload,
-} from "lucide-react";
+import { AlertTriangle, Check, Download, Loader2, Plus, Presentation, Trash2, Upload } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useHackathonResults } from "../hooks/use-hackathon-results";

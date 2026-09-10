@@ -12,12 +12,7 @@ import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import { DataTable } from "@/components/list/data-table";
 import { EmptyState, InlineLoadingState } from "@ui/components/server";
 import type { SemesterLabel, Study } from "@/features/studies";
-import {
-  getMentorConfirmationViewUrl,
-  getMentorConfirmationTargets,
-  issueMentorConfirmations,
-  type MentorConfirmationTargetsData,
-} from "./api";
+import { getMentorConfirmationViewUrl, getMentorConfirmationTargets, issueMentorConfirmations, type MentorConfirmationTargetsData } from "./api";
 
 interface MentorConfirmationsViewProps {
   studies: Study[];

@@ -2,17 +2,9 @@
 import { useState } from "react";
 import { Button } from "@ui/components/client";
 import { Badge, CharacterCount } from "@ui/components/server";
-import {
-  cancelStudyApplication,
-  type ApplicationDetail,
-  updateStudyApplication,
-} from "@/features/my-page/api";
+import { cancelStudyApplication, type ApplicationDetail, updateStudyApplication } from "@/features/my-page/api";
 import { handleApiError } from "@core/utils/api-client";
-import {
-  getNumericDifficultyBadgeVariant,
-  NUMERIC_DIFFICULTY_LABELS,
-  APPLICATION_STATUS_LABELS,
-} from "@/constants/study";
+import { getNumericDifficultyBadgeVariant, NUMERIC_DIFFICULTY_LABELS, APPLICATION_STATUS_LABELS } from "@/constants/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 

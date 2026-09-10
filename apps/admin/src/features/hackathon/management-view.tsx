@@ -4,49 +4,14 @@ import { PageHeader } from "@/components/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsEditor } from "@/features/hackathon-results/components/results-editor";
 import { handleApiError } from "@core/utils/api-client";
-import type {
-  Award,
-  AwardRequest,
-  Criterion,
-  CriterionRequest,
-  EvaluationScore,
-  EvaluationSummary,
-  Hackathon,
-  Participant,
-  Team,
-} from "@core/types/hackathon";
+import type { Award, AwardRequest, Criterion, CriterionRequest, EvaluationScore, EvaluationSummary, Hackathon, Participant, Team } from "@core/types/hackathon";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  createAward,
-  createCriterion,
-  deleteAward,
-  deleteCriterion,
-  deleteTeam,
-  submitTeamEvaluation,
-  updateAward,
-  updateCriterion,
-} from "./api";
-import {
-  AwardDialog,
-  ConfirmDeleteDialog,
-  CriterionDialog,
-  ScoringDialog,
-} from "./management/dialogs";
-import {
-  AwardsTab,
-  CriteriaTab,
-  EvaluationTab,
-  ParticipantsTab,
-  TeamsTab,
-} from "./management/tabs";
-import {
-  EMPTY_AWARD,
-  EMPTY_CRITERION,
-  type AwardForm,
-  type CriterionForm,
-} from "./management/types";
+import { createAward, createCriterion, deleteAward, deleteCriterion, deleteTeam, submitTeamEvaluation, updateAward, updateCriterion } from "./api";
+import { AwardDialog, ConfirmDeleteDialog, CriterionDialog, ScoringDialog } from "./management/dialogs";
+import { AwardsTab, CriteriaTab, EvaluationTab, ParticipantsTab, TeamsTab } from "./management/tabs";
+import { EMPTY_AWARD, EMPTY_CRITERION, type AwardForm, type CriterionForm } from "./management/types";
 
 interface ManagementViewProps {
   hackathon: Hackathon;

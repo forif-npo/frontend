@@ -1,35 +1,14 @@
 "use client";
 import { useState } from "react";
 import { HintText, Label } from "@ui/components/server";
-import {
-  AlertModal,
-  Button,
-  CriticalAlert,
-  FileUpload,
-  SelectBox,
-  TextArea,
-  TextInput,
-} from "@ui/components/client";
+import { AlertModal, Button, CriticalAlert, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import { handleApiError } from "@core/utils/api-client";
 import { useRouter } from "next/navigation";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { getThumbnailValidationMessage } from "@/utils/thumbnail-validation";
-import {
-  applyProduct,
-  deleteProductApplication,
-  updateProductApplication,
-  type ProductApplication,
-  type ProductSourceType,
-} from "./api";
+import { applyProduct, deleteProductApplication, updateProductApplication, type ProductApplication, type ProductSourceType } from "./api";
 import { PRODUCT_SOURCE_OPTIONS } from "./constants";
-import {
-  EMPTY_PRODUCT_APPLICATION_FORM,
-  toProductApplicationFormState,
-  toProductApplicationRequest,
-  validateProductApplicationForm,
-  type ProductApplicationFieldErrors,
-  type ProductApplicationFormState,
-} from "./product-application-form";
+import { EMPTY_PRODUCT_APPLICATION_FORM, toProductApplicationFormState, toProductApplicationRequest, validateProductApplicationForm, type ProductApplicationFieldErrors, type ProductApplicationFormState } from "./product-application-form";
 
 interface ProductApplyViewProps {
   application?: ProductApplication;

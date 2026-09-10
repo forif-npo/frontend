@@ -2,10 +2,7 @@
 import { useState, useTransition } from "react";
 import { EmptyState } from "@ui/components/server";
 import { StudyCard } from "@/components/study/ui/StudyCard";
-import {
-  StudySortControl,
-  type StudySortOrder,
-} from "@/components/study/ui/StudySortControl";
+import { StudySortControl, type StudySortOrder } from "@/components/study/ui/StudySortControl";
 import type { UserStudiesResponse, StudyDetail } from "@/features/my-page/api";
 
 interface StudySectionProps {

@@ -4,24 +4,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Body, Detail, Heading, Label } from "@ui/components/server";
 import { Button, Modal } from "@ui/components/client";
-import {
-  GUIDE_TAB_SCROLL_OFFSET,
-  PROGRAMMING_CARDS,
-  GUIDE_TABS,
-  RECOMMENDATION_MODAL_COPY,
-  RECOMMENDATION_QUESTIONS,
-  STUDY_GUIDE_CARD_CTA_LABEL,
-  STUDY_GUIDE_HERO,
-  STUDY_GUIDE_SECTIONS,
-  STUDY_OPERATION_GUIDE,
-  STUDY_RECOMMENDATION_CTA_LABEL,
-  STUDY_RECOMMENDATION_SIDE_PANEL,
-  getStudyRecommendation,
-  type ProgrammingCard,
-  type ProgrammingCardSection,
-  type StudyGuideTableRow,
-  type StudyTypeGuide,
-} from "@/constants/study-guide";
+import { GUIDE_TAB_SCROLL_OFFSET, PROGRAMMING_CARDS, GUIDE_TABS, RECOMMENDATION_MODAL_COPY, RECOMMENDATION_QUESTIONS, STUDY_GUIDE_CARD_CTA_LABEL, STUDY_GUIDE_HERO, STUDY_GUIDE_SECTIONS, STUDY_OPERATION_GUIDE, STUDY_RECOMMENDATION_CTA_LABEL, STUDY_RECOMMENDATION_SIDE_PANEL, getStudyRecommendation, type ProgrammingCard, type ProgrammingCardSection, type StudyGuideTableRow, type StudyTypeGuide } from "@/constants/study-guide";
 import { useScrollFollower, useScrollSpy } from "@/hooks/useScrollSpy";
 import { useActiveSemester } from "@/hooks/useActiveSemester";
 import type { Semester } from "@/features/semester/api";

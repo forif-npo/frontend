@@ -1,12 +1,5 @@
 "use client";
-import {
-  EventFacts,
-  HackathonAbout,
-  HackathonIntro,
-  TimerHero,
-  getMainStage,
-  type MainStage,
-} from "@/features/hackathon";
+import { EventFacts, HackathonAbout, HackathonIntro, TimerHero, getMainStage, type MainStage } from "@/features/hackathon";
 import { useCurrentHackathon } from "@/hooks/hackathon";
 import { HackathonPageSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { Body, Heading, InlineErrorState, Link } from "@ui/components/server";

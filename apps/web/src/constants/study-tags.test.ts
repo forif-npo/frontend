@@ -1,12 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import { STUDY_TAG_OPTIONS as coreStudyTagOptions } from "@core/study-form";
-import {
-  getStudyTagId,
-  getStudyTagLabel,
-  getStudyTagName,
-  STUDY_TAG_OPTIONS,
-  TAG_OPTIONS,
-} from "./study-tags";
+import { getStudyTagId, getStudyTagLabel, getStudyTagName, STUDY_TAG_OPTIONS, TAG_OPTIONS } from "./study-tags";
 
 describe("study tag adapters", () => {
   it("uses the core tag catalog as its single source of truth", () => {

@@ -3,33 +3,12 @@ import type { ReactNode } from "react";
 import { toFileDownloadUrl } from "@core/utils/file-download";
 import { InlineErrorState, InlineLoadingState } from "@ui/components/server";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { AdminStudyDetail } from "../api";
 import { getStudyTagLabel } from "../constants";
 import type { Study } from "../types";
-import {
-  formatDate,
-  formatDateTime,
-  formatLocation,
-  formatStudyTime,
-  getSafeExternalUrl,
-  splitPlanContent,
-} from "./study-approval-formatters";
+import { formatDate, formatDateTime, formatLocation, formatStudyTime, getSafeExternalUrl, splitPlanContent } from "./study-approval-formatters";
 
 const DIFFICULTY_LABELS: Record<string, string> = {
   EASY: "쉬움",

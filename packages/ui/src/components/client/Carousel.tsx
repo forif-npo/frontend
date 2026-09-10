@@ -1,12 +1,6 @@
 "use client";
 import { ArrowLeft, ArrowRight } from "@repo/assets/icons/lucide";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-  type TouchEvent,
-} from "react";
+import { useEffect, useRef, useState, type ReactNode, type TouchEvent } from "react";
 import { cn } from "@repo/core/utils/cn";
 
 interface CarouselProps {

@@ -4,16 +4,7 @@ import { useRouter } from "next/navigation";
 import { AlertModal } from "@ui/components/client";
 import { StudyCreateSkeleton } from "@/components/skeleton/StudyCreateSkeleton";
 import { useActiveSemester } from "@/hooks/useActiveSemester";
-import {
-  useStudyCreatePage,
-  Step1InfoVerification,
-  Step2StudyOverview,
-  Step3WeeklyPlan,
-  Step4TargetAndOperation,
-  Step5ReviewAndSubmit,
-  StudyCreateComplete,
-  StudyCreatePreviewModal,
-} from "@/features/study/create";
+import { useStudyCreatePage, Step1InfoVerification, Step2StudyOverview, Step3WeeklyPlan, Step4TargetAndOperation, Step5ReviewAndSubmit, StudyCreateComplete, StudyCreatePreviewModal } from "@/features/study/create";
 
 export default function StudyCreatePage() {
   const router = useRouter();

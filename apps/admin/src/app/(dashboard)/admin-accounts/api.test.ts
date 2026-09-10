@@ -8,13 +8,7 @@ jest.mock("@core/utils/api-client", () => ({
   },
 }));
 import { apiClient } from "@core/utils/api-client";
-import {
-  createAdminAccount,
-  delegatePresidency,
-  deleteAdminAccount,
-  getAdminAccounts,
-  updateAdminAccount,
-} from "./api";
+import { createAdminAccount, delegatePresidency, deleteAdminAccount, getAdminAccounts, updateAdminAccount } from "./api";
 
 type JsonMock = {
   mockReset: () => void;

@@ -57,10 +57,7 @@ jest.mock("@/features/semester/schedule-api", () => ({
   getSemesterSchedules: jest.fn(),
   saveSemesterSchedules: jest.fn(),
 }));
-import {
-  getSemesterSchedules,
-  saveSemesterSchedules,
-} from "@/features/semester/schedule-api";
+import { getSemesterSchedules, saveSemesterSchedules } from "@/features/semester/schedule-api";
 import { ScheduleSection } from "./schedule-section";
 
 type ScheduleMock = {

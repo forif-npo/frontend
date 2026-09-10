@@ -7,10 +7,7 @@ import { ProductCard } from "@/features/products/ProductCard";
 import { ProductThumbnail } from "@/features/products/ProductThumbnail";
 import { PRODUCT_SOURCE_LABELS } from "@/features/products/constants";
 import { PRODUCT_APPLICATION_STATUS_LABELS } from "@core/products";
-import type {
-  ProductApplication,
-  ProductSummary,
-} from "@/features/products/api";
+import type { ProductApplication, ProductSummary } from "@/features/products/api";
 
 interface ServiceManageSectionProps {
   applications: ProductApplication[];

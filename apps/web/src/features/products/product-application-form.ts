@@ -1,8 +1,4 @@
-import type {
-  CreateProductApplicationBody,
-  ProductApplication,
-  ProductSourceType,
-} from "./api";
+import type { CreateProductApplicationBody, ProductApplication, ProductSourceType } from "./api";
 
 const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,18})[a-z0-9]$/;
 const RESERVED_SLUGS = new Set([

@@ -2,11 +2,7 @@
 import { auth, signIn, signOut, unstable_update } from "@/auth";
 import { getGoogleAccessToken } from "@/features/auth/signup/get-google-access-token";
 import { SignUpValues } from "@core/schemas";
-import {
-  memberSignUp,
-  userLogin,
-  logout as logoutApi,
-} from "@/features/auth/api";
+import { memberSignUp, userLogin, logout as logoutApi } from "@/features/auth/api";
 import { handleApiError } from "@core/utils/api-client";
 import { cookies } from "next/headers";
 

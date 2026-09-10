@@ -1,10 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  appendSortingParams,
-  parseSortingParams,
-  serializeSortingParams,
-  sortRecords,
-} from "./list-sorting";
+import { appendSortingParams, parseSortingParams, serializeSortingParams, sortRecords } from "./list-sorting";
 import { paginateLocally } from "./paginate";
 
 describe("list sorting", () => {

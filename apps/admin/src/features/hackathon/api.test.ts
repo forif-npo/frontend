@@ -3,11 +3,7 @@ jest.mock("@core/utils/api-client", () => ({
   apiClient: { get: jest.fn(), patch: jest.fn(), post: jest.fn() },
 }));
 import { apiClient } from "@core/utils/api-client";
-import {
-  fetchCriteria,
-  submitTeamEvaluation,
-  updateHackathonStatus,
-} from "./api";
+import { fetchCriteria, submitTeamEvaluation, updateHackathonStatus } from "./api";
 
 type JsonMock = {
   mockReset: () => void;

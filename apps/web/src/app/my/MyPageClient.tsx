@@ -9,21 +9,11 @@ import { ApplicationSection } from "@/features/my-page/ApplicationSection";
 import { SettingsSection } from "@/features/my-page/SettingsSection";
 import { StudyManageSection } from "@/features/my-page/StudyManageSection";
 import { ServiceManageSection } from "@/features/my-page/ServiceManageSection";
-import type {
-  UserProfile,
-  UserStudiesResponse,
-  StudyApplicationsResponse,
-} from "@/features/my-page/api";
-import type {
-  CreatedStudy,
-  IssuedMentorConfirmation,
-} from "@/features/study-manage/api";
+import type { UserProfile, UserStudiesResponse, StudyApplicationsResponse } from "@/features/my-page/api";
+import type { CreatedStudy, IssuedMentorConfirmation } from "@/features/study-manage/api";
 import type { StudyApplicationSummary } from "@/features/study-application";
 import type { Semester } from "@/features/semester/api";
-import type {
-  ProductApplication,
-  ProductSummary,
-} from "@/features/products/api";
+import type { ProductApplication, ProductSummary } from "@/features/products/api";
 import type { DepartmentOption } from "@/features/departments/api";
 
 interface MyPageClientProps {

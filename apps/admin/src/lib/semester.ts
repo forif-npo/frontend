@@ -1,8 +1,4 @@
-import {
-  getCurrentSemester,
-  getSemesters,
-  type Semester,
-} from "@/features/semester/api";
+import { getCurrentSemester, getSemesters, type Semester } from "@/features/semester/api";
 
 /** 탭·필터에 노출할 최근 학기 수 */
 const RECENT_COUNT = 7;

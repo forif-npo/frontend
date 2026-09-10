@@ -1,8 +1,5 @@
 import { useMemo } from "react";
-import {
-  formatPhoneNumber,
-  type PhoneNumberValue,
-} from "@core/utils/phone-number";
+import { formatPhoneNumber, type PhoneNumberValue } from "@core/utils/phone-number";
 
 export { formatPhoneNumber };
 

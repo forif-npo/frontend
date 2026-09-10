@@ -1,12 +1,4 @@
-import type {
-  ApiResponse,
-  RefreshTokenResponse,
-  SignUpRequest,
-  SignUpResponse,
-  UserLoginData,
-  UserLoginRequest,
-  UserLoginResponse,
-} from "@core/types/api";
+import type { ApiResponse, RefreshTokenResponse, SignUpRequest, SignUpResponse, UserLoginData, UserLoginRequest, UserLoginResponse } from "@core/types/api";
 import { apiClient } from "@core/utils/api-client";
 
 const extractRefreshToken = (setCookie: string | null): string | undefined => {

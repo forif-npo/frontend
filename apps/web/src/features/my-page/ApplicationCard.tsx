@@ -2,10 +2,7 @@ import { Button } from "@ui/components/client";
 import { Badge } from "@ui/components/server";
 import type { ApplicationDetail } from "@/features/my-page/api";
 import { StudyImage } from "@/components/study/ui/StudyImage";
-import {
-  getNumericDifficultyBadgeVariant,
-  NUMERIC_DIFFICULTY_LABELS,
-} from "@/constants/study";
+import { getNumericDifficultyBadgeVariant, NUMERIC_DIFFICULTY_LABELS } from "@/constants/study";
 import { getStudyTagLabel } from "@/constants/study-tags";
 
 interface ApplicationCardProps {

@@ -4,22 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import {
-  AlertModal,
-  Button,
-  Checkbox,
-  FileUpload,
-  SelectBox,
-  TextArea,
-  TextInput,
-} from "@ui/components/client";
+import { AlertModal, Button, Checkbox, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import { SearchIcon } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { studyOpenSchema, type StudyOpenValues } from "@core/schemas";
-import {
-  cancelStudyCreationApplication,
-  type StudyApplicationDetail,
-} from "@/features/study-application";
+import { cancelStudyCreationApplication, type StudyApplicationDetail } from "@/features/study-application";
 import { handleApiError } from "@core/utils/api-client";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { useDateInput } from "@/hooks/useDateInput";
@@ -27,17 +16,8 @@ import { useTimeInput } from "@/hooks/useTimeInput";
 import { StudyCurriculumTable } from "@/features/study/components/StudyCurriculumTable";
 import { StudySectionTitle } from "@/features/study/components/StudySectionTitle";
 import { submitStudyCreate } from "@/features/study/create/actions";
-import {
-  addCurriculumContent,
-  addCurriculumWeek,
-  removeCurriculumContent,
-  removeCurriculumWeek,
-} from "@/features/study/create/curriculum";
-import {
-  DIFFICULTY_OPTIONS,
-  LOCATION_OPTIONS,
-  WEEKDAY_OPTIONS,
-} from "@/features/study/create/constants";
+import { addCurriculumContent, addCurriculumWeek, removeCurriculumContent, removeCurriculumWeek } from "@/features/study/create/curriculum";
+import { DIFFICULTY_OPTIONS, LOCATION_OPTIONS, WEEKDAY_OPTIONS } from "@/features/study/create/constants";
 import { TagSelectModal } from "@/features/study/create/components/TagSelectModal";
 import { StudyCreatePreviewModal } from "@/features/study/create/components/StudyCreatePreviewModal";
 import { ReferenceFields } from "@/features/study/create/components/ReferenceFields";
@@ -45,11 +25,7 @@ import { fetchUserInfo } from "@/features/study/create/user-info";
 import { useStudyCreateData } from "@/features/study/create/useStudyCreateData";
 import { getThumbnailValidationMessage } from "@/utils/thumbnail-validation";
 import { useSecondaryMentor } from "@/features/study/create/useSecondaryMentor";
-import {
-  buildReferenceUpdate,
-  canUpdateStudyApplication,
-  toFormValues,
-} from "./study-application-editor-utils";
+import { buildReferenceUpdate, canUpdateStudyApplication, toFormValues } from "./study-application-editor-utils";
 
 interface StudyApplicationEditorProps {
   application: StudyApplicationDetail;

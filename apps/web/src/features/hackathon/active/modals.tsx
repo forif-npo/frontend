@@ -1,18 +1,7 @@
 import type { Criterion, Team } from "@core/types/hackathon";
-import {
-  canonicalizeHackathonTechStack,
-  HACKATHON_TECH_STACK_LIMIT,
-  HACKATHON_TECH_STACK_OPTIONS,
-  normalizeHackathonTechStack,
-} from "../tech-stack";
+import { canonicalizeHackathonTechStack, HACKATHON_TECH_STACK_LIMIT, HACKATHON_TECH_STACK_OPTIONS, normalizeHackathonTechStack } from "../tech-stack";
 import { Body, Label } from "@ui/components/server";
-import {
-  Button,
-  Modal,
-  SelectBox,
-  TextArea,
-  TextInput,
-} from "@ui/components/client";
+import { Button, Modal, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import type { SubmissionFormState, TeamFormState } from "./types";
 

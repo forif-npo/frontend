@@ -1,17 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  Badge,
-  EmptyState,
-  InlineErrorState,
-  InlineLoadingState,
-} from "@ui/components/server";
+import { Badge, EmptyState, InlineErrorState, InlineLoadingState } from "@ui/components/server";
 import { Select } from "@ui/components/client";
-import {
-  getMyStudyApplication,
-  type StudyApplicationDetail,
-  type StudyApplicationSummary,
-} from "@/features/study-application";
+import { getMyStudyApplication, type StudyApplicationDetail, type StudyApplicationSummary } from "@/features/study-application";
 import { STUDY_CREATION_STATUS_LABELS } from "@core/study-status";
 import { handleApiError } from "@core/utils/api-client";
 import { StudyApplicationEditor } from "@/features/study/create";

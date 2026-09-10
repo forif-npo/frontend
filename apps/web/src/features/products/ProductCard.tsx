@@ -1,9 +1,6 @@
 import Link from "next/link";
 import { Badge, Body, Heading, Label } from "@ui/components/server";
-import {
-  PRODUCT_SOURCE_LABELS,
-  PRODUCT_OPERATION_STATUS_BADGE_VARIANTS,
-} from "./constants";
+import { PRODUCT_SOURCE_LABELS, PRODUCT_OPERATION_STATUS_BADGE_VARIANTS } from "./constants";
 import { PRODUCT_OPERATION_STATUS_LABELS } from "@core/products";
 import type { ProductSummary } from "./api";
 import { ProductThumbnail } from "./ProductThumbnail";

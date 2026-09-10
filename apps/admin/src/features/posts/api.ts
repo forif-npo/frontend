@@ -1,11 +1,6 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse, OffsetPageResponse } from "@core/types/api";
-import type {
-  AdminPost,
-  PostFormState,
-  PostKind,
-  PostListResult,
-} from "./types";
+import type { AdminPost, PostFormState, PostKind, PostListResult } from "./types";
 
 interface PostItem {
   post_id: number;

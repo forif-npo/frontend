@@ -1,41 +1,9 @@
 "use client";
 import { type MouseEvent } from "react";
 import { signOutAction } from "@/features/auth/actions";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarSeparator,
-  SidebarTrigger,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { LogoutIcon } from "@repo/assets/icons/krds";
-import {
-  Award,
-  BookOpen,
-  CheckCircle,
-  CalendarRange,
-  CircleDollarSign,
-  Code2,
-  FileText,
-  HelpCircle,
-  LayoutGrid,
-  MessageSquare,
-  Rocket,
-  Settings,
-  ShieldCheck,
-  UserCog,
-  BookUser,
-  ClipboardList,
-  Users,
-} from "lucide-react";
+import { Award, BookOpen, CheckCircle, CalendarRange, CircleDollarSign, Code2, FileText, HelpCircle, LayoutGrid, MessageSquare, Rocket, Settings, ShieldCheck, UserCog, BookUser, ClipboardList, Users } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

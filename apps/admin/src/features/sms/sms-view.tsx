@@ -8,59 +8,22 @@ import { PageHeader } from "@/components/page-header";
 import { Input } from "@/components/ui/input";
 import { SingleDayPicker } from "@/components/ui/single-day-picker";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Send, Loader2, CheckCircle, XCircle, UserPlus } from "lucide-react";
 import { handleApiError } from "@core/utils/api-client";
 import { formatPhoneNumber } from "@core/utils/phone-number";
 import { getObjectParticle } from "@core/utils/korean-particle";
 import { sendAlimTalkSchema, type SendAlimTalkFormValues } from "./schema";
-import {
-  type AlimTalkTemplate,
-  type Receiver,
-  type SendAlimTalkResult,
-} from "./types";
+import { type AlimTalkTemplate, type Receiver, type SendAlimTalkResult } from "./types";
 import { getAlimTalkTemplates, sendAlimTalk } from "./api";
 import { AlimTalkPreview } from "./alimtalk-preview";
 import { AlimTalkHistory } from "./alimtalk-history";
 import { ReceiverSelectorDialog } from "./receiver-selector-dialog";
-import {
-  extractPhoneNumber,
-  getUniqueReceiverPhoneNumbers,
-} from "./receiver-utils";
-import {
-  buildAlimTalkVariables,
-  formatPhoneNumberLines,
-  formatReceiverLine,
-  getMissingTemplateVariables,
-  getRequiredTemplateVariables,
-  getTemplateVariables,
-  getVariableLabel,
-  sortAlimTalkTemplatesByNameDescending,
-} from "./sms-utils";
+import { extractPhoneNumber, getUniqueReceiverPhoneNumbers } from "./receiver-utils";
+import { buildAlimTalkVariables, formatPhoneNumberLines, formatReceiverLine, getMissingTemplateVariables, getRequiredTemplateVariables, getTemplateVariables, getVariableLabel, sortAlimTalkTemplatesByNameDescending } from "./sms-utils";
 
 function getSelectedDate(value: string | undefined) {
   if (!value) return undefined;

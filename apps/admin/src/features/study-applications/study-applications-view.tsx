@@ -3,12 +3,7 @@ import { DataTable } from "@/components/list/data-table";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/list/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
@@ -18,10 +13,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-import {
-  decideAutonomousStudyApplication,
-  fetchStudyApplications,
-} from "./api";
+import { decideAutonomousStudyApplication, fetchStudyApplications } from "./api";
 import { applicationColumns, STUDY_APPLICATION_STATUS_LABELS } from "./columns";
 import type { StudyApplication, StudyApplicationPage } from "./types";
 

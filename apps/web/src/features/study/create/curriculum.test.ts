@@ -1,11 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type { StudyOpenValues } from "@core/schemas";
-import {
-  addCurriculumContent,
-  addCurriculumWeek,
-  removeCurriculumContent,
-  removeCurriculumWeek,
-} from "./curriculum";
+import { addCurriculumContent, addCurriculumWeek, removeCurriculumContent, removeCurriculumWeek } from "./curriculum";
 
 const createCurriculum = (length: number): StudyOpenValues["curriculum"] =>
   Array.from({ length }, (_, index) => ({

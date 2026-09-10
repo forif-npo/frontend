@@ -4,13 +4,7 @@ import type { PaginationInterface } from "@/types/pagination";
 import { paginateLocally } from "@/lib/paginate";
 import { appendSortingParams, sortRecords } from "@/lib/list-sorting";
 import type { SortingState } from "@tanstack/react-table";
-import {
-  buildSemesterEndpoint,
-  getMainSemesterLabels,
-  isMainSemester,
-  pickNumber,
-  pickString,
-} from "@/utils/roster";
+import { buildSemesterEndpoint, getMainSemesterLabels, isMainSemester, pickNumber, pickString } from "@/utils/roster";
 import { Mentor, MentorListResult, MentorSemesterLabel } from "./types";
 
 interface FetchMentorsParams {

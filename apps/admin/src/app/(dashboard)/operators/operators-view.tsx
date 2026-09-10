@@ -6,14 +6,7 @@ import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,17 +20,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import { AddOperatorDialog } from "./add-operator-dialog";
-import {
-  deleteOperator,
-  fetchOperators,
-  updateOperator,
-  updateOperatorProfileImage,
-} from "./api";
+import { deleteOperator, fetchOperators, updateOperator, updateOperatorProfileImage } from "./api";
 import { columns } from "./columns";
-import {
-  canEditOperator,
-  canShowOperatorActions,
-} from "./operator-permissions";
+import { canEditOperator, canShowOperatorActions } from "./operator-permissions";
 import { Operator, OperatorSemesterLabel } from "./types";
 
 interface OperatorEditForm {

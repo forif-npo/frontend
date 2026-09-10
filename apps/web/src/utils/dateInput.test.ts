@@ -1,9 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  formatKoreanDateFromDateInput,
-  normalizeShortDateInput,
-  toLocalDateTimeFromDateInput,
-} from "./dateInput";
+import { formatKoreanDateFromDateInput, normalizeShortDateInput, toLocalDateTimeFromDateInput } from "./dateInput";
 
 describe("date input utils", () => {
   it("normalizes valid six- and eight-digit dates", () => {

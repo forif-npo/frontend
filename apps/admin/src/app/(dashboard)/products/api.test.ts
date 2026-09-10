@@ -8,16 +8,7 @@ jest.mock("@core/utils/api-client", () => ({
   },
 }));
 import { apiClient } from "@core/utils/api-client";
-import {
-  approveProduct,
-  changeProductOperationStatus,
-  deleteProduct,
-  deleteProductThumbnail,
-  getAdminProducts,
-  rejectProduct,
-  updateProduct,
-  uploadProductThumbnail,
-} from "./api";
+import { approveProduct, changeProductOperationStatus, deleteProduct, deleteProductThumbnail, getAdminProducts, rejectProduct, updateProduct, uploadProductThumbnail } from "./api";
 
 type RequestMock = {
   mockReset: () => void;

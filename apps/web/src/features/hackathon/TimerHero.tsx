@@ -2,13 +2,7 @@
 import type { Hackathon } from "@core/types/hackathon";
 import { Badge } from "@ui/components/server";
 import { CountdownBlocks } from "./CountdownBlocks";
-import {
-  formatDateTime,
-  getCountdownTarget,
-  statusBadgeVariant,
-  statusLabel,
-  type MainStage,
-} from "./utils";
+import { formatDateTime, getCountdownTarget, statusBadgeVariant, statusLabel, type MainStage } from "./utils";
 
 interface TimerHeroProps {
   hackathon: Hackathon;

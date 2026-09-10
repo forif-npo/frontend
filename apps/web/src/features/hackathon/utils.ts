@@ -1,8 +1,4 @@
-import type {
-  Hackathon,
-  HackathonStatus,
-  TeamMember,
-} from "@core/types/hackathon";
+import type { Hackathon, HackathonStatus, TeamMember } from "@core/types/hackathon";
 
 export { HACKATHON_STATUS_LABELS as statusLabel } from "@core/hackathon-status";
 

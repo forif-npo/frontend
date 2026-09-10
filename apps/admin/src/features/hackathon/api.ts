@@ -1,20 +1,6 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse, OffsetPageResponse } from "@core/types/api";
-import type {
-  Award,
-  AwardRequest,
-  CreateHackathonRequest,
-  Criterion,
-  CriterionRequest,
-  EvaluationScore,
-  EvaluationSummary,
-  Hackathon,
-  HackathonStatus,
-  Participant,
-  SubmissionStatus,
-  Team,
-  UpdateHackathonRequest,
-} from "@core/types/hackathon";
+import type { Award, AwardRequest, CreateHackathonRequest, Criterion, CriterionRequest, EvaluationScore, EvaluationSummary, Hackathon, HackathonStatus, Participant, SubmissionStatus, Team, UpdateHackathonRequest } from "@core/types/hackathon";
 
 /**
  * 해커톤 목록 조회 (서버 컴포넌트용 - 토큰 명시)

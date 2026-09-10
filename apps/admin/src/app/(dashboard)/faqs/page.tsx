@@ -1,10 +1,6 @@
 import { auth } from "@/auth";
 import { PageState } from "@ui/components/server";
-import {
-  fetchPosts,
-  PostManagementView,
-  type PostListLabels,
-} from "@/features/posts";
+import { fetchPosts, PostManagementView, type PostListLabels } from "@/features/posts";
 
 const PAGE_SIZE = 20;
 

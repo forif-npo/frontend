@@ -1,13 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  TextInput,
-  TextArea,
-  Checkbox,
-  FileUpload,
-  SelectBox,
-  AlertModal,
-} from "@ui/components/client";
+import { TextInput, TextArea, Checkbox, FileUpload, SelectBox, AlertModal } from "@ui/components/client";
 import { HintText } from "@ui/components/server";
 import { CirclePlus, Minus } from "@repo/assets/icons/lucide";
 import { UseFormReturn, Controller } from "react-hook-form";

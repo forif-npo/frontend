@@ -1,8 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  canEditOperator,
-  canShowOperatorActions,
-} from "./operator-permissions";
+import { canEditOperator, canShowOperatorActions } from "./operator-permissions";
 
 describe("운영진 목록 권한", () => {
   it("회장단은 모든 운영진 정보를 수정할 수 있고 액션을 본다", () => {

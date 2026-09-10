@@ -1,11 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  AUTONOMOUS_STUDY_CONFLICT_MESSAGE,
-  DUPLICATE_AUTONOMOUS_STUDY_MESSAGE,
-  DUPLICATE_PRIORITY_STUDY_MESSAGE,
-  FULL_STUDY_APPLICATION_MESSAGE,
-  getStudyApplicationBlockMessage,
-} from "./application-availability";
+import { AUTONOMOUS_STUDY_CONFLICT_MESSAGE, DUPLICATE_AUTONOMOUS_STUDY_MESSAGE, DUPLICATE_PRIORITY_STUDY_MESSAGE, FULL_STUDY_APPLICATION_MESSAGE, getStudyApplicationBlockMessage } from "./application-availability";
 import type { StudyApplicationStatusResponse } from "./api";
 
 const availableStatus: StudyApplicationStatusResponse = {

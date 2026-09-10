@@ -1,9 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  createDuesUpdates,
-  getDuesOutstandingCounts,
-  mergeSelectedMembers,
-} from "./dues-utils";
+import { createDuesUpdates, getDuesOutstandingCounts, mergeSelectedMembers } from "./dues-utils";
 import type { DuesMember } from "./types";
 
 const firstMember: DuesMember = {

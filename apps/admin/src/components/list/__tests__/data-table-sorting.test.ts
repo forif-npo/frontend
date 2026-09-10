@@ -1,15 +1,6 @@
-import {
-  type ColumnDef,
-  type SortingState,
-  createTable,
-  getCoreRowModel,
-  getSortedRowModel,
-} from "@tanstack/react-table";
+import { type ColumnDef, type SortingState, createTable, getCoreRowModel, getSortedRowModel } from "@tanstack/react-table";
 import { describe, expect, it } from "@jest/globals";
-import {
-  appendSortingParams,
-  parseSortingParams,
-} from "../../../lib/list-sorting";
+import { appendSortingParams, parseSortingParams } from "../../../lib/list-sorting";
 
 type Row = { userId: number };
 

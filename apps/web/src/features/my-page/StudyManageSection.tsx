@@ -1,22 +1,14 @@
 "use client";
 import { useState, type ReactNode } from "react";
 import { Button, Select, Tabs } from "@ui/components/client";
-import {
-  Badge,
-  EmptyState,
-  InlineErrorState,
-  InlineLoadingState,
-} from "@ui/components/server";
+import { Badge, EmptyState, InlineErrorState, InlineLoadingState } from "@ui/components/server";
 import { ApplicantsPanel } from "./ApplicantsPanel";
 import { AttendancePanel } from "./AttendancePanel";
 import { StudyApplicationSection } from "./StudyApplicationSection";
 import { StudyDetailContent } from "@/features/study/detail/StudyDetailContent";
 import { useStudyDetail } from "@/hooks/useStudyDetail";
 import type { CreatedStudy } from "@/features/study-manage/api";
-import {
-  getMentorConfirmation,
-  type IssuedMentorConfirmation,
-} from "@/features/study-manage/api";
+import { getMentorConfirmation, type IssuedMentorConfirmation } from "@/features/study-manage/api";
 import type { StudyApplicationSummary } from "@/features/study-application";
 import { useActiveSemester } from "@/hooks/useActiveSemester";
 

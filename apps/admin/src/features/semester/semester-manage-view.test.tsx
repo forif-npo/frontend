@@ -57,13 +57,7 @@ jest.mock("./api", () => ({
 }));
 jest.mock("./schedule-section", () => ({ ScheduleSection: () => null }));
 import { toast } from "sonner";
-import {
-  changeCurrentSemester,
-  getCurrentSemester,
-  getSemesterChangePreview,
-  getSemesters,
-  getAdminCandidates,
-} from "./api";
+import { changeCurrentSemester, getCurrentSemester, getSemesterChangePreview, getSemesters, getAdminCandidates } from "./api";
 import { SemesterManageView } from "./semester-manage-view";
 
 type AsyncMock = {

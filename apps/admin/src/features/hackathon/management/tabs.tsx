@@ -5,29 +5,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@ui/components/server";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type {
-  Award,
-  Criterion,
-  EvaluationSummary,
-  Participant,
-  ParticipantStatus,
-  Team,
-} from "@core/types/hackathon";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { Award, Criterion, EvaluationSummary, Participant, ParticipantStatus, Team } from "@core/types/hackathon";
 import { Pencil, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import {
-  PARTICIPANT_STATUS_LABELS,
-  PARTICIPANT_STUDY_ROLE_LABELS,
-  TEAM_STATUS_LABELS,
-  formatDate,
-} from "./types";
+import { PARTICIPANT_STATUS_LABELS, PARTICIPANT_STUDY_ROLE_LABELS, TEAM_STATUS_LABELS, formatDate } from "./types";
 
 export function ParticipantsTab({
   participants,

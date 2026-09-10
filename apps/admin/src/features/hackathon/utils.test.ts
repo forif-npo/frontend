@@ -1,11 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type { Hackathon } from "./types";
-import {
-  calculateDurationHours,
-  filterHackathons,
-  getNextStatus,
-  toPresentationDownloadUrl,
-} from "./utils";
+import { calculateDurationHours, filterHackathons, getNextStatus, toPresentationDownloadUrl } from "./utils";
 
 const hackathons: Hackathon[] = [
   {

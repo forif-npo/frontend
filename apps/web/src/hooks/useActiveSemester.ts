@@ -1,10 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  fallbackSemester,
-  getCurrentSemester,
-  type Semester,
-} from "@/features/semester/api";
+import { fallbackSemester, getCurrentSemester, type Semester } from "@/features/semester/api";
 
 /**
  * 운영진이 지정한 활동 학기.

@@ -5,23 +5,9 @@ import { AlertTriangle, CalendarClock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { handleApiError } from "@core/utils/api-client";
-import {
-  SEMESTER_PHASES,
-  SEMESTER_PHASE_DESCRIPTIONS,
-  SEMESTER_PHASE_LABELS,
-  getSemesterSchedules,
-  saveSemesterSchedules,
-  type SavePhaseWindow,
-  type SemesterPhase,
-} from "@/features/semester/schedule-api";
+import { SEMESTER_PHASES, SEMESTER_PHASE_DESCRIPTIONS, SEMESTER_PHASE_LABELS, getSemesterSchedules, saveSemesterSchedules, type SavePhaseWindow, type SemesterPhase } from "@/features/semester/schedule-api";
 
 interface ScheduleSectionProps {
   actYear: number;

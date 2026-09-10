@@ -1,11 +1,6 @@
 import { auth } from "@/auth";
 import { PageState } from "@ui/components/server";
-import {
-  fetchStudiesWithFallback,
-  getCurrentSemester,
-  parseStudySemesterFilter,
-  type SemesterLabel,
-} from "@/features/studies";
+import { fetchStudiesWithFallback, getCurrentSemester, parseStudySemesterFilter, type SemesterLabel } from "@/features/studies";
 import { ApprovalView } from "@/features/studies/approval/approval-view";
 import { parseSortingParams } from "@/lib/list-sorting";
 

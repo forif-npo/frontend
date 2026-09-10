@@ -3,25 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ImagePlus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { handleApiError } from "@core/utils/api-client";
-import {
-  deleteProductThumbnail,
-  updateProduct,
-  uploadProductThumbnail,
-  type AdminProduct,
-  type UpdateProductBody,
-} from "./api";
+import { deleteProductThumbnail, updateProduct, uploadProductThumbnail, type AdminProduct, type UpdateProductBody } from "./api";
 
 const MAX_THUMBNAIL_BYTES = 5 * 1024 * 1024;
 

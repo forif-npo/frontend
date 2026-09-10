@@ -1,12 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type { StudyOpenValues } from "@core/schemas";
 import type { StudyApplicationDetail } from "@/features/study-application";
-import {
-  buildReferenceUpdate,
-  canUpdateStudyApplication,
-  toShortDate,
-  toFormValues,
-} from "./study-application-editor-utils";
+import { buildReferenceUpdate, canUpdateStudyApplication, toShortDate, toFormValues } from "./study-application-editor-utils";
 
 describe("canUpdateStudyApplication", () => {
   const readyState = {

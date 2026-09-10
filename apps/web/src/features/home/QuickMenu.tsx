@@ -1,20 +1,6 @@
 "use client";
 import { FaqIcon } from "@repo/assets/icons/krds";
-import {
-  BookMarked,
-  BookOpen,
-  CalendarDays,
-  Code2,
-  FileCheck,
-  FolderPlus,
-  List,
-  MapPin,
-  MessageCircle,
-  NotebookText,
-  Package,
-  PenLine,
-  UserRound,
-} from "@repo/assets/icons/lucide";
+import { BookMarked, BookOpen, CalendarDays, Code2, FileCheck, FolderPlus, List, MapPin, MessageCircle, NotebookText, Package, PenLine, UserRound } from "@repo/assets/icons/lucide";
 import { CarouselArrow, CarouselIndicators } from "@ui/components/client";
 import { Label } from "@ui/components/server";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";

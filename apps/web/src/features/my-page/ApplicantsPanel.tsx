@@ -1,35 +1,10 @@
 "use client";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { Button, Pagination, Select } from "@ui/components/client";
-import {
-  Badge,
-  EmptyState,
-  InlineLoadingState,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  type BadgeProps,
-} from "@ui/components/server";
-import {
-  getApplicants,
-  getApplicationDetail,
-  acceptApplications,
-  rejectApplications,
-  type Applicant,
-  type ApplicantsPage,
-  type ApplyStatusFilter,
-} from "@/features/study-manage/api";
+import { Badge, EmptyState, InlineLoadingState, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type BadgeProps } from "@ui/components/server";
+import { getApplicants, getApplicationDetail, acceptApplications, rejectApplications, type Applicant, type ApplicantsPage, type ApplyStatusFilter } from "@/features/study-manage/api";
 import { getCurrentSemesterSchedules } from "@/features/semester/schedule-api";
-import {
-  ApplicantActionConfirmModal,
-  ApplicantActionResultModal,
-  applicantActionLabel,
-  type ApplicantAction,
-  type ApplicantActionResult,
-} from "./ApplicantActionModal";
+import { ApplicantActionConfirmModal, ApplicantActionResultModal, applicantActionLabel, type ApplicantAction, type ApplicantActionResult } from "./ApplicantActionModal";
 
 interface ApplicantsPanelProps {
   studyId: number;

@@ -55,10 +55,7 @@ jest.mock("./ApplicantActionModal", () => ({
   ),
   applicantActionLabel: { accept: "승낙", reject: "거절" },
 }));
-import {
-  getApplicationDetail,
-  getApplicants,
-} from "@/features/study-manage/api";
+import { getApplicationDetail, getApplicants } from "@/features/study-manage/api";
 import { getCurrentSemesterSchedules } from "@/features/semester/schedule-api";
 import { ApplicantsPanel } from "./ApplicantsPanel";
 

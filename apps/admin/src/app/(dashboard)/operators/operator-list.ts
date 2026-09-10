@@ -1,10 +1,6 @@
 import type { SortingState } from "@tanstack/react-table";
 import { sortRecords } from "../../../lib/list-sorting";
-import type {
-  Operator,
-  OperatorListResult,
-  OperatorSemesterLabel,
-} from "./types";
+import type { Operator, OperatorListResult, OperatorSemesterLabel } from "./types";
 
 interface ProcessOperatorsOptions {
   semester: OperatorSemesterLabel;

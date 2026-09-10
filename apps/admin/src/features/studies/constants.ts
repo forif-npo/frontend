@@ -1,9 +1,5 @@
 import type { StudyEditForm } from "./types";
-import {
-  STUDY_DIFFICULTY_OPTIONS,
-  STUDY_TAG_OPTIONS,
-  STUDY_WEEK_DAY_OPTIONS,
-} from "@core/study-form";
+import { STUDY_DIFFICULTY_OPTIONS, STUDY_TAG_OPTIONS, STUDY_WEEK_DAY_OPTIONS } from "@core/study-form";
 
 export const EMPTY_STUDY_EDIT_FORM: StudyEditForm = {
   secondary_mentor_id: null,

@@ -1,14 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import {
-  getUserProfile,
-  getUserStudies,
-  getStudyApplications,
-} from "@/features/my-page/api";
-import {
-  getMyCreatedStudies,
-  getMyIssuedMentorConfirmations,
-} from "@/features/study-manage/api";
+import { getUserProfile, getUserStudies, getStudyApplications } from "@/features/my-page/api";
+import { getMyCreatedStudies, getMyIssuedMentorConfirmations } from "@/features/study-manage/api";
 import { getMyStudyApplications } from "@/features/study-application";
 import { getCurrentSemester } from "@/features/semester/api";
 import { getDepartments } from "@/features/departments/api";

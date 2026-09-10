@@ -5,38 +5,16 @@ import { toast } from "sonner";
 import { ExternalLink, Eye, Github, Pencil } from "lucide-react";
 import { Badge, type BadgeProps } from "@ui/components/server";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { DataTable } from "@/components/list/data-table";
-import {
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/list/dropdown-menu";
+import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/list/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/page-header";
-import {
-  PRODUCT_APPLICATION_STATUS_LABELS,
-  PRODUCT_OPERATION_STATUS_LABELS,
-  PRODUCT_SOURCE_LABELS,
-  type ProductApplicationStatus,
-  type ProductOperationStatus,
-} from "@core/products";
+import { PRODUCT_APPLICATION_STATUS_LABELS, PRODUCT_OPERATION_STATUS_LABELS, PRODUCT_SOURCE_LABELS, type ProductApplicationStatus, type ProductOperationStatus } from "@core/products";
 import { handleApiError } from "@core/utils/api-client";
-import {
-  approveProduct,
-  changeProductOperationStatus,
-  getAdminProducts,
-  rejectProduct,
-  type AdminProduct,
-} from "./api";
+import { approveProduct, changeProductOperationStatus, getAdminProducts, rejectProduct, type AdminProduct } from "./api";
 import { ProductEditDialog } from "./product-edit-dialog";
 
 type StatusFilter = "ALL" | "PENDING" | "ACCEPTED" | "REJECTED";

@@ -1,11 +1,5 @@
 "use client";
-import {
-  Calendar,
-  CalendarProvider,
-  type IEvent,
-  type IAttendee,
-  type TCalendarView,
-} from "@repo/big-calendar";
+import { Calendar, CalendarProvider, type IEvent, type IAttendee, type TCalendarView } from "@repo/big-calendar";
 
 interface CalendarWrapperProps {
   events: IEvent[];

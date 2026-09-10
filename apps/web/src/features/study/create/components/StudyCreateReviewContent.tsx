@@ -7,12 +7,7 @@ import { formatKoreanDateFromDateInput } from "@/utils/dateInput";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { StudyCurriculumTable } from "../../components/StudyCurriculumTable";
 import { fetchUserInfo } from "../user-info";
-import {
-  WEEKDAY_OPTIONS,
-  DIFFICULTY_OPTIONS,
-  LOCATION_OPTIONS,
-  REFERENCE_TYPE_OPTIONS,
-} from "../constants";
+import { WEEKDAY_OPTIONS, DIFFICULTY_OPTIONS, LOCATION_OPTIONS, REFERENCE_TYPE_OPTIONS } from "../constants";
 import type { UserInfo } from "../types";
 
 type ReferenceItem = StudyOpenValues["references"][number];

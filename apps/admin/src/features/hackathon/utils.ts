@@ -1,10 +1,6 @@
 import { toDateTimeMs, toInputDateTime } from "@/utils/datetime";
 import type { HackathonStatus } from "@core/types/hackathon";
-import {
-  HACKATHON_STATUS_FLOW,
-  type Hackathon,
-  type HackathonFormState,
-} from "./types";
+import { HACKATHON_STATUS_FLOW, type Hackathon, type HackathonFormState } from "./types";
 
 export const EMPTY_FORM: HackathonFormState = {
   held_year: String(new Date().getFullYear()),

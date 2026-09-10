@@ -1,9 +1,5 @@
 import type { AdminStudyDetail } from "./api";
-import {
-  DIFFICULTY_TO_LEVEL,
-  LEGACY_STUDY_TAG_IDS,
-  STUDY_TAG_OPTIONS,
-} from "./constants";
+import { DIFFICULTY_TO_LEVEL, LEGACY_STUDY_TAG_IDS, STUDY_TAG_OPTIONS } from "./constants";
 import type { Study, StudyEditForm } from "./types";
 
 function toDateInputValue(value?: string | null) {

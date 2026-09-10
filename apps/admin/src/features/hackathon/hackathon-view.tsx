@@ -5,62 +5,22 @@ import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  addHoursToDateTime,
-  formatDateTimeLabel,
-  toDateTimeMs,
-  toLocalDateTime,
-} from "@/utils/datetime";
+import { addHoursToDateTime, formatDateTimeLabel, toDateTimeMs, toLocalDateTime } from "@/utils/datetime";
 import { handleApiError } from "@core/utils/api-client";
 import { getObjectParticle } from "@core/utils/korean-particle";
-import type {
-  CreateHackathonRequest,
-  HackathonStatus,
-  UpdateHackathonRequest,
-} from "@core/types/hackathon";
+import type { CreateHackathonRequest, HackathonStatus, UpdateHackathonRequest } from "@core/types/hackathon";
 import { ClipboardList, Download, Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  createHackathon,
-  deleteHackathon,
-  fetchSubmissionStatuses,
-  updateHackathon,
-  updateHackathonStatus,
-} from "./api";
+import { createHackathon, deleteHackathon, fetchSubmissionStatuses, updateHackathon, updateHackathonStatus } from "./api";
 import { columns } from "./columns";
-import {
-  HACKATHON_STATUS_LABELS,
-  type Hackathon,
-  type HackathonFormState,
-  type SubmissionStatus,
-} from "./types";
-import {
-  ACTION_VISIBILITY,
-  EMPTY_FORM,
-  filterHackathons,
-  getNextStatus,
-  toFormState,
-  toPresentationDownloadUrl,
-} from "./utils";
+import { HACKATHON_STATUS_LABELS, type Hackathon, type HackathonFormState, type SubmissionStatus } from "./types";
+import { ACTION_VISIBILITY, EMPTY_FORM, filterHackathons, getNextStatus, toFormState, toPresentationDownloadUrl } from "./utils";
 
 interface HackathonViewProps {
   initialData: Hackathon[];

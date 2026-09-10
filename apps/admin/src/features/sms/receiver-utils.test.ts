@@ -1,8 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  extractPhoneNumber,
-  getUniqueReceiverPhoneNumbers,
-} from "./receiver-utils";
+import { extractPhoneNumber, getUniqueReceiverPhoneNumbers } from "./receiver-utils";
 
 describe("getUniqueReceiverPhoneNumbers", () => {
   it("removes duplicate phone numbers after extracting digits", () => {

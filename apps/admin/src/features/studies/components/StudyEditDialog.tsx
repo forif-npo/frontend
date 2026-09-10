@@ -1,27 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  STUDY_LOCATION_OPTIONS,
-  STUDY_TAG_OPTIONS_BY_CATEGORY,
-} from "@core/study-form";
+import { STUDY_LOCATION_OPTIONS, STUDY_TAG_OPTIONS_BY_CATEGORY } from "@core/study-form";
 import { CircleMinus, CirclePlus, Loader2, Search } from "lucide-react";
 import { useState } from "react";
 import { DIFFICULTY_OPTIONS, WEEK_DAY_OPTIONS } from "../constants";

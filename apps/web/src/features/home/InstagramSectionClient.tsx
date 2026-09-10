@@ -1,11 +1,6 @@
 "use client";
 import { InstagramIcon } from "@repo/assets/icons/krds";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Heart,
-  MessageCircle,
-} from "@repo/assets/icons/lucide";
+import { ArrowLeft, ArrowRight, Heart, MessageCircle } from "@repo/assets/icons/lucide";
 import Link from "next/link";
 import { useState } from "react";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";

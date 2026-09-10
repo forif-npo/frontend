@@ -10,13 +10,7 @@ jest.mock("@/features/semester/api", () => ({
   getCurrentSemester: jest.fn(),
 }));
 import { apiClient } from "@core/utils/api-client";
-import {
-  approveStudy,
-  createAutonomousStudy,
-  deleteStudy,
-  rejectStudy,
-  updateStudy,
-} from "./api";
+import { approveStudy, createAutonomousStudy, deleteStudy, rejectStudy, updateStudy } from "./api";
 
 type MutationMock = {
   mockReset: () => void;

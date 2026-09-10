@@ -1,13 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type { AdminStudyDetail } from "../api";
-import {
-  formatDate,
-  formatDateTime,
-  formatLocation,
-  formatStudyTime,
-  getSafeExternalUrl,
-  splitPlanContent,
-} from "./study-approval-formatters";
+import { formatDate, formatDateTime, formatLocation, formatStudyTime, getSafeExternalUrl, splitPlanContent } from "./study-approval-formatters";
 
 const detail = {
   week_day: 3,

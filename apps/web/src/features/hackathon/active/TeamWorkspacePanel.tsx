@@ -1,18 +1,9 @@
-import type {
-  Hackathon,
-  JoinRequest,
-  Submission,
-  Team,
-} from "@core/types/hackathon";
+import type { Hackathon, JoinRequest, Submission, Team } from "@core/types/hackathon";
 import { Body, Heading, Label } from "@ui/components/server";
 import { Button } from "@ui/components/client";
 import { useState } from "react";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
-import {
-  formatDateTime,
-  getRemainingLabel,
-  sortTeamMembersLeaderFirst,
-} from "../utils";
+import { formatDateTime, getRemainingLabel, sortTeamMembersLeaderFirst } from "../utils";
 import { InfoRow, Panel, PanelHeader } from "../shared";
 import { JoinRequestPanel } from "./JoinRequestPanel";
 import { phaseLabel, type ActiveStage } from "./types";

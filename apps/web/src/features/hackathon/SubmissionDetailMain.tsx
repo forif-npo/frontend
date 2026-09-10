@@ -9,12 +9,7 @@ import { HackathonSubmissionDetailSkeleton } from "@/components/skeleton/Hackath
 import { safeImageSrc } from "@/utils/image";
 import { sortTeamMembersLeaderFirst } from "./utils";
 import { CompetitionTypeBadge } from "./CompetitionTypeBadge";
-import {
-  ARCHIVE_ELEVATED_PANEL_CLASS_NAME,
-  ARCHIVE_PANEL_CLASS_NAME,
-  ArchiveExternalLinks,
-  ArchiveTechStackBadges,
-} from "./archive/ui";
+import { ARCHIVE_ELEVATED_PANEL_CLASS_NAME, ARCHIVE_PANEL_CLASS_NAME, ArchiveExternalLinks, ArchiveTechStackBadges } from "./archive/ui";
 
 interface SubmissionDetailMainProps {
   submissionId: number;

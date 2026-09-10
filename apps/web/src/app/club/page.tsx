@@ -6,11 +6,7 @@ import { Marquee } from "@/features/club/Marquee";
 import { HistoryTimeline } from "@/features/club/HistoryTimeline";
 import { StatCounter } from "@/features/club/StatCounter";
 import { Reveal } from "@/features/club/Reveal";
-import {
-  CLUB_STATS,
-  CLUB_VALUES,
-  GALLERY_ITEMS,
-} from "@/features/club/constants";
+import { CLUB_STATS, CLUB_VALUES, GALLERY_ITEMS } from "@/features/club/constants";
 
 const fadeUp = {
   initial: { opacity: 0, y: 28 },

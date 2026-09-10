@@ -1,10 +1,5 @@
 "use client";
-import {
-  AlertModal,
-  FileUpload,
-  SelectBox,
-  TextInput,
-} from "@ui/components/client";
+import { AlertModal, FileUpload, SelectBox, TextInput } from "@ui/components/client";
 import { CircleMinus, CirclePlus } from "@repo/assets/icons/lucide";
 import type { StudyOpenValues } from "@core/schemas";
 import { toFileDownloadUrl } from "@core/utils/file-download";

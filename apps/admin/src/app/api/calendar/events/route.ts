@@ -1,10 +1,7 @@
 import { env } from "@/env";
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
-import {
-  mapEventColorToColorId,
-  transformGoogleEventsToIEvents,
-} from "./transform";
+import { mapEventColorToColorId, transformGoogleEventsToIEvents } from "./transform";
 import type { TEventColor } from "@repo/big-calendar";
 
 export async function GET() {

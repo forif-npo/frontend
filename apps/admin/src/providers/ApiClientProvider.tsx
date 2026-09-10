@@ -1,10 +1,5 @@
 "use client";
-import {
-  setTokenGetter,
-  setTokenRefresher,
-  setOnTokenRefreshed,
-  setOnUnauthorized,
-} from "@core/utils/api-client";
+import { setTokenGetter, setTokenRefresher, setOnTokenRefreshed, setOnUnauthorized } from "@core/utils/api-client";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 import { toast } from "sonner";

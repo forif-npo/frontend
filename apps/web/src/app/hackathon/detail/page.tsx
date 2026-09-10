@@ -1,31 +1,14 @@
 "use client";
 import { useCallback, useState } from "react";
 import { useCurrentHackathon, useHackathonData } from "@/hooks/hackathon";
-import {
-  ActiveHackathonMain,
-  EndedMain,
-  EventFacts,
-  RecruitingMain,
-  getMainStage,
-} from "@/features/hackathon";
+import { ActiveHackathonMain, EndedMain, EventFacts, RecruitingMain, getMainStage } from "@/features/hackathon";
 import { statusBadgeVariant, statusLabel } from "@/features/hackathon/utils";
 import { HackathonDetailSkeleton } from "@/components/skeleton/HackathonSkeleton";
 import { handleApiError } from "@core/utils/api-client";
-import {
-  Badge,
-  Body,
-  Heading,
-  InlineErrorState,
-  Link,
-} from "@ui/components/server";
+import { Badge, Body, Heading, InlineErrorState, Link } from "@ui/components/server";
 import { Button } from "@ui/components/client";
 import { PageHeader } from "@/components/PageHeader";
-import type {
-  CreateTeamRequest,
-  EvaluationScore,
-  SubmissionRequest,
-  UpdateTeamRequest,
-} from "@core/types/hackathon";
+import type { CreateTeamRequest, EvaluationScore, SubmissionRequest, UpdateTeamRequest } from "@core/types/hackathon";
 
 export default function HackathonDetailPage() {
   const {

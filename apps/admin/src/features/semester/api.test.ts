@@ -3,11 +3,7 @@ jest.mock("@core/utils/api-client", () => ({
   apiClient: { get: jest.fn(), patch: jest.fn() },
 }));
 import { apiClient } from "@core/utils/api-client";
-import {
-  changeCurrentSemester,
-  getAdminCandidates,
-  getSemesterChangePreview,
-} from "./api";
+import { changeCurrentSemester, getAdminCandidates, getSemesterChangePreview } from "./api";
 
 type ApiMock = {
   mockReset: () => void;

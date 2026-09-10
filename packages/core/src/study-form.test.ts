@@ -1,9 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  STUDY_TAG_CATEGORIES,
-  STUDY_TAG_OPTIONS,
-  STUDY_TAG_OPTIONS_BY_CATEGORY,
-} from "./study-form";
+import { STUDY_TAG_CATEGORIES, STUDY_TAG_OPTIONS, STUDY_TAG_OPTIONS_BY_CATEGORY } from "./study-form";
 
 describe("study tag catalog", () => {
   it("groups every tag exactly once under a declared category", () => {

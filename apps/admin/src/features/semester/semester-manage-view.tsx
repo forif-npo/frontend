@@ -4,33 +4,11 @@ import { toast } from "sonner";
 import { AlertTriangle, CalendarRange, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { handleApiError } from "@core/utils/api-client";
-import {
-  changeCurrentSemester,
-  getAdminCandidates,
-  getCurrentSemester,
-  getSemesterChangePreview,
-  getSemesters,
-  type AdminCandidate,
-  type Semester,
-  type SemesterChangePreview,
-} from "./api";
+import { changeCurrentSemester, getAdminCandidates, getCurrentSemester, getSemesterChangePreview, getSemesters, type AdminCandidate, type Semester, type SemesterChangePreview } from "./api";
 import { ScheduleSection } from "./schedule-section";
 
 function parseLabel(label: string): { year: number; semester: number } | null {
