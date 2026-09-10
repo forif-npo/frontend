@@ -267,19 +267,29 @@ export function AttendancePanel({
                       <button
                         onClick={() => toggleCell(mentee.user_id, week)}
                         aria-label={`${mentee.user_name} ${week}주차 출석 상태 변경`}
-                        className={`text-body-xs h-9 w-11 rounded-md font-bold transition-colors ${
+                        className={`text-body-xs border-border-transparency h-9 w-11 rounded-md border font-bold transition-colors focus:outline-none focus:ring-1 ${
                           status === "present"
                             ? "bg-surface-primary-subtler text-text-primary"
                             : status === "absent"
                               ? "bg-surface-danger-subtler text-text-danger"
                               : "bg-surface-gray-subtler text-text-disabled hover:bg-surface-gray-subtle"
-                        } ${isDirty ? "ring-border-primary ring-1" : ""}`}
+                        } ${
+                          status === "absent"
+                            ? "focus:border-border-danger focus:ring-border-danger"
+                            : "focus:border-border-primary focus:ring-border-primary"
+                        } ${
+                          isDirty
+                            ? status === "absent"
+                              ? "ring-border-danger"
+                              : "ring-border-primary"
+                            : ""
+                        }`}
                       >
                         {status === "present"
                           ? "출석"
                           : status === "absent"
                             ? "결석"
-                            : "－"}
+                            : "-"}
                       </button>
                     </TableCell>
                   );
