@@ -318,9 +318,6 @@ export function AttendancePanel({
         </Button>
       </div>
 
-      <p className="text-text-subtle text-body-xs mt-3">
-        수료 기준: 출석 5회 이상 (수료증 발급은 운영진이 진행합니다)
-      </p>
       <ActionConfirmModal
         isOpen={isSaveConfirmOpen}
         target="출석 정보"
