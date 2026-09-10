@@ -3,9 +3,12 @@ jest.mock("@core/utils/api-client", () => ({
   apiClient: { get: jest.fn(), post: jest.fn() },
 }));
 import { apiClient } from "@core/utils/api-client";
-import { getAlimTalkHistory, getAllReceivers, getReceiverPage, sendAlimTalk } from "./api";
-//테스트용 주석
-//테스트용 2
+import {
+  getAlimTalkHistory,
+  getAllReceivers,
+  getReceiverPage,
+  sendAlimTalk,
+} from "./api";
 
 type GetMock = {
   mockReset: () => void;
