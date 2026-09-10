@@ -9,6 +9,7 @@ import {
   getReceiverPage,
   sendAlimTalk,
 } from "./api";
+//테스트용 주석
 
 type GetMock = {
   mockReset: () => void;
