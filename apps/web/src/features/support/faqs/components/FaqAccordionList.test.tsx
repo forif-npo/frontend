@@ -7,12 +7,12 @@ jest.mock("@ui/components/client", () => ({
     items,
     contentClassName,
   }: {
-    items: Array<{ title: string; children: ReactNode }>;
+    items: Array<{ title: ReactNode; children: ReactNode }>;
     contentClassName?: string;
   }) => (
     <div data-content-class-name={contentClassName}>
-      {items.map((item) => (
-        <section key={item.title}>
+      {items.map((item, index) => (
+        <section key={index}>
           <h2>{item.title}</h2>
           {item.children}
         </section>
@@ -41,7 +41,13 @@ describe("FaqAccordionList", () => {
   it("uses a text question prefix and leaves the answer unprefixed", () => {
     render(<FaqAccordionList items={[faq]} />);
 
-    expect(screen.getByRole("heading", { name: "Q. 가입 방법" })).toBeTruthy();
+    const questionTitle = screen.getByRole("heading", {
+      name: "Q. 가입 방법",
+    });
+    expect(questionTitle).toBeTruthy();
+    expect(questionTitle.firstElementChild?.className).toContain(
+      "text-heading-m",
+    );
     expect(screen.getByText(faq.content)).toBeTruthy();
     expect(screen.queryByText("A", { exact: true })).toBeNull();
   });

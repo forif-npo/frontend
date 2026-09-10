@@ -28,7 +28,7 @@ export function FaqAccordionList({ items }: FaqAccordionListProps) {
 
   const accordionItems = items.map((item) => {
     return {
-      title: `Q. ${item.title}`,
+      title: <span className="text-heading-m">Q. {item.title}</span>,
       tagSlot: (
         <Badge
           label={item.tag}

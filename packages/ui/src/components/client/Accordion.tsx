@@ -4,7 +4,7 @@ import { ChevronDown } from "@repo/assets/icons/lucide";
 import { Label } from "../server/Label";
 
 interface AccordionItemProps {
-  title: string;
+  title: React.ReactNode;
   leadingSlot?: React.ReactNode;
   tagSlot?: React.ReactNode;
   children: React.ReactNode;
