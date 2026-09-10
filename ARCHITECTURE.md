@@ -80,6 +80,22 @@ Next.js 라우팅 경계다. `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx
 - `index.ts`는 feature의 의도적인 공개 진입점에만 사용한다. 내부 구현을 모두 재수출하는
   barrel은 순환 의존성과 책임 은폐를 만들 수 있으므로 만들지 않는다.
 
+### React 경계와 상태 소유
+
+React 파일은 위치뿐 아니라 렌더링·상태의 소유자도 함께 판단한다.
+
+- Server Component는 서버 데이터 진입, 권한 확인, metadata와 초기 조합을 담당한다.
+  browser API, 이벤트 핸들러, client state가 필요한 부분만 Client Component로 좁힌다.
+- Client Component는 자신이 소유한 상호작용과 화면 상태만 관리한다. 상위 route나
+  다른 feature의 상태를 알기 위해 client 경계를 넓히지 않는다.
+- form, dialog, filter, mutation 같은 상태는 먼저 해당 feature 또는 화면에 둔다. 서로
+  독립된 feature가 같은 생명주기와 갱신 규칙으로 실제 공유할 때만 app provider나 전역
+  상태로 승격한다.
+- custom hook은 재사용 가능성만으로 분리하지 않는다. 비동기 상태, 구독, 폼 흐름, 도메인
+  규칙처럼 독립적으로 이해·검증할 수 있는 책임이 있을 때 분리한다.
+- server/client 경계, provider 위치, hook의 공개 API를 바꾸는 이동은 렌더링 방식·권한·
+  loading/error 동작을 바꿀 수 있으므로 구조 정리로만 간주하지 않는다.
+
 ### 앱 공통 디렉터리
 
 | 위치             | 책임                                                                                                 |

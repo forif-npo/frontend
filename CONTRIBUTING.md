@@ -78,6 +78,9 @@ API 경로·인증·요청·응답 필드는 [FORIF Scalar](https://dev.forif.or
 - 이 문서: 공통 개발·검증·PR 흐름
 - [GIT_WORKFLOW.md](GIT_WORKFLOW.md): 브랜치, PR 승격, 배포와 hotfix 기준
 - [ARCHITECTURE.md](ARCHITECTURE.md): 디렉터리 책임, 의존성 방향, 파일 명명 기준
+- [REFACTORING.md](REFACTORING.md): 리팩토링 우선순위, 유형별 완료 조건, 레거시 개선 원칙
+- [TESTING.md](TESTING.md): 테스트 대상, mock, 검증 기준
+- [DESIGN_REVIEW.md](DESIGN_REVIEW.md): UI·반응형·접근성 검토 기준
 - [CODEX.md](CODEX.md): Codex 작업 지침
 - [CLAUDE.md](CLAUDE.md): Claude Code 작업 지침
 - 앱 README: 앱별 실행과 환경 설정

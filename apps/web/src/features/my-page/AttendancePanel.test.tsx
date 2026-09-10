@@ -104,4 +104,19 @@ describe("AttendancePanel", () => {
       expect(getAttendance).toHaveBeenCalledTimes(2);
     });
   });
+
+  it("uses danger focus tokens when an attendance cell is absent", async () => {
+    mockedGetAttendance.mockResolvedValue(attendance);
+    render(<AttendancePanel studyId={10} />);
+
+    const attendanceCell = await screen.findByRole("button", {
+      name: "김철수 1주차 출석 상태 변경",
+    });
+    fireEvent.click(attendanceCell);
+    fireEvent.click(attendanceCell);
+
+    expect(attendanceCell.className).toContain("focus:border-border-danger");
+    expect(attendanceCell.className).toContain("focus:ring-border-danger");
+    expect(attendanceCell.className).toContain("ring-border-danger");
+  });
 });
