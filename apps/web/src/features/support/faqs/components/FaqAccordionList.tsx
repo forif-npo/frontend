@@ -28,15 +28,7 @@ export function FaqAccordionList({ items }: FaqAccordionListProps) {
 
   const accordionItems = items.map((item) => {
     return {
-      title: item.title,
-      leadingSlot: (
-        <span
-          aria-hidden="true"
-          className="bg-primary-50 text-text-basic-inverse inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg font-bold"
-        >
-          Q
-        </span>
-      ),
+      title: `Q. ${item.title}`,
       tagSlot: (
         <Badge
           label={item.tag}
@@ -46,26 +38,19 @@ export function FaqAccordionList({ items }: FaqAccordionListProps) {
         />
       ),
       children: (
-        <div className="flex items-start gap-[14px]">
-          <span className="flex h-10 w-10 shrink-0 items-start justify-center">
-            <span
-              aria-hidden="true"
-              className="border-border-information bg-information-5 text-text-information inline-flex h-7 w-7 items-center justify-center rounded-lg border text-sm font-bold"
-            >
-              A
-            </span>
-          </span>
-          <p className="whitespace-pre-line text-sm leading-7 text-gray-800">
-            {item.content}
-          </p>
-        </div>
+        <p className="text-text-basic text-body-l whitespace-pre-line leading-8">
+          {item.content}
+        </p>
       ),
     };
   });
 
   return (
-    <div className="mt-6">
-      <Accordion items={accordionItems} contentClassName="px-6 pb-6 pt-2" />
+    <div className="mt-8">
+      <Accordion
+        items={accordionItems}
+        contentClassName="px-4 pb-6 pt-0 md:px-6 md:pb-8"
+      />
     </div>
   );
 }
