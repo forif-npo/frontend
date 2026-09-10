@@ -46,7 +46,7 @@ describe("FaqAccordionList", () => {
     });
     expect(questionTitle).toBeTruthy();
     expect(questionTitle.firstElementChild?.className).toContain(
-      "text-heading-m",
+      "text-title-l",
     );
     expect(screen.getByText(faq.content)).toBeTruthy();
     expect(screen.queryByText("A", { exact: true })).toBeNull();
