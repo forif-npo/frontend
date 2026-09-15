@@ -375,13 +375,6 @@ export function CriteriaTab({
 
   return (
     <>
-      <div className="flex justify-end">
-        <Button onClick={onCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          평가 기준 추가
-        </Button>
-      </div>
-
       {criteria.length === 0 ? (
         <EmptyState
           title="등록된 평가 기준이 없습니다."
@@ -409,6 +402,12 @@ export function CriteriaTab({
           showPagination={false}
         />
       )}
+      <div className="flex justify-end">
+        <Button onClick={onCreate}>
+          <Plus className="mr-2 h-4 w-4" />
+          평가 기준 추가
+        </Button>
+      </div>
     </>
   );
 }
@@ -541,13 +540,6 @@ export function AwardsTab({
 
   return (
     <>
-      <div className="flex justify-end">
-        <Button onClick={onCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          수상 등록
-        </Button>
-      </div>
-
       {awards.length === 0 ? (
         <EmptyState
           title="등록된 수상 내역이 없습니다."
@@ -575,6 +567,12 @@ export function AwardsTab({
           showPagination={false}
         />
       )}
+      <div className="flex justify-end">
+        <Button onClick={onCreate}>
+          <Plus className="mr-2 h-4 w-4" />
+          수상 등록
+        </Button>
+      </div>
     </>
   );
 }
