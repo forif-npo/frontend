@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Award, Criterion, EvaluationSummary, Participant, ParticipantStatus, Team } from "@core/types/hackathon";
 import { Pencil, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { PARTICIPANT_STATUS_LABELS, PARTICIPANT_STUDY_ROLE_LABELS, TEAM_STATUS_LABELS, formatDate } from "./types";
+import { PARTICIPANT_STATUS_LABELS, TEAM_STATUS_LABELS, formatDate } from "./types";
 
 export function ParticipantsTab({
   participants,
@@ -89,27 +89,19 @@ export function ParticipantsTab({
       {
         id: "studies",
         header: "스터디",
+        size: 360,
+        minSize: 300,
         cell: ({ row }) => {
           const studies = row.original.studies ?? [];
           return studies.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {studies.map((study) => (
-                <Badge
-                  key={`${study.role}-${study.study_id}`}
-                  variant="outline"
-                  className={`h-6 whitespace-nowrap px-2 py-0 text-xs leading-none ${
-                    study.role === "MENTOR"
-                      ? "border-border-primary bg-primary-5 text-text-primary"
-                      : "border-border-gray bg-surface-gray-subtler text-text-subtle"
-                  }`}
-                >
-                  {study.study_name ?? "-"}
-                  <span className="ml-1 text-[11px] opacity-70">
-                    {PARTICIPANT_STUDY_ROLE_LABELS[study.role]}
-                  </span>
-                </Badge>
-              ))}
-            </div>
+            <span>
+              {studies
+                .map(
+                  (study) =>
+                    `${study.study_name ?? "-"}${study.role === "MENTOR" ? "(멘토)" : ""}`,
+                )
+                .join(", ")}
+            </span>
           ) : (
             <span className="text-muted-foreground">-</span>
           );
@@ -117,6 +109,8 @@ export function ParticipantsTab({
       },
       {
         accessorKey: "status",
+        size: 112,
+        minSize: 112,
         header: () => <div className="text-center">상태</div>,
         cell: ({ row }) => (
           <div className="text-center">
