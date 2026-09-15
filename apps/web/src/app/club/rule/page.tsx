@@ -93,6 +93,7 @@ export default function RulePage() {
           })}
         </div>
 
+        {/* 스크롤 시 화면 상단 120px에 목차를 고정한다. 스터디 상세 목차(StudyDetailNavigation)와 같은 값. */}
         <div className="sticky top-[120px] hidden h-fit w-[160px] shrink-0 self-start md:block">
           <div className="flex gap-3">
             <div className="my-7 w-[3px] rounded bg-gray-200" />

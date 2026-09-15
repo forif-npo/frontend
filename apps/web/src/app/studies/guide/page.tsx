@@ -461,7 +461,7 @@ export default function StudyGuidePage() {
             </section>
           </div>
 
-          {/* Side Panel (Desktop) */}
+          {/* Side Panel (Desktop): 스크롤 시 화면 상단 120px에 고정한다. 회칙·스터디 상세 목차와 같은 값. */}
           <aside className="sticky top-[120px] hidden h-fit w-72 shrink-0 self-start md:block">
             <div className="border-border-gray-light rounded-3 border p-6 text-center">
               <GuideBody
