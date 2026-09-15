@@ -2,15 +2,12 @@
 import { motion } from "motion/react";
 import { RULE, RULE_CHAPTERS } from "@/constants/club-rule";
 import { PageHeader } from "@/components/PageHeader";
-import { useScrollFollower, useScrollSpy } from "@/hooks/useScrollSpy";
+import { useScrollSpy } from "@/hooks/useScrollSpy";
 
 const RULE_CHAPTER_IDS = RULE_CHAPTERS.map(String);
 
 export default function RulePage() {
   const activeChapterId = useScrollSpy(RULE_CHAPTER_IDS, { offset: 140 });
-  const chapterNavigator = useScrollFollower<HTMLDivElement, HTMLDivElement>({
-    topOffset: 120,
-  });
 
   const scrollToChapter = (chapter: number) => {
     const section = document.getElementById(String(chapter));
@@ -35,10 +32,7 @@ export default function RulePage() {
         description="모든 포리프 행사 및 활동은 회칙에 근거합니다."
       />
 
-      <div
-        ref={chapterNavigator.containerRef}
-        className="flex flex-col gap-8 md:flex-row md:items-start"
-      >
+      <div className="flex flex-col gap-8 md:flex-row md:items-start">
         <div className="prose prose-sm min-w-0 max-w-none flex-1">
           {RULE.split("\n").map((line, i) => {
             const trimmed = line.trimStart();
@@ -99,43 +93,38 @@ export default function RulePage() {
           })}
         </div>
 
-        <div className="hidden w-[160px] shrink-0 md:block">
-          <div
-            ref={chapterNavigator.followerRef}
-            style={{ marginTop: chapterNavigator.offset }}
-          >
-            <div className="flex gap-3">
-              <div className="my-7 w-[3px] rounded bg-gray-200" />
-              <div className="flex flex-col gap-1">
-                <p className="mb-2 text-xs font-semibold text-gray-500">
-                  회칙 목록
-                </p>
-                {RULE_CHAPTERS.map((ch) => (
-                  <button
-                    key={ch}
-                    type="button"
-                    onClick={() => scrollToChapter(ch)}
-                    className={`relative rounded-sm py-0.5 pl-3 text-left text-sm font-medium transition-colors ${
-                      activeChapterId === String(ch)
-                        ? "text-text-primary"
-                        : "text-text-subtle hover:text-text-basic"
-                    }`}
-                  >
-                    {activeChapterId === String(ch) && (
-                      <motion.span
-                        layoutId="rule-active-chapter"
-                        className="bg-primary-50 absolute bottom-1 left-0 top-1 w-[3px] rounded-full"
-                        transition={{
-                          type: "spring",
-                          stiffness: 420,
-                          damping: 34,
-                        }}
-                      />
-                    )}
-                    {ch}장
-                  </button>
-                ))}
-              </div>
+        <div className="sticky top-[120px] hidden h-fit w-[160px] shrink-0 self-start md:block">
+          <div className="flex gap-3">
+            <div className="my-7 w-[3px] rounded bg-gray-200" />
+            <div className="flex flex-col gap-1">
+              <p className="mb-2 text-xs font-semibold text-gray-500">
+                회칙 목록
+              </p>
+              {RULE_CHAPTERS.map((ch) => (
+                <button
+                  key={ch}
+                  type="button"
+                  onClick={() => scrollToChapter(ch)}
+                  className={`relative rounded-sm py-0.5 pl-3 text-left text-sm font-medium transition-colors ${
+                    activeChapterId === String(ch)
+                      ? "text-text-primary"
+                      : "text-text-subtle hover:text-text-basic"
+                  }`}
+                >
+                  {activeChapterId === String(ch) && (
+                    <motion.span
+                      layoutId="rule-active-chapter"
+                      className="bg-primary-50 absolute bottom-1 left-0 top-1 w-[3px] rounded-full"
+                      transition={{
+                        type: "spring",
+                        stiffness: 420,
+                        damping: 34,
+                      }}
+                    />
+                  )}
+                  {ch}장
+                </button>
+              ))}
             </div>
           </div>
         </div>
