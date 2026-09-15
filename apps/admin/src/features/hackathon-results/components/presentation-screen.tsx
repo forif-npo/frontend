@@ -39,9 +39,7 @@ function rankLabel(result: AwardResult): string {
 }
 
 export function PresentationScreen({ hackathonId }: PresentationScreenProps) {
-  const { draft, hydrated } = useHackathonResults(hackathonId, "", {
-    readOnly: true,
-  });
+  const { draft, hydrated } = useHackathonResults(hackathonId, "");
 
   const slides = useMemo<PresentationSlide[]>(
     () => (draft ? generateSlides(draft) : []),

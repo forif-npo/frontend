@@ -1,22 +1,12 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createEmptyDraft } from "../schema";
-import { clearDraft, loadDraft, saveDraft, storageKey } from "../storage";
+import { loadDraft, saveDraft as persistDraft, type SaveResult, storageKey } from "../storage";
 import type { HackathonResultDraft } from "../types";
-
-export type SaveStatus = "idle" | "saving" | "saved" | "error";
-
-const SAVE_DEBOUNCE_MS = 250;
-
-interface UseHackathonResultsOptions {
-  /** 발표 화면처럼 읽기만 하는 경우 자동 저장을 막는다. */
-  readOnly?: boolean;
-}
 
 export interface UseHackathonResults {
   draft: HackathonResultDraft | null;
   hydrated: boolean;
-  saveStatus: SaveStatus;
   loadError: string | null;
   /** 함수형 업데이트로 results 등을 변경한다. updatedAt은 자동 갱신한다. */
   updateDraft: (
@@ -24,7 +14,9 @@ export interface UseHackathonResults {
   ) => void;
   /** import 등으로 전체 초안을 교체한다. */
   replaceDraft: (next: HackathonResultDraft) => void;
-  /** 빈 초안으로 초기화한다. */
+  /** 현재 편집 중인 초안을 저장소에 반영한다. */
+  saveDraft: () => SaveResult;
+  /** 현재 편집 중인 초안을 빈 상태로 초기화한다. */
   resetDraft: () => void;
   dismissLoadError: () => void;
 }
@@ -32,17 +24,10 @@ export interface UseHackathonResults {
 export function useHackathonResults(
   hackathonId: number,
   eventTitle: string,
-  options: UseHackathonResultsOptions = {},
 ): UseHackathonResults {
-  const { readOnly = false } = options;
-
   const [draft, setDraft] = useState<HackathonResultDraft | null>(null);
   const [hydrated, setHydrated] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [loadError, setLoadError] = useState<string | null>(null);
-
-  const skipNextSaveRef = useRef(true);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── 최초 hydration (클라이언트에서만 localStorage 접근) ──
   useEffect(() => {
@@ -55,30 +40,9 @@ export function useHackathonResults(
     } else {
       setDraft(createEmptyDraft(hackathonId, eventTitle));
     }
-    skipNextSaveRef.current = true;
     setHydrated(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hackathonId]);
-
-  // ── debounce 저장 ──
-  useEffect(() => {
-    if (readOnly || !hydrated || draft === null) return;
-    if (skipNextSaveRef.current) {
-      skipNextSaveRef.current = false;
-      return;
-    }
-
-    setSaveStatus("saving");
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      const result = saveDraft(draft);
-      setSaveStatus(result.ok ? "saved" : "error");
-    }, SAVE_DEBOUNCE_MS);
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [draft, hydrated, readOnly]);
 
   // ── 다른 탭(편집 ↔ 발표) 동기화 ──
   useEffect(() => {
@@ -87,7 +51,6 @@ export function useHackathonResults(
       if (event.key !== key) return;
       const result = loadDraft(hackathonId);
       if (result.status === "ok") {
-        skipNextSaveRef.current = true;
         setDraft(result.draft);
         setLoadError(null);
       }
@@ -119,8 +82,15 @@ export function useHackathonResults(
     [hackathonId],
   );
 
+  const saveDraft = useCallback((): SaveResult => {
+    if (draft === null) {
+      return { ok: false, error: "결과 데이터를 불러오는 중입니다." };
+    }
+
+    return persistDraft(draft);
+  }, [draft]);
+
   const resetDraft = useCallback(() => {
-    clearDraft(hackathonId);
     setDraft(createEmptyDraft(hackathonId, eventTitle));
     setLoadError(null);
   }, [hackathonId, eventTitle]);
@@ -130,10 +100,10 @@ export function useHackathonResults(
   return {
     draft,
     hydrated,
-    saveStatus,
     loadError,
     updateDraft,
     replaceDraft,
+    saveDraft,
     resetDraft,
     dismissLoadError,
   };
