@@ -104,24 +104,24 @@ describe("DataTable 단일 정렬 흐름", () => {
     ]);
     expect(
       table.getRowModel().rows.map((row) => row.original.department),
-    ).toEqual(["나", "가", "다"]);
+    ).toEqual(["가", "나", "다"]);
 
     click(department);
     expect(
       table.getRowModel().rows.map((row) => row.original.department),
-    ).toEqual(["나", "다", "가"]);
+    ).toEqual(["다", "나", "가"]);
 
     click(department);
     expect(table.getState().sorting).toEqual([]);
   });
 
-  it("다중 sort 쿼리를 만들고 해제되면 제거한다", () => {
+  it("기존 다중 sort 쿼리에서는 마지막 조건만 유지하고 해제되면 제거한다", () => {
     const params = new URLSearchParams({ semester: "26-1", page: "0" });
     const sorting = parseSortingParams(["userId:asc", "department:desc"]);
 
     appendSortingParams(params, sorting);
     expect(params.toString()).toBe(
-      "semester=26-1&page=0&sort=userId%3Aasc&sort=department%3Adesc",
+      "semester=26-1&page=0&sort=department%3Adesc",
     );
 
     params.delete("sort");

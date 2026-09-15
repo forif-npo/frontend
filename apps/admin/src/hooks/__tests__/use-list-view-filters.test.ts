@@ -17,13 +17,15 @@ describe("buildListViewParams", () => {
     );
   });
 
-  it("서버에서 받은 다중 정렬 상태를 다시 파싱해도 보존한다", () => {
+  it("서버에서 받은 다중 정렬 상태에서는 마지막 조건만 유지한다", () => {
     const initialSorting = [
       { id: "primary_mentor_name", desc: false },
       { id: "study_name", desc: true },
     ];
     const sortingKey = serializeSortingParams(initialSorting).join(",");
 
-    expect(parseSortingParams(sortingKey.split(","))).toEqual(initialSorting);
+    expect(parseSortingParams(sortingKey.split(","))).toEqual([
+      { id: "study_name", desc: true },
+    ]);
   });
 });

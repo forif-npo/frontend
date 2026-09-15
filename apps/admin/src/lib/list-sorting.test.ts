@@ -3,25 +3,22 @@ import { appendSortingParams, parseSortingParams, serializeSortingParams, sortRe
 import { paginateLocally } from "./paginate";
 
 describe("list sorting", () => {
-  it("serializes sorting for URL params and discards unsafe query values", () => {
+  it("serializes only the latest sort for URL params and discards unsafe query values", () => {
     const sorting = [
       { id: "userName", desc: false },
       { id: "createdAt", desc: true },
     ];
     const params = new URLSearchParams();
 
-    expect(serializeSortingParams(sorting)).toEqual([
-      "userName:asc",
-      "createdAt:desc",
-    ]);
+    expect(serializeSortingParams(sorting)).toEqual(["createdAt:desc"]);
     appendSortingParams(params, sorting);
-    expect(params.toString()).toBe("sort=userName%3Aasc&sort=createdAt%3Adesc");
+    expect(params.toString()).toBe("sort=createdAt%3Adesc");
     expect(
       parseSortingParams(["userName:asc", "name:invalid", "<script>:desc"]),
     ).toEqual([{ id: "userName", desc: false }]);
   });
 
-  it("sorts by multiple fields without mutating the original records", () => {
+  it("sorts by the latest field without mutating the original records", () => {
     const records = [
       { name: "가", score: 1, active: true },
       { name: "나", score: 2, active: false },
@@ -40,9 +37,9 @@ describe("list sorting", () => {
 
     expect(sorted.map((record) => record.name)).toEqual([
       "나",
-      "다",
-      "가",
       "미정",
+      "가",
+      "다",
     ]);
     expect(records.map((record) => record.name)).toEqual([
       "가",
