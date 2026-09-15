@@ -25,9 +25,13 @@ describe("ParticipantsTab", () => {
 
     expect(screen.getByText("자율스터디, README.md(멘토)")).not.toBeNull();
     expect(screen.queryByText("수강")).toBeNull();
+    expect(screen.getByText("2026-06-10 00:00")).not.toBeNull();
     expect(
       screen.getByRole("columnheader", { name: "스터디" }).style.width,
     ).toBe("360px");
+    expect(
+      screen.getByRole("columnheader", { name: "등록일" }).style.width,
+    ).toBe("160px");
   });
 });
 

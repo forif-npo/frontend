@@ -14,9 +14,7 @@ export const TEAM_STATUS_LABELS: Record<Team["status"], string> = {
 
 export function formatDate(value?: string) {
   if (!value) return "-";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return "-";
-  return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+  return value.replace("T", " ").slice(0, 16);
 }
 
 export type CriterionForm = {

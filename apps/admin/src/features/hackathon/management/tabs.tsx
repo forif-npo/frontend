@@ -129,6 +129,8 @@ export function ParticipantsTab({
       },
       {
         accessorKey: "registered_at",
+        size: 160,
+        minSize: 160,
         header: () => <div className="text-right">등록일</div>,
         cell: ({ row }) => (
           <div className="text-muted-foreground text-right">
