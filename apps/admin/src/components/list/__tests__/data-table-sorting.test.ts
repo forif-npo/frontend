@@ -25,7 +25,7 @@ describe("DataTable 단일 정렬 흐름", () => {
       renderFallbackValue: null,
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
-      enableMultiSort: true,
+      enableMultiSort: false,
     });
 
     const column = table.getColumn("userId")!;
@@ -55,7 +55,7 @@ describe("DataTable 단일 정렬 흐름", () => {
     ]);
   });
 
-  it("다른 열을 클릭하면 보조 정렬을 추가하고 다시 해제한다", () => {
+  it("다른 열을 클릭하면 기존 정렬을 새 열 정렬로 대체한다", () => {
     type MultiRow = { userId: number; department: string };
     const rows: MultiRow[] = [
       { userId: 20, department: "다" },
@@ -83,7 +83,7 @@ describe("DataTable 단일 정렬 흐름", () => {
       renderFallbackValue: null,
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
-      enableMultiSort: true,
+      enableMultiSort: false,
     });
 
     const userId = table.getColumn("userId")!;
@@ -94,13 +94,12 @@ describe("DataTable 단일 정렬 흐름", () => {
         column.clearSorting();
         return;
       }
-      column.toggleSorting(direction === "asc", true);
+      column.toggleSorting(direction === "asc");
     };
 
     click(userId);
     click(department);
     expect(table.getState().sorting).toEqual([
-      { id: "userId", desc: false },
       { id: "department", desc: false },
     ]);
     expect(
@@ -113,7 +112,7 @@ describe("DataTable 단일 정렬 흐름", () => {
     ).toEqual(["나", "다", "가"]);
 
     click(department);
-    expect(table.getState().sorting).toEqual([{ id: "userId", desc: false }]);
+    expect(table.getState().sorting).toEqual([]);
   });
 
   it("다중 sort 쿼리를 만들고 해제되면 제거한다", () => {

@@ -165,7 +165,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
     enableRowSelection,
-    enableMultiSort: true,
+    enableMultiSort: false,
     onSortingChange,
     onRowSelectionChange,
     getRowId,
