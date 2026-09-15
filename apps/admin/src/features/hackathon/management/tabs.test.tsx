@@ -98,6 +98,35 @@ const teams: Team[] = [
   },
 ];
 
+const teamsForMemberSorting: Team[] = [
+  ...teams,
+  {
+    hackathon_team_id: 2,
+    hackathon_id: 9901,
+    name: "두 번째 팀",
+    topic: "테스트 주제",
+    competition_type: "HACKATHON",
+    leader_id: 5,
+    leader_name: "가나다 팀장",
+    member_count: 2,
+    status: "FORMING",
+    members: [
+      {
+        user_id: 4,
+        user_name: "하하하",
+        role: "MEMBER",
+        joined_at: "2026-01-01T00:00:00.000Z",
+      },
+      {
+        user_id: 5,
+        user_name: "가나다 팀장",
+        role: "LEADER",
+        joined_at: "2026-01-01T00:00:00.000Z",
+      },
+    ],
+  },
+];
+
 describe("TeamsTab", () => {
   it("renders members in order and provides the standard row action menu", () => {
     render(<TeamsTab teams={teams} onDeleteTeam={() => undefined} />);
@@ -108,5 +137,17 @@ describe("TeamsTab", () => {
     expect(
       screen.getByRole("button", { name: "행 액션 열기" }),
     ).not.toBeNull();
+  });
+
+  it("sorts teams by the displayed member order", () => {
+    render(
+      <TeamsTab teams={teamsForMemberSorting} onDeleteTeam={() => undefined} />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "구성원" }));
+
+    const rows = within(screen.getByRole("table")).getAllByRole("row");
+    expect(rows[1].textContent).toContain("두 번째 팀");
+    expect(rows[2].textContent).toContain("테스트 팀");
   });
 });

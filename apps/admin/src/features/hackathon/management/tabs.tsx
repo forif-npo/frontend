@@ -13,6 +13,24 @@ import { Plus, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PARTICIPANT_STATUS_LABELS, TEAM_STATUS_LABELS, formatDate } from "./types";
 
+function getSortedTeamMembers(members: Team["members"]) {
+  return [...members].sort((left, right) => {
+    if (left.role === "LEADER" && right.role !== "LEADER") return -1;
+    if (left.role !== "LEADER" && right.role === "LEADER") return 1;
+
+    return left.user_name.localeCompare(right.user_name, "ko");
+  });
+}
+
+function formatTeamMembers(members: Team["members"]) {
+  return getSortedTeamMembers(members)
+    .map(
+      (member) =>
+        `${member.user_name}${member.role === "LEADER" ? "(팀장)" : ""}`,
+    )
+    .join(", ");
+}
+
 export function ParticipantsTab({
   participants,
 }: {
@@ -295,30 +313,11 @@ export function TeamsTab({
       },
       {
         id: "members",
-        accessorFn: (team) =>
-          team.members.map((member) => member.user_name).join(" "),
+        accessorFn: (team) => formatTeamMembers(team.members),
         header: ({ column }) => (
           <SortableHeader column={column}>구성원</SortableHeader>
         ),
-        cell: ({ row }) => {
-          const sortedMembers = [...row.original.members].sort((left, right) => {
-            if (left.role === "LEADER" && right.role !== "LEADER") return -1;
-            if (left.role !== "LEADER" && right.role === "LEADER") return 1;
-
-            return left.user_name.localeCompare(right.user_name, "ko");
-          });
-
-          return (
-            <span>
-              {sortedMembers
-                .map(
-                  (member) =>
-                    `${member.user_name}${member.role === "LEADER" ? "(팀장)" : ""}`,
-                )
-                .join(", ")}
-            </span>
-          );
-        },
+        cell: ({ row }) => <span>{formatTeamMembers(row.original.members)}</span>,
       },
     ],
     [],
