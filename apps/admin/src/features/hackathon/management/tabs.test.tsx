@@ -1,8 +1,8 @@
 /** @jest-environment jsdom */
 import { describe, expect, it } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
-import type { Participant } from "@core/types/hackathon";
-import { ParticipantsTab } from "./tabs";
+import type { Participant, Team } from "@core/types/hackathon";
+import { ParticipantsTab, TeamsTab } from "./tabs";
 
 const participants: Participant[] = [
   {
@@ -28,5 +28,49 @@ describe("ParticipantsTab", () => {
     expect(
       screen.getByRole("columnheader", { name: "스터디" }).style.width,
     ).toBe("360px");
+  });
+});
+
+const teams: Team[] = [
+  {
+    hackathon_team_id: 1,
+    hackathon_id: 9901,
+    name: "테스트 팀",
+    topic: "테스트 주제",
+    competition_type: "HACKATHON",
+    leader_id: 2,
+    leader_name: "팀장 사용자",
+    member_count: 3,
+    status: "FORMING",
+    members: [
+      {
+        user_id: 3,
+        user_name: "나다라",
+        role: "MEMBER",
+        joined_at: "2026-01-01T00:00:00.000Z",
+      },
+      {
+        user_id: 2,
+        user_name: "팀장 사용자",
+        role: "LEADER",
+        joined_at: "2026-01-01T00:00:00.000Z",
+      },
+      {
+        user_id: 1,
+        user_name: "가나다",
+        role: "MEMBER",
+        joined_at: "2026-01-01T00:00:00.000Z",
+      },
+    ],
+  },
+];
+
+describe("TeamsTab", () => {
+  it("renders the leader first and remaining members in Korean alphabetical order", () => {
+    render(<TeamsTab teams={teams} onDeleteTeam={() => undefined} />);
+
+    expect(
+      screen.getByText("팀장 사용자(팀장), 가나다, 나다라"),
+    ).not.toBeNull();
   });
 });

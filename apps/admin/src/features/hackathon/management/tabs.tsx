@@ -265,16 +265,25 @@ export function TeamsTab({
       {
         id: "members",
         header: "구성원",
-        cell: ({ row }) => (
-          <div className="flex flex-wrap gap-1.5">
-            {row.original.members.map((member) => (
-              <Badge key={member.user_id} variant="secondary">
-                {member.user_name}
-                {member.role === "LEADER" && " (팀장)"}
-              </Badge>
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const sortedMembers = [...row.original.members].sort((left, right) => {
+            if (left.role === "LEADER" && right.role !== "LEADER") return -1;
+            if (left.role !== "LEADER" && right.role === "LEADER") return 1;
+
+            return left.user_name.localeCompare(right.user_name, "ko");
+          });
+
+          return (
+            <span>
+              {sortedMembers
+                .map(
+                  (member) =>
+                    `${member.user_name}${member.role === "LEADER" ? "(팀장)" : ""}`,
+                )
+                .join(", ")}
+            </span>
+          );
+        },
       },
     ],
     [],
