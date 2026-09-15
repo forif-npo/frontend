@@ -6,11 +6,8 @@ import { StudyCardGrid } from "@/components/study/ui/StudyCardGrid";
 import { StudyFilterSection } from "@/components/study/ui/StudyFilterSection";
 import { StudyListMobileHeader } from "@/components/study/ui/StudyListMobileHeader";
 import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
-import {
-  useStudyData,
-  useStudyFilters,
-  useStudySearchInput,
-} from "@/hooks/study";
+import { useStudyData, useStudyFilters } from "@/hooks/study";
+import { useStudySearchInput } from "@/features/study/list/useStudySearchInput";
 import type { Study, StudyListParams } from "@core/types/study";
 import { getStudyTagName } from "@/constants/study-tags";
 import { Pagination } from "@ui/components/client";
