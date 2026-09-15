@@ -126,25 +126,6 @@ export function ResultRow({
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <Label className="text-muted-foreground text-xs">팀원</Label>
-        {result.members.length > 0 ? (
-          <ul className="flex flex-wrap gap-1.5">
-            {result.members.map((member, i) => (
-              <li
-                key={`${result.id}-${i}`}
-                className="bg-muted rounded-full px-2.5 py-1 text-xs"
-              >
-                {member}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-muted-foreground text-sm">
-            팀을 선택하면 팀원이 자동으로 표시됩니다.
-          </p>
-        )}
-      </div>
     </div>
   );
 }

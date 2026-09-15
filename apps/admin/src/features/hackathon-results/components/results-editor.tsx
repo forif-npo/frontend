@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import type { Team } from "@core/types/hackathon";
-import { AlertTriangle, Check, Download, Loader2, Plus, Presentation, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, Download, Loader2, Plus, Presentation, Save, Trash2, Upload } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useHackathonResults } from "../hooks/use-hackathon-results";
@@ -78,10 +78,11 @@ export function ResultsEditor({
   const {
     draft,
     hydrated,
-    saveStatus,
+    isDirty,
     loadError,
     updateDraft,
     replaceDraft,
+    saveDraft,
     resetDraft,
     dismissLoadError,
   } = useHackathonResults(hackathonId, eventTitle);
@@ -139,6 +140,11 @@ export function ResultsEditor({
   };
 
   const openPresentation = () => {
+    if (isDirty) {
+      toast.error("저장하지 않은 변경사항이 있습니다. 저장 후 발표 화면을 여세요.");
+      return;
+    }
+
     window.open(
       `/hackathon/${hackathonId}/results`,
       "_blank",
@@ -185,37 +191,20 @@ export function ResultsEditor({
     toast.success("결과를 불러왔습니다.");
   };
 
-  const saveLabel: Record<typeof saveStatus, string> = {
-    idle: "저장됨",
-    saving: "저장 중",
-    saved: "저장됨",
-    error: "저장 실패",
+  const saveResults = () => {
+    const result = saveDraft();
+    if (result.ok) {
+      toast.success("결과를 저장했습니다.");
+      return;
+    }
+
+    toast.error(result.error);
   };
 
   return (
     <div className="space-y-6">
       {/* 상단 명령 영역 */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div
-          className={cn(
-            "flex items-center gap-1.5 text-sm",
-            saveStatus === "error"
-              ? "text-destructive"
-              : "text-muted-foreground",
-          )}
-          aria-live="polite"
-        >
-          {saveStatus === "saving" ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : saveStatus === "error" ? (
-            <AlertTriangle className="h-4 w-4" />
-          ) : (
-            <Check className="h-4 w-4" />
-          )}
-          {saveLabel[saveStatus]}
-        </div>
-
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap justify-end gap-2">
           <Button onClick={openPresentation} disabled={presentableCount === 0}>
             <Presentation className="mr-2 h-4 w-4" />
             발표 화면 열기
@@ -248,9 +237,12 @@ export function ResultsEditor({
             onClick={() => setClearOpen(true)}
           >
             <Trash2 className="mr-2 h-4 w-4" />
-            결과 지우기
+            결과 초기화
           </Button>
-        </div>
+          <Button onClick={saveResults}>
+            <Save className="mr-2 h-4 w-4" />
+            저장
+          </Button>
       </div>
 
       {loadError && (
@@ -335,13 +327,14 @@ export function ResultsEditor({
         </Button>
       </div>
 
-      {/* 결과 지우기 확인 */}
+      {/* 결과 초기화 확인 */}
       <Dialog open={clearOpen} onOpenChange={setClearOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>결과 지우기</DialogTitle>
+            <DialogTitle>결과 초기화</DialogTitle>
             <DialogDescription>
-              입력한 모든 수상 팀을 지웁니다. 이 작업은 되돌릴 수 없습니다.
+              입력한 모든 수상 팀을 초기화합니다. 저장을 누르기 전에는 기존
+              저장 결과가 유지됩니다.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -353,10 +346,10 @@ export function ResultsEditor({
               onClick={() => {
                 resetDraft();
                 setClearOpen(false);
-                toast.success("결과를 초기화했습니다.");
+                toast.success("결과를 초기화했습니다. 저장을 눌러 반영하세요.");
               }}
             >
-              지우기
+              초기화
             </Button>
           </DialogFooter>
         </DialogContent>

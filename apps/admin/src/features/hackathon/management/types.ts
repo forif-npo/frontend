@@ -6,11 +6,6 @@ export const PARTICIPANT_STATUS_LABELS: Record<Participant["status"], string> =
     CANCELED: "취소",
   };
 
-export const PARTICIPANT_STUDY_ROLE_LABELS = {
-  MENTEE: "수강",
-  MENTOR: "멘토",
-} as const;
-
 export const TEAM_STATUS_LABELS: Record<Team["status"], string> = {
   FORMING: "구성중",
   CONFIRMED: "확정",
@@ -19,9 +14,7 @@ export const TEAM_STATUS_LABELS: Record<Team["status"], string> = {
 
 export function formatDate(value?: string) {
   if (!value) return "-";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return "-";
-  return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+  return value.replace("T", " ").slice(0, 16);
 }
 
 export type CriterionForm = {

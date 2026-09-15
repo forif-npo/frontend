@@ -12,6 +12,13 @@ type UseFaqListOptions = {
 
 const normalize = (value: string) => value.trim().toLowerCase();
 
+// 태그는 가나다순으로 보여주되, 분류되지 않은 질문을 모은 "기타"는 맨 뒤에 둔다.
+const ETC_CATEGORY = "기타";
+
+const compareCategory = (left: string, right: string) =>
+  Number(left === ETC_CATEGORY) - Number(right === ETC_CATEGORY) ||
+  left.localeCompare(right, "ko");
+
 export const useFaqList = ({
   query,
   category,
@@ -71,7 +78,7 @@ export const useFaqList = ({
     () =>
       Array.from(
         new Set(allItems.map((item) => item.tag.trim()).filter(Boolean)),
-      ).sort((left, right) => left.localeCompare(right, "ko")),
+      ).sort(compareCategory),
     [allItems],
   );
 
