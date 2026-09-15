@@ -1,6 +1,7 @@
 "use client";
 import { SearchBar } from "@/components/list/search-bar";
 import { DataTable } from "@/components/list/data-table";
+import { SortableHeader } from "@/components/list/sortable-header";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -74,21 +75,31 @@ export function ParticipantsTab({
     () => [
       {
         accessorKey: "user_name",
-        header: "이름",
+        header: ({ column }) => (
+          <SortableHeader column={column}>이름</SortableHeader>
+        ),
         cell: ({ row }) => (
           <span className="font-medium">{row.original.user_name ?? "-"}</span>
         ),
       },
       {
         accessorKey: "user_id",
-        header: "학번",
+        header: ({ column }) => (
+          <SortableHeader column={column}>학번</SortableHeader>
+        ),
         cell: ({ row }) => (
           <span className="text-muted-foreground">{row.original.user_id}</span>
         ),
       },
       {
         id: "studies",
-        header: "스터디",
+        accessorFn: (participant) =>
+          (participant.studies ?? [])
+            .map((study) => study.study_name ?? "")
+            .join(" "),
+        header: ({ column }) => (
+          <SortableHeader column={column}>스터디</SortableHeader>
+        ),
         cell: ({ row }) => {
           const studies = row.original.studies ?? [];
           return studies.length > 0 ? (
@@ -117,7 +128,9 @@ export function ParticipantsTab({
       },
       {
         accessorKey: "status",
-        header: () => <div className="text-center">상태</div>,
+        header: ({ column }) => (
+          <SortableHeader column={column}>상태</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-center">
             <Badge
@@ -135,7 +148,9 @@ export function ParticipantsTab({
       },
       {
         accessorKey: "registered_at",
-        header: () => <div className="text-right">등록일</div>,
+        header: ({ column }) => (
+          <SortableHeader column={column}>등록일</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-muted-foreground text-right">
             {formatDate(row.original.registered_at)}
@@ -239,27 +254,40 @@ export function TeamsTab({
     () => [
       {
         accessorKey: "name",
-        header: "팀",
+        header: ({ column }) => (
+          <SortableHeader column={column}>팀</SortableHeader>
+        ),
         cell: ({ row }) => (
           <span className="font-medium">{row.original.name}</span>
         ),
       },
       {
         accessorKey: "topic",
-        header: "주제",
+        header: ({ column }) => (
+          <SortableHeader column={column}>주제</SortableHeader>
+        ),
         cell: ({ row }) => row.original.topic || "-",
       },
-      { accessorKey: "leader_name", header: "팀장" },
+      {
+        accessorKey: "leader_name",
+        header: ({ column }) => (
+          <SortableHeader column={column}>팀장</SortableHeader>
+        ),
+      },
       {
         accessorKey: "member_count",
-        header: () => <div className="text-center">인원</div>,
+        header: ({ column }) => (
+          <SortableHeader column={column}>인원</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-center">{row.original.member_count}명</div>
         ),
       },
       {
         accessorKey: "status",
-        header: () => <div className="text-center">상태</div>,
+        header: ({ column }) => (
+          <SortableHeader column={column}>상태</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-center">
             <Badge variant="outline">
@@ -270,7 +298,11 @@ export function TeamsTab({
       },
       {
         id: "members",
-        header: "구성원",
+        accessorFn: (team) =>
+          team.members.map((member) => member.user_name).join(" "),
+        header: ({ column }) => (
+          <SortableHeader column={column}>구성원</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="flex flex-wrap gap-1.5">
             {row.original.members.map((member) => (
@@ -334,14 +366,18 @@ export function CriteriaTab({
     () => [
       {
         accessorKey: "display_order",
-        header: () => <div className="text-center">순서</div>,
+        header: ({ column }) => (
+          <SortableHeader column={column}>순서</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-center">{row.original.display_order}</div>
         ),
       },
       {
         accessorKey: "name",
-        header: "평가 기준",
+        header: ({ column }) => (
+          <SortableHeader column={column}>평가 기준</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div>
             <p className="font-medium">{row.original.name}</p>
@@ -355,14 +391,18 @@ export function CriteriaTab({
       },
       {
         accessorKey: "max_score",
-        header: () => <div className="text-center">만점</div>,
+        header: ({ column }) => (
+          <SortableHeader column={column}>만점</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-center">{row.original.max_score}</div>
         ),
       },
       {
         accessorKey: "weight",
-        header: () => <div className="text-center">가중치</div>,
+        header: ({ column }) => (
+          <SortableHeader column={column}>가중치</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-center">{row.original.weight}</div>
         ),
@@ -433,7 +473,9 @@ export function EvaluationTab({
     () => [
       {
         accessorKey: "name",
-        header: "팀",
+        header: ({ column }) => (
+          <SortableHeader column={column}>팀</SortableHeader>
+        ),
         cell: ({ row }) => (
           <>
             <p className="font-medium">{row.original.name}</p>
@@ -445,7 +487,11 @@ export function EvaluationTab({
       },
       {
         id: "evaluator_count",
-        header: () => <div className="text-center">평가자</div>,
+        accessorFn: (team) =>
+          summaryByTeam.get(team.hackathon_team_id)?.evaluator_count ?? 0,
+        header: ({ column }) => (
+          <SortableHeader column={column}>평가자</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-center">
             {summaryByTeam.get(row.original.hackathon_team_id)
@@ -456,7 +502,11 @@ export function EvaluationTab({
       },
       {
         id: "average_total_score",
-        header: () => <div className="text-center">평균점수</div>,
+        accessorFn: (team) =>
+          summaryByTeam.get(team.hackathon_team_id)?.average_total_score ?? -1,
+        header: ({ column }) => (
+          <SortableHeader column={column}>평균점수</SortableHeader>
+        ),
         cell: ({ row }) => {
           const summary = summaryByTeam.get(row.original.hackathon_team_id);
           return (
@@ -468,7 +518,11 @@ export function EvaluationTab({
       },
       {
         id: "sum_total_score",
-        header: () => <div className="text-center">합계</div>,
+        accessorFn: (team) =>
+          summaryByTeam.get(team.hackathon_team_id)?.sum_total_score ?? -1,
+        header: ({ column }) => (
+          <SortableHeader column={column}>합계</SortableHeader>
+        ),
         cell: ({ row }) => {
           const summary = summaryByTeam.get(row.original.hackathon_team_id);
           return (
@@ -520,14 +574,18 @@ export function AwardsTab({
     () => [
       {
         accessorKey: "award_name",
-        header: "수상명",
+        header: ({ column }) => (
+          <SortableHeader column={column}>수상명</SortableHeader>
+        ),
         cell: ({ row }) => (
           <p className="font-medium">{row.original.award_name}</p>
         ),
       },
       {
         accessorKey: "award_rank",
-        header: () => <div className="text-center">순위</div>,
+        header: ({ column }) => (
+          <SortableHeader column={column}>순위</SortableHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-center">
             {typeof row.original.award_rank === "number"
@@ -538,7 +596,11 @@ export function AwardsTab({
       },
       {
         id: "team_name",
-        header: "수상 팀",
+        accessorFn: (award) =>
+          award.team_name || teamName(award.hackathon_team_id),
+        header: ({ column }) => (
+          <SortableHeader column={column}>수상 팀</SortableHeader>
+        ),
         cell: ({ row }) =>
           row.original.team_name || teamName(row.original.hackathon_team_id),
       },
