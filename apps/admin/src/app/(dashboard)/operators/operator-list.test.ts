@@ -48,7 +48,7 @@ const operators: Operator[] = [
 ];
 
 describe("processOperators", () => {
-  it("학기별 운영진을 모든 정렬 기준 순서대로 정렬한 뒤 페이지를 나눈다", () => {
+  it("학기별 운영진을 마지막 정렬 기준으로 정렬한 뒤 페이지를 나눈다", () => {
     const result = processOperators(operators, {
       semester: "26-1",
       page: 0,
@@ -61,7 +61,7 @@ describe("processOperators", () => {
 
     expect(result.content.map((operator) => operator.name)).toEqual([
       "다람",
-      "가람",
+      "나람",
     ]);
     expect(result.totalElements).toBe(3);
 
@@ -75,6 +75,6 @@ describe("processOperators", () => {
           { id: "name", desc: true },
         ],
       }).content.map((operator) => operator.name),
-    ).toEqual(["나람"]);
+    ).toEqual(["가람"]);
   });
 });

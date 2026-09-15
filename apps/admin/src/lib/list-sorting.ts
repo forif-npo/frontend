@@ -3,24 +3,31 @@ import type { SortingState } from "@tanstack/react-table";
 export type SortSearchParam = string | string[] | undefined;
 
 export function serializeSortingParams(sorting: SortingState): string[] {
-  return sorting.map(({ id, desc }) => `${id}:${desc ? "desc" : "asc"}`);
+  const latestSorting = sorting[sorting.length - 1];
+
+  return latestSorting
+    ? [`${latestSorting.id}:${latestSorting.desc ? "desc" : "asc"}`]
+    : [];
 }
 
 export function parseSortingParams(sort: SortSearchParam): SortingState {
   const values = Array.isArray(sort) ? sort : sort ? [sort] : [];
 
-  return values.flatMap((value) => {
+  for (let index = values.length - 1; index >= 0; index -= 1) {
+    const value = values[index];
     const [id, direction] = value.split(":");
 
     if (
       !/^[A-Za-z][A-Za-z0-9_]*$/.test(id) ||
       !["asc", "desc"].includes(direction)
     ) {
-      return [];
+      continue;
     }
 
     return [{ id, desc: direction === "desc" }];
-  });
+  }
+
+  return [];
 }
 
 export function appendSortingParams(
@@ -54,21 +61,18 @@ export function sortRecords<T>(
   sorting: SortingState,
   getValue: (record: T, columnId: string) => unknown,
 ): T[] {
-  if (sorting.length === 0) return records;
+  const latestSorting = sorting[sorting.length - 1];
+  if (!latestSorting) return records;
 
   return [...records].sort((left, right) => {
-    for (const { id, desc } of sorting) {
-      const leftValue = getValue(left, id);
-      const rightValue = getValue(right, id);
+    const leftValue = getValue(left, latestSorting.id);
+    const rightValue = getValue(right, latestSorting.id);
 
-      if (isEmpty(leftValue) && isEmpty(rightValue)) continue;
-      if (isEmpty(leftValue)) return 1;
-      if (isEmpty(rightValue)) return -1;
+    if (isEmpty(leftValue) && isEmpty(rightValue)) return 0;
+    if (isEmpty(leftValue)) return 1;
+    if (isEmpty(rightValue)) return -1;
 
-      const result = compareValues(leftValue, rightValue);
-      if (result !== 0) return desc ? -result : result;
-    }
-
-    return 0;
+    const result = compareValues(leftValue, rightValue);
+    return latestSorting.desc ? -result : result;
   });
 }

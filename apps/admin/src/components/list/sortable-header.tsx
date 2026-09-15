@@ -21,6 +21,7 @@ export function SortableHeader<TData>({
       return;
     }
 
+    // 마지막으로 선택한 열 하나만 정렬 기준으로 사용한다.
     column.toggleSorting(sortDirection === "asc");
   };
 
