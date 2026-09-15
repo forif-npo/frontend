@@ -97,11 +97,11 @@ export function ParticipantsTab({
                 <Badge
                   key={`${study.role}-${study.study_id}`}
                   variant="outline"
-                  className={
+                  className={`h-6 whitespace-nowrap px-2 py-0 text-xs leading-none ${
                     study.role === "MENTOR"
                       ? "border-border-primary bg-primary-5 text-text-primary"
                       : "border-border-gray bg-surface-gray-subtler text-text-subtle"
-                  }
+                  }`}
                 >
                   {study.study_name ?? "-"}
                   <span className="ml-1 text-[11px] opacity-70">
