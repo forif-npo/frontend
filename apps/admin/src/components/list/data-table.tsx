@@ -165,7 +165,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
     enableRowSelection,
-    enableMultiSort: true,
+    enableMultiSort: false,
     onSortingChange,
     onRowSelectionChange,
     getRowId,
@@ -256,6 +256,13 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
+                    aria-sort={
+                      header.column.getIsSorted() === "asc"
+                        ? "ascending"
+                        : header.column.getIsSorted() === "desc"
+                          ? "descending"
+                          : undefined
+                    }
                     style={{
                       width: header.getSize()
                         ? `${header.getSize()}px`

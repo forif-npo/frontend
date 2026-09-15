@@ -21,8 +21,7 @@ export function SortableHeader<TData>({
       return;
     }
 
-    // 이미 선택한 정렬 기준을 유지한 채, 클릭한 열을 다음 기준으로 추가한다.
-    column.toggleSorting(sortDirection === "asc", true);
+    column.toggleSorting(sortDirection === "asc");
   };
 
   return (
