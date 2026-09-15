@@ -113,6 +113,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({
 
 type RadioButtonGroupProps = {
   name: string;
+  ariaLabel?: string;
   options: Array<{ value: string; label: string }>;
   selectedValue?: string;
   onChange: (value: string) => void;
@@ -124,6 +125,7 @@ type RadioButtonGroupProps = {
 
 export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
   name,
+  ariaLabel,
   options,
   selectedValue,
   onChange,
@@ -185,6 +187,7 @@ export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
       className={`flex ${directionClasses} ${gapStyle} ${className ?? ""}`}
       ref={groupRef}
       role="radiogroup"
+      aria-label={ariaLabel}
     >
       {options.map((option) => (
         <RadioButton
