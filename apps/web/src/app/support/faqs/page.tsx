@@ -74,6 +74,7 @@ export default function FaqPage() {
         <div className="mt-8">
           <RadioButtonGroup
             name="faq-category"
+            ariaLabel="FAQ 카테고리"
             options={categoryOptions}
             selectedValue={category}
             onChange={handleCategoryChange}

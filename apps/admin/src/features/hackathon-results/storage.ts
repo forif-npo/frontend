@@ -58,12 +58,3 @@ export function saveDraft(draft: HackathonResultDraft): SaveResult {
     };
   }
 }
-
-export function clearDraft(hackathonId: number): void {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.removeItem(storageKey(hackathonId));
-  } catch {
-    // 무시: 비어 있는 것으로 간주한다.
-  }
-}

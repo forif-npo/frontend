@@ -1,6 +1,7 @@
 "use client";
 import { SearchBar } from "@/components/list/search-bar";
 import { DataTable } from "@/components/list/data-table";
+import { DropdownMenuItem } from "@/components/list/dropdown-menu";
 import { SortableHeader } from "@/components/list/sortable-header";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
@@ -8,9 +9,9 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@ui/components/server";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Award, Criterion, EvaluationSummary, Participant, ParticipantStatus, Team } from "@core/types/hackathon";
-import { Pencil, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { Plus, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
-import { PARTICIPANT_STATUS_LABELS, PARTICIPANT_STUDY_ROLE_LABELS, TEAM_STATUS_LABELS, formatDate } from "./types";
+import { PARTICIPANT_STATUS_LABELS, TEAM_STATUS_LABELS, formatDate } from "./types";
 
 export function ParticipantsTab({
   participants,
@@ -100,27 +101,19 @@ export function ParticipantsTab({
         header: ({ column }) => (
           <SortableHeader column={column}>스터디</SortableHeader>
         ),
+        size: 360,
+        minSize: 300,
         cell: ({ row }) => {
           const studies = row.original.studies ?? [];
           return studies.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {studies.map((study) => (
-                <Badge
-                  key={`${study.role}-${study.study_id}`}
-                  variant="outline"
-                  className={
-                    study.role === "MENTOR"
-                      ? "border-border-primary bg-primary-5 text-text-primary"
-                      : "border-border-gray bg-surface-gray-subtler text-text-subtle"
-                  }
-                >
-                  {study.study_name ?? "-"}
-                  <span className="ml-1 text-[11px] opacity-70">
-                    {PARTICIPANT_STUDY_ROLE_LABELS[study.role]}
-                  </span>
-                </Badge>
-              ))}
-            </div>
+            <span>
+              {studies
+                .map(
+                  (study) =>
+                    `${study.study_name ?? "-"}${study.role === "MENTOR" ? "(멘토)" : ""}`,
+                )
+                .join(", ")}
+            </span>
           ) : (
             <span className="text-muted-foreground">-</span>
           );
@@ -131,6 +124,8 @@ export function ParticipantsTab({
         header: ({ column }) => (
           <SortableHeader column={column}>상태</SortableHeader>
         ),
+        size: 112,
+        minSize: 112,
         cell: ({ row }) => (
           <div className="text-center">
             <Badge
@@ -151,6 +146,8 @@ export function ParticipantsTab({
         header: ({ column }) => (
           <SortableHeader column={column}>등록일</SortableHeader>
         ),
+        size: 160,
+        minSize: 160,
         cell: ({ row }) => (
           <div className="text-muted-foreground text-right">
             {formatDate(row.original.registered_at)}
@@ -303,16 +300,25 @@ export function TeamsTab({
         header: ({ column }) => (
           <SortableHeader column={column}>구성원</SortableHeader>
         ),
-        cell: ({ row }) => (
-          <div className="flex flex-wrap gap-1.5">
-            {row.original.members.map((member) => (
-              <Badge key={member.user_id} variant="secondary">
-                {member.user_name}
-                {member.role === "LEADER" && " (팀장)"}
-              </Badge>
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const sortedMembers = [...row.original.members].sort((left, right) => {
+            if (left.role === "LEADER" && right.role !== "LEADER") return -1;
+            if (left.role !== "LEADER" && right.role === "LEADER") return 1;
+
+            return left.user_name.localeCompare(right.user_name, "ko");
+          });
+
+          return (
+            <span>
+              {sortedMembers
+                .map(
+                  (member) =>
+                    `${member.user_name}${member.role === "LEADER" ? "(팀장)" : ""}`,
+                )
+                .join(", ")}
+            </span>
+          );
+        },
       },
     ],
     [],
@@ -331,18 +337,14 @@ export function TeamsTab({
           columns={columns}
           data={teams}
           getRowId={(team) => String(team.hackathon_team_id)}
-          renderActionCell={(team) => (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-destructive"
-              aria-label={`${team.name} 팀 삭제`}
+          renderRowActions={(team) => (
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
               onClick={() => onDeleteTeam(team)}
             >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+              삭제
+            </DropdownMenuItem>
           )}
-          actionColumnSize={56}
           showPagination={false}
         />
       )}
@@ -413,13 +415,6 @@ export function CriteriaTab({
 
   return (
     <>
-      <div className="flex justify-end">
-        <Button onClick={onCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          평가 기준 추가
-        </Button>
-      </div>
-
       {criteria.length === 0 ? (
         <EmptyState
           title="등록된 평가 기준이 없습니다."
@@ -431,31 +426,28 @@ export function CriteriaTab({
           columns={columns}
           data={criteria}
           getRowId={(criterion) => String(criterion.criterion_id)}
-          renderActionCell={(criterion) => (
+          renderRowActions={(criterion) => (
             <>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={`${criterion.name} 평가 기준 수정`}
-                onClick={() => onEdit(criterion)}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-destructive"
-                aria-label={`${criterion.name} 평가 기준 삭제`}
+              <DropdownMenuItem onClick={() => onEdit(criterion)}>
+                수정
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
                 onClick={() => onDelete(criterion)}
               >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+                삭제
+              </DropdownMenuItem>
             </>
           )}
-          actionColumnSize={96}
           showPagination={false}
         />
       )}
+      <div className="flex justify-end">
+        <Button onClick={onCreate}>
+          <Plus className="mr-2 h-4 w-4" />
+          평가 기준 추가
+        </Button>
+      </div>
     </>
   );
 }
@@ -547,10 +539,10 @@ export function EvaluationTab({
       columns={columns}
       data={teams}
       getRowId={(team) => String(team.hackathon_team_id)}
-      renderActionCell={(team) => (
-        <Button variant="outline" size="sm" onClick={() => onScore(team)}>
+      renderRowActions={(team) => (
+        <DropdownMenuItem onClick={() => onScore(team)}>
           점수 입력
-        </Button>
+        </DropdownMenuItem>
       )}
       showPagination={false}
     />
@@ -610,13 +602,6 @@ export function AwardsTab({
 
   return (
     <>
-      <div className="flex justify-end">
-        <Button onClick={onCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          수상 등록
-        </Button>
-      </div>
-
       {awards.length === 0 ? (
         <EmptyState
           title="등록된 수상 내역이 없습니다."
@@ -628,31 +613,28 @@ export function AwardsTab({
           columns={columns}
           data={awards}
           getRowId={(award) => String(award.award_id)}
-          renderActionCell={(award) => (
+          renderRowActions={(award) => (
             <>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={`${award.award_name} 수상 수정`}
-                onClick={() => onEdit(award)}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-destructive"
-                aria-label={`${award.award_name} 수상 삭제`}
+              <DropdownMenuItem onClick={() => onEdit(award)}>
+                수정
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
                 onClick={() => onDelete(award)}
               >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+                삭제
+              </DropdownMenuItem>
             </>
           )}
-          actionColumnSize={96}
           showPagination={false}
         />
       )}
+      <div className="flex justify-end">
+        <Button onClick={onCreate}>
+          <Plus className="mr-2 h-4 w-4" />
+          수상 등록
+        </Button>
+      </div>
     </>
   );
 }

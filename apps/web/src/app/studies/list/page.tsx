@@ -7,7 +7,7 @@ import { StudyFilterSection } from "@/components/study/ui/StudyFilterSection";
 import { StudyListMobileHeader } from "@/components/study/ui/StudyListMobileHeader";
 import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
 import { useStudyData, useStudyFilters } from "@/hooks/study";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useStudySearchInput } from "@/features/study/list/useStudySearchInput";
 import type { Study, StudyListParams } from "@core/types/study";
 import { getStudyTagName } from "@/constants/study-tags";
 import { Pagination } from "@ui/components/client";
@@ -30,12 +30,13 @@ function compareStudySemester(a: Study, b: Study) {
 export default function StudyListPage() {
   const router = useRouter();
   const [sortBy, setSortBy] = useState<StudySort>("latest");
-  const [searchInput, setSearchInput] = useState<string>("");
-
-  const debouncedSearch = useDebounce(searchInput, 500);
-
   const { filters, updateFilter, updateMultipleFilters, clearAllFilters } =
     useStudyFilters();
+
+  const { searchInput, setSearchInput, submitSearch } = useStudySearchInput({
+    urlSearch: filters.search,
+    onApply: (search) => updateFilter("search", search),
+  });
 
   const [pageSize, setPageSize] = useState(12);
   const [fetchSize, setFetchSize] = useState(12);
@@ -44,8 +45,7 @@ export default function StudyListPage() {
 
   useEffect(() => {
     resetPage();
-    updateFilter("search", debouncedSearch || undefined);
-  }, [debouncedSearch, resetPage, updateFilter]);
+  }, [filters.search, resetPage]);
 
   const apiParams: StudyListParams = useMemo(() => {
     const studyTagName = filters.tag ? getStudyTagName(filters.tag) : null;
@@ -163,11 +163,8 @@ export default function StudyListPage() {
 
         <StudyListMobileHeader
           searchInput={searchInput}
-          onSearchChange={(value) => setSearchInput(value)}
-          onSearchSubmit={() => {
-            updateFilter("search", searchInput || undefined);
-            resetPage();
-          }}
+          onSearchChange={setSearchInput}
+          onSearchSubmit={submitSearch}
           selectedSemester={selectedSemester}
           selectedDifficulty={filters.difficulty || ""}
           selectedTag={filters.tag || ""}
@@ -183,11 +180,8 @@ export default function StudyListPage() {
           <div className="mb-6 flex items-center justify-between gap-7">
             <SearchBar
               value={searchInput}
-              onChange={(value) => setSearchInput(value)}
-              onSubmit={() => {
-                updateFilter("search", searchInput || undefined);
-                resetPage();
-              }}
+              onChange={setSearchInput}
+              onSubmit={submitSearch}
             />
             <StudyActionButtons
               onCreateClick={() => router.push("/studies/create")}

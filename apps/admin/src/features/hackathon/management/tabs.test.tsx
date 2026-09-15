@@ -1,38 +1,112 @@
 /** @jest-environment jsdom */
 import { describe, expect, it } from "@jest/globals";
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import type { Participant } from "@core/types/hackathon";
-import { ParticipantsTab } from "./tabs";
+import type { Participant, Team } from "@core/types/hackathon";
+import { ParticipantsTab, TeamsTab } from "./tabs";
 
-const participants: Participant[] = [
+const participantForDisplay: Participant = {
+  participant_id: 1,
+  hackathon_id: 9901,
+  user_id: 10000000,
+  user_name: "테스트 사용자",
+  status: "REGISTERED",
+  registered_at: "2026-06-10T00:00:00.000Z",
+  studies: [
+    { study_id: 1, study_name: "자율스터디", role: "MENTEE" },
+    { study_id: 2, study_name: "README.md", role: "MENTOR" },
+  ],
+};
+
+const participantsForSorting: Participant[] = [
   {
-    participant_id: 1,
-    hackathon_id: 1,
-    user_id: 2026000002,
-    user_name: "홍길동",
+    participant_id: 2,
+    hackathon_id: 9901,
+    user_id: 2,
+    user_name: "나다라",
     status: "REGISTERED",
-    registered_at: "2026-09-02T00:00:00",
+    registered_at: "2026-09-02T00:00:00.000Z",
     studies: [],
   },
   {
-    participant_id: 2,
-    hackathon_id: 1,
-    user_id: 2026000001,
-    user_name: "김포리프",
+    participant_id: 3,
+    hackathon_id: 9901,
+    user_id: 1,
+    user_name: "가나다",
     status: "REGISTERED",
-    registered_at: "2026-09-01T00:00:00",
+    registered_at: "2026-09-01T00:00:00.000Z",
     studies: [],
   },
 ];
 
-describe("해커톤 상세 탭 정렬", () => {
-  it("헤더를 클릭하면 참가자 목록을 해당 열 기준으로 정렬한다", () => {
-    render(<ParticipantsTab participants={participants} />);
+describe("ParticipantsTab", () => {
+  it("renders study names as standard text and marks mentors only", () => {
+    render(<ParticipantsTab participants={[participantForDisplay]} />);
+
+    expect(screen.getByText("자율스터디, README.md(멘토)")).not.toBeNull();
+    expect(screen.queryByText("수강")).toBeNull();
+    expect(screen.getByText("2026-06-10 00:00")).not.toBeNull();
+    expect(
+      screen.getByRole("columnheader", { name: "스터디" }).style.width,
+    ).toBe("360px");
+    expect(
+      screen.getByRole("columnheader", { name: "등록일" }).style.width,
+    ).toBe("160px");
+  });
+
+  it("sorts participants by the selected column", () => {
+    render(<ParticipantsTab participants={participantsForSorting} />);
 
     fireEvent.click(screen.getByRole("button", { name: "이름" }));
 
     const rows = within(screen.getByRole("table")).getAllByRole("row");
-    expect(rows[1].textContent).toContain("김포리프");
-    expect(rows[2].textContent).toContain("홍길동");
+    expect(rows[1].textContent).toContain("가나다");
+    expect(rows[2].textContent).toContain("나다라");
+  });
+});
+
+const teams: Team[] = [
+  {
+    hackathon_team_id: 1,
+    hackathon_id: 9901,
+    name: "테스트 팀",
+    topic: "테스트 주제",
+    competition_type: "HACKATHON",
+    leader_id: 2,
+    leader_name: "팀장 사용자",
+    member_count: 3,
+    status: "FORMING",
+    members: [
+      {
+        user_id: 3,
+        user_name: "나다라",
+        role: "MEMBER",
+        joined_at: "2026-01-01T00:00:00.000Z",
+      },
+      {
+        user_id: 2,
+        user_name: "팀장 사용자",
+        role: "LEADER",
+        joined_at: "2026-01-01T00:00:00.000Z",
+      },
+      {
+        user_id: 1,
+        user_name: "가나다",
+        role: "MEMBER",
+        joined_at: "2026-01-01T00:00:00.000Z",
+      },
+    ],
+  },
+];
+
+describe("TeamsTab", () => {
+  it("renders members in order and provides the standard row action menu", () => {
+    render(<TeamsTab teams={teams} onDeleteTeam={() => undefined} />);
+
+    expect(
+      screen.getByText("팀장 사용자(팀장), 가나다, 나다라"),
+    ).not.toBeNull();
+    expect(
+      screen.getByRole("button", { name: "행 액션 열기" }),
+    ).not.toBeNull();
   });
 });
