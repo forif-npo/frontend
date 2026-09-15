@@ -8,6 +8,7 @@
     "add:web": "pnpm add -F web",
     "build": "turbo run build",
     "build-storybook": "storybook build",
+    "build:local": "node scripts/build-local.mjs",
     "clean": "turbo run clean",
     "commit": "pnpm exec cz-customizable",
     "dev": "turbo run dev",
