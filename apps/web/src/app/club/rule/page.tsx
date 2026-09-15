@@ -1,10 +1,17 @@
 "use client";
 import { motion } from "motion/react";
-import { RULE, RULE_CHAPTERS } from "@/constants/club-rule";
+import { RULE } from "@/constants/club-rule";
 import { PageHeader } from "@/components/PageHeader";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 
-const RULE_CHAPTER_IDS = RULE_CHAPTERS.map(String);
+const RULE_CHAPTER_NAV_ITEMS = RULE.split("\n").flatMap((line) => {
+  const chapterMatch = line.match(/^# (\d+)장 .+$/);
+
+  return chapterMatch
+    ? [{ id: Number(chapterMatch[1]), label: line.replace(/^# /, "") }]
+    : [];
+});
+const RULE_CHAPTER_IDS = RULE_CHAPTER_NAV_ITEMS.map(({ id }) => String(id));
 
 export default function RulePage() {
   const activeChapterId = useScrollSpy(RULE_CHAPTER_IDS, { offset: 140 });
@@ -101,18 +108,18 @@ export default function RulePage() {
               <p className="mb-2 text-xs font-semibold text-gray-500">
                 회칙 목록
               </p>
-              {RULE_CHAPTERS.map((ch) => (
+              {RULE_CHAPTER_NAV_ITEMS.map(({ id, label }) => (
                 <button
-                  key={ch}
+                  key={id}
                   type="button"
-                  onClick={() => scrollToChapter(ch)}
+                  onClick={() => scrollToChapter(id)}
                   className={`relative rounded-sm py-0.5 pl-3 text-left text-sm font-medium transition-colors ${
-                    activeChapterId === String(ch)
+                    activeChapterId === String(id)
                       ? "text-text-primary"
                       : "text-text-subtle hover:text-text-basic"
                   }`}
                 >
-                  {activeChapterId === String(ch) && (
+                  {activeChapterId === String(id) && (
                     <motion.span
                       layoutId="rule-active-chapter"
                       className="bg-primary-50 absolute bottom-1 left-0 top-1 w-[3px] rounded-full"
@@ -123,7 +130,7 @@ export default function RulePage() {
                       }}
                     />
                   )}
-                  {ch}장
+                  {label}
                 </button>
               ))}
             </div>
