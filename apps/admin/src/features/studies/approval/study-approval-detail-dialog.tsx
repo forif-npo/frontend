@@ -68,11 +68,16 @@ export function StudyApprovalDetailDialog({
         ) : detail ? (
           <div className="flex flex-col gap-10">
             {thumbnailUrl && (
-              <img
-                src={thumbnailUrl}
-                alt={`${studyName} 썸네일`}
-                className="max-h-72 w-full rounded-lg border object-contain"
-              />
+              <>
+                {/* 백엔드 저장소 이미지는 Next 이미지 최적화의 remotePatterns 제약으로
+                    표시되지 않았던 이력이 있어 원본 URL을 브라우저에서 직접 로드한다. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={thumbnailUrl}
+                  alt={`${studyName} 썸네일`}
+                  className="max-h-72 w-full rounded-lg border object-contain"
+                />
+              </>
             )}
 
             <ReviewSection title="스터디 개요">

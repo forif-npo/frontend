@@ -112,3 +112,35 @@ pnpm test
 
 `v1.0.0` 같은 버전 태그는 실제 출시가 완료된 `release` 배포를 기준으로 생성합니다.
 태그 대상 커밋, 배포 시각, 주요 변경 사항은 릴리즈 노트에 기록합니다.
+
+### 버전 기준
+
+제품 출시 버전의 단일 기준은 Git의 annotated tag(`v1.0.0` 형식)와 그 tag를 가리키는
+GitHub Release다. 내부 workspace의 `package.json` 버전은 npm 배포나 별도 패키지 공개가
+필요한 경우에만 제품 버전과 함께 관리하며, 앱 출시 버전을 맞추기 위해 일괄 변경하지 않는다.
+
+버전 번호는 Semantic Versioning을 따른다.
+
+| 변경 유형                                      | 버전 변경 | 예시     |
+| ---------------------------------------------- | --------- | -------- |
+| 호환되지 않는 URL, API, 권한, 데이터 형식 변경 | major     | `v2.0.0` |
+| 기존 사용자를 깨지 않는 기능 추가              | minor     | `v1.1.0` |
+| 버그, 보안, 문서, 내부 구현 수정               | patch     | `v1.0.1` |
+
+### 출시 태그와 릴리즈 노트
+
+1. `dev`에서 `release`로 승격한 변경의 Production 배포와 핵심 사용자 흐름을 확인한다.
+2. 실제로 배포된 `release` 커밋에서 annotated tag를 생성하고 원격에 push한다.
+
+   ```bash
+   git switch release
+   git pull --ff-only
+   git tag -a v1.0.0 -m "v1.0.0"
+   git push origin v1.0.0
+   ```
+
+3. GitHub Releases에서 해당 tag를 선택해 Release를 작성한다. 릴리즈 노트에는 tag 대상
+   커밋, 배포 시각, 주요 사용자 변경, 알려진 위험 또는 후속 작업을 기록한다.
+4. 같은 `release` 내용을 `main`에 반영해 실제 배포가 완료된 제품 기준선을 유지한다.
+
+tag는 Production 확인 전에 생성하거나, `main`의 다른 커밋을 가리키게 만들지 않는다.

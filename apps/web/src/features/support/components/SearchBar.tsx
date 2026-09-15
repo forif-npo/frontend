@@ -31,6 +31,7 @@ export function SearchBar({
         onChange={(e) => onChange(e.target.value)}
         onCompositionStart={() => setIsComposing(true)}
         onCompositionEnd={() => setIsComposing(false)}
+        aria-label={placeholder}
         placeholder={placeholder}
         className="border-divider-gray-light focus:border-divider-gray w-full rounded-lg border px-4 py-3 pr-12 text-sm outline-none"
         onKeyDown={(e) => {

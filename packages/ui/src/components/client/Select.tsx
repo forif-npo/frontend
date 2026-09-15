@@ -35,204 +35,212 @@ const sizeClasses = {
   sm: { button: "h-[40px] text-label-s", icon: "h-4 w-4" },
 };
 
-export const Select = ({
-  id,
-  options,
-  placeholder,
-  size = "md",
-  value,
-  onChange,
-  variant = "default",
-  disabled,
-  error,
-  invalid = false,
-  ariaDescribedBy,
-  ariaRequired,
-  dropdownAlign = "left",
-  noPadding = false,
-  selectedSuffix,
-}: SelectProps) => {
-  const isControlled = value !== undefined && onChange !== undefined;
-  const [internalValue, setInternalValue] = useState<string | null>(null);
-  const selectedValue = isControlled ? value : internalValue;
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleSelect = (val: string) => {
-    if (isControlled) {
-      onChange?.(val);
-    } else {
-      setInternalValue(val);
-    }
-    setIsOpen(false);
-  };
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (disabled) return;
-
-      switch (e.key) {
-        case "Enter":
-          if (isOpen && focusedIndex !== null) {
-            e.preventDefault();
-            handleSelect(options[focusedIndex].value);
-          }
-          break;
-        case "Escape":
-          setIsOpen(false);
-          break;
-        case "ArrowDown":
-        case "ArrowUp": {
-          e.preventDefault();
-          const delta = e.key === "ArrowDown" ? 1 : -1;
-          setFocusedIndex((prev) => moveFocus(prev, delta, options.length));
-          setHoveredIndex(null);
-          break;
-        }
-      }
+export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
+  (
+    {
+      id,
+      options,
+      placeholder,
+      size = "md",
+      value,
+      onChange,
+      variant = "default",
+      disabled,
+      error,
+      invalid = false,
+      ariaDescribedBy,
+      ariaRequired,
+      dropdownAlign = "left",
+      noPadding = false,
+      selectedSuffix,
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [disabled, isOpen, focusedIndex, options],
-  );
+    ref,
+  ) => {
+    const isControlled = value !== undefined && onChange !== undefined;
+    const [internalValue, setInternalValue] = useState<string | null>(null);
+    const selectedValue = isControlled ? value : internalValue;
 
-  useEffect(() => {
-    const selectedIndex = options.findIndex((o) => o.value === selectedValue);
-    setFocusedIndex(selectedIndex);
-    setHoveredIndex(selectedIndex);
-  }, [selectedValue, options]);
+    const [isOpen, setIsOpen] = useState(false);
+    const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  useEffect(() => {
-    const clickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setIsOpen(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const handleSelect = (val: string) => {
+      if (isControlled) {
+        onChange?.(val);
+      } else {
+        setInternalValue(val);
       }
+      setIsOpen(false);
     };
-    document.addEventListener("mousedown", clickOutside);
-    return () => document.removeEventListener("mousedown", clickOutside);
-  }, []);
 
-  const labelSize = {
-    lg: "l" as const,
-    md: "m" as const,
-    sm: "s" as const,
-  };
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (disabled) return;
 
-  const variantClasses = {
-    default:
-      "border-gray-30 bg-surface-white focus:ring-primary-50 border focus:outline-none focus:ring-2 focus:ring-inset",
-    text: "border-none bg-transparent",
-  };
-  const isInvalid = invalid || Boolean(error);
+        switch (e.key) {
+          case "Enter":
+            if (isOpen && focusedIndex !== null) {
+              e.preventDefault();
+              handleSelect(options[focusedIndex].value);
+            }
+            break;
+          case "Escape":
+            setIsOpen(false);
+            break;
+          case "ArrowDown":
+          case "ArrowUp": {
+            e.preventDefault();
+            const delta = e.key === "ArrowDown" ? 1 : -1;
+            setFocusedIndex((prev) => moveFocus(prev, delta, options.length));
+            setHoveredIndex(null);
+            break;
+          }
+        }
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [disabled, isOpen, focusedIndex, options],
+    );
 
-  return (
-    <div className="relative" ref={containerRef}>
-      <button
-        id={id}
-        onClick={(e) => {
-          e.preventDefault();
-          if (disabled) return;
-          setIsOpen(!isOpen);
-        }}
-        onKeyDown={handleKeyDown}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-        aria-disabled={disabled}
-        aria-describedby={ariaDescribedBy}
-        aria-required={ariaRequired}
-        disabled={disabled}
-        ref={triggerRef}
-        className={cn(
-          "rounded-2 flex w-full items-center justify-between text-left transition duration-150 ease-in-out",
-          noPadding ? "border-none! px-0" : "px-5",
-          sizeClasses[size],
-          variantClasses[variant],
-          disabled
-            ? "bg-input-surface-disabled border-input-border-disabled"
-            : "bg-input-surface border-input-border",
-          isInvalid && "border-input-border-error",
-        )}
-      >
-        <div className="flex min-w-0 items-center gap-2">
-          <Label
-            size={labelSize[size]}
-            className={cn(
-              "text-gray-90 flex min-w-0 items-center truncate",
-              sizeClasses[size].button,
-              selectedValue === null && "text-gray-30",
-            )}
-          >
-            {selectedValue
-              ? options.find((o) => o.value === selectedValue)?.label
-              : placeholder}
-          </Label>
-          {selectedSuffix && <span className="shrink-0">{selectedSuffix}</span>}
-        </div>
-        <span
+    useEffect(() => {
+      const selectedIndex = options.findIndex((o) => o.value === selectedValue);
+      setFocusedIndex(selectedIndex);
+      setHoveredIndex(selectedIndex);
+    }, [selectedValue, options]);
+
+    useEffect(() => {
+      const clickOutside = (e: MouseEvent) => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(e.target as Node)
+        ) {
+          setIsOpen(false);
+        }
+      };
+      document.addEventListener("mousedown", clickOutside);
+      return () => document.removeEventListener("mousedown", clickOutside);
+    }, []);
+
+    const labelSize = {
+      lg: "l" as const,
+      md: "m" as const,
+      sm: "s" as const,
+    };
+
+    const variantClasses = {
+      default:
+        "border-gray-30 bg-surface-white focus:ring-primary-50 border focus:outline-none focus:ring-2 focus:ring-inset",
+      text: "border-none bg-transparent",
+    };
+    const isInvalid = invalid || Boolean(error);
+
+    return (
+      <div className="relative" ref={containerRef}>
+        <button
+          id={id}
+          onClick={(e) => {
+            e.preventDefault();
+            if (disabled) return;
+            setIsOpen(!isOpen);
+          }}
+          onKeyDown={handleKeyDown}
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          aria-disabled={disabled}
+          aria-describedby={ariaDescribedBy}
+          aria-required={ariaRequired}
+          disabled={disabled}
+          ref={ref}
           className={cn(
-            "ml-2 inline-block transform transition-transform",
-            isOpen ? "rotate-180" : "rotate-0",
-            "text-gray-80",
+            "rounded-2 flex w-full items-center justify-between text-left transition duration-150 ease-in-out",
+            noPadding ? "border-none! px-0" : "px-5",
+            sizeClasses[size],
+            variantClasses[variant],
+            disabled
+              ? "bg-input-surface-disabled border-input-border-disabled"
+              : "bg-input-surface border-input-border",
+            isInvalid && "border-input-border-error",
           )}
         >
-          <ArrowDropdownIcon
-            width={noPadding ? 14 : 24}
-            height={noPadding ? 14 : 24}
-          />
-        </span>
-      </button>
-      {isOpen && !disabled && (
-        <div
-          role="listbox"
-          aria-activedescendant={
-            focusedIndex !== null ? `option-${focusedIndex}` : undefined
-          }
-          className={`border-gray-30 bg-surface-white absolute z-10 mt-2 max-h-60 w-full min-w-[100px] overflow-y-auto rounded-md border ${dropdownAlign === "right" ? "right-0" : "left-0"}`}
-        >
-          {options.map((option, index) => (
-            <button
-              key={option.value}
-              onClick={() => {
-                handleSelect(option.value);
-              }}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() =>
-                focusedIndex !== index && setHoveredIndex(null)
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSelect(option.value);
-                }
-              }}
-              className={`w-full px-5 text-left outline-none ${sizeClasses[size].button} ${
-                selectedValue === option.value
-                  ? "text-primary-50 bg-primary-5"
-                  : "text-gray-90"
-              } ${
-                hoveredIndex === index || focusedIndex === index
-                  ? "bg-primary-5"
-                  : ""
-              } `}
-              role="option"
-              aria-selected={selectedValue === option.value}
-              tabIndex={isOpen ? 0 : -1}
+          <div className="flex min-w-0 items-center gap-2">
+            <Label
+              size={labelSize[size]}
+              className={cn(
+                "text-gray-90 flex min-w-0 items-center truncate",
+                sizeClasses[size].button,
+                selectedValue === null && "text-gray-30",
+              )}
             >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
+              {selectedValue
+                ? options.find((o) => o.value === selectedValue)?.label
+                : placeholder}
+            </Label>
+            {selectedSuffix && (
+              <span className="shrink-0">{selectedSuffix}</span>
+            )}
+          </div>
+          <span
+            className={cn(
+              "ml-2 inline-block transform transition-transform",
+              isOpen ? "rotate-180" : "rotate-0",
+              "text-gray-80",
+            )}
+          >
+            <ArrowDropdownIcon
+              width={noPadding ? 14 : 24}
+              height={noPadding ? 14 : 24}
+            />
+          </span>
+        </button>
+        {isOpen && !disabled && (
+          <div
+            role="listbox"
+            aria-activedescendant={
+              focusedIndex !== null ? `option-${focusedIndex}` : undefined
+            }
+            className={`border-gray-30 bg-surface-white absolute z-10 mt-2 max-h-60 w-full min-w-[100px] overflow-y-auto rounded-md border ${dropdownAlign === "right" ? "right-0" : "left-0"}`}
+          >
+            {options.map((option, index) => (
+              <button
+                key={option.value}
+                onClick={() => {
+                  handleSelect(option.value);
+                }}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() =>
+                  focusedIndex !== index && setHoveredIndex(null)
+                }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleSelect(option.value);
+                  }
+                }}
+                className={`w-full px-5 text-left outline-none ${sizeClasses[size].button} ${
+                  selectedValue === option.value
+                    ? "text-primary-50 bg-primary-5"
+                    : "text-gray-90"
+                } ${
+                  hoveredIndex === index || focusedIndex === index
+                    ? "bg-primary-5"
+                    : ""
+                } `}
+                role="option"
+                aria-selected={selectedValue === option.value}
+                tabIndex={isOpen ? 0 : -1}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  },
+);
+
+Select.displayName = "Select";
 
 const moveFocus = (
   currentIndex: number | null,
