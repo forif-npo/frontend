@@ -70,11 +70,14 @@ const teams: Team[] = [
 ];
 
 describe("TeamsTab", () => {
-  it("renders the leader first and remaining members in Korean alphabetical order", () => {
+  it("renders members in order and provides the standard row action menu", () => {
     render(<TeamsTab teams={teams} onDeleteTeam={() => undefined} />);
 
     expect(
       screen.getByText("팀장 사용자(팀장), 가나다, 나다라"),
+    ).not.toBeNull();
+    expect(
+      screen.getByRole("button", { name: "행 액션 열기" }),
     ).not.toBeNull();
   });
 });
