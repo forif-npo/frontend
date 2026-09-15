@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import { useState } from "react";
 import { DataTable } from "./data-table";
+import { SortableHeader } from "./sortable-header";
 
 type Row = {
   id: number;
@@ -17,6 +18,17 @@ const rows: Row[] = [
 ];
 
 const columns: ColumnDef<Row>[] = [{ accessorKey: "name", header: "이름" }];
+
+const sortableColumns: ColumnDef<Row>[] = [
+  {
+    accessorKey: "id",
+    header: ({ column }) => <SortableHeader column={column}>번호</SortableHeader>,
+  },
+  {
+    accessorKey: "name",
+    header: ({ column }) => <SortableHeader column={column}>이름</SortableHeader>,
+  },
+];
 
 describe("DataTable", () => {
   it("행별 액션이 없으면 해당 행의 액션 메뉴를 렌더링하지 않는다", () => {
@@ -124,5 +136,19 @@ describe("DataTable", () => {
     expect(
       screen.getByRole("columnheader", { name: "이름" }).hasAttribute("aria-sort"),
     ).toBe(false);
+  });
+
+  it("새 열을 정렬하면 이전 열의 정렬을 해제한다", () => {
+    render(<DataTable columns={sortableColumns} data={rows} showPagination={false} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "이름" }));
+    fireEvent.click(screen.getByRole("button", { name: "번호" }));
+
+    expect(
+      screen.getByRole("columnheader", { name: "이름" }).hasAttribute("aria-sort"),
+    ).toBe(false);
+    expect(
+      screen.getByRole("columnheader", { name: "번호" }).getAttribute("aria-sort"),
+    ).toBe("ascending");
   });
 });
