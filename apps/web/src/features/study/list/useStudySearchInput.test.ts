@@ -49,6 +49,16 @@ describe("useStudySearchInput", () => {
     expect(onApply).toHaveBeenCalledWith("파이썬");
   });
 
+  it("cancels a pending search when the list page unmounts", () => {
+    const { result, unmount, onApply } = setup(undefined);
+
+    act(() => result.current.setSearchInput("파이썬"));
+    unmount();
+    act(() => jest.advanceTimersByTime(1000));
+
+    expect(onApply).not.toHaveBeenCalled();
+  });
+
   it("clears the input when the URL search is removed and does not restore it", () => {
     const { result, rerender, onApply } = setup("파이썬");
 
