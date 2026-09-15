@@ -96,4 +96,33 @@ describe("DataTable", () => {
 
     expect(screen.getByTestId("sorting").textContent).toBe("[]");
   });
+
+  it("정렬 상태를 열 헤더의 접근성 속성으로 노출한다", () => {
+    const renderTable = (sorting: SortingState) => (
+      <DataTable
+        columns={columns}
+        data={rows}
+        showPagination={false}
+        sorting={sorting}
+        onSortingChange={() => undefined}
+      />
+    );
+    const { rerender } = render(renderTable([{ id: "name", desc: false }]));
+
+    expect(
+      screen.getByRole("columnheader", { name: "이름" }).getAttribute("aria-sort"),
+    ).toBe("ascending");
+
+    rerender(renderTable([{ id: "name", desc: true }]));
+
+    expect(
+      screen.getByRole("columnheader", { name: "이름" }).getAttribute("aria-sort"),
+    ).toBe("descending");
+
+    rerender(renderTable([]));
+
+    expect(
+      screen.getByRole("columnheader", { name: "이름" }).hasAttribute("aria-sort"),
+    ).toBe(false);
+  });
 });
