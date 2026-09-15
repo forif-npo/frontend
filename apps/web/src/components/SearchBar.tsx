@@ -46,6 +46,7 @@ export function SearchBar({
               onSubmit();
             }
           }}
+          aria-label={placeholder}
           placeholder={placeholder}
           className={clsx(
             "border-input-border bg-input-surface text-text-basic placeholder:text-text-subtle focus:border-input-border-active focus:ring-border-input-border-active w-full rounded-lg border focus:outline-none focus:ring-1",
