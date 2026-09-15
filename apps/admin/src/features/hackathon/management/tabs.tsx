@@ -92,7 +92,7 @@ export function ParticipantsTab({
         cell: ({ row }) => {
           const studies = row.original.studies ?? [];
           return studies.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex min-w-0 flex-wrap gap-2">
               {studies.map((study) => (
                 <Badge
                   key={`${study.role}-${study.study_id}`}
@@ -103,8 +103,13 @@ export function ParticipantsTab({
                       : "border-border-gray bg-surface-gray-subtler text-text-subtle"
                   }
                 >
-                  {study.study_name ?? "-"}
-                  <span className="ml-1 text-[11px] opacity-70">
+                  <span
+                    className="min-w-0 max-w-48 truncate sm:max-w-64"
+                    title={study.study_name ?? "-"}
+                  >
+                    {study.study_name ?? "-"}
+                  </span>
+                  <span className="ml-1 shrink-0 whitespace-nowrap text-[11px] opacity-70">
                     {PARTICIPANT_STUDY_ROLE_LABELS[study.role]}
                   </span>
                 </Badge>
