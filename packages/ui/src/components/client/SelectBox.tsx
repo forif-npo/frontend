@@ -15,7 +15,7 @@ type SelectBoxProps = {
   ariaDescribedBy?: string;
 } & SelectProps;
 
-export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
+export const SelectBox = forwardRef<HTMLButtonElement, SelectBoxProps>(
   (
     {
       title,
@@ -55,6 +55,7 @@ export const SelectBox = forwardRef<HTMLInputElement, SelectBoxProps>(
         )}
         <Select
           id={id}
+          ref={ref}
           invalid={isInvalid}
           ariaDescribedBy={error ? errorId : ariaDescribedBy}
           ariaRequired={required || undefined}
