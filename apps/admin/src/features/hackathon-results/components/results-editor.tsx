@@ -78,6 +78,7 @@ export function ResultsEditor({
   const {
     draft,
     hydrated,
+    isDirty,
     loadError,
     updateDraft,
     replaceDraft,
@@ -139,6 +140,11 @@ export function ResultsEditor({
   };
 
   const openPresentation = () => {
+    if (isDirty) {
+      toast.error("저장하지 않은 변경사항이 있습니다. 저장 후 발표 화면을 여세요.");
+      return;
+    }
+
     window.open(
       `/hackathon/${hackathonId}/results`,
       "_blank",

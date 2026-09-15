@@ -7,6 +7,7 @@ import type { HackathonResultDraft } from "../types";
 export interface UseHackathonResults {
   draft: HackathonResultDraft | null;
   hydrated: boolean;
+  isDirty: boolean;
   loadError: string | null;
   /** 함수형 업데이트로 results 등을 변경한다. updatedAt은 자동 갱신한다. */
   updateDraft: (
@@ -26,6 +27,9 @@ export function useHackathonResults(
   eventTitle: string,
 ): UseHackathonResults {
   const [draft, setDraft] = useState<HackathonResultDraft | null>(null);
+  const [savedDraft, setSavedDraft] = useState<HackathonResultDraft | null>(
+    null,
+  );
   const [hydrated, setHydrated] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -34,11 +38,16 @@ export function useHackathonResults(
     const result = loadDraft(hackathonId);
     if (result.status === "ok") {
       setDraft(result.draft);
+      setSavedDraft(result.draft);
     } else if (result.status === "corrupt") {
       setLoadError(result.message);
-      setDraft(createEmptyDraft(hackathonId, eventTitle));
+      const emptyDraft = createEmptyDraft(hackathonId, eventTitle);
+      setDraft(emptyDraft);
+      setSavedDraft(emptyDraft);
     } else {
-      setDraft(createEmptyDraft(hackathonId, eventTitle));
+      const emptyDraft = createEmptyDraft(hackathonId, eventTitle);
+      setDraft(emptyDraft);
+      setSavedDraft(emptyDraft);
     }
     setHydrated(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,6 +61,7 @@ export function useHackathonResults(
       const result = loadDraft(hackathonId);
       if (result.status === "ok") {
         setDraft(result.draft);
+        setSavedDraft(result.draft);
         setLoadError(null);
       }
     };
@@ -87,7 +97,9 @@ export function useHackathonResults(
       return { ok: false, error: "결과 데이터를 불러오는 중입니다." };
     }
 
-    return persistDraft(draft);
+    const result = persistDraft(draft);
+    if (result.ok) setSavedDraft(draft);
+    return result;
   }, [draft]);
 
   const resetDraft = useCallback(() => {
@@ -96,10 +108,15 @@ export function useHackathonResults(
   }, [hackathonId, eventTitle]);
 
   const dismissLoadError = useCallback(() => setLoadError(null), []);
+  const isDirty =
+    draft !== null &&
+    savedDraft !== null &&
+    JSON.stringify(draft) !== JSON.stringify(savedDraft);
 
   return {
     draft,
     hydrated,
+    isDirty,
     loadError,
     updateDraft,
     replaceDraft,
