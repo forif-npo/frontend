@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { Body, Detail, Heading, Label } from "@ui/components/server";
 import { Button, Modal } from "@ui/components/client";
 import { GUIDE_TAB_SCROLL_OFFSET, PROGRAMMING_CARDS, GUIDE_TABS, RECOMMENDATION_MODAL_COPY, RECOMMENDATION_QUESTIONS, STUDY_GUIDE_CARD_CTA_LABEL, STUDY_GUIDE_HERO, STUDY_GUIDE_SECTIONS, STUDY_OPERATION_GUIDE, STUDY_RECOMMENDATION_CTA_LABEL, STUDY_RECOMMENDATION_SIDE_PANEL, getStudyRecommendation, type ProgrammingCard, type ProgrammingCardSection, type StudyGuideTableRow, type StudyTypeGuide } from "@/constants/study-guide";
-import { useScrollFollower, useScrollSpy } from "@/hooks/useScrollSpy";
+import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { useActiveSemester } from "@/hooks/useActiveSemester";
 import type { Semester } from "@/features/semester/api";
 
@@ -311,11 +311,6 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
 export default function StudyGuidePage() {
   const activeSemester = useActiveSemester();
   const activeTab = useScrollSpy(GUIDE_TAB_IDS, { offset: 140 });
-  const recommendationPanel = useScrollFollower<HTMLDivElement, HTMLDivElement>(
-    {
-      topOffset: 120,
-    },
-  );
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<ProgrammingCard | null>(
     null,
@@ -377,7 +372,7 @@ export default function StudyGuidePage() {
           </div>
         </div>
 
-        <div ref={recommendationPanel.containerRef} className="flex gap-8 pt-6">
+        <div className="flex gap-8 pt-6">
           {/* Main Content */}
           <div className="min-w-0 flex-1">
             {/* 스터디 소개 */}
@@ -466,13 +461,9 @@ export default function StudyGuidePage() {
             </section>
           </div>
 
-          {/* Side Panel (Desktop) */}
-          <aside className="hidden w-72 shrink-0 md:block">
-            <div
-              ref={recommendationPanel.followerRef}
-              style={{ marginTop: recommendationPanel.offset }}
-              className="border-border-gray-light rounded-3 border p-6 text-center"
-            >
+          {/* Side Panel (Desktop): 스크롤 시 화면 상단 120px에 고정한다. 회칙·스터디 상세 목차와 같은 값. */}
+          <aside className="sticky top-[120px] hidden h-fit w-72 shrink-0 self-start md:block">
+            <div className="border-border-gray-light rounded-3 border p-6 text-center">
               <GuideBody
                 text={STUDY_RECOMMENDATION_SIDE_PANEL.description}
                 size="s"

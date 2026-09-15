@@ -67,6 +67,26 @@ describe("useFaqList", () => {
     expect(result.current.items).toEqual([faqs[0]]);
   });
 
+  it("puts the 기타 category last and keeps the rest in Korean order", async () => {
+    mockedGetFaqs.mockResolvedValue([
+      { ...faqs[1], postId: 4, tag: "기타" },
+      { ...faqs[1], postId: 5, tag: " 기타 " },
+      ...faqs,
+    ]);
+    const { result } = renderHook(() =>
+      useFaqList({ query: "", category: "", page: 1, pageSize: 10 }),
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.categories).toEqual([
+      "가입",
+      "스터디",
+      "행사",
+      "기타",
+    ]);
+  });
+
   it("shows the stable FAQ error message when the list request fails", async () => {
     const errorSpy = jest
       .spyOn(console, "error")

@@ -39,9 +39,7 @@ function rankLabel(result: AwardResult): string {
 }
 
 export function PresentationScreen({ hackathonId }: PresentationScreenProps) {
-  const { draft, hydrated } = useHackathonResults(hackathonId, "", {
-    readOnly: true,
-  });
+  const { draft, hydrated } = useHackathonResults(hackathonId, "");
 
   const slides = useMemo<PresentationSlide[]>(
     () => (draft ? generateSlides(draft) : []),
@@ -268,14 +266,6 @@ function SlideBody({ slide }: { slide: PresentationSlide }) {
           <h2 className="break-keep text-5xl font-bold leading-tight sm:text-7xl lg:text-8xl">
             {result.teamName}
           </h2>
-          {result.members.length > 0 && (
-            <p
-              className="mt-8 break-keep text-lg sm:text-2xl"
-              style={{ color: COLORS.textMuted }}
-            >
-              {result.members.join("  ·  ")}
-            </p>
-          )}
         </div>
       );
     }
