@@ -38,6 +38,27 @@ const participantsForSorting: Participant[] = [
   },
 ];
 
+const participantsForStatusSorting: Participant[] = [
+  {
+    participant_id: 4,
+    hackathon_id: 9901,
+    user_id: 4,
+    user_name: "취소 참가자",
+    status: "CANCELED",
+    registered_at: "2026-09-02T00:00:00.000Z",
+    studies: [],
+  },
+  {
+    participant_id: 5,
+    hackathon_id: 9901,
+    user_id: 5,
+    user_name: "참가 참가자",
+    status: "REGISTERED",
+    registered_at: "2026-09-01T00:00:00.000Z",
+    studies: [],
+  },
+];
+
 describe("ParticipantsTab", () => {
   it("renders study names as standard text and marks mentors only", () => {
     render(<ParticipantsTab participants={[participantForDisplay]} />);
@@ -61,6 +82,16 @@ describe("ParticipantsTab", () => {
     const rows = within(screen.getByRole("table")).getAllByRole("row");
     expect(rows[1].textContent).toContain("가나다");
     expect(rows[2].textContent).toContain("나다라");
+  });
+
+  it("sorts participants by the displayed status label", () => {
+    render(<ParticipantsTab participants={participantsForStatusSorting} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "상태" }));
+
+    const rows = within(screen.getByRole("table")).getAllByRole("row");
+    expect(rows[1].textContent).toContain("참가 참가자");
+    expect(rows[2].textContent).toContain("취소 참가자");
   });
 });
 

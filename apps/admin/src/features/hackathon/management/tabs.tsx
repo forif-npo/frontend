@@ -138,7 +138,9 @@ export function ParticipantsTab({
         },
       },
       {
-        accessorKey: "status",
+        id: "status",
+        accessorFn: (participant) =>
+          PARTICIPANT_STATUS_LABELS[participant.status],
         header: ({ column }) => (
           <SortableHeader column={column}>상태</SortableHeader>
         ),
@@ -299,7 +301,8 @@ export function TeamsTab({
         ),
       },
       {
-        accessorKey: "status",
+        id: "status",
+        accessorFn: (team) => TEAM_STATUS_LABELS[team.status],
         header: ({ column }) => (
           <SortableHeader column={column}>상태</SortableHeader>
         ),
