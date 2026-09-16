@@ -89,9 +89,9 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   const modalWidthStyle = {
-    m: "w-[560px]",
-    l: "w-[850px]",
-    xl: "w-[1040px]",
+    m: "w-[calc(100%-2rem)] max-w-[560px] sm:w-[560px]",
+    l: "w-[calc(100%-2rem)] max-w-[850px] sm:w-[850px]",
+    xl: "w-[calc(100%-2rem)] max-w-[1040px] sm:w-[1040px]",
   }[width];
 
   const layoutStyles = {
