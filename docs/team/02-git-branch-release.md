@@ -26,6 +26,19 @@
 
 예: `feat/FOR-123-study-apply`, `fix/login-redirect`
 
+## PR 전 동기화·검증·병합
+
+- PR을 열기 전 대상 브랜치의 최신 원격 커밋을 받아 작업 브랜치에 rebase하고, 충돌을
+  해결한 뒤 관련 기능을 다시 확인합니다.
+- 자신의 작업 브랜치에서만, 리뷰 전 커밋의 목적을 정리하기 위해 interactive rebase를
+  사용할 수 있습니다. rebase 뒤에는 diff를 self-review하고 lint·type-check·테스트를
+  다시 실행합니다.
+- rebase로 작업 브랜치의 이력이 바뀌어 push가 필요하면 `--force-with-lease`만 사용합니다.
+  영구 브랜치에는 force push하지 않습니다.
+- PR은 작성자를 제외한 최소 두 명의 승인을 받은 뒤 병합합니다.
+  - 작성자가 GitHub의 `Create a merge commit`을 선택해 병합합니다.
+  - 병합된 작업 브랜치는 삭제합니다.
+
 ## 배포와 긴급 수정
 
 ```text
@@ -43,3 +56,8 @@ PR로 롤백하며, 원인·사용자 영향·복구 결과를 PR에 기록합�
 출시 버전은 실제 Production 배포가 확인된 `release` 커밋에 annotated tag
 (`v1.0.0` 형식)를 만들고 GitHub Release에 기록합니다. 버전은 Semantic Versioning을
 따릅니다.
+
+---
+
+작성일시: 2026-09-16  
+최종 편집일시: 2026-09-16
