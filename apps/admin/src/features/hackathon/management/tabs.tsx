@@ -98,7 +98,7 @@ export function ParticipantsTab({
           <SortableHeader column={column}>이름</SortableHeader>
         ),
         cell: ({ row }) => (
-          <span className="font-medium">{row.original.user_name ?? "-"}</span>
+          <div className="text-center">{row.original.user_name ?? "-"}</div>
         ),
       },
       {
@@ -107,7 +107,7 @@ export function ParticipantsTab({
           <SortableHeader column={column}>학번</SortableHeader>
         ),
         cell: ({ row }) => (
-          <span className="text-muted-foreground">{row.original.user_id}</span>
+          <div className="text-center">{row.original.user_id}</div>
         ),
       },
       {
@@ -124,16 +124,16 @@ export function ParticipantsTab({
         cell: ({ row }) => {
           const studies = row.original.studies ?? [];
           return studies.length > 0 ? (
-            <span>
+            <div className="text-center">
               {studies
                 .map(
                   (study) =>
                     `${study.study_name ?? "-"}${study.role === "MENTOR" ? "(멘토)" : ""}`,
                 )
                 .join(", ")}
-            </span>
+            </div>
           ) : (
-            <span className="text-muted-foreground">-</span>
+            <div className="text-center">-</div>
           );
         },
       },
@@ -169,7 +169,7 @@ export function ParticipantsTab({
         size: 160,
         minSize: 160,
         cell: ({ row }) => (
-          <div className="text-muted-foreground text-right">
+          <div className="text-center">
             {formatDate(row.original.registered_at)}
           </div>
         ),
@@ -274,16 +274,16 @@ export function TeamsTab({
         header: ({ column }) => (
           <SortableHeader column={column}>팀</SortableHeader>
         ),
-        cell: ({ row }) => (
-          <span className="font-medium">{row.original.name}</span>
-        ),
+        cell: ({ row }) => row.original.name,
       },
       {
         accessorKey: "topic",
         header: ({ column }) => (
           <SortableHeader column={column}>주제</SortableHeader>
         ),
-        cell: ({ row }) => row.original.topic || "-",
+        cell: ({ row }) => (
+          <div className="text-left">{row.original.topic || "-"}</div>
+        ),
       },
       {
         accessorKey: "leader_name",
@@ -320,7 +320,7 @@ export function TeamsTab({
         header: ({ column }) => (
           <SortableHeader column={column}>구성원</SortableHeader>
         ),
-        cell: ({ row }) => <span>{formatTeamMembers(row.original.members)}</span>,
+        cell: ({ row }) => formatTeamMembers(row.original.members),
       },
     ],
     [],
@@ -384,11 +384,9 @@ export function CriteriaTab({
         ),
         cell: ({ row }) => (
           <div>
-            <p className="font-medium">{row.original.name}</p>
+            <p>{row.original.name}</p>
             {row.original.description && (
-              <p className="text-muted-foreground mt-1 text-sm">
-                {row.original.description}
-              </p>
+              <p className="mt-1 text-left">{row.original.description}</p>
             )}
           </div>
         ),
@@ -472,8 +470,8 @@ export function EvaluationTab({
         ),
         cell: ({ row }) => (
           <>
-            <p className="font-medium">{row.original.name}</p>
-            <p className="text-muted-foreground text-xs">
+            <p>{row.original.name}</p>
+            <p>
               {row.original.leader_name} · {row.original.member_count}명
             </p>
           </>
@@ -571,9 +569,7 @@ export function AwardsTab({
         header: ({ column }) => (
           <SortableHeader column={column}>수상명</SortableHeader>
         ),
-        cell: ({ row }) => (
-          <p className="font-medium">{row.original.award_name}</p>
-        ),
+        cell: ({ row }) => <p>{row.original.award_name}</p>,
       },
       {
         accessorKey: "award_rank",

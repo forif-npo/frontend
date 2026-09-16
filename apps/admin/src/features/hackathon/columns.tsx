@@ -17,7 +17,7 @@ export const columns: ColumnDef<Hackathon>[] = [
       <SortableHeader column={column}>해커톤</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center font-medium">
+      <div className="text-center">
         {row.original.title || `${row.original.event_round}회 해커톤`}
       </div>
     ),
@@ -47,7 +47,7 @@ export const columns: ColumnDef<Hackathon>[] = [
       <SortableHeader column={column}>기간</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center text-xs">
+      <div className="text-center">
         {formatDate(row.original.starts_at)} ~{" "}
         {formatDate(row.original.ends_at)}
       </div>
@@ -57,7 +57,7 @@ export const columns: ColumnDef<Hackathon>[] = [
     accessorKey: "location",
     header: () => <div className="text-center text-xs">장소</div>,
     cell: ({ row }) => (
-      <div className="text-center text-xs">{row.original.location ?? "-"}</div>
+      <div className="text-center">{row.original.location ?? "-"}</div>
     ),
   },
 ];

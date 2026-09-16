@@ -102,14 +102,12 @@ export function StudyApprovalDetailDialog({
                     value={detail.one_liner || "-"}
                   />
                   <TableRow>
-                    <TableCell className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
+                    <TableCell className="w-[100px] whitespace-nowrap py-3 pr-3 md:w-[140px]">
                       태그
                     </TableCell>
                     <TableCell className="py-3">
                       {tags.length > 0 ? (
-                        <span className={PREVIEW_VALUE_CLASS}>
-                          {tags.map(getStudyTagLabel).join(", ")}
-                        </span>
+                        <span>{tags.map(getStudyTagLabel).join(", ")}</span>
                       ) : (
                         <EmptyValue />
                       )}
@@ -276,7 +274,7 @@ function CurriculumReviewTable({
                     </>
                   )}
                   <TableCell
-                    className={`${CURRICULUM_BODY_CELL_CLASS} whitespace-pre-wrap break-words`}
+                    className={`${CURRICULUM_BODY_CELL_CLASS} whitespace-pre-wrap break-words text-left`}
                   >
                     {content}
                   </TableCell>
@@ -337,10 +335,10 @@ function ReviewSection({
 function PreviewInfoRow({ label, value }: { label: string; value: string }) {
   return (
     <TableRow>
-      <TableCell className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
+      <TableCell className="w-[100px] whitespace-nowrap py-3 pr-3 md:w-[140px]">
         {label}
       </TableCell>
-      <TableCell className={`py-3 ${PREVIEW_VALUE_CLASS}`}>{value}</TableCell>
+      <TableCell className="py-3">{value}</TableCell>
     </TableRow>
   );
 }
@@ -361,7 +359,6 @@ function RejectReasonPanel({ reason }: { reason: string | null }) {
 }
 
 const CURRICULUM_HEADER_CELL_CLASS =
-  "border-b border-secondary-10 bg-secondary-5 px-2 py-2 text-left text-[15px] font-bold leading-[1.5] text-text-bolder";
+  "border-b border-secondary-10 bg-secondary-5 px-2 py-2";
 const CURRICULUM_BODY_CELL_CLASS =
-  "border-border-gray-light border-b bg-surface-white px-2 py-2 align-top text-[15px] leading-[1.5] text-text-basic";
-const PREVIEW_VALUE_CLASS = "text-text-basic text-[15px] leading-[1.5]";
+  "border-border-gray-light border-b bg-surface-white px-2 py-2 align-top";

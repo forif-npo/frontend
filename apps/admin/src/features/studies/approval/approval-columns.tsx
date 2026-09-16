@@ -69,9 +69,7 @@ export const approvalColumns: ColumnDef<Study>[] = [
       <SortableHeader column={column}>스터디명</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("study_name")}
-      </div>
+      <div className="text-center">{row.getValue("study_name")}</div>
     ),
   },
   {
@@ -151,7 +149,7 @@ export const approvalColumns: ColumnDef<Study>[] = [
       <SortableHeader column={column}>신청일</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center text-xs">
+      <div className="text-center">
         {formatDateTime(row.getValue("created_at"))}
       </div>
     ),
@@ -160,7 +158,10 @@ export const approvalColumns: ColumnDef<Study>[] = [
     accessorKey: "one_liner",
     header: () => <div className="text-center text-xs">한 줄 소개</div>,
     cell: ({ row }) => (
-      <div className="max-w-[320px] truncate" title={row.getValue("one_liner")}>
+      <div
+        className="max-w-[320px] truncate text-left"
+        title={row.getValue("one_liner")}
+      >
         {row.getValue("one_liner")}
       </div>
     ),

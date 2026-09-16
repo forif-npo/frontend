@@ -167,12 +167,12 @@ export function ProductsAdminView() {
           return (
             <div>
               <button
-                className="text-left font-medium hover:underline"
+                className="hover:underline"
                 onClick={() => setDetailTarget(product)}
               >
                 {product.name}
               </button>
-              <p className="text-muted-foreground line-clamp-1 max-w-[260px] text-xs">
+              <p className="line-clamp-1 max-w-[260px] text-left">
                 {product.one_liner}
               </p>
             </div>
@@ -182,17 +182,13 @@ export function ProductsAdminView() {
       {
         accessorKey: "slug",
         header: "서브도메인",
-        cell: ({ row }) => (
-          <span className="text-muted-foreground text-xs">
-            {row.original.slug}.forif.org
-          </span>
-        ),
+        cell: ({ row }) => <span>{row.original.slug}.forif.org</span>,
       },
       {
         accessorKey: "source_type",
         header: "출처",
         cell: ({ row }) => (
-          <span className="text-xs">
+          <span>
             {PRODUCT_SOURCE_LABELS[row.original.source_type] ??
               row.original.source_type}
           </span>
@@ -202,22 +198,16 @@ export function ProductsAdminView() {
         accessorKey: "applicant_name",
         header: "신청자",
         cell: ({ row }) => (
-          <span className="text-xs">
+          <span>
             {row.original.applicant_name}
-            <span className="text-muted-foreground ml-1 text-xs">
-              {row.original.applicant_id}
-            </span>
+            <span className="ml-1">{row.original.applicant_id}</span>
           </span>
         ),
       },
       {
         accessorKey: "applied_at",
         header: "신청일",
-        cell: ({ row }) => (
-          <span className="text-muted-foreground text-xs">
-            {row.original.applied_at}
-          </span>
-        ),
+        cell: ({ row }) => <span>{row.original.applied_at}</span>,
       },
     ],
     [],
