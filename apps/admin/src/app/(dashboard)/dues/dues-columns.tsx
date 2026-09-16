@@ -17,18 +17,14 @@ export const duesColumns: ColumnDef<DuesMember>[] = [
     header: ({ column }) => (
       <SortableHeader column={column}>이름</SortableHeader>
     ),
-    cell: ({ row }) => (
-      <span className="font-medium">{row.getValue("userName")}</span>
-    ),
+    cell: ({ row }) => row.getValue("userName"),
   },
   {
     accessorKey: "userId",
     header: ({ column }) => (
       <SortableHeader column={column}>학번</SortableHeader>
     ),
-    cell: ({ row }) => (
-      <span className="font-mono text-xs">{row.getValue("userId")}</span>
-    ),
+    cell: ({ row }) => row.getValue("userId"),
   },
   {
     accessorKey: "department",

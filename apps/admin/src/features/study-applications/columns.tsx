@@ -31,9 +31,7 @@ export const applicationColumns: ColumnDef<StudyApplication>[] = [
     header: ({ column }) => (
       <SortableHeader column={column}>학번</SortableHeader>
     ),
-    cell: ({ row }) => (
-      <span className="font-mono text-xs">{row.getValue("userId")}</span>
-    ),
+    cell: ({ row }) => row.getValue("userId"),
   },
   {
     accessorKey: "department",

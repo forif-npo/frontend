@@ -24,9 +24,7 @@ export const postColumns: ColumnDef<AdminPost>[] = [
       <SortableHeader column={column}>제목</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="max-w-[360px] truncate font-medium">
-        {row.original.title}
-      </div>
+      <div className="max-w-[360px] truncate">{row.original.title}</div>
     ),
   },
   {
@@ -55,9 +53,7 @@ export const postColumns: ColumnDef<AdminPost>[] = [
       <SortableHeader column={column}>작성일</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center text-xs">
-        {formatDate(row.original.createdAt)}
-      </div>
+      <div className="text-center">{formatDate(row.original.createdAt)}</div>
     ),
   },
 ];

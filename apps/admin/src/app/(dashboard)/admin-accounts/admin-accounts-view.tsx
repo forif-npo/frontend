@@ -257,10 +257,10 @@ export function AdminAccountsView({
         cell: ({ row }) => {
           const account = row.original;
           return (
-            <div className="font-medium">
+            <div>
               {account.name}
               {account.user_id === myUserId && (
-                <span className="text-muted-foreground ml-1 text-xs">(나)</span>
+                <span className="ml-1">(나)</span>
               )}
             </div>
           );

@@ -232,9 +232,7 @@ export function MentorConfirmationsView({
       {
         accessorKey: "user_name",
         header: "이름",
-        cell: ({ row }) => (
-          <span className="font-medium">{row.original.user_name}</span>
-        ),
+        cell: ({ row }) => row.original.user_name,
       },
       { accessorKey: "user_id", header: "학번" },
       {
@@ -252,7 +250,7 @@ export function MentorConfirmationsView({
               <Button
                 type="button"
                 variant="link"
-                className="text-text-primary h-auto p-0"
+                className="h-auto p-0"
                 disabled={downloadingTargetKey != null}
                 onClick={() => handleDownload(row.original)}
               >
@@ -262,7 +260,7 @@ export function MentorConfirmationsView({
                 <ExternalLink className="ml-1 h-3 w-3" />
               </Button>
             ) : (
-              <span className="text-muted-foreground">미발급</span>
+              <span>미발급</span>
             )}
           </div>
         ),
