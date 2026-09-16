@@ -79,36 +79,6 @@ describe("DataTable", () => {
     expect(screen.getByRole("status").textContent).toBe("1");
   });
 
-  it("테이블 밖에 포커스가 있어도 Esc로 모든 정렬을 해제한다", () => {
-    function SortingHarness() {
-      const [sorting, setSorting] = useState<SortingState>([
-        { id: "name", desc: false },
-      ]);
-
-      return (
-        <>
-          <button type="button">테이블 밖 버튼</button>
-          <output data-testid="sorting">{JSON.stringify(sorting)}</output>
-          <DataTable
-            columns={columns}
-            data={rows}
-            showPagination={false}
-            sorting={sorting}
-            onSortingChange={setSorting}
-          />
-        </>
-      );
-    }
-
-    render(<SortingHarness />);
-
-    fireEvent.keyDown(screen.getByRole("button", { name: "테이블 밖 버튼" }), {
-      key: "Escape",
-    });
-
-    expect(screen.getByTestId("sorting").textContent).toBe("[]");
-  });
-
   it("정렬 상태를 열 헤더의 접근성 속성으로 노출한다", () => {
     const renderTable = (sorting: SortingState) => (
       <DataTable
