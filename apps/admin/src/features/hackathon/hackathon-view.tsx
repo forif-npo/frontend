@@ -247,20 +247,20 @@ export function HackathonView({ initialData }: HackathonViewProps) {
       <PageHeader
         title="해커톤 관리"
         description="해커톤을 생성하고 상태와 제출 현황을 관리할 수 있습니다."
-        actions={
-          <Button onClick={handleOpenCreate}>
-            <Plus className="mr-2 h-4 w-4" />
-            해커톤 추가
-          </Button>
-        }
       />
 
       <div className="space-y-4">
-        <SearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="해커톤 제목/장소/기수 검색"
-        />
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="해커톤 제목/장소/기수 검색"
+          />
+          <Button className="ml-auto" onClick={handleOpenCreate}>
+            <Plus className="mr-2 h-4 w-4" />
+            해커톤 추가
+          </Button>
+        </div>
 
         <DataTable
           columns={columns}

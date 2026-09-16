@@ -128,25 +128,25 @@ export function StudyApplicationsView({
       <PageHeader
         title="신청자 관리"
         description="현재 학기 스터디 신청 내역을 확인하고 자율부원 신청을 처리합니다."
-        actions={
-          <Button
-            variant="outline"
-            className="gap-2"
-            disabled={isDownloading}
-            onClick={handleDownloadExcel}
-          >
-            <Download className="h-4 w-4" />
-            {isDownloading ? "다운로드 중..." : "엑셀로 다운로드"}
-          </Button>
-        }
       />
 
-      <SearchBar
-        value={searchQuery}
-        onChange={setSearchQuery}
-        onSearch={handleSearch}
-        placeholder="이름, 학번, 학과 또는 스터디 검색"
-      />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <SearchBar
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onSearch={handleSearch}
+          placeholder="이름, 학번, 학과 또는 스터디 검색"
+        />
+        <Button
+          variant="outline"
+          className="ml-auto gap-2"
+          disabled={isDownloading}
+          onClick={handleDownloadExcel}
+        >
+          <Download className="h-4 w-4" />
+          {isDownloading ? "다운로드 중..." : "엑셀로 다운로드"}
+        </Button>
+      </div>
 
       <DataTable
         columns={applicationColumns}

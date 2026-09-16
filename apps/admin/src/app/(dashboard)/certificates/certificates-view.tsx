@@ -539,24 +539,24 @@ export function CertificatesView({
             학기 해커톤 참여)을 충족한 부원에게 수료증을 발급합니다.
           </>
         }
-        actions={
-          <div className="flex shrink-0 gap-2">
-            <Button variant="outline" onClick={openSignatureDialog}>
-              서명 등록
-            </Button>
-            <Button variant="outline" onClick={() => setManualOpen(true)}>
-              수동 발급
-            </Button>
-          </div>
-        }
       />
 
-      <ActivitySemesterToggle
-        currentSemester={currentSemester}
-        previousSemester={previousSemester}
-        selectedSemester={selectedSemester}
-        onSemesterChange={handleSemesterChange}
-      />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <ActivitySemesterToggle
+          currentSemester={currentSemester}
+          previousSemester={previousSemester}
+          selectedSemester={selectedSemester}
+          onSemesterChange={handleSemesterChange}
+        />
+        <div className="ml-auto flex shrink-0 gap-2">
+          <Button variant="outline" onClick={openSignatureDialog}>
+            서명 등록
+          </Button>
+          <Button variant="outline" onClick={() => setManualOpen(true)}>
+            수동 발급
+          </Button>
+        </div>
+      </div>
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-1.5">
