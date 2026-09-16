@@ -142,9 +142,9 @@ describe("DuesView", () => {
       expect(updateDues).toHaveBeenCalledWith([
         { userId: 20260001, duesPaid: true },
       ]);
+      expect(mockRefresh).toHaveBeenCalledTimes(1);
+      expect(screen.queryByText("0명 선택")).not.toBeNull();
     });
-    expect(mockRefresh).toHaveBeenCalledTimes(1);
-    expect(screen.queryByText("0명 선택")).not.toBeNull();
   });
 
   it("withdraws only the member selected from the row action", async () => {
