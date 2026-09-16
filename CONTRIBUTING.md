@@ -74,6 +74,7 @@ API 경로·인증·요청·응답 필드는 [FORIF Scalar](https://dev.forif.or
 
 ## 문서 기준
 
+- [팀 컨벤션](docs/team/README.md): 팀원이 따르는 온보딩·협업·구현 기준
 - [README.md](README.md): 저장소 소개와 빠른 시작
 - 이 문서: 공통 개발·검증·PR 흐름
 - [GIT_WORKFLOW.md](GIT_WORKFLOW.md): 브랜치, PR 승격, 배포와 hotfix 기준

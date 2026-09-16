@@ -278,19 +278,22 @@ export function ManagementView({
 
   return (
     <div className="space-y-6 p-4 sm:p-6 md:p-8">
-      <div>
-        <Button
-          variant="ghost"
-          className="h-auto p-0 text-sm"
-          onClick={() => router.push("/hackathon")}
-        >
-          <ArrowLeft className="mr-1 h-4 w-4" />
-          해커톤 목록
-        </Button>
-      </div>
       <PageHeader
         title={hackathon.title || `${hackathon.event_round}회 해커톤`}
         description={`${hackathon.held_year}-${hackathon.held_semester} / ${hackathon.event_round}회 · 평가 기준, 심사, 수상을 관리합니다.`}
+        leadingAction={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-11"
+            aria-label="해커톤 목록으로 돌아가기"
+            title="해커톤 목록으로 돌아가기"
+            onClick={() => router.push("/hackathon")}
+          >
+            <ArrowLeft className="size-5" />
+          </Button>
+        }
       />
 
       <Tabs defaultValue="participants" className="w-full">

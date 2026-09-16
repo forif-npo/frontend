@@ -1,4 +1,5 @@
 /** @jest-environment jsdom */
+/* eslint-disable @next/next/no-img-element -- next/image mock must render a plain image element in Jest. */
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, jest } from "@jest/globals";
 jest.mock("next/image", () => ({

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { ExternalLink, Eye, Github, Pencil } from "lucide-react";
-import { Badge, type BadgeProps } from "@ui/components/server";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -18,23 +18,21 @@ import { approveProduct, changeProductOperationStatus, getAdminProducts, rejectP
 import { ProductEditDialog } from "./product-edit-dialog";
 
 type StatusFilter = "ALL" | "PENDING" | "ACCEPTED" | "REJECTED";
-type StatusBadgeVariant = NonNullable<BadgeProps["variant"]>;
-
-const APPLICATION_STATUS_VARIANTS: Record<
+const APPLICATION_STATUS_BADGE_CLASS_NAMES: Record<
   ProductApplicationStatus,
-  StatusBadgeVariant
+  string
 > = {
-  PENDING: "warning",
-  ACCEPTED: "success",
-  REJECTED: "danger",
+  PENDING: "border-border-warning bg-warning-5 text-text-warning",
+  ACCEPTED: "border-border-success bg-success-5 text-text-success",
+  REJECTED: "border-border-danger bg-danger-5 text-text-danger",
 };
 
-const OPERATION_STATUS_VARIANTS: Record<
+const OPERATION_STATUS_BADGE_CLASS_NAMES: Record<
   ProductOperationStatus,
-  StatusBadgeVariant
+  string
 > = {
-  LIVE: "success",
-  PAUSED: "disabled",
+  LIVE: "border-border-success bg-success-5 text-text-success",
+  PAUSED: "border-border-gray bg-surface-gray-subtler text-text-subtle",
 };
 
 /** 링크 주입 방지: http(s) URL만 렌더링한다 */
@@ -48,18 +46,18 @@ function statusBadges(product: AdminProduct) {
   return (
     <div className="flex flex-wrap justify-center gap-1">
       <Badge
-        label={PRODUCT_APPLICATION_STATUS_LABELS[status]}
-        variant={APPLICATION_STATUS_VARIANTS[status]}
-        appearance="solid-pastel"
-        size="small"
-      />
+        variant="outline"
+        className={APPLICATION_STATUS_BADGE_CLASS_NAMES[status]}
+      >
+        {PRODUCT_APPLICATION_STATUS_LABELS[status]}
+      </Badge>
       {status === "ACCEPTED" && operationStatus && (
         <Badge
-          label={PRODUCT_OPERATION_STATUS_LABELS[operationStatus]}
-          variant={OPERATION_STATUS_VARIANTS[operationStatus]}
-          appearance="solid-pastel"
-          size="small"
-        />
+          variant="outline"
+          className={OPERATION_STATUS_BADGE_CLASS_NAMES[operationStatus]}
+        >
+          {PRODUCT_OPERATION_STATUS_LABELS[operationStatus]}
+        </Badge>
       )}
     </div>
   );
@@ -162,37 +160,26 @@ export function ProductsAdminView() {
       {
         accessorKey: "name",
         header: "서비스",
-        cell: ({ row }) => {
-          const product = row.original;
-          return (
-            <div>
-              <button
-                className="text-left font-medium hover:underline"
-                onClick={() => setDetailTarget(product)}
-              >
-                {product.name}
-              </button>
-              <p className="text-muted-foreground line-clamp-1 max-w-[260px] text-xs">
-                {product.one_liner}
-              </p>
-            </div>
-          );
-        },
+        cell: ({ row }) => (
+          <button
+            type="button"
+            className="hover:underline"
+            onClick={() => setDetailTarget(row.original)}
+          >
+            {row.original.name}
+          </button>
+        ),
       },
       {
         accessorKey: "slug",
         header: "서브도메인",
-        cell: ({ row }) => (
-          <span className="text-muted-foreground text-xs">
-            {row.original.slug}.forif.org
-          </span>
-        ),
+        cell: ({ row }) => <span>{row.original.slug}.forif.org</span>,
       },
       {
         accessorKey: "source_type",
         header: "출처",
         cell: ({ row }) => (
-          <span className="text-xs">
+          <span>
             {PRODUCT_SOURCE_LABELS[row.original.source_type] ??
               row.original.source_type}
           </span>
@@ -201,23 +188,12 @@ export function ProductsAdminView() {
       {
         accessorKey: "applicant_name",
         header: "신청자",
-        cell: ({ row }) => (
-          <span className="text-xs">
-            {row.original.applicant_name}
-            <span className="text-muted-foreground ml-1 text-xs">
-              {row.original.applicant_id}
-            </span>
-          </span>
-        ),
+        cell: ({ row }) => <span>{row.original.applicant_name}</span>,
       },
       {
         accessorKey: "applied_at",
         header: "신청일",
-        cell: ({ row }) => (
-          <span className="text-muted-foreground text-xs">
-            {row.original.applied_at}
-          </span>
-        ),
+        cell: ({ row }) => <span>{row.original.applied_at}</span>,
       },
     ],
     [],

@@ -68,11 +68,16 @@ export function StudyApprovalDetailDialog({
         ) : detail ? (
           <div className="flex flex-col gap-10">
             {thumbnailUrl && (
-              <img
-                src={thumbnailUrl}
-                alt={`${studyName} 썸네일`}
-                className="max-h-72 w-full rounded-lg border object-contain"
-              />
+              <>
+                {/* 백엔드 저장소 이미지는 Next 이미지 최적화의 remotePatterns 제약으로
+                    표시되지 않았던 이력이 있어 원본 URL을 브라우저에서 직접 로드한다. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={thumbnailUrl}
+                  alt={`${studyName} 썸네일`}
+                  className="max-h-72 w-full rounded-lg border object-contain"
+                />
+              </>
             )}
 
             <ReviewSection title="스터디 개요">
@@ -97,14 +102,12 @@ export function StudyApprovalDetailDialog({
                     value={detail.one_liner || "-"}
                   />
                   <TableRow>
-                    <TableCell className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
+                    <TableCell className="w-[100px] whitespace-nowrap py-3 pr-3 md:w-[140px]">
                       태그
                     </TableCell>
                     <TableCell className="py-3">
                       {tags.length > 0 ? (
-                        <span className={PREVIEW_VALUE_CLASS}>
-                          {tags.map(getStudyTagLabel).join(", ")}
-                        </span>
+                        <span>{tags.map(getStudyTagLabel).join(", ")}</span>
                       ) : (
                         <EmptyValue />
                       )}
@@ -271,7 +274,7 @@ function CurriculumReviewTable({
                     </>
                   )}
                   <TableCell
-                    className={`${CURRICULUM_BODY_CELL_CLASS} whitespace-pre-wrap break-words`}
+                    className={`${CURRICULUM_BODY_CELL_CLASS} whitespace-pre-wrap break-words text-left`}
                   >
                     {content}
                   </TableCell>
@@ -332,10 +335,10 @@ function ReviewSection({
 function PreviewInfoRow({ label, value }: { label: string; value: string }) {
   return (
     <TableRow>
-      <TableCell className="text-text-subtle w-[100px] whitespace-nowrap py-3 pr-3 text-[15px] font-bold leading-[1.5] md:w-[140px] md:text-[17px]">
+      <TableCell className="w-[100px] whitespace-nowrap py-3 pr-3 md:w-[140px]">
         {label}
       </TableCell>
-      <TableCell className={`py-3 ${PREVIEW_VALUE_CLASS}`}>{value}</TableCell>
+      <TableCell className="py-3">{value}</TableCell>
     </TableRow>
   );
 }
@@ -356,7 +359,6 @@ function RejectReasonPanel({ reason }: { reason: string | null }) {
 }
 
 const CURRICULUM_HEADER_CELL_CLASS =
-  "border-b border-secondary-10 bg-secondary-5 px-2 py-2 text-left text-[15px] font-bold leading-[1.5] text-text-bolder";
+  "border-b border-secondary-10 bg-secondary-5 px-2 py-2";
 const CURRICULUM_BODY_CELL_CLASS =
-  "border-border-gray-light border-b bg-surface-white px-2 py-2 align-top text-[15px] leading-[1.5] text-text-basic";
-const PREVIEW_VALUE_CLASS = "text-text-basic text-[15px] leading-[1.5]";
+  "border-border-gray-light border-b bg-surface-white px-2 py-2 align-top";

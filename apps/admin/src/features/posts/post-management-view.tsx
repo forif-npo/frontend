@@ -166,21 +166,21 @@ export function PostManagementView({
       <PageHeader
         title={labels.pageTitle}
         description={labels.pageDescription}
-        actions={
-          <Button className="gap-2" onClick={handleOpenCreate}>
-            <Plus className="h-4 w-4" />
-            {labels.createButton}
-          </Button>
-        }
       />
 
       <div className="space-y-4">
-        <SearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onSearch={() => pushWithParams(0)}
-          placeholder={labels.searchPlaceholder}
-        />
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onSearch={() => pushWithParams(0)}
+            placeholder={labels.searchPlaceholder}
+          />
+          <Button className="ml-auto gap-2" onClick={handleOpenCreate}>
+            <Plus className="h-4 w-4" />
+            {labels.createButton}
+          </Button>
+        </div>
 
         <DataTable
           columns={postColumns}

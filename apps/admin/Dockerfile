@@ -11,7 +11,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 RUN npm install turbo --global
 COPY . .
-RUN turbo prune web --docker
+RUN turbo prune admin --docker
 
 FROM base AS installer
 RUN apk update
@@ -50,13 +50,13 @@ USER nextjs
 
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+COPY --from=installer --chown=nextjs:nodejs /app/apps/admin/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/admin/.next/static ./apps/admin/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/admin/public ./apps/admin/public
 
 EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node","--trace-deprecation","apps/web/server.js"]
+CMD ["node","--trace-deprecation","apps/admin/server.js"]

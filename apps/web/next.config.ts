@@ -29,6 +29,15 @@ const nextConfig: NextConfig = {
     },
   },
   transpilePackages: ["@t3-oss/env-nextjs", "@t3-oss/env-core", "@repo/ui"],
+  webpack: (config, { dev }) => {
+    // Windows의 로컬 production build에서만 디스크 사용량을 낮춘다.
+    // Vercel과 일반 build는 Next 기본 webpack cache를 그대로 사용한다.
+    if (!dev && process.env.FORIF_LOCAL_BUILD === "1") {
+      config.cache = false;
+    }
+
+    return config;
+  },
   images: {
     remotePatterns: [
       {

@@ -376,15 +376,12 @@ export function CertificatesView({
       );
     });
   };
-  const requiredAttendance = targetsData?.required_attendance ?? 5;
   const columns = useMemo<ColumnDef<CertificateTarget>[]>(
     () => [
       {
         accessorKey: "user_name",
         header: "이름",
-        cell: ({ row }) => (
-          <span className="font-medium">{row.original.user_name}</span>
-        ),
+        cell: ({ row }) => row.original.user_name,
       },
       { accessorKey: "user_id", header: "학번" },
       {
@@ -396,11 +393,7 @@ export function CertificatesView({
         accessorKey: "attendance_count",
         header: () => <div className="text-center">출석</div>,
         cell: ({ row }) => (
-          <div
-            className={`text-center ${row.original.attendance_count >= requiredAttendance ? "text-text-primary font-bold" : ""}`}
-          >
-            {row.original.attendance_count}회
-          </div>
+          <div className="text-center">{row.original.attendance_count}회</div>
         ),
       },
       {
@@ -436,18 +429,18 @@ export function CertificatesView({
                 href={row.original.certificate_url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-text-primary inline-flex items-center gap-1 hover:underline"
+                className="inline-flex items-center gap-1 hover:underline"
               >
                 발급됨 <ExternalLink className="h-3 w-3" />
               </a>
             ) : (
-              <span className="text-muted-foreground">미발급</span>
+              <span>미발급</span>
             )}
           </div>
         ),
       },
     ],
-    [requiredAttendance],
+    [],
   );
 
   const executeIssue = async (ignoreEligibility: boolean) => {
@@ -546,24 +539,24 @@ export function CertificatesView({
             학기 해커톤 참여)을 충족한 부원에게 수료증을 발급합니다.
           </>
         }
-        actions={
-          <div className="flex shrink-0 gap-2">
-            <Button variant="outline" onClick={openSignatureDialog}>
-              서명 등록
-            </Button>
-            <Button variant="outline" onClick={() => setManualOpen(true)}>
-              수동 발급
-            </Button>
-          </div>
-        }
       />
 
-      <ActivitySemesterToggle
-        currentSemester={currentSemester}
-        previousSemester={previousSemester}
-        selectedSemester={selectedSemester}
-        onSemesterChange={handleSemesterChange}
-      />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <ActivitySemesterToggle
+          currentSemester={currentSemester}
+          previousSemester={previousSemester}
+          selectedSemester={selectedSemester}
+          onSemesterChange={handleSemesterChange}
+        />
+        <div className="ml-auto flex shrink-0 gap-2">
+          <Button variant="outline" onClick={openSignatureDialog}>
+            서명 등록
+          </Button>
+          <Button variant="outline" onClick={() => setManualOpen(true)}>
+            수동 발급
+          </Button>
+        </div>
+      </div>
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-1.5">
