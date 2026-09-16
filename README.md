@@ -36,6 +36,7 @@ pnpm storybook
 
 ## 문서
 
+- [팀 컨벤션](docs/team/README.md): 팀원의 온보딩, Git, 코드, UI, 테스트, API 협업 기준
 - [기여 가이드](CONTRIBUTING.md): 검증, 커밋, PR, API 계약 기준
 - [Git 작업·배포 흐름](GIT_WORKFLOW.md): 브랜치, PR 승격, 배포와 hotfix 기준
 - [web 안내](apps/web/README.md)
