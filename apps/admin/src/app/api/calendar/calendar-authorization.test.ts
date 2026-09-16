@@ -1,5 +1,4 @@
 import { describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@/auth", () => ({ auth: jest.fn() }));
 jest.mock("@/lib/calendar-service", () => ({
   createCalendarEvent: jest.fn(),
@@ -9,22 +8,10 @@ jest.mock("@/lib/calendar-service", () => ({
   getCalendarUsers: jest.fn(),
   updateCalendarEvent: jest.fn(),
 }));
-
 import { auth } from "@/auth";
-import {
-  createCalendarEvent,
-  deleteCalendarEvent,
-  getCalendarEvent,
-  getCalendarEvents,
-  getCalendarUsers,
-  updateCalendarEvent,
-} from "@/lib/calendar-service";
+import { createCalendarEvent, deleteCalendarEvent, getCalendarEvent, getCalendarEvents, getCalendarUsers, updateCalendarEvent } from "@/lib/calendar-service";
 import { GET as getEvents, POST as postEvent } from "./events/route";
-import {
-  DELETE as deleteEvent,
-  GET as getEvent,
-  PATCH as patchEvent,
-} from "./events/[eventId]/route";
+import { DELETE as deleteEvent, GET as getEvent, PATCH as patchEvent } from "./events/[eventId]/route";
 import { GET as getUsers } from "./users/route";
 
 const mockedAuth = auth as unknown as jest.MockedFunction<

@@ -1,13 +1,23 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { SortableHeader } from "@/components/list/sortable-header";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { DuesMember } from "./types";
 
-function statusLabel(value: boolean, done: string, pending: string) {
+function statusBadge(value: boolean, done: string, pending: string) {
   return (
-    <span className={value ? "text-text-success" : "text-muted-foreground"}>
-      {value ? done : pending}
-    </span>
+    <div className="text-center">
+      <Badge
+        variant="outline"
+        className={
+          value
+            ? "border-border-success bg-success-5 text-text-success"
+            : "border-border-gray bg-surface-gray-subtler text-text-subtle"
+        }
+      >
+        {value ? done : pending}
+      </Badge>
+    </div>
   );
 }
 
@@ -39,7 +49,7 @@ export const duesColumns: ColumnDef<DuesMember>[] = [
       <SortableHeader column={column}>구글폼 제출</SortableHeader>
     ),
     cell: ({ row }) =>
-      statusLabel(
+      statusBadge(
         row.getValue<boolean>("googleFormSubmitted"),
         "제출",
         "미제출",
@@ -51,6 +61,6 @@ export const duesColumns: ColumnDef<DuesMember>[] = [
       <SortableHeader column={column}>입금 확인</SortableHeader>
     ),
     cell: ({ row }) =>
-      statusLabel(row.getValue<boolean>("duesPaid"), "확인", "미확인"),
+      statusBadge(row.getValue<boolean>("duesPaid"), "확인", "미확인"),
   },
 ];
