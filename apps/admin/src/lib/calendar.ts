@@ -1,25 +1,13 @@
-import { env } from "@/env";
+import { getCalendarEvents, getCalendarUsers } from "@/lib/calendar-service";
 
 export async function getCalendarData() {
-  const baseUrl =
-    env.NEXT_PUBLIC_APP_URL ||
-    env.NEXTAUTH_URL ||
-    env.NEXT_PUBLIC_SERVER_URL ||
-    "http://localhost:3001";
-
   try {
-    const [eventsRes, usersRes] = await Promise.all([
-      fetch(`${baseUrl}/api/calendar/events`, { cache: "no-store" }),
-      fetch(`${baseUrl}/api/calendar/users`, { cache: "no-store" }),
+    const [events, users] = await Promise.all([
+      getCalendarEvents(),
+      getCalendarUsers(),
     ]);
 
-    const eventsData = await eventsRes.json();
-    const usersData = await usersRes.json();
-
-    return {
-      events: eventsData.events || [],
-      users: usersData.users || [],
-    };
+    return { events, users };
   } catch (error) {
     console.error("Failed to fetch calendar data:", error);
     return {

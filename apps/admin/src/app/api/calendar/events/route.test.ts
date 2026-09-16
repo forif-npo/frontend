@@ -6,6 +6,9 @@ jest.mock("@/env", () => ({
     GOOGLE_SERVICE_ACCOUNT_EMAIL: "calendar@forif.org",
   },
 }));
+jest.mock("@/auth", () => ({
+  auth: jest.fn(async () => ({ role: "ADMIN" })),
+}));
 jest.mock("googleapis", () => ({
   google: {
     auth: { GoogleAuth: jest.fn() },
