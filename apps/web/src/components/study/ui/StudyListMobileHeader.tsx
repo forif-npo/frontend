@@ -17,6 +17,8 @@ interface StudyListMobileHeaderProps {
   onTagChange: (value: string) => void;
   onClearAllFilters: () => void;
   totalItems: number;
+  isStudyCreateDisabled: boolean;
+  onStudyCreateClick: () => void;
   loading?: boolean;
 }
 
@@ -45,6 +47,8 @@ export const StudyListMobileHeader: React.FC<StudyListMobileHeaderProps> = ({
   onTagChange,
   onClearAllFilters,
   totalItems,
+  isStudyCreateDisabled,
+  onStudyCreateClick,
   loading = false,
 }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -67,7 +71,11 @@ export const StudyListMobileHeader: React.FC<StudyListMobileHeaderProps> = ({
       </div>
 
       <div className="mb-4">
-        <StudyActionButtons size="medium" />
+        <StudyActionButtons
+          size="medium"
+          disabled={isStudyCreateDisabled}
+          onCreateClick={onStudyCreateClick}
+        />
       </div>
 
       <div className="mb-4 flex items-center justify-between">

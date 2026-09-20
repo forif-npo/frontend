@@ -4,12 +4,14 @@ import { Button } from "@repo/ui/components/client";
 
 interface StudyActionButtonsProps {
   onCreateClick?: () => void;
+  disabled?: boolean;
   size?: "small" | "medium" | "large";
   className?: string;
 }
 
 export const StudyActionButtons: React.FC<StudyActionButtonsProps> = ({
   onCreateClick,
+  disabled = false,
   size = "large",
   className = "",
 }) => {
@@ -18,7 +20,7 @@ export const StudyActionButtons: React.FC<StudyActionButtonsProps> = ({
       <Button
         variant="primary"
         size={size}
-        disabled={false}
+        disabled={disabled}
         onClick={onCreateClick}
       >
         스터디 개설하기
