@@ -19,6 +19,7 @@ export interface CreatedStudy {
   location: string;
   difficulty: string | null;
   img_url: string;
+  autonomous_study: boolean;
   act_year: number;
   act_semester: number;
 }
@@ -69,7 +70,7 @@ export async function getMyCreatedStudies(
   const response = await apiClient
     .get("api/v1/studies/me/created", options)
     .json<ApiResponse<CreatedStudy[]>>();
-  return response.data ?? [];
+  return (response.data ?? []).filter((study) => !study.autonomous_study);
 }
 
 /**
