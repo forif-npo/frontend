@@ -296,8 +296,8 @@ export function MembersView({
           <DialogHeader>
             <DialogTitle>부원 정보 수정</DialogTitle>
             <DialogDescription>
-              {editTarget && `${editTarget.userName} (${editTarget.userId})`}
-              님의 학과와 전화번호를 수정합니다. 학번은 수정할 수 없습니다.
+              {editTarget && `${editTarget.userName}(${editTarget.userId}) `}
+              님의 학과와 전화번호를 수정합니다.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">

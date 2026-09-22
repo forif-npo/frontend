@@ -27,6 +27,7 @@ export interface SelectProps {
   dropdownAlign?: "left" | "right";
   noPadding?: boolean;
   selectedSuffix?: React.ReactNode;
+  emphasizeSelected?: boolean;
 }
 
 const sizeClasses = {
@@ -53,6 +54,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
       dropdownAlign = "left",
       noPadding = false,
       selectedSuffix,
+      emphasizeSelected = false,
     },
     ref,
   ) => {
@@ -166,6 +168,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           <div className="flex min-w-0 items-center gap-2">
             <Label
               size={labelSize[size]}
+              weight={emphasizeSelected && selectedValue ? "bold" : "regular"}
               className={cn(
                 "text-gray-90 flex min-w-0 items-center truncate",
                 sizeClasses[size].button,
@@ -219,7 +222,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
                 }}
                 className={`w-full px-5 text-left outline-none ${sizeClasses[size].button} ${
                   selectedValue === option.value
-                    ? "text-primary-50 bg-primary-5"
+                    ? `text-primary-50 bg-primary-5 ${emphasizeSelected ? "font-bold" : ""}`
                     : "text-gray-90"
                 } ${
                   hoveredIndex === index || focusedIndex === index
