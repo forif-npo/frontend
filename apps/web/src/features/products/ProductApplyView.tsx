@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { HintText, Label } from "@ui/components/server";
-import { AlertModal, Button, CriticalAlert, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
+import { AlertModal, Button, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import { handleApiError } from "@core/utils/api-client";
 import { useRouter } from "next/navigation";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
@@ -302,10 +302,6 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
             placeholder="Next.js, Spring Boot, MySQL"
           />
 
-          {errorMessage && (
-            <CriticalAlert text={errorMessage} variant="danger" />
-          )}
-
           <div
             className={
               isEditMode
@@ -353,6 +349,13 @@ export function ProductApplyView({ application }: ProductApplyViewProps) {
         description={thumbnailAlertMessage ?? ""}
         descriptionClassName="w-full text-center"
         onClose={() => setThumbnailAlertMessage(null)}
+      />
+      <AlertModal
+        isOpen={errorMessage !== null}
+        description={errorMessage ?? ""}
+        descriptionClassName="w-full text-center"
+        onClose={() => setErrorMessage(null)}
+        onConfirm={() => setErrorMessage(null)}
       />
       <ActionConfirmModal
         isOpen={confirmAction !== null}

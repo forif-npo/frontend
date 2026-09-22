@@ -246,7 +246,7 @@ export function AdminAccountsView({
         </Badge>
       );
     }
-    return <Badge variant="secondary">{affiliation}</Badge>;
+    return <Badge variant="secondary">{affiliation}팀</Badge>;
   }, []);
 
   const columns = useMemo<ColumnDef<AdminAccount>[]>(

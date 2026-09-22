@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { HTTPError } from "ky";
-import { CriticalAlert } from "@ui/components/client";
+import { AlertModal } from "@ui/components/client";
 import { GuideCheckIcon, SearchIcon } from "@ui/components/server";
 import type { StudyOpenValues } from "@core/schemas";
 import type { UseFormReturn } from "react-hook-form";
@@ -290,9 +290,6 @@ export function Step1InfoVerification({
           />
         </div>
 
-        {/* 알림 메시지 */}
-        {alertMessage && <CriticalAlert text={alertMessage} variant="danger" />}
-
         {/* 멘토 추가 카드 */}
         {showMentorCard && (
           <MentorAddCard
@@ -319,6 +316,13 @@ export function Step1InfoVerification({
               ]
             : []),
         ]}
+      />
+      <AlertModal
+        isOpen={alertMessage !== null}
+        description={alertMessage ?? ""}
+        descriptionClassName="w-full text-center"
+        onClose={() => setAlertMessage(null)}
+        onConfirm={() => setAlertMessage(null)}
       />
     </div>
   );

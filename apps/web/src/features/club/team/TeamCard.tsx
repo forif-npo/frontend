@@ -44,7 +44,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
       <div className="flex min-h-[140px] flex-col items-center justify-center">
         <p className="text-text-basic text-xl font-bold">{member.user_name}</p>
         <p className="text-text-subtle mb-3 text-sm">
-          {member.club_department}
+          {member.club_department}팀
         </p>
         <div className="mb-3 flex flex-wrap justify-center gap-2">
           {member.user_title && (

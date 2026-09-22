@@ -1,20 +1,52 @@
 "use client";
 import { motion } from "motion/react";
-import { RULE } from "@/constants/club-rule";
+import { useState } from "react";
+import { CLUB_RULE_REVISIONS, CURRENT_RULE_REVISION_ID } from "@/constants/club-rule";
+import { Select } from "@ui/components/client";
 import { PageHeader } from "@/components/PageHeader";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 
-const RULE_CHAPTER_NAV_ITEMS = RULE.split("\n").flatMap((line) => {
-  const chapterMatch = line.match(/^# (\d+)장 .+$/);
+const getRuleChapterNavItems = (content: string) =>
+  content.split("\n").flatMap((line) => {
+    const chapterMatch = line.match(/^# (\d+)장 .+$/);
 
-  return chapterMatch
-    ? [{ id: Number(chapterMatch[1]), label: line.replace(/^# /, "") }]
-    : [];
-});
-const RULE_CHAPTER_IDS = RULE_CHAPTER_NAV_ITEMS.map(({ id }) => String(id));
+    return chapterMatch
+      ? [{ id: Number(chapterMatch[1]), label: line.replace(/^# /, "") }]
+      : [];
+  });
+
+const getPreviousNonEmptyLine = (lines: string[], lineIndex: number) => {
+  for (let index = lineIndex - 1; index >= 0; index -= 1) {
+    const line = lines[index].trimStart();
+
+    if (line !== "") return line;
+  }
+
+  return "";
+};
+
+const getNextNonEmptyLine = (lines: string[], lineIndex: number) => {
+  for (let index = lineIndex + 1; index < lines.length; index += 1) {
+    const line = lines[index].trimStart();
+
+    if (line !== "") return line;
+  }
+
+  return "";
+};
 
 export default function RulePage() {
-  const activeChapterId = useScrollSpy(RULE_CHAPTER_IDS, { offset: 140 });
+  const [selectedRevisionId, setSelectedRevisionId] = useState(
+    CURRENT_RULE_REVISION_ID,
+  );
+  const selectedRevision =
+    CLUB_RULE_REVISIONS.find(
+      (revision) => revision.id === selectedRevisionId,
+    ) ?? CLUB_RULE_REVISIONS[0];
+  const ruleChapterNavItems = getRuleChapterNavItems(selectedRevision.content);
+  const ruleChapterIds = ruleChapterNavItems.map(({ id }) => String(id));
+  const activeChapterId = useScrollSpy(ruleChapterIds, { offset: 140 });
+  const ruleLines = selectedRevision.content.split("\n");
 
   const scrollToChapter = (chapter: number) => {
     const section = document.getElementById(String(chapter));
@@ -37,12 +69,38 @@ export default function RulePage() {
         ]}
         title="회칙"
         description="모든 포리프 행사 및 활동은 회칙에 근거합니다."
+        action={
+          <div className="w-full sm:w-64">
+            <Select
+              id="club-rule-revision"
+              size="sm"
+              value={selectedRevision.id}
+              onChange={setSelectedRevisionId}
+              placeholder="개정판 선택"
+              options={CLUB_RULE_REVISIONS.map((revision) => ({
+                value: revision.id,
+                label: `${revision.revisionDate}. ${revision.amendmentType}`,
+              }))}
+              dropdownAlign="right"
+              emphasizeSelected
+            />
+          </div>
+        }
       />
 
       <div className="flex flex-col gap-8 md:flex-row md:items-start">
         <div className="prose prose-sm min-w-0 max-w-none flex-1">
-          {RULE.split("\n").map((line, i) => {
+          {ruleLines.map((line, i) => {
             const trimmed = line.trimStart();
+            const previousNonEmptyLine = getPreviousNonEmptyLine(ruleLines, i);
+            const nextNonEmptyLine = getNextNonEmptyLine(ruleLines, i);
+            const isFirstArticleInChapter =
+              trimmed.startsWith("## ") &&
+              previousNonEmptyLine.startsWith("# ");
+            const isBlankBeforeFirstArticle =
+              trimmed === "" &&
+              previousNonEmptyLine.startsWith("# ") &&
+              nextNonEmptyLine.startsWith("## ");
 
             if (trimmed.startsWith("# ")) {
               const chapterMatch = trimmed.match(/^# (\d+)장/);
@@ -65,7 +123,9 @@ export default function RulePage() {
               return (
                 <h3
                   key={i}
-                  className="mb-2 mt-6 text-lg font-semibold text-gray-800"
+                  className={`mb-2 text-lg font-semibold text-gray-800 ${
+                    isFirstArticleInChapter ? "mt-4" : "mt-6"
+                  }`}
                 >
                   {trimmed.replace(/^## /, "")}
                 </h3>
@@ -81,6 +141,7 @@ export default function RulePage() {
                 </h4>
               );
             }
+            if (isBlankBeforeFirstArticle) return null;
             if (trimmed === "") return <div key={i} className="h-2" />;
             if (trimmed.match(/^\d+\./)) {
               return (
@@ -108,7 +169,7 @@ export default function RulePage() {
               <p className="mb-2 text-xs font-semibold text-gray-500">
                 회칙 목록
               </p>
-              {RULE_CHAPTER_NAV_ITEMS.map(({ id, label }) => (
+              {ruleChapterNavItems.map(({ id, label }) => (
                 <button
                   key={id}
                   type="button"

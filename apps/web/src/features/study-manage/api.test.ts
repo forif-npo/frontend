@@ -7,7 +7,7 @@ jest.mock("@core/utils/api-client", () => ({
   },
 }));
 import { apiClient } from "@core/utils/api-client";
-import { acceptApplications, getApplicants, getAttendance, rejectApplications, updateAttendance } from "./api";
+import { acceptApplications, getApplicants, getAttendance, getMyCreatedStudies, rejectApplications, updateAttendance } from "./api";
 
 type GetMock = {
   mockReset: () => void;
@@ -70,6 +70,22 @@ describe("study management api", () => {
         statusFilter: "PENDING",
         applyDateDirection: "ASC",
       },
+    });
+  });
+
+  it("excludes autonomous studies from the mentor management list", async () => {
+    const studies = [
+      { id: 101, study_name: "sample regular study", autonomous_study: false },
+      { id: 102, study_name: "sample autonomous study", autonomous_study: true },
+    ];
+    mockedGet.mockReturnValue(response(studies));
+
+    await expect(getMyCreatedStudies("test-token")).resolves.toEqual([
+      studies[0],
+    ]);
+
+    expect(apiClient.get).toHaveBeenCalledWith("api/v1/studies/me/created", {
+      headers: { Authorization: "Bearer test-token" },
     });
   });
 
