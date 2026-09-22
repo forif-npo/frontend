@@ -7,6 +7,7 @@ import { StudyFilterSection } from "@/components/study/ui/StudyFilterSection";
 import { StudyListMobileHeader } from "@/components/study/ui/StudyListMobileHeader";
 import { StudyResultsHeader } from "@/components/study/ui/StudyResultsHeader";
 import { useStudyData, useStudyFilters } from "@/hooks/study";
+import { useStudyCreateAvailability } from "@/features/study/list/useStudyCreateAvailability";
 import { useStudySearchInput } from "@/features/study/list/useStudySearchInput";
 import type { Study, StudyListParams } from "@core/types/study";
 import { getStudyTagName } from "@/constants/study-tags";
@@ -29,6 +30,7 @@ function compareStudySemester(a: Study, b: Study) {
 
 export default function StudyListPage() {
   const router = useRouter();
+  const { isStudyCreateOpen } = useStudyCreateAvailability();
   const [sortBy, setSortBy] = useState<StudySort>("latest");
   const { filters, updateFilter, updateMultipleFilters, clearAllFilters } =
     useStudyFilters();
@@ -98,6 +100,10 @@ export default function StudyListPage() {
 
   const handleApplyClick = (study: Study) => {
     router.push(`/studies/apply?study_id=${study.id}`);
+  };
+
+  const handleStudyCreateClick = () => {
+    if (isStudyCreateOpen) router.push("/studies/create");
   };
 
   if (error) {
@@ -173,6 +179,8 @@ export default function StudyListPage() {
           onTagChange={handleTagChange}
           onClearAllFilters={handleClearAllFilters}
           totalItems={totalElements}
+          isStudyCreateDisabled={!isStudyCreateOpen}
+          onStudyCreateClick={handleStudyCreateClick}
           loading={loading}
         />
 
@@ -184,7 +192,8 @@ export default function StudyListPage() {
               onSubmit={submitSearch}
             />
             <StudyActionButtons
-              onCreateClick={() => router.push("/studies/create")}
+              disabled={!isStudyCreateOpen}
+              onCreateClick={handleStudyCreateClick}
             />
           </div>
 

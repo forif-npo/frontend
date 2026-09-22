@@ -32,19 +32,11 @@ export function MemberHistoryDialog({
         <DialogHeader>
           <DialogTitle>부원 이력 상세</DialogTitle>
           <DialogDescription>
-            멘토와 운영진으로 활동한 이력을 확인합니다.
+            {member
+              ? `${member.userName}(${member.userId}) 님의 멘토 및 운영진 이력을 확인합니다.`
+              : "멘토 및 운영진 이력을 확인합니다."}
           </DialogDescription>
         </DialogHeader>
-
-        {member && (
-          <Table>
-            <TableBody>
-              <InfoRow label="이름" value={member.userName} />
-              <InfoRow label="학번" value={String(member.userId)} />
-              <InfoRow label="학과" value={member.department} />
-            </TableBody>
-          </Table>
-        )}
 
         {isLoading ? (
           <InlineLoadingState
@@ -125,15 +117,6 @@ export function MemberHistoryDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <TableRow>
-      <TableHead className="w-24">{label}</TableHead>
-      <TableCell>{value || "-"}</TableCell>
-    </TableRow>
   );
 }
 

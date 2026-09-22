@@ -42,10 +42,6 @@ interface MemberPageData extends PaginationInterface {
   content: MemberItem[];
 }
 
-interface MentorHistoryPageData extends PaginationInterface {
-  content: MemberItem[];
-}
-
 type MemberWithSemester = Member & { actYear?: number; actSemester?: number };
 
 function mapToMember(item: MemberItem): MemberWithSemester {
@@ -197,30 +193,19 @@ export async function updateMemberInfo(
 
 /**
  * 부원별 멘토·운영진 이력.
- * 각 목록 API는 전체 이력을 반환하므로, 상세 팝업을 열 때만 해당 부원의 기록을 추린다.
+ * 멘토 이력은 학기 정보를 포함하는 부원별 전용 API를 사용한다.
  */
 export async function fetchMemberHistory(
   userId: number,
 ): Promise<MemberHistory> {
   const [mentorResponse, operatorResponse] = await Promise.all([
     apiClient
-      .get("api/v1/admin/mentors", {
-        searchParams: { page: "0", size: "10000" },
-      })
-      .json<ApiResponse<MentorHistoryPageData>>(),
+      .get(`api/v1/admin/users/${userId}/mentor-history`)
+      .json<ApiResponse<MemberItem[]>>(),
     apiClient.get("api/v1/forif-team").json<ApiResponse<MemberItem[]>>(),
   ]);
 
-  const mentors = (mentorResponse.data?.content ?? [])
-    .filter(
-      (item) =>
-        pickNumber(
-          item.userId,
-          item.user_id,
-          item.studentId,
-          item.student_id,
-        ) === userId,
-    )
+  const mentors = (mentorResponse.data ?? [])
     .map((item) => ({
       actYear: pickNumber(item.actYear, item.act_year, item.year),
       actSemester: pickNumber(

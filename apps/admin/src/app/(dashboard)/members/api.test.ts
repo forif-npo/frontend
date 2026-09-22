@@ -113,33 +113,23 @@ describe("members api", () => {
     );
   });
 
-  it("filters and orders a member's mentor and operator histories", async () => {
+  it("uses the member-specific mentor history API with its semester fields", async () => {
     mockedGet
       .mockReturnValueOnce({
         json: <T>() =>
           Promise.resolve({
-            data: {
-              content: [
-                {
-                  user_id: 20260001,
-                  act_year: 2025,
-                  act_semester: 2,
-                  study_name: "React 기초",
-                },
-                {
-                  user_id: 20260001,
-                  act_year: 2026,
-                  act_semester: 1,
-                  study_name: "React 심화",
-                },
-                {
-                  user_id: 20260002,
-                  act_year: 2026,
-                  act_semester: 1,
-                  study_name: "다른 부원 스터디",
-                },
-              ],
-            },
+            data: [
+              {
+                actYear: 2025,
+                actSemester: 2,
+                studyName: "테스트 스터디 A",
+              },
+              {
+                actYear: 2026,
+                actSemester: 1,
+                studyName: "테스트 스터디 B",
+              },
+            ],
           } as T),
       })
       .mockReturnValueOnce({
@@ -147,44 +137,45 @@ describe("members api", () => {
           Promise.resolve({
             data: [
               {
-                student_id: 20260001,
+                student_id: 999999999,
                 year: 2025,
                 semester: 1,
-                club_department: "개발부",
-                user_title: "부원",
+                club_department: "테스트팀",
+                user_title: "테스트 직책 A",
               },
               {
-                student_id: 20260001,
+                student_id: 999999999,
                 year: 2026,
                 semester: 2,
-                club_department: "운영부",
-                user_title: "팀장",
+                club_department: "테스트팀",
+                user_title: "테스트 직책 B",
               },
               {
-                student_id: 20260002,
+                student_id: 999999998,
                 year: 2026,
                 semester: 2,
-                club_department: "운영부",
-                user_title: "팀장",
+                club_department: "테스트팀",
+                user_title: "테스트 직책 B",
               },
             ],
           } as T),
       });
 
-    const result = await fetchMemberHistory(20260001);
+    const result = await fetchMemberHistory(999999999);
 
-    expect(apiClient.get).toHaveBeenNthCalledWith(1, "api/v1/admin/mentors", {
-      searchParams: { page: "0", size: "10000" },
-    });
+    expect(apiClient.get).toHaveBeenNthCalledWith(
+      1,
+      "api/v1/admin/users/999999999/mentor-history",
+    );
     expect(apiClient.get).toHaveBeenNthCalledWith(2, "api/v1/forif-team");
     expect(result).toEqual({
       mentors: [
-        { actYear: 2026, actSemester: 1, studyName: "React 심화" },
-        { actYear: 2025, actSemester: 2, studyName: "React 기초" },
+        { actYear: 2026, actSemester: 1, studyName: "테스트 스터디 B" },
+        { actYear: 2025, actSemester: 2, studyName: "테스트 스터디 A" },
       ],
       operators: [
-        { actYear: 2026, actSemester: 2, team: "운영부", title: "팀장" },
-        { actYear: 2025, actSemester: 1, team: "개발부", title: "부원" },
+        { actYear: 2026, actSemester: 2, team: "테스트팀", title: "테스트 직책 B" },
+        { actYear: 2025, actSemester: 1, team: "테스트팀", title: "테스트 직책 A" },
       ],
     });
   });

@@ -20,7 +20,7 @@ export const columns: ColumnDef<Operator>[] = [
       <SortableHeader column={column}>부서</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue("department")}</div>
+      <div className="text-center">{row.getValue("department")}팀</div>
     ),
   },
   {
