@@ -120,6 +120,12 @@ jest.mock("./api", () => ({
   fetchMembers: jest.fn(),
   updateMemberInfo: jest.fn(),
 }));
+jest.mock("@/features/members/returning-member-roster", () => ({
+  fetchReturningMemberRoster: jest.fn(),
+  downloadReturningMemberRoster: jest.fn(),
+}));
+import { downloadReturningMemberRoster, fetchReturningMemberRoster, type ReturningMemberRoster } from "@/features/members/returning-member-roster";
+import { handleApiError } from "@core/utils/api-client";
 import { toast } from "sonner";
 import { deleteCurrentSemesterMember, updateMemberInfo } from "./api";
 import { MembersView } from "./members-view";
@@ -171,7 +177,88 @@ function renderMembersView(currentSemester = "26-2") {
 }
 
 describe("MembersView", () => {
+  it("downloads the active roster even while viewing a previous semester and disables repeated clicks", async () => {
+    let resolve!: (value: ReturningMemberRoster) => void;
+    jest.mocked(fetchReturningMemberRoster).mockReturnValue(
+      new Promise((done) => {
+        resolve = done;
+      }),
+    );
+    renderMembersView("26-1");
+    fireEvent.click(
+      screen.getByRole("button", { name: "재등록원 명부 다운로드" }),
+    );
+    const loadingButton = screen.getByRole("button", {
+      name: "재등록원 명부 다운로드 중...",
+    }) as HTMLButtonElement;
+    expect(loadingButton.disabled).toBe(true);
+    fireEvent.click(loadingButton);
+    expect(fetchReturningMemberRoster).toHaveBeenCalledTimes(1);
+    const roster: ReturningMemberRoster = {
+      act_year: 2026,
+      act_semester: 2,
+      members: [
+        {
+          user_id: "910001",
+          user_name: "가상부원",
+          college: "가상대학",
+          department: "가상학과",
+          phone_num: "01000000000",
+        },
+      ],
+    };
+    resolve(roster);
+    await waitFor(() =>
+      expect(downloadReturningMemberRoster).toHaveBeenCalledWith(roster),
+    );
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "재등록원 명부 다운로드",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(false);
+  });
+
+  it("shows an empty message without creating a file", async () => {
+    jest
+      .mocked(fetchReturningMemberRoster)
+      .mockResolvedValue({ act_year: 2026, act_semester: 2, members: [] });
+    renderMembersView();
+    fireEvent.click(
+      screen.getByRole("button", { name: "재등록원 명부 다운로드" }),
+    );
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith(
+        "다운로드할 재등록원이 없습니다.",
+      ),
+    );
+    expect(downloadReturningMemberRoster).not.toHaveBeenCalled();
+  });
+
+  it("reports download failures and permits retry", async () => {
+    jest
+      .mocked(fetchReturningMemberRoster)
+      .mockRejectedValue(new Error("network"));
+    jest.mocked(handleApiError).mockResolvedValue("가상 오류");
+    renderMembersView();
+    fireEvent.click(
+      screen.getByRole("button", { name: "재등록원 명부 다운로드" }),
+    );
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("가상 오류"));
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "재등록원 명부 다운로드",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(false);
+    expect(downloadReturningMemberRoster).not.toHaveBeenCalled();
+  });
+
   beforeEach(() => {
+    jest.mocked(fetchReturningMemberRoster).mockReset();
+    jest.mocked(downloadReturningMemberRoster).mockReset();
     mockRefresh.mockReset();
     mockedDeleteCurrentSemesterMember.mockReset();
     mockedDeleteCurrentSemesterMember.mockResolvedValue(undefined);
