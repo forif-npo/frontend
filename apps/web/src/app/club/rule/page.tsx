@@ -82,7 +82,6 @@ export default function RulePage() {
                 label: `${revision.revisionDate}. ${revision.amendmentType}`,
               }))}
               dropdownAlign="right"
-              emphasizeSelected
             />
           </div>
         }
