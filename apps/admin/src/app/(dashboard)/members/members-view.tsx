@@ -18,6 +18,7 @@ import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { DepartmentOption } from "@/features/departments/api";
+import { downloadReturningMemberRoster, fetchReturningMemberRoster } from "@/features/members/returning-member-roster";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import { deleteCurrentSemesterMember, fetchMemberHistory, fetchMembers, updateMemberInfo } from "./api";
@@ -65,6 +66,7 @@ export function MembersView({
   );
   const [selectedMembers, setSelectedMembers] = useState<Member[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isReturningDownloading, setIsReturningDownloading] = useState(false);
   const {
     searchQuery,
     setSearchQuery,
@@ -123,6 +125,23 @@ export function MembersView({
       toast.error(await handleApiError(error));
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  const handleDownloadReturningMembers = async () => {
+    if (isReturningDownloading) return;
+    setIsReturningDownloading(true);
+    try {
+      const roster = await fetchReturningMemberRoster();
+      if (roster.members.length === 0) {
+        toast.error("다운로드할 재등록원이 없습니다.");
+        return;
+      }
+      downloadReturningMemberRoster(roster);
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setIsReturningDownloading(false);
     }
   };
 
@@ -211,20 +230,34 @@ export function MembersView({
     <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader title="부원 목록" description="학기별 부원 목록입니다." />
 
-      <div className="flex items-center justify-between gap-4">
-        <SemesterTabs
-          currentSemester={currentSemester}
-          onSemesterChange={handleSemesterChange}
-        />
-        <Button
-          variant="outline"
-          className="gap-2"
-          disabled={isDownloading}
-          onClick={handleDownloadExcel}
-        >
-          <Download className="h-4 w-4" />
-          {isDownloading ? "다운로드 중..." : "엑셀로 다운로드"}
-        </Button>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0 flex-1">
+          <SemesterTabs
+            currentSemester={currentSemester}
+            onSemesterChange={handleSemesterChange}
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            disabled={isReturningDownloading}
+            onClick={handleDownloadReturningMembers}
+            title="현재 학기의 재등록원 전체 명부를 다운로드합니다."
+          >
+            <Download className="h-4 w-4" />
+            {isReturningDownloading
+              ? "재등록원 명부 다운로드 중..."
+              : "재등록원 명부 다운로드"}
+          </Button>
+          <Button
+            variant="outline"
+            className="gap-2"
+            disabled={isDownloading}
+            onClick={handleDownloadExcel}
+          >
+            <Download className="h-4 w-4" />
+            {isDownloading ? "다운로드 중..." : "엑셀로 다운로드"}
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4">
