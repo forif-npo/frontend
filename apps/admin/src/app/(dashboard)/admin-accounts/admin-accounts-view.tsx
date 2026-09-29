@@ -380,15 +380,24 @@ export function AdminAccountsView({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="create-affiliation">소속 (팀명)</Label>
-              <Input
-                id="create-affiliation"
-                placeholder="기획팀"
+              <Label htmlFor="create-affiliation">소속</Label>
+              <Select
                 value={createForm.affiliation}
-                onChange={(e) =>
-                  setCreateForm((f) => ({ ...f, affiliation: e.target.value }))
+                onValueChange={(affiliation) =>
+                  setCreateForm((f) => ({ ...f, affiliation }))
                 }
-              />
+              >
+                <SelectTrigger id="create-affiliation">
+                  <SelectValue placeholder="소속 팀 선택" />
+                </SelectTrigger>
+                <SelectContent>
+                  {teamNames.map((team) => (
+                    <SelectItem key={team} value={team}>
+                      {team}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
