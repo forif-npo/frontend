@@ -8,11 +8,12 @@ jest.mock("@core/utils/api-client", () => ({
   },
 }));
 import { apiClient } from "@core/utils/api-client";
-import { createAdminAccount, delegatePresidency, deleteAdminAccount, getAdminAccounts, updateAdminAccount } from "./api";
+import { createAdminAccount, delegatePresidency, deleteAdminAccount, getAdminAccounts, getCurrentTeamNames, updateAdminAccount } from "./api";
 
 type JsonMock = {
   mockReset: () => void;
   mockReturnValue: (value: { json: <T>() => Promise<T> }) => void;
+  mockReturnValueOnce: (value: { json: <T>() => Promise<T> }) => JsonMock;
 };
 
 const mockedGet = apiClient.get as unknown as JsonMock;
@@ -69,6 +70,26 @@ describe("admin accounts api", () => {
       total_pages: 0,
       current_page: 0,
     });
+  });
+
+  it("derives unique team names from the current semester roster", async () => {
+    mockedGet
+      .mockReturnValueOnce(
+        response({ act_year: 2026, act_semester: 2, label: "26-2" }),
+      )
+      .mockReturnValueOnce(
+        response([
+          { clubDepartment: "SW" },
+          { club_department: " 전략기획 " },
+          { clubDepartment: "SW" },
+        ]),
+      );
+
+    await expect(getCurrentTeamNames()).resolves.toEqual(["전략기획", "SW"]);
+    expect(apiClient.get).toHaveBeenNthCalledWith(
+      2,
+      "api/v1/forif-team/2026/2",
+    );
   });
 
   it("preserves account mutations and presidency delegation payloads", async () => {

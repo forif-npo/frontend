@@ -1,5 +1,11 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
+import { getCurrentSemester } from "@core/api/semester";
+
+interface ForifTeamItem {
+  clubDepartment?: string;
+  club_department?: string;
+}
 
 /**
  * 운영진 계정 (GET /api/v1/president/admins — 회장단 전용)
@@ -44,6 +50,22 @@ export async function getAdminAccounts(params: {
       current_page: 0,
     }
   );
+}
+
+export async function getCurrentTeamNames(): Promise<string[]> {
+  const semester = await getCurrentSemester();
+  const response = await apiClient
+    .get(`api/v1/forif-team/${semester.act_year}/${semester.act_semester}`)
+    .json<ApiResponse<ForifTeamItem[]>>();
+
+  return Array.from(
+    new Set(
+      (response.data ?? [])
+        .map((item) => item.club_department ?? item.clubDepartment ?? "")
+        .map((team) => team.trim())
+        .filter(Boolean),
+    ),
+  ).sort((a, b) => a.localeCompare(b, "ko"));
 }
 
 export async function createAdminAccount(body: {

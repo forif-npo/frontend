@@ -8,6 +8,7 @@ import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DataTable } from "@/components/list/data-table";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/list/dropdown-menu";
 import { OffsetPagination } from "@/components/list/offset-pagination";
@@ -15,7 +16,7 @@ import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { handleApiError } from "@core/utils/api-client";
 import { passwordSchema } from "@core/schemas";
-import { createAdminAccount, deleteAdminAccount, delegatePresidency, getAdminAccounts, updateAdminAccount, type AdminAccount } from "./api";
+import { createAdminAccount, deleteAdminAccount, delegatePresidency, getAdminAccounts, getCurrentTeamNames, updateAdminAccount, type AdminAccount } from "./api";
 
 interface AdminAccountsViewProps {
   /** 로그인한 운영진의 소속 (회장 / 부회장 / 운영진 ...) */
@@ -48,6 +49,7 @@ export function AdminAccountsView({
   const [appliedSearch, setAppliedSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [teamNames, setTeamNames] = useState<string[]>([]);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState(EMPTY_CREATE_FORM);
@@ -85,6 +87,12 @@ export function AdminAccountsView({
   useEffect(() => {
     fetchAccounts();
   }, [fetchAccounts]);
+
+  useEffect(() => {
+    getCurrentTeamNames()
+      .then(setTeamNames)
+      .catch(async (error) => toast.error(await handleApiError(error)));
+  }, []);
 
   const handleCreate = async () => {
     if (isSubmitting) return;
@@ -426,13 +434,25 @@ export function AdminAccountsView({
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="edit-affiliation">소속</Label>
-              <Input
-                id="edit-affiliation"
+              <Select
                 value={editForm.affiliation}
-                onChange={(e) =>
-                  setEditForm((f) => ({ ...f, affiliation: e.target.value }))
+                onValueChange={(affiliation) =>
+                  setEditForm((f) => ({ ...f, affiliation }))
                 }
-              />
+              >
+                <SelectTrigger id="edit-affiliation">
+                  <SelectValue placeholder="소속 선택" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from(new Set([editForm.affiliation, ...teamNames]))
+                    .filter(Boolean)
+                    .map((team) => (
+                      <SelectItem key={team} value={team}>
+                        {team}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
