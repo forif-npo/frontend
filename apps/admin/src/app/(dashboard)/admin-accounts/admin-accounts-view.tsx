@@ -33,6 +33,11 @@ interface EditForm {
   affiliation: string;
 }
 
+interface DelegateConfirm {
+  account: AdminAccount;
+  role: "회장" | "부회장";
+}
+
 const EMPTY_CREATE_FORM = { userId: "", password: "", affiliation: "" };
 
 export function AdminAccountsView({
@@ -60,11 +65,8 @@ export function AdminAccountsView({
     password: "",
     affiliation: "",
   });
-
-  const [delegateTarget, setDelegateTarget] = useState<AdminAccount | null>(
-    null,
-  );
-  const [delegateRole, setDelegateRole] = useState<"회장" | "부회장">("부회장");
+  const [delegateConfirm, setDelegateConfirm] =
+    useState<DelegateConfirm | null>(null);
 
   const fetchAccounts = useCallback(async () => {
     setIsLoading(true);
@@ -209,24 +211,20 @@ export function AdminAccountsView({
   };
 
   const handleDelegate = async () => {
-    if (!delegateTarget || isSubmitting) return;
-    const label =
-      delegateRole === "회장"
-        ? `${delegateTarget.name}님에게 회장을 위임합니다.\n위임 후 본인은 일반 운영진이 됩니다.`
-        : `${delegateTarget.name}님을 부회장으로 임명합니다.\n기존 부회장은 일반 운영진이 됩니다.`;
-    if (!confirm(label)) return;
+    if (!delegateConfirm || isSubmitting) return;
+    const { account, role } = delegateConfirm;
 
     setIsSubmitting(true);
     try {
-      await delegatePresidency(delegateTarget.user_id, delegateRole);
+      await delegatePresidency(account.user_id, role);
       toast.success(
-        delegateRole === "회장"
+        role === "회장"
           ? "회장이 위임되었습니다."
           : "부회장이 임명되었습니다.",
       );
-      setDelegateTarget(null);
+      setDelegateConfirm(null);
       await fetchAccounts();
-      if (delegateRole === "회장") {
+      if (role === "회장") {
         // 본인 소속이 바뀌었으므로 세션 갱신을 위해 새로고침
         window.location.reload();
       }
@@ -273,15 +271,22 @@ export function AdminAccountsView({
     return (
       <>
         {canDelegate && (
-          <DropdownMenuItem
-            onSelect={() => {
-              setDelegateTarget(account);
-              setDelegateRole("부회장");
-            }}
-          >
-            <Crown className="mr-2 h-4 w-4" />
-            위임/임명
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem
+              onSelect={() => setDelegateConfirm({ account, role: "회장" })}
+            >
+              <Crown className="mr-2 h-4 w-4" />
+              회장 위임
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={() =>
+                setDelegateConfirm({ account, role: "부회장" })
+              }
+            >
+              <ShieldCheck className="mr-2 h-4 w-4" />
+              부회장 임명
+            </DropdownMenuItem>
+          </>
         )}
         {canDelegate && canManage && <DropdownMenuSeparator />}
         {canManage && (
@@ -466,49 +471,33 @@ export function AdminAccountsView({
         </DialogContent>
       </Dialog>
 
-      {/* 위임/임명 다이얼로그 (회장 전용) */}
       <Dialog
-        open={delegateTarget !== null}
-        onOpenChange={(open) => !open && setDelegateTarget(null)}
+        open={delegateConfirm !== null}
+        onOpenChange={(open) => !open && setDelegateConfirm(null)}
       >
-        <DialogContent>
+        <DialogContent showCloseButton={false}>
           <DialogHeader>
-            <DialogTitle>회장 위임 / 부회장 임명</DialogTitle>
+            <DialogTitle>
+              {delegateConfirm?.role === "회장" ? "회장 위임" : "부회장 임명"}
+            </DialogTitle>
             <DialogDescription>
-              {delegateTarget?.name}({delegateTarget?.user_id})님에게 부여할
-              역할을 선택하세요.
+              {delegateConfirm
+                ? delegateConfirm.role === "회장"
+                  ? `${delegateConfirm.account.name} 님에게 회장을 위임하시겠습니까? 위임 후 본인은 일반 운영진이 됩니다.`
+                  : `${delegateConfirm.account.name} 님을 부회장으로 임명하시겠습니까? 기존 부회장은 일반 운영진이 됩니다.`
+                : null}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex gap-2">
-            <Button
-              variant={delegateRole === "부회장" ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => setDelegateRole("부회장")}
-            >
-              <ShieldCheck className="mr-1 h-4 w-4" />
-              부회장 임명
-            </Button>
-            <Button
-              variant={delegateRole === "회장" ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => setDelegateRole("회장")}
-            >
-              <Crown className="mr-1 h-4 w-4" />
-              회장 위임
-            </Button>
-          </div>
-          {delegateRole === "회장" && (
-            <p className="text-destructive text-sm">
-              회장을 위임하면 본인은 일반 운영진이 되며, 이 페이지의 위임/임명
-              기능을 더 이상 사용할 수 없습니다.
-            </p>
-          )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDelegateTarget(null)}>
+            <Button
+              variant="outline"
+              onClick={() => setDelegateConfirm(null)}
+              disabled={isSubmitting}
+            >
               취소
             </Button>
             <Button onClick={handleDelegate} disabled={isSubmitting}>
-              {isSubmitting ? "처리 중..." : "확정"}
+              {isSubmitting ? "처리 중..." : "확인"}
             </Button>
           </DialogFooter>
         </DialogContent>
