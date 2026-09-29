@@ -337,7 +337,7 @@ export function AdminAccountsView({
     <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <PageHeader
         title="운영진 계정 관리"
-        description="admin 페이지에 로그인할 수 있는 운영진(ADMIN) 계정을 관리합니다. 회장 위임과 부회장 임명은 회장만 할 수 있습니다."
+        description="ADMIN 페이지에 로그인할 수 있는 운영진 계정을 관리합니다."
       />
 
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -351,9 +351,6 @@ export function AdminAccountsView({
           placeholder="이름 또는 소속으로 검색"
         />
         <div className="ml-auto flex shrink-0 items-center gap-3">
-          <span className="text-muted-foreground text-sm">
-            총 {totalElements}명
-          </span>
           <Button onClick={() => setCreateOpen(true)}>운영진 계정 생성</Button>
         </div>
       </div>
