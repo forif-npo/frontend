@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DataTable } from "@/components/list/data-table";
+import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/list/dropdown-menu";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
@@ -253,44 +254,41 @@ export function AdminAccountsView({
   const renderAccountActions = (account: AdminAccount) => {
     const isSelf = account.user_id === myUserId;
     const isPresidentTeamMember = PRESIDENT_TEAM.includes(account.affiliation);
+    const canDelegate = isPresident && !isSelf && !isPresidentTeamMember;
     const canManage =
       !isSelf &&
       account.affiliation !== "회장" &&
       (isPresident || account.affiliation !== "부회장");
 
+    if (!canDelegate && !canManage) return null;
+
     return (
       <>
-        {isPresident && !isSelf && !isPresidentTeamMember && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
+        {canDelegate && (
+          <DropdownMenuItem
+            onSelect={() => {
               setDelegateTarget(account);
               setDelegateRole("부회장");
             }}
           >
-            <Crown className="mr-1 h-3.5 w-3.5" />
+            <Crown className="mr-2 h-4 w-4" />
             위임/임명
-          </Button>
+          </DropdownMenuItem>
         )}
+        {canDelegate && canManage && <DropdownMenuSeparator />}
         {canManage && (
           <>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="수정"
-              onClick={() => openEdit(account)}
+            <DropdownMenuItem onSelect={() => openEdit(account)}>
+              <Pencil className="mr-2 h-4 w-4" />
+              수정
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onSelect={() => handleDelete(account)}
             >
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="삭제"
-              onClick={() => handleDelete(account)}
-            >
-              <Trash2 className="text-destructive h-4 w-4" />
-            </Button>
+              <Trash2 className="mr-2 h-4 w-4" />
+              삭제
+            </DropdownMenuItem>
           </>
         )}
       </>
@@ -323,7 +321,7 @@ export function AdminAccountsView({
         columns={columns}
         data={isLoading ? [] : accounts}
         getRowId={(account) => String(account.user_id)}
-        renderActionCell={renderAccountActions}
+        renderRowActions={renderAccountActions}
         showPagination={false}
         emptyMessage={isLoading ? "불러오는 중..." : "운영진 계정이 없습니다"}
       />
@@ -401,7 +399,6 @@ export function AdminAccountsView({
             <DialogTitle>운영진 정보 수정</DialogTitle>
             <DialogDescription>
               {editTarget?.name}({editTarget?.user_id})의 정보를 수정합니다.
-              비밀번호는 입력한 경우에만 변경됩니다.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
@@ -428,7 +425,7 @@ export function AdminAccountsView({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="edit-affiliation">소속 (팀명)</Label>
+              <Label htmlFor="edit-affiliation">소속</Label>
               <Input
                 id="edit-affiliation"
                 value={editForm.affiliation}
