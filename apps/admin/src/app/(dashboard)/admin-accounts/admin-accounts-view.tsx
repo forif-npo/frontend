@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { Crown, Pencil, ShieldCheck, Trash2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -229,43 +228,9 @@ export function AdminAccountsView({
     }
   };
 
-  const affiliationBadge = useCallback((affiliation: string) => {
-    if (affiliation === "회장") {
-      return (
-        <Badge className="bg-warning-50 text-text-inverse-static hover:bg-warning-50">
-          <Crown className="mr-1 h-3 w-3" />
-          회장
-        </Badge>
-      );
-    }
-    if (affiliation === "부회장") {
-      return (
-        <Badge className="bg-primary-60 text-text-inverse-static hover:bg-primary-60">
-          <ShieldCheck className="mr-1 h-3 w-3" />
-          부회장
-        </Badge>
-      );
-    }
-    return <Badge variant="secondary">{affiliation}팀</Badge>;
-  }, []);
-
   const columns = useMemo<ColumnDef<AdminAccount>[]>(
     () => [
-      {
-        accessorKey: "name",
-        header: "이름",
-        cell: ({ row }) => {
-          const account = row.original;
-          return (
-            <div>
-              {account.name}
-              {account.user_id === myUserId && (
-                <span className="ml-1">(나)</span>
-              )}
-            </div>
-          );
-        },
-      },
+      { accessorKey: "name", header: "이름" },
       { accessorKey: "user_id", header: "학번" },
       {
         accessorKey: "department",
@@ -280,10 +245,9 @@ export function AdminAccountsView({
       {
         accessorKey: "affiliation",
         header: "소속",
-        cell: ({ row }) => affiliationBadge(row.original.affiliation),
       },
     ],
-    [affiliationBadge, myUserId],
+    [],
   );
 
   const renderAccountActions = (account: AdminAccount) => {
