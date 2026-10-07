@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">2026년 2학기 FORIF 기술블로그 백일장</title>
+  <desc id="description">푸른 배경 위에 키보드와 펜을 표현한 기술블로그 백일장 행사 모바일 배너입니다. 행사는 9월 30일부터 10월 14일까지 진행됩니다.</desc>
+  <defs>
+    <linearGradient id="background" x1="20" y1="8" x2="340" y2="354" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#304D9D"/>
+      <stop offset="0.55" stop-color="#3F62C6"/>
+      <stop offset="1" stop-color="#5578E5"/>
+    </linearGradient>
+    <linearGradient id="keyboard" x1="34" y1="229" x2="328" y2="347" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#91A9EA"/>
+      <stop offset="1" stop-color="#718BD2"/>
+    </linearGradient>
+    <linearGradient id="pen" x1="221" y1="166" x2="300" y2="306" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFF"/>
+      <stop offset="1" stop-color="#C9D6F8"/>
+    </linearGradient>
+    <filter id="shadow" x="7" y="209" width="346" height="155" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#17316F" flood-opacity="0.3"/>
+    </filter>
+    <filter id="penShadow" x="177" y="139" width="145" height="187" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#17316F" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="360" height="360" fill="url(#background)"/>
+  <path d="M0 272L360 235V360H0V272Z" fill="#8CA5E6" fill-opacity="0.42"/>
+  <circle cx="340" cy="18" r="92" fill="#9CB5F7" fill-opacity="0.12"/>
+
+  <g font-family="Pretendard, Apple SD Gothic Neo, Noto Sans KR, sans-serif">
+    <text x="24" y="66" fill="white" font-size="32" font-weight="800" letter-spacing="-1">기술블로그</text>
+    <text x="24" y="104" fill="white" font-size="32" font-weight="800" letter-spacing="-1">백일장</text>
+    <text x="25" y="134" fill="white" fill-opacity="0.9" font-size="14" font-weight="500" letter-spacing="-0.3">펜 대신, 키보드로 두드리는 백일장</text>
+    <text x="25" y="165" fill="white" font-size="16" font-weight="700">09.30 - 10.14</text>
+  </g>
+
+  <g filter="url(#shadow)" transform="rotate(4 180 293)">
+    <path d="M24 237H325L342 333H38L24 237Z" fill="url(#keyboard)"/>
+    <path d="M38 333H342L334 344H44L38 333Z" fill="#6983CB"/>
+    <g fill="#F8FAFF">
+      <rect x="39" y="249" width="40" height="21" rx="4"/>
+      <rect x="84" y="249" width="40" height="21" rx="4"/>
+      <rect x="129" y="249" width="40" height="21" rx="4"/>
+      <rect x="174" y="249" width="40" height="21" rx="4"/>
+      <rect x="219" y="249" width="40" height="21" rx="4"/>
+      <rect x="264" y="249" width="53" height="21" rx="4"/>
+      <rect x="45" y="276" width="45" height="22" rx="4"/>
+      <rect x="95" y="276" width="45" height="22" rx="4"/>
+      <rect x="145" y="276" width="45" height="22" rx="4"/>
+      <rect x="195" y="276" width="45" height="22" rx="4"/>
+      <rect x="245" y="276" width="77" height="22" rx="4"/>
+      <rect x="52" y="304" width="145" height="23" rx="4"/>
+    </g>
+    <g fill="#9AAFE6">
+      <rect x="202" y="304" width="58" height="23" rx="4"/>
+      <rect x="265" y="304" width="63" height="23" rx="4"/>
+    </g>
+  </g>
+
+  <g filter="url(#penShadow)">
+    <path d="M274 162C282 154 295 154 303 162C311 170 311 183 303 191L219 306L183 315L191 279L274 162Z" fill="url(#pen)"/>
+    <path d="M191 279L219 306L183 315L191 279Z" fill="#3151A6"/>
+    <path d="M274 162C282 154 295 154 303 162C311 170 311 183 303 191L219 306L191 279L274 162Z" stroke="#F8FAFF" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M191 279L183 315L219 306" stroke="#3151A6" stroke-width="7" stroke-linejoin="round"/>
+  </g>
+</svg>

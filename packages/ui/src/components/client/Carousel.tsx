@@ -11,6 +11,7 @@ export interface CarouselItem {
   id: string;
   content: ReactNode;
   mobileAspect?: "square" | "desktop";
+  desktopAspect?: "wide";
 }
 
 export function Carousel({ carouselItems, bannerClassName }: CarouselProps) {
@@ -93,6 +94,7 @@ export function Carousel({ carouselItems, bannerClassName }: CarouselProps) {
               ? "aspect-[4/1]"
               : "aspect-square",
             bannerClassName,
+            currentItem.desktopAspect === "wide" && "md:aspect-[4/1]",
           )}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}

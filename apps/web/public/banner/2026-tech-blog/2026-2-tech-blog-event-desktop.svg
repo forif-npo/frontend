@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">2026년 2학기 FORIF 기술블로그 백일장</title>
+  <desc id="description">푸른 배경 위에 키보드와 펜을 표현한 기술블로그 백일장 행사 배너입니다. 행사는 9월 30일부터 10월 14일까지 진행됩니다.</desc>
+  <defs>
+    <linearGradient id="background" x1="48" y1="18" x2="1128" y2="326" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#304D9D"/>
+      <stop offset="0.54" stop-color="#3F62C6"/>
+      <stop offset="1" stop-color="#5578E5"/>
+    </linearGradient>
+    <linearGradient id="keyboard" x1="744" y1="139" x2="1114" y2="292" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#91A9EA"/>
+      <stop offset="1" stop-color="#718BD2"/>
+    </linearGradient>
+    <linearGradient id="pen" x1="872" y1="74" x2="1014" y2="248" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFF"/>
+      <stop offset="1" stop-color="#C9D6F8"/>
+    </linearGradient>
+    <filter id="keyboardShadow" x="683" y="113" width="483" height="203" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#17316F" flood-opacity="0.3"/>
+    </filter>
+    <filter id="penShadow" x="814" y="41" width="248" height="226" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#17316F" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="300" fill="url(#background)"/>
+  <path d="M0 236L1200 164V300H0V236Z" fill="#8CA5E6" fill-opacity="0.42"/>
+  <circle cx="1128" cy="24" r="132" fill="#9CB5F7" fill-opacity="0.1"/>
+  <circle cx="1136" cy="282" r="176" fill="#24458F" fill-opacity="0.15"/>
+
+  <g font-family="Pretendard, Apple SD Gothic Neo, Noto Sans KR, sans-serif">
+    <text x="72" y="112" fill="white" font-size="46" font-weight="800" letter-spacing="-1.5">기술블로그 백일장</text>
+    <text x="74" y="150" fill="white" fill-opacity="0.9" font-size="19" font-weight="500" letter-spacing="-0.3">펜 대신, 키보드로 두드리는 백일장</text>
+    <line x1="74" y1="174" x2="326" y2="174" stroke="white" stroke-opacity="0.42"/>
+    <text x="74" y="208" fill="white" font-size="21" font-weight="700">09.30 - 10.14</text>
+  </g>
+
+  <g filter="url(#keyboardShadow)" transform="rotate(5 925 219)">
+    <path d="M706 142H1112L1142 272H732L706 142Z" fill="url(#keyboard)"/>
+    <path d="M732 272H1142L1130 288H742L732 272Z" fill="#6983CB"/>
+    <g fill="#F8FAFF">
+      <rect x="728" y="158" width="58" height="27" rx="6"/>
+      <rect x="793" y="158" width="58" height="27" rx="6"/>
+      <rect x="858" y="158" width="58" height="27" rx="6"/>
+      <rect x="923" y="158" width="58" height="27" rx="6"/>
+      <rect x="988" y="158" width="58" height="27" rx="6"/>
+      <rect x="1053" y="158" width="58" height="27" rx="6"/>
+      <rect x="737" y="192" width="62" height="29" rx="6"/>
+      <rect x="806" y="192" width="62" height="29" rx="6"/>
+      <rect x="875" y="192" width="62" height="29" rx="6"/>
+      <rect x="944" y="192" width="62" height="29" rx="6"/>
+      <rect x="1013" y="192" width="106" height="29" rx="6"/>
+      <rect x="748" y="228" width="197" height="30" rx="6"/>
+    </g>
+    <g fill="#9AAFE6">
+      <rect x="952" y="228" width="82" height="30" rx="6"/>
+      <rect x="1041" y="228" width="86" height="30" rx="6"/>
+    </g>
+    <g fill="#2F3D67" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">
+      <text x="757" y="176">t</text><text x="822" y="176">y</text><text x="887" y="176">u</text>
+      <text x="952" y="176">i</text><text x="1017" y="176">o</text><text x="1082" y="176">p</text>
+      <text x="768" y="211">g</text><text x="837" y="211">h</text><text x="906" y="211">j</text>
+      <text x="975" y="211">k</text><text x="1066" y="211">return</text>
+      <text x="993" y="248">?123</text><text x="1084" y="248">shift</text>
+    </g>
+  </g>
+
+  <g filter="url(#penShadow)">
+    <path d="M1009 69C1020 58 1038 58 1049 69C1060 80 1060 98 1049 109L896 251L840 258L850 202L1009 69Z" fill="url(#pen)"/>
+    <path d="M850 202L896 251L840 258L850 202Z" fill="#3151A6"/>
+    <path d="M1009 69C1020 58 1038 58 1049 69C1060 80 1060 98 1049 109L896 251L850 202L1009 69Z" stroke="#F8FAFF" stroke-width="9" stroke-linejoin="round"/>
+    <path d="M850 202L840 258L896 251" stroke="#3151A6" stroke-width="9" stroke-linejoin="round"/>
+  </g>
+</svg>
