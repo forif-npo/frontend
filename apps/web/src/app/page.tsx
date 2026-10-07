@@ -29,6 +29,7 @@ export default async function Page() {
       id: banner.id,
       content: <BannerComponent href={banner.href} image={banner.image} />,
       mobileAspect: banner.mobileAspect,
+      desktopAspect: banner.desktopAspect,
     };
   });
   const mobileCarouselItems = carouselItems.filter(
