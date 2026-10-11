@@ -17,8 +17,8 @@ feat: 운영진 모집 설정과 공개 안내 화면 추가
 
 - admin: `/staff-recruitments` 회장단 권한 경계, 모집 목록·폼·상태 action, sidebar 메뉴
 - web: 현재 모집 API adapter, 동적 홈 Carousel 배너, 모집 안내의 예정/진행/마감/취소/없음/오류 상태
-- core: `staff-hall-contract-r1` snake_case 공유 타입과 package export
-- docs: 계약 r1 동기화, 진행표, PR·backend 인계 자료
+- core: `staff-hall-contract-r2` snake_case 공유 타입과 package export
+- docs: 계약 r2 동기화, 진행표, PR·backend 인계 자료
 
 ## 기존 구현 재사용
 
@@ -28,7 +28,7 @@ feat: 운영진 모집 설정과 공개 안내 화면 추가
 
 ## API·권한·연동
 
-- 계약: `staff-hall-contract-r1`
+- 계약: `staff-hall-contract-r2`
 - 공개: `GET /api/v1/staff-recruitments/current`
 - 관리: `/api/v1/admin/staff-recruitments` CRUD 및 publish/close/cancel action
 - UI는 회장·부회장에게만 메뉴와 설정 화면을 보이지만 최종 권한은 backend 403을 사용합니다.
