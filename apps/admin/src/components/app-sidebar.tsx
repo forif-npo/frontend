@@ -1,9 +1,42 @@
 "use client";
 import { type MouseEvent } from "react";
 import { signOutAction } from "@/features/auth/actions";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarSeparator,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import { LogoutIcon } from "@repo/assets/icons/krds";
-import { Award, BookOpen, CheckCircle, CalendarRange, CircleDollarSign, Code2, FileText, HelpCircle, LayoutGrid, MessageSquare, Rocket, Settings, ShieldCheck, UserCog, BookUser, ClipboardList, Users } from "lucide-react";
+import {
+  Award,
+  BookOpen,
+  CheckCircle,
+  CalendarRange,
+  CircleDollarSign,
+  Code2,
+  FileText,
+  HelpCircle,
+  LayoutGrid,
+  MessageSquare,
+  Rocket,
+  Settings,
+  ShieldCheck,
+  UserCog,
+  BookUser,
+  ClipboardList,
+  Users,
+  ClipboardPenLine,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -51,6 +84,11 @@ const menuItems = {
   presidentOnly: {
     label: "회장단",
     items: [
+      {
+        title: "운영진 모집 관리",
+        url: "/staff-recruitments",
+        icon: ClipboardPenLine,
+      },
       { title: "운영진 계정 관리", url: "/admin-accounts", icon: ShieldCheck },
       { title: "학기 관리", url: "/semester", icon: CalendarRange },
     ],
