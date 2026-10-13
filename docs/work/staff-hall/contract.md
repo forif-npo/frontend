@@ -271,6 +271,44 @@ backend의 실제 `FOR{번호}-{HTTP상태}` 코드는 황재환이 배정한다
 6. reviewer가 sidebar에서 지원서 메뉴를 볼 수 있어도 모집 수정·초대·전시 권한은 얻지 않는다.
 7. USER reviewer를 채택할 경우 현재 admin middleware 구조를 바꿔야 하므로 별도 계약 변경으로 처리한다.
 
+### 4단계 frontend 임시 연결 계약
+
+backend 4단계 구현 전까지 아래 shape는 `staff-hall-contract-r2`의 제안 계약으로만 사용한다.
+실제 backend DTO가 확정되면 endpoint와 필드 이름을 함께 대조하며, 현재 구현만으로 연동
+완료를 주장하지 않는다.
+
+```ts
+type StaffReviewerStatus = "ACTIVE" | "REVOKED" | "EXPIRED";
+
+interface StaffReviewerCandidate {
+  user_id: number;
+  user_name: string;
+  department: string | null;
+  affiliation: string;
+  has_admin_account: boolean;
+  reviewer_status: StaffReviewerStatus | null;
+}
+
+interface StaffRecruitmentReviewer {
+  user_id: number;
+  user_name: string;
+  department: string | null;
+  affiliation: string;
+  status: StaffReviewerStatus;
+  granted_at: string;
+  expires_at: string;
+  revoked_at: string | null;
+}
+```
+
+- 부여 요청은 `{ user_id, expires_at }`이며 이름으로 식별하지 않는다.
+- 기존 ADMIN과 회차 학기 운영진의 교집합만 후보로 반환한다고 가정한다.
+- 부여는 수락 절차 없이 즉시 적용하며 전역 ADMIN role은 변경하지 않는다.
+- 일반 web 초대·수락 화면은 만들지 않는다.
+- 일반 ADMIN reviewer가 `/staff-applications?recruitmentId={id}`로 직접 접근하면 backend가
+  해당 회차 grant를 검사한다. reviewer가 접근 가능한 회차를 스스로 찾는 API나 알림
+  경로는 아직 계약에 없으므로 backend 4단계에서 확정해야 한다.
+
 ## 백엔드 확정 요청
 
 - 실제 endpoint와 request/response 전체 예시

@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { HTTPError } from "ky";
+import { ShieldAlert } from "lucide-react";
 import type {
   AdminStaffRecruitmentRound,
   StaffApplicationDetail,
@@ -78,6 +80,7 @@ export function StaffApplicationsView({
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<StaffApplicationDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   const selectedRound = useMemo(
     () =>
@@ -86,16 +89,19 @@ export function StaffApplicationsView({
   );
 
   useEffect(() => {
+    if (initialRecruitmentId) setRecruitmentId(initialRecruitmentId);
     getStaffRecruitments()
       .then((items) => {
         setRounds(items);
-        setRecruitmentId(
-          items.some((item) => item.recruitment_id === initialRecruitmentId)
-            ? initialRecruitmentId!
-            : (items[0]?.recruitment_id ?? null),
-        );
+        if (!initialRecruitmentId) {
+          setRecruitmentId(items[0]?.recruitment_id ?? null);
+        }
       })
-      .catch(async (error) => toast.error(await handleApiError(error)))
+      .catch(async (error) => {
+        if (!initialRecruitmentId) {
+          toast.error(await handleApiError(error));
+        }
+      })
       .finally(() => setLoading(false));
   }, [initialRecruitmentId]);
 
@@ -111,7 +117,13 @@ export function StaffApplicationsView({
           page,
         }),
       );
+      setAccessDenied(false);
     } catch (error) {
+      setData(EMPTY_PAGE);
+      setDetail(null);
+      if (error instanceof HTTPError && error.response.status === 403) {
+        setAccessDenied(true);
+      }
       toast.error(await handleApiError(error));
     } finally {
       setLoading(false);
@@ -128,11 +140,32 @@ export function StaffApplicationsView({
     try {
       setDetail(await getStaffApplicationDetail(recruitmentId, applicationId));
     } catch (error) {
+      setDetail(null);
+      if (error instanceof HTTPError && error.response.status === 403) {
+        setData(EMPTY_PAGE);
+        setAccessDenied(true);
+      }
       toast.error(await handleApiError(error));
     } finally {
       setDetailLoading(false);
     }
   };
+
+  if (accessDenied) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 px-4 text-center">
+        <ShieldAlert className="text-muted-foreground h-12 w-12" />
+        <h1 className="text-xl font-bold">지원서 열람 권한이 없습니다</h1>
+        <p className="text-muted-foreground max-w-md text-sm">
+          회장단 또는 이 모집 회차의 유효한 열람자만 지원서를 확인할 수
+          있습니다. 회수되거나 만료된 권한은 다음 요청부터 적용됩니다.
+        </p>
+        <Button variant="outline" onClick={() => void load()}>
+          권한 다시 확인
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-4 sm:p-6 md:p-8">
@@ -154,6 +187,11 @@ export function StaffApplicationsView({
             <SelectValue placeholder="모집 회차 선택" />
           </SelectTrigger>
           <SelectContent>
+            {recruitmentId && !selectedRound && (
+              <SelectItem value={String(recruitmentId)}>
+                회차 #{recruitmentId}
+              </SelectItem>
+            )}
             {rounds.map((round) => (
               <SelectItem
                 key={round.recruitment_id}

@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 jest.mock("@core/utils/api-client", () => ({
-  apiClient: { get: jest.fn(), post: jest.fn(), patch: jest.fn() },
+  apiClient: {
+    get: jest.fn(),
+    post: jest.fn(),
+    patch: jest.fn(),
+    delete: jest.fn(),
+  },
 }));
 
 import { apiClient } from "@core/utils/api-client";
@@ -9,7 +14,11 @@ import {
   changeStaffRecruitmentStatus,
   getStaffApplicationDetail,
   getStaffApplications,
+  getStaffReviewerCandidates,
+  getStaffReviewers,
   getStaffRecruitments,
+  grantStaffReviewer,
+  revokeStaffReviewer,
   updateStaffRecruitment,
 } from "./api";
 
@@ -21,6 +30,10 @@ type ApiMock = {
 const mockedGet = apiClient.get as unknown as ApiMock;
 const mockedPost = apiClient.post as unknown as ApiMock;
 const mockedPatch = apiClient.patch as unknown as ApiMock;
+const mockedDelete = apiClient.delete as unknown as {
+  mockReset: () => void;
+  mockResolvedValue: (value: unknown) => void;
+};
 
 function response(data: unknown) {
   return { json: <T>() => Promise.resolve({ data } as T) };
@@ -31,6 +44,7 @@ describe("staff recruitment admin api", () => {
     mockedGet.mockReset();
     mockedPost.mockReset();
     mockedPatch.mockReset();
+    mockedDelete.mockReset();
   });
 
   it("requests a stable admin list page", async () => {
@@ -127,6 +141,44 @@ describe("staff recruitment admin api", () => {
     expect(apiClient.get).toHaveBeenCalledWith(
       "api/v1/admin/staff-recruitments/12/applications/9",
       { cache: "no-store" },
+    );
+  });
+
+  it("loads reviewer candidates and grants without caching personal data", async () => {
+    mockedGet.mockReturnValue(response([]));
+
+    await getStaffReviewerCandidates(12);
+    await getStaffReviewers(12);
+
+    expect(apiClient.get).toHaveBeenNthCalledWith(
+      1,
+      "api/v1/admin/staff-recruitments/12/reviewer-candidates",
+      { cache: "no-store" },
+    );
+    expect(apiClient.get).toHaveBeenNthCalledWith(
+      2,
+      "api/v1/admin/staff-recruitments/12/reviewers",
+      { cache: "no-store" },
+    );
+  });
+
+  it("uses the candidate identifier and explicit expiry for grant and revoke", async () => {
+    mockedPost.mockReturnValue(response({ user_id: 2099999999 }));
+    mockedDelete.mockResolvedValue(undefined);
+    const body = {
+      user_id: 2099999999,
+      expires_at: "2027-02-28T23:59:00+09:00",
+    };
+
+    await grantStaffReviewer(12, body);
+    await revokeStaffReviewer(12, 2099999999);
+
+    expect(apiClient.post).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/12/reviewers",
+      { json: body },
+    );
+    expect(apiClient.delete).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/12/reviewers/2099999999",
     );
   });
 });

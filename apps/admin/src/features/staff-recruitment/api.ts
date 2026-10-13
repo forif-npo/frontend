@@ -3,8 +3,11 @@ import type {
   AdminStaffRecruitmentRound,
   StaffApplicationDetail,
   StaffApplicationSummary,
+  StaffRecruitmentReviewer,
   StaffRecruitmentCreateRequest,
   StaffRecruitmentUpdateRequest,
+  StaffReviewerCandidate,
+  StaffReviewerGrantRequest,
 } from "@core/types/staff-recruitment";
 import { apiClient } from "@core/utils/api-client";
 
@@ -109,4 +112,49 @@ export async function getStaffApplicationDetail(
     .json<ApiResponse<StaffApplicationDetail>>();
   if (!response.data) throw new Error(response.message);
   return response.data;
+}
+
+export async function getStaffReviewerCandidates(
+  recruitmentId: number,
+): Promise<StaffReviewerCandidate[]> {
+  const response = await apiClient
+    .get(
+      `api/v1/admin/staff-recruitments/${recruitmentId}/reviewer-candidates`,
+      { cache: "no-store" },
+    )
+    .json<ApiResponse<StaffReviewerCandidate[]>>();
+  return response.data ?? [];
+}
+
+export async function getStaffReviewers(
+  recruitmentId: number,
+): Promise<StaffRecruitmentReviewer[]> {
+  const response = await apiClient
+    .get(`api/v1/admin/staff-recruitments/${recruitmentId}/reviewers`, {
+      cache: "no-store",
+    })
+    .json<ApiResponse<StaffRecruitmentReviewer[]>>();
+  return response.data ?? [];
+}
+
+export async function grantStaffReviewer(
+  recruitmentId: number,
+  body: StaffReviewerGrantRequest,
+): Promise<StaffRecruitmentReviewer> {
+  const response = await apiClient
+    .post(`api/v1/admin/staff-recruitments/${recruitmentId}/reviewers`, {
+      json: body,
+    })
+    .json<ApiResponse<StaffRecruitmentReviewer>>();
+  if (!response.data) throw new Error(response.message);
+  return response.data;
+}
+
+export async function revokeStaffReviewer(
+  recruitmentId: number,
+  userId: number,
+): Promise<void> {
+  await apiClient.delete(
+    `api/v1/admin/staff-recruitments/${recruitmentId}/reviewers/${userId}`,
+  );
 }

@@ -141,3 +141,30 @@ export interface StaffApplicationDetail extends StaffApplicationSummary {
   applicant_phone_num: string | null;
   answers: StaffApplicationAnswer[];
 }
+
+export type StaffReviewerStatus = "ACTIVE" | "REVOKED" | "EXPIRED";
+
+export interface StaffReviewerCandidate {
+  user_id: number;
+  user_name: string;
+  department: string | null;
+  affiliation: string;
+  has_admin_account: boolean;
+  reviewer_status: StaffReviewerStatus | null;
+}
+
+export interface StaffRecruitmentReviewer {
+  user_id: number;
+  user_name: string;
+  department: string | null;
+  affiliation: string;
+  status: StaffReviewerStatus;
+  granted_at: string;
+  expires_at: string;
+  revoked_at: string | null;
+}
+
+export interface StaffReviewerGrantRequest {
+  user_id: number;
+  expires_at: string;
+}

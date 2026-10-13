@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { CalendarRange, Pencil, Plus } from "lucide-react";
+import { CalendarRange, Pencil, Plus, UserRoundCog } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -165,6 +165,14 @@ export function StaffRecruitmentManageView() {
                       href={`/staff-applications?recruitmentId=${item.recruitment_id}`}
                     >
                       지원서 보기
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link
+                      href={`/staff-recruitments/${item.recruitment_id}/reviewers`}
+                    >
+                      <UserRoundCog className="mr-1 h-4 w-4" />
+                      열람자 관리
                     </Link>
                   </Button>
                   {item.publication_status === "DRAFT" && (
