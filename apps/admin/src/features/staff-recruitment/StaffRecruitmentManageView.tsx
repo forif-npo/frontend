@@ -17,6 +17,7 @@ import {
 } from "./api";
 import { toSaveRequest, type StaffRecruitmentFormState } from "./form";
 import { StaffRecruitmentFormDialog } from "./StaffRecruitmentFormDialog";
+import Link from "next/link";
 
 const STATUS_LABELS = {
   DRAFT: "초안",
@@ -159,6 +160,13 @@ export function StaffRecruitmentManageView() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" asChild>
+                    <Link
+                      href={`/staff-applications?recruitmentId=${item.recruitment_id}`}
+                    >
+                      지원서 보기
+                    </Link>
+                  </Button>
                   {item.publication_status === "DRAFT" && (
                     <>
                       <Button

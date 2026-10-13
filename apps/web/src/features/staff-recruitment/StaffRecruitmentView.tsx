@@ -151,11 +151,21 @@ export function StaffRecruitmentView({
               recruitment.application_unavailable_reason,
             )}
           </p>
-          <Button className="mt-5 w-full" disabled>
-            {recruitment.application_open
-              ? "지원서는 3단계에서 열립니다"
-              : APPLICATION_STATUS_LABELS[recruitment.application_status]}
-          </Button>
+          {recruitment.application_open ? (
+            <Link href={`/club/recruit/${recruitment.recruitment_id}/apply`}>
+              <Button className="mt-5 w-full">지원서 작성</Button>
+            </Link>
+          ) : (
+            <Button className="mt-5 w-full" disabled>
+              {APPLICATION_STATUS_LABELS[recruitment.application_status]}
+            </Button>
+          )}
+          <Link
+            href={`/club/recruit/${recruitment.recruitment_id}/application`}
+            className="text-primary-60 mt-3 block text-center text-sm underline"
+          >
+            내 지원서 확인
+          </Link>
           <p className="text-text-subtle mt-3 text-xs leading-5">
             지원 자격과 접수 가능 여부는 서버에서 최종 확인합니다.
           </p>

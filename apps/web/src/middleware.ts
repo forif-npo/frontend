@@ -32,6 +32,7 @@ const protectedSubRoutes = [
   /^\/studies\/apply(?:\/|$)/,
   /^\/studies\/detail\/[^/]+\/apply(?:\/|$)/,
   /^\/products\/apply(?:\/|$)/,
+  /^\/club\/recruit\/[^/]+\/(?:apply|application)(?:\/|$)/,
 ];
 const authRoutes = ["/signin", "/signup", "/signup/form", "/auth/callback"];
 const apiAuthPrefix = "/api/auth";
@@ -61,7 +62,12 @@ const authMiddleware = auth((req) => {
   }
 
   if (!isLoggedIn && !isAuthRoute && !isPublicRoute && !isPublicParamsRoute) {
-    return Response.redirect(new URL(`/signin`, nextUrl));
+    const signInUrl = new URL(`/signin`, nextUrl);
+    signInUrl.searchParams.set(
+      "callbackUrl",
+      `${nextUrl.pathname}${nextUrl.search}`,
+    );
+    return Response.redirect(signInUrl);
   }
   return NextResponse.next();
 });

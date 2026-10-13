@@ -1,6 +1,8 @@
 import type { ApiResponse, CursorPageResponse } from "@core/types/api";
 import type {
   AdminStaffRecruitmentRound,
+  StaffApplicationDetail,
+  StaffApplicationSummary,
   StaffRecruitmentCreateRequest,
   StaffRecruitmentUpdateRequest,
 } from "@core/types/staff-recruitment";
@@ -48,4 +50,63 @@ export async function changeStaffRecruitmentStatus(
     })
     .json<ApiResponse<AdminStaffRecruitmentRound>>();
   return response.data!;
+}
+
+export interface StaffApplicationPage {
+  content: StaffApplicationSummary[];
+  totalElements: number;
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+}
+
+export async function getStaffApplications({
+  recruitmentId,
+  departmentId,
+  search,
+  page = 0,
+  size = 20,
+}: {
+  recruitmentId: number;
+  departmentId?: number;
+  search?: string;
+  page?: number;
+  size?: number;
+}): Promise<StaffApplicationPage> {
+  const searchParams = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+  });
+  // Spring @RequestParam의 실제 파라미터 이름이다.
+  if (departmentId) searchParams.set("departmentId", String(departmentId));
+  if (search?.trim()) searchParams.set("search", search.trim());
+
+  const response = await apiClient
+    .get(`api/v1/admin/staff-recruitments/${recruitmentId}/applications`, {
+      searchParams,
+      cache: "no-store",
+    })
+    .json<ApiResponse<CursorPageResponse<StaffApplicationSummary>>>();
+  if (!response.data) throw new Error(response.message);
+  return {
+    content: response.data.content,
+    totalElements: response.data.total_elements,
+    currentPage: response.data.current_page ?? page,
+    totalPages: response.data.total_pages ?? 0,
+    pageSize: size,
+  };
+}
+
+export async function getStaffApplicationDetail(
+  recruitmentId: number,
+  applicationId: number,
+): Promise<StaffApplicationDetail> {
+  const response = await apiClient
+    .get(
+      `api/v1/admin/staff-recruitments/${recruitmentId}/applications/${applicationId}`,
+      { cache: "no-store" },
+    )
+    .json<ApiResponse<StaffApplicationDetail>>();
+  if (!response.data) throw new Error(response.message);
+  return response.data;
 }

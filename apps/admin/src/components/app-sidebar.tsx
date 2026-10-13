@@ -89,6 +89,11 @@ const menuItems = {
         url: "/staff-recruitments",
         icon: ClipboardPenLine,
       },
+      {
+        title: "운영진 지원서",
+        url: "/staff-applications",
+        icon: ClipboardList,
+      },
       { title: "운영진 계정 관리", url: "/admin-accounts", icon: ShieldCheck },
       { title: "학기 관리", url: "/semester", icon: CalendarRange },
     ],

@@ -6,10 +6,10 @@
 | ----------------- | --------------------------------------------------- |
 | 계약 ID           | `staff-hall-contract-r2`                            |
 | 작성일            | 2026-10-13 (Asia/Seoul), backend 실구현 대조        |
-| frontend 기준     | local `dev` / `0eb488b` + 미커밋 연동 보정          |
+| frontend 기준     | local `dev` / `8f90e06` + 미커밋 3단계 구현         |
 | backend 참고 기준 | `feature/staff-recruitment-application` / `d657458` |
 | backend 2단계     | `38a24d1`                                           |
-| 합의 상태         | 2단계 계약 대조·로컬 실제 연동 완료                 |
+| 합의 상태         | 3단계 backend 구현 대조·frontend 연결 완료          |
 
 backend `staff-hall-contract-r2`의 공개 모집·관리 모집 구현을 `38a24d1` 소스와 로컬 HTTP
 응답으로 대조했다. create/patch는 부서·문항 배열을 embedded 전체 교체 방식으로 받고 기존
@@ -129,21 +129,21 @@ interface StaffRecruitmentQuestion {
 ```ts
 interface StaffApplicationSummary {
   application_id: number;
-  recruitment_id: number;
-  applicant_user_id: number;
   applicant_name: string;
   applicant_department: string | null;
   applied_departments: Array<{
     department_id: number;
     name: string;
-    priority: number | null;
+    priority: 1 | 2;
   }>;
-  status: "SUBMITTED" | "CANCELED";
+  status: "SUBMITTED";
   submitted_at: string;
 }
 
 interface StaffApplicationDetail extends StaffApplicationSummary {
-  applicant_email: string | null;
+  recruitment_id: number;
+  applicant_user_id: number | null;
+  applicant_email: string;
   applicant_phone_num: string | null;
   answers: Array<{
     question_id: number;
@@ -217,7 +217,7 @@ interface HallOfFameEntry {
 | 모집 수정           | `PATCH /api/v1/admin/staff-recruitments/{id}`                            | ADMIN + 회장단            | 갱신된 회차, stale update 충돌 여부       |
 | 게시·마감·취소      | `POST /api/v1/admin/staff-recruitments/{id}/publish\|close\|cancel`      | ADMIN + 회장단            | 필수 version, 선택 reason, 최신 관리 회차 |
 | 지원 제출           | `POST /api/v1/staff-recruitments/{id}/applications`                      | USER 본인                 | 제출 ID·시각, 중복·기간·자격 오류         |
-| 본인 내역           | `GET /api/v1/staff-recruitments/applications/me`                         | USER 본인                 | 회차별 요약·상세 또는 페이지              |
+| 본인 내역           | `GET /api/v1/staff-recruitments/{id}/applications/me`                    | USER 본인                 | 해당 회차의 본인 상세 또는 404            |
 | 관리자 지원서 목록  | `GET /api/v1/admin/staff-recruitments/{id}/applications`                 | 회장단 또는 유효 reviewer | 검색·부서·페이지·최소 개인정보            |
 | 관리자 지원서 상세  | `GET /api/v1/admin/staff-recruitments/{id}/applications/{applicationId}` | 같은 회차 권한            | 답변·연락처·제출 snapshot                 |
 | 열람 후보           | `GET /api/v1/admin/staff-recruitments/{id}/reviewer-candidates`          | 회장단                    | 활동 학기 운영진+ADMIN 계정 상태          |
@@ -249,6 +249,17 @@ backend의 실제 `FOR{번호}-{HTTP상태}` 코드는 황재환이 배정한다
 오류 응답은 기존 `ApiResponse`의 `error_code`, `message`를 유지하고, field 오류가 필요하면
 별도 구조를 합의한다. 공개 데이터의 cache 정책, 개인정보 응답의 `no-store`, 이미지 cache
 정책도 `r2`에 명시해야 한다.
+
+### 3단계 실제 오류·목록 계약
+
+- 제출 차단: `FOR152-400`(접수 불가), `FOR153-403`(활동 정회원 아님),
+  `FOR154-409`(중복), `FOR156-400`(지망 오류), `FOR157-400`(답변 오류)
+- 조회: `FOR155-404`(본인 지원서 없음 또는 회차 불일치), 회장단 아님은 `FOR020-403`
+- 관리자 목록은 `application_id DESC` 고정이며 `sort`를 받지 않는다. `page`가 있으면
+  0-based offset, 없으면 cursor 방식이다.
+- 부서 필터의 문서 표기는 `department_id`였지만 backend `d657458`의 실제 Spring
+  `@RequestParam` 이름은 `departmentId`다. frontend는 실제 실행 계약인 `departmentId`를
+  사용한다. backend가 snake_case로 변경하면 계약 리비전과 함께 수정한다.
 
 ## 인증·라우팅 요구
 

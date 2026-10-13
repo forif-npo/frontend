@@ -7,6 +7,8 @@ jest.mock("@core/utils/api-client", () => ({
 import { apiClient } from "@core/utils/api-client";
 import {
   changeStaffRecruitmentStatus,
+  getStaffApplicationDetail,
+  getStaffApplications,
   getStaffRecruitments,
   updateStaffRecruitment,
 } from "./api";
@@ -84,6 +86,47 @@ describe("staff recruitment admin api", () => {
     expect(apiClient.patch).toHaveBeenCalledWith(
       "api/v1/admin/staff-recruitments/12",
       { json: body },
+    );
+  });
+
+  it("uses the backend's offset pagination and department filter contract", async () => {
+    mockedGet.mockReturnValue(
+      response({
+        content: [],
+        total_elements: 0,
+        current_page: 2,
+        total_pages: 0,
+      }),
+    );
+
+    await getStaffApplications({
+      recruitmentId: 12,
+      departmentId: 31,
+      search: "테스트",
+      page: 2,
+    });
+
+    const [, options] = (apiClient.get as jest.Mock).mock.calls[0] as [
+      string,
+      { searchParams: URLSearchParams; cache: string },
+    ];
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/12/applications",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+    expect(options.searchParams.toString()).toBe(
+      "page=2&size=20&departmentId=31&search=%ED%85%8C%EC%8A%A4%ED%8A%B8",
+    );
+  });
+
+  it("loads application detail without caching", async () => {
+    mockedGet.mockReturnValue(response({ application_id: 9 }));
+
+    await getStaffApplicationDetail(12, 9);
+
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/12/applications/9",
+      { cache: "no-store" },
     );
   });
 });
