@@ -72,7 +72,7 @@ export function StaffRecruitmentView({
               모집 안내
             </h2>
             <p className="text-text-basic mt-4 whitespace-pre-wrap text-[16px] leading-7">
-              {recruitment.description}
+              {recruitment.description ?? "등록된 모집 안내가 없습니다."}
             </p>
           </section>
 

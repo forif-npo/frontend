@@ -2,19 +2,20 @@
 
 ## 계약 메타데이터
 
-| 항목              | 값                                            |
-| ----------------- | --------------------------------------------- |
-| 계약 ID           | `staff-hall-contract-r2`                      |
-| 작성일            | 2026-10-11 (Asia/Seoul), backend r2 검토 반영 |
-| frontend 기준     | local `dev` / `6fb6335`                       |
-| backend 참고 기준 | local `dev` / `6e1f75b` (문서 commit, 미게시) |
-| dev OpenAPI       | 2026-10-11 조회, 신규 기능 API 없음           |
-| 합의 상태         | 2단계 화면 계약 검토 완료 / backend 구현 대기 |
+| 항목              | 값                                                  |
+| ----------------- | --------------------------------------------------- |
+| 계약 ID           | `staff-hall-contract-r2`                            |
+| 작성일            | 2026-10-13 (Asia/Seoul), backend 실구현 대조        |
+| frontend 기준     | local `dev` / `0eb488b` + 미커밋 연동 보정          |
+| backend 참고 기준 | `feature/staff-recruitment-application` / `d657458` |
+| backend 2단계     | `38a24d1`                                           |
+| 합의 상태         | 2단계 계약 대조·로컬 실제 연동 완료                 |
 
-backend `staff-hall-contract-r2`의 공개 모집·관리 모집 경로, 상태, 시간 경계, cache,
-오류 예약안을 2단계 기준으로 수용했다. 현재 dev OpenAPI에는 API가 아직 없으므로 화면 구현과
-실제 연동 완료를 구분한다. 관리 create/patch body의 embedded 부서·문항 ID 처리와 action
-response는 backend 구현 시 OpenAPI로 다시 대조한다.
+backend `staff-hall-contract-r2`의 공개 모집·관리 모집 구현을 `38a24d1` 소스와 로컬 HTTP
+응답으로 대조했다. create/patch는 부서·문항 배열을 embedded 전체 교체 방식으로 받고 기존
+ID를 요청에 포함하지 않는다. PATCH와 publish/close/cancel은 최신 `version`이 필수이며,
+관리 응답에만 `version`, `ended_at`, `close_reason`이 포함된다. 관리자 목록 정렬은
+`recruitment_id DESC` 고정이고 별도 sort 파라미터를 받지 않는다.
 
 ## r2 frontend 검토 결과
 
@@ -71,7 +72,7 @@ interface StaffRecruitmentRound {
   recruitment_id: number;
   title: string;
   summary: string | null;
-  description: string;
+  description: string | null;
   act_year: number;
   act_semester: number;
   semester_label: string;
@@ -84,6 +85,12 @@ interface StaffRecruitmentRound {
   departments: StaffRecruitmentDepartment[];
   questions: StaffRecruitmentQuestion[];
   updated_at: string;
+}
+
+interface AdminStaffRecruitmentRound extends StaffRecruitmentRound {
+  ended_at: string | null;
+  close_reason: string | null;
+  version: number;
 }
 ```
 
@@ -196,32 +203,33 @@ interface HallOfFameEntry {
 - `slug`, 외부 링크, 이미지 URL은 서버와 프론트 양쪽에서 안전한 형식만 허용한다.
 - 기존 운영진·스터디·해커톤·작품 데이터는 선택 근거일 수 있지만 자동 점수나 자동 전시로 해석하지 않는다.
 
-## 화면별 API 후보
+## 화면별 API 계약
 
-경로는 frontend 요청안이다. backend가 확정 전까지 호출 코드를 만들지 않는다.
+2단계 모집 경로는 backend `38a24d1`에서 확정됐다. 3단계 이후 경로는 해당 구현 커밋과
+단계별 handoff를 함께 확인한다.
 
-| 화면                | method·후보 경로                                                         | 인증·권한                 | 필요한 결과                              |
-| ------------------- | ------------------------------------------------------------------------ | ------------------------- | ---------------------------------------- |
-| 공개 모집 안내      | `GET /api/v1/staff-recruitments/current`                                 | public                    | 공개 회차 또는 없음, 서버 계산 접수 상태 |
-| 모집 상세           | `GET /api/v1/staff-recruitments/{id}`                                    | public                    | 공개 안내·부서·문항, 접수 가능 여부      |
-| 모집 관리 목록      | `GET /api/v1/admin/staff-recruitments`                                   | ADMIN + 회장단            | draft 포함 목록·상태·페이지              |
-| 모집 생성           | `POST /api/v1/admin/staff-recruitments`                                  | ADMIN + 회장단            | 생성된 회차와 충돌 정보                  |
-| 모집 수정           | `PATCH /api/v1/admin/staff-recruitments/{id}`                            | ADMIN + 회장단            | 갱신된 회차, stale update 충돌 여부      |
-| 게시·마감·취소      | action endpoint 또는 상태 전이 endpoint                                  | ADMIN + 회장단            | 허용된 상태 전이와 적용 시각             |
-| 지원 제출           | `POST /api/v1/staff-recruitments/{id}/applications`                      | USER 본인                 | 제출 ID·시각, 중복·기간·자격 오류        |
-| 본인 내역           | `GET /api/v1/staff-recruitments/applications/me`                         | USER 본인                 | 회차별 요약·상세 또는 페이지             |
-| 관리자 지원서 목록  | `GET /api/v1/admin/staff-recruitments/{id}/applications`                 | 회장단 또는 유효 reviewer | 검색·부서·페이지·최소 개인정보           |
-| 관리자 지원서 상세  | `GET /api/v1/admin/staff-recruitments/{id}/applications/{applicationId}` | 같은 회차 권한            | 답변·연락처·제출 snapshot                |
-| 열람 후보           | `GET /api/v1/admin/staff-recruitments/{id}/reviewer-candidates`          | 회장단                    | 활동 학기 운영진+ADMIN 계정 상태         |
-| 열람자 목록         | `GET /api/v1/admin/staff-recruitments/{id}/reviewers`                    | 회장단                    | active/revoked/expired 상태              |
-| 열람 부여           | `POST /api/v1/admin/staff-recruitments/{id}/reviewers`                   | 회장단                    | 중복·지원자 충돌 검증                    |
-| 열람 회수           | `DELETE /api/v1/admin/staff-recruitments/{id}/reviewers/{userId}`        | 회장단                    | 다음 요청부터 즉시 차단                  |
-| 공개 전시 목록      | `GET /api/v1/hall-of-fame`                                               | public                    | season filter, page/cursor, published만  |
-| 공개 전시 상세      | `GET /api/v1/hall-of-fame/{slug}`                                        | public                    | published 상세 또는 404                  |
-| 전시 관리 목록·상세 | `GET /api/v1/admin/hall-of-fame[/{id}]`                                  | 합의된 ADMIN              | draft 포함 목록·상세                     |
-| 전시 생성·수정      | `POST/PATCH /api/v1/admin/hall-of-fame[/{id}]`                           | 합의된 ADMIN              | 저장 결과·validation 오류                |
-| 전시 이미지         | multipart endpoint 후보                                                  | 합의된 ADMIN              | 공개 가능한 image_url                    |
-| 전시 게시·중단      | action endpoint 후보                                                     | 합의된 ADMIN              | 상태·published_at                        |
+| 화면                | method·후보 경로                                                         | 인증·권한                 | 필요한 결과                               |
+| ------------------- | ------------------------------------------------------------------------ | ------------------------- | ----------------------------------------- |
+| 공개 모집 안내      | `GET /api/v1/staff-recruitments/current`                                 | public                    | 공개 회차 또는 없음, 서버 계산 접수 상태  |
+| 모집 상세           | `GET /api/v1/staff-recruitments/{id}`                                    | public                    | 공개 안내·부서·문항, 접수 가능 여부       |
+| 모집 관리 목록      | `GET /api/v1/admin/staff-recruitments`                                   | ADMIN + 회장단            | draft 포함 목록·상태·페이지               |
+| 모집 생성           | `POST /api/v1/admin/staff-recruitments`                                  | ADMIN + 회장단            | 생성된 회차와 충돌 정보                   |
+| 모집 수정           | `PATCH /api/v1/admin/staff-recruitments/{id}`                            | ADMIN + 회장단            | 갱신된 회차, stale update 충돌 여부       |
+| 게시·마감·취소      | `POST /api/v1/admin/staff-recruitments/{id}/publish\|close\|cancel`      | ADMIN + 회장단            | 필수 version, 선택 reason, 최신 관리 회차 |
+| 지원 제출           | `POST /api/v1/staff-recruitments/{id}/applications`                      | USER 본인                 | 제출 ID·시각, 중복·기간·자격 오류         |
+| 본인 내역           | `GET /api/v1/staff-recruitments/applications/me`                         | USER 본인                 | 회차별 요약·상세 또는 페이지              |
+| 관리자 지원서 목록  | `GET /api/v1/admin/staff-recruitments/{id}/applications`                 | 회장단 또는 유효 reviewer | 검색·부서·페이지·최소 개인정보            |
+| 관리자 지원서 상세  | `GET /api/v1/admin/staff-recruitments/{id}/applications/{applicationId}` | 같은 회차 권한            | 답변·연락처·제출 snapshot                 |
+| 열람 후보           | `GET /api/v1/admin/staff-recruitments/{id}/reviewer-candidates`          | 회장단                    | 활동 학기 운영진+ADMIN 계정 상태          |
+| 열람자 목록         | `GET /api/v1/admin/staff-recruitments/{id}/reviewers`                    | 회장단                    | active/revoked/expired 상태               |
+| 열람 부여           | `POST /api/v1/admin/staff-recruitments/{id}/reviewers`                   | 회장단                    | 중복·지원자 충돌 검증                     |
+| 열람 회수           | `DELETE /api/v1/admin/staff-recruitments/{id}/reviewers/{userId}`        | 회장단                    | 다음 요청부터 즉시 차단                   |
+| 공개 전시 목록      | `GET /api/v1/hall-of-fame`                                               | public                    | season filter, page/cursor, published만   |
+| 공개 전시 상세      | `GET /api/v1/hall-of-fame/{slug}`                                        | public                    | published 상세 또는 404                   |
+| 전시 관리 목록·상세 | `GET /api/v1/admin/hall-of-fame[/{id}]`                                  | 합의된 ADMIN              | draft 포함 목록·상세                      |
+| 전시 생성·수정      | `POST/PATCH /api/v1/admin/hall-of-fame[/{id}]`                           | 합의된 ADMIN              | 저장 결과·validation 오류                 |
+| 전시 이미지         | multipart endpoint 후보                                                  | 합의된 ADMIN              | 공개 가능한 image_url                     |
+| 전시 게시·중단      | action endpoint 후보                                                     | 합의된 ADMIN              | 상태·published_at                         |
 
 ## 오류 계약 요청
 

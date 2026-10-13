@@ -1,50 +1,41 @@
-# 2단계 backend 인계 — 황재환
+# 2단계 실제 연동 결과 — 황재환 전달용
 
-## 바로 시작할 때 읽을 파일
+## 기준
 
-아래 순서로 읽으면 backend 2단계를 시작할 수 있다.
+- 계약: `staff-hall-contract-r2`
+- frontend: `dev` / `0eb488b` + 미커밋 실계약 보정
+- backend: `feature/staff-recruitment-application` / `d657458`
+- backend 2단계 구현: `38a24d1`
+- 확인일: 2026-10-13 (Asia/Seoul)
 
-1. `C:/hanluta77/forif/황재환_Claude_단계별_작업지침.md` — backend 2단계 실행 규칙과 완료 기준
-2. `C:/hanluta77/forif/황재환_한지석_8단계_작업프로세스.md` — 양쪽 담당 범위와 순서
-3. `C:/hanluta77/forif/forif-backend/docs/work/staff-hall/contract.md` — `staff-hall-contract-r2` backend 정본
-4. `C:/hanluta77/forif/forif-backend/docs/work/staff-hall/progress.md` — backend 1단계 결과와 2단계 시작 상태
-5. 이 파일 — frontend가 실제 호출하도록 구현한 endpoint와 미확정 request 세부
-6. `C:/hanluta77/forif/forif-frontend/docs/work/staff-hall/contract.md` — frontend 응답 필드·상태·화면 요구
+## frontend에 반영한 실제 계약
 
-`현재_API_프론트구조_및_기획서_검토.md`와 양쪽 `stage-1-handoff.md`는 조사 근거를 다시 확인할 때만 참고하면 된다. 2단계 시작을 위해 한지석용 단계별 지침이나 PR 초안을 다시 읽을 필요는 없다.
+- 공개 응답과 관리 응답을 분리했다. 공개 응답에는 `version`, `ended_at`, `close_reason`이 없고 관리 응답에는 필수 `version`이 있다.
+- `description`은 공개·관리 응답에서 `null`일 수 있다.
+- create/patch의 `departments`, `questions`는 전체 교체 배열이며 기존 ID를 요청에 보내지 않는다.
+- PATCH와 publish/close/cancel에 최신 `version`을 필수로 보낸다.
+- 관리자 목록은 서버의 `recruitment_id DESC` 고정 정렬을 사용하며 지원하지 않는 sort 파라미터를 제거했다.
+- close/cancel의 `reason`은 선택 값으로 유지한다.
 
-```text
-계약 ID: staff-hall-contract-r2
-frontend 기준: local dev 6fb6335 + 미커밋 r2 정책 문서
-backend 참고: local dev 6e1f75b + 미커밋 r2 정책 문서
-연동 상태: 화면·adapter 완료 / backend API 및 실제 연동 대기
+## 실제 연동 증거
 
-구현한 요청:
-- GET /api/v1/staff-recruitments/current (public, data:null 허용, no-cache)
-- GET /api/v1/admin/staff-recruitments?page=0&size=100&sort=recruitmentId:DESC
-- POST /api/v1/admin/staff-recruitments
-- PATCH /api/v1/admin/staff-recruitments/{id}
-- POST /api/v1/admin/staff-recruitments/{id}/publish|close|cancel
+- MySQL 8(`3307`)·Redis 7(`6379`)과 backend `local` 프로파일 기동 성공.
+- `GET /api/v1/staff-recruitments/current`: 회차 없음 `200 + data:null`, `Cache-Control: no-cache`.
+- 무인증 관리자 목록: `401/FOR017-401`.
+- 없는 공개 회차: `404/FOR148-404`.
+- 관리자 목록 → 생성(`201/DRAFT/v0`) → 수정(`200/v1`) → 게시(`PUBLISHED/v2`) → 공개 조회(`OPEN`) → 마감(`CLOSED/v3`) 통과.
+- 공개 응답에서 `version` 미포함, 관리 응답에서 최신 `version` 포함 확인.
+- 실제 공개 회차를 web dev 홈과 `/club/recruit`에서 SSR해 같은 제목·부서·문항·영구보관 안내를 확인했다.
+- 마감 직후 홈과 모집 안내에서 오래된 회차가 제거되고 홈의 다른 섹션이 `200`을 유지했다.
 
-frontend가 사용하는 상태:
-- publication_status: DRAFT | PUBLISHED | CLOSED | CANCELED
-- application_status: UPCOMING | OPEN | CLOSED | CANCELED
-- application_open과 application_unavailable_reason은 서버 값을 그대로 사용
+검증용 회차 2건은 로컬 DB에 `CLOSED`로 남겼다. 검증 중 일시 변경한 운영진 소속은 원래 바이트 값으로 복구했다. 토큰·비밀번호·실제 개인정보는 문서에 남기지 않았다.
 
-확인이 필요한 request 세부:
-- create/patch에 departments/questions를 embedded 배열로 보내는지
-- 기존 department_id/question_id를 patch body에 포함하는 방식
-- patch/publish/close/cancel의 version 필수 여부와 최신 version 응답
-- close/cancel reason 필수 여부
-- 관리자 목록 sort 필드명이 recruitmentId인지
+## 남은 확인
 
-검증용 API 상태 필요:
-- 200 data:null
-- UPCOMING/OPEN/CLOSED/CANCELED 공개 회차
-- DRAFT/PUBLISHED/CLOSED/CANCELED 관리자 회차
-- FOR149, FOR150, FOR151, FOR152, FOR020 오류
+- 인증된 admin 브라우저에서 폼을 직접 클릭하는 수동 검증은 유효 세션 자동화가 없어 미실행이다.
+- 390/768/1440 viewport 시각 비교는 브라우저 연결 실패로 남아 있다.
+- dev 배포·OpenAPI 반영 여부는 로컬 feature 연동과 별개로 배포 후 확인해야 한다.
 
-개인정보나 지원서 제출 API는 2단계에서 호출하지 않음.
-지원서 개인정보 snapshot·답변·지망은 DB 영구 보관이며 기간 기반 자동 삭제 작업은 구현하지 않음.
-backend 구현 뒤 설정→홈 배너→/club/recruit 반영을 함께 검증해야 함.
-```
+## 다음 단계 시작점
+
+한지석 3단계는 backend `d657458`의 지원서 제출·본인 조회·회장단 목록/상세 계약부터 대조하면 된다. 개인정보·답변·지망은 DB 영구 보관이고 기간 기반 자동 삭제는 없다.

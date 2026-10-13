@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import type { AdminStaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { formatDateTimeLabel } from "@/utils/datetime";
 import {
@@ -26,13 +26,12 @@ const STATUS_LABELS = {
 } as const;
 
 export function StaffRecruitmentManageView() {
-  const [items, setItems] = useState<StaffRecruitmentRound[]>([]);
+  const [items, setItems] = useState<AdminStaffRecruitmentRound[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editTarget, setEditTarget] = useState<StaffRecruitmentRound | null>(
-    null,
-  );
+  const [editTarget, setEditTarget] =
+    useState<AdminStaffRecruitmentRound | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -55,7 +54,10 @@ export function StaffRecruitmentManageView() {
     try {
       const body = toSaveRequest(form);
       if (editTarget) {
-        await updateStaffRecruitment(editTarget.recruitment_id, body);
+        await updateStaffRecruitment(editTarget.recruitment_id, {
+          ...body,
+          version: editTarget.version,
+        });
       } else {
         await createStaffRecruitment(body);
       }
@@ -73,7 +75,7 @@ export function StaffRecruitmentManageView() {
   };
 
   const runAction = async (
-    recruitment: StaffRecruitmentRound,
+    recruitment: AdminStaffRecruitmentRound,
     action: "publish" | "close" | "cancel",
   ) => {
     if (submitting) return;

@@ -1,6 +1,6 @@
 import type {
   StaffRecruitmentRound,
-  StaffRecruitmentSaveRequest,
+  StaffRecruitmentCreateRequest,
 } from "@core/types/staff-recruitment";
 
 export interface StaffRecruitmentFormState {
@@ -12,19 +12,16 @@ export interface StaffRecruitmentFormState {
   startsAt: string;
   endsAt: string;
   departments: Array<{
-    departmentId?: number;
     name: string;
     description: string;
   }>;
   questions: Array<{
-    questionId?: number;
     label: string;
     description: string;
     type: "SHORT_TEXT" | "LONG_TEXT";
     required: boolean;
     maxLength: string;
   }>;
-  version?: number;
 }
 
 export function emptyRecruitmentForm(): StaffRecruitmentFormState {
@@ -47,25 +44,22 @@ export function recruitmentToForm(
   return {
     title: recruitment.title,
     summary: recruitment.summary ?? "",
-    description: recruitment.description,
+    description: recruitment.description ?? "",
     actYear: String(recruitment.act_year),
     actSemester: String(recruitment.act_semester) as "1" | "2",
     startsAt: recruitment.starts_at?.slice(0, 16) ?? "",
     endsAt: recruitment.ends_at?.slice(0, 16) ?? "",
     departments: recruitment.departments.map((department) => ({
-      departmentId: department.department_id,
       name: department.name,
       description: department.description ?? "",
     })),
     questions: recruitment.questions.map((question) => ({
-      questionId: question.question_id,
       label: question.label,
       description: question.description ?? "",
       type: question.type,
       required: question.required,
       maxLength: String(question.max_length),
     })),
-    version: recruitment.version,
   };
 }
 
@@ -103,7 +97,7 @@ export function validateRecruitmentForm(
 
 export function toSaveRequest(
   form: StaffRecruitmentFormState,
-): StaffRecruitmentSaveRequest {
+): StaffRecruitmentCreateRequest {
   return {
     title: form.title.trim(),
     summary: form.summary.trim() || null,
@@ -115,14 +109,12 @@ export function toSaveRequest(
     departments: form.departments
       .filter((department) => department.name.trim())
       .map((department, index) => ({
-        department_id: department.departmentId,
         name: department.name.trim(),
         description: department.description.trim() || null,
         display_order: index + 1,
         active: true,
       })),
     questions: form.questions.map((question, index) => ({
-      question_id: question.questionId,
       label: question.label.trim(),
       description: question.description.trim() || null,
       type: question.type,
@@ -130,6 +122,5 @@ export function toSaveRequest(
       max_length: Number(question.maxLength),
       display_order: index + 1,
     })),
-    version: form.version,
   };
 }

@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import type { AdminStaffRecruitmentRound } from "@core/types/staff-recruitment";
 import {
   emptyRecruitmentForm,
   recruitmentToForm,
@@ -31,7 +31,7 @@ import {
 
 interface Props {
   open: boolean;
-  recruitment: StaffRecruitmentRound | null;
+  recruitment: AdminStaffRecruitmentRound | null;
   submitting: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (form: StaffRecruitmentFormState) => void;
@@ -194,7 +194,7 @@ export function StaffRecruitmentFormDialog({
           >
             {form.departments.map((department, index) => (
               <div
-                key={department.departmentId ?? `new-${index}`}
+                key={`department-${index}`}
                 className="grid gap-2 rounded-md border p-3 sm:grid-cols-[1fr_2fr_auto]"
               >
                 <Input
@@ -268,7 +268,7 @@ export function StaffRecruitmentFormDialog({
           >
             {form.questions.map((question, index) => (
               <div
-                key={question.questionId ?? `new-${index}`}
+                key={`question-${index}`}
                 className="grid gap-3 rounded-md border p-3"
               >
                 <div className="grid gap-2 sm:grid-cols-[2fr_1fr_110px_auto]">

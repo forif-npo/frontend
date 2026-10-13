@@ -5,7 +5,11 @@ jest.mock("@core/utils/api-client", () => ({
 }));
 
 import { apiClient } from "@core/utils/api-client";
-import { changeStaffRecruitmentStatus, getStaffRecruitments } from "./api";
+import {
+  changeStaffRecruitmentStatus,
+  getStaffRecruitments,
+  updateStaffRecruitment,
+} from "./api";
 
 type ApiMock = {
   mockReset: () => void;
@@ -37,7 +41,6 @@ describe("staff recruitment admin api", () => {
         searchParams: {
           page: 0,
           size: 100,
-          sort: "recruitmentId:DESC",
         },
       },
     );
@@ -51,6 +54,36 @@ describe("staff recruitment admin api", () => {
     expect(apiClient.post).toHaveBeenCalledWith(
       "api/v1/admin/staff-recruitments/12/publish",
       { json: { version: 3, reason: undefined } },
+    );
+  });
+
+  it("sends the required version and replacement arrays when updating", async () => {
+    mockedPatch.mockReturnValue(response({ recruitment_id: 12, version: 4 }));
+    const body = {
+      version: 3,
+      title: "27-1 운영진 모집",
+      summary: null,
+      description: "모집 안내",
+      act_year: 2027,
+      act_semester: 1,
+      starts_at: "2027-01-01T00:00:00+09:00",
+      ends_at: "2027-01-02T00:00:00+09:00",
+      departments: [
+        {
+          name: "기획부",
+          description: null,
+          display_order: 1,
+          active: true,
+        },
+      ],
+      questions: [],
+    };
+
+    await updateStaffRecruitment(12, body);
+
+    expect(apiClient.patch).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/12",
+      { json: body },
     );
   });
 });

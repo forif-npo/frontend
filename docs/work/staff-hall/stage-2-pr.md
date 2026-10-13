@@ -32,7 +32,8 @@ feat: 운영진 모집 설정과 공개 안내 화면 추가
 - 공개: `GET /api/v1/staff-recruitments/current`
 - 관리: `/api/v1/admin/staff-recruitments` CRUD 및 publish/close/cancel action
 - UI는 회장·부회장에게만 메뉴와 설정 화면을 보이지만 최종 권한은 backend 403을 사용합니다.
-- backend API가 아직 dev에 없어 실제 데이터 연동은 대기 상태입니다. 가상 production fallback은 추가하지 않았습니다.
+- backend `38a24d1`의 실제 계약에 맞춰 공개/관리 응답 타입, 필수 version, embedded 배열 전체 교체, 고정 목록 정렬을 반영했습니다.
+- 로컬 backend `d657458`과 MySQL 8·Redis 7을 사용해 관리자 상태 전이와 공개 SSR을 실제 연동했습니다. 가상 production fallback은 추가하지 않았습니다.
 
 ## 검증
 
@@ -45,11 +46,13 @@ feat: 운영진 모집 설정과 공개 안내 화면 추가
 - 로컬 web dev server 기동 성공
 - 로컬 HTTP `/`, `/club/recruit` 200 확인
 - Codex in-app browser attach timeout으로 390/768/1440 시각 검증 미실행
-- 유효 ADMIN 세션과 backend API가 없어 실제 어드민 설정→공개 반영 미실행
+- 실제 HTTP 관리자 목록→생성→수정→게시→공개 조회→마감 통과
+- 실제 공개 회차가 홈과 `/club/recruit`에 동일하게 SSR되고, 마감 직후 제거되는 것 확인
+- 인증된 admin 브라우저 UI 클릭과 390/768/1440 시각 비교는 브라우저 자동화 연결 실패로 미실행
 
 ## 배포 영향과 남은 사항
 
-공통 package export를 포함한 web/admin 컴파일·타입 검사·정적 페이지 생성은 통과했습니다. Windows에서 symlink 생성이 허용되는 환경에서 standalone 패키징을 다시 확인해야 합니다. backend 모집 API를 먼저 구현·배포한 뒤 frontend를 연동 검증해야 합니다. 관리 create/patch의 embedded 부서·문항 ID 규칙과 action 응답은 OpenAPI 제공 시 다시 대조합니다. 3단계 전까지 지원 버튼은 비활성 안내로 유지합니다.
+공통 package export를 포함한 web/admin 컴파일·타입 검사·정적 페이지 생성은 통과했습니다. Windows에서 symlink 생성이 허용되는 환경에서 standalone 패키징을 다시 확인해야 합니다. 로컬 feature 연동은 완료했으며 dev 배포·OpenAPI 반영은 배포 후 별도로 확인합니다. 3단계 전까지 지원 버튼은 비활성 안내로 유지합니다.
 ```
 
 복사용 초안이며 게시하지 않았다.

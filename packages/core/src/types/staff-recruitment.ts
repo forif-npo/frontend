@@ -34,7 +34,7 @@ export interface StaffRecruitmentRound {
   recruitment_id: number;
   title: string;
   summary: string | null;
-  description: string;
+  description: string | null;
   act_year: number;
   act_semester: number;
   semester_label: string;
@@ -47,12 +47,15 @@ export interface StaffRecruitmentRound {
   departments: StaffRecruitmentDepartment[];
   questions: StaffRecruitmentQuestion[];
   updated_at: string;
-  /** 관리자 optimistic lock 요청에만 사용하며 공개 응답에서는 생략될 수 있다. */
-  version?: number;
+}
+
+export interface AdminStaffRecruitmentRound extends StaffRecruitmentRound {
+  ended_at: string | null;
+  close_reason: string | null;
+  version: number;
 }
 
 export interface StaffRecruitmentDepartmentInput {
-  department_id?: number;
   name: string;
   description: string | null;
   display_order: number;
@@ -60,7 +63,6 @@ export interface StaffRecruitmentDepartmentInput {
 }
 
 export interface StaffRecruitmentQuestionInput {
-  question_id?: number;
   label: string;
   description: string | null;
   type: StaffRecruitmentQuestionType;
@@ -69,7 +71,7 @@ export interface StaffRecruitmentQuestionInput {
   display_order: number;
 }
 
-export interface StaffRecruitmentSaveRequest {
+export interface StaffRecruitmentCreateRequest {
   title: string;
   summary: string | null;
   description: string;
@@ -79,5 +81,9 @@ export interface StaffRecruitmentSaveRequest {
   ends_at: string;
   departments: StaffRecruitmentDepartmentInput[];
   questions: StaffRecruitmentQuestionInput[];
-  version?: number;
+}
+
+export interface StaffRecruitmentUpdateRequest
+  extends StaffRecruitmentCreateRequest {
+  version: number;
 }
