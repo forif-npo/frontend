@@ -12,6 +12,7 @@
     "./mock": "./mock.ts",
     "./utils/api-client": "./src/utils/api-client.ts",
     "./types/api": "./src/types/api.d.ts",
+    "./types/hall-of-fame": "./src/types/hall-of-fame.ts",
     "./types/staff-recruitment": "./src/types/staff-recruitment.ts",
     "./types/study": "./src/types/study.d.ts"
   },

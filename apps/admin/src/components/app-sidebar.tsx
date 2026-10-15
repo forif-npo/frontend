@@ -36,6 +36,7 @@ import {
   ClipboardList,
   Users,
   ClipboardPenLine,
+  Trophy,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -99,6 +100,7 @@ const menuItems = {
         url: "/staff-recruitments",
         icon: ClipboardPenLine,
       },
+      { title: "명예의 전당 관리", url: "/hall-of-fame", icon: Trophy },
       { title: "운영진 계정 관리", url: "/admin-accounts", icon: ShieldCheck },
       { title: "학기 관리", url: "/semester", icon: CalendarRange },
     ],

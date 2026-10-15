@@ -2,13 +2,13 @@
 
 ## 기준선
 
-- 기록일: 2026-10-14 (Asia/Seoul)
+- 기록일: 2026-10-15 (Asia/Seoul)
 - 담당: 한지석 / frontend
-- 현재 checkout: `dev` / `8f90e06` (`origin/dev`와 일치, 아래 3단계 구현은 미커밋)
+- 현재 checkout: `dev` / `1d716a6` (`origin/dev`와 일치, 아래 5단계 구현은 미커밋)
 - 참고 backend checkout: `feature/staff-recruitment-application` / `d657458`
 - 계약: `staff-hall-contract-r2`
-- 계약 상태: backend 3단계 구현 `d657458` 대조 및 실제 HTTP 재검증 완료
-- Git 상태: 2단계까지 `origin/dev`에 반영됨. 3단계 frontend 구현은 미커밋.
+- 계약 상태: 5단계는 `staff-hall-contract-r2` 제안 계약 기반, backend 구현 대기
+- Git 상태: 4단계까지 `origin/dev`에 반영됨. 5단계 frontend 구현은 미커밋.
 
 ## 전체 진행표
 
@@ -18,10 +18,33 @@
 | 2. 모집 설정·배너·안내   | 화면·adapter 완료     | lint/type/관련 test 통과 | 실제 API·SSR·viewport 통과      | 완료      | 프론트 체크 4/4 |
 | 3. 지원서 제출·조회      | web/admin 연결 완료   | type/전체 test 통과      | 실제 API·공개 UI·인증 경계 통과 | 완료      | 4/4             |
 | 4. 열람자 초대·회수      | admin UI·adapter 완료 | 관련 type/test 통과      | backend API 없음                | 연동 대기 | 3/4             |
-| 5. 명예의 전당 관리·게시 | 미착수                | 미실행                   | 미실행                          | 미착수    | 0/4             |
+| 5. 명예의 전당 관리·게시 | admin UI·adapter 완료 | type/lint/관련 test 통과 | 인증 경계 통과·backend API 없음 | 연동 대기 | 3/4             |
 | 6. 명예의 전당 공개 화면 | 미착수                | 미실행                   | 미실행                          | 미착수    | 0/4             |
 | 7. 통합 QA               | 미착수                | 미실행                   | 미실행                          | 미착수    | 0/4             |
 | 8. 출시 준비·배포        | 미착수                | 미실행                   | 미실행                          | 미착수    | 0/4             |
+
+## 5단계 완료 체크
+
+- [ ] 등록 → 미리보기 → 게시/중단이 실제 API로 동작한다. frontend 흐름은 구현했고 backend 5단계 API를 기다린다.
+- [x] 필수 필드·안전한 slug/https 링크·이미지 크기·저장 실패를 처리한다.
+- [x] 공개 표시 타입과 관리자 상태·version 타입을 분리하고 관리 미리보기는 공개 API를 사용하지 않는다.
+- [x] 기존 상품 이미지 multipart 패턴과 admin 레이아웃을 재사용했으며 변경 파일 lint와 관련 회귀 검사를 통과했다.
+
+### 5단계 구현·검증 기록
+
+- admin: 회장단 전용 `/hall-of-fame` 목록, 회원 검색·선택, 시즌·slug·소개·배지·성취·이미지·순서 편집,
+  관리 데이터 기반 미리보기, 초안 저장, 게시·게시 중단을 구현했다.
+- admin: 목록의 로딩·빈 값·오류·초안/게시/게시 중단 상태를 구분하고 저장·상태 전환 중 중복 조작을 막는다.
+- core: web 공개 표시 계약 `HallOfFameEntry`와 admin 전용 `AdminHallOfFameEntry`를 분리했다.
+- web: 6단계에서 사용할 사진 없음·긴 텍스트 대응 카드 기반만 추가했다. 공개 route와 메뉴는 아직 노출하지 않았다.
+- 검증: 전체 lint·type-check 통과, admin 관련 Jest 3 suites/8 tests 통과. 전체 테스트에서 기존
+  5건이 병렬 timeout/비동기 대기로 실패했으나 해당 suite 단독 재실행은 모두 통과했다.
+- build: web 30개·admin 29개 페이지의 컴파일·타입 검사·정적 생성까지 통과했다. 마지막
+  standalone trace 복사만 기존 Windows symlink 권한 `EPERM`으로 실패했다.
+- browser: 비로그인 `/hall-of-fame` 직접 접근이 `/signin`으로 이동하는 admin 인증 경계를 확인했다.
+  유효 회장단 세션과 backend 5단계 API가 없어 관리 화면 390/768/1440 실제 렌더링과 API 왕복은 대기한다.
+- backend 의존: 전시 DB·관리/공개 API·이미지 endpoint·회장단 권한·오류 코드가 아직 구현되지 않았다.
+- 정책 의존: 당사자 공개 동의·철회 절차와 게시 중단 cache 허용 범위는 출시 전 확정해야 한다.
 
 ## 1단계 완료 체크
 

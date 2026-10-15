@@ -309,6 +309,34 @@ interface StaffRecruitmentReviewer {
   해당 회차 grant를 검사한다. reviewer가 접근 가능한 회차를 스스로 찾는 API나 알림
   경로는 아직 계약에 없으므로 backend 4단계에서 확정해야 한다.
 
+### 5단계 frontend 임시 연결 계약
+
+backend 5단계 구현 전까지 아래 경로와 body는 `staff-hall-contract-r2` 제안 계약이다.
+frontend 구현만으로 실제 연동 완료를 주장하지 않으며 backend DTO가 확정되면 함께 대조한다.
+
+| 동작      | method·path                                            | frontend 요청·처리                   |
+| --------- | ------------------------------------------------------ | ------------------------------------ |
+| 관리 목록 | `GET /api/v1/admin/hall-of-fame?page=0&size=100`       | 모든 상태, `no-store`                |
+| 초안 생성 | `POST /api/v1/admin/hall-of-fame`                      | 아래 저장 body, 생성 결과 반환       |
+| 수정      | `PATCH /api/v1/admin/hall-of-fame/{entry_id}`          | 저장 body + `version`                |
+| 이미지    | `POST /api/v1/admin/hall-of-fame/{entry_id}/image`     | multipart `file`, `{image_url}` 반환 |
+| 게시      | `POST /api/v1/admin/hall-of-fame/{entry_id}/publish`   | `{version}`                          |
+| 게시 중단 | `POST /api/v1/admin/hall-of-fame/{entry_id}/unpublish` | `{version}`                          |
+
+저장 body는 `user_id`, `slug`, `act_year`, `act_semester`, `title`, `introduction`,
+`display_order`, 순서가 포함된 `badges`, `achievements`를 사용한다. slug는 영문 소문자·숫자·하이픈
+3~80자, 배지는 최대 10개·각 30자, 성취는 최대 20개, 외부 링크는 `https`만 허용한다.
+이미지는 선택이며 frontend는 5MB 초과 파일을 먼저 차단한다. 서버는 크기·MIME·실제 파일 내용을
+다시 검증해야 한다.
+
+공개용 `HallOfFameEntry`에는 관리자 `publication_status`와 optimistic lock `version`을 포함하지
+않는다. admin 응답만 이를 추가한 `AdminHallOfFameEntry`를 사용한다. 관리 미리보기는 admin 응답으로
+렌더링하며 공개 조회 실패를 초안 API로 우회하지 않는다.
+
+현재 frontend route와 sidebar는 회장·부회장 세션에만 노출한다. 최종 권한은 backend가 기존
+회장단 검증으로 모든 요청마다 확인해야 한다. 일반 ADMIN 편집 허용 여부가 달라지면 route 표시와
+서버 권한을 같은 계약 리비전에서 변경한다.
+
 ## 백엔드 확정 요청
 
 - 실제 endpoint와 request/response 전체 예시
