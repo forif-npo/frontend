@@ -41,16 +41,14 @@ describe("hall of fame form", () => {
 
     expect(validateHallOfFameForm(form)).toBeNull();
     expect(toHallOfFameSaveRequest(form)).toEqual({
-      user_id: 2099999999,
+      member_user_id: 2099999999,
+      member_name: "테스트 회원",
       slug: "test-member",
       act_year: 2026,
       act_semester: 2,
-      title: "FORIF 기여자",
+      headline: "FORIF 기여자",
       introduction: "소개",
-      badges: [
-        { label: "회장", display_order: 1 },
-        { label: "대상", display_order: 2 },
-      ],
+      badges: ["회장", "대상"],
       achievements: [
         {
           title: "프로젝트 대상",

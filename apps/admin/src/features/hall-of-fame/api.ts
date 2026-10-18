@@ -3,6 +3,7 @@ import type {
   AdminHallOfFameEntry,
   HallOfFameEntryCreateRequest,
   HallOfFameEntryUpdateRequest,
+  HallOfFameImageUploadResponse,
   HallOfFameMemberCandidate,
 } from "@core/types/hall-of-fame";
 import { apiClient } from "@core/utils/api-client";
@@ -55,14 +56,16 @@ export async function changeHallOfFamePublication(
 export async function uploadHallOfFameImage(
   entryId: number,
   file: File,
-): Promise<string> {
+): Promise<HallOfFameImageUploadResponse> {
   const formData = new FormData();
   formData.append("file", file);
   const response = await apiClient
     .post(`api/v1/admin/hall-of-fame/${entryId}/image`, { body: formData })
-    .json<ApiResponse<{ image_url: string }>>();
-  if (!response.data?.image_url) throw new Error(response.message);
-  return response.data.image_url;
+    .json<ApiResponse<HallOfFameImageUploadResponse>>();
+  if (!response.data?.image_url || response.data.version === undefined) {
+    throw new Error(response.message);
+  }
+  return response.data;
 }
 
 interface MemberPageItem {

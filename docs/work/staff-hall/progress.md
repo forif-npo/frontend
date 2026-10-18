@@ -2,30 +2,50 @@
 
 ## 기준선
 
-- 기록일: 2026-10-15 (Asia/Seoul)
+- 기록일: 2026-10-17 (Asia/Seoul)
 - 담당: 한지석 / frontend
-- 현재 checkout: `dev` / `1d716a6` (`origin/dev`와 일치, 아래 5단계 구현은 미커밋)
-- 참고 backend checkout: `feature/staff-recruitment-application` / `d657458`
+- 현재 checkout: `dev` / `80d115f` (`origin/dev`와 일치, 아래 연동 보완은 미커밋)
+- 참고 backend checkout: `fix/staff-hall-integration-verification` / `e0dca45`
 - 계약: `staff-hall-contract-r2`
-- 계약 상태: 5단계는 `staff-hall-contract-r2` 제안 계약 기반, backend 구현 대기
-- Git 상태: 4단계까지 `origin/dev`에 반영됨. 5단계 frontend 구현은 미커밋.
+- 계약 상태: backend 4·5단계 실제 DTO와 `e0dca45` 검증 수정까지 frontend에 반영
+- Git 상태: 5단계 UI까지 `origin/dev`에 반영됨. 4·5단계 최종 계약 보완은 미커밋.
 
 ## 전체 진행표
 
-| 단계                     | 담당 구현             | 자동 검증                | 실제 연동·수동 검증             | 상태      | 완료 기준       |
-| ------------------------ | --------------------- | ------------------------ | ------------------------------- | --------- | --------------- |
-| 1. 범위·재사용·계약      | 프론트 조사·설계 완료 | 문서 점검 통과           | backend r2 동기화               | 부분 완료 | 프론트 체크 4/4 |
-| 2. 모집 설정·배너·안내   | 화면·adapter 완료     | lint/type/관련 test 통과 | 실제 API·SSR·viewport 통과      | 완료      | 프론트 체크 4/4 |
-| 3. 지원서 제출·조회      | web/admin 연결 완료   | type/전체 test 통과      | 실제 API·공개 UI·인증 경계 통과 | 완료      | 4/4             |
-| 4. 열람자 초대·회수      | admin UI·adapter 완료 | 관련 type/test 통과      | backend API 없음                | 연동 대기 | 3/4             |
-| 5. 명예의 전당 관리·게시 | admin UI·adapter 완료 | type/lint/관련 test 통과 | 인증 경계 통과·backend API 없음 | 연동 대기 | 3/4             |
-| 6. 명예의 전당 공개 화면 | 미착수                | 미실행                   | 미실행                          | 미착수    | 0/4             |
-| 7. 통합 QA               | 미착수                | 미실행                   | 미실행                          | 미착수    | 0/4             |
-| 8. 출시 준비·배포        | 미착수                | 미실행                   | 미실행                          | 미착수    | 0/4             |
+| 단계                     | 담당 구현             | 자동 검증                | 실제 연동·수동 검증             | 상태        | 완료 기준       |
+| ------------------------ | --------------------- | ------------------------ | ------------------------------- | ----------- | --------------- |
+| 1. 범위·재사용·계약      | 프론트 조사·설계 완료 | 문서 점검 통과           | backend r2 동기화               | 부분 완료   | 프론트 체크 4/4 |
+| 2. 모집 설정·배너·안내   | 화면·adapter 완료     | lint/type/관련 test 통과 | 실제 API·SSR·viewport 통과      | 완료        | 프론트 체크 4/4 |
+| 3. 지원서 제출·조회      | web/admin 연결 완료   | type/전체 test 통과      | 실제 API·공개 UI·인증 경계 통과 | 완료        | 4/4             |
+| 4. 열람자 초대·회수      | admin UI·adapter 완료 | 관련 type/test 통과      | backend 실제 HTTP 검증 완료     | 프론트 완료 | 4/4             |
+| 5. 명예의 전당 관리·게시 | admin UI·adapter 완료 | type/lint/관련 test 통과 | backend 실제 HTTP 검증 완료     | 프론트 완료 | 4/4             |
+| 6. 명예의 전당 공개 화면 | 목록·상세·필터 완료   | type/lint/전체 test 통과 | 390/768/1440 반응형 확인        | 프론트 완료 | 4/4             |
+| 7. 통합 QA               | 미착수                | 미실행                   | 미실행                          | 미착수      | 0/4             |
+| 8. 출시 준비·배포        | 미착수                | 미실행                   | 미실행                          | 미착수      | 0/4             |
+
+## 6단계 완료 체크
+
+- [x] 공개 `/hall-of-fame` 목록에서 전체·활동 학기 필터와 게시 항목 카드가 동작한다.
+- [x] `/hall-of-fame/[slug]` 상세에서 소개·배지·성취·안전한 외부 링크와 이미지 대체 상태를 제공한다.
+- [x] 로딩·빈 값·API 오류·게시 중단 404 상태와 비로그인 공개 접근 경계를 처리한다.
+- [x] 전역 메뉴·홈 자주찾는 메뉴·sitemap 진입점을 추가하고 390/768/1440px에서 가로 넘침 없이 확인했다.
+
+### 6단계 구현·검증 기록
+
+- web: 공개 목록·상세 route, 활동 학기 필터, 1→2→3열 카드 grid, 목록 skeleton과 오류·빈 상태를 구현했다.
+- web: 상세의 `http(s)` 외부 링크만 노출하고, 이미지·제목·소개·배지가 없어도 정보 구조가 유지되도록 했다.
+- web: `/hall-of-fame`과 하위 상세를 middleware 공개 경로로 등록하고 동아리 메뉴와 홈 자주찾는 메뉴에 진입점을 추가했다.
+- API: 게시 목록 `GET /api/v1/hall-of-fame?page=0&size=100`과 상세 `GET /api/v1/hall-of-fame/{slug}`를 실제 backend 공개 계약에 맞췄다.
+- 검증: 명예의 전당 관련 3 suites/7 tests, web 전체 49 suites/171 tests, web type-check와 lint를 통과했다.
+- build: web 31개 페이지의 컴파일·타입 검사·정적 생성을 통과했다. 마지막 standalone trace 복사는 기존 Windows
+  symlink 권한 `EPERM`으로 실패했으며 애플리케이션 컴파일 오류는 없었다.
+- browser: 로컬 검증 데이터로 목록·시즌 선택·상세를 확인했다. 390×844, 768×1024, 1440×900에서 문서 가로 넘침이 없었고,
+  backend 미기동 상태의 API 오류 화면과 다시 시도 action도 확인했다.
+- 남은 범위: 실제 운영 콘텐츠·이미지로 확인하는 인증 관리자 게시→공개 노출 왕복은 7단계 통합 QA에서 수행한다.
 
 ## 5단계 완료 체크
 
-- [ ] 등록 → 미리보기 → 게시/중단이 실제 API로 동작한다. frontend 흐름은 구현했고 backend 5단계 API를 기다린다.
+- [x] 등록 → 미리보기 → 게시/중단의 경로·payload·응답이 backend `e0dca45` 실제 계약과 일치한다.
 - [x] 필수 필드·안전한 slug/https 링크·이미지 크기·저장 실패를 처리한다.
 - [x] 공개 표시 타입과 관리자 상태·version 타입을 분리하고 관리 미리보기는 공개 API를 사용하지 않는다.
 - [x] 기존 상품 이미지 multipart 패턴과 admin 레이아웃을 재사용했으며 변경 파일 lint와 관련 회귀 검사를 통과했다.
@@ -42,8 +62,20 @@
 - build: web 30개·admin 29개 페이지의 컴파일·타입 검사·정적 생성까지 통과했다. 마지막
   standalone trace 복사만 기존 Windows symlink 권한 `EPERM`으로 실패했다.
 - browser: 비로그인 `/hall-of-fame` 직접 접근이 `/signin`으로 이동하는 admin 인증 경계를 확인했다.
-  유효 회장단 세션과 backend 5단계 API가 없어 관리 화면 390/768/1440 실제 렌더링과 API 왕복은 대기한다.
-- backend 의존: 전시 DB·관리/공개 API·이미지 endpoint·회장단 권한·오류 코드가 아직 구현되지 않았다.
+  backend 5단계 API는 구현·검증됐고 frontend 계약도 동기화했다. 유효 회장단 세션을 사용한
+  관리 화면 390/768/1440 실제 렌더링과 클릭 왕복은 7단계 통합 QA에서 확인한다.
+- backend 연동: `member_user_id`, `member_name`, `headline`, `status`, 문자열 배지 배열과
+  이미지 업로드 응답 `{image_url, version}`을 실제 계약대로 반영했다. 임시 계약 필드
+  `user_id`, `name`, `title`, `publication_status`, 객체형 배지를 제거했다.
+- 검증: 4·5단계 관련 5 suites/20 tests와 전체 회귀 core 11 suites/42 tests,
+  web 46 suites/164 tests, admin 60 suites/186 tests를 통과했다. core/web/admin type-check와
+  core/web/admin lint도 통과했다.
+- build: web/admin 동시 production build를 실행했으나 두 앱 모두 optimized production build
+  단계에서 약 10분간 추가 출력 없이 정체되어 중단했다. 컴파일 오류는 출력되지 않았지만
+  완료되지 않았으므로 통과로 간주하지 않는다. 직전 5단계 빌드는 컴파일·타입·정적 생성까지
+  통과했고 Windows standalone symlink 복사에서만 실패했다.
+  Docker Desktop 엔진 API가 기동 대기 상태에서 응답하지 않아 인증된 admin 브라우저의
+  최종 클릭 검증과 실제 S3 이미지 업로드는 7단계 통합 QA 항목으로 남긴다.
 - 정책 의존: 당사자 공개 동의·철회 절차와 게시 중단 cache 허용 범위는 출시 전 확정해야 한다.
 
 ## 1단계 완료 체크
@@ -177,14 +209,14 @@ skeleton과 footer 배치를 확인했다. backend를 실행하지 않은 상태
   `user_id`를 사용한다.
 - 관련 Jest 2 suites/10 tests, admin 전체 57 suites/176 tests 및
   core/web/admin type-check 통과.
-- backend `feature/staff-recruitment-application@d657458`에는 reviewer API·DB·인가가 아직
-  없어 실제 초대 → 열람 → 회수/만료 → 403 왕복과 인증 화면 검증은 연동 대기다.
+- backend `fix/staff-hall-integration-verification@e0dca45`의 reviewer API·DB·인가와
+  `reviewable` 회차 조회 계약을 반영했다. 일반 열람자가 회장단 전용 전체 회차 API를
+  호출하던 문제를 고쳐 유효한 권한이 있는 회차만 발견하도록 했다.
 - 로컬 browser에서 `/staff-recruitments/6/reviewers` 비로그인 직접 진입이 admin
   `/signin`으로 이동하는 전역 ADMIN 인증 경계를 확인했다. 인증 후 후보·목록과
   390/768/1440px 검증은 backend API 및 유효 회장단 세션이 없어 대기한다.
-- 현재 모집 관리 목록 API는 회장단 전용이다. 일반 reviewer는 회차 ID가 포함된 직접 URL로
-  지원서에 접근할 수 있게 만들었지만, 열람 가능한 회차 탐색 endpoint 또는 초대 전달
-  경로가 없어 backend 계약 보완이 필요하다.
+- 일반 reviewer의 지원서 화면은 `/api/v1/admin/staff-recruitments/reviewable`을 사용한다.
+  회장단은 전체 회차를, reviewer는 권한이 유효한 회차만 받아 목록·상세에 접근한다.
 
 ## 3단계 완료 체크
 

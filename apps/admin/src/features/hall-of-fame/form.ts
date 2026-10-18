@@ -41,17 +41,15 @@ export function hallOfFameEntryToForm(
   entry: AdminHallOfFameEntry,
 ): HallOfFameFormState {
   return {
-    userId: entry.user_id === null ? "" : String(entry.user_id),
-    memberName: entry.name,
+    userId: entry.member_user_id === null ? "" : String(entry.member_user_id),
+    memberName: entry.member_name,
     memberDepartment: "",
     slug: entry.slug,
     actYear: String(entry.act_year),
     actSemester: String(entry.act_semester) as "1" | "2",
-    title: entry.title,
-    introduction: entry.introduction,
-    badges: [...entry.badges]
-      .sort((first, second) => first.display_order - second.display_order)
-      .map((badge) => badge.label),
+    title: entry.headline ?? "",
+    introduction: entry.introduction ?? "",
+    badges: [...entry.badges],
     achievements: [...entry.achievements]
       .sort((first, second) => first.display_order - second.display_order)
       .map((achievement) => ({
@@ -115,16 +113,14 @@ export function toHallOfFameSaveRequest(
   form: HallOfFameFormState,
 ): HallOfFameEntryCreateRequest {
   return {
-    user_id: Number(form.userId),
+    member_user_id: Number(form.userId),
+    member_name: form.memberName.trim(),
     slug: form.slug.trim(),
     act_year: Number(form.actYear),
     act_semester: Number(form.actSemester),
-    title: form.title.trim(),
+    headline: form.title.trim(),
     introduction: form.introduction.trim(),
-    badges: form.badges
-      .map((badge) => badge.trim())
-      .filter(Boolean)
-      .map((label, index) => ({ label, display_order: index + 1 })),
+    badges: form.badges.map((badge) => badge.trim()).filter(Boolean),
     achievements: form.achievements
       .filter(
         (achievement) =>

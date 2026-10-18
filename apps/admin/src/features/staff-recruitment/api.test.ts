@@ -17,6 +17,7 @@ import {
   getStaffReviewerCandidates,
   getStaffReviewers,
   getStaffRecruitments,
+  getReviewableStaffRecruitments,
   grantStaffReviewer,
   revokeStaffReviewer,
   updateStaffRecruitment,
@@ -59,6 +60,16 @@ describe("staff recruitment admin api", () => {
           size: 100,
         },
       },
+    );
+  });
+
+  it("loads only rounds the current admin may review", async () => {
+    mockedGet.mockReturnValue(response([]));
+
+    await expect(getReviewableStaffRecruitments()).resolves.toEqual([]);
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/reviewable",
+      { cache: "no-store" },
     );
   });
 

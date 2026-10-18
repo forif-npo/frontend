@@ -25,14 +25,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       },
     },
     {
-      url: `${BASE_URL}/blog`,
+      url: `${BASE_URL}/hall-of-fame`,
       lastModified: new Date(),
-      alternates: {
-        languages: {
-          es: `${BASE_URL}/es/blog`,
-          de: `${BASE_URL}/de/blog`,
-        },
-      },
     },
   ];
 }

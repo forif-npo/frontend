@@ -8,32 +8,28 @@ export interface HallOfFameAchievement {
   display_order: number;
 }
 
-export interface HallOfFameBadge {
-  label: string;
-  display_order: number;
-}
-
 export interface HallOfFameEntry {
   entry_id: number;
   slug: string;
-  user_id: number | null;
-  name: string;
+  member_name: string;
   act_year: number;
   act_semester: number;
   semester_label: string;
-  title: string;
-  introduction: string;
+  headline: string | null;
+  introduction: string | null;
   achievements: HallOfFameAchievement[];
-  badges: HallOfFameBadge[];
+  badges: string[];
   image_url: string | null;
-  display_order: number;
   published_at: string | null;
-  updated_at: string;
 }
 
 export interface AdminHallOfFameEntry extends HallOfFameEntry {
-  publication_status: HallOfFamePublicationStatus;
+  member_user_id: number | null;
+  status: HallOfFamePublicationStatus;
+  display_order: number;
   version: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface HallOfFameAchievementInput {
@@ -44,14 +40,15 @@ export interface HallOfFameAchievementInput {
 }
 
 export interface HallOfFameEntryCreateRequest {
-  user_id: number;
+  member_user_id: number | null;
+  member_name: string | null;
   slug: string;
   act_year: number;
   act_semester: number;
-  title: string;
-  introduction: string;
+  headline: string | null;
+  introduction: string | null;
   achievements: HallOfFameAchievementInput[];
-  badges: HallOfFameBadge[];
+  badges: string[];
   display_order: number;
 }
 
@@ -64,4 +61,9 @@ export interface HallOfFameMemberCandidate {
   user_id: number;
   user_name: string;
   department: string | null;
+}
+
+export interface HallOfFameImageUploadResponse {
+  image_url: string;
+  version: number;
 }

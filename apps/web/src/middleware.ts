@@ -18,6 +18,7 @@ const publicRoutes = [
   "/club/rule",
   "/club/accounting",
   "/hackathon",
+  "/hall-of-fame",
 ];
 const publicParamsList = [
   "/studies/detail",
@@ -26,6 +27,7 @@ const publicParamsList = [
   "/club",
   "/hackathon/archive",
   "/products",
+  "/hall-of-fame",
 ];
 // public 경로 하위여도 로그인이 필요한 경로 (예: 스터디 상세는 공개, 지원 폼은 로그인 필요)
 const protectedSubRoutes = [

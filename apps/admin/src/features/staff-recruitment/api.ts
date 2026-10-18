@@ -22,6 +22,17 @@ export async function getStaffRecruitments(): Promise<
   return response.data?.content ?? [];
 }
 
+export async function getReviewableStaffRecruitments(): Promise<
+  AdminStaffRecruitmentRound[]
+> {
+  const response = await apiClient
+    .get("api/v1/admin/staff-recruitments/reviewable", {
+      cache: "no-store",
+    })
+    .json<ApiResponse<AdminStaffRecruitmentRound[]>>();
+  return response.data ?? [];
+}
+
 export async function createStaffRecruitment(
   body: StaffRecruitmentCreateRequest,
 ): Promise<AdminStaffRecruitmentRound> {

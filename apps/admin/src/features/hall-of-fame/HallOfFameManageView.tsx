@@ -84,10 +84,10 @@ export function HallOfFameManageView() {
   };
 
   const changePublication = async (entry: AdminHallOfFameEntry) => {
-    const action =
-      entry.publication_status === "PUBLISHED" ? "unpublish" : "publish";
+    const action = entry.status === "PUBLISHED" ? "unpublish" : "publish";
     const label = action === "publish" ? "게시" : "게시 중단";
-    if (!window.confirm(`${entry.name} 콘텐츠를 ${label}할까요?`)) return;
+    if (!window.confirm(`${entry.member_name} 콘텐츠를 ${label}할까요?`))
+      return;
     setBusyId(entry.entry_id);
     try {
       await changeHallOfFamePublication(entry.entry_id, action, entry.version);
@@ -153,16 +153,14 @@ export function HallOfFameManageView() {
                 <div className="min-w-0 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h2 className="break-words text-lg font-bold">
-                      {entry.name}
+                      {entry.member_name}
                     </h2>
                     <Badge
                       variant={
-                        entry.publication_status === "PUBLISHED"
-                          ? "default"
-                          : "secondary"
+                        entry.status === "PUBLISHED" ? "default" : "secondary"
                       }
                     >
-                      {STATUS_LABELS[entry.publication_status]}
+                      {STATUS_LABELS[entry.status]}
                     </Badge>
                   </div>
                   <p className="text-muted-foreground break-words text-sm">
@@ -174,7 +172,7 @@ export function HallOfFameManageView() {
                 </span>
               </div>
               <div>
-                <p className="font-medium">{entry.title}</p>
+                <p className="font-medium">{entry.headline}</p>
                 <p className="text-muted-foreground mt-1 line-clamp-3 whitespace-pre-wrap text-sm">
                   {entry.introduction}
                 </p>
@@ -207,16 +205,14 @@ export function HallOfFameManageView() {
                 <Button
                   size="sm"
                   variant={
-                    entry.publication_status === "PUBLISHED"
-                      ? "destructive"
-                      : "default"
+                    entry.status === "PUBLISHED" ? "destructive" : "default"
                   }
                   disabled={busyId === entry.entry_id}
                   onClick={() => changePublication(entry)}
                 >
                   {busyId === entry.entry_id
                     ? "처리 중"
-                    : entry.publication_status === "PUBLISHED"
+                    : entry.status === "PUBLISHED"
                       ? "게시 중단"
                       : "게시"}
                 </Button>
@@ -251,15 +247,15 @@ function DialogPreview({
 }) {
   if (!entry) return null;
   const form: HallOfFameFormState = {
-    userId: entry.user_id === null ? "" : String(entry.user_id),
-    memberName: entry.name,
+    userId: entry.member_user_id === null ? "" : String(entry.member_user_id),
+    memberName: entry.member_name,
     memberDepartment: "",
     slug: entry.slug,
     actYear: String(entry.act_year),
     actSemester: String(entry.act_semester) as "1" | "2",
-    title: entry.title,
-    introduction: entry.introduction,
-    badges: entry.badges.map((badge) => badge.label),
+    title: entry.headline ?? "",
+    introduction: entry.introduction ?? "",
+    badges: [...entry.badges],
     achievements: entry.achievements.map((item) => ({
       title: item.title,
       description: item.description ?? "",

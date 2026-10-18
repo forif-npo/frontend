@@ -15,6 +15,7 @@ import {
   getHallOfFameEntries,
   searchHallOfFameMembers,
   updateHallOfFameEntry,
+  uploadHallOfFameImage,
 } from "./api";
 
 const mockResponse = (data: unknown) => ({
@@ -37,11 +38,12 @@ describe("hall of fame admin api", () => {
 
   it("keeps create, update and publication actions separate", async () => {
     const body = {
-      user_id: 2099999999,
+      member_user_id: 2099999999,
+      member_name: "테스트 회원",
       slug: "test-member",
       act_year: 2026,
       act_semester: 2,
-      title: "기여자",
+      headline: "기여자",
       introduction: "소개",
       achievements: [],
       badges: [],
@@ -71,6 +73,23 @@ describe("hall of fame admin api", () => {
       2,
       "api/v1/admin/hall-of-fame/7/publish",
       { json: { version: 3 } },
+    );
+  });
+
+  it("keeps the new optimistic version returned by image upload", async () => {
+    (apiClient.post as jest.Mock).mockReturnValue(
+      mockResponse({ image_url: "/api/v1/files/image.png", version: 4 }),
+    );
+
+    const file = new File(["image"], "image.png", { type: "image/png" });
+    await expect(uploadHallOfFameImage(7, file)).resolves.toEqual({
+      image_url: "/api/v1/files/image.png",
+      version: 4,
+    });
+
+    expect(apiClient.post).toHaveBeenCalledWith(
+      "api/v1/admin/hall-of-fame/7/image",
+      expect.objectContaining({ body: expect.any(FormData) }),
     );
   });
 

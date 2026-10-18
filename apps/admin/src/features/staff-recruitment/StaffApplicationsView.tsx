@@ -39,7 +39,7 @@ import { toast } from "sonner";
 import {
   getStaffApplicationDetail,
   getStaffApplications,
-  getStaffRecruitments,
+  getReviewableStaffRecruitments,
   type StaffApplicationPage,
 } from "./api";
 
@@ -90,7 +90,7 @@ export function StaffApplicationsView({
 
   useEffect(() => {
     if (initialRecruitmentId) setRecruitmentId(initialRecruitmentId);
-    getStaffRecruitments()
+    getReviewableStaffRecruitments()
       .then((items) => {
         setRounds(items);
         if (!initialRecruitmentId) {
