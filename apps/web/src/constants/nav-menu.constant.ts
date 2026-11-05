@@ -21,6 +21,10 @@ export const NAV_MENUS: NavMenu[] = [
         href: "/club/team",
       },
       {
+        label: "명예의 전당",
+        href: "/hall-of-fame",
+      },
+      {
         label: "회칙",
         href: "/club/rule",
       },

@@ -2,9 +2,14 @@
 import { auth, signIn, signOut, unstable_update } from "@/auth";
 import { getGoogleAccessToken } from "@/features/auth/signup/get-google-access-token";
 import { SignUpValues } from "@core/schemas";
-import { memberSignUp, userLogin, logout as logoutApi } from "@/features/auth/api";
+import {
+  memberSignUp,
+  userLogin,
+  logout as logoutApi,
+} from "@/features/auth/api";
 import { handleApiError } from "@core/utils/api-client";
 import { cookies } from "next/headers";
+import { getSafeCallbackUrl } from "../safe-callback-url";
 
 /**
  * Google OAuth를 시작합니다.
@@ -13,8 +18,13 @@ const signInWithGoogleRedirect = async (redirectTo: string) => {
   await signIn("google", { redirectTo });
 };
 
-export const signInWithGoogle = async () => {
-  await signInWithGoogleRedirect("/auth/callback?flow=signin");
+export const signInWithGoogle = async (callbackUrl?: string) => {
+  const safeCallbackUrl = getSafeCallbackUrl(callbackUrl);
+  const params = new URLSearchParams({
+    flow: "signin",
+    callbackUrl: safeCallbackUrl,
+  });
+  await signInWithGoogleRedirect(`/auth/callback?${params.toString()}`);
 };
 
 export const signUpWithGoogle = async () => {

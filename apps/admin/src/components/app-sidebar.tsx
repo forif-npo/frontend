@@ -1,9 +1,43 @@
 "use client";
 import { type MouseEvent } from "react";
 import { signOutAction } from "@/features/auth/actions";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarSeparator,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import { LogoutIcon } from "@repo/assets/icons/krds";
-import { Award, BookOpen, CheckCircle, CalendarRange, CircleDollarSign, Code2, FileText, HelpCircle, LayoutGrid, MessageSquare, Rocket, Settings, ShieldCheck, UserCog, BookUser, ClipboardList, Users } from "lucide-react";
+import {
+  Award,
+  BookOpen,
+  CheckCircle,
+  CalendarRange,
+  CircleDollarSign,
+  Code2,
+  FileText,
+  HelpCircle,
+  LayoutGrid,
+  MessageSquare,
+  Rocket,
+  Settings,
+  ShieldCheck,
+  UserCog,
+  BookUser,
+  ClipboardList,
+  Users,
+  ClipboardPenLine,
+  Trophy,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -47,10 +81,26 @@ const menuItems = {
       { title: "부원", url: "/members", icon: Users },
     ],
   },
+  recruitmentReview: {
+    label: "운영진 모집",
+    items: [
+      {
+        title: "운영진 지원서",
+        url: "/staff-applications",
+        icon: ClipboardList,
+      },
+    ],
+  },
   // 회장단(회장/부회장)에게만 노출
   presidentOnly: {
     label: "회장단",
     items: [
+      {
+        title: "운영진 모집 관리",
+        url: "/staff-recruitments",
+        icon: ClipboardPenLine,
+      },
+      { title: "명예의 전당 관리", url: "/hall-of-fame", icon: Trophy },
       { title: "운영진 계정 관리", url: "/admin-accounts", icon: ShieldCheck },
       { title: "학기 관리", url: "/semester", icon: CalendarRange },
     ],
@@ -193,6 +243,29 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.memberManagement.items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        {/* 회차별 reviewer도 접근 가능하며 최종 권한은 backend가 검사한다. */}
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            {menuItems.recruitmentReview.label}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.recruitmentReview.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={pathname === item.url}>
                     <Link href={item.url}>

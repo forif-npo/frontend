@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { AuthLoadingIndicator } from "@/components/AuthLoadingIndicator";
+import { getSafeCallbackUrl } from "@/features/auth/safe-callback-url";
 
 /**
  * Google OAuth 콜백 페이지
@@ -20,6 +21,7 @@ export default function AuthCallbackPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isNotRegistered, setIsNotRegistered] = useState(false);
   const flow = searchParams.get("flow") === "signup" ? "signup" : "signin";
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"));
 
   useEffect(() => {
     if (isNotRegistered || errorMessage) return;
@@ -39,7 +41,7 @@ export default function AuthCallbackPage() {
 
       if (result.status === "signed_in") {
         await update();
-        router.replace("/");
+        router.replace(callbackUrl);
         router.refresh();
         return;
       }
@@ -59,7 +61,15 @@ export default function AuthCallbackPage() {
     };
 
     void completeSignIn();
-  }, [errorMessage, flow, isNotRegistered, router, status, update]);
+  }, [
+    callbackUrl,
+    errorMessage,
+    flow,
+    isNotRegistered,
+    router,
+    status,
+    update,
+  ]);
 
   if (isNotRegistered) {
     return (

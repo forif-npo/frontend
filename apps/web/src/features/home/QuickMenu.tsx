@@ -1,6 +1,21 @@
 "use client";
 import { FaqIcon } from "@repo/assets/icons/krds";
-import { BookMarked, BookOpen, CalendarDays, Code2, FileCheck, FolderPlus, List, MapPin, MessageCircle, NotebookText, Package, PenLine, UserRound } from "@repo/assets/icons/lucide";
+import {
+  Award,
+  BookMarked,
+  BookOpen,
+  CalendarDays,
+  Code2,
+  FileCheck,
+  FolderPlus,
+  List,
+  MapPin,
+  MessageCircle,
+  NotebookText,
+  Package,
+  PenLine,
+  UserRound,
+} from "@repo/assets/icons/lucide";
 import { CarouselArrow, CarouselIndicators } from "@ui/components/client";
 import { Label } from "@ui/components/server";
 import { FORIF_EXTERNAL_LINKS } from "@/constants/external-links";
@@ -60,6 +75,7 @@ const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   { icon: FileCheck, label: "증명서 발급", href: "/my" },
   { icon: MapPin, label: "지도 보기", href: "/directions" },
   { icon: Code2, label: "해커톤", href: "/hackathon" },
+  { icon: Award, label: "명예의 전당", href: "/hall-of-fame" },
 ];
 
 const ITEMS_PER_PAGE = 8;

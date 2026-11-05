@@ -3,9 +3,9 @@ import { signInWithGoogle } from "@/features/auth/signin/actions";
 import { MemberEligibilityInfo } from "@/features/auth/member-eligibility-info";
 import { GoogleButton } from "../../../components/GoogleButton";
 
-export default function MemberLogin() {
+export default function MemberLogin({ callbackUrl }: { callbackUrl?: string }) {
   const handleSignIn = async () => {
-    await signInWithGoogle();
+    await signInWithGoogle(callbackUrl);
   };
 
   return (

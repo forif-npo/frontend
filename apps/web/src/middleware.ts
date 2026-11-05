@@ -18,6 +18,7 @@ const publicRoutes = [
   "/club/rule",
   "/club/accounting",
   "/hackathon",
+  "/hall-of-fame",
 ];
 const publicParamsList = [
   "/studies/detail",
@@ -26,12 +27,14 @@ const publicParamsList = [
   "/club",
   "/hackathon/archive",
   "/products",
+  "/hall-of-fame",
 ];
 // public 경로 하위여도 로그인이 필요한 경로 (예: 스터디 상세는 공개, 지원 폼은 로그인 필요)
 const protectedSubRoutes = [
   /^\/studies\/apply(?:\/|$)/,
   /^\/studies\/detail\/[^/]+\/apply(?:\/|$)/,
   /^\/products\/apply(?:\/|$)/,
+  /^\/club\/recruit\/[^/]+\/(?:apply|application)(?:\/|$)/,
 ];
 const authRoutes = ["/signin", "/signup", "/signup/form", "/auth/callback"];
 const apiAuthPrefix = "/api/auth";
@@ -61,7 +64,12 @@ const authMiddleware = auth((req) => {
   }
 
   if (!isLoggedIn && !isAuthRoute && !isPublicRoute && !isPublicParamsRoute) {
-    return Response.redirect(new URL(`/signin`, nextUrl));
+    const signInUrl = new URL(`/signin`, nextUrl);
+    signInUrl.searchParams.set(
+      "callbackUrl",
+      `${nextUrl.pathname}${nextUrl.search}`,
+    );
+    return Response.redirect(signInUrl);
   }
   return NextResponse.next();
 });

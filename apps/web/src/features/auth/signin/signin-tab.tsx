@@ -7,6 +7,6 @@ import MemberLogin from "./member-tab";
  * "이 스터디의 멘토인가"라는 관계에서 나오므로, 로그인 후 본인이 개설한
  * 스터디가 있으면 마이페이지에 관리 탭이 열린다.
  */
-export function SignInTab() {
-  return <MemberLogin />;
+export function SignInTab({ callbackUrl }: { callbackUrl?: string }) {
+  return <MemberLogin callbackUrl={callbackUrl} />;
 }
