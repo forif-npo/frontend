@@ -23,6 +23,10 @@ const backendFileImagePattern = (() => {
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  env: {
+    NEXT_PUBLIC_API_PROXY:
+      process.env.NODE_ENV === "development" ? "true" : "false",
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "5mb",
