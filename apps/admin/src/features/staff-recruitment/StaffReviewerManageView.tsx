@@ -159,22 +159,30 @@ export function StaffReviewerManageView({
 
   return (
     <div className="space-y-8 p-4 sm:p-6 md:p-8">
-      <div className="space-y-3">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/staff-recruitments">
-            <ArrowLeft className="mr-1 h-4 w-4" />
-            모집 관리
-          </Link>
-        </Button>
-        <PageHeader
-          title="지원서 열람자 관리"
-          description={
-            round
-              ? `“${round.title}” 회차의 지원서 열람 권한을 관리합니다.`
-              : "이 회차의 지원서 열람 권한을 관리합니다."
-          }
-        />
-      </div>
+      <PageHeader
+        title="지원서 열람자 관리"
+        description={
+          round
+            ? `“${round.title}” 회차의 지원서 열람 권한을 관리합니다.`
+            : "이 회차의 지원서 열람 권한을 관리합니다."
+        }
+        leadingAction={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-11"
+            asChild
+          >
+            <Link
+              href="/staff-recruitments"
+              aria-label="모집 관리로 돌아가기"
+              title="모집 관리로 돌아가기"
+            >
+              <ArrowLeft className="size-5" />
+            </Link>
+          </Button>
+        }
+      />
 
       <section className="space-y-4" aria-labelledby="active-reviewers-heading">
         <div>
@@ -249,7 +257,7 @@ export function StaffReviewerManageView({
             운영진 후보
           </h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            이 회차 활동 학기의 운영진이면서 ADMIN 계정이 있는 회원에게만 즉시
+            현재 활동 학기의 운영진이면서 ADMIN 계정이 있는 회원에게만 즉시
             권한을 부여합니다.
           </p>
         </div>
