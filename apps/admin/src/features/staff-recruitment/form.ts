@@ -1,7 +1,4 @@
-import type {
-  StaffRecruitmentRound,
-  StaffRecruitmentCreateRequest,
-} from "@core/types/staff-recruitment";
+import type { StaffRecruitmentRound, StaffRecruitmentCreateRequest } from "@core/types/staff-recruitment";
 
 export interface StaffRecruitmentFormState {
   title: string;
@@ -47,8 +44,8 @@ export function recruitmentToForm(
     description: recruitment.description ?? "",
     actYear: String(recruitment.act_year),
     actSemester: String(recruitment.act_semester) as "1" | "2",
-    startsAt: recruitment.starts_at?.slice(0, 16) ?? "",
-    endsAt: recruitment.ends_at?.slice(0, 16) ?? "",
+    startsAt: recruitment.starts_at?.slice(0, 10) ?? "",
+    endsAt: recruitment.ends_at?.slice(0, 10) ?? "",
     departments: recruitment.departments.map((department) => ({
       name: department.name,
       description: department.description ?? "",
@@ -63,8 +60,8 @@ export function recruitmentToForm(
   };
 }
 
-function toSeoulOffset(value: string): string {
-  return `${value}:00+09:00`;
+function toSeoulOffset(date: string, time: "00:00:00" | "23:59:59"): string {
+  return `${date}T${time}+09:00`;
 }
 
 export function validateRecruitmentForm(
@@ -74,10 +71,10 @@ export function validateRecruitmentForm(
     return "모집 제목과 안내문을 입력해주세요.";
   }
   if (!form.startsAt || !form.endsAt) {
-    return "모집 시작·종료 일시를 모두 입력해주세요.";
+    return "모집 시작·종료 날짜를 모두 입력해주세요.";
   }
-  if (new Date(form.startsAt).getTime() >= new Date(form.endsAt).getTime()) {
-    return "모집 종료 시각은 시작 시각보다 뒤여야 합니다.";
+  if (form.startsAt > form.endsAt) {
+    return "모집 종료 날짜는 시작 날짜보다 앞설 수 없습니다.";
   }
   if (!form.departments.some((department) => department.name.trim())) {
     return "지원 가능한 부서를 하나 이상 입력해주세요.";
@@ -104,8 +101,8 @@ export function toSaveRequest(
     description: form.description.trim(),
     act_year: Number(form.actYear),
     act_semester: Number(form.actSemester),
-    starts_at: toSeoulOffset(form.startsAt),
-    ends_at: toSeoulOffset(form.endsAt),
+    starts_at: toSeoulOffset(form.startsAt, "00:00:00"),
+    ends_at: toSeoulOffset(form.endsAt, "23:59:59"),
     departments: form.departments
       .filter((department) => department.name.trim())
       .map((department, index) => ({

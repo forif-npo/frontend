@@ -1,33 +1,14 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { AdminStaffRecruitmentRound } from "@core/types/staff-recruitment";
-import {
-  emptyRecruitmentForm,
-  recruitmentToForm,
-  type StaffRecruitmentFormState,
-  validateRecruitmentForm,
-} from "./form";
+import { emptyRecruitmentForm, recruitmentToForm, type StaffRecruitmentFormState, validateRecruitmentForm } from "./form";
 
 interface Props {
   open: boolean;
@@ -154,7 +135,7 @@ export function StaffRecruitmentFormDialog({
             <Field label="접수 시작" id="recruitment-start">
               <Input
                 id="recruitment-start"
-                type="datetime-local"
+                type="date"
                 value={form.startsAt}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -167,7 +148,7 @@ export function StaffRecruitmentFormDialog({
             <Field label="접수 종료" id="recruitment-end">
               <Input
                 id="recruitment-end"
-                type="datetime-local"
+                type="date"
                 value={form.endsAt}
                 onChange={(event) =>
                   setForm((current) => ({
