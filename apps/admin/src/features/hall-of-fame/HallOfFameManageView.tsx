@@ -106,7 +106,6 @@ export function HallOfFameManageView() {
         <PageHeader
           title="명예의 전당 관리"
           description="인물과 성취를 초안으로 저장하고 미리보기 후 게시합니다."
-          icon={<Award className="h-7 w-7" />}
         />
         <Button
           onClick={() => {
