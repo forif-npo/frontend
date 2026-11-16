@@ -96,7 +96,7 @@ const menuItems = {
     label: "회장단",
     items: [
       {
-        title: "운영진 모집 관리",
+        title: "운영진 모집",
         url: "/staff-recruitments",
         icon: ClipboardPenLine,
       },

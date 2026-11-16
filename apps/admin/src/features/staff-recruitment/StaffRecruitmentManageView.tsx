@@ -103,8 +103,8 @@ export function StaffRecruitmentManageView() {
     <div className="space-y-6 p-4 sm:p-6 md:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <PageHeader
-          title="운영진 모집 관리"
-          description="모집 안내·기간·부서·문항을 설정하고 공개 또는 마감합니다."
+          title="운영진 모집"
+          description="모집 정보와 지원서 문항을 설정하고 모집 기간을 정합니다."
         />
         <Button
           onClick={() => {
