@@ -1,7 +1,7 @@
 import type { StaffRecruitmentRound, StaffRecruitmentCreateRequest, StaffRecruitmentQuestionType } from "@core/types/staff-recruitment";
+import { staffRecruitmentStorageTitle } from "@core/staff-recruitment";
 
 export interface StaffRecruitmentFormState {
-  title: string;
   summary: string;
   description: string;
   actYear: string;
@@ -23,7 +23,6 @@ export interface StaffRecruitmentFormState {
 
 export function emptyRecruitmentForm(): StaffRecruitmentFormState {
   return {
-    title: "",
     summary: "",
     description: "",
     actYear: String(new Date().getFullYear()),
@@ -39,7 +38,6 @@ export function recruitmentToForm(
   recruitment: StaffRecruitmentRound,
 ): StaffRecruitmentFormState {
   return {
-    title: recruitment.title,
     summary: recruitment.summary ?? "",
     description: recruitment.description ?? "",
     actYear: String(recruitment.act_year),
@@ -67,8 +65,12 @@ function toSeoulOffset(date: string, time: "00:00:00" | "23:59:59"): string {
 export function validateRecruitmentForm(
   form: StaffRecruitmentFormState,
 ): string | null {
-  if (!form.title.trim() || !form.description.trim()) {
-    return "모집 제목과 안내문을 입력해주세요.";
+  const actYear = Number(form.actYear);
+  if (!Number.isInteger(actYear) || actYear < 2018 || actYear > 9999) {
+    return "활동 연도를 확인해주세요.";
+  }
+  if (!form.description.trim()) {
+    return "안내문을 입력해주세요.";
   }
   if (!form.startsAt || !form.endsAt) {
     return "모집 시작·종료 날짜를 모두 입력해주세요.";
@@ -97,7 +99,10 @@ export function toSaveRequest(
   form: StaffRecruitmentFormState,
 ): StaffRecruitmentCreateRequest {
   return {
-    title: form.title.trim(),
+    title: staffRecruitmentStorageTitle(
+      Number(form.actYear),
+      Number(form.actSemester),
+    ),
     summary: form.summary.trim() || null,
     description: form.description.trim(),
     act_year: Number(form.actYear),

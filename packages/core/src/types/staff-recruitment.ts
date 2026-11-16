@@ -88,7 +88,7 @@ export interface StaffRecruitmentCreateRequest {
 }
 
 export interface StaffRecruitmentUpdateRequest
-  extends StaffRecruitmentCreateRequest {
+  extends Omit<StaffRecruitmentCreateRequest, "act_year" | "act_semester"> {
   version: number;
 }
 

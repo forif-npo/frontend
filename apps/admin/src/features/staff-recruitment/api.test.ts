@@ -88,11 +88,9 @@ describe("staff recruitment admin api", () => {
     mockedPatch.mockReturnValue(response({ recruitment_id: 12, version: 4 }));
     const body = {
       version: 3,
-      title: "27-1 운영진 모집",
+      title: "2027-1",
       summary: null,
       description: "모집 안내",
-      act_year: 2027,
-      act_semester: 1,
       starts_at: "2027-01-01T00:00:00+09:00",
       ends_at: "2027-01-02T00:00:00+09:00",
       departments: [

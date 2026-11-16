@@ -4,6 +4,7 @@ import Link from "next/link";
 import { HTTPError } from "ky";
 import { ArrowLeft, MoreVertical, ShieldAlert, UserPlus, Users } from "lucide-react";
 import type { AdminStaffRecruitmentRound, StaffRecruitmentReviewer, StaffReviewerCandidate } from "@core/types/staff-recruitment";
+import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { PageHeader } from "@/components/page-header";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
@@ -23,9 +24,7 @@ function isForbidden(error: unknown) {
 
 function formatDate(value: string) {
   const date = value.slice(0, 10);
-  return /^\d{4}-\d{2}-\d{2}$/.test(date)
-    ? date.replaceAll("-", ". ")
-    : "-";
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date.replaceAll("-", ". ") : "-";
 }
 
 function ReviewerDetails({
@@ -178,16 +177,11 @@ export function StaffReviewerManageView({
         title="지원서 열람자 관리"
         description={
           round
-            ? `“${round.title}” 회차의 지원서 열람 권한을 관리합니다.`
+            ? `“${formatStaffRecruitmentTitle(round.act_year, round.act_semester)}” 회차의 지원서 열람 권한을 관리합니다.`
             : "이 회차의 지원서 열람 권한을 관리합니다."
         }
         leadingAction={
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-11"
-            asChild
-          >
+          <Button variant="ghost" size="icon" className="size-11" asChild>
             <Link
               href="/staff-recruitments"
               aria-label="모집 관리로 돌아가기"
@@ -389,8 +383,8 @@ export function StaffReviewerManageView({
           <DialogHeader>
             <DialogTitle>열람 권한 부여</DialogTitle>
             <DialogDescription>
-              {selectedCandidate?.user_name} 님에게 이 회차의 지원서 열람
-              권한을 부여합니다.
+              {selectedCandidate?.user_name} 님에게 이 회차의 지원서 열람 권한을
+              부여합니다.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">

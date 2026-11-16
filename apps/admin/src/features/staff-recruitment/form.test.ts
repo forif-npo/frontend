@@ -3,9 +3,24 @@ import type { StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { emptyRecruitmentForm, recruitmentToForm, toSaveRequest, validateRecruitmentForm } from "./form";
 
 describe("staff recruitment form", () => {
+  it("derives the stored title from a valid activity semester", () => {
+    const form = emptyRecruitmentForm();
+    form.description = "안내";
+    form.startsAt = "2027-01-01";
+    form.endsAt = "2027-01-02";
+    form.departments = [{ name: "기획팀", description: "" }];
+    form.actYear = "2027";
+    form.actSemester = "1";
+
+    expect(validateRecruitmentForm(form)).toBeNull();
+    expect(toSaveRequest(form).title).toBe("2027-1");
+
+    form.actYear = "";
+    expect(validateRecruitmentForm(form)).toBe("활동 연도를 확인해주세요.");
+  });
+
   it("rejects an empty department and reversed schedule", () => {
     const form = emptyRecruitmentForm();
-    form.title = "운영진 모집";
     form.description = "안내";
     form.startsAt = "2026-12-15";
     form.endsAt = "2026-12-01";
@@ -16,7 +31,6 @@ describe("staff recruitment form", () => {
   it("maps ordered departments and optional questions to snake_case", () => {
     const form = emptyRecruitmentForm();
     Object.assign(form, {
-      title: " 2027-1 운영진 모집 ",
       description: " 모집 안내 ",
       startsAt: "2026-12-01",
       endsAt: "2026-12-15",
@@ -40,6 +54,7 @@ describe("staff recruitment form", () => {
     expect(validateRecruitmentForm(form)).toBeNull();
     expect(toSaveRequest(form)).toEqual(
       expect.objectContaining({
+        title: "2027-1",
         act_year: 2027,
         act_semester: 1,
         starts_at: "2026-12-01T00:00:00+09:00",
@@ -61,7 +76,6 @@ describe("staff recruitment form", () => {
 
   it("keeps link and file question types in the recruitment request", () => {
     const form = emptyRecruitmentForm();
-    form.title = "운영진 모집";
     form.description = "안내";
     form.startsAt = "2026-12-01";
     form.endsAt = "2026-12-15";
@@ -91,7 +105,6 @@ describe("staff recruitment form", () => {
 
   it("allows a single-day period and restores dates when editing", () => {
     const form = emptyRecruitmentForm();
-    form.title = "운영진 모집";
     form.description = "안내";
     form.startsAt = "2026-12-15";
     form.endsAt = "2026-12-15";
@@ -104,7 +117,7 @@ describe("staff recruitment form", () => {
 
     const saved: StaffRecruitmentRound = {
       recruitment_id: 1,
-      title: form.title,
+      title: "기존 모집 제목",
       summary: null,
       description: form.description,
       act_year: 2026,
@@ -122,9 +135,12 @@ describe("staff recruitment form", () => {
     };
     expect(recruitmentToForm(saved)).toEqual(
       expect.objectContaining({
+        actYear: "2026",
+        actSemester: "2",
         startsAt: "2026-12-15",
         endsAt: "2026-12-15",
       }),
     );
+    expect(toSaveRequest(recruitmentToForm(saved)).title).toBe("2026-2");
   });
 });

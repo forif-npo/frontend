@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { HTTPError } from "ky";
 import { ShieldAlert } from "lucide-react";
 import type { AdminStaffRecruitmentRound, StaffApplicationDetail, StaffApplicationSummary } from "@core/types/staff-recruitment";
+import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { PageHeader } from "@/components/page-header";
@@ -169,7 +170,10 @@ export function StaffApplicationsView({
                 key={round.recruitment_id}
                 value={String(round.recruitment_id)}
               >
-                {round.title}
+                {formatStaffRecruitmentTitle(
+                  round.act_year,
+                  round.act_semester,
+                )}
               </SelectItem>
             ))}
           </SelectContent>

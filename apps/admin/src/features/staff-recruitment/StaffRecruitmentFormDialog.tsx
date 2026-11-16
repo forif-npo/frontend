@@ -56,32 +56,18 @@ export function StaffRecruitmentFormDialog({
         </DialogHeader>
 
         <div className="grid gap-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="모집 제목" id="recruitment-title">
-              <Input
-                id="recruitment-title"
-                value={form.title}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    title: event.target.value,
-                  }))
-                }
-              />
-            </Field>
-            <Field label="한 줄 소개" id="recruitment-summary">
-              <Input
-                id="recruitment-summary"
-                value={form.summary}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    summary: event.target.value,
-                  }))
-                }
-              />
-            </Field>
-          </div>
+          <Field label="한 줄 소개" id="recruitment-summary">
+            <Input
+              id="recruitment-summary"
+              value={form.summary}
+              onChange={(event) =>
+                setForm((current) => ({
+                  ...current,
+                  summary: event.target.value,
+                }))
+              }
+            />
+          </Field>
 
           <Field label="안내문" id="recruitment-description">
             <Textarea
@@ -103,6 +89,7 @@ export function StaffRecruitmentFormDialog({
                 id="recruitment-year"
                 type="number"
                 min={2018}
+                disabled={recruitment !== null}
                 value={form.actYear}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -116,6 +103,7 @@ export function StaffRecruitmentFormDialog({
               <Label htmlFor="recruitment-semester">학기</Label>
               <Select
                 value={form.actSemester}
+                disabled={recruitment !== null}
                 onValueChange={(value: "1" | "2") =>
                   setForm((current) => ({
                     ...current,

@@ -1,11 +1,9 @@
 import type { StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { Button } from "@ui/components/client";
 import { Body, Display } from "@ui/components/server";
 import Link from "next/link";
-import {
-  APPLICATION_STATUS_LABELS,
-  formatRecruitmentPeriod,
-} from "./presentation";
+import { APPLICATION_STATUS_LABELS, formatRecruitmentPeriod } from "./presentation";
 
 export function StaffRecruitmentBanner({
   recruitment,
@@ -21,7 +19,6 @@ export function StaffRecruitmentBanner({
             size="l"
             className="mb-1 text-[12px] font-semibold leading-none text-white/85 md:mb-3 md:text-[16px]"
           >
-            {recruitment.semester_label} ·{" "}
             {formatRecruitmentPeriod(
               recruitment.starts_at,
               recruitment.ends_at,
@@ -31,7 +28,10 @@ export function StaffRecruitmentBanner({
             size="s"
             className="truncate text-[22px] leading-tight text-white md:text-[40px]"
           >
-            {recruitment.title}
+            {formatStaffRecruitmentTitle(
+              recruitment.act_year,
+              recruitment.act_semester,
+            )}
           </Display>
           <p className="mt-2 hidden max-w-2xl text-sm text-white/80 md:block">
             {recruitment.summary ??

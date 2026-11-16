@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { AdminStaffRecruitmentRound } from "@core/types/staff-recruitment";
+import { formatStaffRecruitmentTitle, staffRecruitmentStorageTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { changeStaffRecruitmentStatus, createStaffRecruitment, getStaffRecruitments, updateStaffRecruitment } from "./api";
 import { toSaveRequest, type StaffRecruitmentFormState } from "./form";
@@ -54,7 +55,16 @@ export function StaffRecruitmentManageView() {
       const body = toSaveRequest(form);
       if (editTarget) {
         await updateStaffRecruitment(editTarget.recruitment_id, {
-          ...body,
+          title: staffRecruitmentStorageTitle(
+            editTarget.act_year,
+            editTarget.act_semester,
+          ),
+          summary: body.summary,
+          description: body.description,
+          starts_at: body.starts_at,
+          ends_at: body.ends_at,
+          departments: body.departments,
+          questions: body.questions,
           version: editTarget.version,
         });
       } else {
@@ -84,7 +94,7 @@ export function StaffRecruitmentManageView() {
     if (
       !(await confirmDialog({
         title: `모집 ${actionLabel}`,
-        description: `“${recruitment.title}” 모집을 ${actionLabel}할까요?`,
+        description: `“${formatStaffRecruitmentTitle(recruitment.act_year, recruitment.act_semester)}”을 ${actionLabel}할까요?`,
         confirmLabel: actionLabel,
       }))
     ) {
@@ -146,11 +156,15 @@ export function StaffRecruitmentManageView() {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-lg font-bold">{item.title}</h2>
+                    <h2 className="text-lg font-bold">
+                      {formatStaffRecruitmentTitle(
+                        item.act_year,
+                        item.act_semester,
+                      )}
+                    </h2>
                     <Badge variant="outline">
                       {STATUS_LABELS[item.publication_status]}
                     </Badge>
-                    <Badge variant="secondary">{item.semester_label}</Badge>
                   </div>
                   <p className="text-muted-foreground mt-2 text-sm">
                     {formatRecruitmentDate(item.starts_at)} ~{" "}

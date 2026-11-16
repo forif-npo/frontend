@@ -1,12 +1,9 @@
 import type { StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { Button } from "@ui/components/client";
 import { Link, PageState } from "@ui/components/server";
 import { PageHeader } from "@/components/PageHeader";
-import {
-  APPLICATION_STATUS_LABELS,
-  formatRecruitmentPeriod,
-  recruitmentStatusMessage,
-} from "./presentation";
+import { APPLICATION_STATUS_LABELS, formatRecruitmentPeriod, recruitmentStatusMessage } from "./presentation";
 
 export function StaffRecruitmentView({
   recruitment,
@@ -53,7 +50,10 @@ export function StaffRecruitmentView({
           { label: "동아리", href: "/club" },
           { label: "운영진 모집" },
         ]}
-        title={recruitment.title}
+        title={formatStaffRecruitmentTitle(
+          recruitment.act_year,
+          recruitment.act_semester,
+        )}
         description={recruitment.summary ?? "FORIF 운영진 모집 안내입니다."}
         titleAddon={
           <span className="bg-primary-5 text-primary-60 rounded-full px-3 py-1 text-sm font-bold">
