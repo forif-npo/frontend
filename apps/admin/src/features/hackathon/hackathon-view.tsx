@@ -258,7 +258,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
           />
           <Button className="ml-auto" onClick={handleOpenCreate}>
             <Plus className="mr-2 h-4 w-4" />
-            해커톤 추가
+            새 해커톤 만들기
           </Button>
         </div>
 
@@ -308,9 +308,6 @@ export function HackathonView({ initialData }: HackathonViewProps) {
           }}
         />
 
-        <div className="text-muted-foreground text-sm">
-          총 {filteredData.length}건
-        </div>
       </div>
 
       {/* 생성/수정 다이얼로그 */}
