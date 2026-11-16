@@ -46,12 +46,14 @@ export function StaffRecruitmentView({
   const showDescription =
     description && description !== recruitment.summary?.trim();
   const statusMessage =
-    recruitment.application_unavailable_reason ??
-    (recruitment.application_open
+    recruitment.application_status === "UPCOMING"
       ? null
-      : recruitment.application_status === "OPEN"
-        ? "현재 지원서를 작성할 수 없습니다."
-        : recruitmentStatusMessage(recruitment.application_status, null));
+      : (recruitment.application_unavailable_reason ??
+        (recruitment.application_open
+          ? null
+          : recruitment.application_status === "OPEN"
+            ? "현재 지원서를 작성할 수 없습니다."
+            : recruitmentStatusMessage(recruitment.application_status, null)));
 
   return (
     <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
