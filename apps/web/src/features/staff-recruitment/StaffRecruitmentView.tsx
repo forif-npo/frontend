@@ -3,7 +3,7 @@ import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { Button } from "@ui/components/client";
 import { Link, PageState } from "@ui/components/server";
 import { PageHeader } from "@/components/PageHeader";
-import { APPLICATION_STATUS_LABELS, formatRecruitmentPeriod, recruitmentStatusMessage } from "./presentation";
+import { APPLICATION_STATUS_LABELS, formatRecruitmentDatePeriod, recruitmentStatusMessage } from "./presentation";
 
 export function StaffRecruitmentView({
   recruitment,
@@ -42,6 +42,17 @@ export function StaffRecruitmentView({
     );
   }
 
+  const description = recruitment.description?.trim();
+  const showDescription =
+    description && description !== recruitment.summary?.trim();
+  const statusMessage =
+    recruitment.application_unavailable_reason ??
+    (recruitment.application_open
+      ? null
+      : recruitment.application_status === "OPEN"
+        ? "현재 지원서를 작성할 수 없습니다."
+        : recruitmentStatusMessage(recruitment.application_status, null));
+
   return (
     <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
       <PageHeader
@@ -64,17 +75,19 @@ export function StaffRecruitmentView({
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-8">
-          <section aria-labelledby="recruitment-description">
-            <h2
-              id="recruitment-description"
-              className="text-title-l-mobile sm:text-title-l text-text-basic font-bold"
-            >
-              모집 안내
-            </h2>
-            <p className="text-text-basic mt-4 whitespace-pre-wrap text-[16px] leading-7">
-              {recruitment.description ?? "등록된 모집 안내가 없습니다."}
-            </p>
-          </section>
+          {showDescription && (
+            <section aria-labelledby="recruitment-description">
+              <h2
+                id="recruitment-description"
+                className="text-title-l-mobile sm:text-title-l text-text-basic font-bold"
+              >
+                모집 안내
+              </h2>
+              <p className="bg-surface-gray-subtler text-text-basic rounded-3 mt-4 whitespace-pre-wrap p-5 text-[16px] leading-7 sm:p-6">
+                {description}
+              </p>
+            </section>
+          )}
 
           <section aria-labelledby="recruitment-departments">
             <h2
@@ -83,20 +96,20 @@ export function StaffRecruitmentView({
             >
               모집 부서
             </h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-x-8 sm:grid-cols-2">
               {recruitment.departments
                 .filter((department) => department.active)
                 .sort((a, b) => a.display_order - b.display_order)
                 .map((department) => (
                   <article
                     key={department.department_id}
-                    className="border-border-gray rounded-3 border bg-white p-5"
+                    className="border-divider-gray-light border-b py-4"
                   >
-                    <h3 className="text-text-basic font-bold">
+                    <h3 className="text-text-basic text-[17px] font-bold leading-[1.5]">
                       {department.name}
                     </h3>
-                    {department.description && (
-                      <p className="text-text-subtle mt-2 text-sm leading-6">
+                    {department.description?.trim() && (
+                      <p className="text-text-subtle mt-1 text-[15px] leading-6">
                         {department.description}
                       </p>
                     )}
@@ -113,23 +126,32 @@ export function StaffRecruitmentView({
               >
                 지원서 문항
               </h2>
-              <ol className="mt-4 space-y-3">
+              <ol className="mt-4 space-y-5">
                 {[...recruitment.questions]
                   .sort((a, b) => a.display_order - b.display_order)
                   .map((question, index) => (
                     <li
                       key={question.question_id}
-                      className="border-border-gray rounded-3 border p-4 text-sm"
+                      className="flex gap-3 text-[15px] leading-[1.5] md:text-[17px]"
                     >
-                      <span className="text-primary-60 font-bold">
+                      <span className="text-text-primary shrink-0 font-bold">
                         {index + 1}.
-                      </span>{" "}
-                      <span className="text-text-basic font-semibold">
-                        {question.label}
                       </span>
-                      {question.required && (
-                        <span className="text-text-danger ml-1">필수</span>
-                      )}
+                      <div className="min-w-0">
+                        <p className="text-text-basic font-semibold">
+                          {question.label}
+                          {question.required && (
+                            <span className="text-text-danger ml-2 text-sm font-normal">
+                              필수
+                            </span>
+                          )}
+                        </p>
+                        {question.description?.trim() && (
+                          <p className="text-text-subtle mt-1 text-sm leading-6">
+                            {question.description}
+                          </p>
+                        )}
+                      </div>
                     </li>
                   ))}
               </ol>
@@ -140,17 +162,16 @@ export function StaffRecruitmentView({
         <aside className="border-border-gray rounded-3 h-fit border bg-white p-5 lg:sticky lg:top-24">
           <p className="text-text-subtle text-sm">모집 기간</p>
           <p className="text-text-basic mt-2 font-bold">
-            {formatRecruitmentPeriod(
+            {formatRecruitmentDatePeriod(
               recruitment.starts_at,
               recruitment.ends_at,
             )}
           </p>
-          <p className="text-text-subtle mt-4 text-sm leading-6">
-            {recruitmentStatusMessage(
-              recruitment.application_status,
-              recruitment.application_unavailable_reason,
-            )}
-          </p>
+          {statusMessage && (
+            <p className="text-text-subtle mt-4 text-sm leading-6">
+              {statusMessage}
+            </p>
+          )}
           {recruitment.application_open ? (
             <Link href={`/club/recruit/${recruitment.recruitment_id}/apply`}>
               <Button className="mt-5 w-full">지원서 작성</Button>
@@ -166,9 +187,6 @@ export function StaffRecruitmentView({
           >
             내 지원서 확인
           </Link>
-          <p className="text-text-subtle mt-3 text-xs leading-5">
-            지원 자격과 접수 가능 여부는 서버에서 최종 확인합니다.
-          </p>
         </aside>
       </div>
     </main>

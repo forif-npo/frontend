@@ -16,9 +16,9 @@ import { HallOfFameFormDialog } from "./HallOfFameFormDialog";
 import { HallOfFamePreview } from "./HallOfFamePreview";
 
 const STATUS_LABELS = {
-  DRAFT: "초안",
-  PUBLISHED: "게시 중",
-  UNPUBLISHED: "게시 중단",
+  DRAFT: "모집 전",
+  PUBLISHED: "모집 중",
+  UNPUBLISHED: "모집 중단",
 } as const;
 
 export function HallOfFameManageView() {

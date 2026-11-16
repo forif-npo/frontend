@@ -17,16 +17,20 @@ export const NAV_MENUS: NavMenu[] = [
         href: "/club#history",
       },
       {
+        label: "회칙",
+        href: "/club/rule",
+      },
+      {
         label: "운영진 소개",
         href: "/club/team",
       },
       {
-        label: "명예의 전당",
-        href: "/hall-of-fame",
+        label: "운영진 모집",
+        href: "/club/recruit",
       },
       {
-        label: "회칙",
-        href: "/club/rule",
+        label: "명예의 전당",
+        href: "/hall-of-fame",
       },
     ],
   },

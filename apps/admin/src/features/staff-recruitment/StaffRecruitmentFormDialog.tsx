@@ -240,7 +240,13 @@ export function StaffRecruitmentFormDialog({
                 key={`question-${index}`}
                 className="grid gap-3"
               >
-                <div className="grid gap-2 sm:grid-cols-[2fr_1fr_110px_auto]">
+                <div
+                  className={
+                    question.type === "SHORT_TEXT" || question.type === "LONG_TEXT"
+                      ? "grid gap-2 sm:grid-cols-[2fr_1fr_110px_auto]"
+                      : "grid gap-2 sm:grid-cols-[2fr_1fr_auto]"
+                  }
+                >
                   <Input
                     aria-label={`${index + 1}번째 문항`}
                     placeholder="지원 동기를 작성해주세요"
@@ -290,8 +296,8 @@ export function StaffRecruitmentFormDialog({
                       <SelectItem value="FILE">파일</SelectItem>
                     </SelectContent>
                   </Select>
-                  {question.type === "SHORT_TEXT" ||
-                  question.type === "LONG_TEXT" ? (
+                  {(question.type === "SHORT_TEXT" ||
+                    question.type === "LONG_TEXT") && (
                     <Input
                       aria-label={`${index + 1}번째 최대 글자 수`}
                       type="number"
@@ -308,12 +314,6 @@ export function StaffRecruitmentFormDialog({
                         }))
                       }
                     />
-                  ) : (
-                    <span className="text-muted-foreground self-center text-xs">
-                      {question.type === "FILE"
-                        ? "파일 1개 · 최대 5MB"
-                        : "http(s) 링크"}
-                    </span>
                   )}
                   <Button
                     type="button"

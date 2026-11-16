@@ -25,7 +25,7 @@ export function formatRecruitmentPeriod(
     hour12: false,
   });
 
-  return `${formatter.format(new Date(startsAt))} – ${formatter.format(
+  return `${formatter.format(new Date(startsAt))} ~ ${formatter.format(
     new Date(endsAt),
   )}`;
 }
@@ -42,7 +42,7 @@ export function formatRecruitmentDatePeriod(
     day: "numeric",
   });
 
-  return `${formatter.format(new Date(startsAt))} – ${formatter.format(
+return `${formatter.format(new Date(startsAt))} ~ ${formatter.format(
     new Date(endsAt),
   )}`;
 }

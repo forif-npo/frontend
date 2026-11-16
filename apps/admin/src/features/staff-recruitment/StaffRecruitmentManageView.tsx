@@ -15,10 +15,10 @@ import { StaffRecruitmentFormDialog } from "./StaffRecruitmentFormDialog";
 import Link from "next/link";
 
 const STATUS_LABELS = {
-  DRAFT: "초안",
-  PUBLISHED: "공개",
-  CLOSED: "마감",
-  CANCELED: "취소",
+  DRAFT: "모집 전",
+  PUBLISHED: "모집 중",
+  CLOSED: "모집 마감",
+  CANCELED: "모집 취소",
 } as const;
 
 function formatRecruitmentDate(value?: string | null) {
