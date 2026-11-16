@@ -1,43 +1,9 @@
 "use client";
 import { type MouseEvent } from "react";
 import { signOutAction } from "@/features/auth/actions";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarSeparator,
-  SidebarTrigger,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { LogoutIcon } from "@repo/assets/icons/krds";
-import {
-  Award,
-  BookOpen,
-  CheckCircle,
-  CalendarRange,
-  CircleDollarSign,
-  Code2,
-  FileText,
-  HelpCircle,
-  LayoutGrid,
-  MessageSquare,
-  Rocket,
-  Settings,
-  ShieldCheck,
-  UserCog,
-  BookUser,
-  ClipboardList,
-  Users,
-  ClipboardPenLine,
-  Trophy,
-} from "lucide-react";
+import { Award, BookOpen, CheckCircle, CalendarRange, CircleDollarSign, Code2, FileBadge, FileText, FileUser, HelpCircle, LayoutGrid, MessageSquare, Rocket, Settings, ShieldCheck, UserCog, BookUser, ClipboardList, Users, ClipboardPenLine, Trophy } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -58,7 +24,7 @@ const menuItems = {
       {
         title: "멘토 확인서 발급",
         url: "/mentor-confirmations",
-        icon: FileText,
+        icon: FileBadge,
       },
     ],
   },
@@ -77,18 +43,13 @@ const menuItems = {
         url: "/operators",
         icon: UserCog,
       },
-      { title: "멘토", url: "/mentors", icon: BookUser },
-      { title: "부원", url: "/members", icon: Users },
-    ],
-  },
-  recruitmentReview: {
-    label: "운영진 모집",
-    items: [
       {
         title: "운영진 지원서",
         url: "/staff-applications",
-        icon: ClipboardList,
+        icon: FileUser,
       },
+      { title: "멘토", url: "/mentors", icon: BookUser },
+      { title: "부원", url: "/members", icon: Users },
     ],
   },
   // 회장단(회장/부회장)에게만 노출
@@ -235,7 +196,7 @@ export function AppSidebar() {
 
         <SidebarSeparator />
 
-        {/* 부원 관리 */}
+        {/* 회원 관리 */}
         <SidebarGroup>
           <SidebarGroupLabel>
             {menuItems.memberManagement.label}
@@ -243,29 +204,6 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.memberManagement.items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator />
-
-        {/* 회차별 reviewer도 접근 가능하며 최종 권한은 backend가 검사한다. */}
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            {menuItems.recruitmentReview.label}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.recruitmentReview.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={pathname === item.url}>
                     <Link href={item.url}>
