@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { AdminStaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
-import { formatDateTimeLabel } from "@/utils/datetime";
 import { changeStaffRecruitmentStatus, createStaffRecruitment, getStaffRecruitments, updateStaffRecruitment } from "./api";
 import { toSaveRequest, type StaffRecruitmentFormState } from "./form";
 import { StaffRecruitmentFormDialog } from "./StaffRecruitmentFormDialog";
@@ -19,6 +18,10 @@ const STATUS_LABELS = {
   CLOSED: "마감",
   CANCELED: "취소",
 } as const;
+
+function formatRecruitmentDate(value?: string | null) {
+  return value ? value.slice(0, 10).replaceAll("-", ". ") : "-";
+}
 
 export function StaffRecruitmentManageView() {
   const [items, setItems] = useState<AdminStaffRecruitmentRound[]>([]);
@@ -145,12 +148,8 @@ export function StaffRecruitmentManageView() {
                     <Badge variant="secondary">{item.semester_label}</Badge>
                   </div>
                   <p className="text-muted-foreground mt-2 text-sm">
-                    {formatDateTimeLabel(item.starts_at ?? undefined)} ~{" "}
-                    {formatDateTimeLabel(item.ends_at ?? undefined)}
-                  </p>
-                  <p className="text-muted-foreground mt-1 text-sm">
-                    부서 {item.departments.length}개 · 문항{" "}
-                    {item.questions.length}개
+                    {formatRecruitmentDate(item.starts_at)} ~{" "}
+                    {formatRecruitmentDate(item.ends_at)}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
