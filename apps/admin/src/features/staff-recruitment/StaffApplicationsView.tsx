@@ -11,11 +11,16 @@ import { OffsetPagination } from "@/components/list/offset-pagination";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/Toast";
-import { getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
+import {
+  getStaffApplicationDetail,
+  getStaffApplications,
+  getReviewableStaffRecruitments,
+  type StaffApplicationPage,
+} from "./api";
 
 const EMPTY_PAGE: StaffApplicationPage = {
   content: [],
@@ -297,82 +302,112 @@ export function StaffApplicationsView({
         open={detail !== null}
         onOpenChange={(open) => !open && setDetail(null)}
       >
-        <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+        <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto p-6 sm:p-8">
           {detail && (
             <>
-              <DialogHeader>
+              <DialogHeader className="sr-only">
                 <DialogTitle>{detail.applicant_name} 지원서</DialogTitle>
-                <DialogDescription>
-                  {dateLabel(detail.submitted_at)} 제출
-                </DialogDescription>
+                <DialogDescription>지원자 정보와 문항별 답변</DialogDescription>
               </DialogHeader>
-              <dl className="grid gap-3 rounded-md border p-4 text-sm sm:grid-cols-2">
-                <div>
-                  <dt className="text-muted-foreground">학과</dt>
-                  <dd>{detail.applicant_department ?? "-"}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">학번</dt>
-                  <dd>{detail.applicant_user_id ?? "탈퇴 회원"}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">이메일</dt>
-                  <dd className="break-all">{detail.applicant_email}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">연락처</dt>
-                  <dd>{detail.applicant_phone_num ?? "-"}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">1지망 부서</dt>
-                  <dd>{departmentName(detail, 1)}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">2지망 부서</dt>
-                  <dd>{departmentName(detail, 2)}</dd>
-                </div>
-              </dl>
-              <ol className="space-y-4">
-                {detail.answers.map((answer, index) => (
-                  <li
-                    key={answer.question_id}
-                    className="rounded-md border p-4"
+              <div className="space-y-8">
+                <section
+                  className="space-y-4"
+                  aria-labelledby="applicant-info-heading"
+                >
+                  <h3
+                    id="applicant-info-heading"
+                    className="text-lg font-semibold"
                   >
-                    <h3 className="font-semibold">
-                      {index + 1}. {answer.question_label}
-                    </h3>
-                    {answer.question_type === "FILE" && answer.answer ? (
-                      <button
-                        type="button"
-                        className="mt-2 text-sm underline"
-                        onClick={() =>
-                          void downloadPrivateFile(
-                            `api/v1/admin/staff-recruitments/${detail.recruitment_id}/applications/${detail.application_id}/files/${answer.question_id}`,
-                            answer.answer,
-                          ).catch(async (error) =>
-                            toast.error(await handleApiError(error)),
-                          )
-                        }
-                      >
-                        {answer.answer} 다운로드
-                      </button>
-                    ) : answer.question_type === "LINK" && answer.answer ? (
-                      <a
-                        className="mt-2 block break-all text-sm underline"
-                        href={answer.answer}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {answer.answer}
-                      </a>
-                    ) : (
-                      <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6">
-                        {answer.answer || "답변 없음"}
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ol>
+                    지원자 정보
+                  </h3>
+                  <Table className="text-sm">
+                    <TableBody>
+                      {[
+                        ["이름", detail.applicant_name],
+                        ["학과", detail.applicant_department ?? "-"],
+                        ["학번", detail.applicant_user_id ?? "탈퇴 회원"],
+                        ["이메일", detail.applicant_email],
+                        ["연락처", detail.applicant_phone_num ?? "-"],
+                        ["1지망 부서", departmentName(detail, 1)],
+                        ["2지망 부서", departmentName(detail, 2)],
+                      ].map(([label, value]) => (
+                        <TableRow key={label} className="hover:bg-transparent">
+                          <th
+                            scope="row"
+                            className="text-muted-foreground w-28 whitespace-nowrap py-3 pr-4 text-left font-normal"
+                          >
+                            {label}
+                          </th>
+                          <TableCell className="break-all py-3 text-left">
+                            {value}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </section>
+                <section
+                  className="space-y-4"
+                  aria-labelledby="application-answers-heading"
+                >
+                  <h3
+                    id="application-answers-heading"
+                    className="text-lg font-semibold"
+                  >
+                    문항 답변
+                  </h3>
+                  <ol className="space-y-6">
+                    {detail.answers.map((answer, index) => (
+                      <li key={answer.question_id} className="space-y-3">
+                        <h4 className="font-semibold">
+                          {index + 1}. {answer.question_label}
+                        </h4>
+                        <div className="bg-surface-gray-subtler rounded-lg p-4 text-sm leading-6">
+                          {answer.question_type === "FILE" && answer.answer ? (
+                            <button
+                              type="button"
+                              className="text-primary break-all text-left underline underline-offset-2"
+                              onClick={() =>
+                                void downloadPrivateFile(
+                                  `api/v1/admin/staff-recruitments/${detail.recruitment_id}/applications/${detail.application_id}/files/${answer.question_id}`,
+                                  answer.answer,
+                                ).catch(async (error) =>
+                                  toast.error(await handleApiError(error)),
+                                )
+                              }
+                            >
+                              {answer.answer} 다운로드
+                            </button>
+                          ) : answer.question_type === "LINK" &&
+                            answer.answer ? (
+                            <a
+                              className="text-primary break-all underline underline-offset-2"
+                              href={answer.answer}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {answer.answer}
+                            </a>
+                          ) : (
+                            <p className="whitespace-pre-wrap break-words">
+                              {answer.answer || "답변 없음"}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setDetail(null)}
+                >
+                  닫기
+                </Button>
+              </DialogFooter>
             </>
           )}
         </DialogContent>
