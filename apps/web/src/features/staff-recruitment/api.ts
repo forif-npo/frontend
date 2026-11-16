@@ -1,5 +1,5 @@
 import type { ApiResponse } from "@core/types/api";
-import type { StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import type { MyStaffApplicationSummary, StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { apiClient } from "@core/utils/api-client";
 
 export async function getCurrentStaffRecruitment(): Promise<StaffRecruitmentRound | null> {
@@ -57,4 +57,16 @@ export async function getMyStaffApplication(
     .json<ApiResponse<StaffApplicationDetail>>();
   if (!response.data) throw new Error(response.message);
   return response.data;
+}
+
+export async function getMyStaffApplications(
+  token: string,
+): Promise<MyStaffApplicationSummary[]> {
+  const response = await apiClient
+    .get("api/v1/staff-applications/me", {
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .json<ApiResponse<MyStaffApplicationSummary[]>>();
+  return response.data ?? [];
 }

@@ -4,7 +4,7 @@ jest.mock("@core/utils/api-client", () => ({
   apiClient: { get: jest.fn(), post: jest.fn() },
 }));
 import { apiClient } from "@core/utils/api-client";
-import { getCurrentStaffRecruitment, getMyStaffApplication, submitStaffApplication } from "./api";
+import { getCurrentStaffRecruitment, getMyStaffApplication, getMyStaffApplications, submitStaffApplication } from "./api";
 
 type ApiMock = {
   mockReset: () => void;
@@ -88,5 +88,18 @@ describe("staff recruitment public api", () => {
       "api/v1/staff-recruitments/3/applications/me",
       { cache: "no-store" },
     );
+  });
+
+  it("loads all of the signed-in user's application history without caching", async () => {
+    const history = [{ application_id: 7, recruitment_id: 3 }];
+    mockedGet.mockReturnValue({
+      json: <T>() => Promise.resolve({ data: history } as T),
+    });
+
+    await expect(getMyStaffApplications("test-token")).resolves.toEqual(history);
+    expect(apiClient.get).toHaveBeenCalledWith("api/v1/staff-applications/me", {
+      cache: "no-store",
+      headers: { Authorization: "Bearer test-token" },
+    });
   });
 });

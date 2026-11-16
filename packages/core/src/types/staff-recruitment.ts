@@ -116,6 +116,15 @@ export interface StaffApplicationSubmitResponse {
   submitted_at: string;
 }
 
+export interface MyStaffApplicationSummary {
+  application_id: number;
+  recruitment_id: number;
+  act_year: number;
+  act_semester: number;
+  status: StaffApplicationStatus;
+  submitted_at: string;
+}
+
 export interface StaffApplicationAppliedDepartment {
   department_id: number;
   name: string;

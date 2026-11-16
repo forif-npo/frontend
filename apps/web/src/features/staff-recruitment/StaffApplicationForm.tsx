@@ -1,8 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, SelectBox, TextArea, TextInput } from "@ui/components/client";
-import type { StaffApplicationSubmitRequest, StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import { Button, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
+import { Label } from "@ui/components/server";
+import type { StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { submitStaffApplication } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
 
@@ -10,8 +11,13 @@ type FieldErrors = Record<string, string>;
 
 export function StaffApplicationForm({
   recruitment,
+  onSubmitted,
 }: {
   recruitment: StaffRecruitmentRound;
+  onSubmitted: (
+    result: StaffApplicationSubmitResponse,
+    departments: { first: string; second: string | null },
+  ) => void;
 }) {
   const router = useRouter();
   const departments = useMemo(
@@ -116,7 +122,7 @@ export function StaffApplicationForm({
     setDuplicate(false);
     setIsSubmitting(true);
     try {
-      await submitStaffApplication(
+      const result = await submitStaffApplication(
         recruitment.recruitment_id,
         {
           department_choices: departmentChoices,
@@ -130,10 +136,14 @@ export function StaffApplicationForm({
         },
         files,
       );
-      router.push(
-        `/club/recruit/${recruitment.recruitment_id}/application?submitted=1`,
-      );
-      router.refresh();
+      onSubmitted(result, {
+        first:
+          departments.find((item) => String(item.department_id) === firstDepartment)
+            ?.name ?? "-",
+        second:
+          departments.find((item) => String(item.department_id) === secondDepartment)
+            ?.name ?? null,
+      });
     } catch (error) {
       const info = await getStaffApplicationErrorInfo(error);
       setDuplicate(info.code === "FOR154-409");
@@ -154,7 +164,7 @@ export function StaffApplicationForm({
             지원 부서
           </h2>
           <p className="text-text-subtle mt-2 text-sm">
-            1지망은 필수이며, 서로 다른 부서를 최대 2개까지 선택할 수 있습니다.
+            최소 1개 이상의 부서를 선택해주세요.
           </p>
         </div>
         <SelectBox
@@ -175,7 +185,7 @@ export function StaffApplicationForm({
         />
         <SelectBox
           id="secondDepartment"
-          title="2지망 (선택)"
+          title="2지망"
           value={secondDepartment}
           options={[
             { value: "none", label: "선택 안 함" },
@@ -183,7 +193,7 @@ export function StaffApplicationForm({
               (option) => option.value !== firstDepartment,
             ),
           ]}
-          placeholder="선택하지 않아도 됩니다"
+          placeholder="부서를 선택해주세요"
           error={errors.secondDepartment}
           onChange={(value) => {
             setSecondDepartment(value === "none" ? null : value);
@@ -202,41 +212,67 @@ export function StaffApplicationForm({
         {questions.map((question, index) => {
           const id = `question-${question.question_id}`;
           if (question.type === "FILE") {
+            const selectedFile = files[question.question_id];
             return (
-              <div key={question.question_id} className="space-y-2">
-                <label htmlFor={id} className="block font-semibold">
+              <div
+                key={question.question_id}
+                id={id}
+                tabIndex={-1}
+                className="flex flex-col gap-1"
+              >
+                <Label id={`${id}-label`}>
                   {index + 1}. {question.label}
-                  {question.required && " *"}
-                </label>
+                  {question.required && (
+                    <span className="text-text-danger ml-0.5" aria-hidden="true">
+                      *
+                    </span>
+                  )}
+                </Label>
                 {question.description && (
-                  <p className="text-text-subtle text-sm">
+                  <Label size="s" className="text-text-subtle">
                     {question.description}
-                  </p>
+                  </Label>
                 )}
-                <input
-                  id={id}
-                  type="file"
-                  className="border-gray-30 w-full rounded-lg border p-3 text-sm"
-                  aria-invalid={Boolean(errors[id])}
-                  aria-describedby={errors[id] ? `${id}-error` : undefined}
-                  onChange={(event) => {
-                    const file = event.target.files?.[0] ?? null;
+                <FileUpload
+                  ariaLabelledBy={`${id}-label`}
+                  ariaDescribedBy={errors[id] ? `${id}-error` : undefined}
+                  invalid={Boolean(errors[id])}
+                  required={question.required}
+                  description="파일 1개, 최대 5MB"
+                  multiple={false}
+                  maxFiles={1}
+                  files={selectedFile ? [selectedFile] : []}
+                  onUpload={async (file) => {
+                    if (file.size > 5 * 1024 * 1024 || file.name.length > 200) {
+                      setErrors((current) => ({
+                        ...current,
+                        [id]: "5MB 이하, 파일명 200자 이하의 파일을 선택해주세요.",
+                      }));
+                      return false;
+                    }
                     setFiles((current) => ({
                       ...current,
                       [question.question_id]: file,
                     }));
                     setErrors((current) => ({ ...current, [id]: "" }));
+                    setSubmitError(null);
+                    return true;
                   }}
+                  onRemove={() =>
+                    setFiles((current) => ({
+                      ...current,
+                      [question.question_id]: null,
+                    }))
+                  }
                 />
-                <p className="text-text-subtle text-sm">파일 1개, 최대 5MB</p>
                 {errors[id] && (
-                  <p
+                  <Label
                     id={`${id}-error`}
-                    className="text-text-danger text-sm"
-                    role="alert"
+                    size="s"
+                    className="text-text-danger mt-1"
                   >
                     {errors[id]}
-                  </p>
+                  </Label>
                 )}
               </div>
             );
@@ -256,7 +292,17 @@ export function StaffApplicationForm({
           return question.type === "LONG_TEXT" ? (
             <TextArea key={question.question_id} {...common} size="large" />
           ) : (
-            <TextInput key={question.question_id} {...common} length="full" />
+            <TextInput
+              key={question.question_id}
+              {...common}
+              length="full"
+              {...(question.type === "LINK"
+                ? {
+                    inputMode: "url" as const,
+                    placeholder: "웹사이트 링크를 입력해주세요",
+                  }
+                : {})}
+            />
           );
         })}
         {questions.length === 0 && (
@@ -290,7 +336,7 @@ export function StaffApplicationForm({
               className="ml-2 underline"
               onClick={() =>
                 router.push(
-                  `/club/recruit/${recruitment.recruitment_id}/application`,
+                  `/my?section=staff-applications&recruitment_id=${recruitment.recruitment_id}`,
                 )
               }
             >

@@ -6,6 +6,7 @@ import { getMyStudyApplications } from "@/features/study-application";
 import { getCurrentSemester } from "@/features/semester/api";
 import { getDepartments } from "@/features/departments/api";
 import { getMyProductApplications, getProducts } from "@/features/products/api";
+import { getMyStaffApplications } from "@/features/staff-recruitment/api";
 import { MyPageClient } from "./MyPageClient";
 
 export default async function MyPage() {
@@ -28,6 +29,7 @@ export default async function MyPage() {
     studyApplications,
     activeSemester,
     productApplications,
+    staffApplications,
     products,
     departments,
   ] = await Promise.all([
@@ -39,6 +41,7 @@ export default async function MyPage() {
     getMyStudyApplications(token).catch(() => []),
     getCurrentSemester(),
     getMyProductApplications(token).catch(() => []),
+    getMyStaffApplications(token).catch(() => []),
     getProducts().catch(() => []),
     getDepartments(),
   ]);
@@ -53,6 +56,7 @@ export default async function MyPage() {
       studyApplications={studyApplications}
       activeSemester={activeSemester}
       productApplications={productApplications}
+      staffApplications={staffApplications}
       products={products}
       departments={departments}
     />

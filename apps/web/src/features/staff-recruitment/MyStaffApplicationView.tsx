@@ -17,9 +17,11 @@ function formatDateTime(value: string) {
 export function MyStaffApplicationView({
   recruitmentId,
   submitted,
+  embedded = false,
 }: {
   recruitmentId: number;
   submitted: boolean;
+  embedded?: boolean;
 }) {
   const [application, setApplication] = useState<StaffApplicationDetail | null>(
     null,
@@ -71,8 +73,9 @@ export function MyStaffApplicationView({
     );
   }
 
+  const Container = embedded ? "div" : "main";
   return (
-    <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
+    <Container className={embedded ? "w-full" : "max-w-main mx-auto w-full px-4 py-10 lg:px-0"}>
       {submitted && (
         <div
           role="status"
@@ -85,9 +88,11 @@ export function MyStaffApplicationView({
         <span className="text-primary-60 text-sm font-bold">
           내 운영진 지원서
         </span>
-        <h1 className="text-title-l-mobile sm:text-title-l font-bold">
-          제출 내역
-        </h1>
+        {embedded ? (
+          <h2 className="text-title-l-mobile sm:text-title-l font-bold">제출 내역</h2>
+        ) : (
+          <h1 className="text-title-l-mobile sm:text-title-l font-bold">제출 내역</h1>
+        )}
         <p className="text-text-subtle text-sm">
           {formatDateTime(application.submitted_at)} 제출 · 제출 완료
         </p>
@@ -191,6 +196,6 @@ export function MyStaffApplicationView({
       <p className="text-text-subtle mt-8 text-sm">
         제출한 지원서는 수정하거나 취소할 수 없습니다.
       </p>
-    </main>
+    </Container>
   );
 }

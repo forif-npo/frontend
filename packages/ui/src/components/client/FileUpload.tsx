@@ -64,6 +64,11 @@ interface FileUploadComponentProps {
   onUpload: (file: File) => Promise<boolean>;
   onRemove: (fileName: string) => void;
   className?: string;
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+  invalid?: boolean;
+  required?: boolean;
 }
 
 export const FileUpload: React.FC<FileUploadComponentProps> = ({
@@ -77,6 +82,11 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
   onUpload,
   onRemove,
   className = "",
+  ariaLabel,
+  ariaLabelledBy,
+  ariaDescribedBy,
+  invalid = false,
+  required = false,
 }) => {
   const [internalFiles, setInternalFiles] = useState<FileObject[]>([]);
   const [isDragActive, setIsDragActive] = useState<boolean>(false);
@@ -209,10 +219,25 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label={ariaLabelledBy ? undefined : (ariaLabel ?? "파일 선택")}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
+          aria-invalid={invalid || undefined}
+          aria-required={required || undefined}
           className={`cursor-pointer rounded-lg border border-dashed px-6 py-8 text-center transition-colors ${
-            isDragActive
-              ? "border-primary-80 bg-primary-5"
-              : "border-gray-30 bg-surface-white hover:border-primary"
+            invalid
+              ? "border-input-border-error"
+              : isDragActive
+                ? "border-primary-80 bg-primary-5"
+                : "border-gray-30 bg-surface-white hover:border-primary"
           }`}
         >
           <input
