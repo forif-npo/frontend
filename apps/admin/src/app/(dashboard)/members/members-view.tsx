@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { DepartmentOption } from "@/features/departments/api";
 import { downloadReturningMemberRoster, fetchReturningMemberRoster } from "@/features/members/returning-member-roster";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import * as XLSX from "xlsx";
 import { deleteCurrentSemesterMember, fetchMemberHistory, fetchMembers, updateMemberInfo } from "./api";
 import { columns } from "./columns";

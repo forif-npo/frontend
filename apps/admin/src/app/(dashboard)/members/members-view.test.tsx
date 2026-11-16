@@ -6,7 +6,7 @@ const mockRefresh = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn(), refresh: mockRefresh }),
 }));
-jest.mock("sonner", () => ({
+jest.mock("@/components/ui/Toast", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
 jest.mock("xlsx", () => ({
@@ -126,7 +126,7 @@ jest.mock("@/features/members/returning-member-roster", () => ({
 }));
 import { downloadReturningMemberRoster, fetchReturningMemberRoster, type ReturningMemberRoster } from "@/features/members/returning-member-roster";
 import { handleApiError } from "@core/utils/api-client";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { deleteCurrentSemesterMember, updateMemberInfo } from "./api";
 import { MembersView } from "./members-view";
 

@@ -4,7 +4,7 @@ import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ExternalLink } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { PageHeader } from "@/components/page-header";
 import { ActivitySemesterToggle } from "@/components/list/activity-semester-toggle";
 import { Button } from "@/components/ui/button";

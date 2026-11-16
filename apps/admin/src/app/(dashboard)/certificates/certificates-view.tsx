@@ -2,7 +2,7 @@
 import { type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { Eraser, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";

@@ -13,7 +13,7 @@ jest.mock("xlsx", () => ({
   utils: {},
   writeFile: jest.fn(),
 }));
-jest.mock("sonner", () => ({
+jest.mock("@/components/ui/Toast", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
 jest.mock("@core/utils/api-client", () => ({ handleApiError: jest.fn() }));

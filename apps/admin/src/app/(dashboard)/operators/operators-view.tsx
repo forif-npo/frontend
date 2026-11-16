@@ -17,7 +17,7 @@ import type { SortingState } from "@tanstack/react-table";
 import { Download, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import * as XLSX from "xlsx";
 import { AddOperatorDialog } from "./add-operator-dialog";
 import { deleteOperator, fetchOperators, updateOperator, updateOperatorProfileImage } from "./api";

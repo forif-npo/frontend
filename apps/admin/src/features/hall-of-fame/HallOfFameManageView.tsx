@@ -1,28 +1,15 @@
 "use client";
-
 import { useCallback, useEffect, useState } from "react";
 import { Award, Eye, Pencil, Plus, RefreshCw } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { AdminHallOfFameEntry } from "@core/types/hall-of-fame";
 import { handleApiError } from "@core/utils/api-client";
 import { formatDateTimeLabel } from "@/utils/datetime";
-import {
-  changeHallOfFamePublication,
-  createHallOfFameEntry,
-  getHallOfFameEntries,
-  updateHallOfFameEntry,
-  uploadHallOfFameImage,
-} from "./api";
+import { changeHallOfFamePublication, createHallOfFameEntry, getHallOfFameEntries, updateHallOfFameEntry, uploadHallOfFameImage } from "./api";
 import { toHallOfFameSaveRequest, type HallOfFameFormState } from "./form";
 import { HallOfFameFormDialog } from "./HallOfFameFormDialog";
 import { HallOfFamePreview } from "./HallOfFamePreview";

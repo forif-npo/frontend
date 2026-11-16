@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { Crown, Pencil, ShieldCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatPhoneNumber } from "@core/utils/phone-number";

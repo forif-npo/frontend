@@ -14,7 +14,7 @@ import type { ApiResponse } from "@core/types/api";
 import { Download, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import * as XLSX from "xlsx";
 import { createAutonomousStudy, deleteStudy, fetchStudyDetail, fetchStudiesWithFallback, updateStudy } from "./api";
 import { columns } from "./columns";

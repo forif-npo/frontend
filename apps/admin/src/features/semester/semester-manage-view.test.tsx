@@ -2,7 +2,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps, ReactNode } from "react";
-jest.mock("sonner", () => ({
+jest.mock("@/components/ui/Toast", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
 jest.mock("@/components/page-header", () => ({
@@ -56,7 +56,7 @@ jest.mock("./api", () => ({
   getSemesters: jest.fn(),
 }));
 jest.mock("./schedule-section", () => ({ ScheduleSection: () => null }));
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { changeCurrentSemester, getCurrentSemester, getSemesterChangePreview, getSemesters, getAdminCandidates } from "./api";
 import { SemesterManageView } from "./semester-manage-view";
 

@@ -11,7 +11,7 @@ import type { SortingState } from "@tanstack/react-table";
 import { Download, MoreVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import * as XLSX from "xlsx";
 import { decideAutonomousStudyApplication, fetchStudyApplications } from "./api";
 import { applicationColumns, STUDY_APPLICATION_STATUS_LABELS } from "./columns";

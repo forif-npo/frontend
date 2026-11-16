@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
 
 const EMPTY_PAGE: StaffApplicationPage = {

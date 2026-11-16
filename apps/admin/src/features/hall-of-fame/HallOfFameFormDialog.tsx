@@ -1,39 +1,17 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { Eye, Plus, Search, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type {
-  AdminHallOfFameEntry,
-  HallOfFameMemberCandidate,
-} from "@core/types/hall-of-fame";
+import type { AdminHallOfFameEntry, HallOfFameMemberCandidate } from "@core/types/hall-of-fame";
 import { handleApiError } from "@core/utils/api-client";
 import { searchHallOfFameMembers } from "./api";
-import {
-  emptyHallOfFameForm,
-  hallOfFameEntryToForm,
-  validateHallOfFameForm,
-  type HallOfFameFormState,
-} from "./form";
+import { emptyHallOfFameForm, hallOfFameEntryToForm, validateHallOfFameForm, type HallOfFameFormState } from "./form";
 import { HallOfFamePreview } from "./HallOfFamePreview";
 
 interface HallOfFameFormDialogProps {
