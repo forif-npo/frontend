@@ -48,7 +48,7 @@ export function StaffRecruitmentFormDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[760px]">
         <DialogHeader>
           <DialogTitle>
-            {recruitment ? "운영진 모집 수정" : "운영진 모집 만들기"}
+            {recruitment ? "운영진 모집 수정" : "운영진 모집"}
           </DialogTitle>
           <DialogDescription>
             저장하면 초안으로 유지됩니다. 공개는 목록에서 별도로 진행합니다.
@@ -164,7 +164,7 @@ export function StaffRecruitmentFormDialog({
             {form.departments.map((department, index) => (
               <div
                 key={`department-${index}`}
-                className="grid gap-2 rounded-md border p-3 sm:grid-cols-[1fr_2fr_auto]"
+                className="grid gap-2 sm:grid-cols-[1fr_2fr_auto]"
               >
                 <Input
                   aria-label={`${index + 1}번째 부서명`}
@@ -238,7 +238,7 @@ export function StaffRecruitmentFormDialog({
             {form.questions.map((question, index) => (
               <div
                 key={`question-${index}`}
-                className="grid gap-3 rounded-md border p-3"
+                className="grid gap-3"
               >
                 <div className="grid gap-2 sm:grid-cols-[2fr_1fr_110px_auto]">
                   <Input
@@ -406,15 +406,15 @@ function EditorSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="grid gap-3">
+    <section className="grid gap-2">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="font-semibold">{title}</h3>
+        <h3 className="text-sm font-medium leading-none">{title}</h3>
         <Button type="button" variant="outline" size="sm" onClick={onAdd}>
           <Plus className="mr-1 h-4 w-4" />
           {addLabel}
         </Button>
       </div>
-      {children}
+      <div className="space-y-6">{children}</div>
     </section>
   );
 }
