@@ -91,7 +91,7 @@ export function HallOfFameManageView() {
     <main className="space-y-6 p-4 sm:p-6 md:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <PageHeader
-          title="명예의 전당 관리"
+          title="명예의 전당"
           description="인물과 성취를 초안으로 저장하고 미리보기 후 게시합니다."
         />
         <Button
