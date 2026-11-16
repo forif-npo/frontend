@@ -1,5 +1,10 @@
 "use client";
-import { setTokenGetter, setTokenRefresher, setOnTokenRefreshed, setOnUnauthorized } from "@core/utils/api-client";
+import {
+  setTokenGetter,
+  setTokenRefresher,
+  setOnTokenRefreshed,
+  setOnUnauthorized,
+} from "@core/utils/api-client";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useRef } from "react";
 
@@ -17,11 +22,10 @@ export function ApiClientProvider({ children }: { children: React.ReactNode }) {
   const signOutExpiredSession = () => {
     if (isSigningOut.current) return;
     isSigningOut.current = true;
-    // 로그인한 적 없는 방문자에게는 만료 안내 없이 로그인 페이지로만 보낸다
-    if (session) {
-      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-    }
-    signOut({ callbackUrl: "/signin" });
+    // 로그인한 세션에서만 로그인 페이지에 만료 안내를 표시한다.
+    void signOut({
+      callbackUrl: session ? "/signin?reason=session-expired" : "/signin",
+    });
   };
 
   // 서버 jwt 콜백에서 refresh token 갱신이 실패하면 session.error가 세팅됨.

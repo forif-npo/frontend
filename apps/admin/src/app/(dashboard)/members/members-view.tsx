@@ -6,6 +6,7 @@ import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -204,9 +205,11 @@ export function MembersView({
     if (isDeleting || !canDeleteCurrentSemesterMember) return;
 
     if (
-      !confirm(
-        `${member.userName}(${member.userId})님의 현재 학기 등록을 철회할까요?\n합격 및 신청 이력은 유지되며, 회비 관리 대상에서는 제외됩니다.`,
-      )
+      !(await confirmDialog({
+        title: "현재 학기 등록 철회",
+        description: `${member.userName}(${member.userId})님의 현재 학기 등록을 철회할까요?\n합격 및 신청 이력은 유지되며, 회비 관리 대상에서는 제외됩니다.`,
+        confirmLabel: "철회",
+      }))
     ) {
       return;
     }

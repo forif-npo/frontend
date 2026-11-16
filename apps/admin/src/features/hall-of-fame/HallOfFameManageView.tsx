@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Award, Eye, Pencil, Plus, RefreshCw } from "lucide-react";
 import { toast } from "@/components/ui/Toast";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -73,7 +74,11 @@ export function HallOfFameManageView() {
   const changePublication = async (entry: AdminHallOfFameEntry) => {
     const action = entry.status === "PUBLISHED" ? "unpublish" : "publish";
     const label = action === "publish" ? "게시" : "게시 중단";
-    if (!window.confirm(`${entry.member_name} 콘텐츠를 ${label}할까요?`))
+    if (!(await confirmDialog({
+      title: `콘텐츠 ${label}`,
+      description: `${entry.member_name} 콘텐츠를 ${label}할까요?`,
+      confirmLabel: label,
+    })))
       return;
     setBusyId(entry.entry_id);
     try {

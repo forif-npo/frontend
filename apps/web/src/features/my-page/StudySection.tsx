@@ -2,7 +2,10 @@
 import { useState, useTransition } from "react";
 import { EmptyState } from "@ui/components/server";
 import { StudyCard } from "@/components/study/ui/StudyCard";
-import { StudySortControl, type StudySortOrder } from "@/components/study/ui/StudySortControl";
+import {
+  StudySortControl,
+  type StudySortOrder,
+} from "@/components/study/ui/StudySortControl";
 import type { UserStudiesResponse, StudyDetail } from "@/features/my-page/api";
 
 interface StudySectionProps {
@@ -11,6 +14,7 @@ interface StudySectionProps {
 
 export function StudySection({ studiesData }: StudySectionProps) {
   const [sortOrder, setSortOrder] = useState<StudySortOrder>("latest");
+  const [downloadError, setDownloadError] = useState("");
   const [, startTransition] = useTransition();
 
   type FlatStudy = StudyDetail & {
@@ -35,6 +39,7 @@ export function StudySection({ studiesData }: StudySectionProps) {
   const totalCount = sortedStudies.length;
 
   const handleDownloadCertificate = async (studyId: number) => {
+    setDownloadError("");
     startTransition(async () => {
       try {
         const { getCertificate } = await import("@/features/my-page/api");
@@ -42,7 +47,7 @@ export function StudySection({ studiesData }: StudySectionProps) {
         window.open(certificateUrl, "_blank");
       } catch (error) {
         console.error("Failed to download certificate:", error);
-        alert("수료증 다운로드에 실패했습니다.");
+        setDownloadError("수료증 다운로드에 실패했습니다.");
       }
     });
   };
@@ -57,6 +62,15 @@ export function StudySection({ studiesData }: StudySectionProps) {
 
         <StudySortControl value={sortOrder} onChange={setSortOrder} />
       </div>
+
+      {downloadError && (
+        <p
+          role="alert"
+          className="border-gray-20 bg-surface-white text-text-basic mb-4 rounded-lg border px-4 py-3 text-sm"
+        >
+          {downloadError}
+        </p>
+      )}
 
       {/* Study List */}
       {sortedStudies.length === 0 ? (

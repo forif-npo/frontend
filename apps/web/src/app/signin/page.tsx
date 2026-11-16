@@ -8,10 +8,10 @@ import { getSafeCallbackUrl } from "@/features/auth/safe-callback-url";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; reason?: string }>;
 }) {
   const session = await auth();
-  const { callbackUrl } = await searchParams;
+  const { callbackUrl, reason } = await searchParams;
   const safeCallbackUrl = getSafeCallbackUrl(callbackUrl);
   if (session?.isSignUp) {
     redirect(safeCallbackUrl);
@@ -27,6 +27,14 @@ export default async function Page({
         <br />
         로그인을 하시면 보다 더 많은 정보와 서비스를 이용하실 수 있습니다.
       </Body>
+      {reason === "session-expired" && (
+        <p
+          role="alert"
+          className="border-gray-20 bg-surface-white text-text-basic mt-6 rounded-lg border px-4 py-3 text-sm"
+        >
+          세션이 만료되었습니다. 다시 로그인해주세요.
+        </p>
+      )}
       <section className="mt-12 w-full">
         <SignInTab callbackUrl={safeCallbackUrl} />
       </section>

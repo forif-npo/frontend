@@ -6,7 +6,15 @@ import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "@/components/ui/Toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
@@ -69,6 +77,7 @@ export function ApprovalView({
   const [isReviewLoading, setIsReviewLoading] = useState(false);
   const [rejectingStudy, setRejectingStudy] = useState<Study | null>(null);
   const [rejectReason, setRejectReason] = useState("");
+  const [rejectError, setRejectError] = useState("");
   const [submittingStudyId, setSubmittingStudyId] = useState<number | null>(
     null,
   );
@@ -112,7 +121,7 @@ export function ApprovalView({
       const detail = await fetchStudyDetail(study.id);
       setReviewDetail(detail);
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setIsReviewLoading(false);
     }
@@ -125,7 +134,7 @@ export function ApprovalView({
       closeReviewDialog();
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmittingStudyId(null);
     }
@@ -134,6 +143,7 @@ export function ApprovalView({
   const closeRejectDialog = () => {
     setRejectingStudy(null);
     setRejectReason("");
+    setRejectError("");
   };
 
   const handleOpenRejectDialog = (study: Study) => {
@@ -144,8 +154,9 @@ export function ApprovalView({
   const handleRejectStudy = async () => {
     const reason = rejectReason.trim();
 
-    if (!rejectingStudy || !reason) {
-      alert("반려 사유를 입력해주세요.");
+    if (!rejectingStudy) return;
+    if (!reason) {
+      setRejectError("반려 사유를 입력해주세요.");
       return;
     }
 
@@ -156,7 +167,7 @@ export function ApprovalView({
       closeReviewDialog();
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmittingStudyId(null);
     }
@@ -178,13 +189,13 @@ export function ApprovalView({
     router.refresh();
 
     if (failed) {
-      alert(
+      toast.error(
         `일부 요청을 처리하지 못했습니다. ${await handleApiError(failed.reason)}`,
       );
       return;
     }
 
-    alert(`${selectedStudies.length}개 스터디를 승인했습니다.`);
+    toast.success(`${selectedStudies.length}개 스터디를 승인했습니다.`);
   };
 
   return (
@@ -290,10 +301,22 @@ export function ApprovalView({
 
           <Textarea
             value={rejectReason}
-            onChange={(event) => setRejectReason(event.target.value)}
+            onChange={(event) => {
+              setRejectReason(event.target.value);
+              setRejectError("");
+            }}
             placeholder="반려 사유"
             rows={5}
           />
+
+          {rejectError && (
+            <p
+              role="alert"
+              className="bg-muted rounded-md border px-3 py-2 text-sm"
+            >
+              {rejectError}
+            </p>
+          )}
 
           <DialogFooter>
             <Button

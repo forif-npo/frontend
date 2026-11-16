@@ -80,6 +80,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
 }) => {
   const [internalFiles, setInternalFiles] = useState<FileObject[]>([]);
   const [isDragActive, setIsDragActive] = useState<boolean>(false);
+  const [fileError, setFileError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
   const isControlled = controlledFiles !== undefined;
@@ -108,10 +109,16 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
   const shouldShowFileList = shouldShowCount || displayedFiles.length > 0;
 
   const handleFiles = async (newFiles: FileList) => {
-    const remainingSlots = maxFiles - files.length;
+    const remainingSlots = maxFiles - displayedFiles.length;
     if (remainingSlots <= 0) {
-      alert(`최대 ${maxFiles}개의 파일만 업로드할 수 있습니다.`);
+      setFileError(`최대 ${maxFiles}개의 파일만 업로드할 수 있습니다.`);
       return;
+    }
+
+    if (newFiles.length > remainingSlots) {
+      setFileError(`최대 ${maxFiles}개의 파일만 업로드할 수 있습니다.`);
+    } else {
+      setFileError("");
     }
 
     const filesToAdd = Array.from(newFiles).slice(0, remainingSlots);
@@ -176,6 +183,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
   };
 
   const removeFile = (fileName: string) => {
+    setFileError("");
     if (!isControlled) {
       setInternalFiles((prevFiles) =>
         prevFiles.filter((file) => file.name !== fileName),
@@ -220,6 +228,12 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
             파일을 여기에 끌어다 놓거나, 클릭하여 파일을 선택하세요
           </Label>
         </div>
+      )}
+
+      {fileError && (
+        <p role="alert" className="text-text-danger mt-2 text-sm">
+          {fileError}
+        </p>
       )}
 
       {shouldShowFileList && (

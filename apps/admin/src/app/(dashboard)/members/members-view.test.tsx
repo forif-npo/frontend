@@ -9,6 +9,9 @@ jest.mock("next/navigation", () => ({
 jest.mock("@/components/ui/Toast", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
+jest.mock("@/components/ui/ConfirmDialog", () => ({
+  confirmDialog: jest.fn(),
+}));
 jest.mock("xlsx", () => ({
   utils: {
     json_to_sheet: jest.fn(),
@@ -124,9 +127,14 @@ jest.mock("@/features/members/returning-member-roster", () => ({
   fetchReturningMemberRoster: jest.fn(),
   downloadReturningMemberRoster: jest.fn(),
 }));
-import { downloadReturningMemberRoster, fetchReturningMemberRoster, type ReturningMemberRoster } from "@/features/members/returning-member-roster";
+import {
+  downloadReturningMemberRoster,
+  fetchReturningMemberRoster,
+  type ReturningMemberRoster,
+} from "@/features/members/returning-member-roster";
 import { handleApiError } from "@core/utils/api-client";
 import { toast } from "@/components/ui/Toast";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { deleteCurrentSemesterMember, updateMemberInfo } from "./api";
 import { MembersView } from "./members-view";
 
@@ -265,24 +273,28 @@ describe("MembersView", () => {
     mockedUpdateMemberInfo.mockReset();
     mockedUpdateMemberInfo.mockResolvedValue(undefined);
     mockedToastError.mockReset();
+    jest.mocked(confirmDialog).mockReset();
   });
 
   it("does not request withdrawal when the confirmation is cancelled", () => {
-    jest.spyOn(window, "confirm").mockReturnValue(false);
+    jest.mocked(confirmDialog).mockResolvedValue(false);
     renderMembersView();
 
     fireEvent.click(
       screen.getByRole("button", { name: "현재 학기 등록 철회" }),
     );
 
-    expect(window.confirm).toHaveBeenCalledWith(
-      "홍길동(20260001)님의 현재 학기 등록을 철회할까요?\n합격 및 신청 이력은 유지되며, 회비 관리 대상에서는 제외됩니다.",
-    );
+    expect(confirmDialog).toHaveBeenCalledWith({
+      title: "현재 학기 등록 철회",
+      description:
+        "홍길동(20260001)님의 현재 학기 등록을 철회할까요?\n합격 및 신청 이력은 유지되며, 회비 관리 대상에서는 제외됩니다.",
+      confirmLabel: "철회",
+    });
     expect(deleteCurrentSemesterMember).not.toHaveBeenCalled();
   });
 
   it("withdraws only the row member from the active semester", async () => {
-    jest.spyOn(window, "confirm").mockReturnValue(true);
+    jest.mocked(confirmDialog).mockResolvedValue(true);
     renderMembersView();
 
     fireEvent.click(

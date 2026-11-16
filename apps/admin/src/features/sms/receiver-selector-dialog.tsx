@@ -5,6 +5,7 @@ import { handleApiError } from "@core/utils/api-client";
 import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { getAllReceivers, getReceiverPage } from "./api";
@@ -79,12 +80,14 @@ export function ReceiverSelectorDialog({
     Map<string, Receiver>
   >(new Map());
 
-  const confirmSelectionReset = () => {
+  const confirmSelectionReset = async () => {
     if (selectedReceivers.size === 0) return true;
 
-    return window.confirm(
-      `선택한 ${selectedReceivers.size}명이 해제됩니다. 계속하시겠습니까?`,
-    );
+    return confirmDialog({
+      title: "수신자 선택 초기화",
+      description: `선택한 ${selectedReceivers.size}명이 해제됩니다. 계속하시겠습니까?`,
+      confirmLabel: "계속",
+    });
   };
 
   const loadReceivers = useCallback(
@@ -163,8 +166,8 @@ export function ReceiverSelectorDialog({
     void initialize();
   }, [loadReceivers, open]);
 
-  const searchReceivers = () => {
-    if (!confirmSelectionReset()) return;
+  const searchReceivers = async () => {
+    if (!(await confirmSelectionReset())) return;
 
     setSelectedReceivers(new Map());
     void loadReceivers({
@@ -174,8 +177,8 @@ export function ReceiverSelectorDialog({
     });
   };
 
-  const changeReceiverTarget = (target: ReceiverTarget) => {
-    if (!confirmSelectionReset()) return;
+  const changeReceiverTarget = async (target: ReceiverTarget) => {
+    if (!(await confirmSelectionReset())) return;
 
     setReceiverTarget(target);
     setReceiverSearch("");

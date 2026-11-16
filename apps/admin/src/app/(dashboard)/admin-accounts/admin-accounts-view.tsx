@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "@/components/ui/Toast";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { Crown, Pencil, ShieldCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatPhoneNumber } from "@core/utils/phone-number";
@@ -192,9 +193,11 @@ export function AdminAccountsView({
   const handleDelete = async (account: AdminAccount) => {
     if (isSubmitting) return;
     if (
-      !confirm(
-        `${account.name}(${account.user_id}) 운영진 계정을 삭제할까요?\n삭제 후에는 admin 페이지에 로그인할 수 없습니다. 부원 계정과 운영진 이력은 유지됩니다.`,
-      )
+      !(await confirmDialog({
+        title: "운영진 계정 삭제",
+        description: `${account.name}(${account.user_id}) 운영진 계정을 삭제할까요?\n삭제 후에는 admin 페이지에 로그인할 수 없습니다. 부원 계정과 운영진 이력은 유지됩니다.`,
+        confirmLabel: "삭제",
+      }))
     ) {
       return;
     }

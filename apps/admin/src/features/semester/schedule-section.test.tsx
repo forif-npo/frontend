@@ -5,6 +5,9 @@ import type { ComponentProps, ReactNode } from "react";
 jest.mock("@/components/ui/Toast", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
+jest.mock("@/components/ui/ConfirmDialog", () => ({
+  confirmDialog: jest.fn(),
+}));
 jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }: ComponentProps<"button">) => (
     <button {...props}>{children}</button>
@@ -57,7 +60,11 @@ jest.mock("@/features/semester/schedule-api", () => ({
   getSemesterSchedules: jest.fn(),
   saveSemesterSchedules: jest.fn(),
 }));
-import { getSemesterSchedules, saveSemesterSchedules } from "@/features/semester/schedule-api";
+import {
+  getSemesterSchedules,
+  saveSemesterSchedules,
+} from "@/features/semester/schedule-api";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { ScheduleSection } from "./schedule-section";
 
 type ScheduleMock = {
@@ -89,7 +96,7 @@ describe("ScheduleSection", () => {
   });
 
   it("does not save when deleting a saved mentee-review schedule is not confirmed", async () => {
-    jest.spyOn(window, "confirm").mockReturnValue(false);
+    jest.mocked(confirmDialog).mockResolvedValue(false);
     render(
       <ScheduleSection actYear={2026} actSemester={2} semesterLabel="2026-2" />,
     );
@@ -103,9 +110,12 @@ describe("ScheduleSection", () => {
     fireEvent.click(screen.getByRole("button", { name: "학기 일정 저장" }));
 
     await waitFor(() => {
-      expect(window.confirm).toHaveBeenCalledWith(
-        "멘티 수락/거절 일정을 삭제하시겠습니까? 현재 활동 학기의 남아 있는 대기 신청은 즉시 불합격 처리되며 되돌릴 수 없습니다.",
-      );
+      expect(confirmDialog).toHaveBeenCalledWith({
+        title: "멘티 수락/거절 일정 삭제",
+        description:
+          "현재 활동 학기의 남아 있는 대기 신청은 즉시 불합격 처리되며 되돌릴 수 없습니다.",
+        confirmLabel: "삭제",
+      });
     });
     expect(saveSemesterSchedules).not.toHaveBeenCalled();
   });

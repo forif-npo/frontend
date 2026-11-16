@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { CalendarRange, Pencil, Plus, UserRoundCog } from "lucide-react";
 import { toast } from "@/components/ui/Toast";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -81,7 +82,11 @@ export function StaffRecruitmentManageView() {
       action
     ];
     if (
-      !window.confirm(`“${recruitment.title}” 모집을 ${actionLabel}할까요?`)
+      !(await confirmDialog({
+        title: `모집 ${actionLabel}`,
+        description: `“${recruitment.title}” 모집을 ${actionLabel}할까요?`,
+        confirmLabel: actionLabel,
+      }))
     ) {
       return;
     }

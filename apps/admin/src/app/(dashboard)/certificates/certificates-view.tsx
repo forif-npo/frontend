@@ -3,6 +3,7 @@ import { type SetStateAction, useCallback, useEffect, useMemo, useRef, useState 
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/Toast";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { Eraser, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -484,9 +485,11 @@ export function CertificatesView({
     }
 
     if (
-      !confirm(
-        `선택한 ${selectedIds.size}명의 수료증을 발급할까요?\n이미 발급된 부원은 재발급됩니다.`,
-      )
+      !(await confirmDialog({
+        title: "수료증 발급",
+        description: `선택한 ${selectedIds.size}명의 수료증을 발급할까요?\n이미 발급된 부원은 재발급됩니다.`,
+        confirmLabel: "발급",
+      }))
     ) {
       return;
     }
