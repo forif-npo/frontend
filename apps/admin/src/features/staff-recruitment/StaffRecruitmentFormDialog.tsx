@@ -270,11 +270,24 @@ export function StaffRecruitmentFormDialog({
                   />
                   <Select
                     value={question.type}
-                    onValueChange={(value: "SHORT_TEXT" | "LONG_TEXT") =>
+                    onValueChange={(
+                      value: "SHORT_TEXT" | "LONG_TEXT" | "LINK" | "FILE",
+                    ) =>
                       setForm((current) => ({
                         ...current,
                         questions: current.questions.map((item, itemIndex) =>
-                          itemIndex === index ? { ...item, type: value } : item,
+                          itemIndex === index
+                            ? {
+                                ...item,
+                                type: value,
+                                maxLength:
+                                  value === "FILE"
+                                    ? "5000"
+                                    : value === "LINK"
+                                      ? "2000"
+                                      : item.maxLength,
+                              }
+                            : item,
                         ),
                       }))
                     }
@@ -285,24 +298,35 @@ export function StaffRecruitmentFormDialog({
                     <SelectContent>
                       <SelectItem value="SHORT_TEXT">짧은 답변</SelectItem>
                       <SelectItem value="LONG_TEXT">긴 답변</SelectItem>
+                      <SelectItem value="LINK">링크</SelectItem>
+                      <SelectItem value="FILE">파일</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input
-                    aria-label={`${index + 1}번째 최대 글자 수`}
-                    type="number"
-                    min={1}
-                    value={question.maxLength}
-                    onChange={(event) =>
-                      setForm((current) => ({
-                        ...current,
-                        questions: current.questions.map((item, itemIndex) =>
-                          itemIndex === index
-                            ? { ...item, maxLength: event.target.value }
-                            : item,
-                        ),
-                      }))
-                    }
-                  />
+                  {question.type === "SHORT_TEXT" ||
+                  question.type === "LONG_TEXT" ? (
+                    <Input
+                      aria-label={`${index + 1}번째 최대 글자 수`}
+                      type="number"
+                      min={1}
+                      value={question.maxLength}
+                      onChange={(event) =>
+                        setForm((current) => ({
+                          ...current,
+                          questions: current.questions.map((item, itemIndex) =>
+                            itemIndex === index
+                              ? { ...item, maxLength: event.target.value }
+                              : item,
+                          ),
+                        }))
+                      }
+                    />
+                  ) : (
+                    <span className="text-muted-foreground self-center text-xs">
+                      {question.type === "FILE"
+                        ? "파일 1개 · 최대 5MB"
+                        : "http(s) 링크"}
+                    </span>
+                  )}
                   <Button
                     type="button"
                     variant="ghost"

@@ -10,7 +10,11 @@ export type StaffRecruitmentApplicationStatus =
   | "CLOSED"
   | "CANCELED";
 
-export type StaffRecruitmentQuestionType = "SHORT_TEXT" | "LONG_TEXT";
+export type StaffRecruitmentQuestionType =
+  | "SHORT_TEXT"
+  | "LONG_TEXT"
+  | "FILE"
+  | "LINK";
 
 export interface StaffRecruitmentDepartment {
   department_id: number;

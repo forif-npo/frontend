@@ -1,12 +1,8 @@
 "use client";
-
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, SelectBox, TextArea, TextInput } from "@ui/components/client";
-import type {
-  StaffApplicationSubmitRequest,
-  StaffRecruitmentRound,
-} from "@core/types/staff-recruitment";
+import type { StaffApplicationSubmitRequest, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { submitStaffApplication } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
 
@@ -35,6 +31,7 @@ export function StaffApplicationForm({
   const [firstDepartment, setFirstDepartment] = useState<string | null>(null);
   const [secondDepartment, setSecondDepartment] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [files, setFiles] = useState<Record<number, File | null>>({});
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [duplicate, setDuplicate] = useState(false);
@@ -63,11 +60,32 @@ export function StaffApplicationForm({
     }
     questions.forEach((question) => {
       const answer = answers[question.question_id] ?? "";
+      if (question.type === "FILE") {
+        const file = files[question.question_id];
+        if (question.required && !file) {
+          next[`question-${question.question_id}`] = "필수 파일입니다.";
+        } else if (
+          file &&
+          (file.size > 5 * 1024 * 1024 || file.name.length > 200)
+        ) {
+          next[`question-${question.question_id}`] =
+            "5MB 이하, 파일명 200자 이하의 파일을 선택해주세요.";
+        }
+        return;
+      }
       if (question.required && !answer.trim()) {
         next[`question-${question.question_id}`] = "필수 문항입니다.";
       } else if (answer.length > question.max_length) {
         next[`question-${question.question_id}`] =
           `${question.max_length}자 이내로 작성해주세요.`;
+      } else if (question.type === "LINK" && answer.trim()) {
+        try {
+          const url = new URL(answer.trim());
+          if (!["http:", "https:"].includes(url.protocol)) throw new Error();
+        } catch {
+          next[`question-${question.question_id}`] =
+            "http 또는 https 링크를 입력해주세요.";
+        }
       }
     });
     return next;
@@ -98,13 +116,20 @@ export function StaffApplicationForm({
     setDuplicate(false);
     setIsSubmitting(true);
     try {
-      await submitStaffApplication(recruitment.recruitment_id, {
-        department_choices: departmentChoices,
-        answers: questions.map((question) => ({
-          question_id: question.question_id,
-          answer: answers[question.question_id]?.trim() ?? "",
-        })),
-      });
+      await submitStaffApplication(
+        recruitment.recruitment_id,
+        {
+          department_choices: departmentChoices,
+          answers: questions.map((question) => ({
+            question_id: question.question_id,
+            answer:
+              question.type === "FILE"
+                ? ""
+                : (answers[question.question_id]?.trim() ?? ""),
+          })),
+        },
+        files,
+      );
       router.push(
         `/club/recruit/${recruitment.recruitment_id}/application?submitted=1`,
       );
@@ -176,6 +201,46 @@ export function StaffApplicationForm({
         </h2>
         {questions.map((question, index) => {
           const id = `question-${question.question_id}`;
+          if (question.type === "FILE") {
+            return (
+              <div key={question.question_id} className="space-y-2">
+                <label htmlFor={id} className="block font-semibold">
+                  {index + 1}. {question.label}
+                  {question.required && " *"}
+                </label>
+                {question.description && (
+                  <p className="text-text-subtle text-sm">
+                    {question.description}
+                  </p>
+                )}
+                <input
+                  id={id}
+                  type="file"
+                  className="border-gray-30 w-full rounded-lg border p-3 text-sm"
+                  aria-invalid={Boolean(errors[id])}
+                  aria-describedby={errors[id] ? `${id}-error` : undefined}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null;
+                    setFiles((current) => ({
+                      ...current,
+                      [question.question_id]: file,
+                    }));
+                    setErrors((current) => ({ ...current, [id]: "" }));
+                  }}
+                />
+                <p className="text-text-subtle text-sm">파일 1개, 최대 5MB</p>
+                {errors[id] && (
+                  <p
+                    id={`${id}-error`}
+                    className="text-text-danger text-sm"
+                    role="alert"
+                  >
+                    {errors[id]}
+                  </p>
+                )}
+              </div>
+            );
+          }
           const common = {
             id,
             title: `${index + 1}. ${question.label}`,

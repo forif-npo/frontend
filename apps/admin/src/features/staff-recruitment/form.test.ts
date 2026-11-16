@@ -59,6 +59,36 @@ describe("staff recruitment form", () => {
     );
   });
 
+  it("keeps link and file question types in the recruitment request", () => {
+    const form = emptyRecruitmentForm();
+    form.title = "운영진 모집";
+    form.description = "안내";
+    form.startsAt = "2026-12-01";
+    form.endsAt = "2026-12-15";
+    form.departments = [{ name: "개발팀", description: "" }];
+    form.questions = [
+      {
+        label: "포트폴리오 URL",
+        description: "",
+        type: "LINK",
+        required: false,
+        maxLength: "2000",
+      },
+      {
+        label: "파일",
+        description: "",
+        type: "FILE",
+        required: true,
+        maxLength: "5000",
+      },
+    ];
+
+    expect(validateRecruitmentForm(form)).toBeNull();
+    expect(
+      toSaveRequest(form).questions.map((question) => question.type),
+    ).toEqual(["LINK", "FILE"]);
+  });
+
   it("allows a single-day period and restores dates when editing", () => {
     const form = emptyRecruitmentForm();
     form.title = "운영진 모집";

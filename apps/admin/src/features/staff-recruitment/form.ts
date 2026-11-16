@@ -1,4 +1,4 @@
-import type { StaffRecruitmentRound, StaffRecruitmentCreateRequest } from "@core/types/staff-recruitment";
+import type { StaffRecruitmentRound, StaffRecruitmentCreateRequest, StaffRecruitmentQuestionType } from "@core/types/staff-recruitment";
 
 export interface StaffRecruitmentFormState {
   title: string;
@@ -15,7 +15,7 @@ export interface StaffRecruitmentFormState {
   questions: Array<{
     label: string;
     description: string;
-    type: "SHORT_TEXT" | "LONG_TEXT";
+    type: StaffRecruitmentQuestionType;
     required: boolean;
     maxLength: string;
   }>;
@@ -84,10 +84,11 @@ export function validateRecruitmentForm(
       (question) =>
         !question.label.trim() ||
         !Number.isInteger(Number(question.maxLength)) ||
-        Number(question.maxLength) < 1,
+        Number(question.maxLength) < 1 ||
+        Number(question.maxLength) > 5000,
     )
   ) {
-    return "문항 제목과 1 이상의 최대 글자 수를 확인해주세요.";
+    return "문항 제목과 1~5000자의 최대 글자 수를 확인해주세요.";
   }
   return null;
 }

@@ -1,47 +1,19 @@
 "use client";
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HTTPError } from "ky";
 import { ShieldAlert } from "lucide-react";
-import type {
-  AdminStaffRecruitmentRound,
-  StaffApplicationDetail,
-  StaffApplicationSummary,
-} from "@core/types/staff-recruitment";
+import type { AdminStaffRecruitmentRound, StaffApplicationDetail, StaffApplicationSummary } from "@core/types/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
+import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { PageHeader } from "@/components/page-header";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import {
-  getStaffApplicationDetail,
-  getStaffApplications,
-  getReviewableStaffRecruitments,
-  type StaffApplicationPage,
-} from "./api";
+import { getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
 
 const EMPTY_PAGE: StaffApplicationPage = {
   content: [],
@@ -339,9 +311,35 @@ export function StaffApplicationsView({
                     <h3 className="font-semibold">
                       {index + 1}. {answer.question_label}
                     </h3>
-                    <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6">
-                      {answer.answer || "답변 없음"}
-                    </p>
+                    {answer.question_type === "FILE" && answer.answer ? (
+                      <button
+                        type="button"
+                        className="mt-2 text-sm underline"
+                        onClick={() =>
+                          void downloadPrivateFile(
+                            `api/v1/admin/staff-recruitments/${detail.recruitment_id}/applications/${detail.application_id}/files/${answer.question_id}`,
+                            answer.answer,
+                          ).catch(async (error) =>
+                            toast.error(await handleApiError(error)),
+                          )
+                        }
+                      >
+                        {answer.answer} 다운로드
+                      </button>
+                    ) : answer.question_type === "LINK" && answer.answer ? (
+                      <a
+                        className="mt-2 block break-all text-sm underline"
+                        href={answer.answer}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {answer.answer}
+                      </a>
+                    ) : (
+                      <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6">
+                        {answer.answer || "답변 없음"}
+                      </p>
+                    )}
                   </li>
                 ))}
               </ol>

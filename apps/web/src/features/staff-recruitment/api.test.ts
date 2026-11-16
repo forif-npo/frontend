@@ -1,15 +1,10 @@
+/** @jest-environment jsdom */
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: { get: jest.fn(), post: jest.fn() },
 }));
-
 import { apiClient } from "@core/utils/api-client";
-import {
-  getCurrentStaffRecruitment,
-  getMyStaffApplication,
-  submitStaffApplication,
-} from "./api";
+import { getCurrentStaffRecruitment, getMyStaffApplication, submitStaffApplication } from "./api";
 
 type ApiMock = {
   mockReset: () => void;
@@ -55,6 +50,31 @@ describe("staff recruitment public api", () => {
       "api/v1/staff-recruitments/3/applications",
       { json: body },
     );
+  });
+
+  it("sends file answers as named multipart parts", async () => {
+    const file = new File(["portfolio"], "portfolio.pdf", {
+      type: "application/pdf",
+    });
+    mockedPost.mockReturnValue({
+      json: <T>() => Promise.resolve({ data: { application_id: 7 } } as T),
+    });
+
+    await submitStaffApplication(
+      3,
+      {
+        department_choices: [{ department_id: 31, priority: 1 }],
+        answers: [{ question_id: 41, answer: "" }],
+      },
+      { 41: file },
+    );
+
+    const [, options] = (apiClient.post as jest.Mock).mock.calls[0] as [
+      string,
+      { body: FormData },
+    ];
+    expect(options.body.get("file_41")).toBe(file);
+    expect(options.body.get("request")).toBeInstanceOf(Blob);
   });
 
   it("loads only the authenticated user's application without caching", async () => {

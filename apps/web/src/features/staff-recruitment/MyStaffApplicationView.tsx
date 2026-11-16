@@ -1,7 +1,7 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
+import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
 import { Link, PageState } from "@ui/components/server";
 import { getMyStaffApplication } from "./api";
@@ -145,13 +145,48 @@ export function MyStaffApplicationView({
               <h3 className="font-semibold">
                 {index + 1}. {answer.question_label}
               </h3>
-              <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6">
-                {answer.answer || "답변 없음"}
-              </p>
+              {answer.question_type === "FILE" && answer.answer ? (
+                <button
+                  type="button"
+                  className="text-primary-60 mt-3 text-sm underline"
+                  onClick={() =>
+                    void downloadPrivateFile(
+                      `api/v1/staff-recruitments/${application.recruitment_id}/applications/me/files/${answer.question_id}`,
+                      answer.answer,
+                    ).catch(() =>
+                      setError({
+                        code: null,
+                        message: "파일을 내려받지 못했습니다.",
+                      }),
+                    )
+                  }
+                >
+                  {answer.answer} 다운로드
+                </button>
+              ) : answer.question_type === "LINK" && answer.answer ? (
+                <a
+                  className="text-primary-60 mt-3 block break-all text-sm underline"
+                  href={answer.answer}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {answer.answer}
+                </a>
+              ) : (
+                <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6">
+                  {answer.answer || "답변 없음"}
+                </p>
+              )}
             </li>
           ))}
         </ol>
       </section>
+
+      {error && (
+        <p role="alert" className="text-text-danger mt-4 text-sm">
+          {error.message}
+        </p>
+      )}
 
       <p className="text-text-subtle mt-8 text-sm">
         제출한 지원서는 수정하거나 취소할 수 없습니다.
