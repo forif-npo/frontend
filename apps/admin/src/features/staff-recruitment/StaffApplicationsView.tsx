@@ -31,11 +31,11 @@ function dateLabel(value: string) {
   }).format(new Date(value));
 }
 
-function choicesLabel(item: StaffApplicationSummary) {
-  return [...item.applied_departments]
-    .sort((a, b) => a.priority - b.priority)
-    .map((choice) => `${choice.priority}지망 ${choice.name}`)
-    .join(" · ");
+function departmentName(item: StaffApplicationSummary, priority: 1 | 2) {
+  return (
+    item.applied_departments.find((choice) => choice.priority === priority)
+      ?.name ?? "-"
+  );
 }
 
 export function StaffApplicationsView({
@@ -229,7 +229,8 @@ export function StaffApplicationsView({
             <TableRow>
               <TableHead>이름</TableHead>
               <TableHead>학과</TableHead>
-              <TableHead>지원 부서</TableHead>
+              <TableHead>1지망 부서</TableHead>
+              <TableHead>2지망 부서</TableHead>
               <TableHead>제출 시각</TableHead>
               <TableHead>상세</TableHead>
             </TableRow>
@@ -237,7 +238,7 @@ export function StaffApplicationsView({
           <TableBody>
             {!loading && data.content.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-muted-foreground h-28">
+                <TableCell colSpan={6} className="text-muted-foreground h-28">
                   조건에 맞는 지원서가 없습니다.
                 </TableCell>
               </TableRow>
@@ -248,7 +249,8 @@ export function StaffApplicationsView({
                     {item.applicant_name}
                   </TableCell>
                   <TableCell>{item.applicant_department ?? "-"}</TableCell>
-                  <TableCell>{choicesLabel(item)}</TableCell>
+                  <TableCell>{departmentName(item, 1)}</TableCell>
+                  <TableCell>{departmentName(item, 2)}</TableCell>
                   <TableCell>{dateLabel(item.submitted_at)}</TableCell>
                   <TableCell>
                     <Button
@@ -285,7 +287,7 @@ export function StaffApplicationsView({
               <DialogHeader>
                 <DialogTitle>{detail.applicant_name} 지원서</DialogTitle>
                 <DialogDescription>
-                  {dateLabel(detail.submitted_at)} 제출 · {choicesLabel(detail)}
+                  {dateLabel(detail.submitted_at)} 제출
                 </DialogDescription>
               </DialogHeader>
               <dl className="grid gap-3 rounded-md border p-4 text-sm sm:grid-cols-2">
@@ -304,6 +306,14 @@ export function StaffApplicationsView({
                 <div>
                   <dt className="text-muted-foreground">연락처</dt>
                   <dd>{detail.applicant_phone_num ?? "-"}</dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">1지망 부서</dt>
+                  <dd>{departmentName(detail, 1)}</dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">2지망 부서</dt>
+                  <dd>{departmentName(detail, 2)}</dd>
                 </div>
               </dl>
               <ol className="space-y-4">
