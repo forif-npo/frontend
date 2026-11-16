@@ -126,7 +126,7 @@ export function CriterionDialog({
           {error && (
             <p
               role="alert"
-              className="bg-muted rounded-md border px-3 py-2 text-sm"
+              className="text-destructive text-sm"
             >
               {error}
             </p>
@@ -225,7 +225,7 @@ export function ScoringDialog({
             {error && (
               <p
                 role="alert"
-                className="bg-muted rounded-md border px-3 py-2 text-sm"
+                className="text-destructive text-sm"
               >
                 {error}
               </p>
@@ -340,7 +340,7 @@ export function AwardDialog({
           {error && (
             <p
               role="alert"
-              className="bg-muted rounded-md border px-3 py-2 text-sm"
+              className="text-destructive text-sm"
             >
               {error}
             </p>

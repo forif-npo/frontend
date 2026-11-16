@@ -30,7 +30,7 @@ export default async function Page({
       {reason === "session-expired" && (
         <p
           role="alert"
-          className="border-gray-20 bg-surface-white text-text-basic mt-6 rounded-lg border px-4 py-3 text-sm"
+          className="text-text-danger mt-6 text-sm"
         >
           세션이 만료되었습니다. 다시 로그인해주세요.
         </p>

@@ -2,10 +2,7 @@
 import { useState, useTransition } from "react";
 import { EmptyState } from "@ui/components/server";
 import { StudyCard } from "@/components/study/ui/StudyCard";
-import {
-  StudySortControl,
-  type StudySortOrder,
-} from "@/components/study/ui/StudySortControl";
+import { StudySortControl, type StudySortOrder } from "@/components/study/ui/StudySortControl";
 import type { UserStudiesResponse, StudyDetail } from "@/features/my-page/api";
 
 interface StudySectionProps {
@@ -66,7 +63,7 @@ export function StudySection({ studiesData }: StudySectionProps) {
       {downloadError && (
         <p
           role="alert"
-          className="border-gray-20 bg-surface-white text-text-basic mb-4 rounded-lg border px-4 py-3 text-sm"
+          className="text-text-danger mb-4 text-sm"
         >
           {downloadError}
         </p>

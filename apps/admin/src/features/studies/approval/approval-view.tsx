@@ -312,7 +312,7 @@ export function ApprovalView({
           {rejectError && (
             <p
               role="alert"
-              className="bg-muted rounded-md border px-3 py-2 text-sm"
+              className="text-destructive text-sm"
             >
               {rejectError}
             </p>

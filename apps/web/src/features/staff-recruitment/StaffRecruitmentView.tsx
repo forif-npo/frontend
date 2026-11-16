@@ -183,12 +183,6 @@ export function StaffRecruitmentView({
               {APPLICATION_STATUS_LABELS[recruitment.application_status]}
             </Button>
           )}
-          <Link
-            href={`/club/recruit/${recruitment.recruitment_id}/application`}
-            className="text-primary-60 mt-3 block text-center text-sm underline"
-          >
-            내 지원서 확인
-          </Link>
         </aside>
       </div>
     </main>
