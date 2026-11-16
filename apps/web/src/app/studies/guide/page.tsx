@@ -95,7 +95,7 @@ function ProgrammingCardModal({
           type="button"
           onClick={onClose}
           aria-label="닫기"
-          className="text-text-subtle hover:text-text-basic absolute right-5 top-5 transition-colors"
+          className="text-text-subtle hover:text-text-basic focus-visible:bg-surface-gray-subtle focus-visible:text-text-basic absolute right-3.5 top-3.5 flex size-8 items-center justify-center rounded-md transition-colors focus:outline-none"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path
