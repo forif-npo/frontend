@@ -2,22 +2,63 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { HTTPError } from "ky";
-import { ArrowLeft, ShieldAlert, UserPlus, Users } from "lucide-react";
+import { ArrowLeft, MoreVertical, ShieldAlert, UserPlus, Users } from "lucide-react";
 import type { AdminStaffRecruitmentRound, StaffRecruitmentReviewer, StaffReviewerCandidate } from "@core/types/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { PageHeader } from "@/components/page-header";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { formatDateTimeLabel, toInputDateTime } from "@/utils/datetime";
+import { toInputDateTime } from "@/utils/datetime";
 import { getStaffReviewerCandidates, getStaffRecruitments, getStaffReviewers, grantStaffReviewer, revokeStaffReviewer } from "./api";
 import { filterReviewerCandidates, REVIEWER_STATUS_LABELS, toReviewerExpiry } from "./reviewer";
 import { toast } from "@/components/ui/Toast";
 
 function isForbidden(error: unknown) {
   return error instanceof HTTPError && error.response.status === 403;
+}
+
+function formatDate(value: string) {
+  const date = value.slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(date)
+    ? date.replaceAll("-", ". ")
+    : "-";
+}
+
+function ReviewerDetails({
+  userId,
+  department,
+  affiliation,
+  grantedAt,
+  expiresAt,
+}: {
+  userId: number;
+  department: string | null;
+  affiliation: string;
+  grantedAt?: string;
+  expiresAt?: string;
+}) {
+  const details = [
+    { label: "학번", value: String(userId) },
+    { label: "학과", value: department ?? "학과 미등록" },
+    { label: "소속", value: affiliation },
+    ...(grantedAt ? [{ label: "부여일", value: formatDate(grantedAt) }] : []),
+    ...(expiresAt ? [{ label: "만료일", value: formatDate(expiresAt) }] : []),
+  ];
+
+  return (
+    <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-3 border-t pt-2 text-sm sm:grid-cols-3">
+      {details.map(({ label, value }) => (
+        <div key={label} className="min-w-0">
+          <dt className="text-muted-foreground">{label}</dt>
+          <dd className="mt-1 break-words font-medium">{value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
 }
 
 export function StaffReviewerManageView({
@@ -103,7 +144,7 @@ export function StaffReviewerManageView({
     if (submitting) return;
     if (
       !window.confirm(
-        `“${reviewer.user_name}” 운영진의 이 회차 열람 권한을 회수할까요?`,
+        `${reviewer.user_name} 님의 지원서 열람 권한을 회수할까요?`,
       )
     ) {
       return;
@@ -168,8 +209,7 @@ export function StaffReviewerManageView({
             부여 내역
           </h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            권한은 이 모집 회차에만 적용되며, 회수 또는 만료 뒤 다음 요청부터
-            지원서를 열람할 수 없습니다.
+            지원서 열람 권한은 이 모집 회차에만 적용됩니다.
           </p>
         </div>
         {loading ? (
@@ -188,38 +228,46 @@ export function StaffReviewerManageView({
                 key={`${reviewer.user_id}-${reviewer.granted_at}`}
                 className="rounded-lg border p-4"
               >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-semibold">{reviewer.user_name}</h3>
-                      <Badge
-                        variant={
-                          reviewer.status === "ACTIVE" ? "default" : "outline"
-                        }
-                      >
+                <div className="flex min-h-9 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-semibold">{reviewer.user_name}</h3>
+                    {reviewer.status !== "ACTIVE" && (
+                      <Badge variant="outline">
                         {REVIEWER_STATUS_LABELS[reviewer.status]}
                       </Badge>
-                    </div>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                      {reviewer.affiliation} ·{" "}
-                      {reviewer.department ?? "학과 미등록"}
-                    </p>
-                    <p className="text-muted-foreground mt-2 text-xs">
-                      부여 {formatDateTimeLabel(reviewer.granted_at)} · 만료{" "}
-                      {formatDateTimeLabel(reviewer.expires_at)}
-                    </p>
+                    )}
                   </div>
                   {reviewer.status === "ACTIVE" && (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      disabled={submitting}
-                      onClick={() => void revoke(reviewer)}
-                    >
-                      권한 회수
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground"
+                          disabled={submitting}
+                          aria-label={`${reviewer.user_name} 액션 열기`}
+                        >
+                          <MoreVertical className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onSelect={() => void revoke(reviewer)}
+                        >
+                          권한 회수
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
                 </div>
+                <ReviewerDetails
+                  userId={reviewer.user_id}
+                  department={reviewer.department}
+                  affiliation={reviewer.affiliation}
+                  grantedAt={reviewer.granted_at}
+                  expiresAt={reviewer.expires_at}
+                />
               </article>
             ))}
           </div>
@@ -232,22 +280,22 @@ export function StaffReviewerManageView({
       >
         <div>
           <h2 id="reviewer-candidates-heading" className="text-lg font-bold">
-            운영진 후보
+            현재 학기 운영진
           </h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            현재 활동 학기의 운영진이면서 ADMIN 계정이 있는 회원에게만 즉시
+            현재 활동 학기의 운영진이면서 ADMIN 계정이 있는 회원에게만 열람
             권한을 부여합니다.
           </p>
         </div>
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="이름·학번·학과·소속 검색"
+          placeholder="이름, 학번, 학과, 소속으로 검색"
           aria-label="열람 후보 검색"
         />
         {!loading && filteredCandidates.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center text-sm">
-            조건에 맞는 운영진 후보가 없습니다.
+            조건에 맞는 운영진이 없습니다.
           </div>
         ) : (
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -256,40 +304,52 @@ export function StaffReviewerManageView({
               return (
                 <article
                   key={candidate.user_id}
-                  className="flex flex-col justify-between gap-4 rounded-lg border p-4"
+                  className="rounded-lg border p-4"
                 >
-                  <div>
+                  <div className="flex min-h-9 items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-semibold">{candidate.user_name}</h3>
-                      {candidate.reviewer_status && (
-                        <Badge variant={active ? "default" : "outline"}>
+                      {candidate.reviewer_status && !active && (
+                        <Badge variant="outline">
                           {REVIEWER_STATUS_LABELS[candidate.reviewer_status]}
                         </Badge>
                       )}
                     </div>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                      {candidate.user_id} ·{" "}
-                      {candidate.department ?? "학과 미등록"}
-                    </p>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                      {candidate.affiliation}
-                    </p>
-                    {!candidate.has_admin_account && (
-                      <p className="text-destructive mt-2 text-xs">
-                        ADMIN 계정이 없어 권한을 부여할 수 없습니다.
-                      </p>
+                    {!active && candidate.has_admin_account && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="text-muted-foreground"
+                            disabled={submitting}
+                            aria-label={`${candidate.user_name} 액션 열기`}
+                          >
+                            <MoreVertical className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onSelect={() => openGrantDialog(candidate)}
+                          >
+                            <UserPlus className="mr-2 size-4" />
+                            열람 권한 부여
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     )}
                   </div>
-                  <Button
-                    size="sm"
-                    disabled={
-                      submitting || !candidate.has_admin_account || active
-                    }
-                    onClick={() => openGrantDialog(candidate)}
-                  >
-                    <UserPlus className="mr-1 h-4 w-4" />
-                    {active ? "열람 중" : "열람 권한 부여"}
-                  </Button>
+                  <ReviewerDetails
+                    userId={candidate.user_id}
+                    department={candidate.department}
+                    affiliation={candidate.affiliation}
+                  />
+                  {!candidate.has_admin_account && (
+                    <p className="text-destructive mt-2 text-xs">
+                      ADMIN 계정이 없어 권한을 부여할 수 없습니다.
+                    </p>
+                  )}
                 </article>
               );
             })}
@@ -305,9 +365,8 @@ export function StaffReviewerManageView({
           <DialogHeader>
             <DialogTitle>열람 권한 부여</DialogTitle>
             <DialogDescription>
-              {selectedCandidate?.user_name} 운영진에게 이 회차의 지원서 열람
-              권한을 즉시 부여합니다. 전역 ADMIN 권한이나 다른 회차 권한은
-              변경하지 않습니다.
+              {selectedCandidate?.user_name} 님에게 이 회차의 지원서 열람
+              권한을 부여합니다.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
@@ -337,7 +396,7 @@ export function StaffReviewerManageView({
               취소
             </Button>
             <Button disabled={submitting} onClick={() => void grant()}>
-              {submitting ? "부여 중..." : "즉시 부여"}
+              {submitting ? "부여 중..." : "부여"}
             </Button>
           </DialogFooter>
         </DialogContent>

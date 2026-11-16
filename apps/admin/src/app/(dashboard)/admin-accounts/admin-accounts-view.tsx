@@ -323,7 +323,7 @@ export function AdminAccountsView({
             setPage(0);
             setAppliedSearch(search.trim());
           }}
-          placeholder="이름 또는 소속으로 검색"
+          placeholder="이름, 소속으로 검색"
         />
         <div className="ml-auto flex shrink-0 items-center gap-3">
           <Button onClick={() => setCreateOpen(true)}>운영진 계정 생성</Button>
