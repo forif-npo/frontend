@@ -15,12 +15,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/Toast";
-import {
-  getStaffApplicationDetail,
-  getStaffApplications,
-  getReviewableStaffRecruitments,
-  type StaffApplicationPage,
-} from "./api";
+import { getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
 
 const EMPTY_PAGE: StaffApplicationPage = {
   content: [],
@@ -354,7 +349,7 @@ export function StaffApplicationsView({
                     id="application-answers-heading"
                     className="text-lg font-semibold"
                   >
-                    문항 답변
+                    지원서
                   </h3>
                   <ol className="space-y-6">
                     {detail.answers.map((answer, index) => (

@@ -94,8 +94,9 @@ export function StaffRecruitmentManageView() {
     if (
       !(await confirmDialog({
         title: `모집 ${actionLabel}`,
-        description: `“${formatStaffRecruitmentTitle(recruitment.act_year, recruitment.act_semester)}”을 ${actionLabel}할까요?`,
-        confirmLabel: actionLabel,
+        description: `${formatStaffRecruitmentTitle(recruitment.act_year, recruitment.act_semester)}을 ${actionLabel}할까요?`,
+        confirmLabel: action === "cancel" ? "모집 취소" : actionLabel,
+        dismissWithCloseButton: action === "cancel",
       }))
     ) {
       return;

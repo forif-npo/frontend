@@ -7,6 +7,7 @@ interface Confirmation {
   title: string;
   description: string;
   confirmLabel: string;
+  dismissWithCloseButton?: boolean;
 }
 
 interface PendingConfirmation extends Confirmation {
@@ -61,7 +62,10 @@ export function ConfirmDialog() {
         if (!open && request) finish(request.id, false);
       }}
     >
-      <DialogContent showCloseButton={false} className="gap-2">
+      <DialogContent
+        showCloseButton={request?.dismissWithCloseButton ?? false}
+        className="gap-2"
+      >
         <DialogHeader>
           <DialogTitle>{request?.title}</DialogTitle>
           <DialogDescription className="whitespace-pre-line">
@@ -69,13 +73,15 @@ export function ConfirmDialog() {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => request && finish(request.id, false)}
-          >
-            취소
-          </Button>
+          {!request?.dismissWithCloseButton && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => request && finish(request.id, false)}
+            >
+              취소
+            </Button>
+          )}
           <Button
             type="button"
             onClick={() => request && finish(request.id, true)}
