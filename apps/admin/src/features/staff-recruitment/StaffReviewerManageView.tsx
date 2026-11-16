@@ -72,6 +72,8 @@ export function StaffReviewerManageView({
   const [query, setQuery] = useState("");
   const [selectedCandidate, setSelectedCandidate] =
     useState<StaffReviewerCandidate | null>(null);
+  const [reviewerToRevoke, setReviewerToRevoke] =
+    useState<StaffRecruitmentReviewer | null>(null);
   const [expiresAt, setExpiresAt] = useState("");
   const [expiryError, setExpiryError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -140,19 +142,13 @@ export function StaffReviewerManageView({
     }
   };
 
-  const revoke = async (reviewer: StaffRecruitmentReviewer) => {
-    if (submitting) return;
-    if (
-      !window.confirm(
-        `${reviewer.user_name} 님의 지원서 열람 권한을 회수할까요?`,
-      )
-    ) {
-      return;
-    }
+  const revoke = async () => {
+    if (!reviewerToRevoke || submitting) return;
     setSubmitting(true);
     try {
-      await revokeStaffReviewer(recruitmentId, reviewer.user_id);
+      await revokeStaffReviewer(recruitmentId, reviewerToRevoke.user_id);
       toast.success("지원서 열람 권한을 회수했습니다.");
+      setReviewerToRevoke(null);
       await load();
     } catch (error) {
       toast.error(await handleApiError(error));
@@ -253,7 +249,7 @@ export function StaffReviewerManageView({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                          onSelect={() => void revoke(reviewer)}
+                          onSelect={() => setReviewerToRevoke(reviewer)}
                         >
                           권한 회수
                         </DropdownMenuItem>
@@ -356,6 +352,34 @@ export function StaffReviewerManageView({
           </div>
         )}
       </section>
+
+      <Dialog
+        open={reviewerToRevoke !== null}
+        onOpenChange={(open) => {
+          if (!open && !submitting) setReviewerToRevoke(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>열람 권한 회수</DialogTitle>
+            <DialogDescription>
+              {reviewerToRevoke?.user_name} 님의 지원서 열람 권한을 회수할까요?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              disabled={submitting}
+              onClick={() => setReviewerToRevoke(null)}
+            >
+              취소
+            </Button>
+            <Button disabled={submitting} onClick={() => void revoke()}>
+              {submitting ? "회수 중..." : "권한 회수"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog
         open={selectedCandidate !== null}
