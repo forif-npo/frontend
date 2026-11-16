@@ -30,6 +30,23 @@ export function formatRecruitmentPeriod(
   )}`;
 }
 
+export function formatRecruitmentDatePeriod(
+  startsAt: string | null,
+  endsAt: string | null,
+): string {
+  if (!startsAt || !endsAt) return "모집 일정 미정";
+
+  const formatter = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    month: "long",
+    day: "numeric",
+  });
+
+  return `${formatter.format(new Date(startsAt))} – ${formatter.format(
+    new Date(endsAt),
+  )}`;
+}
+
 export function recruitmentStatusMessage(
   status: StaffRecruitmentApplicationStatus,
   unavailableReason: string | null,

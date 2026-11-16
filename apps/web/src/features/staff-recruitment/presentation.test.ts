@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import {
+  formatRecruitmentDatePeriod,
   formatRecruitmentPeriod,
   recruitmentStatusMessage,
 } from "./presentation";
@@ -12,6 +13,15 @@ describe("staff recruitment presentation", () => {
         "2026-12-15T18:00:00+09:00",
       ),
     ).toContain("12월 1일");
+  });
+
+  it("shows only Seoul dates in the banner period", () => {
+    expect(
+      formatRecruitmentDatePeriod(
+        "2026-12-01T23:30:00Z",
+        "2026-12-15T18:00:00+09:00",
+      ),
+    ).toBe("12월 2일 ~ 12월 15일");
   });
 
   it("uses the server unavailable reason before a client-derived message", () => {

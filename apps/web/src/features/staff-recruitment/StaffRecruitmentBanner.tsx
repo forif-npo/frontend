@@ -3,7 +3,7 @@ import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { Button } from "@ui/components/client";
 import { Body, Display } from "@ui/components/server";
 import Link from "next/link";
-import { APPLICATION_STATUS_LABELS, formatRecruitmentPeriod } from "./presentation";
+import { formatRecruitmentDatePeriod } from "./presentation";
 
 export function StaffRecruitmentBanner({
   recruitment,
@@ -19,7 +19,7 @@ export function StaffRecruitmentBanner({
             size="l"
             className="mb-1 text-[12px] font-semibold leading-none text-white/85 md:mb-3 md:text-[16px]"
           >
-            {formatRecruitmentPeriod(
+            {formatRecruitmentDatePeriod(
               recruitment.starts_at,
               recruitment.ends_at,
             )}
@@ -33,24 +33,19 @@ export function StaffRecruitmentBanner({
               recruitment.act_semester,
             )}
           </Display>
-          <p className="mt-2 hidden max-w-2xl text-sm text-white/80 md:block">
+          <p className="mt-3 hidden max-w-2xl text-2xl leading-snug text-white/90 md:line-clamp-2">
             {recruitment.summary ??
               "FORIF를 함께 운영할 새로운 운영진을 모집합니다."}
           </p>
         </div>
-        <div className="flex shrink-0 flex-col items-end gap-2">
-          <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold text-white">
-            {APPLICATION_STATUS_LABELS[recruitment.application_status]}
-          </span>
-          <Link href="/club/recruit">
-            <Button
-              variant="secondary"
-              className="!min-h-[40px] px-4 md:!min-h-[52px]"
-            >
-              자세히 보기
-            </Button>
-          </Link>
-        </div>
+        <Link href="/club/recruit" className="shrink-0">
+          <Button
+            variant="secondary"
+            className="!min-h-[40px] px-4 md:!min-h-[52px]"
+          >
+            지원하러 가기
+          </Button>
+        </Link>
       </div>
     </div>
   );
