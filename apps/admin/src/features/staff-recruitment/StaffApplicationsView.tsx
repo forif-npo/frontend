@@ -1,13 +1,14 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HTTPError } from "ky";
-import { ShieldAlert } from "lucide-react";
+import { MoreVertical, ShieldAlert } from "lucide-react";
 import type { AdminStaffRecruitmentRound, StaffApplicationDetail, StaffApplicationSummary } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { PageHeader } from "@/components/page-header";
 import { OffsetPagination } from "@/components/list/offset-pagination";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -232,7 +233,9 @@ export function StaffApplicationsView({
               <TableHead>1지망 부서</TableHead>
               <TableHead>2지망 부서</TableHead>
               <TableHead>제출 시각</TableHead>
-              <TableHead>상세</TableHead>
+              <TableHead className="w-14">
+                <span className="sr-only">작업</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -253,14 +256,27 @@ export function StaffApplicationsView({
                   <TableCell>{departmentName(item, 2)}</TableCell>
                   <TableCell>{dateLabel(item.submitted_at)}</TableCell>
                   <TableCell>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={detailLoading}
-                      onClick={() => void openDetail(item.application_id)}
-                    >
-                      보기
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground h-8 w-8"
+                          disabled={detailLoading}
+                          aria-label={`${item.applicant_name} 작업 메뉴`}
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-44">
+                        <DropdownMenuItem
+                          onSelect={() => void openDetail(item.application_id)}
+                        >
+                          지원서 보기
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))
