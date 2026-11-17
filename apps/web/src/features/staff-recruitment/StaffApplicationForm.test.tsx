@@ -51,7 +51,17 @@ describe("StaffApplicationForm", () => {
     fireEvent.change(screen.getByRole("textbox", { name: /4. 참고 링크/ }), {
       target: { value: "https://example.com/portfolio" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "지원서 제출" }));
+    const submitButton = screen.getByRole("button", {
+      name: "지원서 제출",
+    }) as HTMLButtonElement;
+    expect(submitButton.disabled).toBe(true);
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "작성한 개인정보와 답변은 운영 기록을 위해 FORIF DB에 보관됨을 확인하였습니다.",
+      }),
+    );
+    expect(submitButton.disabled).toBe(false);
+    fireEvent.click(submitButton);
 
     await waitFor(() => expect(onSubmitted).toHaveBeenCalledTimes(1));
     expect(submitStaffApplication).toHaveBeenCalledWith(

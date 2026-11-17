@@ -45,7 +45,7 @@ export function StaffApplicationFlow({ recruitment }: { recruitment: StaffRecrui
           { label: "지원서 작성" },
         ]}
         title={formatStaffRecruitmentTitle(recruitment.act_year, recruitment.act_semester)}
-        description="작성 중인 내용은 브라우저에 저장되지 않습니다. 제출 전 내용을 확인해주세요."
+        description="작성 중인 내용은 저장되지 않습니다. 제출 전 작성한 내용을 꼼꼼히 확인해주세요."
       />
       <StaffApplicationForm
         recruitment={recruitment}

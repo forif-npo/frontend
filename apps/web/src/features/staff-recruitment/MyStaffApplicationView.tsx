@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
-import { Link, PageState } from "@ui/components/server";
+import { InlineLoadingState, Link, PageState } from "@ui/components/server";
 import { getMyStaffApplication } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
 
@@ -47,6 +47,14 @@ export function MyStaffApplicationView({
   }, [recruitmentId]);
 
   if (loading) {
+    if (embedded) {
+      return (
+        <InlineLoadingState
+          message="지원서를 불러오는 중입니다."
+          textClassName="text-base"
+        />
+      );
+    }
     return (
       <PageState
         title="지원서를 불러오는 중입니다"
@@ -192,10 +200,6 @@ export function MyStaffApplicationView({
           {error.message}
         </p>
       )}
-
-      <p className="text-text-subtle mt-8 text-sm">
-        제출한 지원서는 수정하거나 취소할 수 없습니다.
-      </p>
     </Container>
   );
 }

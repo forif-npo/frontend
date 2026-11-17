@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
+import { Button, Checkbox, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import { Label } from "@ui/components/server";
 import type { StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { submitStaffApplication } from "./api";
@@ -42,6 +42,7 @@ export function StaffApplicationForm({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [duplicate, setDuplicate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAcknowledged, setIsAcknowledged] = useState(false);
 
   const departmentOptions = departments.map((department) => ({
     value: String(department.department_id),
@@ -99,7 +100,7 @@ export function StaffApplicationForm({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (isSubmitting) return;
+    if (isSubmitting || !isAcknowledged) return;
 
     const nextErrors = validate();
     if (Object.keys(nextErrors).length > 0) {
@@ -316,12 +317,17 @@ export function StaffApplicationForm({
       </section>
 
       <section className="bg-gray-5 rounded-3 p-5 text-sm leading-6">
-        <h2 className="font-bold">제출 전 확인</h2>
-        <p className="text-text-subtle mt-1">
-          지원서는 회차당 한 번만 제출할 수 있고 제출 후 수정할 수 없습니다.
-          지원 당시 개인정보와 답변은 운영 기록을 위해 데이터베이스에 영구
-          보관됩니다.
-        </p>
+        <h2 className="text-text-basic text-[19px] font-bold leading-[1.5]">
+          제출 전 확인
+        </h2>
+        <div className="mt-3">
+          <Checkbox
+            id="submissionAcknowledged"
+            label="작성하신 개인정보와 답변은 운영 기록을 위해 FORIF DB에 보관됨을 확인하였습니다."
+            checked={isAcknowledged}
+            onChange={setIsAcknowledged}
+          />
+        </div>
       </section>
 
       {submitError && (
@@ -351,7 +357,10 @@ export function StaffApplicationForm({
           type="submit"
           size="large"
           disabled={
-            isSubmitting || questions.length === 0 || departments.length === 0
+            isSubmitting ||
+            !isAcknowledged ||
+            questions.length === 0 ||
+            departments.length === 0
           }
         >
           {isSubmitting ? "제출 중..." : "지원서 제출"}
