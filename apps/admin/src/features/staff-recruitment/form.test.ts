@@ -103,7 +103,26 @@ describe("staff recruitment form", () => {
     ).toEqual(["LINK", "FILE"]);
   });
 
-  it("allows a single-day period and restores dates when editing", () => {
+  it("rejects a second file question in one recruitment", () => {
+    const form = emptyRecruitmentForm();
+    form.description = "안내";
+    form.startsAt = "2026-12-01";
+    form.endsAt = "2026-12-15";
+    form.departments = [{ name: "개발팀", description: "" }];
+    form.questions = ["포트폴리오", "자기소개서"].map((label) => ({
+      label,
+      description: "",
+      type: "FILE" as const,
+      required: false,
+      maxLength: "5000",
+    }));
+
+    expect(validateRecruitmentForm(form)).toBe(
+      "파일 문항은 모집당 하나만 추가할 수 있습니다.",
+    );
+  });
+
+  it("restores dates and existing item identities when editing", () => {
     const form = emptyRecruitmentForm();
     form.description = "안내";
     form.startsAt = "2026-12-15";
@@ -129,8 +148,22 @@ describe("staff recruitment form", () => {
       application_status: "CLOSED",
       application_open: false,
       application_unavailable_reason: null,
-      departments: [],
-      questions: [],
+      departments: [{
+        department_id: 17,
+        name: "기획팀",
+        description: null,
+        display_order: 1,
+        active: false,
+      }],
+      questions: [{
+        question_id: 29,
+        label: "지원 동기",
+        description: null,
+        type: "LONG_TEXT",
+        required: true,
+        max_length: 1000,
+        display_order: 1,
+      }],
       updated_at: "2026-11-16T00:00:00+09:00",
     };
     expect(recruitmentToForm(saved)).toEqual(
@@ -141,6 +174,20 @@ describe("staff recruitment form", () => {
         endsAt: "2026-12-15",
       }),
     );
-    expect(toSaveRequest(recruitmentToForm(saved)).title).toBe("2026-2");
+    const update = toSaveRequest(recruitmentToForm(saved));
+    expect(update.title).toBe("2026-2");
+    expect(request.departments[0]).not.toHaveProperty("department_id");
+    expect(update.departments).toEqual([
+      {
+        department_id: 17,
+        name: "기획팀",
+        description: null,
+        display_order: 1,
+        active: false,
+      },
+    ]);
+    expect(update.questions[0]).toEqual(
+      expect.objectContaining({ question_id: 29, label: "지원 동기" }),
+    );
   });
 });

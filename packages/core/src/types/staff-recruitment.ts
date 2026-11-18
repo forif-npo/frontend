@@ -60,6 +60,7 @@ export interface AdminStaffRecruitmentRound extends StaffRecruitmentRound {
 }
 
 export interface StaffRecruitmentDepartmentInput {
+  department_id?: number;
   name: string;
   description: string | null;
   display_order: number;
@@ -67,6 +68,7 @@ export interface StaffRecruitmentDepartmentInput {
 }
 
 export interface StaffRecruitmentQuestionInput {
+  question_id?: number;
   label: string;
   description: string | null;
   type: StaffRecruitmentQuestionType;
@@ -107,6 +109,11 @@ export interface StaffApplicationAnswerInput {
 export interface StaffApplicationSubmitRequest {
   department_choices: StaffApplicationDepartmentChoice[];
   answers: StaffApplicationAnswerInput[];
+}
+
+export interface StaffApplicationUpdateRequest
+  extends StaffApplicationSubmitRequest {
+  removed_file_question_ids: number[];
 }
 
 export interface StaffApplicationSubmitResponse {
@@ -153,6 +160,7 @@ export interface StaffApplicationDetail extends StaffApplicationSummary {
   applicant_email: string;
   applicant_phone_num: string | null;
   answers: StaffApplicationAnswer[];
+  can_modify: boolean;
 }
 
 export type StaffReviewerStatus = "ACTIVE" | "REVOKED" | "EXPIRED";

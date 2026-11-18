@@ -293,7 +293,15 @@ export function StaffRecruitmentFormDialog({
                       <SelectItem value="SHORT_TEXT">짧은 답변</SelectItem>
                       <SelectItem value="LONG_TEXT">긴 답변</SelectItem>
                       <SelectItem value="LINK">링크</SelectItem>
-                      <SelectItem value="FILE">파일</SelectItem>
+                      <SelectItem
+                        value="FILE"
+                        disabled={form.questions.some(
+                          (item, itemIndex) =>
+                            itemIndex !== index && item.type === "FILE",
+                        )}
+                      >
+                        파일
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   {(question.type === "SHORT_TEXT" ||

@@ -4,7 +4,7 @@ import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
 import { InlineLoadingState, Link, PageState } from "@ui/components/server";
-import { getMyStaffApplication } from "./api";
+import { getMyStaffApplication, getStaffRecruitment } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
 
 function formatDateTime(value: string) {
@@ -27,6 +27,7 @@ export function MyStaffApplicationView({
     null,
   );
   const [loading, setLoading] = useState(true);
+  const [applicationOpen, setApplicationOpen] = useState(false);
   const [error, setError] = useState<{
     code: string | null;
     message: string;
@@ -41,6 +42,20 @@ export function MyStaffApplicationView({
         if (active) setError(info);
       })
       .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+  }, [recruitmentId]);
+
+  useEffect(() => {
+    let active = true;
+    getStaffRecruitment(recruitmentId)
+      .then((recruitment) => {
+        if (active) setApplicationOpen(recruitment.application_open);
+      })
+      .catch(() => {
+        if (active) setApplicationOpen(false);
+      });
     return () => {
       active = false;
     };
@@ -83,7 +98,11 @@ export function MyStaffApplicationView({
 
   const Container = embedded ? "div" : "main";
   return (
-    <Container className={embedded ? "w-full" : "max-w-main mx-auto w-full px-4 py-10 lg:px-0"}>
+    <Container
+      className={
+        embedded ? "w-full" : "max-w-main mx-auto w-full px-4 py-10 lg:px-0"
+      }
+    >
       {submitted && (
         <div
           role="status"
@@ -97,9 +116,13 @@ export function MyStaffApplicationView({
           내 운영진 지원서
         </span>
         {embedded ? (
-          <h2 className="text-title-l-mobile sm:text-title-l font-bold">제출 내역</h2>
+          <h2 className="text-title-l-mobile sm:text-title-l font-bold">
+            제출 내역
+          </h2>
         ) : (
-          <h1 className="text-title-l-mobile sm:text-title-l font-bold">제출 내역</h1>
+          <h1 className="text-title-l-mobile sm:text-title-l font-bold">
+            제출 내역
+          </h1>
         )}
         <p className="text-text-subtle text-sm">
           {formatDateTime(application.submitted_at)} 제출 · 제출 완료
@@ -199,6 +222,13 @@ export function MyStaffApplicationView({
         <p role="alert" className="text-text-danger mt-4 text-sm">
           {error.message}
         </p>
+      )}
+      {applicationOpen && (
+        <div className="mt-8 flex justify-end">
+          <Link href={`/club/recruit/${recruitmentId}/application/edit`}>
+            <Button variant="primary" size="large">지원서 관리</Button>
+          </Link>
+        </div>
       )}
     </Container>
   );

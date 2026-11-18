@@ -9,10 +9,13 @@ export interface StaffRecruitmentFormState {
   startsAt: string;
   endsAt: string;
   departments: Array<{
+    departmentId?: number;
     name: string;
     description: string;
+    active?: boolean;
   }>;
   questions: Array<{
+    questionId?: number;
     label: string;
     description: string;
     type: StaffRecruitmentQuestionType;
@@ -45,10 +48,13 @@ export function recruitmentToForm(
     startsAt: recruitment.starts_at?.slice(0, 10) ?? "",
     endsAt: recruitment.ends_at?.slice(0, 10) ?? "",
     departments: recruitment.departments.map((department) => ({
+      departmentId: department.department_id,
       name: department.name,
       description: department.description ?? "",
+      active: department.active,
     })),
     questions: recruitment.questions.map((question) => ({
+      questionId: question.question_id,
       label: question.label,
       description: question.description ?? "",
       type: question.type,
@@ -92,6 +98,11 @@ export function validateRecruitmentForm(
   ) {
     return "문항 제목과 1~5000자의 최대 글자 수를 확인해주세요.";
   }
+  if (
+    form.questions.filter((question) => question.type === "FILE").length > 1
+  ) {
+    return "파일 문항은 모집당 하나만 추가할 수 있습니다.";
+  }
   return null;
 }
 
@@ -112,12 +123,18 @@ export function toSaveRequest(
     departments: form.departments
       .filter((department) => department.name.trim())
       .map((department, index) => ({
+        ...(department.departmentId !== undefined
+          ? { department_id: department.departmentId }
+          : {}),
         name: department.name.trim(),
         description: department.description.trim() || null,
         display_order: index + 1,
-        active: true,
+        active: department.active ?? true,
       })),
     questions: form.questions.map((question, index) => ({
+      ...(question.questionId !== undefined
+        ? { question_id: question.questionId }
+        : {}),
       label: question.label.trim(),
       description: question.description.trim() || null,
       type: question.type,

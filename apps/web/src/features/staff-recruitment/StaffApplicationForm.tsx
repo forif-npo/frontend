@@ -3,8 +3,10 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Checkbox, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import { Label } from "@ui/components/server";
-import type { StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffRecruitmentRound } from "@core/types/staff-recruitment";
-import { submitStaffApplication } from "./api";
+import type { StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import { downloadPrivateFile } from "@core/utils/private-file-download";
+import { ActionConfirmModal } from "@/components/ActionConfirmModal";
+import { cancelStaffApplication, submitStaffApplication, updateStaffApplication } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
 
 type FieldErrors = Record<string, string>;
@@ -12,14 +14,21 @@ type FieldErrors = Record<string, string>;
 export function StaffApplicationForm({
   recruitment,
   onSubmitted,
+  initialApplication,
+  onUpdated,
+  onCancelled,
 }: {
   recruitment: StaffRecruitmentRound;
-  onSubmitted: (
+  onSubmitted?: (
     result: StaffApplicationSubmitResponse,
     departments: { first: string; second: string | null },
   ) => void;
+  initialApplication?: StaffApplicationDetail;
+  onUpdated?: (detail: StaffApplicationDetail) => void;
+  onCancelled?: () => void;
 }) {
   const router = useRouter();
+  const isEditMode = Boolean(initialApplication);
   const departments = useMemo(
     () =>
       recruitment.departments
@@ -34,15 +43,61 @@ export function StaffApplicationForm({
       ),
     [recruitment.questions],
   );
-  const [firstDepartment, setFirstDepartment] = useState<string | null>(null);
-  const [secondDepartment, setSecondDepartment] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
+  const initialFirstDepartment = initialApplication?.applied_departments.find(
+    (choice) => choice.priority === 1,
+  );
+  const initialSecondDepartment = initialApplication?.applied_departments.find(
+    (choice) => choice.priority === 2,
+  );
+  const initialAnswers = Object.fromEntries(
+    (initialApplication?.answers ?? [])
+      .filter((answer) => answer.question_type !== "FILE")
+      .map((answer) => [answer.question_id, answer.answer ?? ""]),
+  ) as Record<number, string>;
+  const [firstDepartment, setFirstDepartment] = useState<string | null>(
+    initialFirstDepartment
+      ? String(initialFirstDepartment.department_id)
+      : null,
+  );
+  const [secondDepartment, setSecondDepartment] = useState<string | null>(
+    initialSecondDepartment
+      ? String(initialSecondDepartment.department_id)
+      : null,
+  );
+  const [answers, setAnswers] =
+    useState<Record<number, string>>(initialAnswers);
   const [files, setFiles] = useState<Record<number, File | null>>({});
+  const [removedFileQuestionIds, setRemovedFileQuestionIds] = useState<
+    Set<number>
+  >(new Set());
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [duplicate, setDuplicate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<
+    "modify" | "cancel" | null
+  >(null);
   const [isAcknowledged, setIsAcknowledged] = useState(false);
+
+  const hasChanges =
+    Boolean(initialApplication) &&
+    (firstDepartment !==
+      (initialFirstDepartment
+        ? String(initialFirstDepartment.department_id)
+        : null) ||
+      secondDepartment !==
+        (initialSecondDepartment
+          ? String(initialSecondDepartment.department_id)
+          : null) ||
+      questions.some(
+        (question) =>
+          question.type !== "FILE" &&
+          (answers[question.question_id] ?? "") !==
+            (initialAnswers[question.question_id] ?? ""),
+      ) ||
+      Object.values(files).some(Boolean) ||
+      removedFileQuestionIds.size > 0);
 
   const departmentOptions = departments.map((department) => ({
     value: String(department.department_id),
@@ -69,7 +124,14 @@ export function StaffApplicationForm({
       const answer = answers[question.question_id] ?? "";
       if (question.type === "FILE") {
         const file = files[question.question_id];
-        if (question.required && !file) {
+        const retainedFile = initialApplication?.answers.some(
+          (item) =>
+            item.question_id === question.question_id &&
+            item.question_type === "FILE" &&
+            Boolean(item.answer) &&
+            !removedFileQuestionIds.has(question.question_id),
+        );
+        if (question.required && !file && !retainedFile) {
           next[`question-${question.question_id}`] = "필수 파일입니다.";
         } else if (
           file &&
@@ -98,10 +160,14 @@ export function StaffApplicationForm({
     return next;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (isSubmitting || !isAcknowledged) return;
-
+    if (
+      isSubmitting ||
+      isCancelling ||
+      (isEditMode && !initialApplication?.can_modify) ||
+      (!isEditMode && !isAcknowledged)
+    ) return;
     const nextErrors = validate();
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -109,6 +175,14 @@ export function StaffApplicationForm({
       return;
     }
 
+    if (isEditMode) {
+      setConfirmAction("modify");
+    } else {
+      void saveApplication();
+    }
+  };
+
+  const saveApplication = async () => {
     const departmentChoices: StaffApplicationSubmitRequest["department_choices"] =
       [{ department_id: Number(firstDepartment), priority: 1 }];
     if (secondDepartment) {
@@ -123,34 +197,63 @@ export function StaffApplicationForm({
     setDuplicate(false);
     setIsSubmitting(true);
     try {
-      const result = await submitStaffApplication(
-        recruitment.recruitment_id,
-        {
-          department_choices: departmentChoices,
-          answers: questions.map((question) => ({
-            question_id: question.question_id,
-            answer:
-              question.type === "FILE"
-                ? ""
-                : (answers[question.question_id]?.trim() ?? ""),
-          })),
-        },
-        files,
-      );
-      onSubmitted(result, {
-        first:
-          departments.find((item) => String(item.department_id) === firstDepartment)
-            ?.name ?? "-",
-        second:
-          departments.find((item) => String(item.department_id) === secondDepartment)
-            ?.name ?? null,
-      });
+      const body = {
+        department_choices: departmentChoices,
+        answers: questions.map((question) => ({
+          question_id: question.question_id,
+          answer:
+            question.type === "FILE"
+              ? ""
+              : (answers[question.question_id]?.trim() ?? ""),
+        })),
+      };
+      if (initialApplication) {
+        const updated = await updateStaffApplication(
+          recruitment.recruitment_id,
+          {
+            ...body,
+            removed_file_question_ids: Array.from(removedFileQuestionIds),
+          },
+          files,
+        );
+        onUpdated?.(updated);
+      } else {
+        const result = await submitStaffApplication(
+          recruitment.recruitment_id,
+          body,
+          files,
+        );
+        onSubmitted?.(result, {
+          first:
+            departments.find(
+              (item) => String(item.department_id) === firstDepartment,
+            )?.name ?? "-",
+          second:
+            departments.find(
+              (item) => String(item.department_id) === secondDepartment,
+            )?.name ?? null,
+        });
+      }
     } catch (error) {
       const info = await getStaffApplicationErrorInfo(error);
       setDuplicate(info.code === "FOR154-409");
       setSubmitError(info.message);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const cancelApplication = async () => {
+    if (!initialApplication || isCancelling) return;
+    setIsCancelling(true);
+    setSubmitError(null);
+    try {
+      await cancelStaffApplication(recruitment.recruitment_id);
+      onCancelled?.();
+    } catch (error) {
+      setSubmitError((await getStaffApplicationErrorInfo(error)).message);
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -214,6 +317,11 @@ export function StaffApplicationForm({
           const id = `question-${question.question_id}`;
           if (question.type === "FILE") {
             const selectedFile = files[question.question_id];
+            const existingFile = initialApplication?.answers.find(
+              (answer) =>
+                answer.question_id === question.question_id &&
+                answer.question_type === "FILE",
+            )?.answer;
             return (
               <div
                 key={question.question_id}
@@ -224,7 +332,10 @@ export function StaffApplicationForm({
                 <Label id={`${id}-label`}>
                   {index + 1}. {question.label}
                   {question.required && (
-                    <span className="text-text-danger ml-0.5" aria-hidden="true">
+                    <span
+                      className="text-text-danger ml-0.5"
+                      aria-hidden="true"
+                    >
                       *
                     </span>
                   )}
@@ -234,6 +345,37 @@ export function StaffApplicationForm({
                     {question.description}
                   </Label>
                 )}
+                {existingFile &&
+                  !selectedFile &&
+                  !removedFileQuestionIds.has(question.question_id) && (
+                    <div className="border-border-gray-light flex items-center justify-between gap-3 rounded-lg border px-4 py-3">
+                      <button
+                        type="button"
+                        className="text-text-primary min-w-0 truncate underline underline-offset-2"
+                        onClick={() =>
+                          void downloadPrivateFile(
+                            `api/v1/staff-recruitments/${recruitment.recruitment_id}/applications/me/files/${question.question_id}`,
+                            existingFile,
+                          ).catch(() =>
+                            setSubmitError("파일을 내려받지 못했습니다."),
+                          )
+                        }
+                      >
+                        {existingFile}
+                      </button>
+                      <button
+                        type="button"
+                        className="text-text-subtle shrink-0 underline underline-offset-2"
+                        onClick={() =>
+                          setRemovedFileQuestionIds((current) =>
+                            new Set(current).add(question.question_id),
+                          )
+                        }
+                      >
+                        파일 제거
+                      </button>
+                    </div>
+                  )}
                 <FileUpload
                   ariaLabelledBy={`${id}-label`}
                   ariaDescribedBy={errors[id] ? `${id}-error` : undefined}
@@ -255,6 +397,11 @@ export function StaffApplicationForm({
                       ...current,
                       [question.question_id]: file,
                     }));
+                    setRemovedFileQuestionIds((current) => {
+                      const next = new Set(current);
+                      next.delete(question.question_id);
+                      return next;
+                    });
                     setErrors((current) => ({ ...current, [id]: "" }));
                     setSubmitError(null);
                     return true;
@@ -316,19 +463,21 @@ export function StaffApplicationForm({
         )}
       </section>
 
-      <section className="bg-gray-5 rounded-3 p-5 text-sm leading-6">
-        <h2 className="text-text-basic text-[19px] font-bold leading-[1.5]">
-          제출 전 확인
-        </h2>
-        <div className="mt-3">
-          <Checkbox
-            id="submissionAcknowledged"
-            label="작성하신 개인정보와 답변은 운영 기록을 위해 FORIF DB에 보관됨을 확인하였습니다."
-            checked={isAcknowledged}
-            onChange={setIsAcknowledged}
-          />
-        </div>
-      </section>
+      {!isEditMode && (
+        <section className="bg-gray-5 rounded-3 p-5 text-sm leading-6">
+          <h2 className="text-text-basic text-[19px] font-bold leading-[1.5]">
+            제출 전 확인
+          </h2>
+          <div className="mt-3">
+            <Checkbox
+              id="submissionAcknowledged"
+              label="작성하신 개인정보와 답변은 운영 기록을 위해 FORIF DB에 보관됨을 확인하였습니다."
+              checked={isAcknowledged}
+              onChange={setIsAcknowledged}
+            />
+          </div>
+        </section>
+      )}
 
       {submitError && (
         <div
@@ -352,20 +501,60 @@ export function StaffApplicationForm({
         </div>
       )}
 
-      <div className="flex justify-end">
+      <div
+        className={
+          isEditMode
+            ? "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            : "flex justify-end"
+        }
+      >
+        {isEditMode && (
+          <Button
+            variant="tertiary"
+            type="button"
+            size="large"
+            disabled={isSubmitting || isCancelling}
+            onClick={() => setConfirmAction("cancel")}
+          >
+            {isCancelling ? "취소 중..." : "신청 취소"}
+          </Button>
+        )}
         <Button
           type="submit"
           size="large"
           disabled={
             isSubmitting ||
-            !isAcknowledged ||
+            isCancelling ||
+            (isEditMode
+              ? !initialApplication?.can_modify || !hasChanges
+              : !isAcknowledged) ||
             questions.length === 0 ||
             departments.length === 0
           }
         >
-          {isSubmitting ? "제출 중..." : "지원서 제출"}
+          {isSubmitting
+            ? isEditMode
+              ? "수정 중..."
+              : "제출 중..."
+            : isEditMode
+              ? "수정"
+              : "지원서 제출"}
         </Button>
       </div>
+      {isEditMode && (
+        <ActionConfirmModal
+          isOpen={confirmAction !== null}
+          target="운영진 지원서"
+          action={confirmAction === "modify" ? "수정" : "취소"}
+          onClose={() => setConfirmAction(null)}
+          onConfirm={() => {
+            const action = confirmAction;
+            setConfirmAction(null);
+            if (action === "modify") void saveApplication();
+            if (action === "cancel") void cancelApplication();
+          }}
+        />
+      )}
     </form>
   );
 }
