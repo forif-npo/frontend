@@ -8,12 +8,13 @@ describe("staff recruitment form", () => {
     form.description = "안내";
     form.startsAt = "2027-01-01";
     form.endsAt = "2027-01-02";
-    form.departments = [{ name: "기획팀", description: "" }];
+    form.departments = [{ name: "기획", description: "" }];
     form.actYear = "2027";
     form.actSemester = "1";
 
     expect(validateRecruitmentForm(form)).toBeNull();
     expect(toSaveRequest(form).title).toBe("2027-1");
+    expect(toSaveRequest(form).departments[0].name).toBe("기획");
 
     form.actYear = "";
     expect(validateRecruitmentForm(form)).toBe("활동 연도를 확인해주세요.");

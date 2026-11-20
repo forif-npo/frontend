@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { HTTPError } from "ky";
 import { MoreVertical, ShieldAlert } from "lucide-react";
 import type { AdminStaffRecruitmentRound, StaffApplicationDetail, StaffApplicationSummary } from "@core/types/staff-recruitment";
-import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
+import { formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { PageHeader } from "@/components/page-header";
@@ -33,10 +33,10 @@ function dateLabel(value: string) {
 }
 
 function departmentName(item: StaffApplicationSummary, priority: 1 | 2) {
-  return (
-    item.applied_departments.find((choice) => choice.priority === priority)
-      ?.name ?? "-"
-  );
+  const name = item.applied_departments.find(
+    (choice) => choice.priority === priority,
+  )?.name;
+  return name ? formatStaffRecruitmentDepartment(name) : "-";
 }
 
 export function StaffApplicationsView({
@@ -197,7 +197,7 @@ export function StaffApplicationsView({
                 key={department.department_id}
                 value={String(department.department_id)}
               >
-                {department.name}
+                {formatStaffRecruitmentDepartment(department.name)}
               </SelectItem>
             ))}
           </SelectContent>

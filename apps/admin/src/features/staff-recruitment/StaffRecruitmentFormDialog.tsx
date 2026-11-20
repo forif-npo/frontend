@@ -166,21 +166,30 @@ export function StaffRecruitmentFormDialog({
                 key={`department-${index}`}
                 className="grid gap-2 sm:grid-cols-[1fr_2fr_auto]"
               >
-                <Input
-                  aria-label={`${index + 1}번째 부서명`}
-                  placeholder="기획팀"
-                  value={department.name}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      departments: current.departments.map((item, itemIndex) =>
-                        itemIndex === index
-                          ? { ...item, name: event.target.value }
-                          : item,
-                      ),
-                    }))
-                  }
-                />
+                <div className="relative">
+                  <Input
+                    aria-label={`${index + 1}번째 부서명`}
+                    placeholder="회계"
+                    className="pr-9"
+                    value={department.name}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        departments: current.departments.map((item, itemIndex) =>
+                          itemIndex === index
+                            ? { ...item, name: event.target.value }
+                            : item,
+                        ),
+                      }))
+                    }
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm"
+                  >
+                    팀
+                  </span>
+                </div>
                 <Input
                   aria-label={`${index + 1}번째 부서 설명`}
                   placeholder="부서 역할을 간단히 적어주세요"

@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Checkbox, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import { Label } from "@ui/components/server";
+import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import type { StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
@@ -101,7 +102,7 @@ export function StaffApplicationForm({
 
   const departmentOptions = departments.map((department) => ({
     value: String(department.department_id),
-    label: department.name,
+    label: formatStaffRecruitmentDepartment(department.name),
   }));
 
   const updateAnswer = (questionId: number, answer: string) => {

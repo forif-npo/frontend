@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
+import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
 import { InlineLoadingState, Link, PageState } from "@ui/components/server";
@@ -167,7 +168,9 @@ export function MyStaffApplicationView({
                 <span className="text-primary-60 text-sm font-bold">
                   {department.priority}지망
                 </span>
-                <p className="mt-1 font-semibold">{department.name}</p>
+                <p className="mt-1 font-semibold">
+                  {formatStaffRecruitmentDepartment(department.name)}
+                </p>
               </li>
             ))}
         </ol>

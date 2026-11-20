@@ -1,5 +1,5 @@
 import type { StaffRecruitmentRound } from "@core/types/staff-recruitment";
-import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
+import { formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { Button } from "@ui/components/client";
 import { Link, PageState } from "@ui/components/server";
 import { PageHeader } from "@/components/PageHeader";
@@ -108,7 +108,7 @@ export function StaffRecruitmentView({
                     className="border-divider-gray-light border-b py-4"
                   >
                     <h3 className="text-text-basic text-[17px] font-bold leading-[1.5]">
-                      {department.name}
+                      {formatStaffRecruitmentDepartment(department.name)}
                     </h3>
                     {department.description?.trim() && (
                       <p className="text-text-subtle mt-1 text-[15px] leading-6">

@@ -1,5 +1,5 @@
 import { SuccessFillIcon } from "@repo/assets/icons/krds";
-import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
+import { formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import type { StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { Button } from "@ui/components/client";
 
@@ -54,8 +54,14 @@ export function StaffApplicationComplete({
               지원 부서
             </p>
             <div className="text-text-basic flex min-w-0 flex-col gap-2 break-words text-[15px] leading-[1.5] sm:gap-4 sm:text-[19px]">
-              <p>1지망 {submission.firstDepartment}</p>
-              <p>2지망 {submission.secondDepartment ?? "-"}</p>
+              <p>
+                1지망 {formatStaffRecruitmentDepartment(submission.firstDepartment)}
+              </p>
+              <p>
+                2지망 {submission.secondDepartment
+                  ? formatStaffRecruitmentDepartment(submission.secondDepartment)
+                  : "-"}
+              </p>
             </div>
           </div>
           <div className="flex gap-3">

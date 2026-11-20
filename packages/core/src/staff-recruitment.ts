@@ -11,3 +11,7 @@ export function formatStaffRecruitmentTitle(
 ): string {
   return `${actYear}년 ${actSemester}학기 운영진 모집`;
 }
+
+export function formatStaffRecruitmentDepartment(name: string): string {
+  return name.endsWith("팀") ? name : `${name}팀`;
+}
