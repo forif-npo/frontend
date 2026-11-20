@@ -1,7 +1,24 @@
 /** @jest-environment jsdom */
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
-import type { ButtonHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
+import type {
+  ButtonHTMLAttributes,
+  ReactNode,
+  TextareaHTMLAttributes,
+} from "react";
 const mockRefresh = jest.fn();
 const mockPush = jest.fn();
 jest.mock("next/navigation", () => ({
@@ -80,7 +97,16 @@ jest.mock("@/components/ui/textarea", () => ({
   ),
 }));
 jest.mock("./study-approval-detail-dialog", () => ({
-  StudyApprovalDetailDialog: () => null,
+  StudyApprovalDetailDialog: ({
+    study,
+    onReject,
+  }: {
+    study: (typeof studies)[number] | null;
+    onReject: (study: (typeof studies)[number]) => void;
+  }) =>
+    study ? (
+      <button onClick={() => onReject(study)}>테스트 반려 열기</button>
+    ) : null,
 }));
 jest.mock("../api", () => ({
   approveStudy: jest.fn(),
@@ -88,7 +114,11 @@ jest.mock("../api", () => ({
   rejectStudy: jest.fn(),
 }));
 jest.mock("@core/utils/api-client", () => ({ handleApiError: jest.fn() }));
+jest.mock("@/components/ui/Toast", () => ({
+  toast: { error: jest.fn(), success: jest.fn() },
+}));
 import { handleApiError } from "@core/utils/api-client";
+import { toast } from "@/components/ui/Toast";
 import { approveStudy, fetchStudyDetail, rejectStudy } from "../api";
 const mockedRejectStudy = rejectStudy as unknown as {
   mockReset: () => void;
@@ -158,7 +188,8 @@ function renderApprovalView(includeProcessed = false) {
 
 describe("ApprovalView", () => {
   beforeEach(() => {
-    jest.spyOn(window, "alert").mockImplementation(() => undefined);
+    jest.mocked(toast.error).mockClear();
+    jest.mocked(toast.success).mockClear();
     mockRefresh.mockReset();
     mockPush.mockReset();
     mockedApproveStudy.mockReset();
@@ -185,17 +216,23 @@ describe("ApprovalView", () => {
       expect(approveStudy).toHaveBeenCalledWith(20);
     });
     expect(mockRefresh).toHaveBeenCalledTimes(1);
-    expect(window.alert).toHaveBeenCalledWith(
+    expect(toast.error).toHaveBeenCalledWith(
       "일부 요청을 처리하지 못했습니다. 서버 오류",
     );
   });
 
-  it("does not submit a rejection without a reason", () => {
+  it("does not submit a rejection without a reason", async () => {
     renderApprovalView();
 
+    await act(async () => {
+      fireEvent.click(screen.getAllByRole("button", { name: "상세 검토" })[0]);
+    });
+    fireEvent.click(screen.getByRole("button", { name: "테스트 반려 열기" }));
     fireEvent.click(screen.getByRole("button", { name: "반려" }));
 
-    expect(window.alert).toHaveBeenCalledWith("반려 사유를 입력해주세요.");
+    expect(screen.getByRole("alert").textContent).toBe(
+      "반려 사유를 입력해주세요.",
+    );
     expect(rejectStudy).not.toHaveBeenCalled();
   });
 
@@ -219,7 +256,7 @@ describe("ApprovalView", () => {
     fireEvent.click(screen.getAllByRole("button", { name: "상세 검토" })[0]);
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("서버 오류");
+      expect(toast.error).toHaveBeenCalledWith("서버 오류");
     });
     expect(approveStudy).not.toHaveBeenCalled();
   });

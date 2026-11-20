@@ -231,7 +231,7 @@ export function NavBar({ items, rightSlot, isLoggedIn }: NavigationBarProps) {
             <button
               ref={mobileMenuCloseRef}
               onClick={() => closeMobileMenu()}
-              className="flex h-10 w-10 items-center justify-center"
+              className="focus-visible:bg-surface-gray-subtle flex h-10 w-10 items-center justify-center rounded-md focus:outline-none"
               aria-label="전체 메뉴 닫기"
             >
               <CloseIcon width={20} height={20} className="fill-text-basic" />

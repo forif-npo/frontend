@@ -64,6 +64,11 @@ interface FileUploadComponentProps {
   onUpload: (file: File) => Promise<boolean>;
   onRemove: (fileName: string) => void;
   className?: string;
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+  invalid?: boolean;
+  required?: boolean;
 }
 
 export const FileUpload: React.FC<FileUploadComponentProps> = ({
@@ -77,9 +82,15 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
   onUpload,
   onRemove,
   className = "",
+  ariaLabel,
+  ariaLabelledBy,
+  ariaDescribedBy,
+  invalid = false,
+  required = false,
 }) => {
   const [internalFiles, setInternalFiles] = useState<FileObject[]>([]);
   const [isDragActive, setIsDragActive] = useState<boolean>(false);
+  const [fileError, setFileError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
   const isControlled = controlledFiles !== undefined;
@@ -108,10 +119,16 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
   const shouldShowFileList = shouldShowCount || displayedFiles.length > 0;
 
   const handleFiles = async (newFiles: FileList) => {
-    const remainingSlots = maxFiles - files.length;
+    const remainingSlots = maxFiles - displayedFiles.length;
     if (remainingSlots <= 0) {
-      alert(`최대 ${maxFiles}개의 파일만 업로드할 수 있습니다.`);
+      setFileError(`최대 ${maxFiles}개의 파일만 업로드할 수 있습니다.`);
       return;
+    }
+
+    if (newFiles.length > remainingSlots) {
+      setFileError(`최대 ${maxFiles}개의 파일만 업로드할 수 있습니다.`);
+    } else {
+      setFileError("");
     }
 
     const filesToAdd = Array.from(newFiles).slice(0, remainingSlots);
@@ -176,6 +193,7 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
   };
 
   const removeFile = (fileName: string) => {
+    setFileError("");
     if (!isControlled) {
       setInternalFiles((prevFiles) =>
         prevFiles.filter((file) => file.name !== fileName),
@@ -201,10 +219,25 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label={ariaLabelledBy ? undefined : (ariaLabel ?? "파일 선택")}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
+          aria-invalid={invalid || undefined}
+          aria-required={required || undefined}
           className={`cursor-pointer rounded-lg border border-dashed px-6 py-8 text-center transition-colors ${
-            isDragActive
-              ? "border-primary-80 bg-primary-5"
-              : "border-gray-30 bg-surface-white hover:border-primary"
+            invalid
+              ? "border-input-border-error"
+              : isDragActive
+                ? "border-primary-80 bg-primary-5"
+                : "border-gray-30 bg-surface-white hover:border-primary"
           }`}
         >
           <input
@@ -220,6 +253,12 @@ export const FileUpload: React.FC<FileUploadComponentProps> = ({
             파일을 여기에 끌어다 놓거나, 클릭하여 파일을 선택하세요
           </Label>
         </div>
+      )}
+
+      {fileError && (
+        <p role="alert" className="text-text-danger mt-2 text-sm">
+          {fileError}
+        </p>
       )}
 
       {shouldShowFileList && (

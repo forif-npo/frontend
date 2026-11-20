@@ -9,12 +9,14 @@ import { ApplicationSection } from "@/features/my-page/ApplicationSection";
 import { SettingsSection } from "@/features/my-page/SettingsSection";
 import { StudyManageSection } from "@/features/my-page/StudyManageSection";
 import { ServiceManageSection } from "@/features/my-page/ServiceManageSection";
+import { StaffApplicationManageSection } from "@/features/staff-recruitment/StaffApplicationManageSection";
 import type { UserProfile, UserStudiesResponse, StudyApplicationsResponse } from "@/features/my-page/api";
 import type { CreatedStudy, IssuedMentorConfirmation } from "@/features/study-manage/api";
 import type { StudyApplicationSummary } from "@/features/study-application";
 import type { Semester } from "@/features/semester/api";
 import type { ProductApplication, ProductSummary } from "@/features/products/api";
 import type { DepartmentOption } from "@/features/departments/api";
+import type { MyStaffApplicationSummary } from "@core/types/staff-recruitment";
 
 interface MyPageClientProps {
   profile: UserProfile;
@@ -25,6 +27,7 @@ interface MyPageClientProps {
   studyApplications: StudyApplicationSummary[];
   activeSemester: Semester;
   productApplications: ProductApplication[];
+  staffApplications: MyStaffApplicationSummary[];
   products: ProductSummary[];
   departments: DepartmentOption[];
 }
@@ -38,6 +41,7 @@ export function MyPageClient({
   studyApplications,
   activeSemester,
   productApplications,
+  staffApplications,
   products,
   departments,
 }: MyPageClientProps) {
@@ -49,7 +53,11 @@ export function MyPageClient({
     (createdStudies.length === 0 &&
       (studyApplications.length > 0 || mentorConfirmations.length > 0));
   const canManageServiceWorkspace = productApplications.length > 0;
+  const canManageStaffApplications = staffApplications.length > 0;
   const [activeNav, setActiveNav] = useState(() => {
+    if (requestedSection === "staff-applications" && canManageStaffApplications) {
+      return "staff-applications";
+    }
     if (requestedSection === "service-manage" && canManageServiceWorkspace) {
       return "service-manage";
     }
@@ -57,6 +65,7 @@ export function MyPageClient({
   });
   const isApplicationsTab = searchParams.get("tab") === "applications";
   const targetStudyId = Number(searchParams.get("study_id")) || undefined;
+  const targetRecruitmentId = Number(searchParams.get("recruitment_id")) || undefined;
   const pageHeader =
     activeNav === "study-manage"
       ? {
@@ -69,15 +78,20 @@ export function MyPageClient({
             description:
               "서비스 등록 신청 내역과 운영 중인 서비스를 확인할 수 있습니다.",
           }
-        : activeNav === "settings"
+        : activeNav === "staff-applications"
           ? {
-              title: "설정",
-              description: "계정 정보를 확인하고 수정할 수 있습니다.",
+              title: "운영진 지원 관리",
+              description: "제출한 운영진 지원서를 확인할 수 있습니다.",
             }
-          : {
-              title: "내 스터디",
-              description: "수강한 스터디와 지원 현황을 확인할 수 있습니다.",
-            };
+          : activeNav === "settings"
+            ? {
+                title: "설정",
+                description: "계정 정보를 확인하고 수정할 수 있습니다.",
+              }
+            : {
+                title: "내 스터디",
+                description: "수강한 스터디와 지원 현황을 확인할 수 있습니다.",
+              };
 
   const tabs = [
     {
@@ -121,6 +135,7 @@ export function MyPageClient({
           mentorConfirmations.length > 0
         }
         canManageServiceWorkspace={canManageServiceWorkspace}
+        canManageStaffApplications={canManageStaffApplications}
       />
 
       {/* Main Content */}
@@ -144,6 +159,11 @@ export function MyPageClient({
           <ServiceManageSection
             applications={productApplications}
             products={products}
+          />
+        ) : activeNav === "staff-applications" ? (
+          <StaffApplicationManageSection
+            applications={staffApplications}
+            targetRecruitmentId={targetRecruitmentId}
           />
         ) : activeNav === "settings" ? (
           <SettingsSection profile={profile} departments={departments} />

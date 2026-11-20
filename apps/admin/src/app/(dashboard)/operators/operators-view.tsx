@@ -6,6 +6,7 @@ import { SearchBar } from "@/components/list/search-bar";
 import { SemesterTabs } from "@/components/list/semester-tabs";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +18,7 @@ import type { SortingState } from "@tanstack/react-table";
 import { Download, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import * as XLSX from "xlsx";
 import { AddOperatorDialog } from "./add-operator-dialog";
 import { deleteOperator, fetchOperators, updateOperator, updateOperatorProfileImage } from "./api";
@@ -202,9 +203,11 @@ export function OperatorsView({
   const handleDeleteOperator = async (operator: Operator) => {
     if (isSubmitting) return;
     if (
-      !confirm(
-        `${operator.name}(${operator.actYear}-${operator.actSemester} ${operator.title || "운영진"}) 이력을 삭제할까요?\n운영진 소개 페이지에서도 사라집니다.`,
-      )
+      !(await confirmDialog({
+        title: "운영진 이력 삭제",
+        description: `${operator.name}(${operator.actYear}-${operator.actSemester} ${operator.title || "운영진"}) 이력을 삭제할까요?\n운영진 소개 페이지에서도 사라집니다.`,
+        confirmLabel: "삭제",
+      }))
     ) {
       return;
     }

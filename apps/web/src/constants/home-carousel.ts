@@ -44,6 +44,7 @@ export type HomeCarouselBanner =
 export const HOME_CAROUSEL_BANNERS: HomeCarouselBanner[] = [
   {
     id: "tech-blog-event-2026-2",
+    disabled: true,
     type: "svg",
     component: SvgBanner,
     href: FORIF_EXTERNAL_LINKS.medium,

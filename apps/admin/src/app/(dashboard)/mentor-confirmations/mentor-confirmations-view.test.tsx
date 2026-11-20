@@ -6,7 +6,7 @@ const mockPush = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
-jest.mock("sonner", () => ({
+jest.mock("@/components/ui/Toast", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
 jest.mock("@/components/page-header", () => ({
@@ -39,7 +39,7 @@ jest.mock("./api", () => ({
   getMentorConfirmationViewUrl: jest.fn(),
   issueMentorConfirmations: jest.fn(),
 }));
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { getMentorConfirmationTargets } from "./api";
 import { MentorConfirmationsView } from "./mentor-confirmations-view";
 

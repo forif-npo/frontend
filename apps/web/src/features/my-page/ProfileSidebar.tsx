@@ -1,6 +1,6 @@
 "use client";
 import { Body, Label } from "@ui/components/server";
-import { CircleUser, ClipboardCheck, Package, Settings, UsersRound } from "@repo/assets/icons/lucide";
+import { CircleUser, ClipboardCheck, FileText, Package, Settings, UsersRound } from "@repo/assets/icons/lucide";
 import Image from "next/image";
 import { safeImageSrc } from "@/utils/image";
 
@@ -18,6 +18,8 @@ interface ProfileSidebarProps {
   canManageStudyWorkspace?: boolean;
   /** 서비스 등록 신청 이력 또는 보유 서비스가 있는 경우 활성화 */
   canManageServiceWorkspace?: boolean;
+  /** 운영진 지원서 제출 이력이 있는 경우 활성화 */
+  canManageStaffApplications?: boolean;
 }
 
 export function ProfileSidebar({
@@ -26,6 +28,7 @@ export function ProfileSidebar({
   onNavChange,
   canManageStudyWorkspace = false,
   canManageServiceWorkspace = false,
+  canManageStaffApplications = false,
 }: ProfileSidebarProps) {
   const navItems = [
     {
@@ -50,6 +53,16 @@ export function ProfileSidebar({
             id: "service-manage",
             label: "서비스 관리",
             Icon: Package,
+            disabled: false,
+          },
+        ]
+      : []),
+    ...(canManageStaffApplications
+      ? [
+          {
+            id: "staff-applications",
+            label: "운영진 지원 관리",
+            Icon: FileText,
             disabled: false,
           },
         ]

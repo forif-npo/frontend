@@ -13,7 +13,7 @@ import { handleApiError } from "@core/utils/api-client";
 import { Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { createPost, deletePost, updatePost } from "./api";
 import { postColumns } from "./columns";
 import type { AdminPost, PostFormState, PostKind, PostListLabels } from "./types";

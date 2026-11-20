@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { AlertTriangle, CalendarClock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -271,9 +272,12 @@ export function ScheduleSection({
       !phases.some((phase) => phase.phase === "MENTEE_REVIEW");
     if (
       removesMenteeReview &&
-      !window.confirm(
-        "멘티 수락/거절 일정을 삭제하시겠습니까? 현재 활동 학기의 남아 있는 대기 신청은 즉시 불합격 처리되며 되돌릴 수 없습니다.",
-      )
+      !(await confirmDialog({
+        title: "멘티 수락/거절 일정 삭제",
+        description:
+          "현재 활동 학기의 남아 있는 대기 신청은 즉시 불합격 처리되며 되돌릴 수 없습니다.",
+        confirmLabel: "삭제",
+      }))
     ) {
       return;
     }

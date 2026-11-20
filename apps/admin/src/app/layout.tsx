@@ -4,7 +4,8 @@ import { ApiClientProvider } from "@/providers/ApiClientProvider";
 import localFont from "next/font/local";
 import { SessionProvider } from "next-auth/react";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { Toaster } from "sonner";
+import { Toast } from "@/components/ui/Toast";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -40,7 +41,8 @@ export default async function RootLayout({
             <NuqsAdapter>{children}</NuqsAdapter>
           </ApiClientProvider>
         </SessionProvider>
-        <Toaster richColors position="top-right" />
+        <Toast />
+        <ConfirmDialog />
       </body>
     </html>
   );

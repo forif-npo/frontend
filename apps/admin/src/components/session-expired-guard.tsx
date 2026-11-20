@@ -1,7 +1,7 @@
 "use client";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useRef } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 
 /**
  * 백엔드 토큰 갱신 실패(session.error) 시 즉시 로그아웃 처리한다.

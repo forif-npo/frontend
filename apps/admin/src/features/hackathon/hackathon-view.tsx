@@ -5,6 +5,7 @@ import { SearchBar } from "@/components/list/search-bar";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/Toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +37,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
     null,
   );
   const [form, setForm] = useState<HackathonFormState>({ ...EMPTY_FORM });
+  const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   // 상태 변경 다이얼로그
@@ -63,17 +65,20 @@ export function HackathonView({ initialData }: HackathonViewProps) {
     value: HackathonFormState[K],
   ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+    setFormError(null);
   };
 
   const handleOpenCreate = () => {
     setEditingHackathon(null);
     setForm({ ...EMPTY_FORM });
+    setFormError(null);
     setIsFormOpen(true);
   };
 
   const handleOpenEdit = (hackathon: Hackathon) => {
     setEditingHackathon(hackathon);
     setForm(toFormState(hackathon));
+    setFormError(null);
     setIsFormOpen(true);
   };
 
@@ -93,12 +98,12 @@ export function HackathonView({ initialData }: HackathonViewProps) {
     const endsAt = addHoursToDateTime(form.starts_at, durationHours);
 
     if (!recruitStartsAt || !teamBuildingStartsAt || !startsAt) {
-      alert("모집 시작/팀 구성 시작/해커톤 시작 일시를 입력해주세요.");
+      setFormError("모집 시작/팀 구성 시작/해커톤 시작 일시를 입력해주세요.");
       return;
     }
 
     if (!Number.isFinite(durationHours) || durationHours <= 0 || !endsAt) {
-      alert("진행 시간을 올바르게 입력해주세요.");
+      setFormError("진행 시간을 올바르게 입력해주세요.");
       return;
     }
 
@@ -111,17 +116,17 @@ export function HackathonView({ initialData }: HackathonViewProps) {
       teamBuildingStartsAtMs === null ||
       startsAtMs === null
     ) {
-      alert("일시 형식을 확인해주세요.");
+      setFormError("일시 형식을 확인해주세요.");
       return;
     }
 
     if (recruitStartsAtMs >= teamBuildingStartsAtMs) {
-      alert("모집 시작은 팀 구성 시작보다 빨라야 합니다.");
+      setFormError("모집 시작은 팀 구성 시작보다 빨라야 합니다.");
       return;
     }
 
     if (teamBuildingStartsAtMs >= startsAtMs) {
-      alert("팀 구성 시작은 해커톤 시작보다 빨라야 합니다.");
+      setFormError("팀 구성 시작은 해커톤 시작보다 빨라야 합니다.");
       return;
     }
 
@@ -147,12 +152,12 @@ export function HackathonView({ initialData }: HackathonViewProps) {
         const title = form.title.trim();
 
         if (!heldYear || !heldSemester) {
-          alert("연도와 학기를 올바르게 입력해주세요.");
+          setFormError("연도와 학기를 올바르게 입력해주세요.");
           setSubmitting(false);
           return;
         }
         if (!title) {
-          alert("해커톤명을 입력해주세요.");
+          setFormError("해커톤명을 입력해주세요.");
           setSubmitting(false);
           return;
         }
@@ -176,7 +181,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
       handleFormOpenChange(false);
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -185,7 +190,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
   const handleOpenStatus = (hackathon: Hackathon) => {
     const nextStatus = getNextStatus(hackathon.status);
     if (!nextStatus) {
-      alert("더 이상 변경할 수 있는 다음 상태가 없습니다.");
+      toast.info("더 이상 변경할 수 있는 다음 상태가 없습니다.");
       return;
     }
     setStatusTarget(hackathon);
@@ -200,7 +205,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
       setStatusTarget(null);
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmittingStatus(false);
     }
@@ -214,7 +219,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
       setDeleteTarget(null);
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setDeleting(false);
     }
@@ -228,7 +233,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
       const data = await fetchSubmissionStatuses(hackathon.hackathon_id);
       setSubmissionStatuses(data);
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
       setSubmissionTarget(null);
     } finally {
       setLoadingSubmissions(false);
@@ -257,8 +262,7 @@ export function HackathonView({ initialData }: HackathonViewProps) {
             placeholder="해커톤 제목/장소/기수 검색"
           />
           <Button className="ml-auto" onClick={handleOpenCreate}>
-            <Plus className="mr-2 h-4 w-4" />
-            해커톤 추가
+            <Plus className="mr-2 h-4 w-4" />새 해커톤 만들기
           </Button>
         </div>
 
@@ -307,10 +311,6 @@ export function HackathonView({ initialData }: HackathonViewProps) {
             );
           }}
         />
-
-        <div className="text-muted-foreground text-sm">
-          총 {filteredData.length}건
-        </div>
       </div>
 
       {/* 생성/수정 다이얼로그 */}
@@ -473,6 +473,15 @@ export function HackathonView({ initialData }: HackathonViewProps) {
                 </div>
               </div>
             </div>
+
+            {formError && (
+              <p
+                role="alert"
+                className="text-destructive text-sm"
+              >
+                {formError}
+              </p>
+            )}
 
             <DialogFooter>
               <Button
