@@ -3,7 +3,7 @@ import { formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@
 import { Button } from "@ui/components/client";
 import { Link, PageState } from "@ui/components/server";
 import { PageHeader } from "@/components/PageHeader";
-import { APPLICATION_STATUS_LABELS, formatRecruitmentDatePeriod, recruitmentStatusMessage } from "./presentation";
+import { APPLICATION_STATUS_LABELS, formatRecruitmentDatePeriod } from "./presentation";
 
 export function StaffRecruitmentView({
   recruitment,
@@ -45,16 +45,6 @@ export function StaffRecruitmentView({
   const description = recruitment.description?.trim();
   const showDescription =
     description && description !== recruitment.summary?.trim();
-  const statusMessage =
-    recruitment.application_status === "UPCOMING"
-      ? null
-      : (recruitment.application_unavailable_reason ??
-        (recruitment.application_open
-          ? null
-          : recruitment.application_status === "OPEN"
-            ? "현재 지원서를 작성할 수 없습니다."
-            : recruitmentStatusMessage(recruitment.application_status, null)));
-
   return (
     <main className="max-w-main mx-auto w-full px-4 py-10 lg:px-0">
       <PageHeader
@@ -169,11 +159,6 @@ export function StaffRecruitmentView({
               recruitment.ends_at,
             )}
           </p>
-          {statusMessage && (
-            <p className="text-text-subtle mt-4 text-sm leading-6">
-              {statusMessage}
-            </p>
-          )}
           {recruitment.application_open ? (
             <Link href={`/club/recruit/${recruitment.recruitment_id}/apply`}>
               <Button className="mt-5 w-full">지원서 작성</Button>
