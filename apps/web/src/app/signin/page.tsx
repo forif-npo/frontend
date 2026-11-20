@@ -3,11 +3,18 @@ import { AuthHelpInfo } from "@/features/auth/auth-help-info";
 import { SignInTab } from "@/features/auth/signin/signin-tab";
 import { Body, Heading } from "@ui/components/server";
 import { redirect } from "next/navigation";
+import { getSafeCallbackUrl } from "@/features/auth/safe-callback-url";
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string; reason?: string }>;
+}) {
   const session = await auth();
+  const { callbackUrl, reason } = await searchParams;
+  const safeCallbackUrl = getSafeCallbackUrl(callbackUrl);
   if (session?.isSignUp) {
-    redirect("/");
+    redirect(safeCallbackUrl);
   }
 
   return (
@@ -20,8 +27,16 @@ export default async function Page() {
         <br />
         로그인을 하시면 보다 더 많은 정보와 서비스를 이용하실 수 있습니다.
       </Body>
+      {reason === "session-expired" && (
+        <p
+          role="alert"
+          className="text-text-danger mt-6 text-sm"
+        >
+          세션이 만료되었습니다. 다시 로그인해주세요.
+        </p>
+      )}
       <section className="mt-12 w-full">
-        <SignInTab />
+        <SignInTab callbackUrl={safeCallbackUrl} />
       </section>
       <section className="mt-10 w-full">
         <AuthHelpInfo action="로그인" />

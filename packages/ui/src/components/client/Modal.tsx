@@ -182,7 +182,8 @@ export const Modal: React.FC<ModalProps> = ({
 
           {showCloseIcon && (
             <button
-              className="hover:text-gray-70 hover:bg-gray-20 rounded-2 absolute right-5 top-5 ml-auto p-1 text-gray-50 transition-colors duration-200"
+              type="button"
+              className="hover:text-gray-70 hover:bg-gray-20 focus-visible:bg-gray-20 focus-visible:text-gray-70 rounded-2 absolute right-5 top-5 ml-auto p-1 text-gray-50 transition-colors duration-200 focus:outline-none"
               onClick={handleCancel}
               aria-label="닫기"
             >

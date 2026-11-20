@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
+import { fn } from "storybook/test";
 import { Tag } from "../../packages/ui/src/components/server";
 
 const meta = {
@@ -20,8 +21,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     label: "Primary",
-    onClick: (label: string) => alert(`Clicked ${label}`),
-    onDelete: (label: string) => alert(`Deleted ${label}`),
+    onClick: fn(),
+    onDelete: fn(),
   },
 };
 
@@ -29,8 +30,8 @@ export const Small: Story = {
   args: {
     label: "Small",
     size: "small",
-    onClick: (label: string) => alert(`Clicked ${label}`),
-    onDelete: (label: string) => alert(`Deleted ${label}`),
+    onClick: fn(),
+    onDelete: fn(),
   },
 };
 
@@ -38,8 +39,8 @@ export const Medium: Story = {
   args: {
     label: "Medium",
     size: "medium",
-    onClick: (label: string) => alert(`Clicked ${label}`),
-    onDelete: (label: string) => alert(`Deleted ${label}`),
+    onClick: fn(),
+    onDelete: fn(),
   },
 };
 
@@ -47,15 +48,15 @@ export const Large: Story = {
   args: {
     label: "Large",
     size: "large",
-    onClick: (label: string) => alert(`Clicked ${label}`),
-    onDelete: (label: string) => alert(`Deleted ${label}`),
+    onClick: fn(),
+    onDelete: fn(),
   },
 };
 
 export const NoDelete: Story = {
   args: {
     label: "No Delete",
-    onClick: (label: string) => alert(`Clicked ${label}`),
+    onClick: fn(),
   },
 };
 
@@ -63,7 +64,7 @@ export const Disabled: Story = {
   args: {
     label: "Disabled",
     disabled: true,
-    onClick: (label: string) => alert(`Clicked ${label}`),
-    onDelete: (label: string) => alert(`Deleted ${label}`),
+    onClick: fn(),
+    onDelete: fn(),
   },
 };

@@ -1,0 +1,146 @@
+import type { StaffRecruitmentRound, StaffRecruitmentCreateRequest, StaffRecruitmentQuestionType } from "@core/types/staff-recruitment";
+import { staffRecruitmentStorageTitle } from "@core/staff-recruitment";
+
+export interface StaffRecruitmentFormState {
+  summary: string;
+  description: string;
+  actYear: string;
+  actSemester: "1" | "2";
+  startsAt: string;
+  endsAt: string;
+  departments: Array<{
+    departmentId?: number;
+    name: string;
+    description: string;
+    active?: boolean;
+  }>;
+  questions: Array<{
+    questionId?: number;
+    label: string;
+    description: string;
+    type: StaffRecruitmentQuestionType;
+    required: boolean;
+    maxLength: string;
+  }>;
+}
+
+export function emptyRecruitmentForm(): StaffRecruitmentFormState {
+  return {
+    summary: "",
+    description: "",
+    actYear: String(new Date().getFullYear()),
+    actSemester: "1",
+    startsAt: "",
+    endsAt: "",
+    departments: [{ name: "", description: "" }],
+    questions: [],
+  };
+}
+
+export function recruitmentToForm(
+  recruitment: StaffRecruitmentRound,
+): StaffRecruitmentFormState {
+  return {
+    summary: recruitment.summary ?? "",
+    description: recruitment.description ?? "",
+    actYear: String(recruitment.act_year),
+    actSemester: String(recruitment.act_semester) as "1" | "2",
+    startsAt: recruitment.starts_at?.slice(0, 10) ?? "",
+    endsAt: recruitment.ends_at?.slice(0, 10) ?? "",
+    departments: recruitment.departments.map((department) => ({
+      departmentId: department.department_id,
+      name: department.name,
+      description: department.description ?? "",
+      active: department.active,
+    })),
+    questions: recruitment.questions.map((question) => ({
+      questionId: question.question_id,
+      label: question.label,
+      description: question.description ?? "",
+      type: question.type,
+      required: question.required,
+      maxLength: String(question.max_length),
+    })),
+  };
+}
+
+function toSeoulOffset(date: string, time: "00:00:00" | "23:59:59"): string {
+  return `${date}T${time}+09:00`;
+}
+
+export function validateRecruitmentForm(
+  form: StaffRecruitmentFormState,
+): string | null {
+  const actYear = Number(form.actYear);
+  if (!Number.isInteger(actYear) || actYear < 2018 || actYear > 9999) {
+    return "활동 연도를 확인해주세요.";
+  }
+  if (!form.description.trim()) {
+    return "안내문을 입력해주세요.";
+  }
+  if (!form.startsAt || !form.endsAt) {
+    return "모집 시작·종료 날짜를 모두 입력해주세요.";
+  }
+  if (form.startsAt > form.endsAt) {
+    return "모집 종료 날짜는 시작 날짜보다 앞설 수 없습니다.";
+  }
+  if (!form.departments.some((department) => department.name.trim())) {
+    return "지원 가능한 부서를 하나 이상 입력해주세요.";
+  }
+  if (
+    form.questions.some(
+      (question) =>
+        !question.label.trim() ||
+        !Number.isInteger(Number(question.maxLength)) ||
+        Number(question.maxLength) < 1 ||
+        Number(question.maxLength) > 5000,
+    )
+  ) {
+    return "문항 제목과 1~5000자의 최대 글자 수를 확인해주세요.";
+  }
+  if (
+    form.questions.filter((question) => question.type === "FILE").length > 1
+  ) {
+    return "파일 문항은 모집당 하나만 추가할 수 있습니다.";
+  }
+  return null;
+}
+
+export function toSaveRequest(
+  form: StaffRecruitmentFormState,
+): StaffRecruitmentCreateRequest {
+  return {
+    title: staffRecruitmentStorageTitle(
+      Number(form.actYear),
+      Number(form.actSemester),
+    ),
+    summary: form.summary.trim() || null,
+    description: form.description.trim(),
+    act_year: Number(form.actYear),
+    act_semester: Number(form.actSemester),
+    starts_at: toSeoulOffset(form.startsAt, "00:00:00"),
+    ends_at: toSeoulOffset(form.endsAt, "23:59:59"),
+    departments: form.departments
+      .filter((department) => department.name.trim())
+      .map((department, index) => ({
+        ...(department.departmentId !== undefined
+          ? { department_id: department.departmentId }
+          : {}),
+        name: department.name.trim(),
+        description: department.description.trim() || null,
+        display_order: index + 1,
+        active: department.active ?? true,
+      })),
+    questions: form.questions.map((question, index) => ({
+      ...(question.questionId !== undefined
+        ? { question_id: question.questionId }
+        : {}),
+      label: question.label.trim(),
+      description: question.description.trim() || null,
+      type: question.type,
+      required: question.required,
+      max_length: Number(question.maxLength),
+      display_order: index + 1,
+    })),
+  };
+}

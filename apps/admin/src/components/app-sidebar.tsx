@@ -3,7 +3,7 @@ import { type MouseEvent } from "react";
 import { signOutAction } from "@/features/auth/actions";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { LogoutIcon } from "@repo/assets/icons/krds";
-import { Award, BookOpen, CheckCircle, CalendarRange, CircleDollarSign, Code2, FileText, HelpCircle, LayoutGrid, MessageSquare, Rocket, Settings, ShieldCheck, UserCog, BookUser, ClipboardList, Users } from "lucide-react";
+import { Award, BookOpen, CheckCircle, CalendarRange, CircleDollarSign, Code2, FileBadge, FileText, FileUser, HelpCircle, LayoutGrid, MessageSquare, Rocket, Settings, ShieldCheck, UserCog, BookUser, ClipboardList, Users, ClipboardPenLine, Trophy } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,7 +24,7 @@ const menuItems = {
       {
         title: "멘토 확인서 발급",
         url: "/mentor-confirmations",
-        icon: FileText,
+        icon: FileBadge,
       },
     ],
   },
@@ -43,6 +43,11 @@ const menuItems = {
         url: "/operators",
         icon: UserCog,
       },
+      {
+        title: "운영진 지원서",
+        url: "/staff-applications",
+        icon: FileUser,
+      },
       { title: "멘토", url: "/mentors", icon: BookUser },
       { title: "부원", url: "/members", icon: Users },
     ],
@@ -51,6 +56,12 @@ const menuItems = {
   presidentOnly: {
     label: "회장단",
     items: [
+      {
+        title: "운영진 모집",
+        url: "/staff-recruitments",
+        icon: ClipboardPenLine,
+      },
+      { title: "명예의 전당", url: "/hall-of-fame", icon: Trophy },
       { title: "운영진 계정 관리", url: "/admin-accounts", icon: ShieldCheck },
       { title: "학기 관리", url: "/semester", icon: CalendarRange },
     ],
@@ -185,7 +196,7 @@ export function AppSidebar() {
 
         <SidebarSeparator />
 
-        {/* 부원 관리 */}
+        {/* 회원 관리 */}
         <SidebarGroup>
           <SidebarGroupLabel>
             {menuItems.memberManagement.label}

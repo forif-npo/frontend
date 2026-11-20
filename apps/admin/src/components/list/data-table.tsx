@@ -5,6 +5,7 @@ import { flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, 
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
+import { OffsetPagination } from "@/components/list/offset-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
@@ -302,23 +303,14 @@ export function DataTable<TData, TValue>({
       </div>
 
       {showPagination && (
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+        <div className="pt-4">
+          <OffsetPagination
+            currentPage={table.getState().pagination.pageIndex}
+            totalPages={table.getPageCount()}
+            totalElements={table.getPrePaginationRowModel().rows.length}
+            pageSize={table.getState().pagination.pageSize}
+            onPageChange={table.setPageIndex}
+          />
         </div>
       )}
     </div>

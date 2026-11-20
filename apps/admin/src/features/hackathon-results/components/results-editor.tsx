@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import type { Team } from "@core/types/hackathon";
 import { AlertTriangle, Download, Loader2, Plus, Presentation, Save, Trash2, Upload } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import { useHackathonResults } from "../hooks/use-hackathon-results";
 import { createEmptyRow, parseDraft } from "../schema";
 import { isPresentable } from "../slides";

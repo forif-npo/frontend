@@ -1,17 +1,53 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/Toast";
 import { PageHeader } from "@/components/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsEditor } from "@/features/hackathon-results/components/results-editor";
 import { handleApiError } from "@core/utils/api-client";
-import type { Award, AwardRequest, Criterion, CriterionRequest, EvaluationScore, EvaluationSummary, Hackathon, Participant, Team } from "@core/types/hackathon";
+import type {
+  Award,
+  AwardRequest,
+  Criterion,
+  CriterionRequest,
+  EvaluationScore,
+  EvaluationSummary,
+  Hackathon,
+  Participant,
+  Team,
+} from "@core/types/hackathon";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { createAward, createCriterion, deleteAward, deleteCriterion, deleteTeam, submitTeamEvaluation, updateAward, updateCriterion } from "./api";
-import { AwardDialog, ConfirmDeleteDialog, CriterionDialog, ScoringDialog } from "./management/dialogs";
-import { AwardsTab, CriteriaTab, EvaluationTab, ParticipantsTab, TeamsTab } from "./management/tabs";
-import { EMPTY_AWARD, EMPTY_CRITERION, type AwardForm, type CriterionForm } from "./management/types";
+import {
+  createAward,
+  createCriterion,
+  deleteAward,
+  deleteCriterion,
+  deleteTeam,
+  submitTeamEvaluation,
+  updateAward,
+  updateCriterion,
+} from "./api";
+import {
+  AwardDialog,
+  ConfirmDeleteDialog,
+  CriterionDialog,
+  ScoringDialog,
+} from "./management/dialogs";
+import {
+  AwardsTab,
+  CriteriaTab,
+  EvaluationTab,
+  ParticipantsTab,
+  TeamsTab,
+} from "./management/tabs";
+import {
+  EMPTY_AWARD,
+  EMPTY_CRITERION,
+  type AwardForm,
+  type CriterionForm,
+} from "./management/types";
 
 interface ManagementViewProps {
   hackathon: Hackathon;
@@ -43,17 +79,20 @@ export function ManagementView({
   const [criterionForm, setCriterionForm] = useState<CriterionForm>({
     ...EMPTY_CRITERION,
   });
+  const [criterionError, setCriterionError] = useState<string | null>(null);
   const [criterionDeleteTarget, setCriterionDeleteTarget] =
     useState<Criterion | null>(null);
 
   // ── 심사 ──
   const [scoringTeam, setScoringTeam] = useState<Team | null>(null);
   const [scores, setScores] = useState<Record<number, string>>({});
+  const [scoringError, setScoringError] = useState<string | null>(null);
 
   // ── 수상 ──
   const [awardOpen, setAwardOpen] = useState(false);
   const [editingAward, setEditingAward] = useState<Award | null>(null);
   const [awardForm, setAwardForm] = useState<AwardForm>({ ...EMPTY_AWARD });
+  const [awardError, setAwardError] = useState<string | null>(null);
   const [awardDeleteTarget, setAwardDeleteTarget] = useState<Award | null>(
     null,
   );
@@ -68,6 +107,7 @@ export function ManagementView({
 
   /* ── 평가 기준 핸들러 ── */
   const openCreateCriterion = () => {
+    setCriterionError(null);
     setEditingCriterion(null);
     setCriterionForm({
       ...EMPTY_CRITERION,
@@ -77,6 +117,7 @@ export function ManagementView({
   };
 
   const openEditCriterion = (criterion: Criterion) => {
+    setCriterionError(null);
     setEditingCriterion(criterion);
     setCriterionForm({
       name: criterion.name ?? "",
@@ -91,11 +132,11 @@ export function ManagementView({
   const submitCriterion = async () => {
     const displayOrder = Number(criterionForm.display_order);
     if (!criterionForm.name.trim()) {
-      alert("평가 기준 이름을 입력해주세요.");
+      setCriterionError("평가 기준 이름을 입력해주세요.");
       return;
     }
     if (Number.isNaN(displayOrder)) {
-      alert("표시 순서를 숫자로 입력해주세요.");
+      setCriterionError("표시 순서를 숫자로 입력해주세요.");
       return;
     }
 
@@ -119,7 +160,7 @@ export function ManagementView({
       setCriterionOpen(false);
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -133,7 +174,7 @@ export function ManagementView({
       setCriterionDeleteTarget(null);
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -141,6 +182,7 @@ export function ManagementView({
 
   /* ── 심사 핸들러 ── */
   const openScoring = (team: Team) => {
+    setScoringError(null);
     setScoringTeam(team);
     setScores(
       Object.fromEntries(criteria.map((c) => [c.criterion_id, ""])) as Record<
@@ -153,7 +195,6 @@ export function ManagementView({
   const submitScoring = async () => {
     if (!scoringTeam) return;
     if (criteria.length === 0) {
-      alert("먼저 평가 기준을 등록해주세요.");
       return;
     }
 
@@ -162,11 +203,11 @@ export function ManagementView({
       const raw = scores[criterion.criterion_id];
       const value = Number(raw);
       if (raw === "" || Number.isNaN(value)) {
-        alert(`'${criterion.name}' 점수를 입력해주세요.`);
+        setScoringError(`'${criterion.name}' 점수를 입력해주세요.`);
         return;
       }
       if (value < 1 || value > criterion.max_score) {
-        alert(
+        setScoringError(
           `'${criterion.name}' 점수는 1~${criterion.max_score} 사이여야 합니다.`,
         );
         return;
@@ -187,7 +228,7 @@ export function ManagementView({
       setScoringTeam(null);
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -195,12 +236,14 @@ export function ManagementView({
 
   /* ── 수상 핸들러 ── */
   const openCreateAward = () => {
+    setAwardError(null);
     setEditingAward(null);
     setAwardForm({ ...EMPTY_AWARD });
     setAwardOpen(true);
   };
 
   const openEditAward = (award: Award) => {
+    setAwardError(null);
     setEditingAward(award);
     setAwardForm({
       hackathon_team_id: String(award.hackathon_team_id),
@@ -215,11 +258,11 @@ export function ManagementView({
     const teamId = Number(awardForm.hackathon_team_id);
     const awardName = awardForm.award_name.trim();
     if (!teamId) {
-      alert("수상 팀을 선택해주세요.");
+      setAwardError("수상 팀을 선택해주세요.");
       return;
     }
     if (!awardName) {
-      alert("수상명을 입력해주세요.");
+      setAwardError("수상명을 입력해주세요.");
       return;
     }
 
@@ -241,7 +284,7 @@ export function ManagementView({
       setAwardOpen(false);
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -255,7 +298,7 @@ export function ManagementView({
       setAwardDeleteTarget(null);
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -270,7 +313,7 @@ export function ManagementView({
       setTeamDeleteTarget(null);
       router.refresh();
     } catch (error) {
-      alert(await handleApiError(error));
+      toast.error(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -357,6 +400,7 @@ export function ManagementView({
         form={criterionForm}
         setForm={setCriterionForm}
         submitting={submitting}
+        error={criterionError}
         onSubmit={() => void submitCriterion()}
       />
 
@@ -379,6 +423,7 @@ export function ManagementView({
         scores={scores}
         setScores={setScores}
         submitting={submitting}
+        error={scoringError}
         onClose={() => setScoringTeam(null)}
         onSubmit={() => void submitScoring()}
       />
@@ -391,6 +436,7 @@ export function ManagementView({
         setForm={setAwardForm}
         teams={teams}
         submitting={submitting}
+        error={awardError}
         onSubmit={() => void submitAward()}
       />
 

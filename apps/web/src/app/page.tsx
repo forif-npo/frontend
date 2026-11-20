@@ -10,9 +10,12 @@ import { Carousel } from "@ui/components/client";
 import { CarouselItem } from "@ui/components/client/Carousel";
 import { Heading } from "@ui/components/server";
 import Image from "next/image";
+import { getCurrentStaffRecruitment } from "@/features/staff-recruitment/api";
+import { StaffRecruitmentBanner } from "@/features/staff-recruitment/StaffRecruitmentBanner";
 
 export default async function Page() {
-  const carouselItems: CarouselItem[] = HOME_CAROUSEL_BANNERS.filter(
+  const recruitment = await getCurrentStaffRecruitment().catch(() => null);
+  const staticCarouselItems: CarouselItem[] = HOME_CAROUSEL_BANNERS.filter(
     (banner) => !banner.disabled,
   ).map((banner) => {
     if (banner.type === "tsx") {
@@ -32,6 +35,16 @@ export default async function Page() {
       desktopAspect: banner.desktopAspect,
     };
   });
+  const carouselItems: CarouselItem[] = recruitment
+    ? [
+        {
+          id: `staff-recruitment-${recruitment.recruitment_id}`,
+          content: <StaffRecruitmentBanner recruitment={recruitment} />,
+          mobileAspect: "desktop",
+        },
+        ...staticCarouselItems,
+      ]
+    : staticCarouselItems;
   const mobileCarouselItems = carouselItems.filter(
     (banner) => banner.id !== "forif-intro",
   );

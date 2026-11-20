@@ -10,7 +10,7 @@ import { formatPhoneNumber } from "@core/utils/phone-number";
 import { Download } from "lucide-react";
 import type { SortingState } from "@tanstack/react-table";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/Toast";
 import * as XLSX from "xlsx";
 import { fetchMentors } from "./api";
 import { columns } from "./columns";

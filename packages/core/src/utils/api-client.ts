@@ -5,6 +5,9 @@ const getBaseUrl = (): string => {
   if (typeof window === "undefined") {
     return process.env.NEXT_PUBLIC_SERVER_URL || "https://dev.forif.org";
   }
+  if (process.env.NEXT_PUBLIC_API_PROXY === "true") {
+    return `${window.location.origin}/api/proxy`;
+  }
   // 클라이언트에서는 빌드 타임에 주입된 환경 변수 사용
   return process.env.NEXT_PUBLIC_SERVER_URL || "https://dev.forif.org";
 };

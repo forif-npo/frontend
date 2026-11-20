@@ -31,6 +31,24 @@ const sortableColumns: ColumnDef<Row>[] = [
 ];
 
 describe("DataTable", () => {
+  it("기본 페이지네이션도 공통 목록 형식으로 표시하고 다음 페이지로 이동한다", () => {
+    const pageRows = Array.from({ length: 12 }, (_, index) => ({
+      id: index + 1,
+      name: `항목 ${index + 1}`,
+      canEdit: false,
+    }));
+    render(<DataTable columns={columns} data={pageRows} />);
+
+    expect(screen.getByText(/총 12건/).textContent).toContain("1-10");
+    expect(screen.getByText("1 / 2")).toBeTruthy();
+    expect(screen.queryByRole("cell", { name: "항목 11" })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "다음" }));
+
+    expect(screen.getByText(/총 12건/).textContent).toContain("11-12");
+    expect(screen.getByRole("cell", { name: "항목 11" })).toBeTruthy();
+  });
+
   it("행별 액션이 없으면 해당 행의 액션 메뉴를 렌더링하지 않는다", () => {
     render(
       <DataTable

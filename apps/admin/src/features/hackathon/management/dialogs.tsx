@@ -1,9 +1,22 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { Criterion, Team } from "@core/types/hackathon";
 import { Loader2 } from "lucide-react";
@@ -17,6 +30,7 @@ export function CriterionDialog({
   form,
   setForm,
   submitting,
+  error,
   onSubmit,
 }: {
   open: boolean;
@@ -25,6 +39,7 @@ export function CriterionDialog({
   form: CriterionForm;
   setForm: Dispatch<SetStateAction<CriterionForm>>;
   submitting: boolean;
+  error?: string | null;
   onSubmit: () => void;
 }) {
   return (
@@ -108,6 +123,14 @@ export function CriterionDialog({
             </div>
           </div>
 
+          {error && (
+            <p
+              role="alert"
+              className="text-destructive text-sm"
+            >
+              {error}
+            </p>
+          )}
           <DialogFooter>
             <Button
               type="button"
@@ -134,6 +157,7 @@ export function ScoringDialog({
   scores,
   setScores,
   submitting,
+  error,
   onClose,
   onSubmit,
 }: {
@@ -142,6 +166,7 @@ export function ScoringDialog({
   scores: Record<number, string>;
   setScores: Dispatch<SetStateAction<Record<number, string>>>;
   submitting: boolean;
+  error?: string | null;
   onClose: () => void;
   onSubmit: () => void;
 }) {
@@ -197,6 +222,14 @@ export function ScoringDialog({
               </div>
             ))}
 
+            {error && (
+              <p
+                role="alert"
+                className="text-destructive text-sm"
+              >
+                {error}
+              </p>
+            )}
             <DialogFooter>
               <Button
                 type="button"
@@ -226,6 +259,7 @@ export function AwardDialog({
   setForm,
   teams,
   submitting,
+  error,
   onSubmit,
 }: {
   open: boolean;
@@ -235,6 +269,7 @@ export function AwardDialog({
   setForm: Dispatch<SetStateAction<AwardForm>>;
   teams: Team[];
   submitting: boolean;
+  error?: string | null;
   onSubmit: () => void;
 }) {
   return (
@@ -302,6 +337,14 @@ export function AwardDialog({
             />
           </div>
 
+          {error && (
+            <p
+              role="alert"
+              className="text-destructive text-sm"
+            >
+              {error}
+            </p>
+          )}
           <DialogFooter>
             <Button
               type="button"
