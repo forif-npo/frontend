@@ -96,6 +96,38 @@ export interface StaffRecruitmentUpdateRequest
 
 export type StaffApplicationStatus = "SUBMITTED";
 
+/** 면접 가능 시간 한 칸. start_minute는 자정부터의 분이다. 09:30이면 570이다. */
+export interface StaffInterviewSlot {
+  date: string;
+  start_minute: number;
+}
+
+/**
+ * 회장단이 설정한 면접 일정.
+ * 칸 목록은 내려오지 않는다. dates × [start_hour, end_hour) 를 slot_minutes로 나눠 화면이 만든다.
+ */
+export interface StaffInterviewPlan {
+  interview_plan_id: number;
+  recruitment_id: number;
+  dates: string[];
+  start_hour: number;
+  end_hour: number;
+  /** 한 칸의 길이(분). 10·15·20·30·60 중 하나다. */
+  slot_minutes: number;
+  required: boolean;
+  guide: string | null;
+  version: number;
+}
+
+export interface StaffInterviewPlanSaveRequest {
+  dates: string[];
+  start_hour: number;
+  end_hour: number;
+  slot_minutes: number;
+  required: boolean;
+  guide: string | null;
+}
+
 export interface StaffApplicationDepartmentChoice {
   department_id: number;
   priority: 1 | 2;
@@ -109,6 +141,7 @@ export interface StaffApplicationAnswerInput {
 export interface StaffApplicationSubmitRequest {
   department_choices: StaffApplicationDepartmentChoice[];
   answers: StaffApplicationAnswerInput[];
+  interview_slots: StaffInterviewSlot[];
 }
 
 export interface StaffApplicationUpdateRequest
@@ -160,6 +193,7 @@ export interface StaffApplicationDetail extends StaffApplicationSummary {
   applicant_email: string;
   applicant_phone_num: string | null;
   answers: StaffApplicationAnswer[];
+  interview_slots: StaffInterviewSlot[];
   can_modify: boolean;
 }
 
