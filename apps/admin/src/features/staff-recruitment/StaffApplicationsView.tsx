@@ -5,7 +5,6 @@ import { MoreVertical, ShieldAlert } from "lucide-react";
 import type { AdminStaffRecruitmentRound, StaffApplicationDetail, StaffApplicationSummary } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
-import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { PageHeader } from "@/components/page-header";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
@@ -15,6 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/Toast";
+import { StaffApplicationAnswerList } from "./StaffApplicationAnswerList";
 import { getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
 
 const EMPTY_PAGE: StaffApplicationPage = {
@@ -351,47 +351,7 @@ export function StaffApplicationsView({
                   >
                     지원서
                   </h3>
-                  <ol className="space-y-6">
-                    {detail.answers.map((answer, index) => (
-                      <li key={answer.question_id} className="space-y-3">
-                        <h4 className="font-semibold">
-                          {index + 1}. {answer.question_label}
-                        </h4>
-                        <div className="bg-surface-gray-subtler rounded-lg p-4 text-sm leading-6">
-                          {answer.question_type === "FILE" && answer.answer ? (
-                            <button
-                              type="button"
-                              className="text-primary break-all text-left underline underline-offset-2"
-                              onClick={() =>
-                                void downloadPrivateFile(
-                                  `api/v1/admin/staff-recruitments/${detail.recruitment_id}/applications/${detail.application_id}/files/${answer.question_id}`,
-                                  answer.answer,
-                                ).catch(async (error) =>
-                                  toast.error(await handleApiError(error)),
-                                )
-                              }
-                            >
-                              {answer.answer} 다운로드
-                            </button>
-                          ) : answer.question_type === "LINK" &&
-                            answer.answer ? (
-                            <a
-                              className="text-primary break-all underline underline-offset-2"
-                              href={answer.answer}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {answer.answer}
-                            </a>
-                          ) : (
-                            <p className="whitespace-pre-wrap break-words">
-                              {answer.answer || "답변 없음"}
-                            </p>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
+                  <StaffApplicationAnswerList detail={detail} />
                 </section>
               </div>
               <DialogFooter>
