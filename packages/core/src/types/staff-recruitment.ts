@@ -119,6 +119,27 @@ export interface StaffInterviewPlan {
   version: number;
 }
 
+/** 면접 일정 조율 화면의 지원자 한 명. 시각은 날짜 + 시작 분(자정 기준)이다. */
+export interface StaffInterviewScheduleApplicant {
+  application_id: number;
+  applicant_name: string;
+  applicant_department: string | null;
+  applied_departments: StaffApplicationAppliedDepartment[];
+  available_slots: StaffInterviewSlot[];
+  assigned_slot: StaffInterviewSlot | null;
+}
+
+/**
+ * 면접 일정 조율 조회 결과.
+ * 칸마다 누가 가능한지는 화면이 host_slots와 지원자 available_slots를 겹쳐 계산한다.
+ */
+export interface StaffInterviewSchedule {
+  plan: StaffInterviewPlan;
+  host_slots: StaffInterviewSlot[];
+  applicants: StaffInterviewScheduleApplicant[];
+  confirmed_at: string | null;
+}
+
 export interface StaffInterviewPlanSaveRequest {
   dates: string[];
   start_hour: number;

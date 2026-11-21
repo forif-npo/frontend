@@ -1,6 +1,7 @@
 import { parseTimeSlotKey, timeSlotKey, timeSlotStarts } from "./time-slot";
 import type {
   StaffInterviewPlan,
+  StaffInterviewScheduleApplicant,
   StaffInterviewSlot,
 } from "./types/staff-recruitment";
 
@@ -55,3 +56,36 @@ export function outOfRangeSlots(
       (slot.start_minute - first) % plan.slot_minutes !== 0,
   );
 }
+
+/**
+ * 회장단이 되는 칸마다 그 시간에 되는 지원자를 모은다.
+ * 자동으로 배정하지 않는다. 누구를 넣을지는 회장단이 정한다.
+ * 결과는 칸 키(날짜·시각) 순서이며, 지원자는 받은 순서를 유지한다.
+ */
+export function availableApplicantsBySlot(
+  hostSlots: readonly StaffInterviewSlot[],
+  applicants: readonly StaffInterviewScheduleApplicant[],
+): Map<string, StaffInterviewScheduleApplicant[]> {
+  const hostKeys = Array.from(toInterviewSlotKeys(hostSlots)).sort();
+  const result = new Map<string, StaffInterviewScheduleApplicant[]>(
+    hostKeys.map((key) => [key, []]),
+  );
+  applicants.forEach((applicant) => {
+    toInterviewSlotKeys(applicant.available_slots).forEach((key) => {
+      result.get(key)?.push(applicant);
+    });
+  });
+  return result;
+}
+
+/** 회장단과 겹치는 시간이 하나도 없는 지원자. 회장단이 따로 연락해 수동으로 정한다. */
+export function hasNoOverlap(
+  hostSlots: readonly StaffInterviewSlot[],
+  applicant: StaffInterviewScheduleApplicant,
+): boolean {
+  const hostKeys = toInterviewSlotKeys(hostSlots);
+  return !applicant.available_slots.some((slot) =>
+    hostKeys.has(timeSlotKey(slot.date, slot.start_minute)),
+  );
+}
+

@@ -1,12 +1,14 @@
 import { describe, expect, it } from "@jest/globals";
 import {
+  availableApplicantsBySlot,
+  hasNoOverlap,
   interviewSlotRange,
   interviewSlotStarts,
   outOfRangeSlots,
   toInterviewSlotKeys,
   toInterviewSlotRequest,
 } from "./staff-interview";
-import type { StaffInterviewPlan } from "./types/staff-recruitment";
+import type { StaffInterviewPlan, StaffInterviewScheduleApplicant } from "./types/staff-recruitment";
 
 const plan: StaffInterviewPlan = {
   interview_plan_id: 1,
@@ -83,3 +85,47 @@ describe("outOfRangeSlots", () => {
     ]);
   });
 });
+
+describe("칸별 가능 지원자", () => {
+  const applicant = (
+    id: number,
+    slots: Array<[string, number]>,
+  ): StaffInterviewScheduleApplicant => ({
+    application_id: id,
+    applicant_name: `지원자${id}`,
+    applicant_department: null,
+    applied_departments: [],
+    available_slots: slots.map(([date, start_minute]) => ({ date, start_minute })),
+    assigned_slot: null,
+  });
+  const hostSlots = [
+    { date: "2026-12-01", start_minute: 540 },
+    { date: "2026-12-01", start_minute: 570 },
+  ];
+
+  it("회장단이 되는 칸마다 그 시간에 되는 지원자를 모은다", () => {
+    const first = applicant(1, [["2026-12-01", 540], ["2026-12-01", 570]]);
+    const second = applicant(2, [["2026-12-01", 570], ["2026-12-02", 540]]);
+
+    const bySlot = availableApplicantsBySlot(hostSlots, [first, second]);
+
+    expect(Array.from(bySlot.keys())).toEqual(["2026-12-01T0540", "2026-12-01T0570"]);
+    expect(bySlot.get("2026-12-01T0540")).toEqual([first]);
+    expect(bySlot.get("2026-12-01T0570")).toEqual([first, second]);
+  });
+
+  it("회장단이 안 되는 시간은 칸으로 만들지 않는다", () => {
+    const bySlot = availableApplicantsBySlot(hostSlots, [
+      applicant(3, [["2026-12-02", 540]]),
+    ]);
+
+    expect(bySlot.has("2026-12-02T0540")).toBe(false);
+  });
+
+  it("겹치는 시간이 없는 지원자를 가려낸다", () => {
+    expect(hasNoOverlap(hostSlots, applicant(4, [["2026-12-02", 540]]))).toBe(true);
+    expect(hasNoOverlap(hostSlots, applicant(5, []))).toBe(true);
+    expect(hasNoOverlap(hostSlots, applicant(6, [["2026-12-01", 570]]))).toBe(false);
+  });
+});
+

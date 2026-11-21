@@ -176,18 +176,19 @@ export function TimeSlotGrid({
         aria-label={ariaLabel}
       >
         {/* 왼쪽 눈금. 정각에만 라벨을 붙이고 사이 칸은 비워 둔다. */}
-        <div className="w-12 shrink-0 pt-7">
+        {/* 라벨 길이(오전 10시·오후 12시)에 맞춰 폭이 정해진다. 고정 폭이면 좁은 화면에서 줄이 바뀐다. */}
+        <div className="shrink-0 pt-7">
           {starts.map((minute) => (
             <div key={minute} className="flex h-5 items-start justify-end pr-1">
               {/* 라벨의 가운데가 정각 선 위에 오도록 반 칸 끌어올린다. */}
-              <span className="text-text-sub -translate-y-1/2 text-[11px] leading-none font-semibold">
+              <span className="text-text-sub -translate-y-1/2 text-[11px] leading-none font-semibold whitespace-nowrap">
                 {isHourStart(minute) ? formatSlotTime(minute) : ""}
               </span>
             </div>
           ))}
           {/* 마지막 칸의 끝 시각. 띠의 아래 선 위에 올린다. */}
           <div className="flex h-0 items-start justify-end pr-1">
-            <span className="text-text-sub -translate-y-1/2 text-[11px] leading-none font-semibold">
+            <span className="text-text-sub -translate-y-1/2 text-[11px] leading-none font-semibold whitespace-nowrap">
               {formatSlotTime(endHour * 60)}
             </span>
           </div>
