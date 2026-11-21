@@ -5,6 +5,7 @@ import type {
   StaffApplicationSummary,
   StaffInterviewPlan,
   StaffInterviewPlanSaveRequest,
+  StaffInterviewQuestion,
   StaffInterviewSchedule,
   StaffInterviewSlot,
   StaffRecruitmentReviewer,
@@ -169,6 +170,55 @@ export async function confirmStaffInterviewSchedule(
     .post(`${interviewSchedulePath(recruitmentId)}/confirm`)
     .json<ApiResponse<StaffInterviewSchedule>>();
   return response.data!;
+}
+
+function interviewQuestionPath(recruitmentId: number) {
+  return `api/v1/admin/staff-recruitments/${recruitmentId}/interview-questions`;
+}
+
+/** 면접 질문 목록. 공통 질문이 먼저, 부서 질문은 부서 순서대로 온다. */
+export async function getStaffInterviewQuestions(
+  recruitmentId: number,
+): Promise<StaffInterviewQuestion[]> {
+  const response = await apiClient
+    .get(interviewQuestionPath(recruitmentId), { cache: "no-store" })
+    .json<ApiResponse<StaffInterviewQuestion[]>>();
+  return response.data ?? [];
+}
+
+/** departmentId를 null로 보내면 공통 질문이다. */
+export async function createStaffInterviewQuestion(
+  recruitmentId: number,
+  departmentId: number | null,
+  content: string,
+): Promise<StaffInterviewQuestion> {
+  const response = await apiClient
+    .post(interviewQuestionPath(recruitmentId), {
+      json: { department_id: departmentId, content },
+    })
+    .json<ApiResponse<StaffInterviewQuestion>>();
+  return response.data!;
+}
+
+export async function updateStaffInterviewQuestion(
+  recruitmentId: number,
+  questionId: number,
+  content: string,
+): Promise<StaffInterviewQuestion> {
+  const response = await apiClient
+    .patch(`${interviewQuestionPath(recruitmentId)}/${questionId}`, {
+      json: { content },
+    })
+    .json<ApiResponse<StaffInterviewQuestion>>();
+  return response.data!;
+}
+
+/** 답변이 적힌 질문은 서버가 409(FOR170)로 거절한다. */
+export async function deleteStaffInterviewQuestion(
+  recruitmentId: number,
+  questionId: number,
+): Promise<void> {
+  await apiClient.delete(`${interviewQuestionPath(recruitmentId)}/${questionId}`);
 }
 
 export async function changeStaffRecruitmentStatus(

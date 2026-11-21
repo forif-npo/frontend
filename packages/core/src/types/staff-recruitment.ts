@@ -140,6 +140,15 @@ export interface StaffInterviewSchedule {
   confirmed_at: string | null;
 }
 
+/** 면접 질문. department_id가 null이면 모든 면접자에게 묻는 공통 질문이다. */
+export interface StaffInterviewQuestion {
+  question_id: number;
+  department_id: number | null;
+  department_name: string | null;
+  content: string;
+  display_order: number;
+}
+
 export interface StaffInterviewPlanSaveRequest {
   dates: string[];
   start_hour: number;
