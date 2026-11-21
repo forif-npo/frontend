@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, CalendarCheck2 } from "lucide-react";
 import { TimeSlotGrid } from "@ui/components/client";
 import type { StaffInterviewSchedule, StaffInterviewScheduleApplicant, StaffInterviewSlot } from "@core/types/staff-recruitment";
@@ -46,6 +47,7 @@ function departmentsOf(applicant: StaffInterviewScheduleApplicant) {
  * 시간이 맞지 않는 지원자는 표에서 아무 빈 칸에나 직접 넣는다.
  */
 export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: number }) {
+  const router = useRouter();
   const [schedule, setSchedule] = useState<StaffInterviewSchedule | null>(null);
   const [title, setTitle] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -79,13 +81,15 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
   }, [recruitmentId, apply]);
 
   const run = async (action: () => Promise<StaffInterviewSchedule>, success?: string) => {
-    if (busy) return;
+    if (busy) return false;
     setBusy(true);
     try {
       apply(await action());
       if (success) toast.success(success);
+      return true;
     } catch (error) {
       toast.error(await handleApiError(error));
+      return false;
     } finally {
       setBusy(false);
     }
@@ -308,6 +312,12 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
             <span className="inline-flex items-center gap-1.5 font-medium">
               <CalendarCheck2 className="size-4" />
               일정 확정됨 · {schedule.confirmed_at.slice(5, 16).replace("-", "/").replace("T", " ")}
+              <Link
+                href={`/staff-recruitments/${recruitmentId}/interviews`}
+                className="ml-2 underline underline-offset-2"
+              >
+                면접 관리로 가기
+              </Link>
             </span>
           ) : (
             <span className="text-muted-foreground">아직 확정하지 않았습니다.</span>
@@ -321,9 +331,12 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
         <Button
           disabled={busy || hostDirty}
           title={hostDirty ? "회장단 가능 시간을 먼저 저장해 주세요." : undefined}
-          onClick={() =>
-            run(() => confirmStaffInterviewSchedule(recruitmentId), "면접 일정을 확정했습니다.")
-          }
+          onClick={async () => {
+            // 확정하면 바로 면접 관리로 넘어가 질문을 정하고 면접을 시작한다.
+            if (await run(() => confirmStaffInterviewSchedule(recruitmentId), "면접 일정을 확정했습니다.")) {
+              router.push(`/staff-recruitments/${recruitmentId}/interviews`);
+            }
+          }}
         >
           일정 확정하기
         </Button>
