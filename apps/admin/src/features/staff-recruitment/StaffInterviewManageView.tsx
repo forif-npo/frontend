@@ -8,6 +8,7 @@ import { handleApiError } from "@core/utils/api-client";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { getStaffRecruitments } from "./api";
+import { StaffInterviewBoardSection } from "./StaffInterviewBoardSection";
 import { StaffInterviewQuestionsSection } from "./StaffInterviewQuestionsSection";
 
 /**
@@ -17,6 +18,7 @@ import { StaffInterviewQuestionsSection } from "./StaffInterviewQuestionsSection
 export function StaffInterviewManageView({ recruitmentId }: { recruitmentId: number }) {
   const [round, setRound] = useState<AdminStaffRecruitmentRound | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [questionsVersion, setQuestionsVersion] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,7 +50,7 @@ export function StaffInterviewManageView({ recruitmentId }: { recruitmentId: num
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageHeader
           title="면접 관리"
-          description={`“${formatStaffRecruitmentTitle(round.act_year, round.act_semester)}” 회차의 면접 질문을 관리합니다.`}
+          description={`“${formatStaffRecruitmentTitle(round.act_year, round.act_semester)}” 회차의 면접 질문과 면접자를 관리합니다.`}
           leadingAction={
             <Button variant="ghost" size="icon" className="size-11" asChild>
               <Link href="/staff-recruitments" aria-label="모집 관리로 돌아가기" title="모집 관리로 돌아가기">
@@ -70,7 +72,10 @@ export function StaffInterviewManageView({ recruitmentId }: { recruitmentId: num
         departments={round.departments
           .filter((department) => department.active)
           .map((department) => ({ department_id: department.department_id, name: department.name }))}
+        onChanged={() => setQuestionsVersion((version) => version + 1)}
       />
+
+      <StaffInterviewBoardSection recruitmentId={recruitmentId} questionsVersion={questionsVersion} />
     </div>
   );
 }

@@ -5,9 +5,12 @@ import type {
   StaffApplicationSummary,
   StaffInterviewPlan,
   StaffInterviewPlanSaveRequest,
+  StaffInterviewBoard,
   StaffInterviewQuestion,
   StaffInterviewSchedule,
+  StaffInterviewSheet,
   StaffInterviewSlot,
+  StaffInterviewStatus,
   StaffRecruitmentReviewer,
   StaffRecruitmentCreateRequest,
   StaffRecruitmentUpdateRequest,
@@ -219,6 +222,99 @@ export async function deleteStaffInterviewQuestion(
   questionId: number,
 ): Promise<void> {
   await apiClient.delete(`${interviewQuestionPath(recruitmentId)}/${questionId}`);
+}
+
+function interviewPath(recruitmentId: number) {
+  return `api/v1/admin/staff-recruitments/${recruitmentId}/interviews`;
+}
+
+export async function getStaffInterviewBoard(
+  recruitmentId: number,
+): Promise<StaffInterviewBoard> {
+  const response = await apiClient
+    .get(interviewPath(recruitmentId), { cache: "no-store" })
+    .json<ApiResponse<StaffInterviewBoard>>();
+  return response.data!;
+}
+
+export async function getStaffInterviewSheet(
+  recruitmentId: number,
+  applicationId: number,
+): Promise<StaffInterviewSheet> {
+  const response = await apiClient
+    .get(`${interviewPath(recruitmentId)}/${applicationId}`, { cache: "no-store" })
+    .json<ApiResponse<StaffInterviewSheet>>();
+  return response.data!;
+}
+
+export async function changeStaffInterviewStatus(
+  recruitmentId: number,
+  applicationId: number,
+  status: StaffInterviewStatus,
+): Promise<StaffInterviewSheet> {
+  const response = await apiClient
+    .put(`${interviewPath(recruitmentId)}/${applicationId}/status`, {
+      json: { status },
+    })
+    .json<ApiResponse<StaffInterviewSheet>>();
+  return response.data!;
+}
+
+/** 빈 답변을 보내면 적어 둔 답변을 지운다. */
+export async function saveStaffInterviewAnswer(
+  recruitmentId: number,
+  applicationId: number,
+  questionId: number,
+  answer: string,
+): Promise<StaffInterviewSheet> {
+  const response = await apiClient
+    .put(`${interviewPath(recruitmentId)}/${applicationId}/answers/${questionId}`, {
+      json: { answer },
+    })
+    .json<ApiResponse<StaffInterviewSheet>>();
+  return response.data!;
+}
+
+export async function addStaffInterviewExtraQuestion(
+  recruitmentId: number,
+  applicationId: number,
+  content: string,
+): Promise<StaffInterviewSheet> {
+  const response = await apiClient
+    .post(`${interviewPath(recruitmentId)}/${applicationId}/extra-questions`, {
+      json: { content },
+    })
+    .json<ApiResponse<StaffInterviewSheet>>();
+  return response.data!;
+}
+
+/** 보낸 필드만 바뀐다. */
+export async function updateStaffInterviewExtraQuestion(
+  recruitmentId: number,
+  applicationId: number,
+  extraQuestionId: number,
+  patch: { content?: string; answer?: string },
+): Promise<StaffInterviewSheet> {
+  const response = await apiClient
+    .patch(
+      `${interviewPath(recruitmentId)}/${applicationId}/extra-questions/${extraQuestionId}`,
+      { json: patch },
+    )
+    .json<ApiResponse<StaffInterviewSheet>>();
+  return response.data!;
+}
+
+export async function deleteStaffInterviewExtraQuestion(
+  recruitmentId: number,
+  applicationId: number,
+  extraQuestionId: number,
+): Promise<StaffInterviewSheet> {
+  const response = await apiClient
+    .delete(
+      `${interviewPath(recruitmentId)}/${applicationId}/extra-questions/${extraQuestionId}`,
+    )
+    .json<ApiResponse<StaffInterviewSheet>>();
+  return response.data!;
 }
 
 export async function changeStaffRecruitmentStatus(
