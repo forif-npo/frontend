@@ -1,5 +1,5 @@
 import type { ApiResponse } from "@core/types/api";
-import type { MyStaffApplicationSummary, StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffApplicationUpdateRequest, StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import type { MyStaffApplicationSummary, StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffApplicationUpdateRequest, StaffInterviewPlan, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { apiClient } from "@core/utils/api-client";
 
 export async function getCurrentStaffRecruitment(): Promise<StaffRecruitmentRound | null> {
@@ -17,6 +17,21 @@ export async function getStaffRecruitment(
     .get(`api/v1/staff-recruitments/${recruitmentId}`, { cache: "no-cache" })
     .json<ApiResponse<StaffRecruitmentRound>>();
   if (!response.data) throw new Error(response.message);
+  return response.data;
+}
+
+/**
+ * 회차의 면접 일정. 회장단이 설정하지 않았으면 null이고, 그때는 시간표를 보여 주지 않는다.
+ */
+export async function getStaffInterviewPlan(
+  recruitmentId: number,
+): Promise<StaffInterviewPlan | null> {
+  const response = await apiClient
+    .get(`api/v1/staff-recruitments/${recruitmentId}/interview-plan`, {
+      cache: "no-cache",
+    })
+    .json<ApiResponse<StaffInterviewPlan>>();
+
   return response.data;
 }
 

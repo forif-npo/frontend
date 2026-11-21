@@ -47,7 +47,7 @@ const recruitment = {
 describe("StaffApplicationFlow", () => {
   it("shows the completion page after submission and opens its application in My Page", () => {
     window.scrollTo = jest.fn();
-    render(<StaffApplicationFlow recruitment={recruitment} />);
+    render(<StaffApplicationFlow recruitment={recruitment} interviewPlan={null} />);
 
     fireEvent.click(screen.getByRole("button", { name: "지원서 제출" }));
 
