@@ -1,10 +1,19 @@
 import { describe, expect, it } from "@jest/globals";
-import type { StaffRecruitmentRound } from "@core/types/staff-recruitment";
-import { emptyRecruitmentForm, recruitmentToForm, toSaveRequest, validateRecruitmentForm } from "./form";
+import type { StaffInterviewPlan, StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import {
+  emptyRecruitmentForm,
+  interviewPlanToForm,
+  recruitmentToForm,
+  toInterviewPlanRequest,
+  toSaveRequest,
+  validateInterviewForm,
+  validateRecruitmentForm,
+} from "./form";
 
 describe("staff recruitment form", () => {
   it("derives the stored title from a valid activity semester", () => {
     const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
     form.description = "안내";
     form.startsAt = "2027-01-01";
     form.endsAt = "2027-01-02";
@@ -22,6 +31,7 @@ describe("staff recruitment form", () => {
 
   it("rejects an empty department and reversed schedule", () => {
     const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
     form.description = "안내";
     form.startsAt = "2026-12-15";
     form.endsAt = "2026-12-01";
@@ -31,6 +41,7 @@ describe("staff recruitment form", () => {
 
   it("maps ordered departments and optional questions to snake_case", () => {
     const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
     Object.assign(form, {
       description: " 모집 안내 ",
       startsAt: "2026-12-01",
@@ -77,6 +88,7 @@ describe("staff recruitment form", () => {
 
   it("keeps link and file question types in the recruitment request", () => {
     const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
     form.description = "안내";
     form.startsAt = "2026-12-01";
     form.endsAt = "2026-12-15";
@@ -106,6 +118,7 @@ describe("staff recruitment form", () => {
 
   it("rejects a second file question in one recruitment", () => {
     const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
     form.description = "안내";
     form.startsAt = "2026-12-01";
     form.endsAt = "2026-12-15";
@@ -125,6 +138,7 @@ describe("staff recruitment form", () => {
 
   it("restores dates and existing item identities when editing", () => {
     const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
     form.description = "안내";
     form.startsAt = "2026-12-15";
     form.endsAt = "2026-12-15";
@@ -190,5 +204,118 @@ describe("staff recruitment form", () => {
     expect(update.questions[0]).toEqual(
       expect.objectContaining({ question_id: 29, label: "지원 동기" }),
     );
+  });
+});
+
+describe("interview settings in the recruitment form", () => {
+  function validForm() {
+    const form = emptyRecruitmentForm();
+    form.description = "안내";
+    form.startsAt = "2026-11-20";
+    form.endsAt = "2026-11-28";
+    form.departments = [{ name: "개발팀", description: "" }];
+    form.interview.startDate = "2026-12-01";
+    form.interview.endDate = "2026-12-04";
+    return form;
+  }
+
+  it("asks for interview times by default with 30-minute slots from 9 to 22", () => {
+    expect(emptyRecruitmentForm().interview).toEqual({
+      enabled: true,
+      startDate: "",
+      endDate: "",
+      startHour: "9",
+      endHour: "22",
+      slotMinutes: "30",
+    });
+  });
+
+  it("requires the interview period when interview times are collected", () => {
+    const form = validForm();
+    form.interview.endDate = "";
+
+    expect(validateRecruitmentForm(form)).toBe(
+      "면접 시작·종료 날짜를 모두 입력해주세요.",
+    );
+  });
+
+  it("rejects a reversed interview period", () => {
+    const form = validForm();
+    form.interview.startDate = "2026-12-04";
+    form.interview.endDate = "2026-12-01";
+
+    expect(validateInterviewForm(form.interview)).toBe(
+      "면접 종료 날짜는 시작 날짜보다 앞설 수 없습니다.",
+    );
+  });
+
+  it("limits the interview period to fourteen days like the server", () => {
+    const form = validForm();
+    form.interview.startDate = "2026-12-01";
+    form.interview.endDate = "2026-12-14";
+    expect(validateInterviewForm(form.interview)).toBeNull();
+
+    form.interview.endDate = "2026-12-15";
+    expect(validateInterviewForm(form.interview)).toBe(
+      "면접 기간은 최대 14일까지 설정할 수 있습니다.",
+    );
+  });
+
+  it("rejects a start hour that is not before the end hour", () => {
+    const form = validForm();
+    form.interview.startHour = "22";
+    form.interview.endHour = "22";
+
+    expect(validateInterviewForm(form.interview)).toBe(
+      "면접 시간의 시작 시각은 종료 시각보다 앞서야 합니다.",
+    );
+  });
+
+  it("skips interview validation when interview times are not collected", () => {
+    const form = validForm();
+    form.interview = { ...form.interview, enabled: false, startDate: "", endDate: "" };
+
+    expect(validateRecruitmentForm(form)).toBeNull();
+  });
+
+  it("expands the period into one candidate date per day", () => {
+    const form = validForm();
+    form.interview.slotMinutes = "20";
+
+    expect(toInterviewPlanRequest(form.interview)).toEqual({
+      dates: ["2026-12-01", "2026-12-02", "2026-12-03", "2026-12-04"],
+      start_hour: 9,
+      end_hour: 22,
+      slot_minutes: 20,
+      required: true,
+      guide: "면접 가능 시간을 표시해주세요.",
+    });
+  });
+
+  it("opens a round without an interview plan with interview times turned off", () => {
+    expect(interviewPlanToForm(null).enabled).toBe(false);
+  });
+
+  it("restores the period, hours and slot length from a saved plan", () => {
+    const plan: StaffInterviewPlan = {
+      interview_plan_id: 3,
+      recruitment_id: 1,
+      dates: ["2026-12-03", "2026-12-01", "2026-12-02"],
+      start_hour: 10,
+      end_hour: 20,
+      slot_minutes: 15,
+      required: true,
+      guide: "면접 가능 시간을 표시해주세요.",
+      version: 2,
+    };
+
+    expect(interviewPlanToForm(plan)).toEqual({
+      enabled: true,
+      startDate: "2026-12-01",
+      endDate: "2026-12-03",
+      startHour: "10",
+      endHour: "20",
+      slotMinutes: "15",
+    });
   });
 });
