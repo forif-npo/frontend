@@ -101,6 +101,7 @@ const application: StaffApplicationDetail = {
   status: "SUBMITTED",
   submitted_at: "2026-11-17T12:00:00+09:00",
   can_modify: true,
+  interview_slots: [],
   answers: [
     {
       question_id: 1,
@@ -148,7 +149,7 @@ describe("StaffApplicationForm", () => {
     });
     render(
       <StaffApplicationForm
-        recruitment={recruitment}
+        recruitment={recruitment} interviewPlan={null}
         onSubmitted={onSubmitted}
       />,
     );
@@ -184,6 +185,7 @@ describe("StaffApplicationForm", () => {
           { question_id: 3, answer: "" },
           { question_id: 4, answer: "https://example.com/portfolio" },
         ],
+        interview_slots: [],
       },
       { 3: file },
     );
@@ -194,7 +196,7 @@ describe("StaffApplicationForm", () => {
     jest.mocked(updateStaffApplication).mockResolvedValue(application);
     render(
       <StaffApplicationForm
-        recruitment={recruitment}
+        recruitment={recruitment} interviewPlan={null}
         initialApplication={application}
         onUpdated={onUpdated}
       />,
@@ -223,6 +225,7 @@ describe("StaffApplicationForm", () => {
           { question_id: 3, answer: "" },
           { question_id: 4, answer: "https://example.com" },
         ],
+        interview_slots: [],
         removed_file_question_ids: [],
       },
       {},
@@ -234,7 +237,7 @@ describe("StaffApplicationForm", () => {
     jest.mocked(cancelStaffApplication).mockResolvedValue(undefined);
     render(
       <StaffApplicationForm
-        recruitment={recruitment}
+        recruitment={recruitment} interviewPlan={null}
         initialApplication={application}
         onCancelled={onCancelled}
       />,
@@ -251,7 +254,7 @@ describe("StaffApplicationForm", () => {
   it("disables editing for an ineligible applicant while keeping cancellation available", () => {
     render(
       <StaffApplicationForm
-        recruitment={recruitment}
+        recruitment={recruitment} interviewPlan={null}
         initialApplication={{ ...application, can_modify: false }}
       />,
     );

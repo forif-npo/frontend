@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation";
 import { Button, Checkbox, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import { Label } from "@ui/components/server";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
-import type { StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import type { StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffInterviewPlan, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
+import { toInterviewSlotKeys, toInterviewSlotRequest } from "@core/staff-interview";
+import { InterviewAvailabilityGrid } from "./InterviewAvailabilityGrid";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { cancelStaffApplication, submitStaffApplication, updateStaffApplication } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
@@ -14,12 +16,14 @@ type FieldErrors = Record<string, string>;
 
 export function StaffApplicationForm({
   recruitment,
+  interviewPlan,
   onSubmitted,
   initialApplication,
   onUpdated,
   onCancelled,
 }: {
   recruitment: StaffRecruitmentRound;
+  interviewPlan: StaffInterviewPlan | null;
   onSubmitted?: (
     result: StaffApplicationSubmitResponse,
     departments: { first: string; second: string | null },
@@ -68,6 +72,9 @@ export function StaffApplicationForm({
   const [answers, setAnswers] =
     useState<Record<number, string>>(initialAnswers);
   const [files, setFiles] = useState<Record<number, File | null>>({});
+  const [interviewSlots, setInterviewSlots] = useState<Set<string>>(() =>
+    toInterviewSlotKeys(initialApplication?.interview_slots ?? []),
+  );
   const [removedFileQuestionIds, setRemovedFileQuestionIds] = useState<
     Set<number>
   >(new Set());
@@ -158,6 +165,9 @@ export function StaffApplicationForm({
         }
       }
     });
+    if (interviewPlan?.required && interviewSlots.size === 0) {
+      next.interviewSlots = "면접 가능 시간을 한 칸 이상 선택해주세요.";
+    }
     return next;
   };
 
@@ -207,6 +217,9 @@ export function StaffApplicationForm({
               ? ""
               : (answers[question.question_id]?.trim() ?? ""),
         })),
+        interview_slots: interviewPlan
+          ? toInterviewSlotRequest(interviewSlots)
+          : [],
       };
       if (initialApplication) {
         const updated = await updateStaffApplication(
@@ -461,6 +474,36 @@ export function StaffApplicationForm({
           >
             등록된 지원 문항이 없어 현재 제출할 수 없습니다.
           </p>
+        )}
+
+        {interviewPlan && (
+          <div id="interviewSlots" className="flex flex-col gap-3">
+            <Label size="m" className="text-text-basic font-bold">
+              {`${questions.length + 1}. ${
+                interviewPlan.guide ?? "면접 가능 시간을 표시해주세요."
+              }`}
+              {interviewPlan.required && (
+                <span className="text-text-danger ml-1" aria-hidden="true">
+                  *
+                </span>
+              )}
+            </Label>
+            <InterviewAvailabilityGrid
+              plan={interviewPlan}
+              value={interviewSlots}
+              onChange={(next) => {
+                setInterviewSlots(next);
+                setErrors((current) => {
+                  const updated = { ...current };
+                  delete updated.interviewSlots;
+                  return updated;
+                });
+                setSubmitError(null);
+              }}
+              disabled={isSubmitting || isCancelling}
+              error={errors.interviewSlots}
+            />
+          </div>
         )}
       </section>
 

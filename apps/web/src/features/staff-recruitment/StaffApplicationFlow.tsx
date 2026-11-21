@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
-import type { StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import type { StaffInterviewPlan, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { PageHeader } from "@/components/PageHeader";
 import { StaffApplicationComplete } from "./StaffApplicationComplete";
 import { StaffApplicationForm } from "./StaffApplicationForm";
@@ -13,7 +13,13 @@ interface Submission {
   secondDepartment: string | null;
 }
 
-export function StaffApplicationFlow({ recruitment }: { recruitment: StaffRecruitmentRound }) {
+export function StaffApplicationFlow({
+  recruitment,
+  interviewPlan,
+}: {
+  recruitment: StaffRecruitmentRound;
+  interviewPlan: StaffInterviewPlan | null;
+}) {
   const router = useRouter();
   const [submission, setSubmission] = useState<Submission | null>(null);
 
@@ -49,6 +55,7 @@ export function StaffApplicationFlow({ recruitment }: { recruitment: StaffRecrui
       />
       <StaffApplicationForm
         recruitment={recruitment}
+        interviewPlan={interviewPlan}
         onSubmitted={(result, departments) =>
           setSubmission({
             submittedAt: result.submitted_at,
