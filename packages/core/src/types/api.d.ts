@@ -86,6 +86,8 @@ export interface Staff {
   role: "ADMIN";
   /** 회장/부회장/운영진 등 소속 */
   affiliation: string | null;
+  /** 다음 학기 회장단 지정을 반영한 현재 관리 권한 */
+  authority_affiliation?: string | null;
 }
 
 /**
