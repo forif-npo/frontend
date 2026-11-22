@@ -34,6 +34,7 @@ export function StaffRecruitmentManageView({ currentSemester }: { currentSemeste
   const [editTarget, setEditTarget] =
     useState<AdminStaffRecruitmentRound | null>(null);
   const [editPlan, setEditPlan] = useState<StaffInterviewPlan | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -52,6 +53,7 @@ export function StaffRecruitmentManageView({ currentSemester }: { currentSemeste
 
   const save = async (form: StaffRecruitmentFormState) => {
     if (submitting) return;
+    setSaveError(null);
     setSubmitting(true);
     try {
       const body = toSaveRequest(form);
@@ -105,7 +107,7 @@ export function StaffRecruitmentManageView({ currentSemester }: { currentSemeste
       setEditPlan(null);
       await load();
     } catch (error) {
-      toast.error(await handleApiError(error));
+      setSaveError(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -278,7 +280,9 @@ export function StaffRecruitmentManageView({ currentSemester }: { currentSemeste
         recruitment={editTarget}
         interviewPlan={editPlan}
         submitting={submitting}
+        submitError={saveError}
         onOpenChange={(open) => {
+          if (!open) setSaveError(null);
           setDialogOpen(open);
           if (!open) {
             setEditTarget(null);

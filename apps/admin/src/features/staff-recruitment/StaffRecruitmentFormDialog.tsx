@@ -19,6 +19,7 @@ interface Props {
   interviewPlan: StaffInterviewPlan | null;
   currentSemester: Semester;
   submitting: boolean;
+  submitError: string | null;
   onOpenChange: (open: boolean) => void;
   onSubmit: (form: StaffRecruitmentFormState) => void;
 }
@@ -29,6 +30,7 @@ export function StaffRecruitmentFormDialog({
   interviewPlan,
   currentSemester,
   submitting,
+  submitError,
   onOpenChange,
   onSubmit,
 }: Props) {
@@ -400,9 +402,9 @@ export function StaffRecruitmentFormDialog({
             ))}
           </EditorSection>
 
-          {error && (
+          {(error || submitError) && (
             <p role="alert" className="text-destructive text-sm">
-              {error}
+              {error || submitError}
             </p>
           )}
         </div>
