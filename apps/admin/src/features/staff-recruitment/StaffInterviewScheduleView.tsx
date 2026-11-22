@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, CalendarCheck2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { TimeSlotGrid } from "@ui/components/client";
 import type { StaffInterviewSchedule, StaffInterviewScheduleApplicant, StaffInterviewSlot } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
@@ -14,14 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/Toast";
-import {
-  assignStaffInterview,
-  confirmStaffInterviewSchedule,
-  getStaffInterviewSchedule,
-  getStaffRecruitments,
-  saveStaffInterviewHostSlots,
-  unassignStaffInterview,
-} from "./api";
+import { assignStaffInterview, confirmStaffInterviewSchedule, getStaffInterviewSchedule, getStaffRecruitments, saveStaffInterviewHostSlots, unassignStaffInterview } from "./api";
 
 function formatDate(date: string): string {
   const { label, weekday } = formatSlotDate(date);
@@ -124,7 +117,7 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
         title="면접 일정"
         description={
           title
-            ? `“${title}” 회차의 면접 시간을 회장단과 지원자의 가능 시간을 맞춰 정합니다.`
+            ? `${title} 회차의 면접 시간을 회장단과 지원자의 가능 시간을 맞춰 정합니다.`
             : "회장단과 지원자의 가능 시간을 맞춰 면접 시간을 정합니다."
         }
         leadingAction={
@@ -143,7 +136,7 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
               회장단 면접 가능 시간
             </h2>
             <p className="text-muted-foreground mt-1 text-sm">
-              회장단이 면접을 볼 수 있는 시간을 칠해 주세요. 면접 한 번은{" "}
+              회장단이 면접을 볼 수 있는 시간을 칠해 주세요. 시간 단위는{" "}
               {plan.slot_minutes === 60 ? "1시간" : `${plan.slot_minutes}분`}입니다.
             </p>
           </div>
@@ -167,7 +160,7 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
           value={hostDraft}
           onChange={setHostDraft}
           disabled={busy}
-          description="드래그하거나 클릭하여 회장단이 면접 가능한 시간을 칠해 주세요.(다시 클릭하거나 드래그하면 지워집니다.)"
+          description={null}
           ariaLabel="회장단 면접 가능 시간 선택표"
         />
       </section>
@@ -179,7 +172,6 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
           </h2>
           <p className="text-muted-foreground mt-1 text-sm">
             회장단과 지원자가 모두 되는 시간입니다. 지원자 이름을 누르면 그 시간에 배정됩니다.
-            한 시간에는 한 명만 들어갑니다.
           </p>
         </div>
 
@@ -255,10 +247,6 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
           <h2 id="applicants-heading" className="text-lg font-bold">
             지원자별 면접 일시
           </h2>
-          <p className="text-muted-foreground mt-1 text-sm">
-            시간이 맞지 않는 지원자는 여기서 빈 시간에 직접 넣습니다. 면접이 길어지거나 바뀌면
-            수정하기로 옮깁니다.
-          </p>
         </div>
         <div className="rounded-lg border">
           <Table>
@@ -303,22 +291,13 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
       </section>
 
       <footer className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm">
-          {schedule.confirmed_at ? (
-            <span className="inline-flex items-center gap-1.5 font-medium">
-              <CalendarCheck2 className="size-4" />
-              일정 확정됨 · {schedule.confirmed_at.slice(5, 16).replace("-", "/").replace("T", " ")}
-            </span>
-          ) : (
-            <span className="text-muted-foreground">아직 확정하지 않았습니다.</span>
-          )}
-          {unassignedCount > 0 && (
-            <p className="text-muted-foreground mt-1">
-              면접 시간이 정해지지 않은 지원자가 {unassignedCount}명 있습니다. 확정 후에도 정할 수 있습니다.
-            </p>
-          )}
-        </div>
+        {unassignedCount > 0 && (
+          <p className="text-muted-foreground text-sm">
+            면접 시간이 정해지지 않은 지원자가 {unassignedCount}명 있습니다. 확정 후에도 정할 수 있습니다.
+          </p>
+        )}
         <Button
+          className="sm:ml-auto"
           disabled={busy || hostDirty}
           title={hostDirty ? "회장단 가능 시간을 먼저 저장해 주세요." : undefined}
           onClick={() =>
