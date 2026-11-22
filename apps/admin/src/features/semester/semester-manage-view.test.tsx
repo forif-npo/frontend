@@ -104,6 +104,8 @@ describe("SemesterManageView", () => {
       current_member_count: 10,
       current_certificate_issued_count: 10,
       has_pending_certificates: false,
+      designated_next_president_user_id: null,
+      designated_next_vice_president_user_id: 20260002,
     });
     mockedChangeCurrentSemester.mockResolvedValue(target);
   });
@@ -113,6 +115,7 @@ describe("SemesterManageView", () => {
       <SemesterManageView
         currentUserId={20260001}
         currentUserName="현재 회장"
+        isIncumbentPresident
       />,
     );
 
@@ -141,5 +144,80 @@ describe("SemesterManageView", () => {
       expect(getSemesters).toHaveBeenCalledTimes(2);
       expect(getAdminCandidates).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it("warns that the incumbent vice president will lose authority when no successor is designated", async () => {
+    mockedGetPreview.mockResolvedValue({
+      current,
+      target,
+      target_team_member_count: 1,
+      needs_team_setup: false,
+      target_hackathon_exists: true,
+      current_member_count: 10,
+      current_certificate_issued_count: 10,
+      has_pending_certificates: false,
+      designated_next_president_user_id: null,
+      designated_next_vice_president_user_id: null,
+    });
+    render(
+      <SemesterManageView
+        currentUserId={20260001}
+        currentUserName="현재 회장"
+        isIncumbentPresident
+      />,
+    );
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "다음 학기(27-1)로 전환" }),
+    );
+
+    expect(
+      await screen.findByText("부회장도 바로 지정하시겠습니까?"),
+    ).not.toBeNull();
+    expect(
+      screen
+        .getByRole("link", { name: "운영진 명단에서 부회장 지정하기" })
+        .getAttribute("href"),
+    ).toBe("/operators?semester=27-1");
+    expect(
+      screen.getByRole("button", { name: "부회장 없이 전환하기" }),
+    ).not.toBeNull();
+  });
+
+  it("shows disabled semester transition controls to the upcoming president", async () => {
+    mockedGetPreview.mockResolvedValue({
+      current,
+      target,
+      target_team_member_count: 1,
+      needs_team_setup: false,
+      target_hackathon_exists: true,
+      current_member_count: 10,
+      current_certificate_issued_count: 10,
+      has_pending_certificates: false,
+      designated_next_president_user_id: 20260001,
+      designated_next_vice_president_user_id: null,
+    });
+    render(
+      <SemesterManageView
+        currentUserId={20260001}
+        currentUserName="차기 회장"
+        isIncumbentPresident={false}
+      />,
+    );
+
+    const nextButton = await screen.findByRole("button", {
+      name: "다음 학기(27-1)로 전환",
+    });
+    expect((nextButton as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText("직접 선택")).not.toBeNull();
+    expect(
+      (screen.getByRole("button", { name: "전환" }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true);
+    expect(
+      screen.getByText("학기 전환은 현 회장만 진행할 수 있습니다."),
+    ).not.toBeNull();
+    fireEvent.click(nextButton);
+    expect(getSemesterChangePreview).not.toHaveBeenCalled();
   });
 });

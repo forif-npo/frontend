@@ -8,6 +8,7 @@ declare module "next-auth" {
     backendRefreshToken?: string;
     role?: string;
     affiliation?: string | null;
+    authorityAffiliation?: string | null;
   }
 
   interface Session {
@@ -25,6 +26,7 @@ declare module "next-auth" {
       imgUrl: string | null;
       role: "ADMIN";
       affiliation: string | null;
+      authorityAffiliation: string | null;
     };
   }
 }
@@ -41,6 +43,8 @@ declare module "next-auth/jwt" {
     staffDepartment?: string;
     staffImgUrl?: string | null;
     staffAffiliation?: string | null;
+    staffAuthorityAffiliation?: string | null;
+    staffAuthorityCheckedAt?: number;
     error?: string;
   }
 }

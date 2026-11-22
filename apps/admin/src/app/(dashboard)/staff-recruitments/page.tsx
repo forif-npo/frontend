@@ -6,7 +6,7 @@ const PRESIDENT_TEAM = ["회장", "부회장"];
 
 export default async function StaffRecruitmentsPage() {
   const session = await auth();
-  const affiliation = session?.user?.affiliation ?? "";
+  const affiliation = session?.user?.authorityAffiliation ?? "";
 
   if (!PRESIDENT_TEAM.includes(affiliation)) {
     return (
