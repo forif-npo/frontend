@@ -109,6 +109,7 @@ describe("mentors api", () => {
     mockedLoadSemesterOptions.mockResolvedValue({
       current: { act_year: 2026, act_semester: 1, label: "26-1" },
       recentLabels: ["26-1"],
+      nextLabel: "26-2",
     });
     mockedGet.mockReturnValue(
       response({

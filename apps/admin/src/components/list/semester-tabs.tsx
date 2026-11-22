@@ -10,6 +10,8 @@ interface SemesterTabsProps {
   includeEtc?: boolean;
   /** 옵션을 직접 지정할 때 (지정하면 서버 목록 대신 사용) */
   options?: string[];
+  /** 다음 학기 탭 노출 여부. 합격자를 미리 올리는 운영진 명단처럼 차기 학기를 보는 화면에서 켠다. */
+  includeNext?: boolean;
 }
 
 export function SemesterTabs({
@@ -17,18 +19,21 @@ export function SemesterTabs({
   onSemesterChange,
   includeEtc = false,
   options,
+  includeNext = false,
 }: SemesterTabsProps) {
   // 학기 목록과 "현재학기" 표시는 운영진이 지정한 활동 학기를 따른다
   const [serverOptions, setServerOptions] = useState<string[] | null>(null);
   const [currentLabel, setCurrentLabel] = useState<string | null>(null);
+  const [nextLabel, setNextLabel] = useState<string | null>(null);
 
   useEffect(() => {
     let canceled = false;
     loadSemesterOptions()
-      .then(({ current, recentLabels }) => {
+      .then(({ current, recentLabels, nextLabel: next }) => {
         if (canceled) return;
         setCurrentLabel(current.label);
-        setServerOptions(toTabOptions(recentLabels, includeEtc));
+        setNextLabel(includeNext ? next : null);
+        setServerOptions(toTabOptions(recentLabels, includeEtc, includeNext ? next : null));
       })
       .catch(() => {
         // 조회 실패 시 잘못된 학기를 보여주지 않도록 "전체"만 남긴다
@@ -36,7 +41,7 @@ export function SemesterTabs({
     return () => {
       canceled = true;
     };
-  }, [includeEtc]);
+  }, [includeEtc, includeNext]);
 
   const tabOptions = options ?? serverOptions ?? ["전체"];
 
@@ -53,7 +58,11 @@ export function SemesterTabs({
             value={semester}
             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-muted text-muted-foreground rounded-full px-4"
           >
-            {semester === currentLabel ? `현재학기 (${semester})` : semester}
+            {semester === currentLabel
+              ? `현재학기 (${semester})`
+              : semester === nextLabel
+                ? `차기 (${semester})`
+                : semester}
           </TabsTrigger>
         ))}
       </TabsList>

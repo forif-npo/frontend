@@ -235,6 +235,7 @@ export function OperatorsView({
         <SemesterTabs
           currentSemester={currentSemester}
           onSemesterChange={handleSemesterChange}
+          includeNext
         />
         <div className="flex items-center gap-2">
           {canManageOperators && (
