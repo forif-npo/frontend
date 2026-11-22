@@ -36,7 +36,7 @@ export default async function RootLayout({
         style={{ backgroundColor: "var(--background)" }}
         className="scrollbar-hidden"
       >
-        <SessionProvider session={session}>
+        <SessionProvider session={session} refetchInterval={30}>
           <ApiClientProvider>
             <NuqsAdapter>{children}</NuqsAdapter>
           </ApiClientProvider>

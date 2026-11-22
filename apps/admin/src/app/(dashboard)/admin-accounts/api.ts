@@ -16,6 +16,9 @@ export interface AdminAccount {
   department: string | null;
   phone_num: string | null;
   affiliation: string;
+  authority_affiliation: string;
+  sw_team?: boolean;
+  upcoming_affiliation?: string | null;
 }
 
 export interface AdminAccountsPage {

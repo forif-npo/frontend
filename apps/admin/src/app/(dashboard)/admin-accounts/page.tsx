@@ -6,7 +6,7 @@ const PRESIDENT_TEAM = ["회장", "부회장"];
 
 export default async function Page() {
   const session = await auth();
-  const affiliation = session?.user?.affiliation ?? null;
+  const affiliation = session?.user?.authorityAffiliation ?? null;
   const myUserId = Number(session?.user?.id ?? 0);
 
   // 백엔드(validatePresidentTeam)와 동일한 기준: 회장단만 접근 가능
@@ -22,5 +22,11 @@ export default async function Page() {
     );
   }
 
-  return <AdminAccountsView myAffiliation={affiliation} myUserId={myUserId} />;
+  return (
+    <AdminAccountsView
+      myAffiliation={affiliation}
+      isIncumbentPresident={session?.user?.affiliation === "회장"}
+      myUserId={myUserId}
+    />
+  );
 }
