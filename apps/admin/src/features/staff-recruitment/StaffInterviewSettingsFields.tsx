@@ -1,17 +1,11 @@
 "use client";
 import { useMemo, useState } from "react";
 import { TimeSlotGrid } from "@ui/components/client";
-import { datesInRange, formatSlotDate, formatSlotTime, timeSlotStarts } from "@core/time-slot";
+import { datesInRange, formatSlotTime } from "@core/time-slot";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  INTERVIEW_SLOT_MINUTE_OPTIONS,
-  type InterviewFormState,
-  type InterviewSlotMinutes,
-  MAX_INTERVIEW_DAYS,
-  validateInterviewForm,
-} from "./form";
+import { INTERVIEW_SLOT_MINUTE_OPTIONS, type InterviewFormState, type InterviewSlotMinutes, validateInterviewForm } from "./form";
 
 const START_HOURS = Array.from({ length: 24 }, (_, hour) => hour);
 const END_HOURS = Array.from({ length: 24 }, (_, index) => index + 1);
@@ -42,7 +36,6 @@ export function StaffInterviewSettingsFields({
     slotMinutes: Number(value.slotMinutes),
   };
   const valid = value.enabled && validateInterviewForm(value) === null;
-  const slotsPerDay = valid ? timeSlotStarts(range).length : 0;
 
   // 미리보기에서 칠한 칸은 저장하지 않는다. 지원자 화면을 시험해 보는 용도다.
   const [preview, setPreview] = useState<Set<string>>(new Set());
@@ -144,15 +137,6 @@ export function StaffInterviewSettingsFields({
             </div>
           </div>
 
-          <p className="text-muted-foreground text-xs" aria-live="polite">
-            {valid
-              ? `${formatRangeDate(dates[0])} ~ ${formatRangeDate(dates.at(-1))} · ` +
-                `${formatSlotTime(range.startHour * 60)} ~ ${formatSlotTime(range.endHour * 60)} · ` +
-                `면접 한 번 ${value.slotMinutes === "60" ? "1시간" : `${value.slotMinutes}분`} · ` +
-                `하루 ${slotsPerDay}칸, ${dates.length}일 총 ${slotsPerDay * dates.length}칸`
-              : `면접 기간은 최대 ${MAX_INTERVIEW_DAYS}일까지 정할 수 있습니다. 면접 한 번의 길이가 한 칸입니다.`}
-          </p>
-
           {valid && (
             <div className="grid gap-2">
               <span className="text-sm font-medium">지원자 화면 미리보기</span>
@@ -173,12 +157,4 @@ export function StaffInterviewSettingsFields({
       )}
     </section>
   );
-}
-
-function formatRangeDate(date: string | undefined): string {
-  if (!date) {
-    return "";
-  }
-  const { label, weekday } = formatSlotDate(date);
-  return `${label}(${weekday})`;
 }
