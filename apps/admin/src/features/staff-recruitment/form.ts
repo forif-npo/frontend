@@ -194,11 +194,16 @@ export function validateInterviewForm(
   return null;
 }
 
-/** 면접 일정 저장 요청. 기간을 하루씩 펼쳐 후보 날짜 목록으로 보낸다. */
+/**
+ * 면접 일정 저장 요청. 기간을 하루씩 펼쳐 후보 날짜 목록으로 보낸다.
+ * 이미 저장된 일정을 고칠 때는 그 일정의 version을 넘겨야 서버가 받아 준다.
+ */
 export function toInterviewPlanRequest(
   interview: InterviewFormState,
+  version?: number,
 ): StaffInterviewPlanSaveRequest {
   return {
+    ...(version === undefined ? {} : { version }),
     dates: datesInRange(interview.startDate, interview.endDate),
     start_hour: Number(interview.startHour),
     end_hour: Number(interview.endHour),

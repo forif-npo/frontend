@@ -80,7 +80,7 @@ export function StaffRecruitmentManageView() {
         if (form.interview.enabled) {
           await saveStaffInterviewPlan(
             recruitmentId,
-            toInterviewPlanRequest(form.interview),
+            toInterviewPlanRequest(form.interview, editPlan?.version),
           );
         } else if (editPlan) {
           await deleteStaffInterviewPlan(recruitmentId);

@@ -292,6 +292,21 @@ describe("interview settings in the recruitment form", () => {
     });
   });
 
+  it("sends the stored version only when updating an existing interview plan", () => {
+    const interview = {
+      enabled: true,
+      startDate: "2026-12-01",
+      endDate: "2026-12-01",
+      startHour: "9",
+      endHour: "10",
+      slotMinutes: "30" as const,
+    };
+
+    expect(toInterviewPlanRequest(interview)).not.toHaveProperty("version");
+    expect(toInterviewPlanRequest(interview, 3)).toMatchObject({ version: 3 });
+    expect(toInterviewPlanRequest(interview, 0)).toMatchObject({ version: 0 });
+  });
+
   it("opens a round without an interview plan with interview times turned off", () => {
     expect(interviewPlanToForm(null).enabled).toBe(false);
   });
