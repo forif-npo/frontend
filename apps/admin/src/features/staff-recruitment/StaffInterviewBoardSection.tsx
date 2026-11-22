@@ -118,7 +118,7 @@ export function StaffInterviewBoardSection({
     if (registering || passedCount === 0) return;
     const confirmed = await confirmDialog({
       title: "합격자 운영진 등록",
-      description: `합격자 ${passedCount}명을 이 모집 회차의 활동 학기 운영진 명단에 배정 부서로 올립니다. 운영진 명단은 사이트 운영진 소개에 쓰이니 발표 뒤에 눌러 주세요. 이미 명단에 있는 사람은 건너뜁니다.`,
+      description: `합격자 ${passedCount}명을 이 모집 회차의 활동 학기 운영진 명단에 합격 부서, 팀원 직급으로 올립니다. 회장·부회장·팀장은 운영진 목록의 차기 탭에서 지정해 주세요. 운영진 명단은 사이트 운영진 소개에 쓰이니 발표 뒤에 눌러 주세요. 이미 명단에 있는 사람은 건너뜁니다.`,
       confirmLabel: "등록",
     });
     if (!confirmed) return;
