@@ -10,7 +10,7 @@ export default async function SemesterPage() {
   const session = await auth();
   const affiliation = session?.user?.authorityAffiliation ?? "";
 
-  // 현 회장과 차기 회장이 페이지를 볼 수 있다. 전환은 현 회장에게만 열린다.
+  // 회장 권한이 있으면 볼 수 있다. 전환은 현 회장에게만 열린다.
   if (affiliation !== "회장") {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-24">

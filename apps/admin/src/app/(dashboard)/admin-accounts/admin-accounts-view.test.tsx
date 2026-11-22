@@ -2,6 +2,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps, ReactNode } from "react";
+import type { AdminAccount } from "./api";
 
 jest.mock("@/components/ui/Toast", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
@@ -13,14 +14,22 @@ jest.mock("@/components/page-header", () => ({ PageHeader: () => null }));
 jest.mock("@/components/list/data-table", () => ({
   DataTable: ({
     data,
+    columns,
     renderRowActions,
   }: {
-    data: Array<{ user_id: number }>;
-    renderRowActions: (row: { user_id: number }) => ReactNode;
+    data: AdminAccount[];
+    columns: Array<{
+      accessorKey?: string;
+      cell?: (context: { row: { original: AdminAccount } }) => ReactNode;
+    }>;
+    renderRowActions: (row: AdminAccount) => ReactNode;
   }) => (
     <>
       {data.map((row) => (
-        <div key={row.user_id}>{renderRowActions(row)}</div>
+        <div key={row.user_id}>
+          {columns.find((column) => column.accessorKey === "affiliation")?.cell?.({ row: { original: row } })}
+          {renderRowActions(row)}
+        </div>
       ))}
     </>
   ),
@@ -109,6 +118,7 @@ jest.mock("./api", () => ({
   delegatePresidency: jest.fn(),
 }));
 
+import { getAdminAccounts } from "./api";
 import { AdminAccountsView } from "./admin-accounts-view";
 
 describe("AdminAccountsView", () => {
@@ -137,5 +147,34 @@ describe("AdminAccountsView", () => {
       (screen.getByLabelText("새 비밀번호 (선택)") as HTMLInputElement)
         .disabled,
     ).toBe(true);
+  });
+
+  it("shows the upcoming president designation before SW team authority", async () => {
+    jest.mocked(getAdminAccounts).mockResolvedValueOnce({
+      content: [{
+        user_id: 20260002,
+        name: "차기 회장",
+        department: null,
+        phone_num: null,
+        affiliation: "운영진",
+        authority_affiliation: "회장",
+        sw_team: true,
+        upcoming_affiliation: "회장",
+      }],
+      total_elements: 1,
+      total_pages: 1,
+      current_page: 0,
+    });
+
+    render(
+      <AdminAccountsView
+        myAffiliation="회장"
+        isIncumbentPresident
+        myUserId={20260001}
+      />,
+    );
+
+    expect(await screen.findByText("운영진 (차기 회장)")).not.toBeNull();
+    expect(screen.queryByText("운영진 (SW팀 권한)")).toBeNull();
   });
 });

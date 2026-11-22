@@ -97,4 +97,28 @@ describe("AddOperatorDialog", () => {
     fireEvent.click(addButton);
     expect(addOperator).not.toHaveBeenCalled();
   });
+
+  it("keeps SW team assignment disabled for a non-incumbent", () => {
+    jest.mocked(addOperator).mockClear();
+    render(
+      <AddOperatorDialog
+        open
+        onOpenChange={jest.fn()}
+        onAdded={() => undefined}
+        targetSemesterLabel="26-2"
+        isIncumbentPresident={false}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText("소속 팀"), {
+      target: { value: "SW팀" },
+    });
+
+    const addButton = screen.getByRole("button", {
+      name: "추가",
+    }) as HTMLButtonElement;
+    expect(addButton.disabled).toBe(true);
+    fireEvent.click(addButton);
+    expect(addOperator).not.toHaveBeenCalled();
+  });
 });
