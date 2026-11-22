@@ -4,7 +4,12 @@ import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
-import { InlineLoadingState, Link, PageState } from "@ui/components/server";
+import {
+  InlineErrorState,
+  InlineLoadingState,
+  Link,
+  PageState,
+} from "@ui/components/server";
 import { getMyStaffApplication, getStaffRecruitment } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
 
@@ -81,6 +86,18 @@ export function MyStaffApplicationView({
 
   if (!application) {
     const missing = error?.code === "FOR155-404";
+    if (embedded) {
+      return (
+        <InlineErrorState
+          message={
+            missing
+              ? "제출한 지원서를 찾을 수 없습니다."
+              : (error?.message ?? "지원서를 불러오지 못했습니다.")
+          }
+          className="py-10"
+        />
+      );
+    }
     return (
       <PageState
         eyebrow="내 운영진 지원서"
@@ -112,76 +129,85 @@ export function MyStaffApplicationView({
           지원서가 정상적으로 제출되었습니다.
         </div>
       )}
-      <div className="flex flex-col gap-2 border-b pb-6">
-        <span className="text-primary-60 text-sm font-bold">
-          내 운영진 지원서
-        </span>
-        {embedded ? (
-          <h2 className="text-title-l-mobile sm:text-title-l font-bold">
-            제출 내역
-          </h2>
-        ) : (
+      {!embedded && (
+        <div className="flex flex-col gap-2 border-b pb-6">
+          <span className="text-primary-60 text-sm font-bold">
+            내 운영진 지원서
+          </span>
           <h1 className="text-title-l-mobile sm:text-title-l font-bold">
             제출 내역
           </h1>
-        )}
-        <p className="text-text-subtle text-sm">
-          {formatDateTime(application.submitted_at)} 제출 · 제출 완료
-        </p>
-      </div>
+          <p className="text-text-subtle text-sm">
+            {formatDateTime(application.submitted_at)} 제출 · 제출 완료
+          </p>
+        </div>
+      )}
 
-      <section className="rounded-3 mt-8 grid gap-3 border p-5 sm:grid-cols-2">
-        <div>
-          <span className="text-text-subtle text-sm">이름</span>
-          <p className="font-semibold">{application.applicant_name}</p>
-        </div>
-        <div>
-          <span className="text-text-subtle text-sm">소속 학과</span>
-          <p className="font-semibold">
-            {application.applicant_department ?? "-"}
-          </p>
-        </div>
-        <div>
-          <span className="text-text-subtle text-sm">이메일</span>
-          <p className="break-all font-semibold">
-            {application.applicant_email}
-          </p>
-        </div>
-        <div>
-          <span className="text-text-subtle text-sm">연락처</span>
-          <p className="font-semibold">
-            {application.applicant_phone_num ?? "-"}
-          </p>
-        </div>
+      <section className={embedded ? "" : "mt-8"}>
+        <h2 className="text-text-bolder text-body-l mb-4 font-bold">
+          지원자 정보
+        </h2>
+        <dl className="rounded-3 border-border-gray-light bg-surface-white grid gap-4 border p-5 sm:grid-cols-2">
+          <div>
+            <dt className="text-text-subtle text-sm">이름</dt>
+            <dd className="text-text-basic font-semibold">
+              {application.applicant_name}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-text-subtle text-sm">소속 학과</dt>
+            <dd className="text-text-basic font-semibold">
+              {application.applicant_department ?? "-"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-text-subtle text-sm">이메일</dt>
+            <dd className="text-text-basic break-all font-semibold">
+              {application.applicant_email}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-text-subtle text-sm">연락처</dt>
+            <dd className="text-text-basic font-semibold">
+              {application.applicant_phone_num ?? "-"}
+            </dd>
+          </div>
+        </dl>
       </section>
 
-      <section className="mt-10">
-        <h2 className="text-xl font-bold">지원 부서</h2>
-        <ol className="mt-4 grid gap-3 sm:grid-cols-2">
-          {[...application.applied_departments]
-            .sort((a, b) => a.priority - b.priority)
-            .map((department) => (
-              <li
-                key={department.department_id}
-                className="rounded-3 border p-4"
-              >
-                <span className="text-primary-60 text-sm font-bold">
-                  {department.priority}지망
-                </span>
-                <p className="mt-1 font-semibold">
-                  {formatStaffRecruitmentDepartment(department.name)}
-                </p>
-              </li>
-            ))}
-        </ol>
+      <section className="mt-8">
+        <h2 className="text-text-bolder text-body-l mb-4 font-bold">
+          지원 부서
+        </h2>
+        <dl className="rounded-3 border-border-gray-light bg-surface-white grid gap-4 border p-5 sm:grid-cols-2">
+          {([1, 2] as const).map((priority) => {
+            const department = application.applied_departments.find(
+              (item) => item.priority === priority,
+            );
+            return (
+              <div key={priority}>
+                <dt className="text-text-subtle text-sm">
+                  {priority}지망 부서
+                </dt>
+                <dd className="text-text-basic font-semibold">
+                  {department
+                    ? formatStaffRecruitmentDepartment(department.name)
+                    : "-"}
+                </dd>
+              </div>
+            );
+          })}
+        </dl>
       </section>
 
-      <section className="mt-10">
-        <h2 className="text-xl font-bold">작성 답변</h2>
-        <ol className="mt-4 space-y-5">
+      <section className="mt-8">
+        <h2 className="text-text-bolder text-body-l mb-4 font-bold">
+          작성 답변
+        </h2>
+        <ol className="rounded-3 border-border-gray-light bg-surface-white space-y-6 border p-5">
           {application.answers.map((answer, index) => (
-            <li key={answer.question_id} className="rounded-3 border p-5">
-              <h3 className="font-semibold">
+            <li key={answer.question_id}>
+              <h3 className="text-text-bolder font-semibold">
                 {index + 1}. {answer.question_label}
               </h3>
               {answer.question_type === "FILE" && answer.answer ? (
@@ -212,7 +238,7 @@ export function MyStaffApplicationView({
                   {answer.answer}
                 </a>
               ) : (
-                <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6">
+                <p className="text-text-basic mt-3 whitespace-pre-wrap break-words text-sm leading-6">
                   {answer.answer || "답변 없음"}
                 </p>
               )}
@@ -229,7 +255,9 @@ export function MyStaffApplicationView({
       {applicationOpen && (
         <div className="mt-8 flex justify-end">
           <Link href={`/club/recruit/${recruitmentId}/application/edit`}>
-            <Button variant="primary" size="large">지원서 관리</Button>
+            <Button variant="primary" size="large">
+              지원서 관리
+            </Button>
           </Link>
         </div>
       )}

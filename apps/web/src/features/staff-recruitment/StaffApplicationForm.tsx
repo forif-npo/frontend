@@ -560,7 +560,7 @@ export function StaffApplicationForm({
             disabled={isSubmitting || isCancelling}
             onClick={() => setConfirmAction("cancel")}
           >
-            {isCancelling ? "취소 중..." : "신청 취소"}
+            {isCancelling ? "취소 중..." : "지원 취소"}
           </Button>
         )}
         <Button
@@ -588,8 +588,10 @@ export function StaffApplicationForm({
       {isEditMode && (
         <ActionConfirmModal
           isOpen={confirmAction !== null}
-          target="운영진 지원서"
+          target={confirmAction === "cancel" ? "운영진 지원" : "운영진 지원서"}
           action={confirmAction === "modify" ? "수정" : "취소"}
+          cancelLabel={confirmAction === "cancel" ? "돌아가기" : undefined}
+          confirmLabel={confirmAction === "cancel" ? "지원 취소" : undefined}
           onClose={() => setConfirmAction(null)}
           onConfirm={() => {
             const action = confirmAction;
