@@ -31,7 +31,7 @@ export function InterviewAvailabilityGrid({
       onChange={onChange}
       disabled={disabled}
       error={error}
-      description="드래그하거나 클릭하여 면접이 가능한 시간을 칠해 주세요.(다시 클릭하거나 드래그하면 지워집니다.)"
+      description="드래그하거나 클릭하여 면접이 가능한 시간을 칠해 주세요."
       ariaLabel="면접 가능 시간 선택표"
     />
   );

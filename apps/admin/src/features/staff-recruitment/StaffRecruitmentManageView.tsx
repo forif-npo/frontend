@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { AdminStaffRecruitmentRound, StaffInterviewPlan } from "@core/types/staff-recruitment";
+import type { Semester } from "@core/api/semester";
 import { formatStaffRecruitmentTitle, staffRecruitmentStorageTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { changeStaffRecruitmentStatus, createStaffRecruitment, deleteStaffInterviewPlan, getStaffInterviewPlan, getStaffRecruitments, saveStaffInterviewPlan, updateStaffRecruitment } from "./api";
@@ -25,7 +26,7 @@ function formatRecruitmentDate(value?: string | null) {
   return value ? value.slice(0, 10).replaceAll("-", ". ") : "-";
 }
 
-export function StaffRecruitmentManageView() {
+export function StaffRecruitmentManageView({ currentSemester }: { currentSemester: Semester }) {
   const [items, setItems] = useState<AdminStaffRecruitmentRound[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -33,6 +34,7 @@ export function StaffRecruitmentManageView() {
   const [editTarget, setEditTarget] =
     useState<AdminStaffRecruitmentRound | null>(null);
   const [editPlan, setEditPlan] = useState<StaffInterviewPlan | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -51,6 +53,7 @@ export function StaffRecruitmentManageView() {
 
   const save = async (form: StaffRecruitmentFormState) => {
     if (submitting) return;
+    setSaveError(null);
     setSubmitting(true);
     try {
       const body = toSaveRequest(form);
@@ -104,7 +107,7 @@ export function StaffRecruitmentManageView() {
       setEditPlan(null);
       await load();
     } catch (error) {
-      toast.error(await handleApiError(error));
+      setSaveError(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -282,10 +285,13 @@ export function StaffRecruitmentManageView() {
 
       <StaffRecruitmentFormDialog
         open={dialogOpen}
+        currentSemester={currentSemester}
         recruitment={editTarget}
         interviewPlan={editPlan}
         submitting={submitting}
+        submitError={saveError}
         onOpenChange={(open) => {
+          if (!open) setSaveError(null);
           setDialogOpen(open);
           if (!open) {
             setEditTarget(null);

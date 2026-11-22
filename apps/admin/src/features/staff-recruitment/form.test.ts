@@ -1,16 +1,54 @@
 import { describe, expect, it } from "@jest/globals";
 import type { StaffInterviewPlan, StaffRecruitmentRound } from "@core/types/staff-recruitment";
-import {
-  emptyRecruitmentForm,
-  interviewPlanToForm,
-  recruitmentToForm,
-  toInterviewPlanRequest,
-  toSaveRequest,
-  validateInterviewForm,
-  validateRecruitmentForm,
-} from "./form";
+import { defaultQuestionMaxLength, emptyRecruitmentForm, interviewPlanToForm, recruitmentToForm, toInterviewPlanRequest, toSaveRequest, validateInterviewForm, validateRecruitmentForm } from "./form";
 
 describe("staff recruitment form", () => {
+  it("defaults short and long answers to 100 and 500 characters", () => {
+    expect(defaultQuestionMaxLength("SHORT_TEXT")).toBe("100");
+    expect(defaultQuestionMaxLength("LONG_TEXT")).toBe("500");
+    expect(defaultQuestionMaxLength("ATTACHMENT")).toBe("5000");
+  });
+
+  it("saves one combined attachment question", () => {
+    const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
+    form.description = "안내";
+    form.startsAt = "2026-12-01";
+    form.endsAt = "2026-12-15";
+    form.departments = [{ name: "개발팀", description: "" }];
+    form.questions = [
+      {
+        label: "포트폴리오",
+        description: "",
+        type: "ATTACHMENT",
+        required: true,
+        maxLength: "5000",
+      },
+    ];
+
+    expect(validateRecruitmentForm(form)).toBeNull();
+    expect(toSaveRequest(form).questions[0].type).toBe("ATTACHMENT");
+    form.questions.push({
+      label: "기존 파일",
+      description: "",
+      type: "FILE",
+      required: false,
+      maxLength: "5000",
+    });
+    expect(validateRecruitmentForm(form)).toBe(
+      "첨부파일 문항은 모집당 하나만 추가할 수 있습니다.",
+    );
+  });
+
+  it("defaults new recruitment to the semester after the current activity semester", () => {
+    expect(emptyRecruitmentForm({ act_year: 2026, act_semester: 2 })).toEqual(
+      expect.objectContaining({ actYear: "2027", actSemester: "1" }),
+    );
+    expect(emptyRecruitmentForm({ act_year: 2026, act_semester: 1 })).toEqual(
+      expect.objectContaining({ actYear: "2026", actSemester: "2" }),
+    );
+  });
+
   it("derives the stored title from a valid activity semester", () => {
     const form = emptyRecruitmentForm();
     form.interview.enabled = false;
@@ -132,7 +170,7 @@ describe("staff recruitment form", () => {
     }));
 
     expect(validateRecruitmentForm(form)).toBe(
-      "파일 문항은 모집당 하나만 추가할 수 있습니다.",
+      "첨부파일 문항은 모집당 하나만 추가할 수 있습니다.",
     );
   });
 
@@ -163,22 +201,26 @@ describe("staff recruitment form", () => {
       application_status: "CLOSED",
       application_open: false,
       application_unavailable_reason: null,
-      departments: [{
-        department_id: 17,
-        name: "기획팀",
-        description: null,
-        display_order: 1,
-        active: false,
-      }],
-      questions: [{
-        question_id: 29,
-        label: "지원 동기",
-        description: null,
-        type: "LONG_TEXT",
-        required: true,
-        max_length: 1000,
-        display_order: 1,
-      }],
+      departments: [
+        {
+          department_id: 17,
+          name: "기획팀",
+          description: null,
+          display_order: 1,
+          active: false,
+        },
+      ],
+      questions: [
+        {
+          question_id: 29,
+          label: "지원 동기",
+          description: null,
+          type: "LONG_TEXT",
+          required: true,
+          max_length: 1000,
+          display_order: 1,
+        },
+      ],
       updated_at: "2026-11-16T00:00:00+09:00",
     };
     expect(recruitmentToForm(saved)).toEqual(
@@ -271,9 +313,31 @@ describe("interview settings in the recruitment form", () => {
     );
   });
 
+  it("rejects interview hours outside 9 AM to 10 PM", () => {
+    const form = validForm();
+    form.interview.startHour = "8";
+    expect(validateInterviewForm(form.interview)).toBe(
+      "면접 시간은 오전 9시부터 오후 10시 사이로 설정해주세요.",
+    );
+
+    form.interview.startHour = "9";
+    form.interview.endHour = "23";
+    expect(validateInterviewForm(form.interview)).toBe(
+      "면접 시간은 오전 9시부터 오후 10시 사이로 설정해주세요.",
+    );
+
+    form.interview.endHour = "22";
+    expect(validateInterviewForm(form.interview)).toBeNull();
+  });
+
   it("skips interview validation when interview times are not collected", () => {
     const form = validForm();
-    form.interview = { ...form.interview, enabled: false, startDate: "", endDate: "" };
+    form.interview = {
+      ...form.interview,
+      enabled: false,
+      startDate: "",
+      endDate: "",
+    };
 
     expect(validateRecruitmentForm(form)).toBeNull();
   });
