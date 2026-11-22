@@ -147,7 +147,11 @@ export function StaffInterviewSettingsFields({
                 slotMinutes={range.slotMinutes}
                 value={preview}
                 onChange={setPreview}
-                description="지원자에게 보이는 시간표입니다. 여기서 칠한 칸은 저장되지 않습니다."
+                description={
+                  <span className="text-muted-foreground text-xs">
+                    지원자에게 보이는 시간표입니다. 여기서 칠한 칸은 저장되지 않습니다.
+                  </span>
+                }
                 ariaLabel="면접 가능 시간 미리보기"
                 gridClassName="w-full"
               />

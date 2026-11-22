@@ -51,7 +51,7 @@ export function StaffRecruitmentFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[760px]">
+      <DialogContent className="scrollbar-hidden max-h-[90vh] overflow-y-auto sm:max-w-[760px]">
         <DialogHeader>
           <DialogTitle>
             {recruitment ? "운영진 모집 수정" : "운영진 모집"}

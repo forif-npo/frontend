@@ -169,25 +169,25 @@ export function TimeSlotGrid({
       </div>
 
       <div
-        className={cn("mx-auto mt-2 flex gap-1.5 overflow-x-auto pb-1 sm:gap-2", gridClassName)}
+        className={cn("mx-auto mt-2 flex min-h-max gap-1.5 overflow-x-auto pb-1 sm:gap-2", gridClassName)}
         // 드래그 중 텍스트와 이미지가 끌려가지 않도록 한다.
         onDragStart={(event) => event.preventDefault()}
         role="group"
         aria-label={ariaLabel}
       >
         {/* 왼쪽 눈금. 정각에만 라벨을 붙이고 사이 칸은 비워 둔다. */}
-        <div className="w-12 shrink-0 pt-7">
+        <div className="w-14 shrink-0 pt-7">
           {starts.map((minute) => (
-            <div key={minute} className="flex h-5 items-start justify-end pr-1">
+            <div key={minute} className="flex h-5 items-start justify-start pl-1">
               {/* 라벨의 가운데가 정각 선 위에 오도록 반 칸 끌어올린다. */}
-              <span className="text-text-sub -translate-y-1/2 text-[11px] leading-none font-semibold">
+              <span className="text-text-sub -translate-y-1/2 whitespace-nowrap text-[11px] leading-none font-semibold">
                 {isHourStart(minute) ? formatSlotTime(minute) : ""}
               </span>
             </div>
           ))}
           {/* 마지막 칸의 끝 시각. 띠의 아래 선 위에 올린다. */}
-          <div className="flex h-0 items-start justify-end pr-1">
-            <span className="text-text-sub -translate-y-1/2 text-[11px] leading-none font-semibold">
+          <div className="flex h-0 items-start justify-start pl-1">
+            <span className="text-text-sub -translate-y-1/2 whitespace-nowrap text-[11px] leading-none font-semibold">
               {formatSlotTime(endHour * 60)}
             </span>
           </div>
@@ -196,16 +196,15 @@ export function TimeSlotGrid({
         {dates.map((date, dateIndex) => {
           const { label, weekday } = formatSlotDate(date);
           return (
-            <div key={date} className="min-w-11 flex-1">
+            <div key={date} className="min-w-20 flex-1">
               <button
                 type="button"
                 onClick={() => toggleDate(date)}
                 disabled={disabled}
-                className="text-text-sub mb-1 block w-full text-center text-[11px] leading-tight font-semibold disabled:opacity-50"
+                className="text-text-sub mb-1 flex h-6 w-full items-center justify-center whitespace-nowrap text-[11px] font-semibold disabled:opacity-50"
                 aria-label={`${label} ${weekday} 전체 선택`}
               >
-                <span className="block">{label}</span>
-                <span className="block">{weekday}</span>
+                {label}({weekday})
               </button>
 
               {/* 같은 날짜의 칸은 테두리를 공유해 하나의 띠로 보이게 한다. */}
