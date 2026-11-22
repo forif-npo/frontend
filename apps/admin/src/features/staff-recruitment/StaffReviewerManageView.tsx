@@ -233,7 +233,7 @@ export function StaffReviewerManageView({
                     )}
                   </div>
                   {reviewer.status === "ACTIVE" && (
-                    <DropdownMenu>
+                    <DropdownMenu modal={false}>
                       <DropdownMenuTrigger asChild>
                         <Button
                           type="button"
@@ -311,7 +311,7 @@ export function StaffReviewerManageView({
                       )}
                     </div>
                     {!active && candidate.has_admin_account && (
-                      <DropdownMenu>
+                      <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                           <Button
                             type="button"
