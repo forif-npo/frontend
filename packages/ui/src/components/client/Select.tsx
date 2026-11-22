@@ -140,6 +140,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
     return (
       <div className="relative" ref={containerRef}>
         <button
+          type="button"
           id={id}
           onClick={(e) => {
             e.preventDefault();
@@ -206,6 +207,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           >
             {options.map((option, index) => (
               <button
+                type="button"
                 key={option.value}
                 onClick={() => {
                   handleSelect(option.value);

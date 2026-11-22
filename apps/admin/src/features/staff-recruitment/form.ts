@@ -4,13 +4,36 @@ import { datesInRange } from "@core/time-slot";
 import type { Semester } from "@core/api/semester";
 
 /** 한 칸(= 면접 한 번)의 길이로 고를 수 있는 값(분). 서버가 받는 값과 같다. */
-export const INTERVIEW_SLOT_MINUTE_OPTIONS = ["10", "15", "20", "30", "60"] as const;
-export type InterviewSlotMinutes = (typeof INTERVIEW_SLOT_MINUTE_OPTIONS)[number];
+export const INTERVIEW_SLOT_MINUTE_OPTIONS = [
+  "10",
+  "15",
+  "20",
+  "30",
+  "60",
+] as const;
+export type InterviewSlotMinutes =
+  (typeof INTERVIEW_SLOT_MINUTE_OPTIONS)[number];
 
 /** 후보 날짜가 너무 많으면 지원자가 고르기 어렵다. 서버 제한과 같다. */
 export const MAX_INTERVIEW_DAYS = 14;
 export const MIN_INTERVIEW_HOUR = 9;
 export const MAX_INTERVIEW_HOUR = 22;
+
+export function defaultQuestionMaxLength(
+  type: StaffRecruitmentQuestionType,
+): string {
+  switch (type) {
+    case "SHORT_TEXT":
+      return "100";
+    case "LONG_TEXT":
+      return "500";
+    case "LINK":
+      return "2000";
+    case "FILE":
+    case "ATTACHMENT":
+      return "5000";
+  }
+}
 
 const INTERVIEW_GUIDE = "면접 가능 시간을 표시해주세요.";
 
@@ -64,7 +87,8 @@ export function emptyRecruitmentForm(
 ): StaffRecruitmentFormState {
   const now = new Date();
   const currentYear = currentSemester?.act_year ?? now.getFullYear();
-  const currentTerm = currentSemester?.act_semester ?? (now.getMonth() < 7 ? 1 : 2);
+  const currentTerm =
+    currentSemester?.act_semester ?? (now.getMonth() < 7 ? 1 : 2);
   const nextYear = currentYear + (currentTerm === 2 ? 1 : 0);
   const nextSemester = currentTerm === 2 ? "1" : "2";
   return {
@@ -168,9 +192,11 @@ export function validateRecruitmentForm(
     return "문항 제목과 1~5000자의 최대 글자 수를 확인해주세요.";
   }
   if (
-    form.questions.filter((question) => question.type === "FILE").length > 1
+    form.questions.filter(
+      (question) => question.type === "FILE" || question.type === "ATTACHMENT",
+    ).length > 1
   ) {
-    return "파일 문항은 모집당 하나만 추가할 수 있습니다.";
+    return "첨부파일 문항은 모집당 하나만 추가할 수 있습니다.";
   }
   return validateInterviewForm(form.interview);
 }
@@ -187,7 +213,10 @@ export function validateInterviewForm(
   if (interview.startDate > interview.endDate) {
     return "면접 종료 날짜는 시작 날짜보다 앞설 수 없습니다.";
   }
-  if (datesInRange(interview.startDate, interview.endDate).length > MAX_INTERVIEW_DAYS) {
+  if (
+    datesInRange(interview.startDate, interview.endDate).length >
+    MAX_INTERVIEW_DAYS
+  ) {
     return `면접 기간은 최대 ${MAX_INTERVIEW_DAYS}일까지 설정할 수 있습니다.`;
   }
   const startHour = Number(interview.startHour);

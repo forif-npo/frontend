@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import type { AdminStaffRecruitmentRound, StaffInterviewPlan } from "@core/types/staff-recruitment";
 import type { Semester } from "@core/api/semester";
-import { emptyRecruitmentForm, recruitmentToForm, type StaffRecruitmentFormState, validateRecruitmentForm } from "./form";
+import { defaultQuestionMaxLength, emptyRecruitmentForm, recruitmentToForm, type StaffRecruitmentFormState, validateRecruitmentForm } from "./form";
 import { StaffInterviewSettingsFields } from "./StaffInterviewSettingsFields";
 
 interface Props {
@@ -92,7 +92,10 @@ export function StaffRecruitmentFormDialog({
                 }))
               }
             />
-            <p id="recruitment-description-hint" className="text-muted-foreground text-xs">
+            <p
+              id="recruitment-description-hint"
+              className="text-muted-foreground text-xs"
+            >
               마크다운 문법을 사용할 수 있습니다.
             </p>
           </Field>
@@ -196,10 +199,11 @@ export function StaffRecruitmentFormDialog({
                     onChange={(event) =>
                       setForm((current) => ({
                         ...current,
-                        departments: current.departments.map((item, itemIndex) =>
-                          itemIndex === index
-                            ? { ...item, name: event.target.value }
-                            : item,
+                        departments: current.departments.map(
+                          (item, itemIndex) =>
+                            itemIndex === index
+                              ? { ...item, name: event.target.value }
+                              : item,
                         ),
                       }))
                     }
@@ -259,20 +263,18 @@ export function StaffRecruitmentFormDialog({
                     description: "",
                     type: "LONG_TEXT",
                     required: true,
-                    maxLength: "1000",
+                    maxLength: defaultQuestionMaxLength("LONG_TEXT"),
                   },
                 ],
               }))
             }
           >
             {form.questions.map((question, index) => (
-              <div
-                key={`question-${index}`}
-                className="grid gap-3"
-              >
+              <div key={`question-${index}`} className="grid gap-3">
                 <div
                   className={
-                    question.type === "SHORT_TEXT" || question.type === "LONG_TEXT"
+                    question.type === "SHORT_TEXT" ||
+                    question.type === "LONG_TEXT"
                       ? "grid gap-2 sm:grid-cols-[2fr_1fr_110px_auto]"
                       : "grid gap-2 sm:grid-cols-[2fr_1fr_auto]"
                   }
@@ -295,7 +297,12 @@ export function StaffRecruitmentFormDialog({
                   <Select
                     value={question.type}
                     onValueChange={(
-                      value: "SHORT_TEXT" | "LONG_TEXT" | "LINK" | "FILE",
+                      value:
+                        | "SHORT_TEXT"
+                        | "LONG_TEXT"
+                        | "LINK"
+                        | "FILE"
+                        | "ATTACHMENT",
                     ) =>
                       setForm((current) => ({
                         ...current,
@@ -304,12 +311,7 @@ export function StaffRecruitmentFormDialog({
                             ? {
                                 ...item,
                                 type: value,
-                                maxLength:
-                                  value === "FILE"
-                                    ? "5000"
-                                    : value === "LINK"
-                                      ? "2000"
-                                      : item.maxLength,
+                                maxLength: defaultQuestionMaxLength(value),
                               }
                             : item,
                         ),
@@ -322,15 +324,22 @@ export function StaffRecruitmentFormDialog({
                     <SelectContent>
                       <SelectItem value="SHORT_TEXT">짧은 답변</SelectItem>
                       <SelectItem value="LONG_TEXT">긴 답변</SelectItem>
-                      <SelectItem value="LINK">링크</SelectItem>
+                      {question.type === "LINK" && (
+                        <SelectItem value="LINK">링크 (기존)</SelectItem>
+                      )}
+                      {question.type === "FILE" && (
+                        <SelectItem value="FILE">파일 (기존)</SelectItem>
+                      )}
                       <SelectItem
-                        value="FILE"
+                        value="ATTACHMENT"
                         disabled={form.questions.some(
                           (item, itemIndex) =>
-                            itemIndex !== index && item.type === "FILE",
+                            itemIndex !== index &&
+                            (item.type === "FILE" ||
+                              item.type === "ATTACHMENT"),
                         )}
                       >
-                        파일
+                        첨부파일
                       </SelectItem>
                     </SelectContent>
                   </Select>
