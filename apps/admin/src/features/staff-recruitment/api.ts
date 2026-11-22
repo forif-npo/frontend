@@ -216,7 +216,7 @@ export async function updateStaffInterviewQuestion(
   return response.data!;
 }
 
-/** 답변이 적힌 질문은 서버가 409(FOR170)로 거절한다. */
+/** 답변이 적힌 질문은 서버가 409(FOR171)로 거절한다. */
 export async function deleteStaffInterviewQuestion(
   recruitmentId: number,
   questionId: number,
