@@ -22,6 +22,7 @@ import { createAdminAccount, deleteAdminAccount, delegatePresidency, getAdminAcc
 interface AdminAccountsViewProps {
   /** 로그인한 운영진의 소속 (회장 / 부회장 / 운영진 ...) */
   myAffiliation: string;
+  isIncumbentPresident: boolean;
   myUserId: number;
 }
 
@@ -43,9 +44,11 @@ const EMPTY_CREATE_FORM = { userId: "", password: "", affiliation: "" };
 
 export function AdminAccountsView({
   myAffiliation,
+  isIncumbentPresident,
   myUserId,
 }: AdminAccountsViewProps) {
   const isPresident = myAffiliation === "회장";
+  const isUpcomingPresident = isPresident && !isIncumbentPresident;
 
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
   const [totalElements, setTotalElements] = useState(0);
@@ -117,7 +120,13 @@ export function AdminAccountsView({
       return;
     }
     if (PRESIDENT_TEAM.includes(createForm.affiliation.trim())) {
-      toast.error("회장/부회장은 위임 기능으로만 지정할 수 있습니다.");
+      toast.error(
+        "회장단은 현 회장의 위임 또는 다음 학기 운영진 명단에서 지정해주세요.",
+      );
+      return;
+    }
+    if (!isIncumbentPresident && createForm.affiliation.trim() === "SW팀") {
+      toast.error("SW팀 운영진 계정은 현 회장만 생성할 수 있습니다.");
       return;
     }
 
@@ -221,9 +230,7 @@ export function AdminAccountsView({
     try {
       await delegatePresidency(account.user_id, role);
       toast.success(
-        role === "회장"
-          ? "회장이 위임되었습니다."
-          : "부회장이 임명되었습니다.",
+        role === "회장" ? "회장이 위임되었습니다." : "부회장이 임명되었습니다.",
       );
       setDelegateConfirm(null);
       await fetchAccounts();
@@ -255,6 +262,27 @@ export function AdminAccountsView({
       {
         accessorKey: "affiliation",
         header: "소속",
+        cell: ({ row }) => {
+          const account = row.original;
+          const upcoming = account.upcoming_affiliation ?? account.authority_affiliation;
+          if (account.upcoming_affiliation === "회장" && account.affiliation !== "회장") {
+            return `${account.affiliation} (차기 회장)`;
+          }
+          if (
+            account.sw_team &&
+            account.authority_affiliation === "회장" &&
+            account.affiliation !== "회장"
+          ) {
+            return `${account.affiliation} (SW팀 권한)`;
+          }
+          if (upcoming === "회장" && account.affiliation !== "회장") {
+            return `${account.affiliation} (차기 회장)`;
+          }
+          if (upcoming === "부회장" && account.affiliation !== "부회장") {
+            return `${account.affiliation} (차기 부회장)`;
+          }
+          return account.affiliation;
+        },
       },
     ],
     [],
@@ -262,49 +290,52 @@ export function AdminAccountsView({
 
   const renderAccountActions = (account: AdminAccount) => {
     const isSelf = account.user_id === myUserId;
+    const targetAuthority =
+      account.authority_affiliation ?? account.affiliation;
     const isPresidentTeamMember = PRESIDENT_TEAM.includes(account.affiliation);
-    const canDelegate = isPresident && !isSelf && !isPresidentTeamMember;
+    const showDelegate = isPresident && !isSelf && !isPresidentTeamMember;
     const canManage =
-      !isSelf &&
-      account.affiliation !== "회장" &&
-      (isPresident || account.affiliation !== "부회장");
+      !isSelf && (isPresident || !PRESIDENT_TEAM.includes(targetAuthority));
+    const canDelete = canManage && targetAuthority !== "회장";
 
-    if (!canDelegate && !canManage) return null;
+    if (!showDelegate && !canManage) return null;
 
     return (
       <>
-        {canDelegate && (
+        {showDelegate && (
           <>
             <DropdownMenuItem
+              disabled={!isIncumbentPresident}
               onSelect={() => setDelegateConfirm({ account, role: "회장" })}
             >
               <Crown className="mr-2 h-4 w-4" />
               회장 위임
             </DropdownMenuItem>
             <DropdownMenuItem
-              onSelect={() =>
-                setDelegateConfirm({ account, role: "부회장" })
-              }
+              disabled={!isIncumbentPresident}
+              onSelect={() => setDelegateConfirm({ account, role: "부회장" })}
             >
               <ShieldCheck className="mr-2 h-4 w-4" />
               부회장 임명
             </DropdownMenuItem>
           </>
         )}
-        {canDelegate && canManage && <DropdownMenuSeparator />}
+        {showDelegate && canManage && <DropdownMenuSeparator />}
         {canManage && (
           <>
             <DropdownMenuItem onSelect={() => openEdit(account)}>
               <Pencil className="mr-2 h-4 w-4" />
               수정
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onSelect={() => handleDelete(account)}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              삭제
-            </DropdownMenuItem>
+            {canDelete && (
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onSelect={() => handleDelete(account)}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                삭제
+              </DropdownMenuItem>
+            )}
           </>
         )}
       </>
@@ -317,6 +348,12 @@ export function AdminAccountsView({
         title="운영진 계정 관리"
         description="ADMIN 페이지에 로그인할 수 있는 운영진 계정을 관리합니다."
       />
+      {isUpcomingPresident && (
+        <p className="text-muted-foreground text-sm">
+          회장 위임, 부회장 임명, 운영진 비밀번호 재설정은 현 회장만 할 수
+          있습니다.
+        </p>
+      )}
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <SearchBar
@@ -356,7 +393,8 @@ export function AdminAccountsView({
           <DialogHeader>
             <DialogTitle>운영진 계정 생성</DialogTitle>
             <DialogDescription>
-              가입된 부원의 학번으로 운영진 계정을 만듭니다.
+              가입된 부원의 학번으로 운영진 계정을 만듭니다. 현재 학기 SW팀
+              계정은 관리 화면 권한이 열리므로 현 회장만 생성할 수 있습니다.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
@@ -395,7 +433,11 @@ export function AdminAccountsView({
                 </SelectTrigger>
                 <SelectContent>
                   {teamNames.map((team) => (
-                    <SelectItem key={team} value={team}>
+                    <SelectItem
+                      key={team}
+                      value={team}
+                      disabled={team === "SW팀" && !isIncumbentPresident}
+                    >
                       {team}
                     </SelectItem>
                   ))}
@@ -444,6 +486,7 @@ export function AdminAccountsView({
                 type="password"
                 placeholder="변경 시에만 입력"
                 value={editForm.password}
+                disabled={isUpcomingPresident}
                 onChange={(e) =>
                   setEditForm((f) => ({ ...f, password: e.target.value }))
                 }
@@ -453,6 +496,10 @@ export function AdminAccountsView({
               <Label htmlFor="edit-affiliation">소속</Label>
               <Select
                 value={editForm.affiliation}
+                disabled={Boolean(
+                  editTarget &&
+                    PRESIDENT_TEAM.includes(editTarget.authority_affiliation),
+                )}
                 onValueChange={(affiliation) =>
                   setEditForm((f) => ({ ...f, affiliation }))
                 }

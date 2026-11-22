@@ -115,7 +115,9 @@ describe("OperatorsView", () => {
           },
         ]}
         currentSemester="2026-2"
+        semesterOptions={["전체", "2026-2"]}
         canManageOperators={false}
+        isIncumbentPresident={false}
         currentUserId={20260001}
       />,
     );
@@ -130,6 +132,49 @@ describe("OperatorsView", () => {
     ).toBe(true);
     expect(
       (screen.getByDisplayValue("백엔드") as HTMLInputElement).disabled,
+    ).toBe(false);
+  });
+
+  it("keeps leadership deletion visible but disabled for an upcoming president", () => {
+    render(
+      <OperatorsView
+        initialData={[
+          {
+            id: 2,
+            userId: 20260002,
+            name: "차기 부회장",
+            title: "부회장",
+            department: "기획팀",
+            phoneNum: "01011112222",
+            profImgUrl: "",
+            introTag: "기획",
+            selfIntro: "안녕하세요.",
+            graduateYear: 2027,
+            actYear: 2027,
+            actSemester: 1,
+          },
+        ]}
+        currentSemester="2027-1"
+        semesterOptions={["전체", "2027-1"]}
+        canManageOperators
+        isIncumbentPresident={false}
+        currentUserId={20260001}
+      />,
+    );
+
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "운영진 정보 삭제",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "운영진 정보 수정" }));
+    expect(
+      (screen.getByDisplayValue("부회장") as HTMLInputElement).disabled,
+    ).toBe(true);
+    expect(
+      (screen.getByDisplayValue("기획") as HTMLInputElement).disabled,
     ).toBe(false);
   });
 });

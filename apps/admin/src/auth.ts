@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { env } from "./env";
 
 const BACKEND_TOKEN_REFRESH_BUFFER_MS = 60_000;
+const STAFF_AUTHORITY_REFRESH_MS = 30_000;
 
 function getJwtExpiresAt(token?: string): number | null {
   if (!token) return null;
@@ -128,6 +129,8 @@ const result = NextAuth({
             backendRefreshToken: response.data.refresh_token,
             role: response.data.role,
             affiliation: staff.affiliation ?? null,
+            authorityAffiliation:
+              staff.authority_affiliation ?? staff.affiliation ?? null,
           };
         } catch (error) {
           console.error("Authorize error:", error);
@@ -190,17 +193,22 @@ const result = NextAuth({
         token.staffDepartment = user.department ?? "";
         token.staffImgUrl = user.imgUrl ?? null;
         token.staffAffiliation = user.affiliation ?? null;
+        token.staffAuthorityAffiliation = user.authorityAffiliation ?? null;
+        token.staffAuthorityCheckedAt = Date.now();
       }
 
       if (shouldRefreshBackendJwt(token)) {
         token = await refreshBackendJwt(token);
       }
 
-      // 토큰은 있지만 staff 정보가 없는 경우 (기존 세션 복원 시) API로 가져옴
-      // affiliation은 나중에 추가된 필드라 기존 세션에는 없을 수 있어 함께 백필한다
+      // 권한 지정·취소는 재로그인 없이 메뉴에도 반영한다.
       if (
         token.backendJwt &&
-        (!token.staffName || token.staffAffiliation === undefined)
+        (!token.staffName ||
+          token.staffAffiliation === undefined ||
+          token.staffAuthorityAffiliation === undefined ||
+          Date.now() - (token.staffAuthorityCheckedAt ?? 0) >=
+            STAFF_AUTHORITY_REFRESH_MS)
       ) {
         try {
           const { getStaff } = await import("@/features/auth/api");
@@ -214,6 +222,9 @@ const result = NextAuth({
             token.staffDepartment = staff.department;
             token.staffImgUrl = staff.img_url;
             token.staffAffiliation = staff.affiliation ?? null;
+            token.staffAuthorityAffiliation =
+              staff.authority_affiliation ?? staff.affiliation ?? null;
+            token.staffAuthorityCheckedAt = Date.now();
             token.role = staff.role;
           }
         } catch (error) {
@@ -242,6 +253,10 @@ const result = NextAuth({
         imgUrl: (token.staffImgUrl as string | null) ?? null,
         role: "ADMIN",
         affiliation: (token.staffAffiliation as string | null) ?? null,
+        authorityAffiliation:
+          (token.staffAuthorityAffiliation as string | null) ??
+          (token.staffAffiliation as string | null) ??
+          null,
       };
       return session;
     },
