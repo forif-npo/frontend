@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { StaffApplicationDetail, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 
@@ -19,18 +19,22 @@ jest.mock("@/components/ActionConfirmModal", () => ({
   ActionConfirmModal: ({
     isOpen,
     action,
+    cancelLabel,
+    confirmLabel,
     onClose,
     onConfirm,
   }: {
     isOpen: boolean;
     action: string;
+    cancelLabel?: string;
+    confirmLabel?: string;
     onClose: () => void;
     onConfirm: () => void;
   }) =>
     isOpen ? (
       <div role="dialog" aria-label={`${action} 확인`}>
-        <button onClick={onClose}>닫기</button>
-        <button onClick={onConfirm}>{action} 확정</button>
+        <button onClick={onClose}>{cancelLabel ?? "취소"}</button>
+        <button onClick={onConfirm}>{confirmLabel ?? action}</button>
       </div>
     ) : null,
 }));
@@ -212,7 +216,7 @@ describe("StaffApplicationForm", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "수정" }));
     expect(updateStaffApplication).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "수정 확정" }));
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "수정" }));
 
     await waitFor(() => expect(onUpdated).toHaveBeenCalledTimes(1));
     expect(updateStaffApplication).toHaveBeenCalledWith(
@@ -243,9 +247,11 @@ describe("StaffApplicationForm", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "신청 취소" }));
+    fireEvent.click(screen.getByRole("button", { name: "지원 취소" }));
     expect(cancelStaffApplication).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "취소 확정" }));
+    const dialog = within(screen.getByRole("dialog"));
+    expect(dialog.getByRole("button", { name: "돌아가기" })).toBeTruthy();
+    fireEvent.click(dialog.getByRole("button", { name: "지원 취소" }));
 
     await waitFor(() => expect(onCancelled).toHaveBeenCalledTimes(1));
     expect(cancelStaffApplication).toHaveBeenCalledWith(7);
@@ -267,7 +273,7 @@ describe("StaffApplicationForm", () => {
         .disabled,
     ).toBe(true);
     expect(
-      (screen.getByRole("button", { name: "신청 취소" }) as HTMLButtonElement)
+      (screen.getByRole("button", { name: "지원 취소" }) as HTMLButtonElement)
         .disabled,
     ).toBe(false);
   });
