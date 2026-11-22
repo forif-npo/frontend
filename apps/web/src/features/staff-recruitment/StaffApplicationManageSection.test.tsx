@@ -39,7 +39,10 @@ describe("StaffApplicationManageSection", () => {
     expect(screen.getByText("지원서 12")).toBeTruthy();
 
     fireEvent.click(
-      screen.getByRole("button", { name: "2026년 2학기 운영진 모집" }),
+      screen.getByRole("button", { name: "운영진 모집 회차 선택" }),
+    );
+    fireEvent.click(
+      screen.getByRole("option", { name: "2026년 2학기 운영진 모집" }),
     );
     expect(screen.getByText("지원서 8")).toBeTruthy();
   });
