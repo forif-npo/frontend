@@ -5,11 +5,13 @@ import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { toast } from "@/components/ui/Toast";
 import {
   changeStaffInterviewStatus,
   getStaffInterviewBoard,
   getStaffInterviewSheet,
+  registerPassedApplicantsAsStaff,
 } from "./api";
 import {
   INTERVIEW_COLUMNS,
@@ -21,6 +23,7 @@ import {
 } from "./interview-board";
 import { usePassDepartmentPicker } from "./PassDepartmentDialog";
 import { StaffInterviewSheetPanel } from "./StaffInterviewSheetPanel";
+import { registrationResultMessage } from "./staff-registration";
 
 const DRAG_TYPE = "application/x-forif-interview-card";
 
@@ -40,6 +43,7 @@ export function StaffInterviewBoardSection({
   const [board, setBoard] = useState<StaffInterviewBoard | null>(null);
   const [openId, setOpenId] = useState<number | null>(null);
   const [dragOver, setDragOver] = useState<StaffInterviewStatus | null>(null);
+  const [registering, setRegistering] = useState(false);
   const passPicker = usePassDepartmentPicker();
 
   const load = useCallback(async () => {
@@ -105,6 +109,27 @@ export function StaffInterviewBoardSection({
     }
   };
 
+  const passedCount = board?.cards.filter((card) => card.status === "PASSED").length ?? 0;
+
+  /** 발표 시점에 합격자를 차기 운영진 명단에 한 번에 올린다. 이미 올라간 사람은 서버가 건너뛴다. */
+  const registerStaff = async () => {
+    if (registering || passedCount === 0) return;
+    const confirmed = await confirmDialog({
+      title: "합격자 운영진 등록",
+      description: `합격자 ${passedCount}명을 이 모집 회차의 활동 학기 운영진 명단에 배정 부서로 올립니다. 운영진 명단은 사이트 운영진 소개에 쓰이니 발표 뒤에 눌러 주세요. 이미 명단에 있는 사람은 건너뜁니다.`,
+      confirmLabel: "등록",
+    });
+    if (!confirmed) return;
+    setRegistering(true);
+    try {
+      const result = await registerPassedApplicantsAsStaff(recruitmentId);
+      toast.success(registrationResultMessage(result));
+    } catch (error) {
+      toast.error(await handleApiError(error));
+    } finally {
+      setRegistering(false);
+    }
+  };
 
   if (!board) {
     return <p className="text-muted-foreground text-sm">면접자를 불러오는 중입니다.</p>;
@@ -112,13 +137,22 @@ export function StaffInterviewBoardSection({
 
   return (
     <section className="space-y-4" aria-labelledby="interview-board-heading">
-      <div>
-        <h2 id="interview-board-heading" className="text-lg font-bold">
-          면접자
-        </h2>
-        <p className="text-muted-foreground mt-1 text-sm">
-          카드를 눌러 면접 기록을 적고, 끌어서 다른 칸으로 옮길 수 있습니다.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 id="interview-board-heading" className="text-lg font-bold">
+            면접자
+          </h2>
+          <p className="text-muted-foreground mt-1 text-sm">
+            카드를 눌러 면접 기록을 적고, 끌어서 다른 칸으로 옮길 수 있습니다.
+          </p>
+        </div>
+        <Button
+          disabled={registering || passedCount === 0}
+          title={passedCount === 0 ? "합격자가 없습니다." : undefined}
+          onClick={() => void registerStaff()}
+        >
+          합격자 운영진 등록
+        </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

@@ -208,6 +208,18 @@ export interface StaffInterviewSheet {
   passed_department: StaffInterviewPassedDepartment | null;
 }
 
+/** 합격자 운영진 등록 결과. 이름은 지원서에 적힌 이름이다. */
+export interface StaffRegistrationResult {
+  act_year: number;
+  act_semester: number;
+  /** 이번에 명단에 올린 합격자 */
+  registered: string[];
+  /** 이미 그 학기 명단에 있어 건너뛴 합격자 */
+  already_members: string[];
+  /** 탈퇴해 회원 정보가 없어 올리지 못한 합격자 */
+  withdrawn: string[];
+}
+
 export interface StaffInterviewPlanSaveRequest {
   dates: string[];
   start_hour: number;

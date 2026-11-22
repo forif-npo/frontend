@@ -11,6 +11,7 @@ import type {
   StaffInterviewSheet,
   StaffInterviewSlot,
   StaffInterviewStatus,
+  StaffRegistrationResult,
   StaffRecruitmentReviewer,
   StaffRecruitmentCreateRequest,
   StaffRecruitmentUpdateRequest,
@@ -319,6 +320,19 @@ export async function deleteStaffInterviewExtraQuestion(
       `${interviewPath(recruitmentId)}/${applicationId}/extra-questions/${extraQuestionId}`,
     )
     .json<ApiResponse<StaffInterviewSheet>>();
+  return response.data!;
+}
+
+/**
+ * 합격자를 모집 회차의 활동 학기 운영진 명단에 배정 부서로 올린다.
+ * 이미 명단에 있는 사람은 서버가 건너뛰므로 여러 번 불러도 된다.
+ */
+export async function registerPassedApplicantsAsStaff(
+  recruitmentId: number,
+): Promise<StaffRegistrationResult> {
+  const response = await apiClient
+    .post(`${interviewPath(recruitmentId)}/staff-registration`)
+    .json<ApiResponse<StaffRegistrationResult>>();
   return response.data!;
 }
 
