@@ -125,7 +125,11 @@ export function StaffInterviewSheetPanel({
             <SheetHeader className="border-b p-6">
               <div className="flex items-center gap-2">
                 <SheetTitle className="text-xl">{sheet.applicant_name}</SheetTitle>
-                <Badge variant="outline">{interviewStatusTitle(sheet.status)}</Badge>
+                <Badge variant="outline">
+                  {interviewStatusTitle(sheet.status)}
+                  {sheet.passed_department &&
+                    ` · ${formatStaffRecruitmentDepartment(sheet.passed_department.department_name)}`}
+                </Badge>
               </div>
               <SheetDescription>
                 {formatInterviewSlot(sheet.assigned_slot, sheet.slot_minutes)} · 1지망{" "}

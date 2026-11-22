@@ -152,6 +152,12 @@ export interface StaffInterviewQuestion {
 /** 면접 진행 상태. 보드의 네 칸과 같다. */
 export type StaffInterviewStatus = "BEFORE" | "DONE" | "PASSED" | "FAILED";
 
+/** 합격자에게 배정한 부서. 지원자의 1지망·2지망 중 하나다. */
+export interface StaffInterviewPassedDepartment {
+  department_id: number;
+  department_name: string;
+}
+
 export interface StaffInterviewCard {
   application_id: number;
   applicant_name: string;
@@ -159,6 +165,8 @@ export interface StaffInterviewCard {
   first_department: string | null;
   second_department: string | null;
   status: StaffInterviewStatus;
+  /** 합격이 아니면 null이다. */
+  passed_department: StaffInterviewPassedDepartment | null;
 }
 
 /** 면접 관리 보드. 면접 길이는 slot_minutes이고, 면접 일정이 없는 회차면 null이다. */
@@ -196,6 +204,8 @@ export interface StaffInterviewSheet {
   first_department: StaffInterviewDepartmentQuestions | null;
   second_department: StaffInterviewDepartmentQuestions | null;
   extra_questions: StaffInterviewExtraQuestion[];
+  /** 합격이 아니면 null이다. */
+  passed_department: StaffInterviewPassedDepartment | null;
 }
 
 export interface StaffInterviewPlanSaveRequest {

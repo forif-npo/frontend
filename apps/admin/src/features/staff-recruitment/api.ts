@@ -247,14 +247,19 @@ export async function getStaffInterviewSheet(
   return response.data!;
 }
 
+/**
+ * 합격이면 지원자의 1지망·2지망 중 배정할 모집 부서를 함께 보낸다.
+ * 지망이 하나뿐이면 비워도 서버가 그 부서로 정한다.
+ */
 export async function changeStaffInterviewStatus(
   recruitmentId: number,
   applicationId: number,
   status: StaffInterviewStatus,
+  departmentId: number | null = null,
 ): Promise<StaffInterviewSheet> {
   const response = await apiClient
     .put(`${interviewPath(recruitmentId)}/${applicationId}/status`, {
-      json: { status },
+      json: { status, department_id: departmentId },
     })
     .json<ApiResponse<StaffInterviewSheet>>();
   return response.data!;

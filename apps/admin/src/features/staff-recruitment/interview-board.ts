@@ -1,4 +1,9 @@
-import type { StaffInterviewCard, StaffInterviewSlot, StaffInterviewStatus } from "@core/types/staff-recruitment";
+import type {
+  StaffInterviewCard,
+  StaffInterviewSheet,
+  StaffInterviewSlot,
+  StaffInterviewStatus,
+} from "@core/types/staff-recruitment";
 import { formatSlotDate, formatSlotRange } from "@core/time-slot";
 
 /** 보드의 열. 왼쪽에서 오른쪽으로 면접이 진행되는 순서다. */
@@ -69,4 +74,32 @@ export function createSerialQueue() {
     tail = result.catch(() => undefined);
     return result;
   };
+}
+
+export interface PassDepartmentOption {
+  department_id: number;
+  department_name: string;
+  priority: 1 | 2;
+}
+
+/** 합격시킬 때 고를 수 있는 부서. 지원자가 고른 1지망·2지망 순서다. */
+export function passDepartmentOptions(
+  sheet: Pick<StaffInterviewSheet, "first_department" | "second_department">,
+): PassDepartmentOption[] {
+  const options: PassDepartmentOption[] = [];
+  if (sheet.first_department) {
+    options.push({
+      department_id: sheet.first_department.department_id,
+      department_name: sheet.first_department.department_name,
+      priority: 1,
+    });
+  }
+  if (sheet.second_department) {
+    options.push({
+      department_id: sheet.second_department.department_id,
+      department_name: sheet.second_department.department_name,
+      priority: 2,
+    });
+  }
+  return options;
 }

@@ -6,14 +6,20 @@ import { handleApiError } from "@core/utils/api-client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/Toast";
-import { changeStaffInterviewStatus, getStaffInterviewBoard } from "./api";
+import {
+  changeStaffInterviewStatus,
+  getStaffInterviewBoard,
+  getStaffInterviewSheet,
+} from "./api";
 import {
   INTERVIEW_COLUMNS,
   formatInterviewSlot,
   groupInterviewCards,
   interviewStatusTitle,
   moveInterviewCard,
+  passDepartmentOptions,
 } from "./interview-board";
+import { usePassDepartmentPicker } from "./PassDepartmentDialog";
 import { StaffInterviewSheetPanel } from "./StaffInterviewSheetPanel";
 
 const DRAG_TYPE = "application/x-forif-interview-card";
@@ -34,6 +40,7 @@ export function StaffInterviewBoardSection({
   const [board, setBoard] = useState<StaffInterviewBoard | null>(null);
   const [openId, setOpenId] = useState<number | null>(null);
   const [dragOver, setDragOver] = useState<StaffInterviewStatus | null>(null);
+  const passPicker = usePassDepartmentPicker();
 
   const load = useCallback(async () => {
     try {
@@ -49,14 +56,47 @@ export function StaffInterviewBoardSection({
 
   const groups = useMemo(() => groupInterviewCards(board?.cards ?? []), [board]);
 
-  /** 화면을 먼저 옮기고, 실패하면 서버 상태로 되돌린다. */
+  /**
+   * 화면을 먼저 옮기고, 실패하면 서버 상태로 되돌린다.
+   * 합격은 지망 중 배정할 부서를 먼저 고른다. 고르다 취소하면 옮기지 않는다.
+   */
   const changeStatus = async (applicationId: number, status: StaffInterviewStatus) => {
     const current = board?.cards.find((card) => card.application_id === applicationId);
     if (!board || !current || current.status === status) return null;
-    setBoard({ ...board, cards: moveInterviewCard(board.cards, applicationId, status) });
+
+    let departmentId: number | null = null;
+    if (status === "PASSED") {
+      try {
+        const sheet = await getStaffInterviewSheet(recruitmentId, applicationId);
+        const picked = await passPicker.pick(sheet.applicant_name, passDepartmentOptions(sheet));
+        if (picked === undefined) return null;
+        departmentId = picked;
+      } catch (error) {
+        toast.error(await handleApiError(error));
+        return null;
+      }
+    }
+
+    setBoard((prev) => (prev ? { ...prev, cards: moveInterviewCard(prev.cards, applicationId, status) } : prev));
     try {
-      const sheet = await changeStaffInterviewStatus(recruitmentId, applicationId, status);
-      toast.success(`${sheet.applicant_name}님을 ${interviewStatusTitle(status)}(으)로 옮겼습니다.`);
+      const sheet = await changeStaffInterviewStatus(recruitmentId, applicationId, status, departmentId);
+      setBoard((prev) =>
+        prev
+          ? {
+              ...prev,
+              cards: prev.cards.map((card) =>
+                card.application_id === applicationId
+                  ? { ...card, status: sheet.status, passed_department: sheet.passed_department }
+                  : card,
+              ),
+            }
+          : prev,
+      );
+      toast.success(
+        sheet.passed_department
+          ? `${sheet.applicant_name}님을 ${formatStaffRecruitmentDepartment(sheet.passed_department.department_name)} 합격으로 옮겼습니다.`
+          : `${sheet.applicant_name}님을 ${interviewStatusTitle(status)}(으)로 옮겼습니다.`,
+      );
       return sheet;
     } catch (error) {
       toast.error(await handleApiError(error));
@@ -64,6 +104,7 @@ export function StaffInterviewBoardSection({
       return null;
     }
   };
+
 
   if (!board) {
     return <p className="text-muted-foreground text-sm">면접자를 불러오는 중입니다.</p>;
@@ -140,6 +181,7 @@ export function StaffInterviewBoardSection({
         onClose={() => setOpenId(null)}
         onStatusChange={changeStatus}
       />
+      {passPicker.dialog}
     </section>
   );
 }
@@ -178,6 +220,12 @@ function InterviewCard({
           <dd>{department(card.first_department)}</dd>
           <dt className="text-muted-foreground">2지망</dt>
           <dd>{department(card.second_department)}</dd>
+          {card.passed_department && (
+            <>
+              <dt className="text-muted-foreground">합격 부서</dt>
+              <dd className="font-semibold">{department(card.passed_department.department_name)}</dd>
+            </>
+          )}
         </dl>
       </button>
       {card.status === "DONE" && (
