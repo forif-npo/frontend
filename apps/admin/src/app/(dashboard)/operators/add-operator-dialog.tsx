@@ -13,6 +13,8 @@ interface AddOperatorDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAdded: () => Promise<void> | void;
+  targetSemesterLabel: string;
+  isIncumbentPresident: boolean;
 }
 
 const EMPTY_FORM = { userId: "", clubDepartment: "", userTitle: "" };
@@ -21,21 +23,35 @@ export function AddOperatorDialog({
   open,
   onOpenChange,
   onAdded,
+  targetSemesterLabel,
+  isIncumbentPresident,
 }: AddOperatorDialogProps) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [semester, setSemester] = useState<Semester | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const blockedLeadershipTitle =
+    !isIncumbentPresident && ["회장", "부회장"].includes(form.userTitle.trim());
 
   useEffect(() => {
     if (!open) return;
     setForm(EMPTY_FORM);
+    const match = targetSemesterLabel.match(/^(\d{2})-(1|2)$/);
+    if (match) {
+      setSemester({
+        act_year: 2000 + Number(match[1]),
+        act_semester: Number(match[2]),
+        label: targetSemesterLabel,
+      });
+      return;
+    }
     getCurrentSemester()
       .then(setSemester)
       .catch(() => setSemester(null));
-  }, [open]);
+  }, [open, targetSemesterLabel]);
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
+    if (blockedLeadershipTitle) return;
 
     const userId = Number(form.userId);
     if (!form.userId || Number.isNaN(userId)) {
@@ -51,6 +67,8 @@ export function AddOperatorDialog({
     try {
       await addOperator({
         user_id: userId,
+        act_year: semester?.act_year,
+        act_semester: semester?.act_semester,
         club_department: form.clubDepartment.trim(),
         user_title: form.userTitle.trim() || undefined,
       });
@@ -74,7 +92,9 @@ export function AddOperatorDialog({
           <DialogDescription>
             {semester?.label ?? "현재 활동 학기"} 운영진 명단에 추가합니다. 이
             명단은 홈페이지 운영진 소개에 표시되며, 학기가 바뀌면 이어지지
-            않으므로 매 학기 새로 지정해야 합니다.
+            않으므로 매 학기 새로 지정해야 합니다. 다음 학기 회장·부회장 직책은
+            현 회장만 지정할 수 있으며, 운영진 계정이 있는 사람에게 지정 즉시
+            해당 권한이 열립니다.
           </DialogDescription>
         </DialogHeader>
 
@@ -109,6 +129,15 @@ export function AddOperatorDialog({
               placeholder="예: 회장, 부회장, 팀장"
               onChange={(e) => setForm({ ...form, userTitle: e.target.value })}
             />
+            <p className="text-muted-foreground text-xs">
+              차기 회장단 권한은 직책을 정확히 회장 또는 부회장으로 지정하면
+              열립니다. 계정 목록에는 차기 회장·차기 부회장으로 표시됩니다.
+            </p>
+            {blockedLeadershipTitle && (
+              <p className="text-muted-foreground text-xs">
+                회장·부회장 직책은 현 회장만 지정할 수 있습니다.
+              </p>
+            )}
           </div>
         </div>
 
@@ -120,7 +149,10 @@ export function AddOperatorDialog({
           >
             취소
           </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting}>
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting || blockedLeadershipTitle}
+          >
             {isSubmitting ? "추가 중..." : "추가"}
           </Button>
         </DialogFooter>

@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 
 export default async function SemesterPage() {
   const session = await auth();
-  const affiliation = session?.user?.affiliation ?? "";
+  const affiliation = session?.user?.authorityAffiliation ?? "";
 
-  // 학기 전환은 회장직 인수인계를 동반하므로 회장 본인만 할 수 있다
+  // 현 회장과 차기 회장이 페이지를 볼 수 있다. 전환은 현 회장에게만 열린다.
   if (affiliation !== "회장") {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-24">
@@ -27,6 +27,7 @@ export default async function SemesterPage() {
     <SemesterManageView
       currentUserId={Number(session?.user?.id)}
       currentUserName={session?.user?.name ?? ""}
+      isIncumbentPresident={session?.user?.affiliation === "회장"}
     />
   );
 }

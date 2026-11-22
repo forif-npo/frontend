@@ -38,6 +38,7 @@ interface OperatorEditForm {
 interface OperatorsViewProps {
   initialData: Operator[];
   currentSemester: OperatorSemesterLabel;
+  semesterOptions: string[];
   totalElements?: number;
   currentPage?: number;
   totalPages?: number;
@@ -45,12 +46,17 @@ interface OperatorsViewProps {
   initialSearch?: string;
   initialSorting?: SortingState;
   canManageOperators: boolean;
+  isIncumbentPresident: boolean;
   currentUserId: number;
 }
+
+const isLeadershipTitle = (title: string | undefined) =>
+  title === "회장" || title === "부회장";
 
 export function OperatorsView({
   initialData,
   currentSemester,
+  semesterOptions,
   totalElements = 0,
   currentPage = 0,
   totalPages = 1,
@@ -58,6 +64,7 @@ export function OperatorsView({
   initialSearch = "",
   initialSorting = [],
   canManageOperators,
+  isIncumbentPresident,
   currentUserId,
 }: OperatorsViewProps) {
   const router = useRouter();
@@ -150,6 +157,13 @@ export function OperatorsView({
 
   const handleUpdateSubmit = async () => {
     if (!editTarget || isSubmitting) return;
+    if (
+      !isIncumbentPresident &&
+      editForm.title.trim() !== editTarget.title &&
+      (isLeadershipTitle(editTarget.title) ||
+        isLeadershipTitle(editForm.title.trim()))
+    )
+      return;
 
     const body: Parameters<typeof updateOperator>[1] = {};
     if (editForm.title.trim() && editForm.title.trim() !== editTarget.title) {
@@ -202,6 +216,7 @@ export function OperatorsView({
 
   const handleDeleteOperator = async (operator: Operator) => {
     if (isSubmitting) return;
+    if (isLeadershipTitle(operator.title) && !isIncumbentPresident) return;
     if (
       !(await confirmDialog({
         title: "운영진 이력 삭제",
@@ -226,6 +241,16 @@ export function OperatorsView({
   const displayTotalCount =
     totalElements && totalElements > 0 ? totalElements : initialData.length;
   const canManageEditTarget = canManageOperators;
+  const canChangeEditTitle =
+    canManageOperators &&
+    (isIncumbentPresident || !isLeadershipTitle(editTarget?.title));
+  const blockedLeadershipTitleChange = Boolean(
+    !isIncumbentPresident &&
+      editTarget &&
+      editForm.title.trim() !== editTarget.title &&
+      (isLeadershipTitle(editTarget.title) ||
+        isLeadershipTitle(editForm.title.trim())),
+  );
 
   return (
     <div className="space-y-6 p-4 sm:p-6 md:p-8">
@@ -235,6 +260,7 @@ export function OperatorsView({
         <SemesterTabs
           currentSemester={currentSemester}
           onSemesterChange={handleSemesterChange}
+          options={semesterOptions}
         />
         <div className="flex items-center gap-2">
           {canManageOperators && (
@@ -260,6 +286,8 @@ export function OperatorsView({
           open={isAddOpen}
           onOpenChange={setIsAddOpen}
           onAdded={() => router.refresh()}
+          targetSemesterLabel={currentSemester}
+          isIncumbentPresident={isIncumbentPresident}
         />
       )}
 
@@ -297,6 +325,10 @@ export function OperatorsView({
                       {canManageOperators && (
                         <DropdownMenuItem
                           className="text-destructive focus:text-destructive"
+                          disabled={
+                            isLeadershipTitle(operator.title) &&
+                            !isIncumbentPresident
+                          }
                           onClick={() => handleDeleteOperator(operator)}
                         >
                           운영진 정보 삭제
@@ -341,11 +373,21 @@ export function OperatorsView({
                   id="op-title"
                   placeholder="회장 / 부장 / 팀원"
                   value={editForm.title}
-                  disabled={!canManageEditTarget}
+                  disabled={!canChangeEditTitle}
                   onChange={(e) =>
                     setEditForm((f) => ({ ...f, title: e.target.value }))
                   }
                 />
+                {!canChangeEditTitle && canManageOperators && (
+                  <p className="text-muted-foreground text-xs">
+                    회장단 직책은 현 회장만 변경할 수 있습니다.
+                  </p>
+                )}
+                {blockedLeadershipTitleChange && (
+                  <p className="text-muted-foreground text-xs">
+                    회장·부회장 직책 지정은 현 회장만 할 수 있습니다.
+                  </p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="op-department">부서</Label>
@@ -427,7 +469,10 @@ export function OperatorsView({
             <Button variant="outline" onClick={() => setEditTarget(null)}>
               취소
             </Button>
-            <Button onClick={handleUpdateSubmit} disabled={isSubmitting}>
+            <Button
+              onClick={handleUpdateSubmit}
+              disabled={isSubmitting || blockedLeadershipTitleChange}
+            >
               {isSubmitting ? "저장 중..." : "저장"}
             </Button>
           </DialogFooter>

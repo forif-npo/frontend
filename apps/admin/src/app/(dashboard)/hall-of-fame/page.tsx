@@ -6,7 +6,7 @@ const PRESIDENT_TEAM = ["회장", "부회장"];
 
 export default async function HallOfFamePage() {
   const session = await auth();
-  if (!PRESIDENT_TEAM.includes(session?.user?.affiliation ?? "")) {
+  if (!PRESIDENT_TEAM.includes(session?.user?.authorityAffiliation ?? "")) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 px-4 text-center">
         <ShieldAlert className="text-muted-foreground h-12 w-12" />

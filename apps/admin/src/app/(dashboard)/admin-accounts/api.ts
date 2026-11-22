@@ -16,6 +16,7 @@ export interface AdminAccount {
   department: string | null;
   phone_num: string | null;
   affiliation: string;
+  authority_affiliation: string;
 }
 
 export interface AdminAccountsPage {
