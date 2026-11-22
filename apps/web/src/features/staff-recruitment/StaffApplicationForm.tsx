@@ -11,6 +11,7 @@ import { InterviewAvailabilityGrid } from "./InterviewAvailabilityGrid";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { cancelStaffApplication, submitStaffApplication, updateStaffApplication } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
+import { DuplicateStaffApplicationModal } from "./DuplicateStaffApplicationModal";
 
 type FieldErrors = Record<string, string>;
 
@@ -308,8 +309,11 @@ export function StaffApplicationForm({
       }
     } catch (error) {
       const info = await getStaffApplicationErrorInfo(error);
-      setDuplicate(info.code === "FOR154-409");
-      setSubmitError(info.message);
+      if (info.code === "FOR154-409") {
+        setDuplicate(true);
+      } else {
+        setSubmitError(info.message);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -629,19 +633,6 @@ export function StaffApplicationForm({
           className="border-text-danger text-text-danger rounded-3 border p-4 text-sm"
         >
           {submitError}
-          {duplicate && (
-            <button
-              type="button"
-              className="ml-2 underline"
-              onClick={() =>
-                router.push(
-                  `/my?section=staff-applications&recruitment_id=${recruitment.recruitment_id}`,
-                )
-              }
-            >
-              내 지원서 보기
-            </button>
-          )}
         </div>
       )}
 
@@ -701,6 +692,14 @@ export function StaffApplicationForm({
           }}
         />
       )}
+      <DuplicateStaffApplicationModal
+        isOpen={duplicate}
+        onClose={() =>
+          router.push(
+            `/my?section=staff-applications&recruitment_id=${recruitment.recruitment_id}`,
+          )
+        }
+      />
     </form>
   );
 }

@@ -4,12 +4,7 @@ import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
-import {
-  InlineErrorState,
-  InlineLoadingState,
-  Link,
-  PageState,
-} from "@ui/components/server";
+import { InlineErrorState, InlineLoadingState, Link, PageState } from "@ui/components/server";
 import { getMyStaffApplication, getStaffRecruitment } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
 
@@ -34,6 +29,9 @@ export function MyStaffApplicationView({
   );
   const [loading, setLoading] = useState(true);
   const [applicationOpen, setApplicationOpen] = useState(false);
+  const [requiredQuestionIds, setRequiredQuestionIds] = useState<Set<number>>(
+    new Set(),
+  );
   const [error, setError] = useState<{
     code: string | null;
     message: string;
@@ -57,10 +55,22 @@ export function MyStaffApplicationView({
     let active = true;
     getStaffRecruitment(recruitmentId)
       .then((recruitment) => {
-        if (active) setApplicationOpen(recruitment.application_open);
+        if (active) {
+          setApplicationOpen(recruitment.application_open);
+          setRequiredQuestionIds(
+            new Set(
+              recruitment.questions
+                .filter((question) => question.required)
+                .map((question) => question.question_id),
+            ),
+          );
+        }
       })
       .catch(() => {
-        if (active) setApplicationOpen(false);
+        if (active) {
+          setApplicationOpen(false);
+          setRequiredQuestionIds(new Set());
+        }
       });
     return () => {
       active = false;
@@ -209,6 +219,17 @@ export function MyStaffApplicationView({
             <li key={answer.question_id}>
               <h3 className="text-text-bolder font-semibold">
                 {index + 1}. {answer.question_label}
+                {requiredQuestionIds.has(answer.question_id) && (
+                  <>
+                    <span
+                      className="text-text-danger ml-0.5"
+                      aria-hidden="true"
+                    >
+                      *
+                    </span>
+                    <span className="sr-only">(필수 문항)</span>
+                  </>
+                )}
               </h3>
               {answer.question_type === "FILE" && answer.answer ? (
                 <button
