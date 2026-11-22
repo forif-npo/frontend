@@ -1,13 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import {
-  formatSlotDate,
-  formatSlotTime,
-  isHourStart,
-  timeSlotKey,
-  timeSlotStarts,
-  timeSlotsInRange,
-} from "@repo/core/time-slot";
+import { formatSlotDate, formatSlotTime, isHourStart, timeSlotKey, timeSlotStarts, timeSlotsInRange } from "@repo/core/time-slot";
 import { cn } from "@repo/core/utils/cn";
 import { Label } from "../server/Label";
 
@@ -55,7 +48,7 @@ export function TimeSlotGrid({
   onChange,
   disabled = false,
   error,
-  description = "드래그하거나 클릭하여 가능한 시간을 칠해 주세요.(다시 클릭하거나 드래그하면 지워집니다.)",
+  description = "드래그하거나 클릭하여 가능한 시간을 칠해 주세요.",
   ariaLabel = "시간 선택표",
   gridClassName = "w-full sm:w-1/2",
 }: TimeSlotGridProps) {

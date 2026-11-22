@@ -61,6 +61,16 @@ export function StaffApplicationsView({
       rounds.find((round) => round.recruitment_id === recruitmentId) ?? null,
     [recruitmentId, rounds],
   );
+  const requiredQuestionIds = useMemo(
+    () =>
+      new Set(
+        rounds
+          .find((round) => round.recruitment_id === detail?.recruitment_id)
+          ?.questions.filter((question) => question.required)
+          .map((question) => question.question_id) ?? [],
+      ),
+    [detail?.recruitment_id, rounds],
+  );
 
   useEffect(() => {
     if (initialRecruitmentId) setRecruitmentId(initialRecruitmentId);
@@ -356,6 +366,12 @@ export function StaffApplicationsView({
                       <li key={answer.question_id} className="space-y-3">
                         <h4 className="font-semibold">
                           {index + 1}. {answer.question_label}
+                          {requiredQuestionIds.has(answer.question_id) && (
+                            <>
+                              <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
+                              <span className="sr-only">(필수 문항)</span>
+                            </>
+                          )}
                         </h4>
                         <div className="bg-surface-gray-subtler rounded-lg p-4 text-sm leading-6">
                           {answer.question_type === "FILE" && answer.answer ? (
