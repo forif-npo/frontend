@@ -72,6 +72,22 @@ export function StaffApplicationForm({
   const [answers, setAnswers] =
     useState<Record<number, string>>(initialAnswers);
   const [files, setFiles] = useState<Record<number, File | null>>({});
+  const [attachmentModes, setAttachmentModes] = useState<
+    Record<number, "LINK" | "FILE">
+  >(() =>
+    Object.fromEntries(
+      questions
+        .filter((question) => question.type === "ATTACHMENT")
+        .map((question) => [
+          question.question_id,
+          initialApplication?.answers.find(
+            (answer) => answer.question_id === question.question_id,
+          )?.question_type === "FILE"
+            ? "FILE"
+            : "LINK",
+        ]),
+    ),
+  );
   const [interviewSlots, setInterviewSlots] = useState<Set<string>>(() =>
     toInterviewSlotKeys(initialApplication?.interview_slots ?? []),
   );
@@ -101,8 +117,20 @@ export function StaffApplicationForm({
       questions.some(
         (question) =>
           question.type !== "FILE" &&
+          (question.type !== "ATTACHMENT" ||
+            attachmentModes[question.question_id] === "LINK") &&
           (answers[question.question_id] ?? "") !==
             (initialAnswers[question.question_id] ?? ""),
+      ) ||
+      questions.some(
+        (question) =>
+          question.type === "ATTACHMENT" &&
+          attachmentModes[question.question_id] !==
+            (initialApplication?.answers.find(
+              (answer) => answer.question_id === question.question_id,
+            )?.question_type === "FILE"
+              ? "FILE"
+              : "LINK"),
       ) ||
       Object.values(files).some(Boolean) ||
       removedFileQuestionIds.size > 0);
@@ -122,6 +150,26 @@ export function StaffApplicationForm({
     setSubmitError(null);
   };
 
+  const changeAttachmentMode = (questionId: number, mode: "LINK" | "FILE") => {
+    setAttachmentModes((current) => ({ ...current, [questionId]: mode }));
+    setAnswers((current) => ({ ...current, [questionId]: "" }));
+    setFiles((current) => ({ ...current, [questionId]: null }));
+    setRemovedFileQuestionIds((current) => {
+      const next = new Set(current);
+      const hadExistingFile = initialApplication?.answers.some(
+        (answer) =>
+          answer.question_id === questionId &&
+          answer.question_type === "FILE" &&
+          Boolean(answer.answer),
+      );
+      if (mode === "LINK" && hadExistingFile) next.add(questionId);
+      else next.delete(questionId);
+      return next;
+    });
+    setErrors((current) => ({ ...current, [`question-${questionId}`]: "" }));
+    setSubmitError(null);
+  };
+
   const validate = (): FieldErrors => {
     const next: FieldErrors = {};
     if (!firstDepartment) next.firstDepartment = "1지망 부서를 선택해주세요.";
@@ -130,7 +178,11 @@ export function StaffApplicationForm({
     }
     questions.forEach((question) => {
       const answer = answers[question.question_id] ?? "";
-      if (question.type === "FILE") {
+      if (
+        question.type === "FILE" ||
+        (question.type === "ATTACHMENT" &&
+          attachmentModes[question.question_id] === "FILE")
+      ) {
         const file = files[question.question_id];
         const retainedFile = initialApplication?.answers.some(
           (item) =>
@@ -155,7 +207,10 @@ export function StaffApplicationForm({
       } else if (answer.length > question.max_length) {
         next[`question-${question.question_id}`] =
           `${question.max_length}자 이내로 작성해주세요.`;
-      } else if (question.type === "LINK" && answer.trim()) {
+      } else if (
+        (question.type === "LINK" || question.type === "ATTACHMENT") &&
+        answer.trim()
+      ) {
         try {
           const url = new URL(answer.trim());
           if (!["http:", "https:"].includes(url.protocol)) throw new Error();
@@ -178,7 +233,8 @@ export function StaffApplicationForm({
       isCancelling ||
       (isEditMode && !initialApplication?.can_modify) ||
       (!isEditMode && !isAcknowledged)
-    ) return;
+    )
+      return;
     const nextErrors = validate();
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -213,7 +269,9 @@ export function StaffApplicationForm({
         answers: questions.map((question) => ({
           question_id: question.question_id,
           answer:
-            question.type === "FILE"
+            question.type === "FILE" ||
+            (question.type === "ATTACHMENT" &&
+              attachmentModes[question.question_id] === "FILE")
               ? ""
               : (answers[question.question_id]?.trim() ?? ""),
         })),
@@ -329,7 +387,11 @@ export function StaffApplicationForm({
         </h2>
         {questions.map((question, index) => {
           const id = `question-${question.question_id}`;
-          if (question.type === "FILE") {
+          if (question.type === "FILE" || question.type === "ATTACHMENT") {
+            const mode =
+              question.type === "FILE"
+                ? "FILE"
+                : (attachmentModes[question.question_id] ?? "LINK");
             const selectedFile = files[question.question_id];
             const existingFile = initialApplication?.answers.find(
               (answer) =>
@@ -359,74 +421,112 @@ export function StaffApplicationForm({
                     {question.description}
                   </Label>
                 )}
-                {existingFile &&
-                  !selectedFile &&
-                  !removedFileQuestionIds.has(question.question_id) && (
-                    <div className="border-border-gray-light flex items-center justify-between gap-3 rounded-lg border px-4 py-3">
-                      <button
-                        type="button"
-                        className="text-text-primary min-w-0 truncate underline underline-offset-2"
-                        onClick={() =>
-                          void downloadPrivateFile(
-                            `api/v1/staff-recruitments/${recruitment.recruitment_id}/applications/me/files/${question.question_id}`,
-                            existingFile,
-                          ).catch(() =>
-                            setSubmitError("파일을 내려받지 못했습니다."),
-                          )
-                        }
-                      >
-                        {existingFile}
-                      </button>
-                      <button
-                        type="button"
-                        className="text-text-subtle shrink-0 underline underline-offset-2"
-                        onClick={() =>
-                          setRemovedFileQuestionIds((current) =>
-                            new Set(current).add(question.question_id),
-                          )
-                        }
-                      >
-                        파일 제거
-                      </button>
-                    </div>
-                  )}
-                <FileUpload
-                  ariaLabelledBy={`${id}-label`}
-                  ariaDescribedBy={errors[id] ? `${id}-error` : undefined}
-                  invalid={Boolean(errors[id])}
-                  required={question.required}
-                  description="파일 1개, 최대 5MB"
-                  multiple={false}
-                  maxFiles={1}
-                  files={selectedFile ? [selectedFile] : []}
-                  onUpload={async (file) => {
-                    if (file.size > 5 * 1024 * 1024 || file.name.length > 200) {
-                      setErrors((current) => ({
-                        ...current,
-                        [id]: "5MB 이하, 파일명 200자 이하의 파일을 선택해주세요.",
-                      }));
-                      return false;
+                {question.type === "ATTACHMENT" && (
+                  <SelectBox
+                    id={`${id}-type`}
+                    title="첨부 방식"
+                    value={mode}
+                    placeholder="방식을 선택해주세요"
+                    options={[
+                      { value: "LINK", label: "링크" },
+                      { value: "FILE", label: "파일" },
+                    ]}
+                    onChange={(next) =>
+                      changeAttachmentMode(
+                        question.question_id,
+                        next as "LINK" | "FILE",
+                      )
                     }
-                    setFiles((current) => ({
-                      ...current,
-                      [question.question_id]: file,
-                    }));
-                    setRemovedFileQuestionIds((current) => {
-                      const next = new Set(current);
-                      next.delete(question.question_id);
-                      return next;
-                    });
-                    setErrors((current) => ({ ...current, [id]: "" }));
-                    setSubmitError(null);
-                    return true;
-                  }}
-                  onRemove={() =>
-                    setFiles((current) => ({
-                      ...current,
-                      [question.question_id]: null,
-                    }))
-                  }
-                />
+                  />
+                )}
+                {mode === "FILE" ? (
+                  <>
+                    {existingFile &&
+                      !selectedFile &&
+                      !removedFileQuestionIds.has(question.question_id) && (
+                        <div className="border-border-gray-light flex items-center justify-between gap-3 rounded-lg border px-4 py-3">
+                          <button
+                            type="button"
+                            className="text-text-primary min-w-0 truncate underline underline-offset-2"
+                            onClick={() =>
+                              void downloadPrivateFile(
+                                `api/v1/staff-recruitments/${recruitment.recruitment_id}/applications/me/files/${question.question_id}`,
+                                existingFile,
+                              ).catch(() =>
+                                setSubmitError("파일을 내려받지 못했습니다."),
+                              )
+                            }
+                          >
+                            {existingFile}
+                          </button>
+                          <button
+                            type="button"
+                            className="text-text-subtle shrink-0 underline underline-offset-2"
+                            onClick={() =>
+                              setRemovedFileQuestionIds((current) =>
+                                new Set(current).add(question.question_id),
+                              )
+                            }
+                          >
+                            파일 제거
+                          </button>
+                        </div>
+                      )}
+                    <FileUpload
+                      ariaLabelledBy={`${id}-label`}
+                      ariaDescribedBy={errors[id] ? `${id}-error` : undefined}
+                      invalid={Boolean(errors[id])}
+                      required={question.required}
+                      description="파일 1개, 최대 5MB"
+                      multiple={false}
+                      maxFiles={1}
+                      files={selectedFile ? [selectedFile] : []}
+                      onUpload={async (file) => {
+                        if (
+                          file.size > 5 * 1024 * 1024 ||
+                          file.name.length > 200
+                        ) {
+                          setErrors((current) => ({
+                            ...current,
+                            [id]: "5MB 이하, 파일명 200자 이하의 파일을 선택해주세요.",
+                          }));
+                          return false;
+                        }
+                        setFiles((current) => ({
+                          ...current,
+                          [question.question_id]: file,
+                        }));
+                        setRemovedFileQuestionIds((current) => {
+                          const next = new Set(current);
+                          next.delete(question.question_id);
+                          return next;
+                        });
+                        setErrors((current) => ({ ...current, [id]: "" }));
+                        setSubmitError(null);
+                        return true;
+                      }}
+                      onRemove={() =>
+                        setFiles((current) => ({
+                          ...current,
+                          [question.question_id]: null,
+                        }))
+                      }
+                    />
+                  </>
+                ) : (
+                  <TextInput
+                    id={`${id}-link`}
+                    title="링크"
+                    length="full"
+                    inputMode="url"
+                    placeholder="웹사이트 링크를 입력해주세요"
+                    maxLength={question.max_length}
+                    value={answers[question.question_id] ?? ""}
+                    onChange={(event) =>
+                      updateAnswer(question.question_id, event.target.value)
+                    }
+                  />
+                )}
                 {errors[id] && (
                   <Label
                     id={`${id}-error`}

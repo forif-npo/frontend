@@ -1,29 +1,12 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Label } from "@ui/components/server";
-import {
-  formatInterviewDate,
-  formatInterviewTime,
-  interviewSlotKey,
-  interviewSlotStarts,
-  interviewSlotsInRange,
-  isHourStart,
-} from "@core/staff-interview";
+import { TimeSlotGrid } from "@ui/components/client";
 import type { StaffInterviewPlan } from "@core/types/staff-recruitment";
 
-type Cell = { dateIndex: number; slotIndex: number };
-
 /**
- * 면접 가능 시간 시간표.
+ * 지원서의 면접 가능 시간 시간표.
  *
- * 세로축이 칸 길이만큼 나눈 시각, 가로축이 회장단이 정한 후보 날짜다.
- * 끌어서 여러 칸을 한 번에 칠하고, 이미 칠한 칸에서 시작하면 지운다.
- *
- * 같은 날짜의 칸은 위아래로 붙여 하나의 띠로 보이게 하고 날짜 사이는 띄운다.
- * 시간은 이어지는 값이고 날짜는 끊기는 값이라 눈으로도 그렇게 읽혀야 한다.
- *
- * `@repo/ui`에는 2차원 선택 격자가 없어 직접 만든다.
- * 칸은 버튼이라 키보드로도 하나씩 켜고 끌 수 있고, 상태는 `aria-pressed`로 전달한다.
+ * 회장단이 정한 면접 일정을 공용 시간표에 넘기고, 면접에 맞는 안내 문구를 붙인다.
+ * 칠하기·지우기·날짜 전체 선택 같은 동작은 `TimeSlotGrid`가 맡는다.
  */
 export function InterviewAvailabilityGrid({
   plan,
@@ -38,222 +21,18 @@ export function InterviewAvailabilityGrid({
   disabled?: boolean;
   error?: string;
 }) {
-  const starts = useMemo(() => interviewSlotStarts(plan), [plan]);
-  const dates = plan.dates;
-
-  const [dragFrom, setDragFrom] = useState<Cell | null>(null);
-  const [dragTo, setDragTo] = useState<Cell | null>(null);
-  // 칠하는 중인지 지우는 중인지. 시작 칸의 상태로 정한다.
-  const erasingRef = useRef(false);
-
-  const previewKeys = useMemo(() => {
-    if (!dragFrom || !dragTo) {
-      return null;
-    }
-    return new Set(interviewSlotsInRange(dates, starts, dragFrom, dragTo));
-  }, [dragFrom, dragTo, dates, starts]);
-
-  const commit = useCallback(() => {
-    if (previewKeys) {
-      const next = new Set(value);
-      previewKeys.forEach((key) => {
-        if (erasingRef.current) {
-          next.delete(key);
-        } else {
-          next.add(key);
-        }
-      });
-      onChange(next);
-    }
-    setDragFrom(null);
-    setDragTo(null);
-  }, [previewKeys, value, onChange]);
-
-  // 격자 밖에서 손을 떼도 드래그가 끝나야 한다.
-  useEffect(() => {
-    if (!dragFrom) {
-      return;
-    }
-    window.addEventListener("pointerup", commit);
-    window.addEventListener("pointercancel", commit);
-    return () => {
-      window.removeEventListener("pointerup", commit);
-      window.removeEventListener("pointercancel", commit);
-    };
-  }, [dragFrom, commit]);
-
-  const isSelected = (key: string) => {
-    if (previewKeys?.has(key)) {
-      return !erasingRef.current;
-    }
-    return value.has(key);
-  };
-
-  const startDrag = (cell: Cell, key: string) => {
-    if (disabled) {
-      return;
-    }
-    erasingRef.current = value.has(key);
-    setDragFrom(cell);
-    setDragTo(cell);
-  };
-
-  const toggleOne = (key: string) => {
-    if (disabled) {
-      return;
-    }
-    const next = new Set(value);
-    if (next.has(key)) {
-      next.delete(key);
-    } else {
-      next.add(key);
-    }
-    onChange(next);
-  };
-
-  /** 날짜 머리글을 누르면 그 날짜를 통째로 켜거나 끈다. */
-  const toggleDate = (date: string) => {
-    if (disabled) {
-      return;
-    }
-    const keys = starts.map((minute) => interviewSlotKey(date, minute));
-    const allOn = keys.every((key) => value.has(key));
-    const next = new Set(value);
-    keys.forEach((key) => (allOn ? next.delete(key) : next.add(key)));
-    onChange(next);
-  };
-
-  const allKeys = useMemo(
-    () =>
-      dates.flatMap((date) =>
-        starts.map((minute) => interviewSlotKey(date, minute)),
-      ),
-    [dates, starts],
-  );
-  const allSelected =
-    allKeys.length > 0 && allKeys.every((key) => value.has(key));
-
   return (
-    <div className="flex w-full flex-col gap-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Label size="s" className="text-text-sub">
-          드래그하거나 클릭하여 면접이 가능한 시간을 칠해 주세요.(다시 클릭하거나
-          드래그하면 지워집니다.)
-        </Label>
-        <button
-          type="button"
-          onClick={() => onChange(allSelected ? new Set() : new Set(allKeys))}
-          disabled={disabled}
-          className="rounded-2 border px-2.5 py-1 text-xs disabled:opacity-50"
-        >
-          {allSelected ? "전체 해제" : "전체 선택"}
-        </button>
-      </div>
-
-      <div
-        className="mx-auto mt-2 flex w-full gap-1.5 overflow-x-auto pb-1 sm:w-1/2 sm:gap-2"
-        // 드래그 중 텍스트와 이미지가 끌려가지 않도록 한다.
-        onDragStart={(event) => event.preventDefault()}
-        role="group"
-        aria-label="면접 가능 시간 선택표"
-      >
-        {/* 왼쪽 눈금. 정각에만 라벨을 붙이고 사이 칸은 비워 둔다. */}
-        <div className="w-12 shrink-0 pt-7">
-          {starts.map((minute) => (
-            <div
-              key={minute}
-              className="flex h-5 items-start justify-end pr-1"
-            >
-              {/* 라벨의 가운데가 정각 선 위에 오도록 반 칸 끌어올린다. */}
-              <span className="text-text-sub -translate-y-1/2 text-[11px] leading-none font-semibold">
-                {isHourStart(minute) ? formatInterviewTime(minute) : ""}
-              </span>
-            </div>
-          ))}
-          {/* 마지막 칸의 끝 시각. 띠의 아래 선 위에 올린다. */}
-          <div className="flex h-0 items-start justify-end pr-1">
-            <span className="text-text-sub -translate-y-1/2 text-[11px] leading-none font-semibold">
-              {formatInterviewTime(plan.end_hour * 60)}
-            </span>
-          </div>
-        </div>
-
-        {dates.map((date, dateIndex) => {
-          const { label, weekday } = formatInterviewDate(date);
-          return (
-            <div key={date} className="min-w-11 flex-1">
-              <button
-                type="button"
-                onClick={() => toggleDate(date)}
-                disabled={disabled}
-                className="text-text-sub mb-1 block w-full text-center text-[11px] leading-tight font-semibold disabled:opacity-50"
-                aria-label={`${label} ${weekday} 전체 선택`}
-              >
-                <span className="block">{label}</span>
-                <span className="block">{weekday}</span>
-              </button>
-
-              {/* 같은 날짜의 칸은 테두리를 공유해 하나의 띠로 보이게 한다. */}
-              <div className="border-gray-30 border-x-2 border-b-2">
-                {starts.map((minute, slotIndex) => {
-                  const key = interviewSlotKey(date, minute);
-                  const selected = isSelected(key);
-                  // 바로 위 칸도 칠해졌을 때만 사이 선을 지운다.
-                  // 아래 칸만 칠했는데 선까지 파래지면 위 칸까지 칠해진 것처럼 보인다.
-                  const previousMinute = starts[slotIndex - 1];
-                  const joinedAbove =
-                    selected &&
-                    previousMinute !== undefined &&
-                    isSelected(interviewSlotKey(date, previousMinute));
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      aria-pressed={selected}
-                      aria-label={`${label} ${formatInterviewTime(minute)}`}
-                      disabled={disabled}
-                      onPointerDown={() =>
-                        startDrag({ dateIndex, slotIndex }, key)
-                      }
-                      onPointerEnter={() => {
-                        if (dragFrom) {
-                          setDragTo({ dateIndex, slotIndex });
-                        }
-                      }}
-                      onClick={(event) => {
-                        // 포인터로 누른 경우는 pointerup에서 이미 칠해졌다.
-                        // 여기서 또 토글하면 두 번 뒤집혀 아무 일도 없던 것처럼 보인다.
-                        // 키보드로 누른 click만 detail이 0이라 그것만 처리한다.
-                        if (event.detail === 0) {
-                          toggleOne(key);
-                        }
-                      }}
-                      className={`block h-5 w-full ${
-                        isHourStart(minute)
-                          ? "border-gray-30 border-t-2"
-                          : // 위아래가 이어져 칠해졌을 때만 사이 선을 정각 선과 같은
-                            // 회색으로 맞춰 격자 선이 한 가지 색으로 읽히게 한다.
-                            // 그 밖에는 칠하지 않은 칸과 같은 연한 회색이다.
-                            `border-t ${joinedAbove ? "border-t-gray-30" : "border-t-gray-10"}`
-                      } ${
-                        selected
-                          ? "bg-primary-50 ring-primary-60 ring-1 ring-inset"
-                          : "bg-white"
-                      } disabled:opacity-50`}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {error && (
-        <Label size="s" className="text-text-danger" role="alert">
-          {error}
-        </Label>
-      )}
-    </div>
+    <TimeSlotGrid
+      dates={plan.dates}
+      startHour={plan.start_hour}
+      endHour={plan.end_hour}
+      slotMinutes={plan.slot_minutes}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      error={error}
+      description="드래그하거나 클릭하여 면접이 가능한 시간을 칠해 주세요."
+      ariaLabel="면접 가능 시간 선택표"
+    />
   );
 }

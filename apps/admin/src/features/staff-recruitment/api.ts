@@ -3,6 +3,8 @@ import type {
   AdminStaffRecruitmentRound,
   StaffApplicationDetail,
   StaffApplicationSummary,
+  StaffInterviewPlan,
+  StaffInterviewPlanSaveRequest,
   StaffRecruitmentReviewer,
   StaffRecruitmentCreateRequest,
   StaffRecruitmentUpdateRequest,
@@ -50,6 +52,61 @@ export async function updateStaffRecruitment(
     .patch(`api/v1/admin/staff-recruitments/${recruitmentId}`, { json: body })
     .json<ApiResponse<AdminStaffRecruitmentRound>>();
   return response.data!;
+}
+
+/**
+ * 회차의 면접 일정. 설정하지 않은 회차는 서버가 404(FOR167)로 답하므로 null로 바꾼다.
+ */
+export async function getStaffInterviewPlan(
+  recruitmentId: number,
+): Promise<StaffInterviewPlan | null> {
+  try {
+    const response = await apiClient
+      .get(`api/v1/admin/staff-recruitments/${recruitmentId}/interview-plan`, {
+        cache: "no-store",
+      })
+      .json<ApiResponse<StaffInterviewPlan>>();
+    return response.data ?? null;
+  } catch (error) {
+    if (isNotFound(error)) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+/**
+ * ky의 HTTPError는 응답을 `response`에 담는다.
+ * ky를 직접 import하면 ESM 전용 모듈이라 jest에서 읽지 못해 응답 상태만 확인한다.
+ */
+function isNotFound(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "response" in error &&
+    (error as { response?: { status?: number } }).response?.status === 404
+  );
+}
+
+export async function saveStaffInterviewPlan(
+  recruitmentId: number,
+  body: StaffInterviewPlanSaveRequest,
+): Promise<StaffInterviewPlan> {
+  const response = await apiClient
+    .put(`api/v1/admin/staff-recruitments/${recruitmentId}/interview-plan`, {
+      json: body,
+    })
+    .json<ApiResponse<StaffInterviewPlan>>();
+  return response.data!;
+}
+
+/** 면접을 받지 않는 회차로 되돌린다. 이미 제출된 선택은 서버에 남는다. */
+export async function deleteStaffInterviewPlan(
+  recruitmentId: number,
+): Promise<void> {
+  await apiClient.delete(
+    `api/v1/admin/staff-recruitments/${recruitmentId}/interview-plan`,
+  );
 }
 
 export async function changeStaffRecruitmentStatus(

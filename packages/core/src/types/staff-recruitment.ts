@@ -14,7 +14,8 @@ export type StaffRecruitmentQuestionType =
   | "SHORT_TEXT"
   | "LONG_TEXT"
   | "FILE"
-  | "LINK";
+  | "LINK"
+  | "ATTACHMENT";
 
 export interface StaffRecruitmentDepartment {
   department_id: number;
@@ -126,6 +127,8 @@ export interface StaffInterviewPlanSaveRequest {
   slot_minutes: number;
   required: boolean;
   guide: string | null;
+  /** 처음 설정할 때는 보내지 않고, 수정할 때는 조회한 version을 보낸다. 다르면 서버가 거절한다. */
+  version?: number;
 }
 
 export interface StaffApplicationDepartmentChoice {

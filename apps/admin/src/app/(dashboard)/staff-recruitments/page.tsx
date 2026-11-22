@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { ShieldAlert } from "lucide-react";
 import { StaffRecruitmentManageView } from "@/features/staff-recruitment/StaffRecruitmentManageView";
+import { getCurrentSemester } from "@/features/semester/api";
 
 const PRESIDENT_TEAM = ["회장", "부회장"];
 
@@ -20,5 +21,6 @@ export default async function StaffRecruitmentsPage() {
     );
   }
 
-  return <StaffRecruitmentManageView />;
+  const currentSemester = await getCurrentSemester();
+  return <StaffRecruitmentManageView currentSemester={currentSemester} />;
 }

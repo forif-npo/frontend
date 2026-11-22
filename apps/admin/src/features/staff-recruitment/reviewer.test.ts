@@ -1,10 +1,6 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import type { StaffReviewerCandidate } from "@core/types/staff-recruitment";
-import {
-  filterReviewerCandidates,
-  REVIEWER_STATUS_LABELS,
-  toReviewerExpiry,
-} from "./reviewer";
+import { defaultReviewerExpiryDate, filterReviewerCandidates, REVIEWER_STATUS_LABELS, toReviewerExpiry } from "./reviewer";
 
 const candidates: StaffReviewerCandidate[] = [
   {
@@ -26,6 +22,16 @@ const candidates: StaffReviewerCandidate[] = [
 ];
 
 describe("staff reviewer helpers", () => {
+  it("defaults expiry to the last interview date, then the recruitment end date", () => {
+    expect(defaultReviewerExpiryDate(
+      { dates: ["2026-12-04", "2026-12-01", "2026-12-03"] },
+      "2026-11-30T23:59:59+09:00",
+    )).toBe("2026-12-04");
+    expect(defaultReviewerExpiryDate(null, "2026-11-30T23:59:59+09:00"))
+      .toBe("2026-11-30");
+    expect(defaultReviewerExpiryDate({ dates: [] }, null)).toBe("");
+  });
+
   it("searches candidates by stable id and visible profile fields", () => {
     expect(filterReviewerCandidates(candidates, "2099999998")).toEqual([
       candidates[1],
@@ -35,14 +41,15 @@ describe("staff reviewer helpers", () => {
     ]);
   });
 
-  it("rejects an empty, invalid, or past expiry", () => {
-    jest.useFakeTimers().setSystemTime(new Date("2027-01-01T00:00:00Z"));
+  it("uses 23:59 Korea time on the selected date and rejects expired dates", () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-12-31T14:58:00Z"));
     expect(toReviewerExpiry("")).toBeNull();
     expect(toReviewerExpiry("invalid")).toBeNull();
-    expect(toReviewerExpiry("2026-12-31T23:59")).toBeNull();
-    expect(toReviewerExpiry("2027-01-02T09:00")).toBe(
-      new Date("2027-01-02T09:00").toISOString(),
-    );
+    expect(toReviewerExpiry("2026-02-31")).toBeNull();
+    expect(toReviewerExpiry("2026-12-31")).toBe("2026-12-31T23:59:00+09:00");
+    jest.setSystemTime(new Date("2026-12-31T14:59:00Z"));
+    expect(toReviewerExpiry("2026-12-31")).toBeNull();
+    expect(toReviewerExpiry("2027-01-01")).toBe("2027-01-01T23:59:00+09:00");
     jest.useRealTimers();
   });
 
