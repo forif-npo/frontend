@@ -1,7 +1,4 @@
-import type {
-  StaffReviewerCandidate,
-  StaffReviewerStatus,
-} from "@core/types/staff-recruitment";
+import type { StaffReviewerCandidate, StaffReviewerStatus } from "@core/types/staff-recruitment";
 
 export const REVIEWER_STATUS_LABELS: Record<StaffReviewerStatus, string> = {
   ACTIVE: "열람 중",
@@ -26,9 +23,17 @@ export function filterReviewerCandidates(
 }
 
 export function toReviewerExpiry(value: string): string | null {
-  const date = new Date(value);
-  if (!value || Number.isNaN(date.getTime()) || date.getTime() <= Date.now()) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return null;
   }
-  return date.toISOString();
+  const expiresAt = `${value}T23:59:00+09:00`;
+  const date = new Date(expiresAt);
+  if (
+    Number.isNaN(date.getTime()) ||
+    new Date(date.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10) !== value ||
+    date.getTime() <= Date.now()
+  ) {
+    return null;
+  }
+  return expiresAt;
 }

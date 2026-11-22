@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toInputDateTime } from "@/utils/datetime";
 import { getStaffReviewerCandidates, getStaffRecruitments, getStaffReviewers, grantStaffReviewer, revokeStaffReviewer } from "./api";
 import { filterReviewerCandidates, REVIEWER_STATUS_LABELS, toReviewerExpiry } from "./reviewer";
 import { toast } from "@/components/ui/Toast";
@@ -114,7 +113,7 @@ export function StaffReviewerManageView({
 
   const openGrantDialog = (candidate: StaffReviewerCandidate) => {
     setSelectedCandidate(candidate);
-    setExpiresAt(toInputDateTime(round?.ends_at ?? undefined));
+    setExpiresAt(round?.ends_at?.slice(0, 10) ?? "");
     setExpiryError(null);
   };
 
@@ -122,7 +121,7 @@ export function StaffReviewerManageView({
     if (!selectedCandidate || submitting) return;
     const normalizedExpiry = toReviewerExpiry(expiresAt);
     if (!normalizedExpiry) {
-      setExpiryError("현재 시각 이후의 만료 시각을 입력해주세요.");
+      setExpiryError("현재 시각 이후의 만료일을 선택해주세요.");
       return;
     }
     setSubmitting(true);
@@ -388,12 +387,13 @@ export function StaffReviewerManageView({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="reviewer-expires-at">만료 시각</Label>
+            <Label htmlFor="reviewer-expires-at">만료일</Label>
             <Input
               id="reviewer-expires-at"
-              type="datetime-local"
+              type="date"
               value={expiresAt}
               aria-invalid={Boolean(expiryError)}
+              aria-describedby="reviewer-expiry-hint"
               onChange={(event) => {
                 setExpiresAt(event.target.value);
                 setExpiryError(null);

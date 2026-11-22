@@ -1,10 +1,6 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import type { StaffReviewerCandidate } from "@core/types/staff-recruitment";
-import {
-  filterReviewerCandidates,
-  REVIEWER_STATUS_LABELS,
-  toReviewerExpiry,
-} from "./reviewer";
+import { filterReviewerCandidates, REVIEWER_STATUS_LABELS, toReviewerExpiry } from "./reviewer";
 
 const candidates: StaffReviewerCandidate[] = [
   {
@@ -35,14 +31,15 @@ describe("staff reviewer helpers", () => {
     ]);
   });
 
-  it("rejects an empty, invalid, or past expiry", () => {
-    jest.useFakeTimers().setSystemTime(new Date("2027-01-01T00:00:00Z"));
+  it("uses 23:59 Korea time on the selected date and rejects expired dates", () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-12-31T14:58:00Z"));
     expect(toReviewerExpiry("")).toBeNull();
     expect(toReviewerExpiry("invalid")).toBeNull();
-    expect(toReviewerExpiry("2026-12-31T23:59")).toBeNull();
-    expect(toReviewerExpiry("2027-01-02T09:00")).toBe(
-      new Date("2027-01-02T09:00").toISOString(),
-    );
+    expect(toReviewerExpiry("2026-02-31")).toBeNull();
+    expect(toReviewerExpiry("2026-12-31")).toBe("2026-12-31T23:59:00+09:00");
+    jest.setSystemTime(new Date("2026-12-31T14:59:00Z"));
+    expect(toReviewerExpiry("2026-12-31")).toBeNull();
+    expect(toReviewerExpiry("2027-01-01")).toBe("2027-01-01T23:59:00+09:00");
     jest.useRealTimers();
   });
 
