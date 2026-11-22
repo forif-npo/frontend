@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { StaffInterviewBoard, StaffInterviewCard, StaffInterviewStatus } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
@@ -23,7 +24,7 @@ import {
 } from "./interview-board";
 import { usePassDepartmentPicker } from "./PassDepartmentDialog";
 import { StaffInterviewSheetPanel } from "./StaffInterviewSheetPanel";
-import { registrationResultMessage } from "./staff-registration";
+import { registrationResultMessage, registrationRosterHref } from "./staff-registration";
 
 const DRAG_TYPE = "application/x-forif-interview-card";
 
@@ -45,6 +46,7 @@ export function StaffInterviewBoardSection({
   const [dragOver, setDragOver] = useState<StaffInterviewStatus | null>(null);
   const [registering, setRegistering] = useState(false);
   const passPicker = usePassDepartmentPicker();
+  const router = useRouter();
 
   const load = useCallback(async () => {
     try {
@@ -123,7 +125,13 @@ export function StaffInterviewBoardSection({
     setRegistering(true);
     try {
       const result = await registerPassedApplicantsAsStaff(recruitmentId);
-      toast.success(registrationResultMessage(result));
+      // 등록한 학기 명단으로 바로 넘어가 확인할 수 있게 한다. 차기 학기면 운영진 목록의 차기 탭이다.
+      const goToRoster = await confirmDialog({
+        title: "합격자 운영진 등록 완료",
+        description: registrationResultMessage(result),
+        confirmLabel: "운영진 명단 보기",
+      });
+      if (goToRoster) router.push(registrationRosterHref(result));
     } catch (error) {
       toast.error(await handleApiError(error));
     } finally {

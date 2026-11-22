@@ -1,3 +1,4 @@
+import { toSemesterLabel } from "@core/api/semester";
 import type { StaffRegistrationResult } from "@core/types/staff-recruitment";
 
 /** 합격자 운영진 등록 결과를 한 줄로 알린다. 건너뛴 사람이 있으면 이름을 덧붙인다. */
@@ -15,4 +16,9 @@ export function registrationResultMessage(result: StaffRegistrationResult): stri
     parts.push(`탈퇴해 올리지 못함: ${result.withdrawn.join(", ")}`);
   }
   return parts.join(" ");
+}
+
+/** 등록한 학기의 운영진 목록 주소. 운영진 목록은 "27-1" 형태 학기 값을 받는다. */
+export function registrationRosterHref(result: Pick<StaffRegistrationResult, "act_year" | "act_semester">): string {
+  return `/operators?semester=${toSemesterLabel(result.act_year, result.act_semester)}`;
 }
