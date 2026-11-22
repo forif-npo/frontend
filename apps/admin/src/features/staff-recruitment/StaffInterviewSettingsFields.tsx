@@ -5,10 +5,16 @@ import { datesInRange, formatSlotTime } from "@core/time-slot";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { INTERVIEW_SLOT_MINUTE_OPTIONS, type InterviewFormState, type InterviewSlotMinutes, validateInterviewForm } from "./form";
+import { INTERVIEW_SLOT_MINUTE_OPTIONS, MAX_INTERVIEW_HOUR, MIN_INTERVIEW_HOUR, type InterviewFormState, type InterviewSlotMinutes, validateInterviewForm } from "./form";
 
-const START_HOURS = Array.from({ length: 24 }, (_, hour) => hour);
-const END_HOURS = Array.from({ length: 24 }, (_, index) => index + 1);
+const START_HOURS = Array.from(
+  { length: MAX_INTERVIEW_HOUR - MIN_INTERVIEW_HOUR },
+  (_, index) => MIN_INTERVIEW_HOUR + index,
+);
+const END_HOURS = Array.from(
+  { length: MAX_INTERVIEW_HOUR - MIN_INTERVIEW_HOUR },
+  (_, index) => MIN_INTERVIEW_HOUR + index + 1,
+);
 
 /**
  * 모집 폼의 면접 일정 설정.

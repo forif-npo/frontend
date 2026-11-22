@@ -1,16 +1,17 @@
 import { describe, expect, it } from "@jest/globals";
 import type { StaffInterviewPlan, StaffRecruitmentRound } from "@core/types/staff-recruitment";
-import {
-  emptyRecruitmentForm,
-  interviewPlanToForm,
-  recruitmentToForm,
-  toInterviewPlanRequest,
-  toSaveRequest,
-  validateInterviewForm,
-  validateRecruitmentForm,
-} from "./form";
+import { emptyRecruitmentForm, interviewPlanToForm, recruitmentToForm, toInterviewPlanRequest, toSaveRequest, validateInterviewForm, validateRecruitmentForm } from "./form";
 
 describe("staff recruitment form", () => {
+  it("defaults new recruitment to the semester after the current activity semester", () => {
+    expect(emptyRecruitmentForm({ act_year: 2026, act_semester: 2 })).toEqual(
+      expect.objectContaining({ actYear: "2027", actSemester: "1" }),
+    );
+    expect(emptyRecruitmentForm({ act_year: 2026, act_semester: 1 })).toEqual(
+      expect.objectContaining({ actYear: "2026", actSemester: "2" }),
+    );
+  });
+
   it("derives the stored title from a valid activity semester", () => {
     const form = emptyRecruitmentForm();
     form.interview.enabled = false;
@@ -269,6 +270,23 @@ describe("interview settings in the recruitment form", () => {
     expect(validateInterviewForm(form.interview)).toBe(
       "면접 시간의 시작 시각은 종료 시각보다 앞서야 합니다.",
     );
+  });
+
+  it("rejects interview hours outside 9 AM to 10 PM", () => {
+    const form = validForm();
+    form.interview.startHour = "8";
+    expect(validateInterviewForm(form.interview)).toBe(
+      "면접 시간은 오전 9시부터 오후 10시 사이로 설정해주세요.",
+    );
+
+    form.interview.startHour = "9";
+    form.interview.endHour = "23";
+    expect(validateInterviewForm(form.interview)).toBe(
+      "면접 시간은 오전 9시부터 오후 10시 사이로 설정해주세요.",
+    );
+
+    form.interview.endHour = "22";
+    expect(validateInterviewForm(form.interview)).toBeNull();
   });
 
   it("skips interview validation when interview times are not collected", () => {

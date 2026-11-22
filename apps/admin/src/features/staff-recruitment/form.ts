@@ -1,6 +1,7 @@
 import type { StaffInterviewPlan, StaffInterviewPlanSaveRequest, StaffRecruitmentRound, StaffRecruitmentCreateRequest, StaffRecruitmentQuestionType } from "@core/types/staff-recruitment";
 import { staffRecruitmentStorageTitle } from "@core/staff-recruitment";
 import { datesInRange } from "@core/time-slot";
+import type { Semester } from "@core/api/semester";
 
 /** 한 칸(= 면접 한 번)의 길이로 고를 수 있는 값(분). 서버가 받는 값과 같다. */
 export const INTERVIEW_SLOT_MINUTE_OPTIONS = ["10", "15", "20", "30", "60"] as const;
@@ -8,6 +9,8 @@ export type InterviewSlotMinutes = (typeof INTERVIEW_SLOT_MINUTE_OPTIONS)[number
 
 /** 후보 날짜가 너무 많으면 지원자가 고르기 어렵다. 서버 제한과 같다. */
 export const MAX_INTERVIEW_DAYS = 14;
+export const MIN_INTERVIEW_HOUR = 9;
+export const MAX_INTERVIEW_HOUR = 22;
 
 const INTERVIEW_GUIDE = "면접 가능 시간을 표시해주세요.";
 
@@ -56,12 +59,19 @@ export function emptyInterviewForm(): InterviewFormState {
   };
 }
 
-export function emptyRecruitmentForm(): StaffRecruitmentFormState {
+export function emptyRecruitmentForm(
+  currentSemester?: Pick<Semester, "act_year" | "act_semester">,
+): StaffRecruitmentFormState {
+  const now = new Date();
+  const currentYear = currentSemester?.act_year ?? now.getFullYear();
+  const currentTerm = currentSemester?.act_semester ?? (now.getMonth() < 7 ? 1 : 2);
+  const nextYear = currentYear + (currentTerm === 2 ? 1 : 0);
+  const nextSemester = currentTerm === 2 ? "1" : "2";
   return {
     summary: "",
     description: "",
-    actYear: String(new Date().getFullYear()),
-    actSemester: "1",
+    actYear: String(nextYear),
+    actSemester: nextSemester,
     startsAt: "",
     endsAt: "",
     departments: [{ name: "", description: "" }],
@@ -185,10 +195,12 @@ export function validateInterviewForm(
   if (
     !Number.isInteger(startHour) ||
     !Number.isInteger(endHour) ||
-    startHour < 0 ||
-    endHour > 24 ||
-    startHour >= endHour
+    startHour < MIN_INTERVIEW_HOUR ||
+    endHour > MAX_INTERVIEW_HOUR
   ) {
+    return "면접 시간은 오전 9시부터 오후 10시 사이로 설정해주세요.";
+  }
+  if (startHour >= endHour) {
     return "면접 시간의 시작 시각은 종료 시각보다 앞서야 합니다.";
   }
   return null;

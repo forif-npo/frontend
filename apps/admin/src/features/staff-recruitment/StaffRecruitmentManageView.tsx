@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { AdminStaffRecruitmentRound, StaffInterviewPlan } from "@core/types/staff-recruitment";
+import type { Semester } from "@core/api/semester";
 import { formatStaffRecruitmentTitle, staffRecruitmentStorageTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { changeStaffRecruitmentStatus, createStaffRecruitment, deleteStaffInterviewPlan, getStaffInterviewPlan, getStaffRecruitments, saveStaffInterviewPlan, updateStaffRecruitment } from "./api";
@@ -25,7 +26,7 @@ function formatRecruitmentDate(value?: string | null) {
   return value ? value.slice(0, 10).replaceAll("-", ". ") : "-";
 }
 
-export function StaffRecruitmentManageView() {
+export function StaffRecruitmentManageView({ currentSemester }: { currentSemester: Semester }) {
   const [items, setItems] = useState<AdminStaffRecruitmentRound[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -273,6 +274,7 @@ export function StaffRecruitmentManageView() {
 
       <StaffRecruitmentFormDialog
         open={dialogOpen}
+        currentSemester={currentSemester}
         recruitment={editTarget}
         interviewPlan={editPlan}
         submitting={submitting}

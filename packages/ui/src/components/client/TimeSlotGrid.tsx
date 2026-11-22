@@ -169,7 +169,7 @@ export function TimeSlotGrid({
       </div>
 
       <div
-        className={cn("mx-auto mt-2 flex min-h-max gap-1.5 overflow-x-auto pb-1 sm:gap-2", gridClassName)}
+        className={cn("mx-auto mt-2 flex shrink-0 gap-1.5 overflow-x-auto pb-1 sm:gap-2", gridClassName)}
         // 드래그 중 텍스트와 이미지가 끌려가지 않도록 한다.
         onDragStart={(event) => event.preventDefault()}
         role="group"

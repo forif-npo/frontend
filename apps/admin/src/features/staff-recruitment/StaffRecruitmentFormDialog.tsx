@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { AdminStaffRecruitmentRound, StaffInterviewPlan } from "@core/types/staff-recruitment";
+import type { Semester } from "@core/api/semester";
 import { emptyRecruitmentForm, recruitmentToForm, type StaffRecruitmentFormState, validateRecruitmentForm } from "./form";
 import { StaffInterviewSettingsFields } from "./StaffInterviewSettingsFields";
 
@@ -16,6 +17,7 @@ interface Props {
   recruitment: AdminStaffRecruitmentRound | null;
   /** 수정할 회차의 면접 일정. 새 모집이거나 일정이 없으면 null이다. */
   interviewPlan: StaffInterviewPlan | null;
+  currentSemester: Semester;
   submitting: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (form: StaffRecruitmentFormState) => void;
@@ -25,12 +27,14 @@ export function StaffRecruitmentFormDialog({
   open,
   recruitment,
   interviewPlan,
+  currentSemester,
   submitting,
   onOpenChange,
   onSubmit,
 }: Props) {
-  const [form, setForm] =
-    useState<StaffRecruitmentFormState>(emptyRecruitmentForm);
+  const [form, setForm] = useState<StaffRecruitmentFormState>(() =>
+    emptyRecruitmentForm(currentSemester),
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,10 +42,10 @@ export function StaffRecruitmentFormDialog({
     setForm(
       recruitment
         ? recruitmentToForm(recruitment, interviewPlan)
-        : emptyRecruitmentForm(),
+        : emptyRecruitmentForm(currentSemester),
     );
     setError(null);
-  }, [open, recruitment, interviewPlan]);
+  }, [open, recruitment, interviewPlan, currentSemester]);
 
   const submit = () => {
     const message = validateRecruitmentForm(form);
