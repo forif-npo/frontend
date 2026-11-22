@@ -273,15 +273,19 @@ export function MyStaffApplicationView({
           {error.message}
         </p>
       )}
-      {applicationOpen && (
-        <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-end">
+        {applicationOpen ? (
           <Link href={`/club/recruit/${recruitmentId}/application/edit`}>
             <Button variant="primary" size="large">
               지원서 관리
             </Button>
           </Link>
-        </div>
-      )}
+        ) : (
+          <Button variant="primary" size="large" disabled>
+            지원서 관리
+          </Button>
+        )}
+      </div>
     </Container>
   );
 }
