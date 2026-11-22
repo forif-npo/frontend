@@ -82,6 +82,7 @@ export function StaffRecruitmentFormDialog({
           <Field label="안내문" id="recruitment-description">
             <Textarea
               id="recruitment-description"
+              aria-describedby="recruitment-description-hint"
               rows={6}
               value={form.description}
               onChange={(event) =>
@@ -91,6 +92,9 @@ export function StaffRecruitmentFormDialog({
                 }))
               }
             />
+            <p id="recruitment-description-hint" className="text-muted-foreground text-xs">
+              마크다운 문법을 사용할 수 있습니다.
+            </p>
           </Field>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
