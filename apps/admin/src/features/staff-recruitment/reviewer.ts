@@ -1,4 +1,15 @@
-import type { StaffReviewerCandidate, StaffReviewerStatus } from "@core/types/staff-recruitment";
+import type { StaffInterviewPlan, StaffReviewerCandidate, StaffReviewerStatus } from "@core/types/staff-recruitment";
+
+export function defaultReviewerExpiryDate(
+  interviewPlan: Pick<StaffInterviewPlan, "dates"> | null,
+  recruitmentEndsAt?: string | null,
+): string {
+  const lastInterviewDate = interviewPlan?.dates.reduce(
+    (latest, date) => (date > latest ? date : latest),
+    "",
+  );
+  return lastInterviewDate || recruitmentEndsAt?.slice(0, 10) || "";
+}
 
 export const REVIEWER_STATUS_LABELS: Record<StaffReviewerStatus, string> = {
   ACTIVE: "열람 중",

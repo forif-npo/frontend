@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { HTTPError } from "ky";
 import { ArrowLeft, MoreVertical, ShieldAlert, UserPlus, Users } from "lucide-react";
-import type { AdminStaffRecruitmentRound, StaffRecruitmentReviewer, StaffReviewerCandidate } from "@core/types/staff-recruitment";
+import type { AdminStaffRecruitmentRound, StaffInterviewPlan, StaffRecruitmentReviewer, StaffReviewerCandidate } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { PageHeader } from "@/components/page-header";
@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getStaffReviewerCandidates, getStaffRecruitments, getStaffReviewers, grantStaffReviewer, revokeStaffReviewer } from "./api";
-import { filterReviewerCandidates, REVIEWER_STATUS_LABELS, toReviewerExpiry } from "./reviewer";
+import { getStaffInterviewPlan, getStaffReviewerCandidates, getStaffRecruitments, getStaffReviewers, grantStaffReviewer, revokeStaffReviewer } from "./api";
+import { defaultReviewerExpiryDate, filterReviewerCandidates, REVIEWER_STATUS_LABELS, toReviewerExpiry } from "./reviewer";
 import { toast } from "@/components/ui/Toast";
 
 function isForbidden(error: unknown) {
@@ -65,6 +65,7 @@ export function StaffReviewerManageView({
   recruitmentId: number;
 }) {
   const [round, setRound] = useState<AdminStaffRecruitmentRound | null>(null);
+  const [interviewPlan, setInterviewPlan] = useState<StaffInterviewPlan | null>(null);
   const [candidates, setCandidates] = useState<StaffReviewerCandidate[]>([]);
   const [reviewers, setReviewers] = useState<StaffRecruitmentReviewer[]>([]);
   const [query, setQuery] = useState("");
@@ -81,16 +82,21 @@ export function StaffReviewerManageView({
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [rounds, nextCandidates, nextReviewers] = await Promise.all([
+      const [rounds, nextCandidates, nextReviewers, nextInterviewPlan] = await Promise.all([
         getStaffRecruitments(),
         getStaffReviewerCandidates(recruitmentId),
         getStaffReviewers(recruitmentId),
+        getStaffInterviewPlan(recruitmentId).catch(() => {
+          toast.error("면접 일정을 불러오지 못해 모집 종료일을 기본값으로 사용합니다.");
+          return null;
+        }),
       ]);
       setRound(
         rounds.find((item) => item.recruitment_id === recruitmentId) ?? null,
       );
       setCandidates(nextCandidates);
       setReviewers(nextReviewers);
+      setInterviewPlan(nextInterviewPlan);
       setAccessDenied(false);
     } catch (error) {
       setCandidates([]);
@@ -113,7 +119,7 @@ export function StaffReviewerManageView({
 
   const openGrantDialog = (candidate: StaffReviewerCandidate) => {
     setSelectedCandidate(candidate);
-    setExpiresAt(round?.ends_at?.slice(0, 10) ?? "");
+    setExpiresAt(defaultReviewerExpiryDate(interviewPlan, round?.ends_at));
     setExpiryError(null);
   };
 
