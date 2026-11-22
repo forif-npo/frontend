@@ -87,7 +87,7 @@ export function AppSidebar() {
   const { data, status } = useSession();
   const { isMobile, setOpenMobile } = useSidebar();
   const isPresidentTeam = ["회장", "부회장"].includes(
-    data?.user?.affiliation ?? "",
+    data?.user?.authorityAffiliation ?? "",
   );
 
   const closeMobileSidebarOnNavigation = (

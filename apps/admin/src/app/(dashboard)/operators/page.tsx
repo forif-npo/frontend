@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { PageState } from "@ui/components/server";
-import { getCurrentSemester } from "@/features/semester/api";
+import { getCurrentSemester, getSemesters } from "@/features/semester/api";
 import { fetchOperators } from "./api";
 import { OperatorsView } from "./operators-view";
 import { OperatorSemesterLabel } from "./types";
@@ -23,10 +23,18 @@ export default async function Page({ searchParams }: PageProps) {
   const parsedPage = params.page ? parseInt(params.page, 10) : 0;
   const page = Number.isNaN(parsedPage) ? 0 : Math.max(parsedPage, 0);
 
-  const [session, currentSemester] = await Promise.all([
+  const [session, currentSemester, semesters] = await Promise.all([
     auth(),
     getCurrentSemester(),
+    getSemesters(),
   ]);
+  const semesterOptions = Array.from(
+    new Set([
+      "전체",
+      ...semesters.slice(0, 8).map((semester) => semester.label),
+      currentSemester.label,
+    ]),
+  );
   const activeSemester =
     (params.semester as OperatorSemesterLabel) ||
     (currentSemester.label as OperatorSemesterLabel);
@@ -43,7 +51,7 @@ export default async function Page({ searchParams }: PageProps) {
     );
   }
 
-  const affiliation = session?.user?.affiliation ?? null;
+  const affiliation = session?.user?.authorityAffiliation ?? null;
   const currentUserId = Number(session?.user?.id ?? 0);
   const canManageOperators = Boolean(
     affiliation && PRESIDENT_TEAM.includes(affiliation),
@@ -63,6 +71,7 @@ export default async function Page({ searchParams }: PageProps) {
       <OperatorsView
         initialData={operatorsData.content}
         currentSemester={activeSemester}
+        semesterOptions={semesterOptions}
         totalElements={operatorsData.totalElements}
         currentPage={operatorsData.currentPage}
         totalPages={operatorsData.totalPages}
@@ -70,6 +79,7 @@ export default async function Page({ searchParams }: PageProps) {
         initialSearch={search ?? ""}
         initialSorting={sorting}
         canManageOperators={canManageOperators}
+        isIncumbentPresident={session?.user?.affiliation === "회장"}
         currentUserId={currentUserId}
       />
     );
