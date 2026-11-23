@@ -1,6 +1,7 @@
 import { apiClient } from "@core/utils/api-client";
 import type { ApiResponse } from "@core/types/api";
 import { getCurrentSemester } from "@core/api/semester";
+import { normalizeClubDepartment } from "@/lib/club-department";
 
 interface ForifTeamItem {
   clubDepartment?: string;
@@ -65,7 +66,7 @@ export async function getCurrentTeamNames(): Promise<string[]> {
     new Set(
       (response.data ?? [])
         .map((item) => item.club_department ?? item.clubDepartment ?? "")
-        .map((team) => team.trim())
+        .map(normalizeClubDepartment)
         .filter(Boolean),
     ),
   ).sort((a, b) => a.localeCompare(b, "ko"));

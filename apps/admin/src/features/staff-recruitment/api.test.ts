@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-
 jest.mock("@core/utils/api-client", () => ({
   apiClient: {
     get: jest.fn(),
@@ -9,11 +8,11 @@ jest.mock("@core/utils/api-client", () => ({
     delete: jest.fn(),
   },
 }));
-
 import { apiClient } from "@core/utils/api-client";
 import {
   changeStaffRecruitmentStatus,
   deleteStaffInterviewPlan,
+  finalizeStaffInterviewResults,
   getStaffApplicationDetail,
   getPublicStaffInterviewPlan,
   getStaffInterviewPlan,
@@ -53,6 +52,16 @@ describe("staff recruitment admin api", () => {
     mockedPatch.mockReset();
     mockedPut.mockReset();
     mockedDelete.mockReset();
+  });
+
+  it("confirms interview results before staff registration", async () => {
+    const board = { slot_minutes: 30, cards: [], results_finalized: true };
+    mockedPost.mockReturnValue(response(board));
+
+    await expect(finalizeStaffInterviewResults(12)).resolves.toEqual(board);
+    expect(apiClient.post).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/12/interviews/finalize-results",
+    );
   });
 
   it("requests a stable admin list page", async () => {
@@ -199,7 +208,9 @@ describe("staff recruitment admin api", () => {
   });
 
   it("reads the interview plan of a round without caching", async () => {
-    mockedGet.mockReturnValue(response({ interview_plan_id: 3, slot_minutes: 30 }));
+    mockedGet.mockReturnValue(
+      response({ interview_plan_id: 3, slot_minutes: 30 }),
+    );
 
     await expect(getStaffInterviewPlan(12)).resolves.toEqual({
       interview_plan_id: 3,
@@ -214,7 +225,9 @@ describe("staff recruitment admin api", () => {
   it("reads the public interview plan for an application reviewer", async () => {
     mockedGet.mockReturnValue(response({ slot_minutes: 30 }));
 
-    await expect(getPublicStaffInterviewPlan(12)).resolves.toEqual({ slot_minutes: 30 });
+    await expect(getPublicStaffInterviewPlan(12)).resolves.toEqual({
+      slot_minutes: 30,
+    });
     expect(apiClient.get).toHaveBeenCalledWith(
       "api/v1/staff-recruitments/12/interview-plan",
       { cache: "no-cache" },

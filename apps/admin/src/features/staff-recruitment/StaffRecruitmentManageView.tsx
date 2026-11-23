@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { CalendarClock, CalendarRange, Pencil, Plus, UserRoundCog } from "lucide-react";
+import { CalendarClock, CalendarRange, ClipboardList, Pencil, Plus, UserRoundCog } from "lucide-react";
 import { toast } from "@/components/ui/Toast";
 import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageHeader } from "@/components/page-header";
@@ -224,7 +224,15 @@ export function StaffRecruitmentManageView({ currentSemester }: { currentSemeste
                     <Button asChild>
                       <Link href={`/staff-recruitments/${item.recruitment_id}/interview`}>
                         <CalendarClock className="mr-1 h-4 w-4" />
-                        면접
+                        면접 시간 지정
+                      </Link>
+                    </Button>
+                  )}
+                  {item.publication_status === "CLOSED" && (
+                    <Button asChild>
+                      <Link href={`/staff-recruitments/${item.recruitment_id}/interviews`}>
+                        <ClipboardList className="mr-1 h-4 w-4" />
+                        면접 운영
                       </Link>
                     </Button>
                   )}

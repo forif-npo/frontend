@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/Toast";
 import { StaffApplicationAnswerList } from "./StaffApplicationAnswerList";
+import { StaffApplicationDecision } from "./StaffApplicationDecision";
 import { StaffApplicantInfoTable } from "./StaffApplicantInfoTable";
 import { getPublicStaffInterviewPlan, getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
 
@@ -381,7 +382,12 @@ export function StaffApplicationsView({
                   </section>
                 )}
               </div>
-              <DialogFooter>
+              <DialogFooter className="gap-3 sm:items-center">
+                <StaffApplicationDecision
+                  recruitmentId={detail.recruitment_id}
+                  applicationId={detail.application_id}
+                  canDecide={selectedRound?.publication_status === "CLOSED"}
+                />
                 <Button
                   type="button"
                   variant="outline"

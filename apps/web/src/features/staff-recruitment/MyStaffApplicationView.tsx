@@ -4,6 +4,7 @@ import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
 import { formatStaffInterviewAvailability, formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { formatPhoneNumber } from "@core/utils/phone-number";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
+import { formatSlotDate, formatSlotRange } from "@core/time-slot";
 import { Button } from "@ui/components/client";
 import { InlineErrorState, InlineLoadingState, Link, PageState } from "@ui/components/server";
 import { getMyStaffApplication, getStaffInterviewPlan, getStaffRecruitment } from "./api";
@@ -147,6 +148,16 @@ export function MyStaffApplicationView({
     application.interview_slots,
     interviewSlotMinutes,
   );
+  const assignedSlot = application.interview?.assigned_slot;
+  const assignedDate = assignedSlot ? formatSlotDate(assignedSlot.date) : null;
+  const assignedTime = assignedSlot && assignedDate && application.interview?.slot_minutes
+    ? `${assignedDate.label}(${assignedDate.weekday}) ${formatSlotRange(assignedSlot.start_minute, application.interview.slot_minutes)}`
+    : "-";
+  const interviewResult = application.interview?.status === "PASSED"
+    ? "합격"
+    : application.interview?.status === "FAILED"
+      ? "불합격"
+      : "-";
 
   const Container = embedded ? "div" : "main";
   return (
@@ -311,6 +322,17 @@ export function MyStaffApplicationView({
           </ul>
         </section>
       )}
+
+      <dl className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+        <div className="flex items-center gap-2">
+          <dt className="text-text-subtle">면접 배정시각</dt>
+          <dd className="text-text-basic">{assignedTime}</dd>
+        </div>
+        <div className="flex items-center gap-2">
+          <dt className="text-text-subtle">면접 결과</dt>
+          <dd className="text-text-basic">{interviewResult}</dd>
+        </div>
+      </dl>
 
       {error && (
         <p role="alert" className="text-text-danger mt-4 text-sm">
