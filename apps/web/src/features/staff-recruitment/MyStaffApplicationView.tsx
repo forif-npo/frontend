@@ -1,21 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
-import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
-import { formatSlotDate, formatSlotTime } from "@core/time-slot";
+import { formatStaffInterviewAvailability, formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
-import {
-  InlineErrorState,
-  InlineLoadingState,
-  Link,
-  PageState,
-} from "@ui/components/server";
-import {
-  getMyStaffApplication,
-  getStaffInterviewPlan,
-  getStaffRecruitment,
-} from "./api";
+import { InlineErrorState, InlineLoadingState, Link, PageState } from "@ui/components/server";
+import { getMyStaffApplication, getStaffInterviewPlan, getStaffRecruitment } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
 
 function formatDateTime(value: string) {
@@ -23,43 +14,6 @@ function formatDateTime(value: string) {
     dateStyle: "long",
     timeStyle: "short",
   }).format(new Date(value));
-}
-
-function formatInterviewDate(value: string) {
-  const date = new Date(`${value}T12:00:00`);
-  const label = new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
-  return `${label}(${formatSlotDate(value).weekday})`;
-}
-
-function formatInterviewTimes(minutes: number[], slotMinutes: number | null) {
-  if (!slotMinutes) return minutes.map(formatSlotTime).join(", ");
-
-  const ranges: string[] = [];
-  let start = minutes[0];
-  let last = start;
-  for (const minute of minutes.slice(1)) {
-    if (minute === last + slotMinutes) {
-      last = minute;
-      continue;
-    }
-    ranges.push(
-      start === last
-        ? formatSlotTime(start)
-        : `${formatSlotTime(start)} ~ ${formatSlotTime(last + slotMinutes)}`,
-    );
-    start = minute;
-    last = minute;
-  }
-  ranges.push(
-    start === last
-      ? formatSlotTime(start)
-      : `${formatSlotTime(start)} ~ ${formatSlotTime(last + slotMinutes)}`,
-  );
-  return ranges.join(", ");
 }
 
 export function MyStaffApplicationView({
@@ -189,18 +143,10 @@ export function MyStaffApplicationView({
     );
   }
 
-  const interviewSlotsByDate = new Map<string, number[]>();
-  [...application.interview_slots]
-    .sort(
-      (first, second) =>
-        first.date.localeCompare(second.date) ||
-        first.start_minute - second.start_minute,
-    )
-    .forEach(({ date, start_minute }) => {
-      const minutes = interviewSlotsByDate.get(date) ?? [];
-      minutes.push(start_minute);
-      interviewSlotsByDate.set(date, minutes);
-    });
+  const interviewAvailability = formatStaffInterviewAvailability(
+    application.interview_slots,
+    interviewSlotMinutes,
+  );
 
   const Container = embedded ? "div" : "main";
   return (
@@ -257,7 +203,7 @@ export function MyStaffApplicationView({
           <div>
             <dt className="text-text-subtle text-sm">연락처</dt>
             <dd className="text-text-basic font-semibold">
-              {application.applicant_phone_num ?? "-"}
+              {formatPhoneNumber(application.applicant_phone_num) || "-"}
             </dd>
           </div>
         </dl>
@@ -346,19 +292,19 @@ export function MyStaffApplicationView({
         </ol>
       </section>
 
-      {interviewSlotsByDate.size > 0 && (
+      {interviewAvailability.length > 0 && (
         <section className="mt-8">
           <h2 className="text-text-bolder text-body-l mb-4 font-bold">
             면접 가능 시각
           </h2>
           <ul className="rounded-3 border-border-gray-light bg-surface-white space-y-5 border p-5">
-            {Array.from(interviewSlotsByDate, ([date, minutes]) => (
+            {interviewAvailability.map(({ date, dateLabel, timeLabel }) => (
               <li key={date}>
                 <h3 className="text-text-bolder font-semibold">
-                  {formatInterviewDate(date)}
+                  {dateLabel}
                 </h3>
                 <p className="text-text-basic mt-2 text-sm leading-6">
-                  {formatInterviewTimes(minutes, interviewSlotMinutes)}
+                  {timeLabel}
                 </p>
               </li>
             ))}

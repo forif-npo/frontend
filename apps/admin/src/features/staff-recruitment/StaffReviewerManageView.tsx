@@ -182,7 +182,7 @@ export function StaffReviewerManageView({
         title="지원서 열람자 관리"
         description={
           round
-            ? `“${formatStaffRecruitmentTitle(round.act_year, round.act_semester)}” 회차의 지원서 열람 권한을 관리합니다.`
+            ? `${formatStaffRecruitmentTitle(round.act_year, round.act_semester)} 회차의 지원서 열람 권한을 관리합니다.`
             : "이 회차의 지원서 열람 권한을 관리합니다."
         }
         leadingAction={

@@ -141,6 +141,64 @@ export interface StaffInterviewSchedule {
   confirmed_at: string | null;
 }
 
+/** 면접 질문. department_id가 null이면 모든 면접자에게 묻는 공통 질문이다. */
+export interface StaffInterviewQuestion {
+  question_id: number;
+  department_id: number | null;
+  department_name: string | null;
+  content: string;
+  display_order: number;
+}
+
+/** 면접 진행 상태. 보드의 네 칸과 같다. */
+export type StaffInterviewStatus = "BEFORE" | "DONE" | "PASSED" | "FAILED";
+
+export interface StaffInterviewCard {
+  application_id: number;
+  applicant_name: string;
+  assigned_slot: StaffInterviewSlot | null;
+  first_department: string | null;
+  second_department: string | null;
+  status: StaffInterviewStatus;
+}
+
+/** 면접 관리 보드. 면접 길이는 slot_minutes이고, 면접 일정이 없는 회차면 null이다. */
+export interface StaffInterviewBoard {
+  slot_minutes: number | null;
+  cards: StaffInterviewCard[];
+}
+
+export interface StaffInterviewQuestionAnswer {
+  question_id: number;
+  content: string;
+  answer: string | null;
+}
+
+export interface StaffInterviewDepartmentQuestions {
+  department_id: number;
+  department_name: string;
+  questions: StaffInterviewQuestionAnswer[];
+}
+
+export interface StaffInterviewExtraQuestion {
+  extra_question_id: number;
+  content: string;
+  answer: string | null;
+}
+
+/** 면접자 한 명의 기록지. 지원서 내용은 지원서 상세 API로 따로 읽는다. */
+export interface StaffInterviewSheet {
+  application_id: number;
+  applicant_name: string;
+  status: StaffInterviewStatus;
+  assigned_slot: StaffInterviewSlot | null;
+  slot_minutes: number | null;
+  common_questions: StaffInterviewQuestionAnswer[];
+  first_department: StaffInterviewDepartmentQuestions | null;
+  second_department: StaffInterviewDepartmentQuestions | null;
+  extra_questions: StaffInterviewExtraQuestion[];
+}
+
 export interface StaffInterviewPlanSaveRequest {
   dates: string[];
   start_hour: number;
