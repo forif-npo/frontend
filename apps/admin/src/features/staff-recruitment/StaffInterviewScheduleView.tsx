@@ -219,7 +219,6 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
                             variant="outline"
                             size="sm"
                             disabled={busy || elsewhere}
-                            title={elsewhere ? `이미 ${formatSlot(candidate.assigned_slot!, plan.slot_minutes)}에 배정됨` : undefined}
                             onClick={() =>
                               run(() =>
                                 assignStaffInterview(recruitmentId, candidate.application_id, {
@@ -232,7 +231,6 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
                             {candidate.applicant_name}
                             <span className="text-muted-foreground ml-1 text-xs">
                               {departmentsOf(candidate).first}
-                              {elsewhere ? " · 배정됨" : ""}
                             </span>
                           </Button>
                         );

@@ -301,6 +301,12 @@ export interface StaffApplicationDetail extends StaffApplicationSummary {
   answers: StaffApplicationAnswer[];
   interview_slots: StaffInterviewSlot[];
   can_modify: boolean;
+  /** 본인 지원서 조회에 포함되는 면접 공개 정보. */
+  interview?: {
+    assigned_slot: StaffInterviewSlot | null;
+    slot_minutes: number | null;
+    status: StaffInterviewStatus | null;
+  } | null;
 }
 
 export type StaffReviewerStatus = "ACTIVE" | "REVOKED" | "EXPIRED";
