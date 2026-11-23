@@ -25,6 +25,7 @@ export function StaffInterviewSheetPanel({
   applicationId,
   reloadKey,
   requiredQuestionIds,
+  resultsFinalized,
   onClose,
   onStatusChange,
 }: {
@@ -34,6 +35,7 @@ export function StaffInterviewSheetPanel({
   /** 바뀌면 기록지를 다시 읽는다. 면접 질문을 고쳤을 때 쓴다. */
   reloadKey?: number;
   requiredQuestionIds: ReadonlySet<number>;
+  resultsFinalized: boolean;
   onClose: () => void;
   /** 상태 변경은 보드가 맡는다. 성공하면 바뀐 기록지를 돌려준다. */
   onStatusChange: (applicationId: number, status: StaffInterviewStatus) => Promise<StaffInterviewSheet | null>;
@@ -94,7 +96,7 @@ export function StaffInterviewSheetPanel({
   };
 
   const changeStatus = async (status: StaffInterviewStatus) => {
-    if (!sheet || busy) return;
+    if (!sheet || resultsFinalized || busy) return;
     const target = sheet.application_id;
     setBusy(true);
     try {
@@ -116,7 +118,11 @@ export function StaffInterviewSheetPanel({
             <SheetHeader className="border-b p-6">
               <div className="flex items-center gap-2">
                 <SheetTitle className="text-xl">면접 기록지</SheetTitle>
-                <Badge variant="outline">{interviewStatusTitle(sheet.status)}</Badge>
+                <Badge variant="outline">
+                  {interviewStatusTitle(sheet.status)}
+                  {sheet.passed_department &&
+                    ` · ${formatStaffRecruitmentDepartment(sheet.passed_department.department_name)}`}
+                </Badge>
               </div>
               <SheetDescription>지원자 정보와 면접 기록을 확인합니다.</SheetDescription>
             </SheetHeader>
@@ -195,22 +201,22 @@ export function StaffInterviewSheetPanel({
 
             <SheetFooter className="flex-row justify-end gap-2 border-t p-4">
               {sheet.status === "BEFORE" && (
-                <Button disabled={busy} onClick={() => void changeStatus("DONE")}>
+                <Button disabled={busy || resultsFinalized} onClick={() => void changeStatus("DONE")}>
                   면접 완료
                 </Button>
               )}
               {sheet.status === "DONE" && (
                 <>
-                  <Button variant="outline" disabled={busy} onClick={() => void changeStatus("FAILED")}>
+                  <Button variant="outline" disabled={busy || resultsFinalized} onClick={() => void changeStatus("FAILED")}>
                     불합격
                   </Button>
-                  <Button disabled={busy} onClick={() => void changeStatus("PASSED")}>
+                  <Button disabled={busy || resultsFinalized} onClick={() => void changeStatus("PASSED")}>
                     합격
                   </Button>
                 </>
               )}
               {(sheet.status === "PASSED" || sheet.status === "FAILED") && (
-                <Button variant="outline" disabled={busy} onClick={() => void changeStatus("DONE")}>
+                <Button variant="outline" disabled={busy || resultsFinalized} onClick={() => void changeStatus("DONE")}>
                   면접 완료로 되돌리기
                 </Button>
               )}
