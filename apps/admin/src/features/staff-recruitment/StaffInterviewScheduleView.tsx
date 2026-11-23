@@ -295,32 +295,33 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
       </section>
 
       <footer className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
-        {schedule.confirmed_at && (
-          <Link
-            href={`/staff-recruitments/${recruitmentId}/interviews`}
-            className="text-sm underline underline-offset-2"
-          >
-            면접 관리로 가기
-          </Link>
-        )}
         {unassignedCount > 0 && (
           <p className="text-muted-foreground text-sm">
             면접 시간이 정해지지 않은 지원자가 {unassignedCount}명 있습니다. 확정 후에도 정할 수 있습니다.
           </p>
         )}
-        <Button
-          className="sm:ml-auto"
-          disabled={busy || hostDirty}
-          title={hostDirty ? "회장단 가능 시간을 먼저 저장해 주세요." : undefined}
-          onClick={async () => {
-            // 확정하면 바로 면접 관리로 넘어가 질문을 정하고 면접을 시작한다.
-            if (await run(() => confirmStaffInterviewSchedule(recruitmentId), "면접 일정을 확정했습니다.")) {
-              router.push(`/staff-recruitments/${recruitmentId}/interviews`);
-            }
-          }}
-        >
-          일정 확정하기
-        </Button>
+        <div className="flex justify-end gap-2 sm:ml-auto">
+          <Button
+            disabled={busy || hostDirty}
+            title={hostDirty ? "회장단 가능 시간을 먼저 저장해 주세요." : undefined}
+            onClick={async () => {
+              // 확정하면 바로 면접 관리로 넘어가 질문을 정하고 면접을 시작한다.
+              if (await run(() => confirmStaffInterviewSchedule(recruitmentId), "면접 일정을 확정했습니다.")) {
+                router.push(`/staff-recruitments/${recruitmentId}/interviews`);
+              }
+            }}
+          >
+            일정 확정하기
+          </Button>
+          <Button
+            variant="outline"
+            disabled={!schedule.confirmed_at || busy}
+            title={!schedule.confirmed_at ? "면접 일정을 확정한 뒤 이용할 수 있습니다." : undefined}
+            onClick={() => router.push(`/staff-recruitments/${recruitmentId}/interviews`)}
+          >
+            면접 관리
+          </Button>
+        </div>
       </footer>
     </div>
   );
