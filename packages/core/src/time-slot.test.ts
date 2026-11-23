@@ -1,10 +1,12 @@
 import { describe, expect, it } from "@jest/globals";
 import {
+  clockTimeToMinute,
   datesInRange,
   formatSlotDate,
   formatSlotRange,
   formatSlotTime,
   isHourStart,
+  minuteToClockTime,
   parseTimeSlotKey,
   timeSlotKey,
   timeSlotStarts,
@@ -175,5 +177,32 @@ describe("formatSlotRange", () => {
 
   it("오전에서 오후로 넘어가면 끝에도 오후를 붙인다", () => {
     expect(formatSlotRange(11 * 60 + 30, 30)).toBe("오전 11:30 - 오후 12:00");
+  });
+});
+
+describe("clockTimeToMinute", () => {
+  it("HH:MM을 자정부터의 분으로 바꾼다", () => {
+    expect(clockTimeToMinute("00:00")).toBe(0);
+    expect(clockTimeToMinute("11:30")).toBe(690);
+    expect(clockTimeToMinute("23:59")).toBe(1439);
+  });
+
+  it("빈 값이나 범위를 벗어난 값은 null이다", () => {
+    expect(clockTimeToMinute("")).toBeNull();
+    expect(clockTimeToMinute("9:30")).toBeNull();
+    expect(clockTimeToMinute("24:00")).toBeNull();
+    expect(clockTimeToMinute("12:60")).toBeNull();
+  });
+});
+
+describe("minuteToClockTime", () => {
+  it("분을 두 자리 HH:MM으로 바꾼다", () => {
+    expect(minuteToClockTime(0)).toBe("00:00");
+    expect(minuteToClockTime(570)).toBe("09:30");
+    expect(minuteToClockTime(1290)).toBe("21:30");
+  });
+
+  it("clockTimeToMinute와 왕복한다", () => {
+    expect(clockTimeToMinute(minuteToClockTime(735))).toBe(735);
   });
 });
