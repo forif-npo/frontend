@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import type { StaffApplicationDetail, StaffInterviewQuestionAnswer, StaffInterviewSheet, StaffInterviewStatus } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
@@ -167,6 +167,12 @@ export function StaffInterviewSheetPanel({
                 onAdd={(content) =>
                   save(() => addStaffInterviewExtraQuestion(recruitmentId, sheet.application_id, content))
                 }
+                onUpdateContent={(extraId, content) =>
+                  save(
+                    () => updateStaffInterviewExtraQuestion(recruitmentId, sheet.application_id, extraId, { content }),
+                    "기타 질문을 고쳤습니다.",
+                  )
+                }
                 onSaveAnswer={(extraId, answer) =>
                   save(() =>
                     updateStaffInterviewExtraQuestion(recruitmentId, sheet.application_id, extraId, { answer }),
@@ -265,15 +271,19 @@ function QuestionAnswerSection({
 function ExtraQuestionSection({
   sheet,
   onAdd,
+  onUpdateContent,
   onSaveAnswer,
   onDelete,
 }: {
   sheet: StaffInterviewSheet;
   onAdd: (content: string) => Promise<boolean>;
+  onUpdateContent: (extraQuestionId: number, content: string) => Promise<boolean>;
   onSaveAnswer: (extraQuestionId: number, answer: string) => Promise<boolean>;
   onDelete: (extraQuestionId: number) => Promise<boolean>;
 }) {
   const [draft, setDraft] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
 
   const add = async () => {
     if (!draft.trim()) return;
@@ -293,17 +303,55 @@ function ExtraQuestionSection({
           {sheet.extra_questions.map((extra, index) => (
             <li key={extra.extra_question_id} className="space-y-2">
               <div className="flex items-start gap-2">
-                <h4 className="flex-1 pt-2 font-semibold">
-                  {index + 1}. {extra.content}
-                </h4>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  aria-label={`기타 질문 ${index + 1}번 지우기`}
-                  onClick={() => void onDelete(extra.extra_question_id)}
-                >
-                  <Trash2 className="size-4" />
-                </Button>
+                {editingId === extra.extra_question_id ? (
+                  <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                    <span className="font-semibold">{index + 1}.</span>
+                    <Input
+                      className="min-w-40 flex-1"
+                      value={editText}
+                      maxLength={500}
+                      aria-label={`기타 질문 ${index + 1}번 고치기`}
+                      onChange={(event) => setEditText(event.target.value)}
+                    />
+                    <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>
+                      취소
+                    </Button>
+                    <Button
+                      size="sm"
+                      disabled={!editText.trim()}
+                      onClick={async () => {
+                        if (await onUpdateContent(extra.extra_question_id, editText.trim())) setEditingId(null);
+                      }}
+                    >
+                      저장
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <h4 className="flex-1 pt-2 font-semibold">
+                      {index + 1}. {extra.content}
+                    </h4>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label={`기타 질문 ${index + 1}번 고치기`}
+                      onClick={() => {
+                        setEditingId(extra.extra_question_id);
+                        setEditText(extra.content);
+                      }}
+                    >
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label={`기타 질문 ${index + 1}번 지우기`}
+                      onClick={() => void onDelete(extra.extra_question_id)}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </>
+                )}
               </div>
               <AnswerBox
                 label={`기타 질문 ${index + 1}번 답변`}
