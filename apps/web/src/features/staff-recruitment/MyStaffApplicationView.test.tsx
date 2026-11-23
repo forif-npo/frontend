@@ -114,4 +114,51 @@ describe("MyStaffApplicationView", () => {
     expect(section).not.toBeNull();
     expect(within(section!).getByText(/오전 9시, 오전 9:30/)).toBeTruthy();
   });
+
+  it("shows dashes when no interview is assigned or decided", async () => {
+    jest.mocked(getMyStaffApplication).mockResolvedValue({
+      ...application,
+      interview: { assigned_slot: null, slot_minutes: null, status: null },
+    });
+    render(<MyStaffApplicationView recruitmentId={7} submitted={false} embedded />);
+
+    expect((await screen.findByText("면접 배정시각")).nextSibling?.textContent).toBe("-");
+    expect(screen.getByText("면접 결과").nextSibling?.textContent).toBe("-");
+  });
+
+  it("shows the assigned time while the result is pending", async () => {
+    jest.mocked(getMyStaffApplication).mockResolvedValue({
+      ...application,
+      interview: {
+        assigned_slot: { date: "2026-11-26", start_minute: 960 },
+        slot_minutes: 30,
+        status: "BEFORE",
+      },
+    });
+    render(<MyStaffApplicationView recruitmentId={7} submitted={false} embedded />);
+
+    expect((await screen.findByText("면접 배정시각")).nextSibling?.textContent)
+      .toBe("11/26(목) 오후 4:00 - 4:30");
+    expect(screen.getByText("면접 결과").nextSibling?.textContent).toBe("-");
+  });
+
+  const results: Array<["PASSED" | "FAILED", string]> = [
+    ["PASSED", "합격"],
+    ["FAILED", "불합격"],
+  ];
+
+  it.each(results)("shows %s as %s after a result is recorded", async (status, label) => {
+    jest.mocked(getMyStaffApplication).mockResolvedValue({
+      ...application,
+      interview: {
+        assigned_slot: { date: "2026-11-26", start_minute: 960 },
+        slot_minutes: 30,
+        status,
+      },
+    });
+    render(<MyStaffApplicationView recruitmentId={7} submitted={false} embedded />);
+
+    await screen.findByText("면접 결과");
+    expect(screen.getByText("면접 결과").nextSibling?.textContent).toBe(label);
+  });
 });

@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
 import { formatPhoneNumber } from "@core/utils/phone-number";
+import { normalizeClubDepartment } from "@/lib/club-department";
 import type { SortingState } from "@tanstack/react-table";
 import { Download, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -159,13 +160,6 @@ export function OperatorsView({
     if (!editTarget || isSubmitting) return;
     if (
       !isIncumbentPresident &&
-      editForm.department.trim() !== editTarget.department &&
-      (editForm.department.trim() === "SW팀" ||
-        editTarget.department === "SW팀")
-    )
-      return;
-    if (
-      !isIncumbentPresident &&
       editForm.title.trim() !== editTarget.title &&
       (isLeadershipTitle(editTarget.title) ||
         isLeadershipTitle(editForm.title.trim()))
@@ -178,9 +172,9 @@ export function OperatorsView({
     }
     if (
       editForm.department.trim() &&
-      editForm.department.trim() !== editTarget.department
+      normalizeClubDepartment(editForm.department) !== normalizeClubDepartment(editTarget.department)
     ) {
-      body.club_department = editForm.department.trim();
+      body.club_department = normalizeClubDepartment(editForm.department);
     }
     if (editForm.introTag.trim() !== editTarget.introTag) {
       body.intro_tag = editForm.introTag.trim();
@@ -223,11 +217,7 @@ export function OperatorsView({
 
   const handleDeleteOperator = async (operator: Operator) => {
     if (isSubmitting) return;
-    if (
-      !isIncumbentPresident &&
-      (isLeadershipTitle(operator.title) || operator.department === "SW팀")
-    )
-      return;
+    if (!isIncumbentPresident && isLeadershipTitle(operator.title)) return;
     if (
       !(await confirmDialog({
         title: "운영진 이력 삭제",
@@ -261,13 +251,6 @@ export function OperatorsView({
       editForm.title.trim() !== editTarget.title &&
       (isLeadershipTitle(editTarget.title) ||
         isLeadershipTitle(editForm.title.trim())),
-  );
-  const blockedSwTeamChange = Boolean(
-    !isIncumbentPresident &&
-      editTarget &&
-      editForm.department.trim() !== editTarget.department &&
-      (editForm.department.trim() === "SW팀" ||
-        editTarget.department === "SW팀"),
   );
 
   return (
@@ -343,11 +326,7 @@ export function OperatorsView({
                       {canManageOperators && (
                         <DropdownMenuItem
                           className="text-destructive focus:text-destructive"
-                          disabled={
-                            !isIncumbentPresident &&
-                            (isLeadershipTitle(operator.title) ||
-                              operator.department === "SW팀")
-                          }
+                          disabled={!isIncumbentPresident && isLeadershipTitle(operator.title)}
                           onClick={() => handleDeleteOperator(operator)}
                         >
                           운영진 정보 삭제
@@ -414,19 +393,11 @@ export function OperatorsView({
                   id="op-department"
                   placeholder="기획팀"
                   value={editForm.department}
-                  disabled={
-                    !canManageEditTarget ||
-                    (!isIncumbentPresident && editTarget?.department === "SW팀")
-                  }
+                  disabled={!canManageEditTarget}
                   onChange={(e) =>
                     setEditForm((f) => ({ ...f, department: e.target.value }))
                   }
                 />
-                {blockedSwTeamChange && (
-                  <p className="text-muted-foreground text-xs">
-                    SW팀 소속 지정은 현 회장만 할 수 있습니다.
-                  </p>
-                )}
               </div>
             </div>
             <div className="flex flex-col gap-2">
@@ -498,11 +469,7 @@ export function OperatorsView({
             </Button>
             <Button
               onClick={handleUpdateSubmit}
-              disabled={
-                isSubmitting ||
-                blockedLeadershipTitleChange ||
-                blockedSwTeamChange
-              }
+              disabled={isSubmitting || blockedLeadershipTitleChange}
             >
               {isSubmitting ? "저장 중..." : "저장"}
             </Button>

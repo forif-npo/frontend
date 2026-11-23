@@ -153,6 +153,12 @@ export interface StaffInterviewQuestion {
 /** 면접 진행 상태. 보드의 네 칸과 같다. */
 export type StaffInterviewStatus = "BEFORE" | "DONE" | "PASSED" | "FAILED";
 
+/** 합격자에게 배정한 부서. 지원자의 1지망·2지망 중 하나다. */
+export interface StaffInterviewPassedDepartment {
+  department_id: number;
+  department_name: string;
+}
+
 export interface StaffInterviewCard {
   application_id: number;
   applicant_name: string;
@@ -160,12 +166,15 @@ export interface StaffInterviewCard {
   first_department: string | null;
   second_department: string | null;
   status: StaffInterviewStatus;
+  /** 합격이 아니면 null이다. */
+  passed_department: StaffInterviewPassedDepartment | null;
 }
 
 /** 면접 관리 보드. 면접 길이는 slot_minutes이고, 면접 일정이 없는 회차면 null이다. */
 export interface StaffInterviewBoard {
   slot_minutes: number | null;
   cards: StaffInterviewCard[];
+  results_finalized: boolean;
 }
 
 export interface StaffInterviewQuestionAnswer {
@@ -197,6 +206,21 @@ export interface StaffInterviewSheet {
   first_department: StaffInterviewDepartmentQuestions | null;
   second_department: StaffInterviewDepartmentQuestions | null;
   extra_questions: StaffInterviewExtraQuestion[];
+  /** 합격이 아니면 null이다. */
+  passed_department: StaffInterviewPassedDepartment | null;
+  results_finalized: boolean;
+}
+
+/** 합격자 운영진 등록 결과. 이름은 지원서에 적힌 이름이다. */
+export interface StaffRegistrationResult {
+  act_year: number;
+  act_semester: number;
+  /** 이번에 명단에 올린 합격자 */
+  registered: string[];
+  /** 이미 그 학기 명단에 있어 건너뛴 합격자 */
+  already_members: string[];
+  /** 탈퇴해 회원 정보가 없어 올리지 못한 합격자 */
+  withdrawn: string[];
 }
 
 export interface StaffInterviewPlanSaveRequest {
@@ -277,6 +301,12 @@ export interface StaffApplicationDetail extends StaffApplicationSummary {
   answers: StaffApplicationAnswer[];
   interview_slots: StaffInterviewSlot[];
   can_modify: boolean;
+  /** 본인 지원서 조회에 포함되는 면접 공개 정보. */
+  interview?: {
+    assigned_slot: StaffInterviewSlot | null;
+    slot_minutes: number | null;
+    status: StaffInterviewStatus | null;
+  } | null;
 }
 
 export type StaffReviewerStatus = "ACTIVE" | "REVOKED" | "EXPIRED";

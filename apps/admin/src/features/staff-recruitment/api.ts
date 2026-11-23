@@ -11,6 +11,7 @@ import type {
   StaffInterviewSheet,
   StaffInterviewSlot,
   StaffInterviewStatus,
+  StaffRegistrationResult,
   StaffRecruitmentReviewer,
   StaffRecruitmentCreateRequest,
   StaffRecruitmentUpdateRequest,
@@ -161,9 +162,12 @@ export async function assignStaffInterview(
   slot: StaffInterviewSlot,
 ): Promise<StaffInterviewSchedule> {
   const response = await apiClient
-    .put(`${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`, {
-      json: slot,
-    })
+    .put(
+      `${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`,
+      {
+        json: slot,
+      },
+    )
     .json<ApiResponse<StaffInterviewSchedule>>();
   return response.data!;
 }
@@ -173,7 +177,9 @@ export async function unassignStaffInterview(
   applicationId: number,
 ): Promise<StaffInterviewSchedule> {
   const response = await apiClient
-    .delete(`${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`)
+    .delete(
+      `${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`,
+    )
     .json<ApiResponse<StaffInterviewSchedule>>();
   return response.data!;
 }
@@ -233,7 +239,9 @@ export async function deleteStaffInterviewQuestion(
   recruitmentId: number,
   questionId: number,
 ): Promise<void> {
-  await apiClient.delete(`${interviewQuestionPath(recruitmentId)}/${questionId}`);
+  await apiClient.delete(
+    `${interviewQuestionPath(recruitmentId)}/${questionId}`,
+  );
 }
 
 function interviewPath(recruitmentId: number) {
@@ -249,24 +257,40 @@ export async function getStaffInterviewBoard(
   return response.data!;
 }
 
+export async function finalizeStaffInterviewResults(
+  recruitmentId: number,
+): Promise<StaffInterviewBoard> {
+  const response = await apiClient
+    .post(`${interviewPath(recruitmentId)}/finalize-results`)
+    .json<ApiResponse<StaffInterviewBoard>>();
+  return response.data!;
+}
+
 export async function getStaffInterviewSheet(
   recruitmentId: number,
   applicationId: number,
 ): Promise<StaffInterviewSheet> {
   const response = await apiClient
-    .get(`${interviewPath(recruitmentId)}/${applicationId}`, { cache: "no-store" })
+    .get(`${interviewPath(recruitmentId)}/${applicationId}`, {
+      cache: "no-store",
+    })
     .json<ApiResponse<StaffInterviewSheet>>();
   return response.data!;
 }
 
+/**
+ * 합격이면 지원자의 1지망·2지망 중 배정할 모집 부서를 함께 보낸다.
+ * 지망이 하나뿐이면 비워도 서버가 그 부서로 정한다.
+ */
 export async function changeStaffInterviewStatus(
   recruitmentId: number,
   applicationId: number,
   status: StaffInterviewStatus,
+  departmentId: number | null = null,
 ): Promise<StaffInterviewSheet> {
   const response = await apiClient
     .put(`${interviewPath(recruitmentId)}/${applicationId}/status`, {
-      json: { status },
+      json: { status, department_id: departmentId },
     })
     .json<ApiResponse<StaffInterviewSheet>>();
   return response.data!;
@@ -280,9 +304,12 @@ export async function saveStaffInterviewAnswer(
   answer: string,
 ): Promise<StaffInterviewSheet> {
   const response = await apiClient
-    .put(`${interviewPath(recruitmentId)}/${applicationId}/answers/${questionId}`, {
-      json: { answer },
-    })
+    .put(
+      `${interviewPath(recruitmentId)}/${applicationId}/answers/${questionId}`,
+      {
+        json: { answer },
+      },
+    )
     .json<ApiResponse<StaffInterviewSheet>>();
   return response.data!;
 }
@@ -326,6 +353,19 @@ export async function deleteStaffInterviewExtraQuestion(
       `${interviewPath(recruitmentId)}/${applicationId}/extra-questions/${extraQuestionId}`,
     )
     .json<ApiResponse<StaffInterviewSheet>>();
+  return response.data!;
+}
+
+/**
+ * 합격자를 모집 회차의 활동 학기 운영진 명단에 배정 부서로 올린다.
+ * 이미 명단에 있는 사람은 서버가 건너뛰므로 여러 번 불러도 된다.
+ */
+export async function registerPassedApplicantsAsStaff(
+  recruitmentId: number,
+): Promise<StaffRegistrationResult> {
+  const response = await apiClient
+    .post(`${interviewPath(recruitmentId)}/staff-registration`)
+    .json<ApiResponse<StaffRegistrationResult>>();
   return response.data!;
 }
 

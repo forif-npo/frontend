@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MoreVertical } from "lucide-react";
 import { TimeSlotGrid } from "@ui/components/client";
 import type { StaffInterviewSchedule, StaffInterviewScheduleApplicant, StaffInterviewSlot } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
@@ -10,6 +10,7 @@ import { availableApplicantsBySlot, hasNoOverlap, interviewSlotStarts, toIntervi
 import { formatSlotDate, formatSlotRange, parseTimeSlotKey, timeSlotKey } from "@core/time-slot";
 import { handleApiError } from "@core/utils/api-client";
 import { PageHeader } from "@/components/page-header";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -209,7 +210,7 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
                         </Button>
                       </>
                     ) : candidates.length === 0 ? (
-                      <span className="text-muted-foreground text-sm">가능한 지원자 없음</span>
+                      <span className="text-muted-foreground text-sm">-</span>
                     ) : (
                       candidates.map((candidate) => {
                         const elsewhere = candidate.assigned_slot !== null;
@@ -219,7 +220,6 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
                             variant="outline"
                             size="sm"
                             disabled={busy || elsewhere}
-                            title={elsewhere ? `이미 ${formatSlot(candidate.assigned_slot!, plan.slot_minutes)}에 배정됨` : undefined}
                             onClick={() =>
                               run(() =>
                                 assignStaffInterview(recruitmentId, candidate.application_id, {
@@ -232,7 +232,6 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
                             {candidate.applicant_name}
                             <span className="text-muted-foreground ml-1 text-xs">
                               {departmentsOf(candidate).first}
-                              {elsewhere ? " · 배정됨" : ""}
                             </span>
                           </Button>
                         );
@@ -252,15 +251,24 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
             지원자별 면접 일시
           </h2>
         </div>
-        <div className="rounded-lg border">
-          <Table>
+        <div className="overflow-x-auto rounded-lg border">
+          <Table className="min-w-[960px] table-fixed">
+            <colgroup>
+              <col className="w-[14%]" />
+              <col className="w-[18%]" />
+              <col className="w-[18%]" />
+              <col className="w-[44%]" />
+              <col className="w-[6%]" />
+            </colgroup>
             <TableHeader>
               <TableRow>
                 <TableHead>이름</TableHead>
                 <TableHead>1지망</TableHead>
                 <TableHead>2지망</TableHead>
                 <TableHead>면접 일시</TableHead>
-                <TableHead className="text-right">관리</TableHead>
+                <TableHead>
+                  <span className="sr-only">작업</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -294,22 +302,14 @@ export function StaffInterviewScheduleView({ recruitmentId }: { recruitmentId: n
         </div>
       </section>
 
-      <footer className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
-        {unassignedCount > 0 && (
-          <p className="text-muted-foreground text-sm">
-            면접 시간이 정해지지 않은 지원자가 {unassignedCount}명 있습니다. 확정 후에도 정할 수 있습니다.
-          </p>
-        )}
+      <footer className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex justify-end gap-2 sm:ml-auto">
           <Button
             disabled={busy || hostDirty}
             title={hostDirty ? "회장단 가능 시간을 먼저 저장해 주세요." : undefined}
-            onClick={async () => {
-              // 확정하면 바로 면접 관리로 넘어가 질문을 정하고 면접을 시작한다.
-              if (await run(() => confirmStaffInterviewSchedule(recruitmentId), "면접 일정을 확정했습니다.")) {
-                router.push(`/staff-recruitments/${recruitmentId}/interviews`);
-              }
-            }}
+            onClick={() =>
+              void run(() => confirmStaffInterviewSchedule(recruitmentId), "면접 일정을 확정했습니다.")
+            }
           >
             일정 확정하기
           </Button>
@@ -362,75 +362,88 @@ function ApplicantRow({
       <TableCell>{second}</TableCell>
       <TableCell>
         {editing ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <Select
-              value={date}
-              onValueChange={(next) => {
-                setDate(next);
-                setMinute("");
-              }}
-            >
-              <SelectTrigger className="w-32" aria-label={`${applicant.applicant_name} 면접 날짜`}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {plan.dates.map((candidate) => (
-                  <SelectItem key={candidate} value={candidate}>
-                    {formatDate(candidate)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={minute} onValueChange={setMinute}>
-              <SelectTrigger className="w-44" aria-label={`${applicant.applicant_name} 면접 시간`}>
-                <SelectValue placeholder="시간 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                {freeMinutes.map((start) => (
-                  <SelectItem key={start} value={String(start)}>
-                    {formatSlotRange(start, plan.slot_minutes)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Select
+                value={date}
+                onValueChange={(next) => {
+                  setDate(next);
+                  setMinute("");
+                }}
+              >
+                <SelectTrigger className="w-32" aria-label={`${applicant.applicant_name} 면접 날짜`}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {plan.dates.map((candidate) => (
+                    <SelectItem key={candidate} value={candidate}>
+                      {formatDate(candidate)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={minute} onValueChange={setMinute}>
+                <SelectTrigger className="w-44" aria-label={`${applicant.applicant_name} 면접 시간`}>
+                  <SelectValue placeholder="시간 선택" />
+                </SelectTrigger>
+                <SelectContent>
+                  {freeMinutes.map((start) => (
+                    <SelectItem key={start} value={String(start)}>
+                      {formatSlotRange(start, plan.slot_minutes)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
+                취소
+              </Button>
+              <Button
+                size="sm"
+                disabled={busy || !minute}
+                onClick={() => {
+                  onAssign({ date, start_minute: Number(minute) });
+                  setEditing(false);
+                }}
+              >
+                저장
+              </Button>
+            </div>
           </div>
         ) : applicant.assigned_slot ? (
           <span className="tabular-nums">{formatSlot(applicant.assigned_slot, plan.slot_minutes)}</span>
         ) : (
           <span className="text-muted-foreground inline-flex flex-wrap items-center gap-2">
-            미정
+            -
             {noOverlap && <Badge variant="outline">겹치는 시간 없음</Badge>}
           </span>
         )}
       </TableCell>
-      <TableCell className="text-right">
-        {editing ? (
-          <div className="flex justify-end gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
-              취소
-            </Button>
-            <Button
-              size="sm"
-              disabled={busy || !minute}
-              onClick={() => {
-                onAssign({ date, start_minute: Number(minute) });
-                setEditing(false);
-              }}
-            >
-              저장
-            </Button>
-          </div>
-        ) : (
-          <div className="flex justify-end gap-2">
-            {applicant.assigned_slot && (
-              <Button variant="ghost" size="sm" disabled={busy} onClick={onUnassign}>
-                배정 취소
+      <TableCell>
+        {!editing && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground h-8 w-8"
+                disabled={busy}
+                aria-label={`${applicant.applicant_name} 면접 배정 관리`}
+              >
+                <MoreVertical className="h-4 w-4" />
               </Button>
-            )}
-            <Button variant="outline" size="sm" disabled={busy} onClick={() => setEditing(true)}>
-              {applicant.assigned_slot ? "수정하기" : "직접 정하기"}
-            </Button>
-          </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem disabled={!applicant.assigned_slot || busy} onSelect={onUnassign}>
+                배정 취소하기
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled={busy} onSelect={() => setEditing(true)}>
+                배정 수정하기
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </TableCell>
     </TableRow>

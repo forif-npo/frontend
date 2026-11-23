@@ -79,7 +79,7 @@ describe("admin accounts api", () => {
       )
       .mockReturnValueOnce(
         response([
-          { clubDepartment: "SW" },
+          { clubDepartment: "SW팀" },
           { club_department: " 전략기획 " },
           { clubDepartment: "SW" },
         ]),

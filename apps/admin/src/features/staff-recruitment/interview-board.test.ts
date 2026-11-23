@@ -6,6 +6,7 @@ import {
   groupInterviewCards,
   interviewStatusTitle,
   moveInterviewCard,
+  passDepartmentOptions,
 } from "./interview-board";
 
 function card(overrides: Partial<StaffInterviewCard>): StaffInterviewCard {
@@ -16,6 +17,7 @@ function card(overrides: Partial<StaffInterviewCard>): StaffInterviewCard {
     first_department: null,
     second_department: null,
     status: "BEFORE",
+    passed_department: null,
     ...overrides,
   };
 }
@@ -103,5 +105,28 @@ describe("createSerialQueue", () => {
 
     await expect(failed).rejects.toThrow("boom");
     await expect(next).resolves.toBe("ok");
+  });
+});
+
+describe("passDepartmentOptions", () => {
+  it("지원자가 고른 부서를 1지망, 2지망 순서로 돌려준다", () => {
+    expect(
+      passDepartmentOptions({
+        first_department: { department_id: 31, department_name: "SW팀", questions: [] },
+        second_department: { department_id: 32, department_name: "기획팀", questions: [] },
+      }),
+    ).toEqual([
+      { department_id: 31, department_name: "SW팀", priority: 1 },
+      { department_id: 32, department_name: "기획팀", priority: 2 },
+    ]);
+  });
+
+  it("지망이 하나면 하나만 돌려준다", () => {
+    expect(
+      passDepartmentOptions({
+        first_department: { department_id: 33, department_name: "디자인팀", questions: [] },
+        second_department: null,
+      }),
+    ).toEqual([{ department_id: 33, department_name: "디자인팀", priority: 1 }]);
   });
 });
