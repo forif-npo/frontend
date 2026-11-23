@@ -2,7 +2,6 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { StaffApplicationDetail, StaffRecruitmentRound } from "@core/types/staff-recruitment";
-
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
@@ -38,12 +37,7 @@ jest.mock("@/components/ActionConfirmModal", () => ({
       </div>
     ) : null,
 }));
-
-import {
-  cancelStaffApplication,
-  submitStaffApplication,
-  updateStaffApplication,
-} from "./api";
+import { cancelStaffApplication, submitStaffApplication, updateStaffApplication } from "./api";
 import { StaffApplicationForm } from "./StaffApplicationForm";
 
 const recruitment = {
@@ -134,11 +128,153 @@ const application: StaffApplicationDetail = {
   ],
 };
 
+const attachmentRecruitment = {
+  ...recruitment,
+  questions: [
+    ...recruitment.questions.slice(0, 2),
+    {
+      question_id: 3,
+      label: "첨부 파일",
+      type: "ATTACHMENT",
+      required: true,
+      max_length: 5000,
+      display_order: 3,
+    },
+  ],
+} as StaffRecruitmentRound;
+
 describe("StaffApplicationForm", () => {
   beforeEach(() => {
     jest.mocked(submitStaffApplication).mockReset();
     jest.mocked(updateStaffApplication).mockReset();
     jest.mocked(cancelStaffApplication).mockReset();
+  });
+
+  it("submits a link for an attachment question", async () => {
+    jest.mocked(submitStaffApplication).mockResolvedValue({
+      application_id: 42,
+      recruitment_id: 7,
+      status: "SUBMITTED",
+      submitted_at: "2026-11-17T12:00:00+09:00",
+    });
+    render(
+      <StaffApplicationForm
+        recruitment={attachmentRecruitment}
+        interviewPlan={null}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "1지망" }));
+    fireEvent.click(screen.getByRole("option", { name: "예시팀" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "링크" }), {
+      target: { value: "https://example.com/portfolio" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "작성하신 개인정보와 답변은 운영 기록을 위해 FORIF DB에 보관됨을 확인하였습니다.",
+      }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "지원서 제출" }));
+
+    await waitFor(() =>
+      expect(submitStaffApplication).toHaveBeenCalledWith(
+        7,
+        expect.objectContaining({
+          answers: [
+            { question_id: 1, answer: "" },
+            { question_id: 2, answer: "" },
+            { question_id: 3, answer: "https://example.com/portfolio" },
+          ],
+        }),
+        {},
+      ),
+    );
+  });
+
+  it("submits a file for an attachment question", async () => {
+    const file = new File(["portfolio"], "example.pdf", {
+      type: "application/pdf",
+    });
+    jest.mocked(submitStaffApplication).mockResolvedValue({
+      application_id: 42,
+      recruitment_id: 7,
+      status: "SUBMITTED",
+      submitted_at: "2026-11-17T12:00:00+09:00",
+    });
+    render(
+      <StaffApplicationForm
+        recruitment={attachmentRecruitment}
+        interviewPlan={null}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "1지망" }));
+    fireEvent.click(screen.getByRole("option", { name: "예시팀" }));
+    fireEvent.click(screen.getByRole("button", { name: "첨부 방식" }));
+    fireEvent.click(screen.getByRole("option", { name: "파일" }));
+    fireEvent.drop(screen.getByRole("button", { name: "3. 첨부 파일" }), {
+      dataTransfer: { files: [file] },
+    });
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "작성하신 개인정보와 답변은 운영 기록을 위해 FORIF DB에 보관됨을 확인하였습니다.",
+      }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "지원서 제출" }));
+
+    await waitFor(() =>
+      expect(submitStaffApplication).toHaveBeenCalledWith(
+        7,
+        expect.objectContaining({
+          answers: [
+            { question_id: 1, answer: "" },
+            { question_id: 2, answer: "" },
+            { question_id: 3, answer: "" },
+          ],
+        }),
+        { 3: file },
+      ),
+    );
+  });
+
+  it("switches an existing attachment file to a link when editing", async () => {
+    const attachmentApplication = {
+      ...application,
+      answers: application.answers.filter((answer) => answer.question_id !== 4),
+    };
+    jest
+      .mocked(updateStaffApplication)
+      .mockResolvedValue(attachmentApplication);
+    render(
+      <StaffApplicationForm
+        recruitment={attachmentRecruitment}
+        interviewPlan={null}
+        initialApplication={attachmentApplication}
+      />,
+    );
+    expect(screen.getByText("portfolio.pdf")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "첨부 방식" }));
+    fireEvent.click(screen.getByRole("option", { name: "링크" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "링크" }), {
+      target: { value: "https://example.com/new" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "수정" }));
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getByRole("button", { name: "수정" }),
+    );
+
+    await waitFor(() =>
+      expect(updateStaffApplication).toHaveBeenCalledWith(
+        7,
+        expect.objectContaining({
+          answers: [
+            { question_id: 1, answer: "원래 답변" },
+            { question_id: 2, answer: "" },
+            { question_id: 3, answer: "https://example.com/new" },
+          ],
+          removed_file_question_ids: [3],
+        }),
+        { 3: null },
+      ),
+    );
   });
   it("uses the shared file field and submits a selected file with a valid link", async () => {
     const file = new File(["portfolio"], "example.pdf", {
@@ -153,7 +289,8 @@ describe("StaffApplicationForm", () => {
     });
     render(
       <StaffApplicationForm
-        recruitment={recruitment} interviewPlan={null}
+        recruitment={recruitment}
+        interviewPlan={null}
         onSubmitted={onSubmitted}
       />,
     );
@@ -200,7 +337,8 @@ describe("StaffApplicationForm", () => {
     jest.mocked(updateStaffApplication).mockResolvedValue(application);
     render(
       <StaffApplicationForm
-        recruitment={recruitment} interviewPlan={null}
+        recruitment={recruitment}
+        interviewPlan={null}
         initialApplication={application}
         onUpdated={onUpdated}
       />,
@@ -216,7 +354,9 @@ describe("StaffApplicationForm", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "수정" }));
     expect(updateStaffApplication).not.toHaveBeenCalled();
-    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "수정" }));
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getByRole("button", { name: "수정" }),
+    );
 
     await waitFor(() => expect(onUpdated).toHaveBeenCalledTimes(1));
     expect(updateStaffApplication).toHaveBeenCalledWith(
@@ -241,7 +381,8 @@ describe("StaffApplicationForm", () => {
     jest.mocked(cancelStaffApplication).mockResolvedValue(undefined);
     render(
       <StaffApplicationForm
-        recruitment={recruitment} interviewPlan={null}
+        recruitment={recruitment}
+        interviewPlan={null}
         initialApplication={application}
         onCancelled={onCancelled}
       />,
@@ -260,7 +401,8 @@ describe("StaffApplicationForm", () => {
   it("disables editing for an ineligible applicant while keeping cancellation available", () => {
     render(
       <StaffApplicationForm
-        recruitment={recruitment} interviewPlan={null}
+        recruitment={recruitment}
+        interviewPlan={null}
         initialApplication={{ ...application, can_modify: false }}
       />,
     );

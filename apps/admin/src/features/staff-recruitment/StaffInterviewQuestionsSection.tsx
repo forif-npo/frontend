@@ -75,7 +75,7 @@ export function StaffInterviewQuestionsSection({
           면접 질문
         </h2>
         <p className="text-muted-foreground mt-1 text-sm">
-          공통 질문은 모든 면접자에게, 부서별 질문은 그 부서를 1지망·2지망으로 고른 면접자에게 나옵니다.
+          공통 질문은 모든 면접자에게, 부서별 질문은 그 부서를 1지망/2지망으로 고른 면접자에게 나옵니다.
         </p>
       </div>
 

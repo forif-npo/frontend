@@ -57,7 +57,7 @@ export function StudySection({ studiesData }: StudySectionProps) {
           스터디 <span className="text-text-primary">{totalCount}</span>개
         </p>
 
-        <StudySortControl value={sortOrder} onChange={setSortOrder} />
+        <StudySortControl id="my-studies-sort" value={sortOrder} onChange={setSortOrder} />
       </div>
 
       {downloadError && (

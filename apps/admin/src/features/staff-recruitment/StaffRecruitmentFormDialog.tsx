@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { AdminStaffRecruitmentRound, StaffInterviewPlan } from "@core/types/staff-recruitment";
-import { emptyRecruitmentForm, recruitmentToForm, type StaffRecruitmentFormState, validateRecruitmentForm } from "./form";
+import type { Semester } from "@core/api/semester";
+import { defaultQuestionMaxLength, emptyRecruitmentForm, recruitmentToForm, type StaffRecruitmentFormState, validateRecruitmentForm } from "./form";
 import { StaffInterviewSettingsFields } from "./StaffInterviewSettingsFields";
 
 interface Props {
@@ -16,7 +17,9 @@ interface Props {
   recruitment: AdminStaffRecruitmentRound | null;
   /** 수정할 회차의 면접 일정. 새 모집이거나 일정이 없으면 null이다. */
   interviewPlan: StaffInterviewPlan | null;
+  currentSemester: Semester;
   submitting: boolean;
+  submitError: string | null;
   onOpenChange: (open: boolean) => void;
   onSubmit: (form: StaffRecruitmentFormState) => void;
 }
@@ -25,12 +28,15 @@ export function StaffRecruitmentFormDialog({
   open,
   recruitment,
   interviewPlan,
+  currentSemester,
   submitting,
+  submitError,
   onOpenChange,
   onSubmit,
 }: Props) {
-  const [form, setForm] =
-    useState<StaffRecruitmentFormState>(emptyRecruitmentForm);
+  const [form, setForm] = useState<StaffRecruitmentFormState>(() =>
+    emptyRecruitmentForm(currentSemester),
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,10 +44,10 @@ export function StaffRecruitmentFormDialog({
     setForm(
       recruitment
         ? recruitmentToForm(recruitment, interviewPlan)
-        : emptyRecruitmentForm(),
+        : emptyRecruitmentForm(currentSemester),
     );
     setError(null);
-  }, [open, recruitment, interviewPlan]);
+  }, [open, recruitment, interviewPlan, currentSemester]);
 
   const submit = () => {
     const message = validateRecruitmentForm(form);
@@ -51,7 +57,7 @@ export function StaffRecruitmentFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[760px]">
+      <DialogContent className="scrollbar-hidden max-h-[90vh] overflow-y-auto sm:max-w-[760px]">
         <DialogHeader>
           <DialogTitle>
             {recruitment ? "운영진 모집 수정" : "운영진 모집"}
@@ -78,6 +84,7 @@ export function StaffRecruitmentFormDialog({
           <Field label="안내문" id="recruitment-description">
             <Textarea
               id="recruitment-description"
+              aria-describedby="recruitment-description-hint"
               rows={6}
               value={form.description}
               onChange={(event) =>
@@ -87,6 +94,12 @@ export function StaffRecruitmentFormDialog({
                 }))
               }
             />
+            <p
+              id="recruitment-description-hint"
+              className="text-muted-foreground text-xs"
+            >
+              마크다운 문법을 사용할 수 있습니다.
+            </p>
           </Field>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -188,10 +201,11 @@ export function StaffRecruitmentFormDialog({
                     onChange={(event) =>
                       setForm((current) => ({
                         ...current,
-                        departments: current.departments.map((item, itemIndex) =>
-                          itemIndex === index
-                            ? { ...item, name: event.target.value }
-                            : item,
+                        departments: current.departments.map(
+                          (item, itemIndex) =>
+                            itemIndex === index
+                              ? { ...item, name: event.target.value }
+                              : item,
                         ),
                       }))
                     }
@@ -251,20 +265,18 @@ export function StaffRecruitmentFormDialog({
                     description: "",
                     type: "LONG_TEXT",
                     required: true,
-                    maxLength: "1000",
+                    maxLength: defaultQuestionMaxLength("LONG_TEXT"),
                   },
                 ],
               }))
             }
           >
             {form.questions.map((question, index) => (
-              <div
-                key={`question-${index}`}
-                className="grid gap-3"
-              >
+              <div key={`question-${index}`} className="grid gap-3">
                 <div
                   className={
-                    question.type === "SHORT_TEXT" || question.type === "LONG_TEXT"
+                    question.type === "SHORT_TEXT" ||
+                    question.type === "LONG_TEXT"
                       ? "grid gap-2 sm:grid-cols-[2fr_1fr_110px_auto]"
                       : "grid gap-2 sm:grid-cols-[2fr_1fr_auto]"
                   }
@@ -287,7 +299,12 @@ export function StaffRecruitmentFormDialog({
                   <Select
                     value={question.type}
                     onValueChange={(
-                      value: "SHORT_TEXT" | "LONG_TEXT" | "LINK" | "FILE",
+                      value:
+                        | "SHORT_TEXT"
+                        | "LONG_TEXT"
+                        | "LINK"
+                        | "FILE"
+                        | "ATTACHMENT",
                     ) =>
                       setForm((current) => ({
                         ...current,
@@ -296,12 +313,7 @@ export function StaffRecruitmentFormDialog({
                             ? {
                                 ...item,
                                 type: value,
-                                maxLength:
-                                  value === "FILE"
-                                    ? "5000"
-                                    : value === "LINK"
-                                      ? "2000"
-                                      : item.maxLength,
+                                maxLength: defaultQuestionMaxLength(value),
                               }
                             : item,
                         ),
@@ -314,15 +326,22 @@ export function StaffRecruitmentFormDialog({
                     <SelectContent>
                       <SelectItem value="SHORT_TEXT">짧은 답변</SelectItem>
                       <SelectItem value="LONG_TEXT">긴 답변</SelectItem>
-                      <SelectItem value="LINK">링크</SelectItem>
+                      {question.type === "LINK" && (
+                        <SelectItem value="LINK">링크 (기존)</SelectItem>
+                      )}
+                      {question.type === "FILE" && (
+                        <SelectItem value="FILE">파일 (기존)</SelectItem>
+                      )}
                       <SelectItem
-                        value="FILE"
+                        value="ATTACHMENT"
                         disabled={form.questions.some(
                           (item, itemIndex) =>
-                            itemIndex !== index && item.type === "FILE",
+                            itemIndex !== index &&
+                            (item.type === "FILE" ||
+                              item.type === "ATTACHMENT"),
                         )}
                       >
-                        파일
+                        첨부파일
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -383,9 +402,9 @@ export function StaffRecruitmentFormDialog({
             ))}
           </EditorSection>
 
-          {error && (
+          {(error || submitError) && (
             <p role="alert" className="text-destructive text-sm">
-              {error}
+              {error || submitError}
             </p>
           )}
         </div>

@@ -50,7 +50,7 @@ export function StaffInterviewManageView({ recruitmentId }: { recruitmentId: num
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageHeader
           title="면접 관리"
-          description={`“${formatStaffRecruitmentTitle(round.act_year, round.act_semester)}” 회차의 면접 질문과 면접자를 관리합니다.`}
+          description={`${formatStaffRecruitmentTitle(round.act_year, round.act_semester)} 회차의 면접 질문과 면접자를 관리합니다.`}
           leadingAction={
             <Button variant="ghost" size="icon" className="size-11" asChild>
               <Link href="/staff-recruitments" aria-label="모집 관리로 돌아가기" title="모집 관리로 돌아가기">
@@ -75,7 +75,11 @@ export function StaffInterviewManageView({ recruitmentId }: { recruitmentId: num
         onChanged={() => setQuestionsVersion((version) => version + 1)}
       />
 
-      <StaffInterviewBoardSection recruitmentId={recruitmentId} questionsVersion={questionsVersion} />
+      <StaffInterviewBoardSection
+        recruitmentId={recruitmentId}
+        questionsVersion={questionsVersion}
+        requiredQuestionIds={new Set(round.questions.filter((question) => question.required).map((question) => question.question_id))}
+      />
     </div>
   );
 }

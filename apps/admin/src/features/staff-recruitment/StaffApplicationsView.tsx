@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { HTTPError } from "ky";
 import { MoreVertical, ShieldAlert } from "lucide-react";
 import type { AdminStaffRecruitmentRound, StaffApplicationDetail, StaffApplicationSummary } from "@core/types/staff-recruitment";
-import { formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@core/staff-recruitment";
+import { formatStaffInterviewAvailability, formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { PageHeader } from "@/components/page-header";
 import { OffsetPagination } from "@/components/list/offset-pagination";
@@ -16,7 +16,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "@/components/ui/Toast";
 import { StaffApplicationAnswerList } from "./StaffApplicationAnswerList";
 import { StaffApplicationDecision } from "./StaffApplicationDecision";
-import { getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
+import { StaffApplicantInfoTable } from "./StaffApplicantInfoTable";
+import { getPublicStaffInterviewPlan, getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
 
 const EMPTY_PAGE: StaffApplicationPage = {
   content: [],
@@ -40,6 +41,10 @@ function departmentName(item: StaffApplicationSummary, priority: 1 | 2) {
   return name ? formatStaffRecruitmentDepartment(name) : "-";
 }
 
+function isAccessDenied(error: unknown) {
+  return error instanceof HTTPError && error.response.status === 403;
+}
+
 export function StaffApplicationsView({
   initialRecruitmentId,
 }: {
@@ -55,6 +60,7 @@ export function StaffApplicationsView({
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<StaffApplicationDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [interviewSlotMinutes, setInterviewSlotMinutes] = useState<number | null>(null);
   const [accessDenied, setAccessDenied] = useState(false);
 
   const selectedRound = useMemo(
@@ -62,6 +68,19 @@ export function StaffApplicationsView({
       rounds.find((round) => round.recruitment_id === recruitmentId) ?? null,
     [recruitmentId, rounds],
   );
+  const requiredQuestionIds = useMemo(
+    () =>
+      new Set(
+        rounds
+          .find((round) => round.recruitment_id === detail?.recruitment_id)
+          ?.questions.filter((question) => question.required)
+          .map((question) => question.question_id) ?? [],
+      ),
+    [detail?.recruitment_id, rounds],
+  );
+  const interviewAvailability = detail
+    ? formatStaffInterviewAvailability(detail.interview_slots, interviewSlotMinutes)
+    : [];
 
   useEffect(() => {
     if (initialRecruitmentId) setRecruitmentId(initialRecruitmentId);
@@ -73,7 +92,9 @@ export function StaffApplicationsView({
         }
       })
       .catch(async (error) => {
-        if (!initialRecruitmentId) {
+        if (isAccessDenied(error)) {
+          setAccessDenied(true);
+        } else if (!initialRecruitmentId) {
           toast.error(await handleApiError(error));
         }
       })
@@ -96,10 +117,11 @@ export function StaffApplicationsView({
     } catch (error) {
       setData(EMPTY_PAGE);
       setDetail(null);
-      if (error instanceof HTTPError && error.response.status === 403) {
+      if (isAccessDenied(error)) {
         setAccessDenied(true);
+      } else {
+        toast.error(await handleApiError(error));
       }
-      toast.error(await handleApiError(error));
     } finally {
       setLoading(false);
     }
@@ -113,14 +135,26 @@ export function StaffApplicationsView({
     if (!recruitmentId || detailLoading) return;
     setDetailLoading(true);
     try {
-      setDetail(await getStaffApplicationDetail(recruitmentId, applicationId));
+      const application = await getStaffApplicationDetail(recruitmentId, applicationId);
+      let slotMinutes: number | null = null;
+      if (application.interview_slots.length > 0) {
+        try {
+          slotMinutes = (await getPublicStaffInterviewPlan(recruitmentId))?.slot_minutes ?? null;
+        } catch {
+          // 계획 조회에 실패해도 제출된 가능 시각은 보여 준다.
+        }
+      }
+      setInterviewSlotMinutes(slotMinutes);
+      setDetail(application);
     } catch (error) {
       setDetail(null);
-      if (error instanceof HTTPError && error.response.status === 403) {
+      setInterviewSlotMinutes(null);
+      if (isAccessDenied(error)) {
         setData(EMPTY_PAGE);
         setAccessDenied(true);
+      } else {
+        toast.error(await handleApiError(error));
       }
-      toast.error(await handleApiError(error));
     } finally {
       setDetailLoading(false);
     }
@@ -132,8 +166,7 @@ export function StaffApplicationsView({
         <ShieldAlert className="text-muted-foreground h-12 w-12" />
         <h1 className="text-xl font-bold">지원서 열람 권한이 없습니다</h1>
         <p className="text-muted-foreground max-w-md text-sm">
-          회장단 또는 이 모집 회차의 유효한 열람자만 지원서를 확인할 수
-          있습니다. 회수되거나 만료된 권한은 다음 요청부터 적용됩니다.
+          회장단 또는 이 모집 회차의 유효한 열람자만 지원서를 확인할 수 있습니다.
         </p>
         <Button variant="outline" onClick={() => void load()}>
           권한 다시 확인
@@ -316,31 +349,7 @@ export function StaffApplicationsView({
                   >
                     지원자 정보
                   </h3>
-                  <Table className="text-sm">
-                    <TableBody>
-                      {[
-                        ["이름", detail.applicant_name],
-                        ["학과", detail.applicant_department ?? "-"],
-                        ["학번", detail.applicant_user_id ?? "탈퇴 회원"],
-                        ["이메일", detail.applicant_email],
-                        ["연락처", detail.applicant_phone_num ?? "-"],
-                        ["1지망 부서", departmentName(detail, 1)],
-                        ["2지망 부서", departmentName(detail, 2)],
-                      ].map(([label, value]) => (
-                        <TableRow key={label} className="hover:bg-transparent">
-                          <th
-                            scope="row"
-                            className="text-muted-foreground w-28 whitespace-nowrap py-3 pr-4 text-left font-normal"
-                          >
-                            {label}
-                          </th>
-                          <TableCell className="break-all py-3 text-left">
-                            {value}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <StaffApplicantInfoTable detail={detail} />
                 </section>
                 <section
                   className="space-y-4"
@@ -352,8 +361,26 @@ export function StaffApplicationsView({
                   >
                     지원서
                   </h3>
-                  <StaffApplicationAnswerList detail={detail} />
+                  <StaffApplicationAnswerList
+                    detail={detail}
+                    requiredQuestionIds={requiredQuestionIds}
+                  />
                 </section>
+                {interviewAvailability.length > 0 && (
+                  <section className="space-y-4" aria-labelledby="interview-availability-heading">
+                    <h3 id="interview-availability-heading" className="text-lg font-semibold">
+                      면접 가능 시각
+                    </h3>
+                    <ul className="space-y-5 rounded-lg border p-4">
+                      {interviewAvailability.map(({ date, dateLabel, timeLabel }) => (
+                        <li key={date}>
+                          <h4 className="font-semibold">{dateLabel}</h4>
+                          <p className="mt-2 whitespace-pre-wrap text-sm leading-6">{timeLabel}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
               </div>
               <DialogFooter className="gap-3 sm:items-center">
                 {selectedRound?.publication_status === "CLOSED" && (

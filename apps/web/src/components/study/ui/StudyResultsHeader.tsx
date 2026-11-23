@@ -52,7 +52,7 @@ export const StudyResultsHeader: React.FC<StudyResultsHeaderProps> = ({
 
         <div className="bg-divider-gray h-4 w-[1px]" />
 
-        <StudySortControl value={sortBy} onChange={onSortChange} />
+        <StudySortControl id="study-results-sort" value={sortBy} onChange={onSortChange} />
       </div>
     </div>
   );

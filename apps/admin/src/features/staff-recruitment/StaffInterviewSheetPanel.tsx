@@ -1,12 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
-import type {
-  StaffApplicationDetail,
-  StaffInterviewQuestionAnswer,
-  StaffInterviewSheet,
-  StaffInterviewStatus,
-} from "@core/types/staff-recruitment";
+import { Pencil, Plus, Trash2 } from "lucide-react";
+import type { StaffApplicationDetail, StaffInterviewQuestionAnswer, StaffInterviewSheet, StaffInterviewStatus } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { Badge } from "@/components/ui/badge";
@@ -16,16 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/Toast";
-import {
-  addStaffInterviewExtraQuestion,
-  deleteStaffInterviewExtraQuestion,
-  getStaffApplicationDetail,
-  getStaffInterviewSheet,
-  saveStaffInterviewAnswer,
-  updateStaffInterviewExtraQuestion,
-} from "./api";
+import { addStaffInterviewExtraQuestion, deleteStaffInterviewExtraQuestion, getStaffApplicationDetail, getStaffInterviewSheet, saveStaffInterviewAnswer, updateStaffInterviewExtraQuestion } from "./api";
 import { createSerialQueue, formatInterviewSlot, interviewStatusTitle } from "./interview-board";
 import { StaffApplicationAnswerList } from "./StaffApplicationAnswerList";
+import { StaffApplicantInfoTable } from "./StaffApplicantInfoTable";
 
 /**
  * 면접자 한 명의 기록지. 지원서 내용, 공통·1지망·2지망 질문, 기타 질문 순으로 놓고
@@ -35,6 +24,7 @@ export function StaffInterviewSheetPanel({
   recruitmentId,
   applicationId,
   reloadKey,
+  requiredQuestionIds,
   onClose,
   onStatusChange,
 }: {
@@ -43,6 +33,7 @@ export function StaffInterviewSheetPanel({
   applicationId: number | null;
   /** 바뀌면 기록지를 다시 읽는다. 면접 질문을 고쳤을 때 쓴다. */
   reloadKey?: number;
+  requiredQuestionIds: ReadonlySet<number>;
   onClose: () => void;
   /** 상태 변경은 보드가 맡는다. 성공하면 바뀐 기록지를 돌려준다. */
   onStatusChange: (applicationId: number, status: StaffInterviewStatus) => Promise<StaffInterviewSheet | null>;
@@ -124,27 +115,32 @@ export function StaffInterviewSheetPanel({
           <>
             <SheetHeader className="border-b p-6">
               <div className="flex items-center gap-2">
-                <SheetTitle className="text-xl">{sheet.applicant_name}</SheetTitle>
+                <SheetTitle className="text-xl">면접 기록지</SheetTitle>
                 <Badge variant="outline">
                   {interviewStatusTitle(sheet.status)}
                   {sheet.passed_department &&
                     ` · ${formatStaffRecruitmentDepartment(sheet.passed_department.department_name)}`}
                 </Badge>
               </div>
-              <SheetDescription>
-                {formatInterviewSlot(sheet.assigned_slot, sheet.slot_minutes)} · 1지망{" "}
-                {sheet.first_department ? formatStaffRecruitmentDepartment(sheet.first_department.department_name) : "-"}{" "}
-                · 2지망{" "}
-                {sheet.second_department ? formatStaffRecruitmentDepartment(sheet.second_department.department_name) : "-"}
-              </SheetDescription>
+              <SheetDescription>지원자 정보와 면접 기록을 확인합니다.</SheetDescription>
             </SheetHeader>
 
             <div className="flex-1 space-y-10 overflow-y-auto p-6">
+              <section className="space-y-4" aria-labelledby="sheet-applicant-info-heading">
+                <h3 id="sheet-applicant-info-heading" className="text-lg font-semibold">
+                  지원자 정보
+                </h3>
+                <StaffApplicantInfoTable
+                  detail={application}
+                  interviewTime={formatInterviewSlot(sheet.assigned_slot, sheet.slot_minutes)}
+                />
+              </section>
+
               <section className="space-y-4" aria-labelledby="sheet-application-heading">
                 <h3 id="sheet-application-heading" className="text-lg font-semibold">
                   지원서 내용
                 </h3>
-                <StaffApplicationAnswerList detail={application} />
+                <StaffApplicationAnswerList detail={application} requiredQuestionIds={requiredQuestionIds} />
               </section>
 
               <QuestionAnswerSection
@@ -174,6 +170,12 @@ export function StaffInterviewSheetPanel({
                 sheet={sheet}
                 onAdd={(content) =>
                   save(() => addStaffInterviewExtraQuestion(recruitmentId, sheet.application_id, content))
+                }
+                onUpdateContent={(extraId, content) =>
+                  save(
+                    () => updateStaffInterviewExtraQuestion(recruitmentId, sheet.application_id, extraId, { content }),
+                    "기타 질문을 고쳤습니다.",
+                  )
                 }
                 onSaveAnswer={(extraId, answer) =>
                   save(() =>
@@ -273,15 +275,19 @@ function QuestionAnswerSection({
 function ExtraQuestionSection({
   sheet,
   onAdd,
+  onUpdateContent,
   onSaveAnswer,
   onDelete,
 }: {
   sheet: StaffInterviewSheet;
   onAdd: (content: string) => Promise<boolean>;
+  onUpdateContent: (extraQuestionId: number, content: string) => Promise<boolean>;
   onSaveAnswer: (extraQuestionId: number, answer: string) => Promise<boolean>;
   onDelete: (extraQuestionId: number) => Promise<boolean>;
 }) {
   const [draft, setDraft] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
 
   const add = async () => {
     if (!draft.trim()) return;
@@ -301,17 +307,55 @@ function ExtraQuestionSection({
           {sheet.extra_questions.map((extra, index) => (
             <li key={extra.extra_question_id} className="space-y-2">
               <div className="flex items-start gap-2">
-                <h4 className="flex-1 pt-2 font-semibold">
-                  {index + 1}. {extra.content}
-                </h4>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  aria-label={`기타 질문 ${index + 1}번 지우기`}
-                  onClick={() => void onDelete(extra.extra_question_id)}
-                >
-                  <Trash2 className="size-4" />
-                </Button>
+                {editingId === extra.extra_question_id ? (
+                  <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                    <span className="font-semibold">{index + 1}.</span>
+                    <Input
+                      className="min-w-40 flex-1"
+                      value={editText}
+                      maxLength={500}
+                      aria-label={`기타 질문 ${index + 1}번 고치기`}
+                      onChange={(event) => setEditText(event.target.value)}
+                    />
+                    <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>
+                      취소
+                    </Button>
+                    <Button
+                      size="sm"
+                      disabled={!editText.trim()}
+                      onClick={async () => {
+                        if (await onUpdateContent(extra.extra_question_id, editText.trim())) setEditingId(null);
+                      }}
+                    >
+                      저장
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <h4 className="flex-1 pt-2 font-semibold">
+                      {index + 1}. {extra.content}
+                    </h4>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label={`기타 질문 ${index + 1}번 고치기`}
+                      onClick={() => {
+                        setEditingId(extra.extra_question_id);
+                        setEditText(extra.content);
+                      }}
+                    >
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label={`기타 질문 ${index + 1}번 지우기`}
+                      onClick={() => void onDelete(extra.extra_question_id)}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </>
+                )}
               </div>
               <AnswerBox
                 label={`기타 질문 ${index + 1}번 답변`}

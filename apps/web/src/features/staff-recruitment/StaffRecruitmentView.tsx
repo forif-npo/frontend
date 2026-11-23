@@ -3,7 +3,9 @@ import { formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@
 import { Button } from "@ui/components/client";
 import { Link, PageState } from "@ui/components/server";
 import { PageHeader } from "@/components/PageHeader";
+import { MarkdownContent } from "@/components/MarkdownContent";
 import { APPLICATION_STATUS_LABELS, formatRecruitmentDatePeriod } from "./presentation";
+import { StaffApplicationEntryButton } from "./StaffApplicationEntryButton";
 
 export function StaffRecruitmentView({
   recruitment,
@@ -75,9 +77,9 @@ export function StaffRecruitmentView({
               >
                 모집 안내
               </h2>
-              <p className="bg-surface-gray-subtler text-text-basic rounded-3 mt-4 whitespace-pre-wrap p-5 text-[16px] leading-7 sm:p-6">
-                {description}
-              </p>
+              <div className="bg-surface-gray-subtler rounded-3 mt-4 p-5 sm:p-6">
+                <MarkdownContent content={description} />
+              </div>
             </section>
           )}
 
@@ -160,9 +162,9 @@ export function StaffRecruitmentView({
             )}
           </p>
           {recruitment.application_open ? (
-            <Link href={`/club/recruit/${recruitment.recruitment_id}/apply`}>
-              <Button className="mt-5 w-full">지원서 작성</Button>
-            </Link>
+            <StaffApplicationEntryButton
+              recruitmentId={recruitment.recruitment_id}
+            />
           ) : (
             <Button className="mt-5 w-full" disabled>
               {APPLICATION_STATUS_LABELS[recruitment.application_status]}

@@ -15,6 +15,7 @@ import {
   changeStaffRecruitmentStatus,
   deleteStaffInterviewPlan,
   getStaffApplicationDetail,
+  getPublicStaffInterviewPlan,
   getStaffInterviewPlan,
   getStaffApplications,
   getStaffReviewerCandidates,
@@ -207,6 +208,16 @@ describe("staff recruitment admin api", () => {
     expect(apiClient.get).toHaveBeenCalledWith(
       "api/v1/admin/staff-recruitments/12/interview-plan",
       { cache: "no-store" },
+    );
+  });
+
+  it("reads the public interview plan for an application reviewer", async () => {
+    mockedGet.mockReturnValue(response({ slot_minutes: 30 }));
+
+    await expect(getPublicStaffInterviewPlan(12)).resolves.toEqual({ slot_minutes: 30 });
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "api/v1/staff-recruitments/12/interview-plan",
+      { cache: "no-cache" },
     );
   });
 

@@ -1,9 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import {
-  formatRecruitmentDatePeriod,
-  formatRecruitmentPeriod,
-  recruitmentStatusMessage,
-} from "./presentation";
+import { formatRecruitmentDatePeriod, formatRecruitmentPeriod, recruitmentStatusMessage } from "./presentation";
 
 describe("staff recruitment presentation", () => {
   it("formats an offset timestamp in the contract timezone", () => {

@@ -82,6 +82,18 @@ export async function getStaffInterviewPlan(
   }
 }
 
+/** 열람자도 확인할 수 있는 공개 면접 계획. 설정이 없으면 null이다. */
+export async function getPublicStaffInterviewPlan(
+  recruitmentId: number,
+): Promise<StaffInterviewPlan | null> {
+  const response = await apiClient
+    .get(`api/v1/staff-recruitments/${recruitmentId}/interview-plan`, {
+      cache: "no-cache",
+    })
+    .json<ApiResponse<StaffInterviewPlan>>();
+  return response.data ?? null;
+}
+
 /**
  * ky의 HTTPError는 응답을 `response`에 담는다.
  * ky를 직접 import하면 ESM 전용 모듈이라 jest에서 읽지 못해 응답 상태만 확인한다.

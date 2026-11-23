@@ -36,10 +36,12 @@ const DRAG_TYPE = "application/x-forif-interview-card";
 export function StaffInterviewBoardSection({
   recruitmentId,
   questionsVersion,
+  requiredQuestionIds,
 }: {
   recruitmentId: number;
   /** 면접 질문이 바뀔 때마다 늘어난다. 열려 있는 기록지를 다시 읽는 데 쓴다. */
   questionsVersion: number;
+  requiredQuestionIds: ReadonlySet<number>;
 }) {
   const [board, setBoard] = useState<StaffInterviewBoard | null>(null);
   const [openId, setOpenId] = useState<number | null>(null);
@@ -220,6 +222,7 @@ export function StaffInterviewBoardSection({
         recruitmentId={recruitmentId}
         applicationId={openId}
         reloadKey={questionsVersion}
+        requiredQuestionIds={requiredQuestionIds}
         onClose={() => setOpenId(null)}
         onStatusChange={changeStatus}
       />
