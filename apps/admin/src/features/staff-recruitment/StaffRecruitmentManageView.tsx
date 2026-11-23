@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { CalendarRange, Pencil, Plus, UserRoundCog } from "lucide-react";
+import { CalendarClock, CalendarRange, Pencil, Plus, UserRoundCog } from "lucide-react";
 import { toast } from "@/components/ui/Toast";
 import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageHeader } from "@/components/page-header";
@@ -219,6 +219,15 @@ export function StaffRecruitmentManageView({ currentSemester }: { currentSemeste
                       열람자 관리
                     </Link>
                   </Button>
+                  {/* 마감한 회차에서만 면접 일정을 정한다. 접수 중에는 지원자가 계속 바뀐다. */}
+                  {item.publication_status === "CLOSED" && (
+                    <Button asChild>
+                      <Link href={`/staff-recruitments/${item.recruitment_id}/interview`}>
+                        <CalendarClock className="mr-1 h-4 w-4" />
+                        면접
+                      </Link>
+                    </Button>
+                  )}
                   {item.publication_status === "DRAFT" && (
                     <>
                       <Button

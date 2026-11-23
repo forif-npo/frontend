@@ -2,6 +2,7 @@ import { describe, expect, it } from "@jest/globals";
 import {
   datesInRange,
   formatSlotDate,
+  formatSlotRange,
   formatSlotTime,
   isHourStart,
   parseTimeSlotKey,
@@ -162,5 +163,17 @@ describe("datesInRange", () => {
     expect(datesInRange("2026-12-04", "2026-12-01")).toEqual([]);
     expect(datesInRange("", "2026-12-01")).toEqual([]);
     expect(datesInRange("2026/12/01", "2026-12-04")).toEqual([]);
+  });
+});
+
+describe("formatSlotRange", () => {
+  it("시작에 칸 길이를 더해 끝 시각을 붙인다", () => {
+    expect(formatSlotRange(17 * 60 + 30, 30)).toBe("오후 5:30 - 6:00");
+    expect(formatSlotRange(16 * 60 + 20, 20)).toBe("오후 4:20 - 4:40");
+    expect(formatSlotRange(9 * 60, 60)).toBe("오전 9:00 - 10:00");
+  });
+
+  it("오전에서 오후로 넘어가면 끝에도 오후를 붙인다", () => {
+    expect(formatSlotRange(11 * 60 + 30, 30)).toBe("오전 11:30 - 오후 12:00");
   });
 });
