@@ -1,17 +1,7 @@
 /** @jest-environment jsdom */
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import type {
-  StaffApplicationDetail,
-  StaffRecruitmentRound,
-} from "@core/types/staff-recruitment";
-
+import type { StaffApplicationDetail, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
@@ -47,12 +37,7 @@ jest.mock("@/components/ActionConfirmModal", () => ({
       </div>
     ) : null,
 }));
-
-import {
-  cancelStaffApplication,
-  submitStaffApplication,
-  updateStaffApplication,
-} from "./api";
+import { cancelStaffApplication, submitStaffApplication, updateStaffApplication } from "./api";
 import { StaffApplicationForm } from "./StaffApplicationForm";
 
 const recruitment = {

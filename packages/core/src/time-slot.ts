@@ -62,6 +62,28 @@ export function formatSlotTime(startMinute: number): string {
     : `${meridiem} ${display}:${String(minute).padStart(2, "0")}`;
 }
 
+/**
+ * 한 칸의 시작~끝 표기. 끝 시각은 시작 + 칸 길이다.
+ * "오후 5:30 - 6:00", "오후 4:20 - 4:40"처럼 쓰고, 오전·오후가 바뀔 때만 끝에도 붙인다.
+ */
+export function formatSlotRange(startMinute: number, slotMinutes: number): string {
+  const end = startMinute + slotMinutes;
+  const clock = (minute: number) => {
+    const hour = Math.floor(minute / MINUTES_PER_HOUR) % 24;
+    const display = hour % 12 === 0 ? 12 : hour % 12;
+    return `${display}:${String(minute % MINUTES_PER_HOUR).padStart(2, "0")}`;
+  };
+  const meridiem = (minute: number) =>
+    Math.floor(minute / MINUTES_PER_HOUR) % 24 < 12 ? "오전" : "오후";
+
+  const startLabel = `${meridiem(startMinute)} ${clock(startMinute)}`;
+  const endLabel =
+    meridiem(end) === meridiem(startMinute)
+      ? clock(end)
+      : `${meridiem(end)} ${clock(end)}`;
+  return `${startLabel} - ${endLabel}`;
+}
+
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
 /** 시간표 머리글. "12/1" 과 요일 두 줄로 쓴다. */

@@ -5,6 +5,8 @@ import type {
   StaffApplicationSummary,
   StaffInterviewPlan,
   StaffInterviewPlanSaveRequest,
+  StaffInterviewSchedule,
+  StaffInterviewSlot,
   StaffRecruitmentReviewer,
   StaffRecruitmentCreateRequest,
   StaffRecruitmentUpdateRequest,
@@ -107,6 +109,66 @@ export async function deleteStaffInterviewPlan(
   await apiClient.delete(
     `api/v1/admin/staff-recruitments/${recruitmentId}/interview-plan`,
   );
+}
+
+function interviewSchedulePath(recruitmentId: number) {
+  return `api/v1/admin/staff-recruitments/${recruitmentId}/interview-schedule`;
+}
+
+/** 면접 일정 조율 화면 전체. 면접 일정·회장단 가능 시간·지원자별 가능 시간과 배정 시각. */
+export async function getStaffInterviewSchedule(
+  recruitmentId: number,
+): Promise<StaffInterviewSchedule> {
+  const response = await apiClient
+    .get(interviewSchedulePath(recruitmentId), { cache: "no-store" })
+    .json<ApiResponse<StaffInterviewSchedule>>();
+  return response.data!;
+}
+
+/** 회장단 가능 시간을 보낸 목록으로 맞춘다. */
+export async function saveStaffInterviewHostSlots(
+  recruitmentId: number,
+  slots: StaffInterviewSlot[],
+): Promise<StaffInterviewSchedule> {
+  const response = await apiClient
+    .put(`${interviewSchedulePath(recruitmentId)}/host-slots`, {
+      json: { slots },
+    })
+    .json<ApiResponse<StaffInterviewSchedule>>();
+  return response.data!;
+}
+
+/** 지원자를 한 칸에 넣는다. 이미 넣었으면 그 칸으로 옮긴다. */
+export async function assignStaffInterview(
+  recruitmentId: number,
+  applicationId: number,
+  slot: StaffInterviewSlot,
+): Promise<StaffInterviewSchedule> {
+  const response = await apiClient
+    .put(`${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`, {
+      json: slot,
+    })
+    .json<ApiResponse<StaffInterviewSchedule>>();
+  return response.data!;
+}
+
+export async function unassignStaffInterview(
+  recruitmentId: number,
+  applicationId: number,
+): Promise<StaffInterviewSchedule> {
+  const response = await apiClient
+    .delete(`${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`)
+    .json<ApiResponse<StaffInterviewSchedule>>();
+  return response.data!;
+}
+
+export async function confirmStaffInterviewSchedule(
+  recruitmentId: number,
+): Promise<StaffInterviewSchedule> {
+  const response = await apiClient
+    .post(`${interviewSchedulePath(recruitmentId)}/confirm`)
+    .json<ApiResponse<StaffInterviewSchedule>>();
+  return response.data!;
 }
 
 export async function changeStaffRecruitmentStatus(
