@@ -101,7 +101,7 @@ export async function deleteAdminAccount(targetUserId: number): Promise<void> {
 }
 
 /**
- * 회장/부회장 위임 (회장 전용)
+ * 다음 학기 회장단 지정 (현 회장 전용)
  * @param affiliation "회장" 또는 "부회장"
  */
 export async function delegatePresidency(
