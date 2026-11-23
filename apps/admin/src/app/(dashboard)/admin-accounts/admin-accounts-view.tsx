@@ -230,14 +230,12 @@ export function AdminAccountsView({
     try {
       await delegatePresidency(account.user_id, role);
       toast.success(
-        role === "회장" ? "회장이 위임되었습니다." : "부회장이 임명되었습니다.",
+        role === "회장"
+          ? "차기 회장으로 지정되었습니다."
+          : "차기 부회장으로 지정되었습니다.",
       );
       setDelegateConfirm(null);
       await fetchAccounts();
-      if (role === "회장") {
-        // 본인 소속이 바뀌었으므로 세션 갱신을 위해 새로고침
-        window.location.reload();
-      }
     } catch (error) {
       toast.error(await handleApiError(error));
     } finally {
@@ -292,8 +290,7 @@ export function AdminAccountsView({
     const isSelf = account.user_id === myUserId;
     const targetAuthority =
       account.authority_affiliation ?? account.affiliation;
-    const isPresidentTeamMember = PRESIDENT_TEAM.includes(account.affiliation);
-    const showDelegate = isPresident && !isSelf && !isPresidentTeamMember;
+    const showDelegate = isPresident && (isSelf || account.affiliation !== "회장");
     const canManage =
       !isSelf && (isPresident || !PRESIDENT_TEAM.includes(targetAuthority));
     const canDelete = canManage && targetAuthority !== "회장";
@@ -311,13 +308,15 @@ export function AdminAccountsView({
               <Crown className="mr-2 h-4 w-4" />
               회장 위임
             </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={!isIncumbentPresident}
-              onSelect={() => setDelegateConfirm({ account, role: "부회장" })}
-            >
-              <ShieldCheck className="mr-2 h-4 w-4" />
-              부회장 임명
-            </DropdownMenuItem>
+            {!isSelf && (
+              <DropdownMenuItem
+                disabled={!isIncumbentPresident}
+                onSelect={() => setDelegateConfirm({ account, role: "부회장" })}
+              >
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                부회장 임명
+              </DropdownMenuItem>
+            )}
           </>
         )}
         {showDelegate && canManage && <DropdownMenuSeparator />}
@@ -537,13 +536,15 @@ export function AdminAccountsView({
         <DialogContent showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>
-              {delegateConfirm?.role === "회장" ? "회장 위임" : "부회장 임명"}
+              {delegateConfirm?.role === "회장"
+                ? "차기 회장 지정"
+                : "차기 부회장 지정"}
             </DialogTitle>
             <DialogDescription>
               {delegateConfirm
                 ? delegateConfirm.role === "회장"
-                  ? `${delegateConfirm.account.name} 님에게 회장을 위임하시겠습니까? 위임 후 본인은 일반 운영진이 됩니다.`
-                  : `${delegateConfirm.account.name} 님을 부회장으로 임명하시겠습니까? 기존 부회장은 일반 운영진이 됩니다.`
+                  ? `${delegateConfirm.account.name} 님을 다음 학기 회장으로 지정하시겠습니까?`
+                  : `${delegateConfirm.account.name} 님을 다음 학기 부회장으로 지정하시겠습니까?`
                 : null}
             </DialogDescription>
           </DialogHeader>

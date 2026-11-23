@@ -10,8 +10,10 @@ import { toast } from "@/components/ui/Toast";
  */
 export function StaffApplicationAnswerList({
   detail,
+  requiredQuestionIds,
 }: {
   detail: Pick<StaffApplicationDetail, "recruitment_id" | "application_id" | "answers">;
+  requiredQuestionIds?: ReadonlySet<number>;
 }) {
   return (
     <ol className="space-y-6">
@@ -19,6 +21,12 @@ export function StaffApplicationAnswerList({
         <li key={answer.question_id} className="space-y-3">
           <h4 className="font-semibold">
             {index + 1}. {answer.question_label}
+            {requiredQuestionIds?.has(answer.question_id) && (
+              <>
+                <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
+                <span className="sr-only">(필수 문항)</span>
+              </>
+            )}
           </h4>
           <div className="bg-surface-gray-subtler rounded-lg p-4 text-sm leading-6">
             {answer.question_type === "FILE" && answer.answer ? (

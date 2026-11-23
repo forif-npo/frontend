@@ -61,6 +61,16 @@ export function StaffApplicationsView({
       rounds.find((round) => round.recruitment_id === recruitmentId) ?? null,
     [recruitmentId, rounds],
   );
+  const requiredQuestionIds = useMemo(
+    () =>
+      new Set(
+        rounds
+          .find((round) => round.recruitment_id === detail?.recruitment_id)
+          ?.questions.filter((question) => question.required)
+          .map((question) => question.question_id) ?? [],
+      ),
+    [detail?.recruitment_id, rounds],
+  );
 
   useEffect(() => {
     if (initialRecruitmentId) setRecruitmentId(initialRecruitmentId);
@@ -351,7 +361,10 @@ export function StaffApplicationsView({
                   >
                     지원서
                   </h3>
-                  <StaffApplicationAnswerList detail={detail} />
+                  <StaffApplicationAnswerList
+                    detail={detail}
+                    requiredQuestionIds={requiredQuestionIds}
+                  />
                 </section>
               </div>
               <DialogFooter>

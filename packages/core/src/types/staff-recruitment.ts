@@ -14,7 +14,8 @@ export type StaffRecruitmentQuestionType =
   | "SHORT_TEXT"
   | "LONG_TEXT"
   | "FILE"
-  | "LINK";
+  | "LINK"
+  | "ATTACHMENT";
 
 export interface StaffRecruitmentDepartment {
   department_id: number;

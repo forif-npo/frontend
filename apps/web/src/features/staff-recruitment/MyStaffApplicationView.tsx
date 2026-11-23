@@ -4,13 +4,8 @@ import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
-import {
-  InlineErrorState,
-  InlineLoadingState,
-  Link,
-  PageState,
-} from "@ui/components/server";
-import { getMyStaffApplication, getStaffRecruitment } from "./api";
+import { InlineErrorState, InlineLoadingState, Link, PageState } from "@ui/components/server";
+import { getMyStaffApplication, getStaffInterviewPlan, getStaffRecruitment } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
 
 function formatDateTime(value: string) {
@@ -18,6 +13,43 @@ function formatDateTime(value: string) {
     dateStyle: "long",
     timeStyle: "short",
   }).format(new Date(value));
+}
+
+function formatInterviewDate(value: string) {
+  const date = new Date(`${value}T12:00:00`);
+  const label = new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+  return `${label}(${formatSlotDate(value).weekday})`;
+}
+
+function formatInterviewTimes(minutes: number[], slotMinutes: number | null) {
+  if (!slotMinutes) return minutes.map(formatSlotTime).join(", ");
+
+  const ranges: string[] = [];
+  let start = minutes[0];
+  let last = start;
+  for (const minute of minutes.slice(1)) {
+    if (minute === last + slotMinutes) {
+      last = minute;
+      continue;
+    }
+    ranges.push(
+      start === last
+        ? formatSlotTime(start)
+        : `${formatSlotTime(start)} ~ ${formatSlotTime(last + slotMinutes)}`,
+    );
+    start = minute;
+    last = minute;
+  }
+  ranges.push(
+    start === last
+      ? formatSlotTime(start)
+      : `${formatSlotTime(start)} ~ ${formatSlotTime(last + slotMinutes)}`,
+  );
+  return ranges.join(", ");
 }
 
 export function MyStaffApplicationView({
@@ -34,6 +66,12 @@ export function MyStaffApplicationView({
   );
   const [loading, setLoading] = useState(true);
   const [applicationOpen, setApplicationOpen] = useState(false);
+  const [interviewSlotMinutes, setInterviewSlotMinutes] = useState<
+    number | null
+  >(null);
+  const [requiredQuestionIds, setRequiredQuestionIds] = useState<Set<number>>(
+    new Set(),
+  );
   const [error, setError] = useState<{
     code: string | null;
     message: string;
@@ -42,7 +80,22 @@ export function MyStaffApplicationView({
   useEffect(() => {
     let active = true;
     getMyStaffApplication(recruitmentId)
-      .then((data) => active && setApplication(data))
+      .then(async (data) => {
+        let slotMinutes: number | null = null;
+        if (data.interview_slots.length > 0) {
+          try {
+            slotMinutes =
+              (await getStaffInterviewPlan(recruitmentId))?.slot_minutes ??
+              null;
+          } catch {
+            // 설정을 조회할 수 없어도 저장된 가능 시각은 보여 준다.
+          }
+        }
+        if (active) {
+          setInterviewSlotMinutes(slotMinutes);
+          setApplication(data);
+        }
+      })
       .catch(async (reason) => {
         const info = await getStaffApplicationErrorInfo(reason);
         if (active) setError(info);
@@ -57,10 +110,22 @@ export function MyStaffApplicationView({
     let active = true;
     getStaffRecruitment(recruitmentId)
       .then((recruitment) => {
-        if (active) setApplicationOpen(recruitment.application_open);
+        if (active) {
+          setApplicationOpen(recruitment.application_open);
+          setRequiredQuestionIds(
+            new Set(
+              recruitment.questions
+                .filter((question) => question.required)
+                .map((question) => question.question_id),
+            ),
+          );
+        }
       })
       .catch(() => {
-        if (active) setApplicationOpen(false);
+        if (active) {
+          setApplicationOpen(false);
+          setRequiredQuestionIds(new Set());
+        }
       });
     return () => {
       active = false;
@@ -113,6 +178,19 @@ export function MyStaffApplicationView({
       />
     );
   }
+
+  const interviewSlotsByDate = new Map<string, number[]>();
+  [...application.interview_slots]
+    .sort(
+      (first, second) =>
+        first.date.localeCompare(second.date) ||
+        first.start_minute - second.start_minute,
+    )
+    .forEach(({ date, start_minute }) => {
+      const minutes = interviewSlotsByDate.get(date) ?? [];
+      minutes.push(start_minute);
+      interviewSlotsByDate.set(date, minutes);
+    });
 
   const Container = embedded ? "div" : "main";
   return (
@@ -209,6 +287,17 @@ export function MyStaffApplicationView({
             <li key={answer.question_id}>
               <h3 className="text-text-bolder font-semibold">
                 {index + 1}. {answer.question_label}
+                {requiredQuestionIds.has(answer.question_id) && (
+                  <>
+                    <span
+                      className="text-text-danger ml-0.5"
+                      aria-hidden="true"
+                    >
+                      *
+                    </span>
+                    <span className="sr-only">(필수 문항)</span>
+                  </>
+                )}
               </h3>
               {answer.question_type === "FILE" && answer.answer ? (
                 <button
@@ -247,20 +336,44 @@ export function MyStaffApplicationView({
         </ol>
       </section>
 
+      {interviewSlotsByDate.size > 0 && (
+        <section className="mt-8">
+          <h2 className="text-text-bolder text-body-l mb-4 font-bold">
+            면접 가능 시각
+          </h2>
+          <ul className="rounded-3 border-border-gray-light bg-surface-white space-y-5 border p-5">
+            {Array.from(interviewSlotsByDate, ([date, minutes]) => (
+              <li key={date}>
+                <h3 className="text-text-bolder font-semibold">
+                  {formatInterviewDate(date)}
+                </h3>
+                <p className="text-text-basic mt-2 text-sm leading-6">
+                  {formatInterviewTimes(minutes, interviewSlotMinutes)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {error && (
         <p role="alert" className="text-text-danger mt-4 text-sm">
           {error.message}
         </p>
       )}
-      {applicationOpen && (
-        <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-end">
+        {applicationOpen ? (
           <Link href={`/club/recruit/${recruitmentId}/application/edit`}>
             <Button variant="primary" size="large">
               지원서 관리
             </Button>
           </Link>
-        </div>
-      )}
+        ) : (
+          <Button variant="primary" size="large" disabled>
+            지원서 관리
+          </Button>
+        )}
+      </div>
     </Container>
   );
 }
