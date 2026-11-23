@@ -1,11 +1,7 @@
 /** @jest-environment jsdom */
 import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import type {
-  StaffApplicationDetail,
-  StaffInterviewPlan,
-  StaffRecruitmentRound,
-} from "@core/types/staff-recruitment";
+import type { StaffApplicationDetail, StaffInterviewPlan, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 
 jest.mock("./api", () => ({
   getMyStaffApplication: jest.fn(),
@@ -19,11 +15,7 @@ jest.mock("@core/utils/private-file-download", () => ({
   downloadPrivateFile: jest.fn(),
 }));
 
-import {
-  getMyStaffApplication,
-  getStaffInterviewPlan,
-  getStaffRecruitment,
-} from "./api";
+import { getMyStaffApplication, getStaffInterviewPlan, getStaffRecruitment } from "./api";
 import { MyStaffApplicationView } from "./MyStaffApplicationView";
 
 const application = {

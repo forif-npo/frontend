@@ -542,8 +542,8 @@ export function AdminAccountsView({
             <DialogDescription>
               {delegateConfirm
                 ? delegateConfirm.role === "회장"
-                  ? `${delegateConfirm.account.name} 님에게 회장을 위임하시겠습니까? 위임 후 본인은 일반 운영진이 됩니다.`
-                  : `${delegateConfirm.account.name} 님을 부회장으로 임명하시겠습니까? 기존 부회장은 일반 운영진이 됩니다.`
+                  ? `${delegateConfirm.account.name} 님에게 회장을 위임하시겠습니까?`
+                  : `${delegateConfirm.account.name} 님을 부회장으로 임명하시겠습니까?`
                 : null}
             </DialogDescription>
           </DialogHeader>
