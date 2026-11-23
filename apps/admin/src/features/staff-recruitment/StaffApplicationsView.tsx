@@ -5,7 +5,6 @@ import { MoreVertical, ShieldAlert } from "lucide-react";
 import type { AdminStaffRecruitmentRound, StaffApplicationDetail, StaffApplicationSummary } from "@core/types/staff-recruitment";
 import { formatStaffInterviewAvailability, formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
-import { formatPhoneNumber } from "@core/utils/phone-number";
 import { PageHeader } from "@/components/page-header";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
@@ -16,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/Toast";
 import { StaffApplicationAnswerList } from "./StaffApplicationAnswerList";
+import { StaffApplicantInfoTable } from "./StaffApplicantInfoTable";
 import { getPublicStaffInterviewPlan, getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
 
 const EMPTY_PAGE: StaffApplicationPage = {
@@ -348,31 +348,7 @@ export function StaffApplicationsView({
                   >
                     지원자 정보
                   </h3>
-                  <Table className="text-sm">
-                    <TableBody>
-                      {[
-                        ["이름", detail.applicant_name],
-                        ["학과", detail.applicant_department ?? "-"],
-                        ["학번", detail.applicant_user_id ?? "탈퇴 회원"],
-                        ["이메일", detail.applicant_email],
-                        ["연락처", formatPhoneNumber(detail.applicant_phone_num) || "-"],
-                        ["1지망 부서", departmentName(detail, 1)],
-                        ["2지망 부서", departmentName(detail, 2)],
-                      ].map(([label, value]) => (
-                        <TableRow key={label} className="hover:bg-transparent">
-                          <th
-                            scope="row"
-                            className="text-muted-foreground w-28 whitespace-nowrap py-3 pr-4 text-left font-normal"
-                          >
-                            {label}
-                          </th>
-                          <TableCell className="break-all py-3 text-left">
-                            {value}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <StaffApplicantInfoTable detail={detail} />
                 </section>
                 <section
                   className="space-y-4"
