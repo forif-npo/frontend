@@ -383,6 +383,8 @@ export async function changeStaffRecruitmentStatus(
   return response.data!;
 }
 
+export type StaffApplicationSort = `${"department" | "submittedAt"}:${"ASC" | "DESC"}`;
+
 export interface StaffApplicationPage {
   content: StaffApplicationSummary[];
   totalElements: number;
@@ -397,12 +399,15 @@ export async function getStaffApplications({
   search,
   page = 0,
   size = 20,
+  sort,
 }: {
   recruitmentId: number;
   departmentId?: number;
   search?: string;
   page?: number;
   size?: number;
+  /** "department:ASC" 형태. offset 모드에서만 적용된다. */
+  sort?: StaffApplicationSort;
 }): Promise<StaffApplicationPage> {
   const searchParams = new URLSearchParams({
     page: String(page),
@@ -411,6 +416,7 @@ export async function getStaffApplications({
   // Spring @RequestParam의 실제 파라미터 이름이다.
   if (departmentId) searchParams.set("departmentId", String(departmentId));
   if (search?.trim()) searchParams.set("search", search.trim());
+  if (sort) searchParams.set("sort", sort);
 
   const response = await apiClient
     .get(`api/v1/admin/staff-recruitments/${recruitmentId}/applications`, {
