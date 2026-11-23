@@ -160,13 +160,6 @@ export function OperatorsView({
     if (!editTarget || isSubmitting) return;
     if (
       !isIncumbentPresident &&
-      normalizeClubDepartment(editForm.department) !== normalizeClubDepartment(editTarget.department) &&
-      (normalizeClubDepartment(editForm.department) === "SW" ||
-        normalizeClubDepartment(editTarget.department) === "SW")
-    )
-      return;
-    if (
-      !isIncumbentPresident &&
       editForm.title.trim() !== editTarget.title &&
       (isLeadershipTitle(editTarget.title) ||
         isLeadershipTitle(editForm.title.trim()))
@@ -224,11 +217,7 @@ export function OperatorsView({
 
   const handleDeleteOperator = async (operator: Operator) => {
     if (isSubmitting) return;
-    if (
-      !isIncumbentPresident &&
-      (isLeadershipTitle(operator.title) || normalizeClubDepartment(operator.department) === "SW")
-    )
-      return;
+    if (!isIncumbentPresident && isLeadershipTitle(operator.title)) return;
     if (
       !(await confirmDialog({
         title: "운영진 이력 삭제",
@@ -262,13 +251,6 @@ export function OperatorsView({
       editForm.title.trim() !== editTarget.title &&
       (isLeadershipTitle(editTarget.title) ||
         isLeadershipTitle(editForm.title.trim())),
-  );
-  const blockedSwTeamChange = Boolean(
-    !isIncumbentPresident &&
-      editTarget &&
-      normalizeClubDepartment(editForm.department) !== normalizeClubDepartment(editTarget.department) &&
-      (normalizeClubDepartment(editForm.department) === "SW" ||
-        normalizeClubDepartment(editTarget.department) === "SW"),
   );
 
   return (
@@ -344,11 +326,7 @@ export function OperatorsView({
                       {canManageOperators && (
                         <DropdownMenuItem
                           className="text-destructive focus:text-destructive"
-                          disabled={
-                            !isIncumbentPresident &&
-                            (isLeadershipTitle(operator.title) ||
-                              normalizeClubDepartment(operator.department) === "SW")
-                          }
+                          disabled={!isIncumbentPresident && isLeadershipTitle(operator.title)}
                           onClick={() => handleDeleteOperator(operator)}
                         >
                           운영진 정보 삭제
@@ -415,19 +393,11 @@ export function OperatorsView({
                   id="op-department"
                   placeholder="기획팀"
                   value={editForm.department}
-                  disabled={
-                    !canManageEditTarget ||
-                    (!isIncumbentPresident && normalizeClubDepartment(editTarget?.department ?? "") === "SW")
-                  }
+                  disabled={!canManageEditTarget}
                   onChange={(e) =>
                     setEditForm((f) => ({ ...f, department: e.target.value }))
                   }
                 />
-                {blockedSwTeamChange && (
-                  <p className="text-muted-foreground text-xs">
-                    SW팀 소속 지정은 현 회장만 할 수 있습니다.
-                  </p>
-                )}
               </div>
             </div>
             <div className="flex flex-col gap-2">
@@ -499,11 +469,7 @@ export function OperatorsView({
             </Button>
             <Button
               onClick={handleUpdateSubmit}
-              disabled={
-                isSubmitting ||
-                blockedLeadershipTitleChange ||
-                blockedSwTeamChange
-              }
+              disabled={isSubmitting || blockedLeadershipTitleChange}
             >
               {isSubmitting ? "저장 중..." : "저장"}
             </Button>

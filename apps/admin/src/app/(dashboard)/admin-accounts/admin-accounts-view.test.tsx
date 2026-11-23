@@ -207,7 +207,7 @@ describe("AdminAccountsView", () => {
     expect(screen.queryByText("SW (차기 회장)")).toBeNull();
   });
 
-  it("shows SW as SW팀 but disables selection for a non-incumbent", async () => {
+  it("shows SW as SW팀 and permits selection for the president team", async () => {
     jest.mocked(getCurrentTeamNames).mockResolvedValueOnce(["SW"]);
     render(
       <AdminAccountsView
@@ -218,7 +218,7 @@ describe("AdminAccountsView", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "운영진 계정 생성" }));
-    expect((await screen.findByText("SW팀")).getAttribute("data-disabled")).toBe("true");
+    expect((await screen.findByText("SW팀")).getAttribute("data-disabled")).toBeNull();
   });
 
   it("allows the incumbent to designate the current vice president for next semester", async () => {

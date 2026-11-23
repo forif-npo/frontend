@@ -98,7 +98,7 @@ describe("AddOperatorDialog", () => {
     expect(addOperator).not.toHaveBeenCalled();
   });
 
-  it("keeps SW team assignment disabled for a non-incumbent", () => {
+  it("allows a non-incumbent president-team member to assign SW", async () => {
     jest.mocked(addOperator).mockClear();
     render(
       <AddOperatorDialog
@@ -110,6 +110,9 @@ describe("AddOperatorDialog", () => {
       />,
     );
 
+    fireEvent.change(screen.getByLabelText("학번"), {
+      target: { value: "20260002" },
+    });
     fireEvent.change(screen.getByLabelText("소속 팀"), {
       target: { value: "SW팀" },
     });
@@ -117,9 +120,13 @@ describe("AddOperatorDialog", () => {
     const addButton = screen.getByRole("button", {
       name: "추가",
     }) as HTMLButtonElement;
-    expect(addButton.disabled).toBe(true);
+    expect(addButton.disabled).toBe(false);
     fireEvent.click(addButton);
-    expect(addOperator).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(addOperator).toHaveBeenCalledWith(
+        expect.objectContaining({ club_department: "SW" }),
+      ),
+    );
   });
 
   it("sends a team name without its display suffix", async () => {

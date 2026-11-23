@@ -178,7 +178,7 @@ describe("OperatorsView", () => {
     ).toBe(false);
   });
 
-  it("uses the stored SW value when disabling SW roster changes", () => {
+  it("allows a non-incumbent president-team member to edit or delete SW roster entries", () => {
     render(
       <OperatorsView
         initialData={[
@@ -207,8 +207,8 @@ describe("OperatorsView", () => {
 
     expect(
       (screen.getByRole("button", { name: "운영진 정보 삭제" }) as HTMLButtonElement).disabled,
-    ).toBe(true);
+    ).toBe(false);
     fireEvent.click(screen.getByRole("button", { name: "운영진 정보 수정" }));
-    expect((screen.getByDisplayValue("SW") as HTMLInputElement).disabled).toBe(true);
+    expect((screen.getByDisplayValue("SW") as HTMLInputElement).disabled).toBe(false);
   });
 });

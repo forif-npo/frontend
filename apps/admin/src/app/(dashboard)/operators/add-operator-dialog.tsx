@@ -32,8 +32,6 @@ export function AddOperatorDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const blockedLeadershipTitle =
     !isIncumbentPresident && ["회장", "부회장"].includes(form.userTitle.trim());
-  const blockedSwTeam =
-    !isIncumbentPresident && normalizeClubDepartment(form.clubDepartment) === "SW";
 
   useEffect(() => {
     if (!open) return;
@@ -54,7 +52,7 @@ export function AddOperatorDialog({
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
-    if (blockedLeadershipTitle || blockedSwTeam) return;
+    if (blockedLeadershipTitle) return;
 
     const userId = Number(form.userId);
     if (!form.userId || Number.isNaN(userId)) {
@@ -95,10 +93,10 @@ export function AddOperatorDialog({
           <DialogDescription>
             {semester?.label ?? "현재 활동 학기"} 운영진 명단에 추가합니다. 이
             명단은 홈페이지 운영진 소개에 표시되며, 학기가 바뀌면 이어지지
-            않으므로 매 학기 새로 지정해야 합니다. 다음 학기 회장·부회장 직책은
+            않으므로 매 학기 새로 지정해야 합니다. 다음 학기 회장/부회장 직책은
             현 회장만 지정할 수 있으며, 운영진 계정이 있는 사람에게 지정 즉시
             해당 권한이 열립니다. 현재 학기 SW팀 소속도 운영진 계정이 있으면
-            관리 화면 권한이 열리므로 현 회장만 지정할 수 있습니다.
+            관리 화면 권한이 열립니다.
           </DialogDescription>
         </DialogHeader>
 
@@ -142,11 +140,6 @@ export function AddOperatorDialog({
                 회장·부회장 직책은 현 회장만 지정할 수 있습니다.
               </p>
             )}
-            {blockedSwTeam && (
-              <p className="text-muted-foreground text-xs">
-                SW팀 소속 지정은 현 회장만 할 수 있습니다.
-              </p>
-            )}
           </div>
         </div>
 
@@ -160,7 +153,7 @@ export function AddOperatorDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={isSubmitting || blockedLeadershipTitle || blockedSwTeam}
+            disabled={isSubmitting || blockedLeadershipTitle}
           >
             {isSubmitting ? "추가 중..." : "추가"}
           </Button>

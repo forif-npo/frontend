@@ -126,11 +126,6 @@ export function AdminAccountsView({
       );
       return;
     }
-    if (!isIncumbentPresident && normalizeClubDepartment(createForm.affiliation) === "SW") {
-      toast.error("SW팀 운영진 계정은 현 회장만 생성할 수 있습니다.");
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       await createAdminAccount({
@@ -387,8 +382,7 @@ export function AdminAccountsView({
           <DialogHeader>
             <DialogTitle>운영진 계정 생성</DialogTitle>
             <DialogDescription>
-              가입된 부원의 학번으로 운영진 계정을 만듭니다. 현재 학기 SW팀
-              계정은 관리 화면 권한이 열리므로 현 회장만 생성할 수 있습니다.
+              가입된 부원의 학번으로 운영진 계정을 만듭니다.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
@@ -427,11 +421,7 @@ export function AdminAccountsView({
                 </SelectTrigger>
                 <SelectContent>
                   {teamNames.map((team) => (
-                    <SelectItem
-                      key={team}
-                      value={team}
-                      disabled={normalizeClubDepartment(team) === "SW" && !isIncumbentPresident}
-                    >
+                    <SelectItem key={team} value={team}>
                       {formatClubDepartment(team)}
                     </SelectItem>
                   ))}
