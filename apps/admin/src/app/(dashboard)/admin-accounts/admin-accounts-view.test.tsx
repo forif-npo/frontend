@@ -199,7 +199,9 @@ describe("AdminAccountsView", () => {
     );
 
     fireEvent.click(await screen.findByRole("button", { name: "회장 위임" }));
-    expect(screen.getByText(/현 회장 권한은 이번 학기 동안 유지됩니다/)).not.toBeNull();
+    expect(
+      screen.getByText("현 부회장 님을 다음 학기 회장으로 지정하시겠습니까?"),
+    ).not.toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "확인" }));
     await waitFor(() => expect(delegatePresidency).toHaveBeenCalledWith(20260002, "회장"));
   });

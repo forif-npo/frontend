@@ -536,13 +536,15 @@ export function AdminAccountsView({
         <DialogContent showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>
-              {delegateConfirm?.role === "회장" ? "회장 위임" : "부회장 임명"}
+              {delegateConfirm?.role === "회장"
+                ? "차기 회장 지정"
+                : "차기 부회장 지정"}
             </DialogTitle>
             <DialogDescription>
               {delegateConfirm
                 ? delegateConfirm.role === "회장"
-                  ? `${delegateConfirm.account.name} 님에게 회장을 위임하시겠습니까?`
-                  : `${delegateConfirm.account.name} 님을 부회장으로 임명하시겠습니까?`
+                  ? `${delegateConfirm.account.name} 님을 다음 학기 회장으로 지정하시겠습니까?`
+                  : `${delegateConfirm.account.name} 님을 다음 학기 부회장으로 지정하시겠습니까?`
                 : null}
             </DialogDescription>
           </DialogHeader>
