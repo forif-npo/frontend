@@ -1,9 +1,8 @@
 /** @jest-environment jsdom */
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, jest } from "@jest/globals";
 import type { ComponentProps, ReactNode } from "react";
 import type { AdminAccount } from "./api";
-
 jest.mock("@/components/ui/Toast", () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
@@ -117,8 +116,7 @@ jest.mock("./api", () => ({
   deleteAdminAccount: jest.fn(),
   delegatePresidency: jest.fn(),
 }));
-
-import { getAdminAccounts } from "./api";
+import { delegatePresidency, getAdminAccounts } from "./api";
 import { AdminAccountsView } from "./admin-accounts-view";
 
 describe("AdminAccountsView", () => {
@@ -176,5 +174,33 @@ describe("AdminAccountsView", () => {
 
     expect(await screen.findByText("운영진 (차기 회장)")).not.toBeNull();
     expect(screen.queryByText("운영진 (SW팀 권한)")).toBeNull();
+  });
+
+  it("allows the incumbent to designate the current vice president for next semester", async () => {
+    jest.mocked(getAdminAccounts).mockResolvedValueOnce({
+      content: [{
+        user_id: 20260002,
+        name: "현 부회장",
+        department: null,
+        phone_num: null,
+        affiliation: "부회장",
+        authority_affiliation: "부회장",
+      }],
+      total_elements: 1,
+      total_pages: 1,
+      current_page: 0,
+    });
+    render(
+      <AdminAccountsView
+        myAffiliation="회장"
+        isIncumbentPresident
+        myUserId={20260001}
+      />,
+    );
+
+    fireEvent.click(await screen.findByRole("button", { name: "회장 위임" }));
+    expect(screen.getByText(/현 회장 권한은 이번 학기 동안 유지됩니다/)).not.toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "확인" }));
+    await waitFor(() => expect(delegatePresidency).toHaveBeenCalledWith(20260002, "회장"));
   });
 });
