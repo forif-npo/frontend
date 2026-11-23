@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
+import { formatSlotDate, formatSlotTime } from "@core/time-slot";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
 import { InlineErrorState, InlineLoadingState, Link, PageState } from "@ui/components/server";
