@@ -5,6 +5,7 @@ import { MoreVertical, ShieldAlert } from "lucide-react";
 import type { AdminStaffRecruitmentRound, StaffApplicationDetail, StaffApplicationSummary } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment, formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import { PageHeader } from "@/components/page-header";
 import { OffsetPagination } from "@/components/list/offset-pagination";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
@@ -332,7 +333,7 @@ export function StaffApplicationsView({
                         ["학과", detail.applicant_department ?? "-"],
                         ["학번", detail.applicant_user_id ?? "탈퇴 회원"],
                         ["이메일", detail.applicant_email],
-                        ["연락처", detail.applicant_phone_num ?? "-"],
+                        ["연락처", formatPhoneNumber(detail.applicant_phone_num) || "-"],
                         ["1지망 부서", departmentName(detail, 1)],
                         ["2지망 부서", departmentName(detail, 2)],
                       ].map(([label, value]) => (

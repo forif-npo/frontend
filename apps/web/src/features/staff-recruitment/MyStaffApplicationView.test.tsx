@@ -25,7 +25,7 @@ const application = {
   applicant_name: "예시 지원자",
   applicant_department: null,
   applicant_email: "applicant@example.com",
-  applicant_phone_num: null,
+  applicant_phone_num: "01012345678",
   applied_departments: [],
   status: "SUBMITTED",
   submitted_at: "2026-11-23T12:00:00+09:00",
@@ -86,6 +86,7 @@ describe("MyStaffApplicationView", () => {
     const heading = await screen.findByRole("heading", {
       name: "면접 가능 시각",
     });
+    expect(screen.getByText("010-1234-5678")).toBeTruthy();
     const section = heading.closest("section");
     expect(section).not.toBeNull();
     const dates = within(section!).getAllByRole("listitem");

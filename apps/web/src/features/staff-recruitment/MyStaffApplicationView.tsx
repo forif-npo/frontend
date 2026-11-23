@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { StaffApplicationDetail } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { formatSlotDate, formatSlotTime } from "@core/time-slot";
+import { formatPhoneNumber } from "@core/utils/phone-number";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
 import { Button } from "@ui/components/client";
 import { InlineErrorState, InlineLoadingState, Link, PageState } from "@ui/components/server";
@@ -248,7 +249,7 @@ export function MyStaffApplicationView({
           <div>
             <dt className="text-text-subtle text-sm">연락처</dt>
             <dd className="text-text-basic font-semibold">
-              {application.applicant_phone_num ?? "-"}
+              {formatPhoneNumber(application.applicant_phone_num) || "-"}
             </dd>
           </div>
         </dl>
