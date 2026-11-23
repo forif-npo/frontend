@@ -40,6 +40,10 @@ function departmentName(item: StaffApplicationSummary, priority: 1 | 2) {
   return name ? formatStaffRecruitmentDepartment(name) : "-";
 }
 
+function isAccessDenied(error: unknown) {
+  return error instanceof HTTPError && error.response.status === 403;
+}
+
 export function StaffApplicationsView({
   initialRecruitmentId,
 }: {
@@ -83,7 +87,9 @@ export function StaffApplicationsView({
         }
       })
       .catch(async (error) => {
-        if (!initialRecruitmentId) {
+        if (isAccessDenied(error)) {
+          setAccessDenied(true);
+        } else if (!initialRecruitmentId) {
           toast.error(await handleApiError(error));
         }
       })
@@ -106,10 +112,11 @@ export function StaffApplicationsView({
     } catch (error) {
       setData(EMPTY_PAGE);
       setDetail(null);
-      if (error instanceof HTTPError && error.response.status === 403) {
+      if (isAccessDenied(error)) {
         setAccessDenied(true);
+      } else {
+        toast.error(await handleApiError(error));
       }
-      toast.error(await handleApiError(error));
     } finally {
       setLoading(false);
     }
@@ -126,11 +133,12 @@ export function StaffApplicationsView({
       setDetail(await getStaffApplicationDetail(recruitmentId, applicationId));
     } catch (error) {
       setDetail(null);
-      if (error instanceof HTTPError && error.response.status === 403) {
+      if (isAccessDenied(error)) {
         setData(EMPTY_PAGE);
         setAccessDenied(true);
+      } else {
+        toast.error(await handleApiError(error));
       }
-      toast.error(await handleApiError(error));
     } finally {
       setDetailLoading(false);
     }
