@@ -5,6 +5,7 @@ jest.mock("@core/utils/api-client", () => ({
     get: jest.fn(),
     post: jest.fn(),
     patch: jest.fn(),
+    put: jest.fn(),
     delete: jest.fn(),
   },
 }));
@@ -12,7 +13,10 @@ jest.mock("@core/utils/api-client", () => ({
 import { apiClient } from "@core/utils/api-client";
 import {
   changeStaffRecruitmentStatus,
+  deleteStaffInterviewPlan,
   getStaffApplicationDetail,
+  getPublicStaffInterviewPlan,
+  getStaffInterviewPlan,
   getStaffApplications,
   getStaffReviewerCandidates,
   getStaffReviewers,
@@ -20,6 +24,7 @@ import {
   getReviewableStaffRecruitments,
   grantStaffReviewer,
   revokeStaffReviewer,
+  saveStaffInterviewPlan,
   updateStaffRecruitment,
 } from "./api";
 
@@ -31,6 +36,7 @@ type ApiMock = {
 const mockedGet = apiClient.get as unknown as ApiMock;
 const mockedPost = apiClient.post as unknown as ApiMock;
 const mockedPatch = apiClient.patch as unknown as ApiMock;
+const mockedPut = apiClient.put as unknown as ApiMock;
 const mockedDelete = apiClient.delete as unknown as {
   mockReset: () => void;
   mockResolvedValue: (value: unknown) => void;
@@ -45,6 +51,7 @@ describe("staff recruitment admin api", () => {
     mockedGet.mockReset();
     mockedPost.mockReset();
     mockedPatch.mockReset();
+    mockedPut.mockReset();
     mockedDelete.mockReset();
   });
 
@@ -188,6 +195,68 @@ describe("staff recruitment admin api", () => {
     );
     expect(apiClient.delete).toHaveBeenCalledWith(
       "api/v1/admin/staff-recruitments/12/reviewers/2099999999",
+    );
+  });
+
+  it("reads the interview plan of a round without caching", async () => {
+    mockedGet.mockReturnValue(response({ interview_plan_id: 3, slot_minutes: 30 }));
+
+    await expect(getStaffInterviewPlan(12)).resolves.toEqual({
+      interview_plan_id: 3,
+      slot_minutes: 30,
+    });
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/12/interview-plan",
+      { cache: "no-store" },
+    );
+  });
+
+  it("reads the public interview plan for an application reviewer", async () => {
+    mockedGet.mockReturnValue(response({ slot_minutes: 30 }));
+
+    await expect(getPublicStaffInterviewPlan(12)).resolves.toEqual({ slot_minutes: 30 });
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "api/v1/staff-recruitments/12/interview-plan",
+      { cache: "no-cache" },
+    );
+  });
+
+  it("treats a round without an interview plan as none instead of an error", async () => {
+    mockedGet.mockReturnValue({
+      json: () => Promise.reject({ response: { status: 404 } }),
+    });
+
+    await expect(getStaffInterviewPlan(12)).resolves.toBeNull();
+  });
+
+  it("does not hide other interview plan failures", async () => {
+    const failure = { response: { status: 403 } };
+    mockedGet.mockReturnValue({ json: () => Promise.reject(failure) });
+
+    await expect(getStaffInterviewPlan(12)).rejects.toBe(failure);
+  });
+
+  it("saves and removes the interview plan of a round", async () => {
+    mockedPut.mockReturnValue(response({ interview_plan_id: 3 }));
+    mockedDelete.mockResolvedValue(undefined);
+    const body = {
+      dates: ["2026-12-01"],
+      start_hour: 9,
+      end_hour: 22,
+      slot_minutes: 20,
+      required: true,
+      guide: "면접 가능 시간을 표시해주세요.",
+    };
+
+    await saveStaffInterviewPlan(12, body);
+    await deleteStaffInterviewPlan(12);
+
+    expect(apiClient.put).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/12/interview-plan",
+      { json: body },
+    );
+    expect(apiClient.delete).toHaveBeenCalledWith(
+      "api/v1/admin/staff-recruitments/12/interview-plan",
     );
   });
 });

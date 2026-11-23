@@ -21,11 +21,13 @@ interface SemesterManageViewProps {
   /** 로그인한 회장단 본인의 학번. 연임 시 차기 회장 기본값이 된다. */
   currentUserId: number;
   currentUserName: string;
+  isIncumbentPresident: boolean;
 }
 
 export function SemesterManageView({
   currentUserId,
   currentUserName,
+  isIncumbentPresident,
 }: SemesterManageViewProps) {
   const [current, setCurrent] = useState<Semester | null>(null);
   const [semesters, setSemesters] = useState<Semester[]>([]);
@@ -74,8 +76,9 @@ export function SemesterManageView({
         target.act_semester,
       );
       setPreview(result);
-      // 기본값은 연임. 회장이 바뀌는 경우에만 다른 사람을 고르게 한다.
-      setNextPresidentId(String(currentUserId));
+      setNextPresidentId(
+        String(result.designated_next_president_user_id ?? currentUserId),
+      );
     } catch (error) {
       toast.error(await handleApiError(error));
     } finally {
@@ -84,7 +87,7 @@ export function SemesterManageView({
   };
 
   const handleConfirm = async () => {
-    if (!preview || isSubmitting) return;
+    if (!preview || isSubmitting || !isIncumbentPresident) return;
     if (!nextPresidentId) {
       toast.error("차기 회장을 지정해주세요.");
       return;
@@ -96,11 +99,12 @@ export function SemesterManageView({
         act_semester: preview.target.act_semester,
         next_president_user_id: Number(nextPresidentId),
       });
-      const isReelection = Number(nextPresidentId) === currentUserId;
+      const isReelection =
+        isIncumbentPresident && Number(nextPresidentId) === currentUserId;
       toast.success(
         isReelection
           ? `활동 학기를 ${changed.label}로 전환했습니다.`
-          : `활동 학기를 ${changed.label}로 전환하고 회장 권한을 넘겼습니다.`,
+          : `활동 학기를 ${changed.label}로 전환하고 회장직을 인계했습니다.`,
       );
       setPreview(null);
       setSelectedLabel("");
@@ -133,7 +137,10 @@ export function SemesterManageView({
 
         <div className="flex flex-wrap items-end gap-3 pt-2">
           {next && (
-            <Button onClick={() => openPreview(next)} disabled={isSubmitting}>
+            <Button
+              onClick={() => openPreview(next)}
+              disabled={isSubmitting || !isIncumbentPresident}
+            >
               다음 학기({next.label})로 전환
             </Button>
           )}
@@ -143,7 +150,11 @@ export function SemesterManageView({
               <Label htmlFor="semester-select" className="text-xs">
                 직접 선택
               </Label>
-              <Select value={selectedLabel} onValueChange={setSelectedLabel}>
+              <Select
+                value={selectedLabel}
+                onValueChange={setSelectedLabel}
+                disabled={!isIncumbentPresident}
+              >
                 <SelectTrigger id="semester-select" className="w-[160px]">
                   <SelectValue placeholder="학기 선택" />
                 </SelectTrigger>
@@ -160,7 +171,7 @@ export function SemesterManageView({
             </div>
             <Button
               variant="outline"
-              disabled={!selectedLabel || isSubmitting}
+              disabled={!isIncumbentPresident || !selectedLabel || isSubmitting}
               onClick={() => {
                 const parsed = parseLabel(selectedLabel);
                 if (!parsed) return;
@@ -175,6 +186,11 @@ export function SemesterManageView({
             </Button>
           </div>
         </div>
+        {!isIncumbentPresident && (
+          <p className="text-muted-foreground text-sm">
+            학기 전환은 현 회장만 진행할 수 있습니다.
+          </p>
+        )}
       </div>
 
       {/* 모집 일정 */}
@@ -211,6 +227,10 @@ export function SemesterManageView({
                   <Select
                     value={nextPresidentId}
                     onValueChange={setNextPresidentId}
+                    disabled={
+                      !isIncumbentPresident ||
+                      Boolean(preview.designated_next_president_user_id)
+                    }
                   >
                     <SelectTrigger id="next-president" className="w-full">
                       <SelectValue placeholder="차기 회장 선택" />
@@ -230,9 +250,37 @@ export function SemesterManageView({
                   <p className="text-muted-foreground text-xs">
                     {Number(nextPresidentId) === currentUserId
                       ? `${currentUserName || "본인"} 님이 다음 학기 회장을 맡습니다.`
-                      : "전환과 동시에 회장 권한이 넘어갑니다. 이후 운영진 계정 생성·명단 관리는 신임 회장이 맡고, 본인은 일반 운영진이 됩니다."}
+                      : preview.designated_next_president_user_id ===
+                          Number(nextPresidentId)
+                        ? "차기 회장 권한은 이미 열려 있습니다. 전환 시 현재 회장 직책과 서명 기준이 바뀝니다."
+                        : "전환과 동시에 회장 권한이 넘어갑니다. 이후 운영진 계정 생성·명단 관리는 신임 회장이 맡고, 본인은 일반 운영진이 됩니다."}
                   </p>
                 </div>
+
+                {!preview.designated_next_vice_president_user_id && (
+                  <div className="bg-warning-5 text-text-warning rounded-md p-3">
+                    <p className="flex items-center gap-1.5 font-semibold">
+                      <AlertTriangle className="h-4 w-4 shrink-0" />
+                      부회장도 바로 지정하시겠습니까?
+                    </p>
+                    <p className="mt-1 text-xs">
+                      {preview.target.label} 부회장이 지정되지 않았습니다.
+                      이대로 전환하면 기존 부회장의 권한이 종료됩니다.
+                    </p>
+                    {isIncumbentPresident ? (
+                      <a
+                        className="mt-2 inline-block text-xs underline underline-offset-2"
+                        href={`/operators?semester=${encodeURIComponent(preview.target.label)}`}
+                      >
+                        운영진 명단에서 부회장 지정하기
+                      </a>
+                    ) : (
+                      <p className="mt-2 text-xs">
+                        차기 부회장 지정은 현 회장에게 요청해주세요.
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* 수료증 */}
                 {preview.has_pending_certificates && (
@@ -297,9 +345,15 @@ export function SemesterManageView({
                 </Button>
                 <Button
                   onClick={handleConfirm}
-                  disabled={isSubmitting || !nextPresidentId}
+                  disabled={
+                    isSubmitting || !nextPresidentId || !isIncumbentPresident
+                  }
                 >
-                  {isSubmitting ? "전환 중..." : "전환하기"}
+                  {isSubmitting
+                    ? "전환 중..."
+                    : preview.designated_next_vice_president_user_id
+                      ? "전환하기"
+                      : "부회장 없이 전환하기"}
                 </Button>
               </DialogFooter>
             </>

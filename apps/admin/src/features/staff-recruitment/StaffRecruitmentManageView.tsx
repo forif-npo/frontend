@@ -1,16 +1,17 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { CalendarRange, Pencil, Plus, UserRoundCog } from "lucide-react";
+import { CalendarClock, CalendarRange, Pencil, Plus, UserRoundCog } from "lucide-react";
 import { toast } from "@/components/ui/Toast";
 import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { AdminStaffRecruitmentRound } from "@core/types/staff-recruitment";
+import type { AdminStaffRecruitmentRound, StaffInterviewPlan } from "@core/types/staff-recruitment";
+import type { Semester } from "@core/api/semester";
 import { formatStaffRecruitmentTitle, staffRecruitmentStorageTitle } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
-import { changeStaffRecruitmentStatus, createStaffRecruitment, getStaffRecruitments, updateStaffRecruitment } from "./api";
-import { toSaveRequest, type StaffRecruitmentFormState } from "./form";
+import { changeStaffRecruitmentStatus, createStaffRecruitment, deleteStaffInterviewPlan, getStaffInterviewPlan, getStaffRecruitments, saveStaffInterviewPlan, updateStaffRecruitment } from "./api";
+import { toInterviewPlanRequest, toSaveRequest, type StaffRecruitmentFormState } from "./form";
 import { StaffRecruitmentFormDialog } from "./StaffRecruitmentFormDialog";
 import Link from "next/link";
 
@@ -25,13 +26,15 @@ function formatRecruitmentDate(value?: string | null) {
   return value ? value.slice(0, 10).replaceAll("-", ". ") : "-";
 }
 
-export function StaffRecruitmentManageView() {
+export function StaffRecruitmentManageView({ currentSemester }: { currentSemester: Semester }) {
   const [items, setItems] = useState<AdminStaffRecruitmentRound[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editTarget, setEditTarget] =
     useState<AdminStaffRecruitmentRound | null>(null);
+  const [editPlan, setEditPlan] = useState<StaffInterviewPlan | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -50,10 +53,13 @@ export function StaffRecruitmentManageView() {
 
   const save = async (form: StaffRecruitmentFormState) => {
     if (submitting) return;
+    setSaveError(null);
     setSubmitting(true);
     try {
       const body = toSaveRequest(form);
+      let recruitmentId: number;
       if (editTarget) {
+        recruitmentId = editTarget.recruitment_id;
         await updateStaffRecruitment(editTarget.recruitment_id, {
           title: staffRecruitmentStorageTitle(
             editTarget.act_year,
@@ -68,16 +74,40 @@ export function StaffRecruitmentManageView() {
           version: editTarget.version,
         });
       } else {
-        await createStaffRecruitment(body);
+        recruitmentId = (await createStaffRecruitment(body)).recruitment_id;
       }
+
+      // 모집과 면접 일정은 따로 저장된다. 모집만 저장되고 일정이 실패하면
+      // 지원서에 시간표가 나오지 않으므로 그 사실을 따로 알린다.
+      try {
+        if (form.interview.enabled) {
+          await saveStaffInterviewPlan(
+            recruitmentId,
+            toInterviewPlanRequest(form.interview, editPlan?.version),
+          );
+        } else if (editPlan) {
+          await deleteStaffInterviewPlan(recruitmentId);
+        }
+      } catch (error) {
+        toast.error(
+          `모집은 저장했지만 면접 일정을 저장하지 못했습니다. 수정에서 다시 저장해 주세요. (${await handleApiError(error)})`,
+        );
+        setDialogOpen(false);
+        setEditTarget(null);
+        setEditPlan(null);
+        await load();
+        return;
+      }
+
       toast.success(
         editTarget ? "모집 초안을 수정했습니다." : "모집 초안을 만들었습니다.",
       );
       setDialogOpen(false);
       setEditTarget(null);
+      setEditPlan(null);
       await load();
     } catch (error) {
-      toast.error(await handleApiError(error));
+      setSaveError(await handleApiError(error));
     } finally {
       setSubmitting(false);
     }
@@ -128,6 +158,7 @@ export function StaffRecruitmentManageView() {
         <Button
           onClick={() => {
             setEditTarget(null);
+            setEditPlan(null);
             setDialogOpen(true);
           }}
         >
@@ -188,11 +219,28 @@ export function StaffRecruitmentManageView() {
                       열람자 관리
                     </Link>
                   </Button>
+                  {/* 마감한 회차에서만 면접 일정을 정한다. 접수 중에는 지원자가 계속 바뀐다. */}
+                  {item.publication_status === "CLOSED" && (
+                    <Button asChild>
+                      <Link href={`/staff-recruitments/${item.recruitment_id}/interview`}>
+                        <CalendarClock className="mr-1 h-4 w-4" />
+                        면접
+                      </Link>
+                    </Button>
+                  )}
                   {item.publication_status === "DRAFT" && (
                     <>
                       <Button
                         variant="outline"
-                        onClick={() => {
+                        onClick={async () => {
+                          try {
+                            setEditPlan(
+                              await getStaffInterviewPlan(item.recruitment_id),
+                            );
+                          } catch (error) {
+                            toast.error(await handleApiError(error));
+                            return;
+                          }
                           setEditTarget(item);
                           setDialogOpen(true);
                         }}
@@ -237,11 +285,18 @@ export function StaffRecruitmentManageView() {
 
       <StaffRecruitmentFormDialog
         open={dialogOpen}
+        currentSemester={currentSemester}
         recruitment={editTarget}
+        interviewPlan={editPlan}
         submitting={submitting}
+        submitError={saveError}
         onOpenChange={(open) => {
+          if (!open) setSaveError(null);
           setDialogOpen(open);
-          if (!open) setEditTarget(null);
+          if (!open) {
+            setEditTarget(null);
+            setEditPlan(null);
+          }
         }}
         onSubmit={save}
       />

@@ -1,22 +1,20 @@
 "use client";
-import { useId } from "react";
 import { Select } from "@ui/components/client";
 
 export type StudySortOrder = "latest" | "oldest";
 
 interface StudySortControlProps {
+  id: string;
   value: StudySortOrder;
   onChange: (value: StudySortOrder) => void;
 }
 
-export function StudySortControl({ value, onChange }: StudySortControlProps) {
-  const selectId = useId();
-
+export function StudySortControl({ id, value, onChange }: StudySortControlProps) {
   return (
     <div className="flex shrink-0 items-center gap-3">
       <p className="text-body-medium whitespace-nowrap font-bold">정렬기준</p>
       <Select
-        id={`study-sort-${selectId}`}
+        id={id}
         variant="text"
         size="sm"
         noPadding

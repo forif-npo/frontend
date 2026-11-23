@@ -45,6 +45,7 @@ describe("staff recruitment public api", () => {
     const body = {
       department_choices: [{ department_id: 31, priority: 1 as const }],
       answers: [{ question_id: 41, answer: "테스트 지원 동기" }],
+        interview_slots: [],
     };
     mockedPost.mockReturnValue({
       json: <T>() =>
@@ -74,6 +75,7 @@ describe("staff recruitment public api", () => {
       {
         department_choices: [{ department_id: 31, priority: 1 }],
         answers: [{ question_id: 41, answer: "" }],
+        interview_slots: [],
       },
       { 41: file },
     );
@@ -103,6 +105,7 @@ describe("staff recruitment public api", () => {
     const body = {
       department_choices: [{ department_id: 31, priority: 1 as const }],
       answers: [{ question_id: 41, answer: "수정한 답변" }],
+      interview_slots: [],
       removed_file_question_ids: [42],
     };
     mockedPatch.mockReturnValue({
@@ -130,6 +133,7 @@ describe("staff recruitment public api", () => {
       {
         department_choices: [{ department_id: 31, priority: 1 }],
         answers: [{ question_id: 42, answer: "" }],
+        interview_slots: [],
         removed_file_question_ids: [],
       },
       { 42: file },

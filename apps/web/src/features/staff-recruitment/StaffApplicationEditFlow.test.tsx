@@ -53,13 +53,13 @@ describe("StaffApplicationEditFlow", () => {
     );
 
     const view = render(
-      <StaffApplicationEditFlow recruitment={recruitment(7)} />,
+      <StaffApplicationEditFlow recruitment={recruitment(7)} interviewPlan={null} />,
     );
     await waitFor(() =>
       expect(screen.getByText("지원자 첫 지원자")).toBeTruthy(),
     );
 
-    view.rerender(<StaffApplicationEditFlow recruitment={recruitment(8)} />);
+    view.rerender(<StaffApplicationEditFlow recruitment={recruitment(8)} interviewPlan={null} />);
     expect(screen.queryByText("지원자 첫 지원자")).toBeNull();
     expect(screen.getByText("지원서를 불러오는 중입니다.")).toBeTruthy();
 

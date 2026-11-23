@@ -1,8 +1,7 @@
 /** @jest-environment jsdom */
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { StaffApplicationDetail, StaffRecruitmentRound } from "@core/types/staff-recruitment";
-
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
@@ -19,27 +18,26 @@ jest.mock("@/components/ActionConfirmModal", () => ({
   ActionConfirmModal: ({
     isOpen,
     action,
+    cancelLabel,
+    confirmLabel,
     onClose,
     onConfirm,
   }: {
     isOpen: boolean;
     action: string;
+    cancelLabel?: string;
+    confirmLabel?: string;
     onClose: () => void;
     onConfirm: () => void;
   }) =>
     isOpen ? (
       <div role="dialog" aria-label={`${action} 확인`}>
-        <button onClick={onClose}>닫기</button>
-        <button onClick={onConfirm}>{action} 확정</button>
+        <button onClick={onClose}>{cancelLabel ?? "취소"}</button>
+        <button onClick={onConfirm}>{confirmLabel ?? action}</button>
       </div>
     ) : null,
 }));
-
-import {
-  cancelStaffApplication,
-  submitStaffApplication,
-  updateStaffApplication,
-} from "./api";
+import { cancelStaffApplication, submitStaffApplication, updateStaffApplication } from "./api";
 import { StaffApplicationForm } from "./StaffApplicationForm";
 
 const recruitment = {
@@ -101,6 +99,7 @@ const application: StaffApplicationDetail = {
   status: "SUBMITTED",
   submitted_at: "2026-11-17T12:00:00+09:00",
   can_modify: true,
+  interview_slots: [],
   answers: [
     {
       question_id: 1,
@@ -129,11 +128,153 @@ const application: StaffApplicationDetail = {
   ],
 };
 
+const attachmentRecruitment = {
+  ...recruitment,
+  questions: [
+    ...recruitment.questions.slice(0, 2),
+    {
+      question_id: 3,
+      label: "첨부 파일",
+      type: "ATTACHMENT",
+      required: true,
+      max_length: 5000,
+      display_order: 3,
+    },
+  ],
+} as StaffRecruitmentRound;
+
 describe("StaffApplicationForm", () => {
   beforeEach(() => {
     jest.mocked(submitStaffApplication).mockReset();
     jest.mocked(updateStaffApplication).mockReset();
     jest.mocked(cancelStaffApplication).mockReset();
+  });
+
+  it("submits a link for an attachment question", async () => {
+    jest.mocked(submitStaffApplication).mockResolvedValue({
+      application_id: 42,
+      recruitment_id: 7,
+      status: "SUBMITTED",
+      submitted_at: "2026-11-17T12:00:00+09:00",
+    });
+    render(
+      <StaffApplicationForm
+        recruitment={attachmentRecruitment}
+        interviewPlan={null}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "1지망" }));
+    fireEvent.click(screen.getByRole("option", { name: "예시팀" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "링크" }), {
+      target: { value: "https://example.com/portfolio" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "작성하신 개인정보와 답변은 운영 기록을 위해 FORIF DB에 보관됨을 확인하였습니다.",
+      }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "지원서 제출" }));
+
+    await waitFor(() =>
+      expect(submitStaffApplication).toHaveBeenCalledWith(
+        7,
+        expect.objectContaining({
+          answers: [
+            { question_id: 1, answer: "" },
+            { question_id: 2, answer: "" },
+            { question_id: 3, answer: "https://example.com/portfolio" },
+          ],
+        }),
+        {},
+      ),
+    );
+  });
+
+  it("submits a file for an attachment question", async () => {
+    const file = new File(["portfolio"], "example.pdf", {
+      type: "application/pdf",
+    });
+    jest.mocked(submitStaffApplication).mockResolvedValue({
+      application_id: 42,
+      recruitment_id: 7,
+      status: "SUBMITTED",
+      submitted_at: "2026-11-17T12:00:00+09:00",
+    });
+    render(
+      <StaffApplicationForm
+        recruitment={attachmentRecruitment}
+        interviewPlan={null}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "1지망" }));
+    fireEvent.click(screen.getByRole("option", { name: "예시팀" }));
+    fireEvent.click(screen.getByRole("button", { name: "첨부 방식" }));
+    fireEvent.click(screen.getByRole("option", { name: "파일" }));
+    fireEvent.drop(screen.getByRole("button", { name: "3. 첨부 파일" }), {
+      dataTransfer: { files: [file] },
+    });
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "작성하신 개인정보와 답변은 운영 기록을 위해 FORIF DB에 보관됨을 확인하였습니다.",
+      }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "지원서 제출" }));
+
+    await waitFor(() =>
+      expect(submitStaffApplication).toHaveBeenCalledWith(
+        7,
+        expect.objectContaining({
+          answers: [
+            { question_id: 1, answer: "" },
+            { question_id: 2, answer: "" },
+            { question_id: 3, answer: "" },
+          ],
+        }),
+        { 3: file },
+      ),
+    );
+  });
+
+  it("switches an existing attachment file to a link when editing", async () => {
+    const attachmentApplication = {
+      ...application,
+      answers: application.answers.filter((answer) => answer.question_id !== 4),
+    };
+    jest
+      .mocked(updateStaffApplication)
+      .mockResolvedValue(attachmentApplication);
+    render(
+      <StaffApplicationForm
+        recruitment={attachmentRecruitment}
+        interviewPlan={null}
+        initialApplication={attachmentApplication}
+      />,
+    );
+    expect(screen.getByText("portfolio.pdf")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "첨부 방식" }));
+    fireEvent.click(screen.getByRole("option", { name: "링크" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "링크" }), {
+      target: { value: "https://example.com/new" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "수정" }));
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getByRole("button", { name: "수정" }),
+    );
+
+    await waitFor(() =>
+      expect(updateStaffApplication).toHaveBeenCalledWith(
+        7,
+        expect.objectContaining({
+          answers: [
+            { question_id: 1, answer: "원래 답변" },
+            { question_id: 2, answer: "" },
+            { question_id: 3, answer: "https://example.com/new" },
+          ],
+          removed_file_question_ids: [3],
+        }),
+        { 3: null },
+      ),
+    );
   });
   it("uses the shared file field and submits a selected file with a valid link", async () => {
     const file = new File(["portfolio"], "example.pdf", {
@@ -149,6 +290,7 @@ describe("StaffApplicationForm", () => {
     render(
       <StaffApplicationForm
         recruitment={recruitment}
+        interviewPlan={null}
         onSubmitted={onSubmitted}
       />,
     );
@@ -184,6 +326,7 @@ describe("StaffApplicationForm", () => {
           { question_id: 3, answer: "" },
           { question_id: 4, answer: "https://example.com/portfolio" },
         ],
+        interview_slots: [],
       },
       { 3: file },
     );
@@ -195,6 +338,7 @@ describe("StaffApplicationForm", () => {
     render(
       <StaffApplicationForm
         recruitment={recruitment}
+        interviewPlan={null}
         initialApplication={application}
         onUpdated={onUpdated}
       />,
@@ -210,7 +354,9 @@ describe("StaffApplicationForm", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "수정" }));
     expect(updateStaffApplication).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "수정 확정" }));
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getByRole("button", { name: "수정" }),
+    );
 
     await waitFor(() => expect(onUpdated).toHaveBeenCalledTimes(1));
     expect(updateStaffApplication).toHaveBeenCalledWith(
@@ -223,6 +369,7 @@ describe("StaffApplicationForm", () => {
           { question_id: 3, answer: "" },
           { question_id: 4, answer: "https://example.com" },
         ],
+        interview_slots: [],
         removed_file_question_ids: [],
       },
       {},
@@ -235,14 +382,17 @@ describe("StaffApplicationForm", () => {
     render(
       <StaffApplicationForm
         recruitment={recruitment}
+        interviewPlan={null}
         initialApplication={application}
         onCancelled={onCancelled}
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "신청 취소" }));
+    fireEvent.click(screen.getByRole("button", { name: "지원 취소" }));
     expect(cancelStaffApplication).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "취소 확정" }));
+    const dialog = within(screen.getByRole("dialog"));
+    expect(dialog.getByRole("button", { name: "돌아가기" })).toBeTruthy();
+    fireEvent.click(dialog.getByRole("button", { name: "지원 취소" }));
 
     await waitFor(() => expect(onCancelled).toHaveBeenCalledTimes(1));
     expect(cancelStaffApplication).toHaveBeenCalledWith(7);
@@ -252,6 +402,7 @@ describe("StaffApplicationForm", () => {
     render(
       <StaffApplicationForm
         recruitment={recruitment}
+        interviewPlan={null}
         initialApplication={{ ...application, can_modify: false }}
       />,
     );
@@ -264,7 +415,7 @@ describe("StaffApplicationForm", () => {
         .disabled,
     ).toBe(true);
     expect(
-      (screen.getByRole("button", { name: "신청 취소" }) as HTMLButtonElement)
+      (screen.getByRole("button", { name: "지원 취소" }) as HTMLButtonElement)
         .disabled,
     ).toBe(false);
   });

@@ -4,22 +4,27 @@ import { useRouter } from "next/navigation";
 import { Button, Checkbox, FileUpload, SelectBox, TextArea, TextInput } from "@ui/components/client";
 import { Label } from "@ui/components/server";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
-import type { StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import type { StaffApplicationDetail, StaffApplicationSubmitRequest, StaffApplicationSubmitResponse, StaffInterviewPlan, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { downloadPrivateFile } from "@core/utils/private-file-download";
+import { toInterviewSlotKeys, toInterviewSlotRequest } from "@core/staff-interview";
+import { InterviewAvailabilityGrid } from "./InterviewAvailabilityGrid";
 import { ActionConfirmModal } from "@/components/ActionConfirmModal";
 import { cancelStaffApplication, submitStaffApplication, updateStaffApplication } from "./api";
 import { getStaffApplicationErrorInfo } from "./application-error";
+import { DuplicateStaffApplicationModal } from "./DuplicateStaffApplicationModal";
 
 type FieldErrors = Record<string, string>;
 
 export function StaffApplicationForm({
   recruitment,
+  interviewPlan,
   onSubmitted,
   initialApplication,
   onUpdated,
   onCancelled,
 }: {
   recruitment: StaffRecruitmentRound;
+  interviewPlan: StaffInterviewPlan | null;
   onSubmitted?: (
     result: StaffApplicationSubmitResponse,
     departments: { first: string; second: string | null },
@@ -68,6 +73,25 @@ export function StaffApplicationForm({
   const [answers, setAnswers] =
     useState<Record<number, string>>(initialAnswers);
   const [files, setFiles] = useState<Record<number, File | null>>({});
+  const [attachmentModes, setAttachmentModes] = useState<
+    Record<number, "LINK" | "FILE">
+  >(() =>
+    Object.fromEntries(
+      questions
+        .filter((question) => question.type === "ATTACHMENT")
+        .map((question) => [
+          question.question_id,
+          initialApplication?.answers.find(
+            (answer) => answer.question_id === question.question_id,
+          )?.question_type === "FILE"
+            ? "FILE"
+            : "LINK",
+        ]),
+    ),
+  );
+  const [interviewSlots, setInterviewSlots] = useState<Set<string>>(() =>
+    toInterviewSlotKeys(initialApplication?.interview_slots ?? []),
+  );
   const [removedFileQuestionIds, setRemovedFileQuestionIds] = useState<
     Set<number>
   >(new Set());
@@ -94,8 +118,20 @@ export function StaffApplicationForm({
       questions.some(
         (question) =>
           question.type !== "FILE" &&
+          (question.type !== "ATTACHMENT" ||
+            attachmentModes[question.question_id] === "LINK") &&
           (answers[question.question_id] ?? "") !==
             (initialAnswers[question.question_id] ?? ""),
+      ) ||
+      questions.some(
+        (question) =>
+          question.type === "ATTACHMENT" &&
+          attachmentModes[question.question_id] !==
+            (initialApplication?.answers.find(
+              (answer) => answer.question_id === question.question_id,
+            )?.question_type === "FILE"
+              ? "FILE"
+              : "LINK"),
       ) ||
       Object.values(files).some(Boolean) ||
       removedFileQuestionIds.size > 0);
@@ -115,6 +151,26 @@ export function StaffApplicationForm({
     setSubmitError(null);
   };
 
+  const changeAttachmentMode = (questionId: number, mode: "LINK" | "FILE") => {
+    setAttachmentModes((current) => ({ ...current, [questionId]: mode }));
+    setAnswers((current) => ({ ...current, [questionId]: "" }));
+    setFiles((current) => ({ ...current, [questionId]: null }));
+    setRemovedFileQuestionIds((current) => {
+      const next = new Set(current);
+      const hadExistingFile = initialApplication?.answers.some(
+        (answer) =>
+          answer.question_id === questionId &&
+          answer.question_type === "FILE" &&
+          Boolean(answer.answer),
+      );
+      if (mode === "LINK" && hadExistingFile) next.add(questionId);
+      else next.delete(questionId);
+      return next;
+    });
+    setErrors((current) => ({ ...current, [`question-${questionId}`]: "" }));
+    setSubmitError(null);
+  };
+
   const validate = (): FieldErrors => {
     const next: FieldErrors = {};
     if (!firstDepartment) next.firstDepartment = "1지망 부서를 선택해주세요.";
@@ -123,7 +179,11 @@ export function StaffApplicationForm({
     }
     questions.forEach((question) => {
       const answer = answers[question.question_id] ?? "";
-      if (question.type === "FILE") {
+      if (
+        question.type === "FILE" ||
+        (question.type === "ATTACHMENT" &&
+          attachmentModes[question.question_id] === "FILE")
+      ) {
         const file = files[question.question_id];
         const retainedFile = initialApplication?.answers.some(
           (item) =>
@@ -148,7 +208,10 @@ export function StaffApplicationForm({
       } else if (answer.length > question.max_length) {
         next[`question-${question.question_id}`] =
           `${question.max_length}자 이내로 작성해주세요.`;
-      } else if (question.type === "LINK" && answer.trim()) {
+      } else if (
+        (question.type === "LINK" || question.type === "ATTACHMENT") &&
+        answer.trim()
+      ) {
         try {
           const url = new URL(answer.trim());
           if (!["http:", "https:"].includes(url.protocol)) throw new Error();
@@ -158,6 +221,9 @@ export function StaffApplicationForm({
         }
       }
     });
+    if (interviewPlan?.required && interviewSlots.size === 0) {
+      next.interviewSlots = "면접 가능 시간을 한 칸 이상 선택해주세요.";
+    }
     return next;
   };
 
@@ -168,7 +234,8 @@ export function StaffApplicationForm({
       isCancelling ||
       (isEditMode && !initialApplication?.can_modify) ||
       (!isEditMode && !isAcknowledged)
-    ) return;
+    )
+      return;
     const nextErrors = validate();
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -203,10 +270,15 @@ export function StaffApplicationForm({
         answers: questions.map((question) => ({
           question_id: question.question_id,
           answer:
-            question.type === "FILE"
+            question.type === "FILE" ||
+            (question.type === "ATTACHMENT" &&
+              attachmentModes[question.question_id] === "FILE")
               ? ""
               : (answers[question.question_id]?.trim() ?? ""),
         })),
+        interview_slots: interviewPlan
+          ? toInterviewSlotRequest(interviewSlots)
+          : [],
       };
       if (initialApplication) {
         const updated = await updateStaffApplication(
@@ -237,8 +309,11 @@ export function StaffApplicationForm({
       }
     } catch (error) {
       const info = await getStaffApplicationErrorInfo(error);
-      setDuplicate(info.code === "FOR154-409");
-      setSubmitError(info.message);
+      if (info.code === "FOR154-409") {
+        setDuplicate(true);
+      } else {
+        setSubmitError(info.message);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -316,7 +391,11 @@ export function StaffApplicationForm({
         </h2>
         {questions.map((question, index) => {
           const id = `question-${question.question_id}`;
-          if (question.type === "FILE") {
+          if (question.type === "FILE" || question.type === "ATTACHMENT") {
+            const mode =
+              question.type === "FILE"
+                ? "FILE"
+                : (attachmentModes[question.question_id] ?? "LINK");
             const selectedFile = files[question.question_id];
             const existingFile = initialApplication?.answers.find(
               (answer) =>
@@ -346,74 +425,112 @@ export function StaffApplicationForm({
                     {question.description}
                   </Label>
                 )}
-                {existingFile &&
-                  !selectedFile &&
-                  !removedFileQuestionIds.has(question.question_id) && (
-                    <div className="border-border-gray-light flex items-center justify-between gap-3 rounded-lg border px-4 py-3">
-                      <button
-                        type="button"
-                        className="text-text-primary min-w-0 truncate underline underline-offset-2"
-                        onClick={() =>
-                          void downloadPrivateFile(
-                            `api/v1/staff-recruitments/${recruitment.recruitment_id}/applications/me/files/${question.question_id}`,
-                            existingFile,
-                          ).catch(() =>
-                            setSubmitError("파일을 내려받지 못했습니다."),
-                          )
-                        }
-                      >
-                        {existingFile}
-                      </button>
-                      <button
-                        type="button"
-                        className="text-text-subtle shrink-0 underline underline-offset-2"
-                        onClick={() =>
-                          setRemovedFileQuestionIds((current) =>
-                            new Set(current).add(question.question_id),
-                          )
-                        }
-                      >
-                        파일 제거
-                      </button>
-                    </div>
-                  )}
-                <FileUpload
-                  ariaLabelledBy={`${id}-label`}
-                  ariaDescribedBy={errors[id] ? `${id}-error` : undefined}
-                  invalid={Boolean(errors[id])}
-                  required={question.required}
-                  description="파일 1개, 최대 5MB"
-                  multiple={false}
-                  maxFiles={1}
-                  files={selectedFile ? [selectedFile] : []}
-                  onUpload={async (file) => {
-                    if (file.size > 5 * 1024 * 1024 || file.name.length > 200) {
-                      setErrors((current) => ({
-                        ...current,
-                        [id]: "5MB 이하, 파일명 200자 이하의 파일을 선택해주세요.",
-                      }));
-                      return false;
+                {question.type === "ATTACHMENT" && (
+                  <SelectBox
+                    id={`${id}-type`}
+                    title="첨부 방식"
+                    value={mode}
+                    placeholder="방식을 선택해주세요"
+                    options={[
+                      { value: "LINK", label: "링크" },
+                      { value: "FILE", label: "파일" },
+                    ]}
+                    onChange={(next) =>
+                      changeAttachmentMode(
+                        question.question_id,
+                        next as "LINK" | "FILE",
+                      )
                     }
-                    setFiles((current) => ({
-                      ...current,
-                      [question.question_id]: file,
-                    }));
-                    setRemovedFileQuestionIds((current) => {
-                      const next = new Set(current);
-                      next.delete(question.question_id);
-                      return next;
-                    });
-                    setErrors((current) => ({ ...current, [id]: "" }));
-                    setSubmitError(null);
-                    return true;
-                  }}
-                  onRemove={() =>
-                    setFiles((current) => ({
-                      ...current,
-                      [question.question_id]: null,
-                    }))
-                  }
-                />
+                  />
+                )}
+                {mode === "FILE" ? (
+                  <>
+                    {existingFile &&
+                      !selectedFile &&
+                      !removedFileQuestionIds.has(question.question_id) && (
+                        <div className="border-border-gray-light flex items-center justify-between gap-3 rounded-lg border px-4 py-3">
+                          <button
+                            type="button"
+                            className="text-text-primary min-w-0 truncate underline underline-offset-2"
+                            onClick={() =>
+                              void downloadPrivateFile(
+                                `api/v1/staff-recruitments/${recruitment.recruitment_id}/applications/me/files/${question.question_id}`,
+                                existingFile,
+                              ).catch(() =>
+                                setSubmitError("파일을 내려받지 못했습니다."),
+                              )
+                            }
+                          >
+                            {existingFile}
+                          </button>
+                          <button
+                            type="button"
+                            className="text-text-subtle shrink-0 underline underline-offset-2"
+                            onClick={() =>
+                              setRemovedFileQuestionIds((current) =>
+                                new Set(current).add(question.question_id),
+                              )
+                            }
+                          >
+                            파일 제거
+                          </button>
+                        </div>
+                      )}
+                    <FileUpload
+                      ariaLabelledBy={`${id}-label`}
+                      ariaDescribedBy={errors[id] ? `${id}-error` : undefined}
+                      invalid={Boolean(errors[id])}
+                      required={question.required}
+                      description="파일 1개, 최대 5MB"
+                      multiple={false}
+                      maxFiles={1}
+                      files={selectedFile ? [selectedFile] : []}
+                      onUpload={async (file) => {
+                        if (
+                          file.size > 5 * 1024 * 1024 ||
+                          file.name.length > 200
+                        ) {
+                          setErrors((current) => ({
+                            ...current,
+                            [id]: "5MB 이하, 파일명 200자 이하의 파일을 선택해주세요.",
+                          }));
+                          return false;
+                        }
+                        setFiles((current) => ({
+                          ...current,
+                          [question.question_id]: file,
+                        }));
+                        setRemovedFileQuestionIds((current) => {
+                          const next = new Set(current);
+                          next.delete(question.question_id);
+                          return next;
+                        });
+                        setErrors((current) => ({ ...current, [id]: "" }));
+                        setSubmitError(null);
+                        return true;
+                      }}
+                      onRemove={() =>
+                        setFiles((current) => ({
+                          ...current,
+                          [question.question_id]: null,
+                        }))
+                      }
+                    />
+                  </>
+                ) : (
+                  <TextInput
+                    id={`${id}-link`}
+                    title="링크"
+                    length="full"
+                    inputMode="url"
+                    placeholder="웹사이트 링크를 입력해주세요"
+                    maxLength={question.max_length}
+                    value={answers[question.question_id] ?? ""}
+                    onChange={(event) =>
+                      updateAnswer(question.question_id, event.target.value)
+                    }
+                  />
+                )}
                 {errors[id] && (
                   <Label
                     id={`${id}-error`}
@@ -462,6 +579,36 @@ export function StaffApplicationForm({
             등록된 지원 문항이 없어 현재 제출할 수 없습니다.
           </p>
         )}
+
+        {interviewPlan && (
+          <div id="interviewSlots" className="flex flex-col gap-3">
+            <Label size="m" className="text-text-basic font-bold">
+              {`${questions.length + 1}. ${
+                interviewPlan.guide ?? "면접 가능 시간을 표시해주세요."
+              }`}
+              {interviewPlan.required && (
+                <span className="text-text-danger ml-1" aria-hidden="true">
+                  *
+                </span>
+              )}
+            </Label>
+            <InterviewAvailabilityGrid
+              plan={interviewPlan}
+              value={interviewSlots}
+              onChange={(next) => {
+                setInterviewSlots(next);
+                setErrors((current) => {
+                  const updated = { ...current };
+                  delete updated.interviewSlots;
+                  return updated;
+                });
+                setSubmitError(null);
+              }}
+              disabled={isSubmitting || isCancelling}
+              error={errors.interviewSlots}
+            />
+          </div>
+        )}
       </section>
 
       {!isEditMode && (
@@ -486,19 +633,6 @@ export function StaffApplicationForm({
           className="border-text-danger text-text-danger rounded-3 border p-4 text-sm"
         >
           {submitError}
-          {duplicate && (
-            <button
-              type="button"
-              className="ml-2 underline"
-              onClick={() =>
-                router.push(
-                  `/my?section=staff-applications&recruitment_id=${recruitment.recruitment_id}`,
-                )
-              }
-            >
-              내 지원서 보기
-            </button>
-          )}
         </div>
       )}
 
@@ -517,7 +651,7 @@ export function StaffApplicationForm({
             disabled={isSubmitting || isCancelling}
             onClick={() => setConfirmAction("cancel")}
           >
-            {isCancelling ? "취소 중..." : "신청 취소"}
+            {isCancelling ? "취소 중..." : "지원 취소"}
           </Button>
         )}
         <Button
@@ -545,8 +679,10 @@ export function StaffApplicationForm({
       {isEditMode && (
         <ActionConfirmModal
           isOpen={confirmAction !== null}
-          target="운영진 지원서"
+          target={confirmAction === "cancel" ? "운영진 지원" : "운영진 지원서"}
           action={confirmAction === "modify" ? "수정" : "취소"}
+          cancelLabel={confirmAction === "cancel" ? "돌아가기" : undefined}
+          confirmLabel={confirmAction === "cancel" ? "지원 취소" : undefined}
           onClose={() => setConfirmAction(null)}
           onConfirm={() => {
             const action = confirmAction;
@@ -556,6 +692,14 @@ export function StaffApplicationForm({
           }}
         />
       )}
+      <DuplicateStaffApplicationModal
+        isOpen={duplicate}
+        onClose={() =>
+          router.push(
+            `/my?section=staff-applications&recruitment_id=${recruitment.recruitment_id}`,
+          )
+        }
+      />
     </form>
   );
 }

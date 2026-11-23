@@ -14,7 +14,8 @@ export type StaffRecruitmentQuestionType =
   | "SHORT_TEXT"
   | "LONG_TEXT"
   | "FILE"
-  | "LINK";
+  | "LINK"
+  | "ATTACHMENT";
 
 export interface StaffRecruitmentDepartment {
   department_id: number;
@@ -96,6 +97,119 @@ export interface StaffRecruitmentUpdateRequest
 
 export type StaffApplicationStatus = "SUBMITTED";
 
+/** 면접 가능 시간 한 칸. start_minute는 자정부터의 분이다. 09:30이면 570이다. */
+export interface StaffInterviewSlot {
+  date: string;
+  start_minute: number;
+}
+
+/**
+ * 회장단이 설정한 면접 일정.
+ * 칸 목록은 내려오지 않는다. dates × [start_hour, end_hour) 를 slot_minutes로 나눠 화면이 만든다.
+ */
+export interface StaffInterviewPlan {
+  interview_plan_id: number;
+  recruitment_id: number;
+  dates: string[];
+  start_hour: number;
+  end_hour: number;
+  /** 한 칸의 길이(분). 10·15·20·30·60 중 하나다. */
+  slot_minutes: number;
+  required: boolean;
+  guide: string | null;
+  version: number;
+}
+
+/** 면접 일정 조율 화면의 지원자 한 명. 시각은 날짜 + 시작 분(자정 기준)이다. */
+export interface StaffInterviewScheduleApplicant {
+  application_id: number;
+  applicant_name: string;
+  applicant_department: string | null;
+  applied_departments: StaffApplicationAppliedDepartment[];
+  available_slots: StaffInterviewSlot[];
+  assigned_slot: StaffInterviewSlot | null;
+}
+
+/**
+ * 면접 일정 조율 조회 결과.
+ * 칸마다 누가 가능한지는 화면이 host_slots와 지원자 available_slots를 겹쳐 계산한다.
+ */
+export interface StaffInterviewSchedule {
+  plan: StaffInterviewPlan;
+  host_slots: StaffInterviewSlot[];
+  applicants: StaffInterviewScheduleApplicant[];
+  confirmed_at: string | null;
+}
+
+/** 면접 질문. department_id가 null이면 모든 면접자에게 묻는 공통 질문이다. */
+export interface StaffInterviewQuestion {
+  question_id: number;
+  department_id: number | null;
+  department_name: string | null;
+  content: string;
+  display_order: number;
+}
+
+/** 면접 진행 상태. 보드의 네 칸과 같다. */
+export type StaffInterviewStatus = "BEFORE" | "DONE" | "PASSED" | "FAILED";
+
+export interface StaffInterviewCard {
+  application_id: number;
+  applicant_name: string;
+  assigned_slot: StaffInterviewSlot | null;
+  first_department: string | null;
+  second_department: string | null;
+  status: StaffInterviewStatus;
+}
+
+/** 면접 관리 보드. 면접 길이는 slot_minutes이고, 면접 일정이 없는 회차면 null이다. */
+export interface StaffInterviewBoard {
+  slot_minutes: number | null;
+  cards: StaffInterviewCard[];
+}
+
+export interface StaffInterviewQuestionAnswer {
+  question_id: number;
+  content: string;
+  answer: string | null;
+}
+
+export interface StaffInterviewDepartmentQuestions {
+  department_id: number;
+  department_name: string;
+  questions: StaffInterviewQuestionAnswer[];
+}
+
+export interface StaffInterviewExtraQuestion {
+  extra_question_id: number;
+  content: string;
+  answer: string | null;
+}
+
+/** 면접자 한 명의 기록지. 지원서 내용은 지원서 상세 API로 따로 읽는다. */
+export interface StaffInterviewSheet {
+  application_id: number;
+  applicant_name: string;
+  status: StaffInterviewStatus;
+  assigned_slot: StaffInterviewSlot | null;
+  slot_minutes: number | null;
+  common_questions: StaffInterviewQuestionAnswer[];
+  first_department: StaffInterviewDepartmentQuestions | null;
+  second_department: StaffInterviewDepartmentQuestions | null;
+  extra_questions: StaffInterviewExtraQuestion[];
+}
+
+export interface StaffInterviewPlanSaveRequest {
+  dates: string[];
+  start_hour: number;
+  end_hour: number;
+  slot_minutes: number;
+  required: boolean;
+  guide: string | null;
+  /** 처음 설정할 때는 보내지 않고, 수정할 때는 조회한 version을 보낸다. 다르면 서버가 거절한다. */
+  version?: number;
+}
+
 export interface StaffApplicationDepartmentChoice {
   department_id: number;
   priority: 1 | 2;
@@ -109,6 +223,7 @@ export interface StaffApplicationAnswerInput {
 export interface StaffApplicationSubmitRequest {
   department_choices: StaffApplicationDepartmentChoice[];
   answers: StaffApplicationAnswerInput[];
+  interview_slots: StaffInterviewSlot[];
 }
 
 export interface StaffApplicationUpdateRequest
@@ -160,6 +275,7 @@ export interface StaffApplicationDetail extends StaffApplicationSummary {
   applicant_email: string;
   applicant_phone_num: string | null;
   answers: StaffApplicationAnswer[];
+  interview_slots: StaffInterviewSlot[];
   can_modify: boolean;
 }
 

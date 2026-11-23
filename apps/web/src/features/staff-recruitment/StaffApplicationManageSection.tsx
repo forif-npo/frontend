@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import type { MyStaffApplicationSummary } from "@core/types/staff-recruitment";
-import { Tabs } from "@ui/components/client";
+import { Select, Tabs } from "@ui/components/client";
 import { EmptyState } from "@ui/components/server";
 import { MyStaffApplicationView } from "./MyStaffApplicationView";
 
@@ -13,9 +13,10 @@ function ApplicationHistory({
   applications: MyStaffApplicationSummary[];
   targetRecruitmentId?: number;
 }) {
-  const [selectedId, setSelectedId] = useState(() =>
-    applications.find((item) => item.recruitment_id === targetRecruitmentId)
-      ?.recruitment_id ?? applications[0].recruitment_id,
+  const [selectedId, setSelectedId] = useState(
+    () =>
+      applications.find((item) => item.recruitment_id === targetRecruitmentId)
+        ?.recruitment_id ?? applications[0].recruitment_id,
   );
   const selected =
     applications.find((item) => item.recruitment_id === selectedId) ??
@@ -24,30 +25,24 @@ function ApplicationHistory({
   return (
     <div>
       {applications.length > 1 && (
-        <div
-          className="mb-8 flex flex-wrap gap-3"
-          aria-label="운영진 지원 회차 선택"
-        >
-          {applications.map((application) => (
-            <button
-              key={application.application_id}
-              type="button"
-              aria-pressed={
-                selected.recruitment_id === application.recruitment_id
-              }
-              onClick={() => setSelectedId(application.recruitment_id)}
-              className={`rounded-3 border px-4 py-3 text-left text-sm font-semibold transition-colors ${
-                selected.recruitment_id === application.recruitment_id
-                  ? "border-text-primary text-text-primary"
-                  : "border-border-gray text-text-subtle hover:text-text-basic"
-              }`}
-            >
-              {formatStaffRecruitmentTitle(
+        <div className="mb-6">
+          <label htmlFor="staff-application" className="sr-only">
+            운영진 모집 회차 선택
+          </label>
+          <Select
+            id="staff-application"
+            size="sm"
+            value={String(selected.recruitment_id)}
+            onChange={(value) => setSelectedId(Number(value))}
+            placeholder="모집 회차 선택"
+            options={applications.map((application) => ({
+              value: String(application.recruitment_id),
+              label: formatStaffRecruitmentTitle(
                 application.act_year,
                 application.act_semester,
-              )}
-            </button>
-          ))}
+              ),
+            }))}
+          />
         </div>
       )}
       <MyStaffApplicationView
@@ -72,11 +67,15 @@ export function StaffApplicationManageSection({
       tabs={[
         {
           label: "지원 내역",
-          content: applications.length > 0 ? (
-            <ApplicationHistory applications={applications} targetRecruitmentId={targetRecruitmentId} />
-          ) : (
-            <EmptyState title="제출한 운영진 지원서가 없습니다." />
-          ),
+          content:
+            applications.length > 0 ? (
+              <ApplicationHistory
+                applications={applications}
+                targetRecruitmentId={targetRecruitmentId}
+              />
+            ) : (
+              <EmptyState title="제출한 운영진 지원서가 없습니다." />
+            ),
         },
       ]}
     />

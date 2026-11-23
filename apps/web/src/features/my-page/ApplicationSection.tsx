@@ -124,7 +124,7 @@ export function ApplicationSection({
           <span className="text-text-primary">{sortedApplications.length}</span>
           개
         </p>
-        <StudySortControl value={sortOrder} onChange={setSortOrder} />
+        <StudySortControl id="my-applications-sort" value={sortOrder} onChange={setSortOrder} />
       </div>
 
       {sortedApplications.length === 0 ? (

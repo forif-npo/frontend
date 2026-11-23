@@ -19,3 +19,5 @@ export type { SlideTabProps } from "./SlideTab";
 export { Tabs } from "./Tab";
 export { TextArea } from "./TextArea";
 export { TextInput } from "./TextInput";
+export { TimeSlotGrid } from "./TimeSlotGrid";
+export type { TimeSlotGridProps } from "./TimeSlotGrid";

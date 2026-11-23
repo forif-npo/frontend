@@ -23,6 +23,10 @@ export interface SemesterChangePreview {
   current_certificate_issued_count: number;
   /** true면 전환 전 수료증을 마저 발급하는 편이 좋다 (전환 후에는 신임 회장 서명이 찍힌다) */
   has_pending_certificates: boolean;
+  /** 다음 활동 학기 운영진 명단에 지정된 회장 */
+  designated_next_president_user_id: number | null;
+  /** 다음 활동 학기 운영진 명단에 지정된 부회장. 없으면 기존 부회장 권한은 전환 시 종료된다. */
+  designated_next_vice_president_user_id: number | null;
 }
 
 export interface AdminCandidate {

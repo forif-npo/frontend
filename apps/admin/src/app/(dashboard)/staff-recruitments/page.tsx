@@ -1,12 +1,13 @@
 import { auth } from "@/auth";
 import { ShieldAlert } from "lucide-react";
 import { StaffRecruitmentManageView } from "@/features/staff-recruitment/StaffRecruitmentManageView";
+import { getCurrentSemester } from "@/features/semester/api";
 
 const PRESIDENT_TEAM = ["회장", "부회장"];
 
 export default async function StaffRecruitmentsPage() {
   const session = await auth();
-  const affiliation = session?.user?.affiliation ?? "";
+  const affiliation = session?.user?.authorityAffiliation ?? "";
 
   if (!PRESIDENT_TEAM.includes(affiliation)) {
     return (
@@ -20,5 +21,6 @@ export default async function StaffRecruitmentsPage() {
     );
   }
 
-  return <StaffRecruitmentManageView />;
+  const currentSemester = await getCurrentSemester();
+  return <StaffRecruitmentManageView currentSemester={currentSemester} />;
 }

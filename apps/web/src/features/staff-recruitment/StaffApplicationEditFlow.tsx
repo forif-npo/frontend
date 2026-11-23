@@ -1,9 +1,8 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
-import type { StaffApplicationDetail, StaffRecruitmentRound } from "@core/types/staff-recruitment";
+import type { StaffApplicationDetail, StaffInterviewPlan, StaffRecruitmentRound } from "@core/types/staff-recruitment";
 import { InlineLoadingState, PageState } from "@ui/components/server";
 import { PageHeader } from "@/components/PageHeader";
 import { getMyStaffApplication } from "./api";
@@ -12,21 +11,26 @@ import { StaffApplicationForm } from "./StaffApplicationForm";
 
 export function StaffApplicationEditFlow({
   recruitment,
+  interviewPlan,
 }: {
   recruitment: StaffRecruitmentRound;
+  interviewPlan: StaffInterviewPlan | null;
 }) {
   return (
     <StaffApplicationEditContent
       key={recruitment.recruitment_id}
       recruitment={recruitment}
+      interviewPlan={interviewPlan}
     />
   );
 }
 
 function StaffApplicationEditContent({
   recruitment,
+  interviewPlan,
 }: {
   recruitment: StaffRecruitmentRound;
+  interviewPlan: StaffInterviewPlan | null;
 }) {
   const router = useRouter();
   const [application, setApplication] = useState<StaffApplicationDetail | null>(
@@ -89,6 +93,7 @@ function StaffApplicationEditContent({
       ) : application ? (
         <StaffApplicationForm
           recruitment={recruitment}
+          interviewPlan={interviewPlan}
           initialApplication={application}
           onUpdated={() =>
             router.push(
