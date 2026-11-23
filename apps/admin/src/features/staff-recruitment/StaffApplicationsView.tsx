@@ -383,12 +383,11 @@ export function StaffApplicationsView({
                 )}
               </div>
               <DialogFooter className="gap-3 sm:items-center">
-                {selectedRound?.publication_status === "CLOSED" && (
-                  <StaffApplicationDecision
-                    recruitmentId={detail.recruitment_id}
-                    applicationId={detail.application_id}
-                  />
-                )}
+                <StaffApplicationDecision
+                  recruitmentId={detail.recruitment_id}
+                  applicationId={detail.application_id}
+                  canDecide={selectedRound?.publication_status === "CLOSED"}
+                />
                 <Button
                   type="button"
                   variant="outline"

@@ -1,27 +1,26 @@
 "use client";
 import { useEffect, useState } from "react";
-import type { StaffInterviewSheet,StaffInterviewStatus } from "@core/types/staff-recruitment";
-import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
+import type { StaffInterviewSheet } from "@core/types/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/Toast";
 import { changeStaffInterviewStatus, getStaffInterviewSheet } from "./api";
-import { interviewStatusTitle, passDepartmentOptions } from "./interview-board";
+import { formatInterviewSlot, interviewStatusTitle, passDepartmentOptions } from "./interview-board";
 import { usePassDepartmentPicker } from "./PassDepartmentDialog";
 
 /**
- * 지원서 보기에서 바로 합격·불합격을 정한다. 면접 보드와 같은 면접 상태를 쓴다.
+ * 지원서 하단에 면접 배정시각과 결과를 표시하고, 마감된 모집에서는 합격·불합격을 정한다.
  *
- * 합격·불합격은 회장단만, 마감된 모집에서만 정할 수 있다. 열람자처럼 권한이 없는 계정은
- * 기록지 조회가 거절되므로 이 영역을 아예 보여 주지 않는다.
+ * 합격·불합격은 회장단만, 마감된 모집에서만 정할 수 있다.
  */
 export function StaffApplicationDecision({
   recruitmentId,
   applicationId,
+  canDecide,
 }: {
   recruitmentId: number;
   applicationId: number;
+  canDecide: boolean;
 }) {
   const [sheet, setSheet] = useState<StaffInterviewSheet | null>(null);
   const [busy, setBusy] = useState(false);
@@ -32,19 +31,19 @@ export function StaffApplicationDecision({
     setSheet(null);
     getStaffInterviewSheet(recruitmentId, applicationId)
       .then((next) => {
-        if (!cancelled) setSheet(next);
+        if (!cancelled) {
+          setSheet(next);
+        }
       })
-      // 권한이 없거나 기록을 읽을 수 없으면 조용히 숨긴다. 지원서 보기 자체는 그대로 쓸 수 있다.
+      // 열람자처럼 기록지를 읽을 수 없는 경우에도 지원서 하단의 항목은 표시한다.
       .catch(() => undefined);
     return () => {
       cancelled = true;
     };
   }, [recruitmentId, applicationId]);
 
-  if (!sheet) return null;
-
-  const decide = async (status: StaffInterviewStatus) => {
-    if (busy || sheet.results_finalized) return;
+  const decide = async (status: "PASSED" | "FAILED") => {
+    if (!sheet || !canDecide || busy || sheet.results_finalized) return;
     let departmentId: number | null = null;
     if (status === "PASSED") {
       const picked = await passPicker.pick(
@@ -73,33 +72,46 @@ export function StaffApplicationDecision({
     }
   };
 
+  const assignedTime =
+    sheet?.assigned_slot && sheet.slot_minutes
+      ? formatInterviewSlot(sheet.assigned_slot, sheet.slot_minutes)
+      : "-";
+  const result =
+    sheet?.status === "PASSED"
+      ? "합격"
+      : sheet?.status === "FAILED"
+        ? "불합격"
+        : "-";
+
   return (
-    <div className="flex flex-1 flex-wrap items-center gap-2">
-      <span className="text-muted-foreground text-sm">면접 결과</span>
-      <Badge variant="outline">
-        {interviewStatusTitle(sheet.status)}
-        {sheet.passed_department &&
-          ` · ${formatStaffRecruitmentDepartment(sheet.passed_department.department_name)}`}
-      </Badge>
-      <div className="ml-auto flex gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          disabled={
-            busy || sheet.results_finalized || sheet.status === "FAILED"
-          }
-          onClick={() => void decide("FAILED")}
-        >
-          불합격
-        </Button>
-        <Button
-          type="button"
-          disabled={busy || sheet.results_finalized}
-          onClick={() => void decide("PASSED")}
-        >
-          합격
-        </Button>
+    <div className="flex flex-1 flex-wrap items-center gap-x-6 gap-y-2">
+      <div className="flex items-center gap-2 text-sm">
+        <span className="text-muted-foreground">면접 배정시각</span>
+        <span>{assignedTime}</span>
       </div>
+      <div className="flex items-center gap-2 text-sm">
+        <span className="text-muted-foreground">면접 결과</span>
+        <span>{result}</span>
+      </div>
+      {canDecide && sheet && (
+        <div className="ml-auto flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy || sheet.results_finalized || sheet.status === "FAILED"}
+            onClick={() => void decide("FAILED")}
+          >
+            불합격
+          </Button>
+          <Button
+            type="button"
+            disabled={busy || sheet.results_finalized}
+            onClick={() => void decide("PASSED")}
+          >
+            합격
+          </Button>
+        </div>
+      )}
       {passPicker.dialog}
     </div>
   );
