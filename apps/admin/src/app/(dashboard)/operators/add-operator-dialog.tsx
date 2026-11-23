@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { handleApiError } from "@core/utils/api-client";
+import { normalizeClubDepartment } from "@/lib/club-department";
 import { getCurrentSemester, type Semester } from "@/features/semester/api";
 import { addOperator } from "./api";
 
@@ -32,7 +33,7 @@ export function AddOperatorDialog({
   const blockedLeadershipTitle =
     !isIncumbentPresident && ["회장", "부회장"].includes(form.userTitle.trim());
   const blockedSwTeam =
-    !isIncumbentPresident && form.clubDepartment.trim() === "SW팀";
+    !isIncumbentPresident && normalizeClubDepartment(form.clubDepartment) === "SW";
 
   useEffect(() => {
     if (!open) return;
@@ -60,7 +61,7 @@ export function AddOperatorDialog({
       toast.error("학번을 숫자로 입력해주세요.");
       return;
     }
-    if (!form.clubDepartment.trim()) {
+    if (!normalizeClubDepartment(form.clubDepartment)) {
       toast.error("소속 팀을 입력해주세요.");
       return;
     }
@@ -71,7 +72,7 @@ export function AddOperatorDialog({
         user_id: userId,
         act_year: semester?.act_year,
         act_semester: semester?.act_semester,
-        club_department: form.clubDepartment.trim(),
+        club_department: normalizeClubDepartment(form.clubDepartment),
         user_title: form.userTitle.trim() || undefined,
       });
       toast.success(

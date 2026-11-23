@@ -8,20 +8,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { toast } from "@/components/ui/Toast";
-import {
-  changeStaffInterviewStatus,
-  getStaffInterviewBoard,
-  getStaffInterviewSheet,
-  registerPassedApplicantsAsStaff,
-} from "./api";
-import {
-  INTERVIEW_COLUMNS,
-  formatInterviewSlot,
-  groupInterviewCards,
-  interviewStatusTitle,
-  moveInterviewCard,
-  passDepartmentOptions,
-} from "./interview-board";
+import { changeStaffInterviewStatus, finalizeStaffInterviewResults, getStaffInterviewBoard, getStaffInterviewSheet, registerPassedApplicantsAsStaff } from "./api";
+import { INTERVIEW_COLUMNS, formatInterviewSlot, groupInterviewCards, interviewStatusTitle, moveInterviewCard, passDepartmentOptions } from "./interview-board";
 import { usePassDepartmentPicker } from "./PassDepartmentDialog";
 import { StaffInterviewSheetPanel } from "./StaffInterviewSheetPanel";
 import { registrationResultMessage, registrationRosterHref } from "./staff-registration";
@@ -47,6 +35,7 @@ export function StaffInterviewBoardSection({
   const [openId, setOpenId] = useState<number | null>(null);
   const [dragOver, setDragOver] = useState<StaffInterviewStatus | null>(null);
   const [registering, setRegistering] = useState(false);
+  const [finalizing, setFinalizing] = useState(false);
   const passPicker = usePassDepartmentPicker();
   const router = useRouter();
 
@@ -70,7 +59,7 @@ export function StaffInterviewBoardSection({
    */
   const changeStatus = async (applicationId: number, status: StaffInterviewStatus) => {
     const current = board?.cards.find((card) => card.application_id === applicationId);
-    if (!board || !current || current.status === status) return null;
+    if (!board || board.results_finalized || !current || current.status === status) return null;
 
     let departmentId: number | null = null;
     if (status === "PASSED") {
@@ -114,10 +103,33 @@ export function StaffInterviewBoardSection({
   };
 
   const passedCount = board?.cards.filter((card) => card.status === "PASSED").length ?? 0;
+  const undecidedCount = board?.cards.filter(
+    (card) => card.status !== "PASSED" && card.status !== "FAILED",
+  ).length ?? 0;
+
+  const finalizeResults = async () => {
+    if (!board || board.results_finalized || finalizing || board.cards.length === 0 || undecidedCount > 0) return;
+    const confirmed = await confirmDialog({
+      title: "면접 결과 최종 확정",
+      description: "모든 지원자의 합격/불합격 결과를 확정합니다. 확정 후에는 결과와 합격 부서를 변경할 수 없습니다.",
+      confirmLabel: "최종 확정",
+    });
+    if (!confirmed) return;
+    setFinalizing(true);
+    try {
+      setBoard(await finalizeStaffInterviewResults(recruitmentId));
+      toast.success("면접 결과를 최종 확정했습니다.");
+    } catch (error) {
+      toast.error(await handleApiError(error));
+      await load();
+    } finally {
+      setFinalizing(false);
+    }
+  };
 
   /** 발표 시점에 합격자를 차기 운영진 명단에 한 번에 올린다. 이미 올라간 사람은 서버가 건너뛴다. */
   const registerStaff = async () => {
-    if (registering || passedCount === 0) return;
+    if (!board?.results_finalized || registering || passedCount === 0) return;
     const confirmed = await confirmDialog({
       title: "합격자 운영진 등록",
       description: `합격자 ${passedCount}명을 이 모집 회차의 활동 학기 운영진 명단에 합격 부서, 팀원 직급으로 올립니다. 회장·부회장·팀장은 운영진 목록의 차기 탭에서 지정해 주세요. 운영진 명단은 사이트 운영진 소개에 쓰이니 발표 뒤에 눌러 주세요. 이미 명단에 있는 사람은 건너뜁니다.`,
@@ -153,16 +165,27 @@ export function StaffInterviewBoardSection({
             면접자
           </h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            카드를 눌러 면접 기록을 적고, 끌어서 다른 칸으로 옮길 수 있습니다.
+            {board.results_finalized
+              ? "면접 결과가 최종 확정되었습니다. 합격자를 차기 운영진 명단에 등록할 수 있습니다."
+              : `카드를 눌러 면접 기록을 적고, 모든 지원자의 결과를 정한 뒤 최종 확정하세요.${undecidedCount > 0 ? ` 미결정 ${undecidedCount}명` : ""}`}
           </p>
         </div>
-        <Button
-          disabled={registering || passedCount === 0}
-          title={passedCount === 0 ? "합격자가 없습니다." : undefined}
-          onClick={() => void registerStaff()}
-        >
-          합격자 운영진 등록
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            disabled={board.results_finalized || finalizing || board.cards.length === 0 || undecidedCount > 0}
+            onClick={() => void finalizeResults()}
+          >
+            {board.results_finalized ? "면접 결과 확정됨" : "면접 결과 최종 확정"}
+          </Button>
+          <Button
+            disabled={!board.results_finalized || registering || passedCount === 0}
+            title={!board.results_finalized ? "면접 결과를 먼저 최종 확정해 주세요." : passedCount === 0 ? "합격자가 없습니다." : undefined}
+            onClick={() => void registerStaff()}
+          >
+            합격자 운영진 등록
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -178,6 +201,7 @@ export function StaffInterviewBoardSection({
                 dragOver === column.status && "border-foreground bg-muted",
               )}
               onDragOver={(event) => {
+                if (board.results_finalized) return;
                 if (!event.dataTransfer.types.includes(DRAG_TYPE)) return;
                 event.preventDefault();
                 event.dataTransfer.dropEffect = "move";
@@ -192,6 +216,7 @@ export function StaffInterviewBoardSection({
               onDrop={(event) => {
                 event.preventDefault();
                 setDragOver(null);
+                if (board.results_finalized) return;
                 const applicationId = Number(event.dataTransfer.getData(DRAG_TYPE));
                 if (applicationId) void changeStatus(applicationId, column.status);
               }}
@@ -208,6 +233,7 @@ export function StaffInterviewBoardSection({
                     key={card.application_id}
                     card={card}
                     slotMinutes={board.slot_minutes}
+                    resultsFinalized={board.results_finalized}
                     onOpen={() => setOpenId(card.application_id)}
                     onChangeStatus={(status) => void changeStatus(card.application_id, status)}
                   />
@@ -223,6 +249,7 @@ export function StaffInterviewBoardSection({
         applicationId={openId}
         reloadKey={questionsVersion}
         requiredQuestionIds={requiredQuestionIds}
+        resultsFinalized={board.results_finalized}
         onClose={() => setOpenId(null)}
         onStatusChange={changeStatus}
       />
@@ -234,23 +261,29 @@ export function StaffInterviewBoardSection({
 function InterviewCard({
   card,
   slotMinutes,
+  resultsFinalized,
   onOpen,
   onChangeStatus,
 }: {
   card: StaffInterviewCard;
   slotMinutes: number | null;
+  resultsFinalized: boolean;
   onOpen: () => void;
   onChangeStatus: (status: StaffInterviewStatus) => void;
 }) {
   const department = (name: string | null) => (name ? formatStaffRecruitmentDepartment(name) : "-");
   return (
     <article
-      draggable
+      draggable={!resultsFinalized}
       onDragStart={(event) => {
+        if (resultsFinalized) {
+          event.preventDefault();
+          return;
+        }
         event.dataTransfer.setData(DRAG_TYPE, String(card.application_id));
         event.dataTransfer.effectAllowed = "move";
       }}
-      className="bg-background cursor-grab rounded-md border shadow-sm active:cursor-grabbing"
+      className={cn("bg-background rounded-md border shadow-sm", !resultsFinalized && "cursor-grab active:cursor-grabbing")}
     >
       <button
         type="button"
@@ -275,10 +308,10 @@ function InterviewCard({
       </button>
       {card.status === "DONE" && (
         <div className="flex gap-2 border-t p-2">
-          <Button size="sm" variant="outline" className="flex-1" onClick={() => onChangeStatus("FAILED")}>
+          <Button size="sm" variant="outline" className="flex-1" disabled={resultsFinalized} onClick={() => onChangeStatus("FAILED")}>
             불합격
           </Button>
-          <Button size="sm" className="flex-1" onClick={() => onChangeStatus("PASSED")}>
+          <Button size="sm" className="flex-1" disabled={resultsFinalized} onClick={() => onChangeStatus("PASSED")}>
             합격
           </Button>
         </div>

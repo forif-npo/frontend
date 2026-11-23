@@ -88,7 +88,9 @@ jest.mock("@/components/ui/select", () => ({
   SelectContent: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
   ),
-  SelectItem: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  SelectItem: ({ children, disabled }: { children: ReactNode; disabled?: boolean }) => (
+    <div data-disabled={disabled}>{children}</div>
+  ),
   SelectTrigger: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
   ),
@@ -116,7 +118,7 @@ jest.mock("./api", () => ({
   deleteAdminAccount: jest.fn(),
   delegatePresidency: jest.fn(),
 }));
-import { delegatePresidency, getAdminAccounts } from "./api";
+import { delegatePresidency, getAdminAccounts, getCurrentTeamNames } from "./api";
 import { AdminAccountsView } from "./admin-accounts-view";
 
 describe("AdminAccountsView", () => {
@@ -174,6 +176,49 @@ describe("AdminAccountsView", () => {
 
     expect(await screen.findByText("운영진 (차기 회장)")).not.toBeNull();
     expect(screen.queryByText("운영진 (SW팀 권한)")).toBeNull();
+  });
+
+  it("shows SW staff without an authority suffix", async () => {
+    jest.mocked(getAdminAccounts).mockResolvedValueOnce({
+      content: [{
+        user_id: 20260002,
+        name: "SW 운영진",
+        department: null,
+        phone_num: null,
+        affiliation: "SW",
+        authority_affiliation: "회장",
+        sw_team: true,
+      }],
+      total_elements: 1,
+      total_pages: 1,
+      current_page: 0,
+    });
+
+    render(
+      <AdminAccountsView
+        myAffiliation="회장"
+        isIncumbentPresident
+        myUserId={20260001}
+      />,
+    );
+
+    expect(await screen.findByText("SW")).not.toBeNull();
+    expect(screen.queryByText("SW (SW팀 권한)")).toBeNull();
+    expect(screen.queryByText("SW (차기 회장)")).toBeNull();
+  });
+
+  it("shows SW as SW팀 but disables selection for a non-incumbent", async () => {
+    jest.mocked(getCurrentTeamNames).mockResolvedValueOnce(["SW"]);
+    render(
+      <AdminAccountsView
+        myAffiliation="회장"
+        isIncumbentPresident={false}
+        myUserId={20260001}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "운영진 계정 생성" }));
+    expect((await screen.findByText("SW팀")).getAttribute("data-disabled")).toBe("true");
   });
 
   it("allows the incumbent to designate the current vice president for next semester", async () => {

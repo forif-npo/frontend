@@ -2,6 +2,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { SortableHeader } from "@/components/list/sortable-header";
 import { formatPhoneNumber } from "@core/utils/phone-number";
+import { formatClubDepartment } from "@/lib/club-department";
 import { Operator } from "./types";
 
 export const columns: ColumnDef<Operator>[] = [
@@ -20,7 +21,7 @@ export const columns: ColumnDef<Operator>[] = [
       <SortableHeader column={column}>부서</SortableHeader>
     ),
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue("department")}팀</div>
+      <div className="text-center">{formatClubDepartment(row.getValue<string>("department"))}</div>
     ),
   },
   {

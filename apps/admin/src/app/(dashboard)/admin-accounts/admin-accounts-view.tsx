@@ -6,6 +6,7 @@ import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { Crown, Pencil, ShieldCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatPhoneNumber } from "@core/utils/phone-number";
+import { formatClubDepartment, normalizeClubDepartment } from "@/lib/club-department";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -125,7 +126,7 @@ export function AdminAccountsView({
       );
       return;
     }
-    if (!isIncumbentPresident && createForm.affiliation.trim() === "SW팀") {
+    if (!isIncumbentPresident && normalizeClubDepartment(createForm.affiliation) === "SW") {
       toast.error("SW팀 운영진 계정은 현 회장만 생성할 수 있습니다.");
       return;
     }
@@ -135,7 +136,7 @@ export function AdminAccountsView({
       await createAdminAccount({
         user_id: userId,
         password: createForm.password,
-        affiliation: createForm.affiliation.trim(),
+        affiliation: normalizeClubDepartment(createForm.affiliation),
       });
       toast.success("운영진 계정이 생성되었습니다.");
       setCreateOpen(false);
@@ -177,9 +178,9 @@ export function AdminAccountsView({
     }
     if (
       editForm.affiliation.trim() &&
-      editForm.affiliation.trim() !== editTarget.affiliation
+      normalizeClubDepartment(editForm.affiliation) !== normalizeClubDepartment(editTarget.affiliation)
     ) {
-      body.affiliation = editForm.affiliation.trim();
+      body.affiliation = normalizeClubDepartment(editForm.affiliation);
     }
     if (Object.keys(body).length === 0) {
       toast.error("변경된 내용이 없습니다.");
@@ -271,7 +272,7 @@ export function AdminAccountsView({
             account.authority_affiliation === "회장" &&
             account.affiliation !== "회장"
           ) {
-            return `${account.affiliation} (SW팀 권한)`;
+            return account.affiliation;
           }
           if (upcoming === "회장" && account.affiliation !== "회장") {
             return `${account.affiliation} (차기 회장)`;
@@ -347,12 +348,6 @@ export function AdminAccountsView({
         title="운영진 계정 관리"
         description="ADMIN 페이지에 로그인할 수 있는 운영진 계정을 관리합니다."
       />
-      {isUpcomingPresident && (
-        <p className="text-muted-foreground text-sm">
-          회장 위임, 부회장 임명, 운영진 비밀번호 재설정은 현 회장만 할 수
-          있습니다.
-        </p>
-      )}
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <SearchBar
@@ -435,9 +430,9 @@ export function AdminAccountsView({
                     <SelectItem
                       key={team}
                       value={team}
-                      disabled={team === "SW팀" && !isIncumbentPresident}
+                      disabled={normalizeClubDepartment(team) === "SW" && !isIncumbentPresident}
                     >
-                      {team}
+                      {formatClubDepartment(team)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -511,7 +506,7 @@ export function AdminAccountsView({
                     .filter(Boolean)
                     .map((team) => (
                       <SelectItem key={team} value={team}>
-                        {team}
+                        {formatClubDepartment(team)}
                       </SelectItem>
                     ))}
                 </SelectContent>

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import type { StaffInterviewSheet, StaffInterviewStatus } from "@core/types/staff-recruitment";
+import type { StaffInterviewSheet,StaffInterviewStatus } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentDepartment } from "@core/staff-recruitment";
 import { handleApiError } from "@core/utils/api-client";
 import { Badge } from "@/components/ui/badge";
@@ -44,18 +44,28 @@ export function StaffApplicationDecision({
   if (!sheet) return null;
 
   const decide = async (status: StaffInterviewStatus) => {
-    if (busy) return;
+    if (busy || sheet.results_finalized) return;
     let departmentId: number | null = null;
     if (status === "PASSED") {
-      const picked = await passPicker.pick(sheet.applicant_name, passDepartmentOptions(sheet));
+      const picked = await passPicker.pick(
+        sheet.applicant_name,
+        passDepartmentOptions(sheet),
+      );
       if (picked === undefined) return;
       departmentId = picked;
     }
     setBusy(true);
     try {
-      const next = await changeStaffInterviewStatus(recruitmentId, applicationId, status, departmentId);
+      const next = await changeStaffInterviewStatus(
+        recruitmentId,
+        applicationId,
+        status,
+        departmentId,
+      );
       setSheet(next);
-      toast.success(`${next.applicant_name}님을 ${interviewStatusTitle(next.status)} 처리했습니다.`);
+      toast.success(
+        `${next.applicant_name}님을 ${interviewStatusTitle(next.status)} 처리했습니다.`,
+      );
     } catch (error) {
       toast.error(await handleApiError(error));
     } finally {
@@ -75,12 +85,18 @@ export function StaffApplicationDecision({
         <Button
           type="button"
           variant="outline"
-          disabled={busy || sheet.status === "FAILED"}
+          disabled={
+            busy || sheet.results_finalized || sheet.status === "FAILED"
+          }
           onClick={() => void decide("FAILED")}
         >
           불합격
         </Button>
-        <Button type="button" disabled={busy} onClick={() => void decide("PASSED")}>
+        <Button
+          type="button"
+          disabled={busy || sheet.results_finalized}
+          onClick={() => void decide("PASSED")}
+        >
           합격
         </Button>
       </div>

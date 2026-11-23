@@ -177,4 +177,38 @@ describe("OperatorsView", () => {
       (screen.getByDisplayValue("기획") as HTMLInputElement).disabled,
     ).toBe(false);
   });
+
+  it("uses the stored SW value when disabling SW roster changes", () => {
+    render(
+      <OperatorsView
+        initialData={[
+          {
+            id: 3,
+            userId: 20260003,
+            name: "SW 운영진",
+            title: "팀원",
+            department: "SW",
+            phoneNum: "01011112222",
+            profImgUrl: "",
+            introTag: "",
+            selfIntro: "",
+            graduateYear: null,
+            actYear: 2026,
+            actSemester: 2,
+          },
+        ]}
+        currentSemester="2026-2"
+        semesterOptions={["전체", "2026-2"]}
+        canManageOperators
+        isIncumbentPresident={false}
+        currentUserId={20260001}
+      />,
+    );
+
+    expect(
+      (screen.getByRole("button", { name: "운영진 정보 삭제" }) as HTMLButtonElement).disabled,
+    ).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "운영진 정보 수정" }));
+    expect((screen.getByDisplayValue("SW") as HTMLInputElement).disabled).toBe(true);
+  });
 });

@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useListViewFilters } from "@/hooks/use-list-view-filters";
 import { handleApiError } from "@core/utils/api-client";
 import { formatPhoneNumber } from "@core/utils/phone-number";
+import { normalizeClubDepartment } from "@/lib/club-department";
 import type { SortingState } from "@tanstack/react-table";
 import { Download, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -159,9 +160,9 @@ export function OperatorsView({
     if (!editTarget || isSubmitting) return;
     if (
       !isIncumbentPresident &&
-      editForm.department.trim() !== editTarget.department &&
-      (editForm.department.trim() === "SW팀" ||
-        editTarget.department === "SW팀")
+      normalizeClubDepartment(editForm.department) !== normalizeClubDepartment(editTarget.department) &&
+      (normalizeClubDepartment(editForm.department) === "SW" ||
+        normalizeClubDepartment(editTarget.department) === "SW")
     )
       return;
     if (
@@ -178,9 +179,9 @@ export function OperatorsView({
     }
     if (
       editForm.department.trim() &&
-      editForm.department.trim() !== editTarget.department
+      normalizeClubDepartment(editForm.department) !== normalizeClubDepartment(editTarget.department)
     ) {
-      body.club_department = editForm.department.trim();
+      body.club_department = normalizeClubDepartment(editForm.department);
     }
     if (editForm.introTag.trim() !== editTarget.introTag) {
       body.intro_tag = editForm.introTag.trim();
@@ -225,7 +226,7 @@ export function OperatorsView({
     if (isSubmitting) return;
     if (
       !isIncumbentPresident &&
-      (isLeadershipTitle(operator.title) || operator.department === "SW팀")
+      (isLeadershipTitle(operator.title) || normalizeClubDepartment(operator.department) === "SW")
     )
       return;
     if (
@@ -265,9 +266,9 @@ export function OperatorsView({
   const blockedSwTeamChange = Boolean(
     !isIncumbentPresident &&
       editTarget &&
-      editForm.department.trim() !== editTarget.department &&
-      (editForm.department.trim() === "SW팀" ||
-        editTarget.department === "SW팀"),
+      normalizeClubDepartment(editForm.department) !== normalizeClubDepartment(editTarget.department) &&
+      (normalizeClubDepartment(editForm.department) === "SW" ||
+        normalizeClubDepartment(editTarget.department) === "SW"),
   );
 
   return (
@@ -346,7 +347,7 @@ export function OperatorsView({
                           disabled={
                             !isIncumbentPresident &&
                             (isLeadershipTitle(operator.title) ||
-                              operator.department === "SW팀")
+                              normalizeClubDepartment(operator.department) === "SW")
                           }
                           onClick={() => handleDeleteOperator(operator)}
                         >
@@ -416,7 +417,7 @@ export function OperatorsView({
                   value={editForm.department}
                   disabled={
                     !canManageEditTarget ||
-                    (!isIncumbentPresident && editTarget?.department === "SW팀")
+                    (!isIncumbentPresident && normalizeClubDepartment(editTarget?.department ?? "") === "SW")
                   }
                   onChange={(e) =>
                     setEditForm((f) => ({ ...f, department: e.target.value }))

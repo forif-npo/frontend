@@ -121,4 +121,31 @@ describe("AddOperatorDialog", () => {
     fireEvent.click(addButton);
     expect(addOperator).not.toHaveBeenCalled();
   });
+
+  it("sends a team name without its display suffix", async () => {
+    jest.mocked(addOperator).mockClear();
+    render(
+      <AddOperatorDialog
+        open
+        onOpenChange={jest.fn()}
+        onAdded={() => undefined}
+        targetSemesterLabel="27-1"
+        isIncumbentPresident
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText("학번"), {
+      target: { value: "20260002" },
+    });
+    fireEvent.change(screen.getByLabelText("소속 팀"), {
+      target: { value: "SW팀" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "추가" }));
+
+    await waitFor(() =>
+      expect(addOperator).toHaveBeenCalledWith(
+        expect.objectContaining({ club_department: "SW" }),
+      ),
+    );
+  });
 });

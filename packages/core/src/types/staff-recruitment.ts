@@ -174,6 +174,7 @@ export interface StaffInterviewCard {
 export interface StaffInterviewBoard {
   slot_minutes: number | null;
   cards: StaffInterviewCard[];
+  results_finalized: boolean;
 }
 
 export interface StaffInterviewQuestionAnswer {
@@ -207,6 +208,7 @@ export interface StaffInterviewSheet {
   extra_questions: StaffInterviewExtraQuestion[];
   /** 합격이 아니면 null이다. */
   passed_department: StaffInterviewPassedDepartment | null;
+  results_finalized: boolean;
 }
 
 /** 합격자 운영진 등록 결과. 이름은 지원서에 적힌 이름이다. */

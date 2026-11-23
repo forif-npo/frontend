@@ -162,9 +162,12 @@ export async function assignStaffInterview(
   slot: StaffInterviewSlot,
 ): Promise<StaffInterviewSchedule> {
   const response = await apiClient
-    .put(`${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`, {
-      json: slot,
-    })
+    .put(
+      `${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`,
+      {
+        json: slot,
+      },
+    )
     .json<ApiResponse<StaffInterviewSchedule>>();
   return response.data!;
 }
@@ -174,7 +177,9 @@ export async function unassignStaffInterview(
   applicationId: number,
 ): Promise<StaffInterviewSchedule> {
   const response = await apiClient
-    .delete(`${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`)
+    .delete(
+      `${interviewSchedulePath(recruitmentId)}/assignments/${applicationId}`,
+    )
     .json<ApiResponse<StaffInterviewSchedule>>();
   return response.data!;
 }
@@ -234,7 +239,9 @@ export async function deleteStaffInterviewQuestion(
   recruitmentId: number,
   questionId: number,
 ): Promise<void> {
-  await apiClient.delete(`${interviewQuestionPath(recruitmentId)}/${questionId}`);
+  await apiClient.delete(
+    `${interviewQuestionPath(recruitmentId)}/${questionId}`,
+  );
 }
 
 function interviewPath(recruitmentId: number) {
@@ -250,12 +257,23 @@ export async function getStaffInterviewBoard(
   return response.data!;
 }
 
+export async function finalizeStaffInterviewResults(
+  recruitmentId: number,
+): Promise<StaffInterviewBoard> {
+  const response = await apiClient
+    .post(`${interviewPath(recruitmentId)}/finalize-results`)
+    .json<ApiResponse<StaffInterviewBoard>>();
+  return response.data!;
+}
+
 export async function getStaffInterviewSheet(
   recruitmentId: number,
   applicationId: number,
 ): Promise<StaffInterviewSheet> {
   const response = await apiClient
-    .get(`${interviewPath(recruitmentId)}/${applicationId}`, { cache: "no-store" })
+    .get(`${interviewPath(recruitmentId)}/${applicationId}`, {
+      cache: "no-store",
+    })
     .json<ApiResponse<StaffInterviewSheet>>();
   return response.data!;
 }
@@ -286,9 +304,12 @@ export async function saveStaffInterviewAnswer(
   answer: string,
 ): Promise<StaffInterviewSheet> {
   const response = await apiClient
-    .put(`${interviewPath(recruitmentId)}/${applicationId}/answers/${questionId}`, {
-      json: { answer },
-    })
+    .put(
+      `${interviewPath(recruitmentId)}/${applicationId}/answers/${questionId}`,
+      {
+        json: { answer },
+      },
+    )
     .json<ApiResponse<StaffInterviewSheet>>();
   return response.data!;
 }
