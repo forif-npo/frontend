@@ -78,6 +78,24 @@ describe("MyStaffApplicationView", () => {
     jest.mocked(getStaffRecruitment).mockResolvedValue(recruitment);
   });
 
+  it("keeps line breaks in a submitted question title", async () => {
+    jest.mocked(getMyStaffApplication).mockResolvedValue({
+      ...application,
+      answers: [{
+        question_id: 1,
+        question_label: "첫 줄\n둘째 줄",
+        question_type: "LONG_TEXT",
+        answer: "답변",
+      }],
+    });
+    render(<MyStaffApplicationView recruitmentId={7} submitted={false} embedded />);
+
+    const heading = await screen.findByText((_, node) =>
+      node?.tagName === "H3" && node.textContent?.includes("첫 줄\n둘째 줄") === true);
+    expect(heading.classList.contains("whitespace-pre-wrap")).toBe(true);
+    expect(heading.textContent).toContain("첫 줄\n둘째 줄");
+  });
+
   it("shows the submitted interview availability in date and time order", async () => {
     render(
       <MyStaffApplicationView recruitmentId={7} submitted={false} embedded />,

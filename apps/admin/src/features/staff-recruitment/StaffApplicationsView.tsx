@@ -7,6 +7,7 @@ import { formatStaffInterviewAvailability, formatStaffRecruitmentDepartment, for
 import { handleApiError } from "@core/utils/api-client";
 import { PageHeader } from "@/components/page-header";
 import { OffsetPagination } from "@/components/list/offset-pagination";
+import { SortableHeader } from "@/components/list/sortable-header";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +18,7 @@ import { toast } from "@/components/ui/Toast";
 import { StaffApplicationAnswerList } from "./StaffApplicationAnswerList";
 import { StaffApplicationDecision } from "./StaffApplicationDecision";
 import { StaffApplicantInfoTable } from "./StaffApplicantInfoTable";
-import { getPublicStaffInterviewPlan, getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage } from "./api";
+import { getPublicStaffInterviewPlan, getStaffApplicationDetail, getStaffApplications, getReviewableStaffRecruitments, type StaffApplicationPage, type StaffApplicationSort } from "./api";
 
 const EMPTY_PAGE: StaffApplicationPage = {
   content: [],
@@ -56,6 +57,7 @@ export function StaffApplicationsView({
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
+  const [sort, setSort] = useState<StaffApplicationSort | undefined>(undefined);
   const [data, setData] = useState<StaffApplicationPage>(EMPTY_PAGE);
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<StaffApplicationDetail | null>(null);
@@ -111,6 +113,7 @@ export function StaffApplicationsView({
           departmentId: departmentId ?? undefined,
           search: search || undefined,
           page,
+          sort,
         }),
       );
       setAccessDenied(false);
@@ -125,7 +128,24 @@ export function StaffApplicationsView({
     } finally {
       setLoading(false);
     }
-  }, [departmentId, page, recruitmentId, search]);
+  }, [departmentId, page, recruitmentId, search, sort]);
+
+  // SortableHeader가 쓰는 tanstack 열 메서드를 서버 정렬 값에 연결한다.
+  const sortColumn = (field: "department" | "submittedAt") => ({
+    getIsSorted: () => (sort?.startsWith(`${field}:`) ? (sort.endsWith("DESC") ? "desc" : "asc") : false) as false | "asc" | "desc",
+    toggleSorting: (desc?: boolean) => {
+      setSort(`${field}:${desc ? "DESC" : "ASC"}`);
+      setPage(0);
+    },
+    clearSorting: () => {
+      setSort(undefined);
+      setPage(0);
+    },
+  });
+  const ariaSort = (field: "department" | "submittedAt") => {
+    const state = sortColumn(field).getIsSorted();
+    return state === "asc" ? "ascending" : state === "desc" ? "descending" : "none";
+  };
 
   useEffect(() => {
     void load();
@@ -263,10 +283,14 @@ export function StaffApplicationsView({
           <TableHeader>
             <TableRow>
               <TableHead>이름</TableHead>
-              <TableHead>학과</TableHead>
+              <TableHead aria-sort={ariaSort("department")}>
+                <SortableHeader column={sortColumn("department")}>학과</SortableHeader>
+              </TableHead>
               <TableHead>1지망 부서</TableHead>
               <TableHead>2지망 부서</TableHead>
-              <TableHead>제출 시각</TableHead>
+              <TableHead aria-sort={ariaSort("submittedAt")}>
+                <SortableHeader column={sortColumn("submittedAt")}>제출 시각</SortableHeader>
+              </TableHead>
               <TableHead className="w-14">
                 <span className="sr-only">작업</span>
               </TableHead>

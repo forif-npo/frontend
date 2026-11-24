@@ -158,6 +158,20 @@ describe("staff recruitment admin api", () => {
     );
   });
 
+  it("sends the selected sort as the backend sort param", async () => {
+    mockedGet.mockReturnValue(
+      response({ content: [], total_elements: 0, current_page: 0, total_pages: 0 }),
+    );
+
+    await getStaffApplications({ recruitmentId: 12, sort: "submittedAt:DESC" });
+
+    const [, options] = (apiClient.get as jest.Mock).mock.calls[0] as [
+      string,
+      { searchParams: URLSearchParams },
+    ];
+    expect(options.searchParams.get("sort")).toBe("submittedAt:DESC");
+  });
+
   it("loads application detail without caching", async () => {
     mockedGet.mockReturnValue(response({ application_id: 9 }));
 

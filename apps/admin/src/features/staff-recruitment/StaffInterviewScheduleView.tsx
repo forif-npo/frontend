@@ -7,12 +7,13 @@ import { TimeSlotGrid } from "@ui/components/client";
 import type { StaffInterviewSchedule, StaffInterviewScheduleApplicant, StaffInterviewSlot } from "@core/types/staff-recruitment";
 import { formatStaffRecruitmentTitle } from "@core/staff-recruitment";
 import { availableApplicantsBySlot, hasNoOverlap, interviewSlotStarts, toInterviewSlotKeys, toInterviewSlotRequest } from "@core/staff-interview";
-import { formatSlotDate, formatSlotRange, parseTimeSlotKey, timeSlotKey } from "@core/time-slot";
+import { clockTimeToMinute, formatSlotDate, formatSlotRange, minuteToClockTime, parseTimeSlotKey, timeSlotKey } from "@core/time-slot";
 import { handleApiError } from "@core/utils/api-client";
 import { PageHeader } from "@/components/page-header";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/list/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/Toast";
@@ -344,6 +345,7 @@ function ApplicantRow({
   const [editing, setEditing] = useState(false);
   const [date, setDate] = useState(applicant.assigned_slot?.date ?? plan.dates[0] ?? "");
   const [minute, setMinute] = useState<string>("");
+  const [typed, setTyped] = useState("");
 
   // 다른 지원자가 들어간 시간은 고를 수 없다. 면접은 한 타임에 한 명이다.
   const takenByOthers = new Set(
@@ -351,7 +353,19 @@ function ApplicantRow({
       .filter((other) => other.application_id !== applicant.application_id && other.assigned_slot)
       .map((other) => timeSlotKey(other.assigned_slot!.date, other.assigned_slot!.start_minute)),
   );
-  const freeMinutes = interviewSlotStarts(plan).filter((start) => !takenByOthers.has(timeSlotKey(date, start)));
+  const allStarts = interviewSlotStarts(plan);
+  const freeMinutes = allStarts.filter((start) => !takenByOthers.has(timeSlotKey(date, start)));
+  // 직접 입력한 시각도 서버 규칙(면접 시간 범위 안, 칸 단위 시작)과 같은 기준으로 막는다.
+  const typedMinute = clockTimeToMinute(typed);
+  const typedError =
+    typedMinute === null
+      ? null
+      : !allStarts.includes(typedMinute)
+        ? `${plan.start_hour}시~${plan.end_hour}시 사이, ${plan.slot_minutes}분 단위로 입력해 주세요.`
+        : takenByOthers.has(timeSlotKey(date, typedMinute))
+          ? "다른 지원자가 배정된 시간입니다."
+          : null;
+  const errorId = `interview-time-error-${applicant.application_id}`;
   const { first, second } = departmentsOf(applicant);
   const noOverlap = hasNoOverlap(schedule.host_slots, applicant);
 
@@ -369,6 +383,7 @@ function ApplicantRow({
                 onValueChange={(next) => {
                   setDate(next);
                   setMinute("");
+                  setTyped("");
                 }}
               >
                 <SelectTrigger className="w-32" aria-label={`${applicant.applicant_name} 면접 날짜`}>
@@ -382,8 +397,15 @@ function ApplicantRow({
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={minute} onValueChange={setMinute}>
-                <SelectTrigger className="w-44" aria-label={`${applicant.applicant_name} 면접 시간`}>
+              <Select
+                value={minute}
+                onValueChange={(next) => {
+                  setMinute(next);
+                  setTyped(minuteToClockTime(Number(next)));
+                }}
+              >
+                {/* 시간 범위 문구("오전 11:30 - 오후 12:00")가 잘리지 않도록 내용 폭에 맞춘다. */}
+                <SelectTrigger className="w-auto min-w-44" aria-label={`${applicant.applicant_name} 면접 시간`}>
                   <SelectValue placeholder="시간 선택" />
                 </SelectTrigger>
                 <SelectContent>
@@ -394,7 +416,27 @@ function ApplicantRow({
                   ))}
                 </SelectContent>
               </Select>
+              <Input
+                type="time"
+                className="w-32"
+                step={plan.slot_minutes * 60}
+                value={typed}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setTyped(value);
+                  const typedMinute = clockTimeToMinute(value);
+                  setMinute(typedMinute !== null && freeMinutes.includes(typedMinute) ? String(typedMinute) : "");
+                }}
+                aria-label={`${applicant.applicant_name} 면접 시작 시각 직접 입력`}
+                aria-invalid={typedError !== null}
+                aria-describedby={typedError ? errorId : undefined}
+              />
             </div>
+            {typedError && (
+              <p id={errorId} className="text-destructive text-xs">
+                {typedError}
+              </p>
+            )}
             <div className="flex gap-2">
               <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
                 취소

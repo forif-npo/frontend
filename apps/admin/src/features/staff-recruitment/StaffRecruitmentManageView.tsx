@@ -12,6 +12,7 @@ import { formatStaffRecruitmentTitle, staffRecruitmentStorageTitle } from "@core
 import { handleApiError } from "@core/utils/api-client";
 import { changeStaffRecruitmentStatus, createStaffRecruitment, deleteStaffInterviewPlan, getStaffInterviewPlan, getStaffRecruitments, saveStaffInterviewPlan, updateStaffRecruitment } from "./api";
 import { toInterviewPlanRequest, toSaveRequest, type StaffRecruitmentFormState } from "./form";
+import { getStaffRecruitmentSaveError } from "./save-error";
 import { StaffRecruitmentFormDialog } from "./StaffRecruitmentFormDialog";
 import Link from "next/link";
 
@@ -107,7 +108,7 @@ export function StaffRecruitmentManageView({ currentSemester }: { currentSemeste
       setEditPlan(null);
       await load();
     } catch (error) {
-      setSaveError(await handleApiError(error));
+      setSaveError(await getStaffRecruitmentSaveError(error));
     } finally {
       setSubmitting(false);
     }

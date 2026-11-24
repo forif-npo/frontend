@@ -15,6 +15,18 @@ import { DuplicateStaffApplicationModal } from "./DuplicateStaffApplicationModal
 
 type FieldErrors = Record<string, string>;
 
+function attachmentFileError(file: File): string | null {
+  if (file.size === 0) return "빈 파일은 첨부할 수 없습니다.";
+  if (file.size > 5 * 1024 * 1024 || file.name.length > 200) {
+    return "5MB 이하, 파일명 200자 이하의 파일을 선택해주세요.";
+  }
+  if (!file.name.trim() || file.name.split("").some((character) =>
+    character.charCodeAt(0) < 32 || '<>:"|?*/\\'.includes(character))) {
+    return "파일명에 사용할 수 없는 문자가 포함되어 있습니다.";
+  }
+  return null;
+}
+
 export function StaffApplicationForm({
   recruitment,
   interviewPlan,
@@ -194,12 +206,9 @@ export function StaffApplicationForm({
         );
         if (question.required && !file && !retainedFile) {
           next[`question-${question.question_id}`] = "필수 파일입니다.";
-        } else if (
-          file &&
-          (file.size > 5 * 1024 * 1024 || file.name.length > 200)
-        ) {
-          next[`question-${question.question_id}`] =
-            "5MB 이하, 파일명 200자 이하의 파일을 선택해주세요.";
+        } else if (file) {
+          const fileError = attachmentFileError(file);
+          if (fileError) next[`question-${question.question_id}`] = fileError;
         }
         return;
       }
@@ -382,7 +391,7 @@ export function StaffApplicationForm({
         />
       </section>
 
-      <section className="space-y-6" aria-labelledby="answers-heading">
+      <section className="space-y-6 whitespace-pre-wrap break-words" aria-labelledby="answers-heading">
         <h2
           id="answers-heading"
           className="text-title-l-mobile sm:text-title-l font-bold"
@@ -486,13 +495,11 @@ export function StaffApplicationForm({
                       maxFiles={1}
                       files={selectedFile ? [selectedFile] : []}
                       onUpload={async (file) => {
-                        if (
-                          file.size > 5 * 1024 * 1024 ||
-                          file.name.length > 200
-                        ) {
+                        const fileError = attachmentFileError(file);
+                        if (fileError) {
                           setErrors((current) => ({
                             ...current,
-                            [id]: "5MB 이하, 파일명 200자 이하의 파일을 선택해주세요.",
+                            [id]: fileError,
                           }));
                           return false;
                         }

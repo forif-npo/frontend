@@ -171,6 +171,9 @@ export function validateRecruitmentForm(
   if (!form.description.trim()) {
     return "안내문을 입력해주세요.";
   }
+  if (form.summary.trim().length > 200) {
+    return "한 줄 소개는 200자 이내로 입력해주세요.";
+  }
   if (!form.startsAt || !form.endsAt) {
     return "모집 시작·종료 날짜를 모두 입력해주세요.";
   }
@@ -180,16 +183,31 @@ export function validateRecruitmentForm(
   if (!form.departments.some((department) => department.name.trim())) {
     return "지원 가능한 부서를 하나 이상 입력해주세요.";
   }
-  if (
-    form.questions.some(
-      (question) =>
-        !question.label.trim() ||
-        !Number.isInteger(Number(question.maxLength)) ||
-        Number(question.maxLength) < 1 ||
-        Number(question.maxLength) > 5000,
-    )
-  ) {
-    return "문항 제목과 1~5000자의 최대 글자 수를 확인해주세요.";
+  for (let index = 0; index < form.departments.length; index += 1) {
+    const department = form.departments[index]!;
+    if (!department.name.trim()) continue;
+    if (department.name.trim().length > 50) {
+      return `${index + 1}번째 부서명은 50자 이내로 입력해주세요.`;
+    }
+    if (department.description.trim().length > 200) {
+      return `${index + 1}번째 부서 설명은 200자 이내로 입력해주세요.`;
+    }
+  }
+  for (let index = 0; index < form.questions.length; index += 1) {
+    const question = form.questions[index]!;
+    if (!question.label.trim()) {
+      return `${index + 1}번째 문항 제목을 입력해주세요.`;
+    }
+    if (question.label.trim().length > 100) {
+      return `${index + 1}번째 문항 제목은 100자 이내로 입력해주세요.`;
+    }
+    if (question.description.trim().length > 200) {
+      return `${index + 1}번째 문항 설명은 200자 이내로 입력해주세요.`;
+    }
+    const maxLength = Number(question.maxLength);
+    if (!Number.isInteger(maxLength) || maxLength < 1 || maxLength > 5000) {
+      return `${index + 1}번째 문항의 최대 글자 수는 1~5000자로 설정해주세요.`;
+    }
   }
   if (
     form.questions.filter(

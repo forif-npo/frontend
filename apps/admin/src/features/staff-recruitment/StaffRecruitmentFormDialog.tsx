@@ -281,9 +281,11 @@ export function StaffRecruitmentFormDialog({
                       : "grid gap-2 sm:grid-cols-[2fr_1fr_auto]"
                   }
                 >
-                  <Input
+                  <Textarea
                     aria-label={`${index + 1}번째 문항`}
                     placeholder="지원 동기를 작성해주세요"
+                    rows={2}
+                    maxLength={100}
                     value={question.label}
                     onChange={(event) =>
                       setForm((current) => ({
@@ -403,7 +405,7 @@ export function StaffRecruitmentFormDialog({
           </EditorSection>
 
           {(error || submitError) && (
-            <p role="alert" className="text-destructive text-sm">
+            <p role="alert" className="text-destructive whitespace-pre-line text-sm">
               {error || submitError}
             </p>
           )}
