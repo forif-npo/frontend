@@ -73,6 +73,25 @@ describe("staff recruitment form", () => {
     expect(validateRecruitmentForm(form)).toBeNull();
   });
 
+  it("keeps line breaks inside a saved application question", () => {
+    const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
+    form.description = "안내";
+    form.startsAt = "2026-12-01";
+    form.endsAt = "2026-12-15";
+    form.departments = [{ name: "개발", description: "" }];
+    form.questions = [{
+      label: "첫 줄\n둘째 줄",
+      description: "",
+      type: "LONG_TEXT",
+      required: true,
+      maxLength: "500",
+    }];
+
+    expect(validateRecruitmentForm(form)).toBeNull();
+    expect(toSaveRequest(form).questions[0].label).toBe("첫 줄\n둘째 줄");
+  });
+
   it("defaults new recruitment to the semester after the current activity semester", () => {
     expect(emptyRecruitmentForm({ act_year: 2026, act_semester: 2 })).toEqual(
       expect.objectContaining({ actYear: "2027", actSemester: "1" }),

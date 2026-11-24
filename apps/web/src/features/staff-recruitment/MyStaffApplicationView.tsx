@@ -252,7 +252,7 @@ export function MyStaffApplicationView({
         <ol className="rounded-3 border-border-gray-light bg-surface-white space-y-6 border p-5">
           {application.answers.map((answer, index) => (
             <li key={answer.question_id}>
-              <h3 className="text-text-bolder font-semibold">
+              <h3 className="text-text-bolder whitespace-pre-wrap break-words font-semibold">
                 {index + 1}. {answer.question_label}
                 {requiredQuestionIds.has(answer.question_id) && (
                   <>

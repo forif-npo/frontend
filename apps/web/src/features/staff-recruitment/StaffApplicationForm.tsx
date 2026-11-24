@@ -391,7 +391,7 @@ export function StaffApplicationForm({
         />
       </section>
 
-      <section className="space-y-6" aria-labelledby="answers-heading">
+      <section className="space-y-6 whitespace-pre-wrap break-words" aria-labelledby="answers-heading">
         <h2
           id="answers-heading"
           className="text-title-l-mobile sm:text-title-l font-bold"

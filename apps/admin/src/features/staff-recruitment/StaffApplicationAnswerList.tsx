@@ -19,7 +19,7 @@ export function StaffApplicationAnswerList({
     <ol className="space-y-6">
       {detail.answers.map((answer, index) => (
         <li key={answer.question_id} className="space-y-3">
-          <h4 className="font-semibold">
+          <h4 className="whitespace-pre-wrap break-words font-semibold">
             {index + 1}. {answer.question_label}
             {requiredQuestionIds?.has(answer.question_id) && (
               <>

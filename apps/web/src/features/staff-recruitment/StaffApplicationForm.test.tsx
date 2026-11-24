@@ -150,6 +150,25 @@ describe("StaffApplicationForm", () => {
     jest.mocked(cancelStaffApplication).mockReset();
   });
 
+  it("shows line breaks in application question titles and descriptions", () => {
+    const multilineRecruitment = {
+      ...recruitment,
+      questions: [{
+        ...recruitment.questions[0]!,
+        label: "첫 줄\n둘째 줄",
+        description: "설명 첫 줄\n설명 둘째 줄",
+      }],
+    } as StaffRecruitmentRound;
+    render(<StaffApplicationForm recruitment={multilineRecruitment} interviewPlan={null} />);
+
+    const label = screen.getByText((_, node) =>
+      node?.tagName === "LABEL" && node.textContent?.includes("첫 줄\n둘째 줄") === true);
+    const section = label.closest("section");
+    expect(section?.classList.contains("whitespace-pre-wrap")).toBe(true);
+    expect(section?.textContent).toContain("첫 줄\n둘째 줄");
+    expect(section?.textContent).toContain("설명 첫 줄\n설명 둘째 줄");
+  });
+
   it("submits a link for an attachment question", async () => {
     jest.mocked(submitStaffApplication).mockResolvedValue({
       application_id: 42,

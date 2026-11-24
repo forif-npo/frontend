@@ -132,7 +132,7 @@ export function StaffRecruitmentView({
                         {index + 1}.
                       </span>
                       <div className="min-w-0">
-                        <p className="text-text-basic font-semibold">
+                        <p className="text-text-basic whitespace-pre-wrap break-words font-semibold">
                           {question.label}
                           {question.required && (
                             <span className="text-text-danger ml-2 text-sm font-normal">
@@ -141,7 +141,7 @@ export function StaffRecruitmentView({
                           )}
                         </p>
                         {question.description?.trim() && (
-                          <p className="text-text-subtle mt-1 text-sm leading-6">
+                          <p className="text-text-subtle mt-1 whitespace-pre-wrap break-words text-sm leading-6">
                             {question.description}
                           </p>
                         )}
