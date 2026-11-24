@@ -235,6 +235,19 @@ describe("StaffApplicationForm", () => {
     );
   });
 
+  it("rejects empty files and server-invalid filenames before submission", async () => {
+    render(<StaffApplicationForm recruitment={attachmentRecruitment} interviewPlan={null} />);
+    fireEvent.click(screen.getByRole("button", { name: "첨부 방식" }));
+    fireEvent.click(screen.getByRole("option", { name: "파일" }));
+    const dropZone = screen.getByRole("button", { name: "3. 첨부 파일" });
+
+    fireEvent.drop(dropZone, { dataTransfer: { files: [new File([], "empty.pdf")] } });
+    expect(await screen.findByText("빈 파일은 첨부할 수 없습니다.")).toBeTruthy();
+    fireEvent.drop(dropZone, { dataTransfer: { files: [new File(["x"], "bad:name.pdf")] } });
+    expect(await screen.findByText("파일명에 사용할 수 없는 문자가 포함되어 있습니다.")).toBeTruthy();
+    expect(submitStaffApplication).not.toHaveBeenCalled();
+  });
+
   it("switches an existing attachment file to a link when editing", async () => {
     const attachmentApplication = {
       ...application,

@@ -403,7 +403,7 @@ export function StaffRecruitmentFormDialog({
           </EditorSection>
 
           {(error || submitError) && (
-            <p role="alert" className="text-destructive text-sm">
+            <p role="alert" className="text-destructive whitespace-pre-line text-sm">
               {error || submitError}
             </p>
           )}
