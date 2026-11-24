@@ -154,3 +154,19 @@ export function datesInRange(start: string, end: string): string[] {
   }
   return dates;
 }
+
+/** `<input type="time">` 값("HH:MM")을 자정부터의 분으로 바꾼다. 형식이 틀리면 null이다. */
+export function clockTimeToMinute(value: string): number | null {
+  const match = /^(\d{2}):(\d{2})$/.exec(value);
+  if (!match) return null;
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  return hour < 24 && minute < 60 ? hour * MINUTES_PER_HOUR + minute : null;
+}
+
+/** 자정부터의 분을 `<input type="time">` 값("HH:MM")으로 바꾼다. */
+export function minuteToClockTime(startMinute: number): string {
+  const hour = Math.floor(startMinute / MINUTES_PER_HOUR);
+  const minute = startMinute % MINUTES_PER_HOUR;
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}

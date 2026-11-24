@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import type { Column } from "@tanstack/react-table";
 
 interface SortableHeaderProps<TData> {
-  column: Column<TData, unknown>;
+  // tanstack 표가 아닌 서버 정렬 목록도 같은 헤더를 쓰도록 필요한 메서드만 받는다.
+  column: Pick<Column<TData, unknown>, "getIsSorted" | "toggleSorting" | "clearSorting">;
   children: React.ReactNode;
 }
 

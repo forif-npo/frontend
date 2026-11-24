@@ -40,6 +40,58 @@ describe("staff recruitment form", () => {
     );
   });
 
+  it("checks the server length limits before saving a recruitment", () => {
+    const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
+    form.description = "안내";
+    form.startsAt = "2026-12-01";
+    form.endsAt = "2026-12-15";
+    form.departments = [{ name: "개발", description: "" }];
+    form.questions = [{
+      label: "포트폴리오",
+      description: "",
+      type: "ATTACHMENT",
+      required: false,
+      maxLength: "5000",
+    }];
+
+    form.summary = "가".repeat(201);
+    expect(validateRecruitmentForm(form)).toBe("한 줄 소개는 200자 이내로 입력해주세요.");
+    form.summary = "가".repeat(200);
+    form.departments[0]!.name = "가".repeat(51);
+    expect(validateRecruitmentForm(form)).toBe("1번째 부서명은 50자 이내로 입력해주세요.");
+    form.departments[0]!.name = "가".repeat(50);
+    form.departments[0]!.description = "가".repeat(201);
+    expect(validateRecruitmentForm(form)).toBe("1번째 부서 설명은 200자 이내로 입력해주세요.");
+    form.departments[0]!.description = "가".repeat(200);
+    form.questions[0]!.label = "가".repeat(101);
+    expect(validateRecruitmentForm(form)).toBe("1번째 문항 제목은 100자 이내로 입력해주세요.");
+    form.questions[0]!.label = "가".repeat(100);
+    form.questions[0]!.description = "가".repeat(201);
+    expect(validateRecruitmentForm(form)).toBe("1번째 문항 설명은 200자 이내로 입력해주세요.");
+    form.questions[0]!.description = "가".repeat(200);
+    expect(validateRecruitmentForm(form)).toBeNull();
+  });
+
+  it("keeps line breaks inside a saved application question", () => {
+    const form = emptyRecruitmentForm();
+    form.interview.enabled = false;
+    form.description = "안내";
+    form.startsAt = "2026-12-01";
+    form.endsAt = "2026-12-15";
+    form.departments = [{ name: "개발", description: "" }];
+    form.questions = [{
+      label: "첫 줄\n둘째 줄",
+      description: "",
+      type: "LONG_TEXT",
+      required: true,
+      maxLength: "500",
+    }];
+
+    expect(validateRecruitmentForm(form)).toBeNull();
+    expect(toSaveRequest(form).questions[0].label).toBe("첫 줄\n둘째 줄");
+  });
+
   it("defaults new recruitment to the semester after the current activity semester", () => {
     expect(emptyRecruitmentForm({ act_year: 2026, act_semester: 2 })).toEqual(
       expect.objectContaining({ actYear: "2027", actSemester: "1" }),

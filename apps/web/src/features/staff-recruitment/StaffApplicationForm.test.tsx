@@ -150,6 +150,25 @@ describe("StaffApplicationForm", () => {
     jest.mocked(cancelStaffApplication).mockReset();
   });
 
+  it("shows line breaks in application question titles and descriptions", () => {
+    const multilineRecruitment = {
+      ...recruitment,
+      questions: [{
+        ...recruitment.questions[0]!,
+        label: "첫 줄\n둘째 줄",
+        description: "설명 첫 줄\n설명 둘째 줄",
+      }],
+    } as StaffRecruitmentRound;
+    render(<StaffApplicationForm recruitment={multilineRecruitment} interviewPlan={null} />);
+
+    const label = screen.getByText((_, node) =>
+      node?.tagName === "LABEL" && node.textContent?.includes("첫 줄\n둘째 줄") === true);
+    const section = label.closest("section");
+    expect(section?.classList.contains("whitespace-pre-wrap")).toBe(true);
+    expect(section?.textContent).toContain("첫 줄\n둘째 줄");
+    expect(section?.textContent).toContain("설명 첫 줄\n설명 둘째 줄");
+  });
+
   it("submits a link for an attachment question", async () => {
     jest.mocked(submitStaffApplication).mockResolvedValue({
       application_id: 42,
@@ -233,6 +252,19 @@ describe("StaffApplicationForm", () => {
         { 3: file },
       ),
     );
+  });
+
+  it("rejects empty files and server-invalid filenames before submission", async () => {
+    render(<StaffApplicationForm recruitment={attachmentRecruitment} interviewPlan={null} />);
+    fireEvent.click(screen.getByRole("button", { name: "첨부 방식" }));
+    fireEvent.click(screen.getByRole("option", { name: "파일" }));
+    const dropZone = screen.getByRole("button", { name: "3. 첨부 파일" });
+
+    fireEvent.drop(dropZone, { dataTransfer: { files: [new File([], "empty.pdf")] } });
+    expect(await screen.findByText("빈 파일은 첨부할 수 없습니다.")).toBeTruthy();
+    fireEvent.drop(dropZone, { dataTransfer: { files: [new File(["x"], "bad:name.pdf")] } });
+    expect(await screen.findByText("파일명에 사용할 수 없는 문자가 포함되어 있습니다.")).toBeTruthy();
+    expect(submitStaffApplication).not.toHaveBeenCalled();
   });
 
   it("switches an existing attachment file to a link when editing", async () => {
