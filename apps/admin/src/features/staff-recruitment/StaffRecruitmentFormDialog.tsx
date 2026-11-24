@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -281,10 +281,9 @@ export function StaffRecruitmentFormDialog({
                       : "grid gap-2 sm:grid-cols-[2fr_1fr_auto]"
                   }
                 >
-                  <Textarea
+                  <QuestionTextarea
                     aria-label={`${index + 1}번째 문항`}
                     placeholder="지원 동기를 작성해주세요"
-                    rows={2}
                     maxLength={100}
                     value={question.label}
                     onChange={(event) =>
@@ -425,6 +424,27 @@ export function StaffRecruitmentFormDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function QuestionTextarea({ value, ...props }: React.ComponentProps<typeof Textarea>) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${Math.max(36, element.scrollHeight + 2)}px`;
+  }, [value]);
+
+  return (
+    <Textarea
+      {...props}
+      ref={ref}
+      value={value}
+      rows={1}
+      className="h-9 min-h-9 resize-none overflow-hidden py-1"
+    />
   );
 }
 
