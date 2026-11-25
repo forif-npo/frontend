@@ -416,7 +416,11 @@ export function StaffApplicationForm({
                 key={question.question_id}
                 id={id}
                 tabIndex={-1}
-                className="flex flex-col gap-1"
+                className={
+                  question.type === "ATTACHMENT"
+                    ? "grid grid-cols-[128px_minmax(0,1fr)] gap-x-3 gap-y-1 [&>div]:min-w-0 [&>label]:col-span-2"
+                    : "flex flex-col gap-1"
+                }
               >
                 <Label id={`${id}-label`}>
                   {index + 1}. {question.label}
@@ -438,8 +442,9 @@ export function StaffApplicationForm({
                   <SelectBox
                     id={`${id}-type`}
                     title="첨부 방식"
+                    titleClassName="sr-only"
                     value={mode}
-                    placeholder="방식을 선택해주세요"
+                    placeholder="유형"
                     options={[
                       { value: "LINK", label: "링크" },
                       { value: "FILE", label: "파일" },
@@ -450,6 +455,7 @@ export function StaffApplicationForm({
                         next as "LINK" | "FILE",
                       )
                     }
+                    size="md"
                   />
                 )}
                 {mode === "FILE" ? (
@@ -457,7 +463,9 @@ export function StaffApplicationForm({
                     {existingFile &&
                       !selectedFile &&
                       !removedFileQuestionIds.has(question.question_id) && (
-                        <div className="border-border-gray-light flex items-center justify-between gap-3 rounded-lg border px-4 py-3">
+                        <div
+                          className={`border-border-gray-light flex items-center justify-between gap-3 rounded-lg border px-4 py-3 ${question.type === "ATTACHMENT" ? "col-start-2" : ""}`}
+                        >
                           <button
                             type="button"
                             className="text-text-primary min-w-0 truncate underline underline-offset-2"
@@ -522,12 +530,17 @@ export function StaffApplicationForm({
                           [question.question_id]: null,
                         }))
                       }
+                      className={
+                        question.type === "ATTACHMENT"
+                          ? "col-start-2 p-3"
+                          : undefined
+                      }
                     />
                   </>
                 ) : (
                   <TextInput
                     id={`${id}-link`}
-                    title="링크"
+                    aria-label="링크"
                     length="full"
                     inputMode="url"
                     placeholder="웹사이트 링크를 입력해주세요"
